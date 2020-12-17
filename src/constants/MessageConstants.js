@@ -1,0 +1,3 @@
+export const MESSAGE_TYPES = {
+  INFO: 'INFO', ERROR: 'ERROR', WARNING: 'WORNING', SUCCESS: 'SUCCESS',
+};

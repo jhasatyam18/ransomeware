@@ -1,0 +1,34 @@
+//
+// _badge.scss
+//
+
+// Soft badge
+@mixin badge-variant-soft($bg) {
+  color: $bg;
+  background-color: rgba($bg, 0.18);
+
+  &[href] {
+    @include hover-focus {
+      color: $bg;
+      text-decoration: none;
+      background-color: rgba($bg, 0.4);
+    }
+  }
+}
+
+@each $color, $value in $theme-colors {
+  .badge-soft-#{$color} {
+    @include badge-variant-soft($value);
+  }
+}
+
+// Dark badge
+
+.badge-dark {
+  color: $light;
+}
+
+.badge-pill {
+  padding-right: 0.6em !important;
+  padding-left: 0.6em !important;
+}
