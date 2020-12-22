@@ -1,5 +1,5 @@
 //
-// _menu.scss
+// _menu.scss 
 //
 
 .metismenu {
@@ -59,15 +59,15 @@
   .mm-active {
     > .has-arrow {
       &:after {
-        transform: rotate(-180deg);
+        transform: rotate(90deg);
       }
     }
   }
 
   .has-arrow {
     &:after {
-      content: "\F0140";
-      font-family: "Material Design Icons";
+      content: "\e9e4";
+      font-family: "boxicons";
       display: block;
       float: right;
       transition: transform 0.2s;

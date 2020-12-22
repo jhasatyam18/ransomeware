@@ -1,6 +1,6 @@
 import { isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware } from '../utils/InputUtils';
 import { isEmpty } from '../utils/validationUtils';
-import { HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX } from './ValidationConstants';
+import { HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX } from './ValidationConstants';
 
 export const CONFIURE_SITE_GROUP = ['configureSite.platformDetails.type', 'configureSite.platformDetails.platformName'];
 export const FIELD_TYPE = {
@@ -21,7 +21,7 @@ export const FIELDS = {
     label: 'Description', description: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Site Description Required', shouldShow: true,
   },
   'configureSite.platformDetails.hostname': {
-    label: 'Hostname or IP', description: '', type: FIELD_TYPE.TEXT, patterns: [HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX], errorMessage: 'Invalid hostname or fqdn', shouldShow: (user) => isPlatformTypeVMware(user),
+    label: 'vCenter Server IP', description: '', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], errorMessage: 'Enter valid IP address', shouldShow: (user) => isPlatformTypeVMware(user),
   },
   'configureSite.platformDetails.port': {
     label: 'Port', description: '', type: FIELD_TYPE.NUMBER, errorMessage: 'Required', shouldShow: (user) => isPlatformTypeVMware(user),
@@ -48,13 +48,13 @@ export const FIELDS = {
     label: 'Project ID', description: '', type: FIELD_TYPE.TEXT, patterns: [HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX], errorMessage: 'Required', shouldShow: (user) => isPlatformTypeGCP(user),
   },
   'configureSite.platformDetails.serverIp': {
-    label: 'Datamotive Server IP', description: '', type: FIELD_TYPE.TEXT, patterns: [HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX], errorMessage: 'Required', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
+    label: 'Datamotive Server IP', description: '', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], errorMessage: 'Enter valid IP address', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
   },
   'configureSite.platformDetails.serverPort': {
     label: 'Server Port', description: '', type: FIELD_TYPE.NUMBER, errorMessage: 'Required', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
   },
   'configureSite.platformDetails.prepMachineIP': {
-    label: 'Prep Machine IP', description: '', type: FIELD_TYPE.TEXT, patterns: [HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX], errorMessage: 'Required', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
+    label: 'Preparation Machine IP', description: '', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], errorMessage: 'Enter valid Machine IP address', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
   },
 
   'TEST.site.platformName': {
