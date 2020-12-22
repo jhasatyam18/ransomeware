@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import SimpleBar from 'simplebar-react';
-import ConfigureSite from '../forms/ConfigureSite';
+import ConfigureSite from '../Forms/ConfigureSite';
 import { closeModal } from '../../store/actions/ModalAcions';
 import { confiureSite } from '../../store/actions/SiteActions';
 import { getConfigureSitePayload } from '../../utils/PayloadUtil';

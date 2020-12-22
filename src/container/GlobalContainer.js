@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Ripple from '../components/shared/Ripple';
+import Ripple from '../components/Shared/Ripple';
 
 class GlobalContainer extends Component {
   render() {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Form, CardBody } from 'reactstrap';
-import DMField from '../shared/DMField';
+import DMField from '../Shared/DMField';
 import { FIELDS } from '../../constants/FieldsConstant';
 
 class ConfigureSite extends Component {

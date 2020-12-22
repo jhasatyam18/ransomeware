@@ -6,9 +6,9 @@ import { openModal } from '../../../store/actions/ModalAcions';
 import { MODAL_CONFIGURE_NEW_SITE, MODAL_CONFIRMATION_WARNING } from '../../../constants/Modalconstant';
 import { clearValues, valueChange } from '../../../store/actions';
 import { deleteSites } from '../../../store/actions/SiteActions';
-import CloudPlusButton from '../../shared/CloudPlus';
-import CloudMinusButton from '../../shared/CloudMinus';
-import CloudEdit from '../../shared/CloudEdit';
+import CloudPlusButton from '../../Shared/CloudPlus';
+import CloudMinusButton from '../../Shared/CloudMinus';
+import CloudEdit from '../../Shared/CloudEdit';
 import { FIELDS } from '../../../constants/FieldsConstant';
 
 class SiteActionBar extends Component {

@@ -10,7 +10,7 @@ import Sidebar from './Sidebar';
 import Header from './Header';
 
 // lazy load components
-const Dashboard = React.lazy(() => import('components/dashboard/Dashboard'));
+const Dashboard = React.lazy(() => import('components/Dashboard/Dashboard'));
 const Sites = React.lazy(() => import('components/Configure/Sites/Sites'));
 
 class Layout extends Component {
