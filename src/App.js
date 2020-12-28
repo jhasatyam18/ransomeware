@@ -5,6 +5,7 @@ import Login from './pages/AuthenticationInner/Login';
 import MessageContainer from './container/MessageContainer';
 import ModalContainer from './container/ModalContainer';
 import GlobalContainer from './container/GlobalContainer';
+import WizardContainer from './container/WizardContainer';
 
 const VerticalLayout = React.lazy(() => import('./components/VerticalLayout'));
 const propTypes = {
@@ -21,10 +22,13 @@ class App extends Component {
         <Suspense fallback={<div>Loading...</div>}>
           {isAuthenticated ? <VerticalLayout {...this.props} /> : <Login {...this.props} />}
         </Suspense>
+        <Suspense fallback={<div>Loading...</div>}>
+          <MessageContainer />
+          <ModalContainer />
+          <WizardContainer />
+          <GlobalContainer />
+        </Suspense>
 
-        <MessageContainer />
-        <ModalContainer />
-        <GlobalContainer />
       </div>
     );
   }

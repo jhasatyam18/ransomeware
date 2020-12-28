@@ -24,6 +24,7 @@ class SitesTable extends Component {
           isSelectable
           onSelect={handleSiteTableSelection}
           selectedData={selectedSites}
+          primaryKey="id"
         />
 
       </>

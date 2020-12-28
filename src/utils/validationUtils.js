@@ -1,6 +1,7 @@
 import { addErrorMessage, removeErrorMessage, valueChange } from '../store/actions';
 import { FIELDS } from '../constants/FieldsConstant';
 import { getValue } from './InputUtils';
+import { MESSAGE_TYPES } from '../constants/MessageConstants';
 
 export function isRequired(value) {
   if (!value) {
@@ -26,7 +27,7 @@ export function validateField(fieldKey, value, dispatch, user) {
     }
   }
   if (typeof validate === 'function') {
-    const hasError = validate({ value, dispatch, user });
+    const hasError = validate({ value, dispatch, user, fieldKey });
     if (hasError) {
       dispatch(addErrorMessage(fieldKey, errorMessage));
       return false;
@@ -59,4 +60,44 @@ export function validateConfigureSite(user, dispatch) {
     }
   });
   return isClean;
+}
+
+export function validateSteps(user, dispatch, fields) {
+  const { values } = user;
+  let isClean = true;
+  fields.map((fieldKey) => {
+    const field = FIELDS[fieldKey];
+    const { shouldShow } = field;
+    const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
+    if (showField) {
+      if (!validateField(fieldKey, getValue(fieldKey, values), dispatch, user)) {
+        isClean = false;
+      }
+    }
+  });
+  return isClean;
+}
+
+export function validateDrSiteSelection({ user, fieldKey }) {
+  const { values } = user;
+  const fieldValue = getValue(fieldKey, values);
+  const otherField = (fieldKey === 'drplan.protectedSite' ? 'drplan.recoverySite' : 'drplan.protectedSite');
+  const otherFieldValue = getValue(otherField, values);
+  if (!fieldValue) {
+    return true;
+  }
+  if (fieldValue === otherFieldValue) {
+    return true;
+  }
+  return false;
+}
+
+export function validateDRPlanProtectData({ user, dispatch }) {
+  const { values } = user;
+  const vms = getValue('ui.site.seletedVMs', values);
+  if (!vms || Object.keys(vms).length === 0) {
+    dispatch(addErrorMessage(MESSAGE_TYPES.ERROR, 'Please select virtual machines.'));
+    return false;
+  }
+  return true;
 }

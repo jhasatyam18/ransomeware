@@ -1,5 +1,6 @@
-import { isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware } from '../utils/InputUtils';
-import { isEmpty } from '../utils/validationUtils';
+import { onProtectSiteChange } from '../store/actions/SiteActions';
+import { getSitesOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware } from '../utils/InputUtils';
+import { isEmpty, validateDrSiteSelection } from '../utils/validationUtils';
 import { HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX } from './ValidationConstants';
 
 export const CONFIURE_SITE_GROUP = ['configureSite.platformDetails.type', 'configureSite.platformDetails.platformName'];
@@ -60,4 +61,40 @@ export const FIELDS = {
   'TEST.site.platformName': {
     label: 'Platform Name', description: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Platform name required',
   },
+
+  'drplan.name': {
+    label: 'Name', description: 'Disaster recovery plan name', type: FIELD_TYPE.TEXT, errorMessage: 'Required disaster recovery plan name', shouldShow: true, validate: (value, user) => isEmpty(value, user),
+  },
+  'drplan.replicationInterval': {
+    label: 'Replication Interval', description: 'Replication Interval', type: FIELD_TYPE.NUMBER, errorMessage: 'Replication Interval Rquired', shouldShow: true,
+  },
+  'drplan.retryCount': {
+    label: 'Retry Count', description: 'Retry Count', type: FIELD_TYPE.NUMBER, errorMessage: 'Retry Count', shouldShow: true,
+  },
+  'drplan.failureActions': {
+    label: 'Failure Actions', description: 'Failure Actions', type: FIELD_TYPE.TEXT, errorMessage: 'Failure Actions', shouldShow: true, validate: (value, user) => isEmpty(value, user),
+  },
+  'drplan.throttleTime': {
+    label: 'Throttle Time', description: 'Failure Actions', type: FIELD_TYPE.TEXT, errorMessage: 'Failure Actions', shouldShow: true, validate: (value, user) => isEmpty(value, user),
+  },
+  'drplan.throttleBandwidth': {
+    label: 'Throttle Bandwidth', description: 'Retry Count', type: FIELD_TYPE.NUMBER, errorMessage: 'Retry Count', shouldShow: true,
+  },
+  'drplan.protectedSite': {
+    label: 'Protect Site', placeHolderText: 'Protect Site', type: FIELD_TYPE.SELECT, options: (user) => getSitesOptions(user), errorMessage: 'Select site', shouldShow: true, validate: (user) => validateDrSiteSelection(user), onChange: (user, dispatch) => onProtectSiteChange(user, dispatch),
+  },
+  'drplan.recoverySite': {
+    label: 'Recovery Site', placeHolderText: 'Recovery Site', type: FIELD_TYPE.SELECT, options: (user) => getSitesOptions(user), errorMessage: 'Select recovery site. Recovery can protect sites can not be same.', shouldShow: true, validate: (user) => validateDrSiteSelection(user),
+  },
+  'drplan.recoveryEntities.name': { label: '', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: null, errorMessage: '', shouldShow: false },
+  'drplan.recoveryEntities.networkConfig': { label: '', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: null, errorMessage: '', shouldShow: false },
+  'drplan.recoveryEntities.preScript': { label: '', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: null, errorMessage: '', shouldShow: false },
+  'drplan.recoveryEntities.postScript': { label: '', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: null, errorMessage: '', shouldShow: false },
+
+  'drplan.recoveryEntities.instanceDetails.amiID': { label: 'AMI ID', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Required', shouldShow: true },
+  'drplan.recoveryEntities.instanceDetails.instanceType': { label: 'Instance Type', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Required', shouldShow: true },
+  'drplan.recoveryEntities.instanceDetails.availabilityZone': { label: 'Availability Zone', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Required', shouldShow: true },
+  'drplan.recoveryEntities.instanceDetails.volumeType': { label: 'Volume Type', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Required', shouldShow: true },
+
+  'drplan.protectedEntities.Name': { label: '', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: null, errorMessage: '', shouldShow: false },
 };

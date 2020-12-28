@@ -17,11 +17,14 @@ class AppContainer extends Component {
 AppContainer.propTypes = propTypes;
 
 function mapStateToProps(state) {
-  const { layout, user, sites } = state;
+  const {
+    layout, user, sites, drPlans,
+  } = state;
   return {
     layout,
     user,
     sites,
+    drPlans,
   };
 }
 export default connect(mapStateToProps)(AppContainer);

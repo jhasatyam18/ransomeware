@@ -45,3 +45,16 @@ export function isPlatformTypeGCP(user) {
   }
   return false;
 }
+
+export function getSitesOptions(user) {
+  const { values } = user;
+  const sites = getValue('ui.values.sites', values);
+  const result = [];
+  if (sites) {
+    sites.reduce((previous, next) => {
+      previous.push({ label: next.Description, value: next.id });
+      return previous;
+    }, result);
+  }
+  return result;
+}

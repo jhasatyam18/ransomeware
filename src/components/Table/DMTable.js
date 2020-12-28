@@ -52,7 +52,7 @@ class DMTable extends Component {
 
   renderRows() {
     const {
-      dispatch, data, columns, isSelectable, onSelect, selectedData,
+      dispatch, data, columns, isSelectable, onSelect, selectedData, primaryKey,
     } = this.props;
     return data.map((row, index) => (
       <DMTableRow
@@ -63,6 +63,7 @@ class DMTable extends Component {
         isSelectable={isSelectable}
         onSelect={onSelect}
         selectedData={selectedData}
+        primaryKey={primaryKey}
       />
     ));
   }
@@ -74,7 +75,7 @@ class DMTable extends Component {
         <Col>
           <Card>
             <CardBody>
-              <Table className="table table-striped table-bordered">
+              <Table className="table table-bordered">
                 {this.renderHeaders()}
                 <Tbody>
                   {data && data.length > 0 ? this.renderRows() : this.renderNoDataToShow()}
@@ -95,6 +96,7 @@ const propTypes = {
   isSelectable: PropTypes.bool.isRequired,
   onSelect: PropTypes.func.isRequired,
   selectedData: PropTypes.any.isRequired,
+  primaryKey: PropTypes.string,
 };
 
 DMTable.propTypes = propTypes;

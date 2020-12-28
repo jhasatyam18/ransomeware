@@ -96,9 +96,9 @@ class SidebarContent extends Component {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/user">
-                    <i className="bx bx-user" />
-                    {t('User')}
+                  <Link to="/drplans" className="waves-effect">
+                    <i className="bx bx-layer" />
+                    <span>Disaster Recovery Plans</span>
                   </Link>
                 </li>
               </ul>

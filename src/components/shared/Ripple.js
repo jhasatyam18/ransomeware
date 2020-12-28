@@ -16,7 +16,14 @@ class Ripple extends Component {
 
         <div className="ripple__container">
           <div className="ripple__box">
-            <div className="spinner-border text-secondary m-1" role="status" />
+            <div className="spinner-chase">
+              <div className="chase-dot" />
+              <div className="chase-dot" />
+              <div className="chase-dot" />
+              <div className="chase-dot" />
+              <div className="chase-dot" />
+              <div className="chase-dot" />
+            </div>
             {this.renderMessages(loaderKeys)}
           </div>
         </div>
