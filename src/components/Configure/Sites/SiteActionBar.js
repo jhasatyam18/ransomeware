@@ -1,14 +1,9 @@
 import React, { Component } from 'react';
-
 import PropTypes from 'prop-types';
-import { Button } from 'reactstrap';
 import { openModal } from '../../../store/actions/ModalAcions';
 import { MODAL_CONFIGURE_NEW_SITE, MODAL_CONFIRMATION_WARNING } from '../../../constants/Modalconstant';
 import { clearValues, valueChange } from '../../../store/actions';
 import { deleteSites } from '../../../store/actions/SiteActions';
-import CloudPlusButton from '../../Shared/CloudPlus';
-import CloudMinusButton from '../../Shared/CloudMinus';
-import CloudEdit from '../../Shared/CloudEdit';
 import { FIELDS } from '../../../constants/FieldsConstant';
 
 class SiteActionBar extends Component {
@@ -66,26 +61,18 @@ class SiteActionBar extends Component {
       <>
         <div className="btn-toolbar padding-left-20" role="toolbar" aria-label="Toolbar with button groups">
           <div className="btn-group mr-2" role="group" aria-label="First group">
-            <Button color="secondary" className="btn btn-secondary" onClick={this.createSite}>
-              <CloudPlusButton size={1.5} />
-              {' '}
-              Create
-              {' '}
-            </Button>
-            <Button color="secondary" className="btn btn-secondary" onClick={this.deleteSelectedSites} disabled={this.shouldShowAction(false)}>
-              {' '}
-              <CloudMinusButton size={1.5} />
-              {' '}
+            <button className="btn btn-hover" color="secondary" type="button" onClick={this.createSite}>
+              <i className="bx bx-plus" />
+              New Site
+            </button>
+            <button className="btn btn-hover" color="secondary" type="button" onClick={this.deleteSelectedSites} disabled={this.shouldShowAction(false)}>
+              <i className="bx bx-trash" />
               Remove
-              {' '}
-            </Button>
-            <Button color="secondary" className="btn btn-secondary" onClick={this.reconfigureSite} disabled={this.shouldShowAction(true)}>
-              {' '}
-              <CloudEdit size={1.5} />
-              {' '}
+            </button>
+            <button className="btn btn-hover" color="secondary" type="button" onClick={this.reconfigureSite} disabled={this.shouldShowAction(true)}>
+              <i className="bx bxs-edit" />
               Reconfigure
-              {' '}
-            </Button>
+            </button>
           </div>
         </div>
       </>

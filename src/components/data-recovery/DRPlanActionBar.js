@@ -54,20 +54,20 @@ class DRPlanActionBar extends Component {
       <>
         <div className="btn-toolbar padding-left-20" role="toolbar" aria-label="Toolbar with button groups">
           <div className="btn-group mr-2" role="group" aria-label="dr_plan_action group">
-            <button type="button" className="btn" color="secondary" onClick={this.onCreate}>
+            <button type="button" className="btn btn-hover" color="secondary" onClick={this.onCreate}>
               <i className="bx bx-plus" />
               New Plan
             </button>
-            <button className="btn" color="secondary" type="button" onClick={this.onDelete}>
-              <i className="bx bxs-trash" />
+            <button type="button" className="btn btn-hover" color="secondary" onClick={this.onDelete}>
+              <i className="bx bx-trash" />
               Remove
             </button>
-            <button type="button" className="btn" color="secondary" onClick={() => { this.planAction(startPlan); }}>
-              <i className="bx bx-play" />
+            <button type="button" className="btn btn-hover" color="secondary" onClick={() => { this.planAction(startPlan); }}>
+              <i className="bx bx-play-circle" />
               Start
             </button>
-            <button type="button" className="btn" color="secondary" onClick={() => { this.planAction(stopPlan); }}>
-              <i className="bx bx-stop" />
+            <button type="button" className="btn btn-hover" color="secondary" onClick={() => { this.planAction(stopPlan); }}>
+              <i className="bx bx-stop-circle" />
               Stop
             </button>
           </div>

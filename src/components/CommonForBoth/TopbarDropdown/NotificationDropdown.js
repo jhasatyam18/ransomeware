@@ -40,7 +40,7 @@ class NotificationDropdown extends Component {
             tag="button"
             id="page-header-notifications-dropdown"
           >
-            <i className="bx bx-bell bx-tada" />
+            <box-icon name="bell" color="#a6b0cf" animation="tada" />
             <span className="badge badge-danger badge-pill" />
           </DropdownToggle>
 

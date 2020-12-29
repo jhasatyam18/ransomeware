@@ -17,11 +17,14 @@ class placeHolderNumber extends Component {
   }
 
   componentDidMount() {
-    const { user, fieldKey } = this.props;
+    const { user, fieldKey, field } = this.props;
     const { values } = user;
+    const { defaultValue } = field;
     const value = getValue(fieldKey, values);
     if (value && isNumber(value)) {
       this.setState({ value });
+    } else {
+      this.setState({ value: defaultValue });
     }
   }
 
@@ -33,9 +36,16 @@ class placeHolderNumber extends Component {
   }
 
   handleChange = (e) => {
-    this.setState({
-      value: Number(e.target.value),
-    });
+    const { field } = this.props;
+    const { min, max } = field;
+
+    if (e.target.value < min) {
+      this.setState({ value: min });
+    } else if (e.target.value > max) {
+      this.setState({ value: max });
+    } else {
+      this.setState({ value: e.target.value });
+    }
   }
 
   renderError(hasError) {
@@ -50,7 +60,7 @@ class placeHolderNumber extends Component {
 
   render() {
     const { field, fieldKey, user } = this.props;
-    const { label, shouldShow } = field;
+    const { label, shouldShow, min, max } = field;
     const { errors } = user;
     const { value } = this.state;
     const hasErrors = !!(errors && errors[fieldKey] !== undefined);
@@ -68,6 +78,8 @@ class placeHolderNumber extends Component {
               className="form-control form-control-sm"
               id={fieldKey}
               value={value}
+              min={min}
+              max={max}
               onBlur={this.onBlur}
               onChange={this.handleChange}
               invalid={hasErrors}

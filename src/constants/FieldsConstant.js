@@ -25,7 +25,7 @@ export const FIELDS = {
     label: 'vCenter Server IP', description: '', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], errorMessage: 'Enter valid IP address', shouldShow: (user) => isPlatformTypeVMware(user),
   },
   'configureSite.platformDetails.port': {
-    label: 'Port', description: '', type: FIELD_TYPE.NUMBER, errorMessage: 'Required', shouldShow: (user) => isPlatformTypeVMware(user),
+    label: 'Port', description: '', defaultValue: 443, min: 1, max: 65536, type: FIELD_TYPE.NUMBER, errorMessage: 'Required', shouldShow: (user) => isPlatformTypeVMware(user),
   },
   'configureSite.platformDetails.username': {
     label: 'Username', description: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Username Required', shouldShow: (user) => isPlatformTypeVMware(user),
@@ -52,7 +52,7 @@ export const FIELDS = {
     label: 'Datamotive Server IP', description: '', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], errorMessage: 'Enter valid IP address', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
   },
   'configureSite.platformDetails.serverPort': {
-    label: 'Server Port', description: '', type: FIELD_TYPE.NUMBER, errorMessage: 'Required', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
+    label: 'Server Port', description: '', defaultValue: 5000, min: 1, max: 65536, type: FIELD_TYPE.NUMBER, errorMessage: 'Required', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
   },
   'configureSite.platformDetails.prepMachineIP': {
     label: 'Preparation Machine IP', description: '', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], errorMessage: 'Enter valid Machine IP address', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
