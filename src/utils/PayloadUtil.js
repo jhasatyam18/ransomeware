@@ -26,3 +26,32 @@ function setObject(path, value, data) {
   }
   setObject(parts.slice(1).join('.'), value, formData[currentPath]);
 }
+
+export function getCreateDRPlanPayload(user, sites) {
+  const { values } = user;
+  const vms = getValue('ui.site.seletedVMs', values);
+  const result = {};
+  Object.keys((FIELDS))
+    .filter((key) => key.indexOf('drplan.') === 0)
+    .forEach((key) => {
+      const value = getValue(key, values);
+      setObject(key, value, result);
+    });
+  const rSite = sites.filter((site) => getFilteredObject(site, result.drplan.recoverySite, 'id'))[0];
+  const pSite = sites.filter((site) => getFilteredObject(site, result.drplan.protectedSite, 'id'))[0];
+  result.drplan.recoverySite = rSite;
+  result.drplan.protectedSite = pSite;
+  result.drplan.protectedEntities.Name = 'dummy';
+  result.drplan.protectedEntities.VirtualMachines = [];
+  Object.keys(vms).forEach((key) => {
+    const vm = vms[key];
+    vm.id = 0;
+
+    result.drplan.protectedEntities.VirtualMachines.push(vm);
+  });
+  return result;
+}
+
+function getFilteredObject(data, keyToMatch, arrayFieldKey) {
+  return String(data[arrayFieldKey]) === String(keyToMatch);
+}

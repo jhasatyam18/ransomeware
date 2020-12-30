@@ -72,11 +72,10 @@ class Header extends Component {
                   </span>
                 </Link>
               </div>
-
               <button
                 type="button"
                 onClick={this.toggleMenu}
-                className="btn btn-sm px-3 font-size-16 header-item waves-effect"
+                className="btn btn-sm px-3 font-size-16 header-item waves-effect bx bx-menu "
                 id="vertical-menu-btn"
               >
                 <i className="fa fa-fw fa-bars" />
@@ -91,7 +90,7 @@ class Header extends Component {
                   className="btn header-item noti-icon waves-effect"
                   data-toggle="fullscreen"
                 >
-                  <i className="bx bx-fullscreen" />
+                  <box-icon name="fullscreen" color="#a6b0cf" />
                 </button>
               </div>
 

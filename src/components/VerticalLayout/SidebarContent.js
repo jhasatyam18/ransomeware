@@ -7,6 +7,7 @@ import { withRouter, Link } from 'react-router-dom';
 
 // i18n
 import { withTranslation } from 'react-i18next';
+import { DASHBOARD_PATH, PROTECTION_PLANS_PATH, REPLICATIONS, SITES_PATH } from '../../constants/RouterConstants';
 
 class SidebarContent extends Component {
   constructor(props) {
@@ -78,7 +79,7 @@ class SidebarContent extends Component {
         <div id="sidebar-menu">
           <ul className="metismenu list-unstyled" id="side-menu">
             <li>
-              <Link to="/dashboard" className="waves-effect">
+              <Link to={DASHBOARD_PATH} className="waves-effect">
                 <i className="bx bx-tv" />
                 <span>Dashboard</span>
               </Link>
@@ -90,18 +91,24 @@ class SidebarContent extends Component {
               </Link>
               <ul className="sub-menu" aria-expanded="false">
                 <li>
-                  <Link to="/Sites">
+                  <Link to={SITES_PATH}>
                     <i className="bx bx-cloud" />
                     {t('Sites')}
                   </Link>
                 </li>
                 <li>
-                  <Link to="/user">
-                    <i className="bx bx-user" />
-                    {t('User')}
+                  <Link to={PROTECTION_PLANS_PATH} className="waves-effect">
+                    <i className="bx bx-layer" />
+                    <span>Protection Plans</span>
                   </Link>
                 </li>
               </ul>
+            </li>
+            <li>
+              <Link to={REPLICATIONS} className="waves-effect">
+                <i className="bx bx-tv" />
+                <span>Replication Jobs</span>
+              </Link>
             </li>
           </ul>
         </div>

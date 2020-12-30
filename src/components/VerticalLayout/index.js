@@ -1,10 +1,11 @@
 import React, { Component, Suspense } from 'react';
 import PropTypes from 'prop-types';
 import { Route, Switch, withRouter } from 'react-router-dom';
-// Layout Related Components
-import { DASHBOARD_PATH, SITES_PATH, LOGIN_PATH } from '../../constants/RouterConstants';
+import DRPlans from '../data-recovery/DRPlans';
+import {
+  DASHBOARD_PATH, SITES_PATH, LOGIN_PATH, PROTECTION_PLANS_PATH, PROTECTION_PLAN_DETAILS, REPLICATIONS,
+} from '../../constants/RouterConstants';
 import Pages404 from '../../pages/Page-404';
-
 import Login from '../../pages/AuthenticationInner/Login';
 import Sidebar from './Sidebar';
 import Header from './Header';
@@ -12,6 +13,8 @@ import Header from './Header';
 // lazy load components
 const Dashboard = React.lazy(() => import('components/Dashboard/Dashboard'));
 const Sites = React.lazy(() => import('components/Configure/Sites/Sites'));
+const DRPlanDetails = React.lazy(() => import('components/data-recovery/DRPlanDetails'));
+const ReplicationJobs = React.lazy(() => import('components/Replication/ReplicationJobs'));
 
 class Layout extends Component {
   constructor(props) {
@@ -55,7 +58,7 @@ class Layout extends Component {
 
   render() {
     const {
-      layout, sites, dispatch, user,
+      layout, sites, dispatch, user, drPlans,
     } = this.props;
     const { isMobile } = this.state;
     const { leftSideBarTheme, leftSideBarType } = layout;
@@ -90,10 +93,12 @@ class Layout extends Component {
                   <Route path={LOGIN_PATH} render={() => <Login {...this.props} />} />
                   <Route path={DASHBOARD_PATH} render={() => <Dashboard />} />
                   <Route path={SITES_PATH} render={() => <Sites user={user} sites={sites} dispatch={dispatch} />} />
+                  <Route path={PROTECTION_PLANS_PATH} render={() => <DRPlans user={user} sites={sites} dispatch={dispatch} drPlans={drPlans} />} />
+                  <Route path={PROTECTION_PLAN_DETAILS} render={() => <DRPlanDetails {...this.props} />} />
+                  <Route path={REPLICATIONS} render={() => <ReplicationJobs {...this.props} />} />
                   <Route component={Pages404} />
                 </Switch>
               </Suspense>
-
             </div>
           </div>
           {/* <Footer /> */}

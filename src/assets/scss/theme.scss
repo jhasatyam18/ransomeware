@@ -120,7 +120,7 @@ span.flatpickr-weekday {
   width: 600px;
   margin-left: -300px;
   transform-style: preserve-3d;
-  z-index: 10001;
+  z-index: 10010;
   transition: transform 0.6s ease-in-out;
   animation: toast-in-left 0.7s;
 }
@@ -190,4 +190,57 @@ span.flatpickr-weekday {
 
 .login__soft__bg {
   background-color: #222736;
+}
+
+.step-wizard {
+  padding-top: 5px;
+  padding-bottom: 10px;
+  font-weight: 200;
+  color: white;
+  font-size: 14px;
+}
+
+.step-ul {
+  padding-top: 15px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.step-active {
+  background-color: #2b5480;
+}
+
+.wizard-header-options {
+  display: flex;
+  flex-direction: row;
+  .wizard-header-div {
+    padding-right: 10px;
+  }
+}
+
+.table tbody th {
+  font-weight: 400;
+}
+
+.table tbody tr:hover {background-color:#545a6d;}
+
+.stack__info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 5px;
+  .lable {
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .value {
+    font-size: 14px;
+    font-weight: 200;
+  }
+
+  .line {
+    height: 200px;
+    margin-left: 50%;
+    border: 1px solid #222736;
+  }
 }

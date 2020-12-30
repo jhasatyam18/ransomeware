@@ -1,0 +1,13 @@
+import React from 'react';
+import 'boxicons';
+
+function DateItemRenderer({ data, field }) {
+  const time = data[field] * 1000;
+  const d = new Date(time);
+  const locale = d.toLocaleDateString('en-US');
+  return (
+    <>{ locale }</>
+  );
+}
+
+export default DateItemRenderer;

@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Tr, Th } from 'react-super-responsive-table';
-// import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
 import { getAppKey } from '../../utils/AppUtils';
+import { DATE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDARER, VM_SIZE_ITEM_RENDERER } from '../../constants/TableConstants';
+import OsTypeItemRenderer from './OsTypeItemRenderer';
+import VMSizeItemRenderer from './VMSizeItemRenderer';
+import DRPlanNameItemRenderer from './DRPlanNameItemRenderer';
+import DateItemRenderer from './DateItemRenderer';
 
 class DMTableRow extends Component {
   constructor() {
@@ -11,28 +15,52 @@ class DMTableRow extends Component {
   }
 
   onChange(e) {
-    const { dispatch, onSelect, data } = this.props;
-    dispatch(onSelect(data, e.target.checked));
+    const { dispatch, onSelect, data, primaryKey } = this.props;
+    dispatch(onSelect(data, e.target.checked, primaryKey));
+  }
+
+  getItemRenderer(render, data, field) {
+    switch (render) {
+      case OS_TYPE_ITEM_RENDARER:
+        return <OsTypeItemRenderer data={data} />;
+      case VM_SIZE_ITEM_RENDERER:
+        return <VMSizeItemRenderer data={data} />;
+      case DR_PLAN_NAME_ITEM_RENDERER:
+        return <DRPlanNameItemRenderer data={data} />;
+      case DATE_ITEM_RENDERER:
+        return <DateItemRenderer data={data} field={field} />;
+      default:
+        return (<div> 404 </div>);
+    }
   }
 
   getObjectValue(object, field) {
     const parts = field.split('.');
-    if (parts.length > 1) {
-      return object[parts[0]][parts[1]];
+    switch (parts.length) {
+      case 2:
+        return object[parts[0]][parts[1]];
+      case 3:
+        return object[parts[0]][parts[1]][parts[2]];
+      case 4:
+        return object[parts[0]][parts[1]][parts[2]][parts[3]];
+      default:
+        return object[field];
     }
-    return object[field];
   }
 
   hasOwnRow(key) {
-    const { data } = this.props;
-    if (data.id) {
-      return key === `${data.id}`;
+    const { data, primaryKey } = this.props;
+    if (primaryKey) {
+      return key === `${data[primaryKey]}`;
     }
     return false;
   }
 
   renderCellContent(tableHeader, data) {
-    const { field } = tableHeader;
+    const { field, itemRenderer } = tableHeader;
+    if (itemRenderer) {
+      return this.getItemRenderer(itemRenderer, data, field);
+    }
     return this.getObjectValue(data, field);
   }
 
@@ -92,6 +120,7 @@ const propTypes = {
   isSelectable: PropTypes.bool.isRequired,
   onSelect: PropTypes.func.isRequired,
   selectedData: PropTypes.any.isRequired,
+  primaryKey: PropTypes.string,
 };
 
 DMTableRow.propTypes = propTypes;

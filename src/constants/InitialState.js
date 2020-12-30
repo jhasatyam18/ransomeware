@@ -12,10 +12,16 @@ const INITIAL_STATE = {
     errors: {},
   },
   sites: { sites: [], selectedSites: [] },
+  drPlans: { plans: [], selectedPlans: [], details: {} },
   modal: {
     content: null,
     options: {},
     show: false,
+  },
+  wizard: {
+    steps: [],
+    show: false,
+    options: { title: '' },
   },
 };
 

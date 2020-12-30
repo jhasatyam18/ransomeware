@@ -48,7 +48,7 @@ export default function user(state = INITIAL_STATE.user, action) {
       };
     case Types.CLEAR_VALUES:
       return {
-        ...state, values: {},
+        ...state, values: {}, errors: {},
       };
     default:
       return state;
