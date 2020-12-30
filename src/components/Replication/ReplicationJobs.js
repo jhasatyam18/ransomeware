@@ -4,7 +4,7 @@ import DMTable from '../Table/DMTable';
 import { REPLICATION_JOB_STATUS } from '../../constants/TableConstants';
 import { hideApplicationLoader, showApplicationLoader } from '../../store/actions';
 import { callAPI } from '../../utils/ApiUtils';
-import { API_REPLICATION_JOBS } from '../../constants/ApiConstants';
+import { API_DR_PLAN_REPLICATION_JOBS, API_REPLICATION_JOBS } from '../../constants/ApiConstants';
 import { addMessage } from '../../store/actions/MessageActions';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import DMTPaginator from '../Table/DMTPaginator';
@@ -29,9 +29,10 @@ class ReplicationJobs extends Component {
   }
 
   fethData() {
-    const { dispatch } = this.props;
+    const { dispatch, drPlanID } = this.props;
     dispatch(showApplicationLoader('JOBS_DATA', 'Fetching jobs...'));
-    callAPI(API_REPLICATION_JOBS).then((json) => {
+    const url = (drPlanID === 0 ? API_REPLICATION_JOBS : API_DR_PLAN_REPLICATION_JOBS.replace('<id>', drPlanID));
+    callAPI(url).then((json) => {
       dispatch(hideApplicationLoader('JOBS_DATA'));
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));

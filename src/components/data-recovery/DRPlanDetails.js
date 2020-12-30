@@ -1,9 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, Suspense } from 'react';
 import { Card, Container, CardBody, Row, Col, CardTitle, Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap';
 import classnames from 'classnames';
 import { fetchDRPlanById } from '../../store/actions/DrPlanActions';
 import DMTable from '../Table/DMTable';
 import { TABLE_PROTECT_VM_VMWARE } from '../../constants/TableConstants';
+
+const ReplicationJobs = React.lazy(() => import('../Replication/ReplicationJobs'));
 
 class DRPlanDetails extends Component {
   constructor() {
@@ -89,7 +91,7 @@ class DRPlanDetails extends Component {
     if (!details || Object.keys(details).length === 0) {
       return null;
     }
-    const { name, protectedSite, recoverySite, protectedEntities, recoveryEntities } = details;
+    const { name, protectedSite, recoverySite, protectedEntities, recoveryEntities, Id } = details;
     const { VirtualMachines } = protectedEntities;
     return (
       <>
@@ -160,7 +162,9 @@ class DRPlanDetails extends Component {
                 <TabPane tabId="3" className="p-3">
                   <Row>
                     <Col sm="12">
-                      3
+                      <Suspense fallback={<div>Loading...</div>}>
+                        {activeTab === '3' ? <ReplicationJobs drPlanID={Id} {...this.props} /> : null}
+                      </Suspense>
                     </Col>
                   </Row>
                 </TabPane>
