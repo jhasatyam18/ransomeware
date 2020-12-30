@@ -1,17 +1,16 @@
-import React, { Component } from "react"
-import { Container, Row, Col } from "reactstrap"
+import React, { Component } from 'react';
+import { Container, Row, Col } from 'reactstrap';
 
-//Import Images
-
+// Import Images
 
 class DMWizardHeader extends Component {
   render() {
     return (
-      <React.Fragment>
-        
-      </React.Fragment>
-    )
+      <>
+
+      </>
+    );
   }
 }
 
-export default DMWizardHeader
+export default DMWizardHeader;

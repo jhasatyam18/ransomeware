@@ -12,9 +12,10 @@ import { getValue } from '../../utils/InputUtils';
 
 export function fetchSites(key) {
   return (dispatch) => {
-    dispatch(clearMessages());
+    dispatch(showApplicationLoader('Fetching', 'Retriving configured sites'));
     return callAPI(API_FETCH_SITES)
       .then((json) => {
+        dispatch(hideApplicationLoader('Fetching'));
         if (json.hasError) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
@@ -126,7 +127,6 @@ export function deleteSite(id) {
 
 export function onProtectSiteChange({ value }) {
   return (dispatch) => {
-    dispatch(clearMessages());
     const url = API_FETCH_SITE_VMS.replace('<id>', value);
     return callAPI(url)
       .then((json) => {

@@ -21,3 +21,13 @@ export const TABLE_PROTECT_VM_VMWARE = [
   { label: 'Size', field: 'virtualDisks', itemRenderer: VM_SIZE_ITEM_RENDERER },
   { label: 'OS', field: 'guestOS', itemRenderer: OS_TYPE_ITEM_RENDARER },
 ];
+
+export const REPLICATION_JOB_STATUS = [
+  { label: 'Virtual Machine', field: 'VMName' },
+  { label: 'Disk', field: 'DiskID' },
+  { label: 'Size', field: 'TransferSize' },
+  { label: 'Start Time', field: 'StartTime' },
+  { label: 'End Time', field: 'EndTime' },
+  { label: 'Status', field: 'Status' },
+  { label: 'Message', field: 'FailureMessage' },
+];

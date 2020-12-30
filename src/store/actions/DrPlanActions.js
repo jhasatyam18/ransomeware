@@ -141,13 +141,13 @@ export function onConfigureDRPlan() {
     const { user, sites } = getState();
     const payload = getCreateDRPlanPayload(user, sites.sites);
     const obj = createPayload(API_TYPES.POST, { ...payload.drplan });
-    dispatch(showApplicationLoader('configuring-new-dr-plan', 'Configuring new disaster recovery plan'));
+    dispatch(showApplicationLoader('configuring-new-dr-plan', 'Configuring new Protection plan'));
     return callAPI(API_FETCH_DR_PLANS, obj).then((json) => {
       dispatch(hideApplicationLoader('configuring-new-dr-plan'));
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
-        dispatch(addMessage('Disaster recovery plan configuration successfully', MESSAGE_TYPES.SUCCESS));
+        dispatch(addMessage('Protection plan configuration successfully', MESSAGE_TYPES.SUCCESS));
         dispatch(closeWizard());
         dispatch(clearValues());
         fetchByDelay(dispatch, fetchDrPlans, 2000);
@@ -163,9 +163,9 @@ export function fetchDRPlanById(id) {
   return (dispatch) => {
     const url = API_FETCH_DR_PLAN_BY_ID.replace('<id>', id);
     const obj = createPayload();
-    dispatch(showApplicationLoader('FETCHING_DR_PLAN_DETAILS', 'Loading disaster recovery plan details'));
+    dispatch(showApplicationLoader('FETCHING_PROTECTION_PLAN_DETAILS', 'Loading protection plan details'));
     return callAPI(url, obj).then((json) => {
-      dispatch(hideApplicationLoader('FETCHING_DR_PLAN_DETAILS'));
+      dispatch(hideApplicationLoader('FETCHING_PROTECTION_PLAN_DETAILS'));
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
