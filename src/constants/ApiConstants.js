@@ -12,3 +12,4 @@ export const API_STOP_DR_PLAN = 'api/v1/dr/plans/<id>/stop';
 export const API_DELETE_DR_PLAN = 'api/v1/dr/plans/<id>';
 // jobs
 export const API_REPLICATION_JOBS = 'api/v1/jobs/disks';
+export const API_DR_PLAN_REPLICATION_JOBS = 'api/v1/jobs/dr/plans/<id>';

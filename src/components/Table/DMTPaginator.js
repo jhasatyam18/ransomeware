@@ -42,8 +42,8 @@ class DMTPaginator extends Component {
   render() {
     const { disablePrivious, disableNext, maxRowPerPage } = this.state;
     const { totalRows, index } = this.state;
-    const tPages = totalRows / maxRowPerPage;
-    const cP = (index > 0 ? index / maxRowPerPage : 0);
+    const tPages = Math.ceil(totalRows / maxRowPerPage);
+    const cP = (index > 0 ? Math.ceil(index / maxRowPerPage) : 0);
     return (
       <>
         <ButtonGroup style={{ paddingLeft: 20 }}>

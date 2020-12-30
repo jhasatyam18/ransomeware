@@ -95,7 +95,7 @@ class Layout extends Component {
                   <Route path={SITES_PATH} render={() => <Sites user={user} sites={sites} dispatch={dispatch} />} />
                   <Route path={PROTECTION_PLANS_PATH} render={() => <DRPlans user={user} sites={sites} dispatch={dispatch} drPlans={drPlans} />} />
                   <Route path={PROTECTION_PLAN_DETAILS} render={() => <DRPlanDetails {...this.props} />} />
-                  <Route path={REPLICATIONS} render={() => <ReplicationJobs {...this.props} />} />
+                  <Route path={REPLICATIONS} render={() => <ReplicationJobs drPlanID={0} {...this.props} />} />
                   <Route component={Pages404} />
                 </Switch>
               </Suspense>
