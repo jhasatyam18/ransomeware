@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Tr, Th } from 'react-super-responsive-table';
 import { getAppKey } from '../../utils/AppUtils';
-import { DR_PLAN_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDARER, VM_SIZE_ITEM_RENDERER } from '../../constants/TableConstants';
+import { DATE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDARER, VM_SIZE_ITEM_RENDERER } from '../../constants/TableConstants';
 import OsTypeItemRenderer from './OsTypeItemRenderer';
 import VMSizeItemRenderer from './VMSizeItemRenderer';
 import DRPlanNameItemRenderer from './DRPlanNameItemRenderer';
+import DateItemRenderer from './DateItemRenderer';
 
 class DMTableRow extends Component {
   constructor() {
@@ -18,7 +19,7 @@ class DMTableRow extends Component {
     dispatch(onSelect(data, e.target.checked, primaryKey));
   }
 
-  getItemRenderer(render, data) {
+  getItemRenderer(render, data, field) {
     switch (render) {
       case OS_TYPE_ITEM_RENDARER:
         return <OsTypeItemRenderer data={data} />;
@@ -26,6 +27,8 @@ class DMTableRow extends Component {
         return <VMSizeItemRenderer data={data} />;
       case DR_PLAN_NAME_ITEM_RENDERER:
         return <DRPlanNameItemRenderer data={data} />;
+      case DATE_ITEM_RENDERER:
+        return <DateItemRenderer data={data} field={field} />;
       default:
         return (<div> 404 </div>);
     }
@@ -56,7 +59,7 @@ class DMTableRow extends Component {
   renderCellContent(tableHeader, data) {
     const { field, itemRenderer } = tableHeader;
     if (itemRenderer) {
-      return this.getItemRenderer(itemRenderer, data);
+      return this.getItemRenderer(itemRenderer, data, field);
     }
     return this.getObjectValue(data, field);
   }

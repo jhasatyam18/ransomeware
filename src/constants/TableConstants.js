@@ -1,6 +1,7 @@
 export const OS_TYPE_ITEM_RENDARER = 'OS_TYPE_ITEM_RENDARER';
 export const VM_SIZE_ITEM_RENDERER = 'VM_SIZE_ITEM_RENDERER';
 export const DR_PLAN_NAME_ITEM_RENDERER = 'DR_PLAN_NAME_ITEM_RENDERER';
+export const DATE_ITEM_RENDERER = 'DateItemRenderer';
 
 export const TABLE_HEADER_SITES = [
   { label: 'Site Type', field: 'siteType' },
@@ -23,11 +24,12 @@ export const TABLE_PROTECT_VM_VMWARE = [
 ];
 
 export const REPLICATION_JOB_STATUS = [
+  { label: 'ID', field: 'id' },
   { label: 'Virtual Machine', field: 'VMName' },
   { label: 'Disk', field: 'DiskID' },
   { label: 'Size', field: 'TransferSize' },
-  { label: 'Start Time', field: 'StartTime' },
-  { label: 'End Time', field: 'EndTime' },
+  { label: 'Start Time', field: 'StartTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'End Time', field: 'EndTime', itemRenderer: DATE_ITEM_RENDERER },
   { label: 'Status', field: 'Status' },
   { label: 'Message', field: 'FailureMessage' },
 ];

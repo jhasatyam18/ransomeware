@@ -134,7 +134,7 @@ class DRPlanDetails extends Component {
                 </NavItem>
                 <NavItem>
                   <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '3' })} onClick={() => { this.toggleTab('3'); }}>
-                    <span className="d-none d-sm-block">Events</span>
+                    <span className="d-none d-sm-block">Replications</span>
                   </NavLink>
                 </NavItem>
               </Nav>

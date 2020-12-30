@@ -6,6 +6,8 @@ import MessageContainer from './container/MessageContainer';
 import ModalContainer from './container/ModalContainer';
 import GlobalContainer from './container/GlobalContainer';
 import WizardContainer from './container/WizardContainer';
+import { addMessage } from './store/actions/MessageActions';
+import { MESSAGE_TYPES } from './constants/MessageConstants';
 
 const VerticalLayout = React.lazy(() => import('./components/VerticalLayout'));
 const propTypes = {
@@ -14,6 +16,11 @@ const propTypes = {
 };
 
 class App extends Component {
+  componentDidCatch(error) {
+    const { dispatch } = this.props;
+    dispatch(addMessage(MESSAGE_TYPES.ERROR, error.toString()));
+  }
+
   render() {
     const { user } = this.props;
     const { isAuthenticated } = user;

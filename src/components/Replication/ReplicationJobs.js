@@ -12,11 +12,20 @@ import DMTPaginator from '../Table/DMTPaginator';
 class ReplicationJobs extends Component {
   constructor() {
     super();
-    this.state = { data: [] };
+    this.state = { data: [], dataToDisplay: [] };
+    this.setDataForDisplay = this.setDataForDisplay.bind(this);
   }
 
   componentDidMount() {
     this.fethData();
+  }
+
+  componentWillUnmount() {
+    this.state = null;
+  }
+
+  setDataForDisplay(data) {
+    this.setState({ dataToDisplay: data });
   }
 
   fethData() {
@@ -36,7 +45,7 @@ class ReplicationJobs extends Component {
   }
 
   render() {
-    const { data } = this.state;
+    const { data, dataToDisplay } = this.state;
     const { dispatch } = this.props;
     return (
       <>
@@ -44,11 +53,11 @@ class ReplicationJobs extends Component {
           <Card>
             <CardBody>
               <CardTitle className="mb-4">Replication Jobs</CardTitle>
-              <DMTPaginator />
+              <DMTPaginator data={data} setData={this.setDataForDisplay} />
               <DMTable
                 dispatch={dispatch}
                 columns={REPLICATION_JOB_STATUS}
-                data={data}
+                data={dataToDisplay}
               />
             </CardBody>
           </Card>
