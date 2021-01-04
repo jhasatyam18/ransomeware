@@ -3,7 +3,7 @@
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import * as Types from '../../constants/actionTypes';
 import { API_CREATE_SITES, API_DELETE_SITES, API_FETCH_SITES, API_FETCH_SITE_VMS } from '../../constants/ApiConstants';
-import { addMessage, clearMessages } from './MessageActions';
+import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { closeModal } from './ModalAcions';
 import { hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
@@ -113,7 +113,6 @@ export function deleteSite(id) {
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
-        dispatch(clearMessages());
         dispatch(addMessage('Site configuration deleted.', MESSAGE_TYPES.SUCCESS));
         fetchByDelay(dispatch, fetchSites, 2000);
         dispatch(closeModal());
