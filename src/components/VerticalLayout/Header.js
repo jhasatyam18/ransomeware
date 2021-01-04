@@ -75,10 +75,10 @@ class Header extends Component {
               <button
                 type="button"
                 onClick={this.toggleMenu}
-                className="btn btn-sm px-3 font-size-16 header-item waves-effect bx bx-menu "
+                className="btn btn-sm px-3 font-size-16 header-item waves-effect"
                 id="vertical-menu-btn"
               >
-                <i className="fa fa-fw fa-bars" />
+                <i className="fa fa-bars" />
               </button>
             </div>
             <div className="d-flex">

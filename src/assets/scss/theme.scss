@@ -1,17 +1,6 @@
 @import "./icons.scss";
-
-// Light Theme 
-//@import "./bootstrap.scss";
-//@import "./app.scss";
-
-// Dark Theme
 @import "./bootstrap-dark.scss";
 @import "./app-dark.scss";
-
-// RTL Mode
-// @import "./bootstrap.scss";
-// @import "./app-rtl.scss";
-
 #sidebar-menu {
   ul {
     li {
@@ -243,4 +232,14 @@ span.flatpickr-weekday {
     margin-left: 50%;
     border: 1px solid #222736;
   }
+}
+
+.fa-s-sm {
+  font-size: 14px;
+}
+.fa-s-lg {
+  font-size: 20px;
+}
+.fa-s-xlg {
+  font-size: 25px;
 }

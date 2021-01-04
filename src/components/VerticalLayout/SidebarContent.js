@@ -80,13 +80,13 @@ class SidebarContent extends Component {
           <ul className="metismenu list-unstyled" id="side-menu">
             <li>
               <Link to={DASHBOARD_PATH} className="waves-effect">
-                <i className="bx bx-tv" />
+                <i className="fa fa-desktop fa-s-lg" style={{ fontSize: 16 }} />
                 <span>Dashboard</span>
               </Link>
             </li>
             <li>
               <Link to="/#" className="has-arrow waves-effect">
-                <i className="bx bx-cog" />
+                <i className="fa fa-cog fa-s-lg" style={{ fontSize: 16 }} />
                 <span>{t('Configure')}</span>
               </Link>
               <ul className="sub-menu" aria-expanded="false">
@@ -106,7 +106,7 @@ class SidebarContent extends Component {
             </li>
             <li>
               <Link to={REPLICATIONS} className="waves-effect">
-                <i className="bx bx-tv" />
+                <i className="fa fa-tasks" style={{ fontSize: 16 }} />
                 <span>Replication Jobs</span>
               </Link>
             </li>

@@ -79,7 +79,6 @@ export function startPlan(id) {
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
-        dispatch(clearMessages());
         dispatch(addMessage(json.message, MESSAGE_TYPES.SUCCESS));
       }
     },
@@ -97,7 +96,6 @@ export function stopPlan(id) {
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
-        dispatch(clearMessages());
         dispatch(addMessage(json.message, MESSAGE_TYPES.SUCCESS));
       }
     },
@@ -118,7 +116,6 @@ export function deletePlan() {
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
-        dispatch(clearMessages());
         dispatch(addMessage(json.message, MESSAGE_TYPES.SUCCESS));
         dispatch(closeModal());
         fetchByDelay(dispatch, fetchDrPlans, 1000);
