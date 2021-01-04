@@ -4,9 +4,9 @@ import 'boxicons';
 function DateItemRenderer({ data, field }) {
   const time = data[field] * 1000;
   const d = new Date(time);
-  const locale = d.toLocaleDateString('en-US');
+  const locale = `${d.toLocaleDateString()}-${d.toLocaleTimeString()}`;
   return (
-    <>{ locale }</>
+    <>{locale}</>
   );
 }
 
