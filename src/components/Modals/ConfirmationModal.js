@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { closeModal } from '../../store/actions/ModalAcions';
+import { closeModal } from '../../store/actions/ModalActions';
 
 class ConfirmationModal extends Component {
   constructor() {

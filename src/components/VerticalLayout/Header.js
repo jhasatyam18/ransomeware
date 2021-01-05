@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import NotificationDropdown from '../CommonForBoth/TopbarDropdown/NotificationDropdown';
 import ProfileMenu from '../CommonForBoth/TopbarDropdown/ProfileMenu';
-import logoLightPng from '../../assets/images/logo-light.png';
+// import logoLightPng from '../../assets/images/logo-light.png';
 
 // i18n
 
@@ -65,10 +65,10 @@ class Header extends Component {
                 {/* brand logo */}
                 <Link to="/" className="logo logo-light">
                   <span className="logo-sm">
-                    <img src={logoLightPng} alt="" height="22" />
+                    D
                   </span>
                   <span className="logo-lg">
-                    <img src={logoLightPng} alt="" height="19" />
+                    DATAMOTIVE
                   </span>
                 </Link>
               </div>

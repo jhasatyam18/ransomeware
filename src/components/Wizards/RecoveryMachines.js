@@ -5,11 +5,11 @@ import { TABLE_PROTECT_VM_VMWARE } from '../../constants/TableConstants';
 import { handleProtectVMSeletion } from '../../store/actions/SiteActions';
 import { getValue } from '../../utils/InputUtils';
 
-class DRPlanProtectVMStep extends Component {
+class RecoveryMachines extends Component {
   render() {
     const { dispatch, user } = this.props;
     const { values } = user;
-    const data = getValue('ui.site.vms', values);
+    const data = getValue('ui.recovery.vms', values);
     let selectedVMs = getValue('ui.site.seletedVMs', values);
     if (!selectedVMs) {
       selectedVMs = {};
@@ -17,7 +17,7 @@ class DRPlanProtectVMStep extends Component {
     return (
       <>
         <br />
-        <Label>Select Virtual Machine for protection</Label>
+        <Label>Select Virtual Machine for recovery</Label>
         <DMTable
           dispatch={dispatch}
           columns={TABLE_PROTECT_VM_VMWARE}
@@ -32,4 +32,4 @@ class DRPlanProtectVMStep extends Component {
   }
 }
 
-export default DRPlanProtectVMStep;
+export default RecoveryMachines;

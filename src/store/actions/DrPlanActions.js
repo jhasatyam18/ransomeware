@@ -2,17 +2,17 @@ import { fetchByDelay } from '../../utils/SlowFetch';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import * as Types from '../../constants/actionTypes';
 import {
-  API_FETCH_DR_PLANS, API_START_DR_PLAN, API_STOP_DR_PLAN, API_DELETE_DR_PLAN, API_FETCH_DR_PLAN_BY_ID,
+  API_FETCH_DR_PLANS, API_START_DR_PLAN, API_STOP_DR_PLAN, API_DELETE_DR_PLAN, API_FETCH_DR_PLAN_BY_ID, API_RECOVER,
 } from '../../constants/ApiConstants';
 import { addMessage, clearMessages } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { fetchSites } from './SiteActions';
-import { getCreateDRPlanPayload } from '../../utils/PayloadUtil';
-import { clearValues, hideApplicationLoader, showApplicationLoader } from './UserActions';
+import { getCreateDRPlanPayload, getRecoveryPayload } from '../../utils/PayloadUtil';
+import { clearValues, hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
 import { closeWizard } from './WizardActions';
-import { closeModal } from './ModalAcions';
+import { closeModal } from './ModalActions';
 
-export function fetchDrPlans() {
+export function fetchDrPlans(key) {
   return (dispatch) => {
     dispatch(clearMessages());
     return callAPI(API_FETCH_DR_PLANS)
@@ -21,6 +21,9 @@ export function fetchDrPlans() {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
           dispatch(drPlansFetched(json));
+          if (key) {
+            dispatch(valueChange(key, json));
+          }
         }
       },
       (err) => {
@@ -180,5 +183,46 @@ export function drPlanDetailsFetched(details) {
   return {
     type: Types.FETCH_DR_PALN_DETAILS,
     details,
+  };
+}
+
+export function onProtectionPlanChange({ value }) {
+  return (dispatch) => {
+    const url = API_FETCH_DR_PLAN_BY_ID.replace('<id>', value);
+    return callAPI(url)
+      .then((json) => {
+        if (json && json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          dispatch(valueChange('ui.recovery.vms', json.protectedEntities.VirtualMachines));
+        }
+      },
+      (err) => {
+        alert(err);
+      });
+  };
+}
+
+export function startRecovery() {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const values = user;
+    const payload = getRecoveryPayload(values);
+    const obj = createPayload(API_TYPES.POST, { ...payload.recovery });
+    dispatch(showApplicationLoader('RECOVERY-API-EXECUTION', 'Initiating Recovery'));
+    return callAPI(API_RECOVER, obj).then((json) => {
+      dispatch(hideApplicationLoader('RECOVERY-API-EXECUTION'));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        dispatch(closeWizard());
+        dispatch(clearValues());
+        dispatch(addMessage('Recovery Started Successfully', MESSAGE_TYPES.SUCCESS));
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('RECOVERY-API-EXECUTION'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
   };
 }

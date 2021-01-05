@@ -13,3 +13,6 @@ export const API_DELETE_DR_PLAN = 'api/v1/dr/plans/<id>';
 // jobs
 export const API_REPLICATION_JOBS = 'api/v1/jobs/disks';
 export const API_DR_PLAN_REPLICATION_JOBS = 'api/v1/jobs/dr/plans/<id>';
+
+// recovery
+export const API_RECOVER = 'api/v1/recover';

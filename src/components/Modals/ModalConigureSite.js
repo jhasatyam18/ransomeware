@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import SimpleBar from 'simplebar-react';
 import ConfigureSite from '../Forms/ConfigureSite';
-import { closeModal } from '../../store/actions/ModalAcions';
+import { closeModal } from '../../store/actions/ModalActions';
 import { confiureSite } from '../../store/actions/SiteActions';
 import { getConfigureSitePayload } from '../../utils/PayloadUtil';
 import { validateConfigureSite } from '../../utils/validationUtils';

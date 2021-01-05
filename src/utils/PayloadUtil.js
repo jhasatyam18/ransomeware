@@ -1,11 +1,10 @@
 import { FIELDS } from '../constants/FieldsConstant';
 import { getValue } from './InputUtils';
 
-export function getConfigureSitePayload(user) {
-  const { values } = user;
+export function getKeyStruct(filterKey, values) {
   const result = {};
   Object.keys((FIELDS))
-    .filter((key) => key.indexOf('configureSite.') === 0)
+    .filter((key) => key.indexOf(filterKey) === 0)
     .forEach((key) => {
       const value = getValue(key, values);
       setObject(key, value, result);
@@ -27,16 +26,15 @@ function setObject(path, value, data) {
   setObject(parts.slice(1).join('.'), value, formData[currentPath]);
 }
 
+export function getConfigureSitePayload(user) {
+  const { values } = user;
+  return getKeyStruct('configureSite.', values);
+}
+
 export function getCreateDRPlanPayload(user, sites) {
   const { values } = user;
   const vms = getValue('ui.site.seletedVMs', values);
-  const result = {};
-  Object.keys((FIELDS))
-    .filter((key) => key.indexOf('drplan.') === 0)
-    .forEach((key) => {
-      const value = getValue(key, values);
-      setObject(key, value, result);
-    });
+  const result = getKeyStruct('drplan.', values);
   const rSite = sites.filter((site) => getFilteredObject(site, result.drplan.recoverySite, 'id'))[0];
   const pSite = sites.filter((site) => getFilteredObject(site, result.drplan.protectedSite, 'id'))[0];
   result.drplan.recoverySite = rSite;
@@ -54,4 +52,18 @@ export function getCreateDRPlanPayload(user, sites) {
 
 function getFilteredObject(data, keyToMatch, arrayFieldKey) {
   return String(data[arrayFieldKey]) === String(keyToMatch);
+}
+
+export function getRecoveryPayload(user) {
+  const { values } = user;
+  const vms = getValue('ui.site.seletedVMs', values);
+  const result = getKeyStruct('recovery.', values);
+  const vmnames = [];
+  Object.keys(vms).forEach((key) => {
+    const { Name } = vms[key];
+    vmnames.push(Name);
+  });
+  result.recovery.vmNames = vmnames;
+  result.recovery.drplanID = parseInt(`${result.recovery.drplanID}`, 10);
+  return result;
 }

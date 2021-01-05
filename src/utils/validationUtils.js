@@ -1,5 +1,5 @@
 import { addErrorMessage, removeErrorMessage, valueChange } from '../store/actions';
-import { FIELDS } from '../constants/FieldsConstant';
+import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
 import { getValue } from './InputUtils';
 import { MESSAGE_TYPES } from '../constants/MessageConstants';
 
@@ -12,6 +12,8 @@ export function isRequired(value) {
 
 export function validateField(fieldKey, value, dispatch, user) {
   const { patterns, validate, errorMessage } = FIELDS[fieldKey];
+  const field = FIELDS[fieldKey];
+  const { type } = field;
   const { errors } = user;
   if (patterns) {
     let isValid = false;
@@ -27,6 +29,10 @@ export function validateField(fieldKey, value, dispatch, user) {
     }
   }
   if (typeof validate === 'function') {
+    if (type === FIELD_TYPE.SELECT && value === '-') {
+      dispatch(addErrorMessage(fieldKey, errorMessage));
+      return false;
+    }
     const hasError = validate({ value, dispatch, user, fieldKey });
     if (hasError) {
       dispatch(addErrorMessage(fieldKey, errorMessage));
@@ -99,5 +105,9 @@ export function validateDRPlanProtectData({ user, dispatch }) {
     dispatch(addErrorMessage(MESSAGE_TYPES.ERROR, 'Please select virtual machines.'));
     return false;
   }
+  return true;
+}
+
+export function noValidate() {
   return true;
 }

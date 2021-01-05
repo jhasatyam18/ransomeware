@@ -31,20 +31,20 @@ class placeHolderNumber extends Component {
   onBlur = () => {
     const { fieldKey, dispatch, user } = this.props;
     const { value } = this.state;
-    dispatch(valueChange(fieldKey, value));
+    dispatch(valueChange(fieldKey, parseInt(value, 10)));
     validateField(fieldKey, value, dispatch, user);
   }
 
   handleChange = (e) => {
     const { field } = this.props;
     const { min, max } = field;
-
-    if (e.target.value < min) {
+    const targetValue = parseInt(`${e.target.value}`, 10);
+    if (targetValue < min) {
       this.setState({ value: min });
-    } else if (e.target.value > max) {
+    } else if (targetValue > max) {
       this.setState({ value: max });
     } else {
-      this.setState({ value: e.target.value });
+      this.setState({ value: targetValue });
     }
   }
 

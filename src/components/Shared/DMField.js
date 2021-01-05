@@ -4,6 +4,7 @@ import { FIELDS, FIELD_TYPE } from '../../constants/FieldsConstant';
 import DMFieldSelect from './DMFieldSelect';
 import DMFieldText from './DMFieldText';
 import DMFieldNumber from './DMFieldNumber';
+import DMFieldCheckbox from './DMFieldCheckbox';
 // Import Images
 
 class DMField extends Component {
@@ -16,6 +17,8 @@ class DMField extends Component {
         return <DMFieldSelect dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} />;
       case FIELD_TYPE.NUMBER:
         return <DMFieldNumber dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} />;
+      case FIELD_TYPE.CHECKBOX:
+          return <DMFieldCheckbox dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} />;
       default:
         return <DMFieldText dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} />;
     }

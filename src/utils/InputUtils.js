@@ -58,3 +58,16 @@ export function getSitesOptions(user) {
   }
   return result;
 }
+
+export function getDRPlanOptions(user) {
+  const { values } = user;
+  const plans = getValue('ui.values.drplan', values);
+  const result = [];
+  if (plans) {
+    plans.reduce((previous, next) => {
+      previous.push({ label: next.name, value: next.Id });
+      return previous;
+    }, result);
+  }
+  return result;
+}

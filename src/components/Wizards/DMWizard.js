@@ -4,12 +4,15 @@ import { Modal, Row, Col } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
 import { closeWizard } from '../../store/actions/WizardActions';
 import { clearValues } from '../../store/actions';
-import { DRPLAN_GENERAL_SETTINGS_STEP, DRPLAN_PROTECT_STEP, DRPLAN_RECOVERY_STEP } from '../../constants/WizardConstants';
+import { DRPLAN_GENERAL_SETTINGS_STEP, DRPLAN_PROTECT_STEP, DRPLAN_RECOVERY_STEP, RECOVERY_GENERAL_STEP, RECOVERY_PROTECT_VM_STEP, RECOVERY_SUMMARY } from '../../constants/WizardConstants';
 import Pages404 from '../../pages/Page-404';
 import DRPlanRecoveryConfigStep from './DRPlanRecoveryConfigStep';
 import DRPlanProtectVMStep from './DRPlanProtectVMStep';
 import DRPlanGeneralSettingsStep from './DRPlanGeneralSettingsStep';
 import DMWSteps from './DNWizardSteps';
+import RecoveryGeneralStep from './RecoveryGeneralStep';
+import RecoveryMachines from './RecoveryMachines';
+import RecoverySummary from './RecoverySummary';
 
 class DMWizard extends React.Component {
   constructor() {
@@ -71,6 +74,12 @@ class DMWizard extends React.Component {
         return <DRPlanRecoveryConfigStep {...this.props} />;
       case DRPLAN_PROTECT_STEP:
         return <DRPlanProtectVMStep {...this.props} />;
+      case RECOVERY_GENERAL_STEP:
+        return <RecoveryGeneralStep {...this.props} />;
+      case RECOVERY_PROTECT_VM_STEP:
+        return <RecoveryMachines {...this.props} />;
+      case RECOVERY_SUMMARY:
+        return <RecoverySummary {...this.props} />;
       default:
         return <Pages404 />;
     }

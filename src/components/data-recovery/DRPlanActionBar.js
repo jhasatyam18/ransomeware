@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-  drPlanStopStart, startPlan, stopPlan, deletePlan,
+  drPlanStopStart, startPlan, stopPlan, deletePlan, fetchDrPlans,
 } from '../../store/actions/DrPlanActions';
-import { openModal } from '../../store/actions/ModalAcions';
+import { openModal } from '../../store/actions/ModalActions';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
-import { CREATE_DR_PLAN_WIZARDS } from '../../constants/WizardConstants';
+import { CREATE_DR_PLAN_WIZARDS, RECOVERY_WIZARDS } from '../../constants/WizardConstants';
 import { openWizard } from '../../store/actions/WizardActions';
 import { fetchSites } from '../../store/actions/SiteActions';
 import { clearValues } from '../../store/actions';
@@ -16,6 +16,7 @@ class DRPlanActionBar extends Component {
     this.planAction = this.planAction.bind(this);
     this.onDelete = this.onDelete.bind(this);
     this.onCreate = this.onCreate.bind(this);
+    this.onInitiateRecovery = this.onInitiateRecovery.bind(this);
   }
 
   onCreate() {
@@ -23,6 +24,13 @@ class DRPlanActionBar extends Component {
     dispatch(clearValues());
     dispatch(fetchSites('ui.values.sites'));
     dispatch(openWizard(CREATE_DR_PLAN_WIZARDS.options, CREATE_DR_PLAN_WIZARDS.steps));
+  }
+
+  onInitiateRecovery() {
+    const { dispatch } = this.props;
+    dispatch(clearValues());
+    dispatch(fetchDrPlans('ui.values.drplan'));
+    dispatch(openWizard(RECOVERY_WIZARDS.options, RECOVERY_WIZARDS.steps));
   }
 
   onDelete() {
@@ -69,6 +77,10 @@ class DRPlanActionBar extends Component {
             <button type="button" className="btn btn-hover" color="secondary" onClick={() => { this.planAction(stopPlan); }}>
               <i className="bx bx-stop-circle" />
               Stop
+            </button>
+            <button type="button" className="btn btn-hover" color="secondary" onClick={this.onInitiateRecovery}>
+              <i className="bx bx-stop-circle" />
+              Recovery
             </button>
           </div>
         </div>

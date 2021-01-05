@@ -5,7 +5,7 @@ import * as Types from '../../constants/actionTypes';
 import { API_CREATE_SITES, API_DELETE_SITES, API_FETCH_SITES, API_FETCH_SITE_VMS } from '../../constants/ApiConstants';
 import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
-import { closeModal } from './ModalAcions';
+import { closeModal } from './ModalActions';
 import { hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { getValue } from '../../utils/InputUtils';
@@ -136,16 +136,7 @@ export function onProtectSiteChange({ value }) {
           if (data === null) {
             data = [];
           }
-          let id = 1;
-          const vms = [];
-
-          data.forEach((vm) => {
-            const d = vm;
-            d.id = id;
-            id += 1;
-            vms.push(d);
-          });
-          dispatch(valueChange('ui.site.vms', vms));
+          dispatch(valueChange('ui.site.vms', data));
         }
       },
       (err) => {

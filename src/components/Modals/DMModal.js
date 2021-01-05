@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Modal } from 'reactstrap';
-import { closeModal } from '../../store/actions/ModalAcions';
+import { closeModal } from '../../store/actions/ModalActions';
 import * as MODALS from '../../constants/Modalconstant';
 import ModalConfigureSite from './ModalConigureSite';
 import ConfirmationModal from './ConfirmationModal';
