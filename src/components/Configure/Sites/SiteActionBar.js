@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { openModal } from '../../../store/actions/ModalAcions';
+import { openModal } from '../../../store/actions/ModalActions';
 import { MODAL_CONFIGURE_NEW_SITE, MODAL_CONFIRMATION_WARNING } from '../../../constants/Modalconstant';
 import { clearValues, valueChange } from '../../../store/actions';
 import { deleteSites } from '../../../store/actions/SiteActions';

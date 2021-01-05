@@ -1,5 +1,6 @@
+import { onProtectionPlanChange } from '../store/actions/DrPlanActions';
 import { onProtectSiteChange } from '../store/actions/SiteActions';
-import { getSitesOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware } from '../utils/InputUtils';
+import { getDRPlanOptions, getSitesOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware } from '../utils/InputUtils';
 import { isEmpty, validateDrSiteSelection } from '../utils/validationUtils';
 import { HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX } from './ValidationConstants';
 
@@ -10,7 +11,7 @@ export const FIELD_TYPE = {
 export const FIELDS = {
   // CONFIGURE SITE FIELDS
   'configureSite.siteType': {
-    label: 'Site Type', placeHolderText: 'Select Site', type: FIELD_TYPE.SELECT, options: [{ label: 'Protect', value: 'Protect' }, { label: 'Recovery', value: 'Recovery' }], validate: null, errorMessage: '', shouldShow: true,
+    label: 'Site Type', placeHolderText: 'Select Site', type: FIELD_TYPE.SELECT, options: [{ label: 'Protect', value: 'Protect' }, { label: 'Recovery', value: 'Recovery' }], validate: (value, user) => isEmpty(value, user), errorMessage: 'Select site type', shouldShow: true,
   },
   'configureSite.platformDetails.platformType': {
     label: 'Platform Type', description: 'Select Platform Type', type: FIELD_TYPE.SELECT, options: [{ label: 'VMware', value: 'VMware' }, { label: 'AWS', value: 'AWS' }, { label: 'GCP', value: 'GCP' }], validate: (value, user) => isEmpty(value, user), errorMessage: 'Select Platform Type', shouldShow: true,
@@ -97,4 +98,10 @@ export const FIELDS = {
   'drplan.recoveryEntities.instanceDetails.volumeType': { label: 'Volume Type', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Required', shouldShow: true },
 
   'drplan.protectedEntities.Name': { label: '', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: null, errorMessage: '', shouldShow: false },
+
+  'recovery.drplanID': { label: 'Protection Plan', placeHolderText: '', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (user) => getDRPlanOptions(user), onChange: (user, dispatch) => onProtectionPlanChange(user, dispatch) },
+  'recovery.dryrun': { label: 'Dry Run', placeHolderText: '', type: FIELD_TYPE.CHECKBOX, validate: null, errorMessage: '', shouldShow: true, defaultValue: true },
+  'recovery.winUser': { label: 'Machine Username', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: null, errorMessage: '', shouldShow: true },
+  'recovery.winPassword': { label: 'Machine Password', placeHolderText: '', type: FIELD_TYPE.PASSOWRD, validate: null, errorMessage: '', shouldShow: true },
+  'recovery.vmNames': { label: '', placeHolderText: '', type: FIELD_TYPE.PASSOWRD, validate: null, errorMessage: '', shouldShow: false },
 };

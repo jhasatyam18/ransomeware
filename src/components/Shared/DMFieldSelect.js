@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Col, FormFeedback, FormGroup, Label,
+  Col, FormFeedback, FormGroup, Input, Label,
 } from 'reactstrap';
 import { FIELDS } from '../../constants/FieldsConstant';
 import { getValue } from '../../utils/InputUtils';
 import { valueChange } from '../../store/actions/UserActions';
+import { validateField } from '../../utils/validationUtils';
 // Import Images
 
 class DMFieldSelect extends Component {
@@ -37,9 +38,10 @@ class DMFieldSelect extends Component {
   }
 
   onBlur = () => {
-    const { fieldKey, dispatch } = this.props;
-    const { value } = this.props;
+    const { fieldKey, dispatch, user } = this.props;
+    const { value } = this.state;
     dispatch(valueChange(fieldKey, value));
+    validateField(fieldKey, value, dispatch, user);
   }
 
   handleChange = (e) => {
@@ -79,9 +81,11 @@ class DMFieldSelect extends Component {
   }
 
   render() {
-    const { field, fieldKey } = this.props;
+    const { field, fieldKey, user } = this.props;
     const { label } = field;
     const { value } = this.state;
+    const { errors } = user;
+    const hasErrors = !!(errors && errors[fieldKey] !== undefined);
     return (
       <>
         <FormGroup className="row mb-4 form-group">
@@ -89,10 +93,11 @@ class DMFieldSelect extends Component {
             {label}
           </Label>
           <Col sm={9}>
-            <select id={fieldKey} onSelect={this.handleChange} className="custom-select form-control form-control-sm" onChange={this.handleChange} value={value}>
+            <Input type="select" id={fieldKey} onSelect={this.handleChange} className="form-control form-control-sm custom-select" onChange={this.handleChange} value={value} invalid={hasErrors}>
               <option key={`${fieldKey}-default`} value="-">  </option>
               {this.renderOptions()}
-            </select>
+            </Input>
+            {this.renderError(hasErrors)}
           </Col>
         </FormGroup>
       </>

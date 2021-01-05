@@ -91,7 +91,7 @@ class DRPlanDetails extends Component {
     if (!details || Object.keys(details).length === 0) {
       return null;
     }
-    const { name, protectedSite, recoverySite, protectedEntities, recoveryEntities, Id } = details;
+    const { name, protectedSite, recoverySite, protectedEntities, recoveryEntities, id } = details;
     const { VirtualMachines } = protectedEntities;
     return (
       <>
@@ -163,7 +163,7 @@ class DRPlanDetails extends Component {
                   <Row>
                     <Col sm="12">
                       <Suspense fallback={<div>Loading...</div>}>
-                        {activeTab === '3' ? <ReplicationJobs drPlanID={Id} {...this.props} /> : null}
+                        {activeTab === '3' ? <ReplicationJobs drPlanID={id} {...this.props} /> : null}
                       </Suspense>
                     </Col>
                   </Row>

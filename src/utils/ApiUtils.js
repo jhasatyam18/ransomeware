@@ -1,7 +1,7 @@
 import { logOutUser } from '../store/actions';
 import { getApplicationToken } from './CookieUtils';
 import store from '../store/index';
-import { closeModal } from '../store/actions/ModalAcions';
+import { closeModal } from '../store/actions/ModalActions';
 
 export const API_TYPES = { POST: 'POST', PUT: 'PUT', DELETE: 'DELETE' };
 
