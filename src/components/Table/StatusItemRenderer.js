@@ -25,7 +25,7 @@ function StatusItemRenderer({ data }) {
             <box-icon color="white" animation="burst" name="dots-horizontal-rounded" />
           </div>
           <div className="col-9">
-            Running
+            running
           </div>
         </div>
       </div>
