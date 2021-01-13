@@ -18,7 +18,7 @@ class DMField extends Component {
       case FIELD_TYPE.NUMBER:
         return <DMFieldNumber dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} />;
       case FIELD_TYPE.CHECKBOX:
-          return <DMFieldCheckbox dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} />;
+        return <DMFieldCheckbox dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} />;
       default:
         return <DMFieldText dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} />;
     }

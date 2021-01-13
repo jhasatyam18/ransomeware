@@ -96,7 +96,6 @@ class Header extends Component {
 
               <NotificationDropdown />
               <ProfileMenu {...this.props} />
-
             </div>
           </div>
         </header>
