@@ -6,9 +6,9 @@ function TransferSizeItemRenderer({ data }) {
   const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
   if (bytes === 0) return '0 Byte';
   return (
-    <div>
+    <duv>
       {`${Math.round(bytes / 1024 ** i, 2)}  ${sizes[i]}`}
-    </div>
+    </duv>
   );
 }
 
