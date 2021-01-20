@@ -9,6 +9,7 @@ function VMSizeItemRenderer({ data }) {
   return (
     <div>
       {size}
+      {' '}
       GB
     </div>
   );

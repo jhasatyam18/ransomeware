@@ -4,9 +4,9 @@ import {
   Row, Col, Card, CardBody,
 } from 'reactstrap';
 import {
-  Table, Thead, Tr, Th, Tbody,
+  Table, Thead, Tr, Th, Tbody, Td,
 } from 'react-super-responsive-table';
-
+import SimpleBar from 'simplebar-react';
 import DMTableRow from './DMTableRows';
 
 class DMTable extends Component {
@@ -45,7 +45,7 @@ class DMTable extends Component {
     const { columns } = this.props;
     return (
       <Tr>
-        <Th colSpan={Object.keys(columns).length + 1}> No Data To Display</Th>
+        <Td colSpan={Object.keys(columns).length + 1}> No Data To Display</Td>
       </Tr>
     );
   }
@@ -75,17 +75,18 @@ class DMTable extends Component {
         <Col>
           <Card>
             <CardBody>
-              <Table className="table table-bordered">
-                {this.renderHeaders()}
-                <Tbody>
-                  {data && data.length > 0 ? this.renderRows() : this.renderNoDataToShow()}
-                </Tbody>
-              </Table>
+              <SimpleBar style={{ minHeight: 400, maxHeight: 550 }}>
+                <Table className="table table-bordered">
+                  {this.renderHeaders()}
+                  <Tbody>
+                    {data && data.length > 0 ? this.renderRows() : this.renderNoDataToShow()}
+                  </Tbody>
+                </Table>
+              </SimpleBar>
             </CardBody>
           </Card>
         </Col>
       </Row>
-
     );
   }
 }

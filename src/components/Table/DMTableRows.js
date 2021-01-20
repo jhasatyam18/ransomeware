@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Tr, Th } from 'react-super-responsive-table';
+import { Tr, Td, Th } from 'react-super-responsive-table';
 import { getAppKey } from '../../utils/AppUtils';
 import { DATE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDARER, VM_SIZE_ITEM_RENDERER, STATUS_ITEM_RENDERER, TRANSFER_SIZE_ITEM_RENDERER } from '../../constants/TableConstants';
 import OsTypeItemRenderer from './OsTypeItemRenderer';
@@ -83,7 +83,7 @@ class DMTableRow extends Component {
     }
     if (isSelectable) {
       return (
-        <Th>
+        <Td>
           <div className="custom-control custom-checkbox">
             <input
               type="checkbox"
@@ -97,7 +97,7 @@ class DMTableRow extends Component {
               &nbsp;
             </label>
           </div>
-        </Th>
+        </Td>
       );
     }
     return null;

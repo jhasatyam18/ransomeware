@@ -27,34 +27,34 @@ export const FIELDS = {
     label: 'vCenter Server IP', description: '', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], errorMessage: 'Enter valid IP address', shouldShow: (user) => isPlatformTypeVMware(user),
   },
   'configureSite.platformDetails.port': {
-    label: 'Port', description: '', defaultValue: 443, min: 1, max: 65536, type: FIELD_TYPE.NUMBER, errorMessage: 'Required', shouldShow: (user) => isPlatformTypeVMware(user),
+    label: 'Port', description: '', defaultValue: 443, min: 1, max: 65536, type: FIELD_TYPE.NUMBER, errorMessage: 'Port value required, if different.', shouldShow: (user) => isPlatformTypeVMware(user),
   },
   'configureSite.platformDetails.username': {
-    label: 'Username', description: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Username Required', shouldShow: (user) => isPlatformTypeVMware(user),
+    label: 'Username', description: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Username required', shouldShow: (user) => isPlatformTypeVMware(user),
   },
   'configureSite.platformDetails.password': {
-    label: 'Password', description: '', type: FIELD_TYPE.PASSOWRD, validate: (value, user) => isEmpty(value, user), errorMessage: 'Password Required', shouldShow: (user) => isPlatformTypeVMware(user),
+    label: 'Password', description: '', type: FIELD_TYPE.PASSOWRD, validate: (value, user) => isEmpty(value, user), errorMessage: 'Password required', shouldShow: (user) => isPlatformTypeVMware(user),
   },
   'configureSite.platformDetails.region': {
-    label: 'Region', description: '', type: FIELD_TYPE.SELECT, errorMessage: 'Required', shouldShow: (user) => isPlatformTypeAWS(user), options: (user) => getRegionOptions(user),
+    label: 'Region', description: '', type: FIELD_TYPE.SELECT, errorMessage: 'Region required', shouldShow: (user) => isPlatformTypeAWS(user), options: (user) => getRegionOptions(user),
   },
   'configureSite.platformDetails.availZone': {
-    label: 'Zone', description: '', type: FIELD_TYPE.SELECT, patterns: [HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX], errorMessage: 'Required', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user), options: (user) => getAvailibilityZoneOptions(user),
+    label: 'Zone', description: '', type: FIELD_TYPE.SELECT, patterns: [HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX], errorMessage: 'Zone required', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user), options: (user) => getAvailibilityZoneOptions(user),
   },
   'configureSite.platformDetails.secretKey': {
     label: 'Secret Key', description: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), shouldShow: (user) => isPlatformTypeAWS(user),
   },
   'configureSite.platformDetails.accessKey': {
-    label: 'Access Key', description: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Required', shouldShow: (user) => isPlatformTypeAWS(user),
+    label: 'Access Key', description: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Access Key is required', shouldShow: (user) => isPlatformTypeAWS(user),
   },
   'configureSite.platformDetails.projectId': {
-    label: 'Project ID', description: '', type: FIELD_TYPE.TEXT, patterns: [HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX], errorMessage: 'Required', shouldShow: (user) => isPlatformTypeGCP(user),
+    label: 'Project ID', description: '', type: FIELD_TYPE.TEXT, patterns: [HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX], errorMessage: 'Project ID is required', shouldShow: (user) => isPlatformTypeGCP(user),
   },
   'configureSite.platformDetails.serverIp': {
     label: 'Datamotive Server IP', description: '', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], errorMessage: 'Enter valid IP address', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
   },
   'configureSite.platformDetails.serverPort': {
-    label: 'Server Port', description: '', defaultValue: 5000, min: 1, max: 65536, type: FIELD_TYPE.NUMBER, errorMessage: 'Required', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
+    label: 'Server Port', description: '', defaultValue: 5000, min: 1, max: 65536, type: FIELD_TYPE.NUMBER, errorMessage: 'Server Port is required, if different.', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
   },
   'configureSite.platformDetails.prepMachineIP': {
     label: 'Preparation Machine IP', description: '', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], errorMessage: 'Enter valid Machine IP address', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
@@ -93,10 +93,10 @@ export const FIELDS = {
   'drplan.recoveryEntities.preScript': { label: '', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: null, errorMessage: '', shouldShow: false },
   'drplan.recoveryEntities.postScript': { label: '', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: null, errorMessage: '', shouldShow: false },
 
-  'drplan.recoveryEntities.instanceDetails.amiID': { label: 'AMI ID', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Required', shouldShow: true },
-  'drplan.recoveryEntities.instanceDetails.instanceType': { label: 'Instance Type', placeHolderText: '', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Required', shouldShow: true, options: (user) => getInstanceTypeOptions(user) },
-  'drplan.recoveryEntities.instanceDetails.availabilityZone': { label: 'Availability Zone', placeHolderText: '', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Required', shouldShow: true, options: (user) => getAvailibilityZoneOptions(user) },
-  'drplan.recoveryEntities.instanceDetails.volumeType': { label: 'Volume Type', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Required', shouldShow: true },
+  'drplan.recoveryEntities.instanceDetails.amiID': { label: 'AMI ID', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'AMI ID required', shouldShow: true },
+  'drplan.recoveryEntities.instanceDetails.instanceType': { label: 'Instance Type', placeHolderText: '', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Instance Type required', shouldShow: true, options: (user) => getInstanceTypeOptions(user) },
+  'drplan.recoveryEntities.instanceDetails.availabilityZone': { label: 'Availability Zone', placeHolderText: '', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Availability Zone required', shouldShow: true, options: (user) => getAvailibilityZoneOptions(user) },
+  'drplan.recoveryEntities.instanceDetails.volumeType': { label: 'Volume Type', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Volume Type required', shouldShow: true },
 
   'drplan.protectedEntities.Name': { label: '', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: null, errorMessage: '', shouldShow: false },
 

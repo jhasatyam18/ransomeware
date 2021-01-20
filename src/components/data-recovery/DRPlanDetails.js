@@ -40,7 +40,7 @@ class DRPlanDetails extends Component {
       return null;
     }
     const { platformDetails } = site;
-    const keys = [{ label: 'Name', field: 'platformName' }, { label: 'Platfrom Type', field: 'platformType' }, { label: 'Hostname', field: 'hostname' }, { label: 'Port', field: 'port' },
+    const keys = [{ label: 'Name', field: 'platformName' }, { label: 'Platform Type', field: 'platformType' }, { label: 'Hostname', field: 'hostname' }, { label: 'Port', field: 'port' },
       { label: 'Region', field: 'region' }, { label: 'Zone', field: 'availZone' }, { label: 'Project ID', field: 'projectId' }, { label: 'Datamotive Server IP', field: 'serverIp' },
       { label: 'Datamotive Server Port', field: 'serverPort' }, { label: 'Machine IP', field: 'prepMachineIP' }];
     const fields = keys.map((ele) => {

@@ -72,6 +72,14 @@ class SidebarContent extends Component {
     // }
   }
 
+  isActive(path) {
+    const { pathname } = window.location;
+    if (path === pathname) {
+      return '#FFF';
+    }
+    return '';
+  }
+
   render() {
     const { t } = this.props;
     return (
@@ -79,34 +87,34 @@ class SidebarContent extends Component {
         <div id="sidebar-menu">
           <ul className="metismenu list-unstyled" id="side-menu">
             <li>
-              <Link to={DASHBOARD_PATH} className="waves-effect">
-                <i className="fa fa-desktop fa-s-lg" style={{ fontSize: 16 }} />
+              <Link to={DASHBOARD_PATH} className="waves-effect" style={{ color: this.isActive(DASHBOARD_PATH) }}>
+                <i className="fa fa-desktop fa-s-lg" style={{ fontSize: 16, color: this.isActive(DASHBOARD_PATH) }} />
                 <span>Dashboard</span>
               </Link>
             </li>
             <li>
               <Link to="/#" className="has-arrow waves-effect">
-                <i className="fa fa-cog fa-s-lg" style={{ fontSize: 16 }} />
+                <i className="fa fa-cog fa-s-lg" />
                 <span>{t('Configure')}</span>
               </Link>
               <ul className="sub-menu" aria-expanded="false">
                 <li>
-                  <Link to={SITES_PATH}>
-                    <i className="bx bx-cloud" />
+                  <Link to={SITES_PATH} style={{ color: this.isActive(SITES_PATH) }}>
+                    <i className="bx bx-cloud" style={{ color: this.isActive(SITES_PATH) }} />
                     {t('Sites')}
                   </Link>
                 </li>
                 <li>
-                  <Link to={PROTECTION_PLANS_PATH} className="waves-effect">
-                    <i className="bx bx-layer" />
+                  <Link to={PROTECTION_PLANS_PATH} className="waves-effect" style={{ color: this.isActive(PROTECTION_PLANS_PATH) }}>
+                    <i className="bx bx-layer" style={{ color: this.isActive(PROTECTION_PLANS_PATH) }} />
                     <span>Protection Plans</span>
                   </Link>
                 </li>
               </ul>
             </li>
             <li>
-              <Link to={JOBS} className="waves-effect">
-                <i className="fa fa-tasks" style={{ fontSize: 16 }} />
+              <Link to={JOBS} className="waves-effect" style={{ color: this.isActive(JOBS) }}>
+                <i className="fa fa-tasks" style={{ fontSize: 16, color: this.isActive(JOBS) }} />
                 <span>Jobs</span>
               </Link>
             </li>
