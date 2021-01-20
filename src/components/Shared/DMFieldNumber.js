@@ -43,6 +43,8 @@ class placeHolderNumber extends Component {
       this.setState({ value: min });
     } else if (targetValue > max) {
       this.setState({ value: max });
+    } else if (Number.isNaN(targetValue)) {
+      this.setState({ value: min });
     } else {
       this.setState({ value: targetValue });
     }

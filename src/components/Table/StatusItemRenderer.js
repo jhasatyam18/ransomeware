@@ -7,11 +7,11 @@ function StatusItemRenderer({ data }) {
     return (
       <div className="container">
         <div className="row">
-          <div className="col-3">
+          <div className="col-2">
             <box-icon color="white" name="check" />
           </div>
-          <div className="col-9">
-            {data.status}
+          <div className="col-10">
+            {data.Status}
           </div>
         </div>
       </div>
@@ -21,11 +21,11 @@ function StatusItemRenderer({ data }) {
     return (
       <div className="container">
         <div className="row">
-          <div className="col-3">
+          <div className="col-2">
             <box-icon color="white" animation="burst" name="dots-horizontal-rounded" />
           </div>
-          <div className="col-9">
-            {data.status}
+          <div className="col-10">
+            Running
           </div>
         </div>
       </div>

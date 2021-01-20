@@ -64,7 +64,7 @@ class NotificationDropdown extends Component {
             </div>
 
             <SimpleBar style={{ height: '230px' }}>
-              <Link to="" className="text-reset notification-item" />
+              <Link to="notifications" className="text-reset notification-item" />
             </SimpleBar>
             <div className="p-2 border-top">
               <Link
