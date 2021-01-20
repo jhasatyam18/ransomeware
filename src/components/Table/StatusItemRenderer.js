@@ -11,7 +11,7 @@ function StatusItemRenderer({ data }) {
             <box-icon color="white" name="check" />
           </div>
           <div className="col-10">
-            {data.Status}
+            {data.status}
           </div>
         </div>
       </div>
