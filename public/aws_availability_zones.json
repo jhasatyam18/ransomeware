@@ -1,0 +1,11 @@
+[
+  {"label" : "US East (Ohio) us-east-2a", "value": "us-east-2a"},
+  {"label" : "US East (Ohio) us-east-2b", "value": "us-east-2b"},
+  {"label" : "US East (Ohio) us-east-2c", "value": "us-east-2c"},
+  {"label" : "US East (N. Virginia) us-east-1a", "value": "us-east-1a"},
+  {"label" : "US East (N. Virginia) us-east-1b", "value": "us-east-1b"},
+  {"label" : "US East (N. Virginia) us-east-1c", "value": "us-east-1c"},
+  {"label" : "US East (N. Virginia) us-east-1d", "value": "us-east-1d"},
+  {"label" : "US East (N. Virginia) us-east-1e", "value": "us-east-1e"},
+  {"label" : "US East (N. Virginia) us-east-1f", "value": "us-east-1f"}
+]

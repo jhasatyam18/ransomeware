@@ -1,11 +1,16 @@
 import React, { Component, Suspense } from 'react';
 import { Card, Container, CardBody, Row, Col, CardTitle, Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap';
 import classnames from 'classnames';
-import { fetchDRPlanById } from '../../store/actions/DrPlanActions';
+import { deletePlan, fetchDRPlanById, fetchDrPlans, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
 import DMTable from '../Table/DMTable';
 import { TABLE_PROTECT_VM_VMWARE } from '../../constants/TableConstants';
+import { DROP_DOWN_ACTION_TYPES, REPLICATION_STATUS } from '../../constants/InputConstants';
+import DropdownActions from '../Common/DropdownActions';
+import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
+import { RECOVERY_WIZARDS } from '../../constants/WizardConstants';
 
-const ReplicationJobs = React.lazy(() => import('../Replication/ReplicationJobs'));
+const Replication = React.lazy(() => import('../Jobs/Replication'));
+const Recovery = React.lazy(() => import('../Jobs/Recovery'));
 
 class DRPlanDetails extends Component {
   constructor() {
@@ -84,6 +89,32 @@ class DRPlanDetails extends Component {
     return fields;
   }
 
+  renderStatus() {
+    const { drPlans } = this.props;
+    const { details } = drPlans;
+    const { status } = details;
+    if (status === REPLICATION_STATUS.STOPPED) {
+      return (
+        <span className="badge badge-danger">STOPPED</span>
+      );
+    }
+    return (
+      <span className="badge badge-success">RUNNING</span>
+    );
+  }
+
+  renderActions() {
+    const { drPlans, dispatch } = this.props;
+    const { details } = drPlans;
+    const actions = [{ label: 'Start', action: startPlan, id: details.id, disabled: details.status !== REPLICATION_STATUS.STOPPED },
+      { label: 'Stop', action: stopPlan, id: details.id, disabled: details.status === REPLICATION_STATUS.STOPPED },
+      { label: 'Remove', action: deletePlan, id: details.id, type: DROP_DOWN_ACTION_TYPES.MODAL, MODAL_COMPONENT: MODAL_CONFIRMATION_WARNING, options: { title: 'Alert', confirmAction: deletePlan, message: 'Are you sure want to delete  ?', id: details.id } },
+      { label: 'Recover', type: DROP_DOWN_ACTION_TYPES.WIZARD, wizard: RECOVERY_WIZARDS, init: fetchDrPlans, initValue: 'ui.values.drplan' }];
+    return (
+      <DropdownActions title="Actions" dispatch={dispatch} actions={actions} />
+    );
+  }
+
   render() {
     const { drPlans, dispatch } = this.props;
     const { details } = drPlans;
@@ -92,19 +123,28 @@ class DRPlanDetails extends Component {
       return null;
     }
     const { name, protectedSite, recoverySite, protectedEntities, recoveryEntities, id } = details;
-    const { VirtualMachines } = protectedEntities;
+    const { virtualMachines } = protectedEntities;
     return (
       <>
         <Container fluid>
           <Card>
             <CardBody>
-              <CardTitle className="mb-4">
-                Protection Plan : &nbsp;&nbsp;
-                {name}
-              </CardTitle>
+              <Row>
+                <Col sm={8}>
+                  <CardTitle className="mb-4 title-color">
+                    Protection Plan : &nbsp;&nbsp;
+                    {name}
+                    &nbsp;&nbsp;
+                    {this.renderStatus()}
+                  </CardTitle>
+                </Col>
+                <Col sm={4}>
+                  {this.renderActions()}
+                </Col>
+              </Row>
               <Row>
                 <Col sm={5}>
-                  <CardTitle>Protected Site</CardTitle>
+                  <CardTitle className="title-color">Protected Site</CardTitle>
                   <Card>
                     {this.renderSite(protectedSite)}
                   </Card>
@@ -115,7 +155,7 @@ class DRPlanDetails extends Component {
                   </div>
                 </Col>
                 <Col sm={5}>
-                  <CardTitle>Recovery Site</CardTitle>
+                  <CardTitle className="title-color">Recovery Site</CardTitle>
                   {this.renderSite(recoverySite)}
                 </Col>
               </Row>
@@ -139,6 +179,11 @@ class DRPlanDetails extends Component {
                     <span className="d-none d-sm-block">Replications</span>
                   </NavLink>
                 </NavItem>
+                <NavItem>
+                  <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '4' })} onClick={() => { this.toggleTab('4'); }}>
+                    <span className="d-none d-sm-block">Recovery</span>
+                  </NavLink>
+                </NavItem>
               </Nav>
               <TabContent activeTab={activeTab}>
                 <TabPane tabId="1" className="p-3">
@@ -147,7 +192,7 @@ class DRPlanDetails extends Component {
                       <DMTable
                         dispatch={dispatch}
                         columns={TABLE_PROTECT_VM_VMWARE}
-                        data={VirtualMachines}
+                        data={virtualMachines}
                       />
                     </Col>
                   </Row>
@@ -163,7 +208,16 @@ class DRPlanDetails extends Component {
                   <Row>
                     <Col sm="12">
                       <Suspense fallback={<div>Loading...</div>}>
-                        {activeTab === '3' ? <ReplicationJobs drPlanID={id} {...this.props} /> : null}
+                        {activeTab === '3' ? <Replication protectionplanID={id} {...this.props} /> : null}
+                      </Suspense>
+                    </Col>
+                  </Row>
+                </TabPane>
+                <TabPane tabId="4" className="p-3">
+                  <Row>
+                    <Col sm="12">
+                      <Suspense fallback={<div>Loading...</div>}>
+                        {activeTab === '4' ? <Recovery protectionplanID={id} {...this.props} /> : null}
                       </Suspense>
                     </Col>
                   </Row>

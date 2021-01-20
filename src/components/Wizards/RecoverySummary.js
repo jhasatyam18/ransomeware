@@ -9,8 +9,8 @@ class RecoverySummary extends Component {
     const { dispatch, user } = this.props;
     const { values } = user;
     const selectedVMs = getValue('ui.site.seletedVMs', values);
-    const drPlanID = getValue('recovery.drplanID', values);
-    const selectedDrPlan = getValue('ui.values.drplan', values).filter((plan) => `${plan.Id}` === `${drPlanID}`)[0];
+    const protectionplanID = getValue('recovery.protectionplanID', values);
+    const selectedDrPlan = getValue('ui.values.drplan', values).filter((plan) => `${plan.id}` === `${protectionplanID}`)[0];
     const dryRun = getValue('recovery.dryrun', values);
     const data = [];
     const { name } = selectedDrPlan;
@@ -23,27 +23,29 @@ class RecoverySummary extends Component {
     });
     return (
       <>
-        <Card>
+        <Card className="padding-20">
           <CardTitle>Recovery Summary</CardTitle>
           <CardBody>
             <Row>
               <Col sm={12}>
                 <Row>
-                  <Col sm={3}>Plan</Col>
+                  <Col sm={3} className="text-muted">Plan</Col>
                   <Col sm={3}>{name}</Col>
-                  <Col sm={3}>Recovery Type</Col>
+                  <Col sm={3} className="text-muted">Recovery Type</Col>
                   <Col sm={3}>{(dryRun ? 'TEST' : 'FULL')}</Col>
                 </Row>
+                <hr className="mt-3 mb-3" />
               </Col>
             </Row>
             <Row>
               <Col sm={12}>
                 <Row>
-                  <Col sm={3}>Virtual Machines</Col>
+                  <Col sm={3} className="text-muted">Virtual Machines</Col>
                   <Col sm={3}>{data.length}</Col>
-                  <Col sm={3}>Total Size</Col>
+                  <Col sm={3} className="text-muted">Total Size</Col>
                   <Col sm={3}>{`${size} GB`}</Col>
                 </Row>
+                <hr className="mt-3 mb-3" />
               </Col>
             </Row>
             <DMTable

@@ -52,7 +52,7 @@ export function getSitesOptions(user) {
   const result = [];
   if (sites) {
     sites.reduce((previous, next) => {
-      previous.push({ label: next.Description, value: next.id });
+      previous.push({ label: next.platformDetails.platformName, value: next.id });
       return previous;
     }, result);
   }
@@ -65,7 +65,46 @@ export function getDRPlanOptions(user) {
   const result = [];
   if (plans) {
     plans.reduce((previous, next) => {
-      previous.push({ label: next.name, value: next.Id });
+      previous.push({ label: next.name, value: next.id });
+      return previous;
+    }, result);
+  }
+  return result;
+}
+
+export function getInstanceTypeOptions(user) {
+  const { values } = user;
+  const instanceTypes = getValue('ui.values.instances', values);
+  const result = [];
+  if (instanceTypes) {
+    instanceTypes.reduce((previous, next) => {
+      previous.push({ label: next.label, value: next.value });
+      return previous;
+    }, result);
+  }
+  return result;
+}
+
+export function getAvailibilityZoneOptions(user) {
+  const { values } = user;
+  const zones = getValue('ui.values.availabilityZones', values);
+  const result = [];
+  if (zones) {
+    zones.reduce((previous, next) => {
+      previous.push({ label: next.label, value: next.value });
+      return previous;
+    }, result);
+  }
+  return result;
+}
+
+export function getRegionOptions(user) {
+  const { values } = user;
+  const zones = getValue('ui.values.regions', values);
+  const result = [];
+  if (zones) {
+    zones.reduce((previous, next) => {
+      previous.push({ label: next.label, value: next.value });
       return previous;
     }, result);
   }

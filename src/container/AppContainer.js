@@ -18,13 +18,14 @@ AppContainer.propTypes = propTypes;
 
 function mapStateToProps(state) {
   const {
-    layout, user, sites, drPlans,
+    layout, user, sites, drPlans, jobs,
   } = state;
   return {
     layout,
     user,
     sites,
     drPlans,
+    jobs,
   };
 }
 export default connect(mapStateToProps)(AppContainer);

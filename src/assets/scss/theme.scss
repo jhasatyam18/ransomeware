@@ -1,6 +1,9 @@
 @import "./icons.scss";
 @import "./bootstrap-dark.scss";
 @import "./app-dark.scss";
+// @import "./bootstrap.scss";
+// @import "./app.scss";
+
 #sidebar-menu {
   ul {
     li {
@@ -242,4 +245,40 @@ span.flatpickr-weekday {
 }
 .fa-s-xlg {
   font-size: 25px;
+}
+.dmtable-body {
+  max-width: 400px;
+  width: 100%;
+}
+.logo-name-size{
+  width: 180px;
+}
+
+.logo-size{
+  width: 30px;
+}
+
+.title-color {
+  color: #FFF;
+  font-weight: 400;
+}
+
+.dataMove {
+  width: 10px;
+  height: 10px;
+  position: relative;
+  animation: mymove 3s infinite;
+  margin-left: 2px;
+}
+
+@keyframes mymove {
+  from {left: 0px;}
+  to {left: calc(100%)}
+}
+
+.display__flex__reverse {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  flex-flow: row-reverse;
 }

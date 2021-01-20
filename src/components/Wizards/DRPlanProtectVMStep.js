@@ -25,7 +25,7 @@ class DRPlanProtectVMStep extends Component {
           isSelectable
           onSelect={handleProtectVMSeletion}
           selectedData={selectedVMs}
-          primaryKey="Moref"
+          primaryKey="moref"
         />
       </>
     );

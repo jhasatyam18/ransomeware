@@ -37,7 +37,7 @@ class DRPlans extends Component {
                 isSelectable
                 onSelect={handleDrPlanTableSelection}
                 selectedData={selectedPlans}
-                primaryKey="Id"
+                primaryKey="id"
               />
             </CardBody>
           </Card>

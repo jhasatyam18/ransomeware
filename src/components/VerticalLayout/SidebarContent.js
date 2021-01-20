@@ -7,7 +7,7 @@ import { withRouter, Link } from 'react-router-dom';
 
 // i18n
 import { withTranslation } from 'react-i18next';
-import { DASHBOARD_PATH, PROTECTION_PLANS_PATH, REPLICATIONS, SITES_PATH } from '../../constants/RouterConstants';
+import { DASHBOARD_PATH, JOBS, PROTECTION_PLANS_PATH, SITES_PATH } from '../../constants/RouterConstants';
 
 class SidebarContent extends Component {
   constructor(props) {
@@ -105,9 +105,9 @@ class SidebarContent extends Component {
               </ul>
             </li>
             <li>
-              <Link to={REPLICATIONS} className="waves-effect">
+              <Link to={JOBS} className="waves-effect">
                 <i className="fa fa-tasks" style={{ fontSize: 16 }} />
-                <span>Replication Jobs</span>
+                <span>Jobs</span>
               </Link>
             </li>
           </ul>

@@ -7,29 +7,40 @@ export const TRANSFER_SIZE_ITEM_RENDERER = 'TRANSFER_SIZE_ITEM_RENDERER';
 
 export const TABLE_HEADER_SITES = [
   { label: 'Site Type', field: 'siteType' },
-  { label: 'Description', field: 'Description' },
+  { label: 'Description', field: 'description' },
   { label: 'Platform', field: 'platformDetails.platformType' },
 ];
 
 export const TABLE_HEADER_DR_PLANS = [
-  { label: 'Name', field: 'Name', itemRenderer: DR_PLAN_NAME_ITEM_RENDERER },
+  { label: 'Name', field: 'name', itemRenderer: DR_PLAN_NAME_ITEM_RENDERER },
   { label: 'Protected Site', field: 'protectedSite.platformDetails.platformName' },
   { label: 'Recovery Site', field: 'recoverySite.platformDetails.platformName' },
   { label: 'Replication Interval', field: 'replicationInterval' },
-  { label: 'Status', field: '' },
+  { label: 'Status', field: 'status' },
 ];
 
 export const TABLE_PROTECT_VM_VMWARE = [
-  { label: 'Name', field: 'Name' },
+  { label: 'Name', field: 'name' },
   { label: 'Size', field: 'virtualDisks', itemRenderer: VM_SIZE_ITEM_RENDERER },
   { label: 'OS', field: 'guestOS', itemRenderer: OS_TYPE_ITEM_RENDARER },
 ];
 
-export const REPLICATION_JOB_STATUS = [
-  { label: 'Virtual Machine', field: 'VMName' },
-  { label: 'Disk', field: 'DiskID' },
-  { label: 'Size', field: 'TransferSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
-  { label: 'Start Time', field: 'StartTime', itemRenderer: DATE_ITEM_RENDERER },
-  { label: 'End Time', field: 'EndTime', itemRenderer: DATE_ITEM_RENDERER },
-  { label: 'Status', field: 'Status', itemRenderer: STATUS_ITEM_RENDERER },
+export const REPLICATION_JOBS = [
+  { label: 'Virtual Machine', field: 'vmName' },
+  { label: 'Disk', field: 'diskId' },
+  { label: 'Size', field: 'transferSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
+  { label: 'Start Time', field: 'startTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'End Time', field: 'endTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
+];
+
+export const RECOVERY_JOBS = [
+  { label: 'Virtual Machine', field: 'vmName' },
+  // { label: 'Disk', field: 'DiskID' },
+  // { label: 'Size', field: 'TransferSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
+  { label: 'Start Time', field: 'startTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'End Time', field: 'endTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Recovery Type', field: 'testRecovery' },
+  { label: 'Status', field: 'status' },
+  { label: 'Message', field: 'failureMessage' },
 ];

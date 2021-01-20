@@ -25,7 +25,7 @@ class RecoveryMachines extends Component {
           isSelectable
           onSelect={handleProtectVMSeletion}
           selectedData={selectedVMs}
-          primaryKey="Moref"
+          primaryKey="moref"
         />
       </>
     );

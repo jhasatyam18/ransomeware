@@ -1,0 +1,11 @@
+[
+  {"label" : "n1-standard-1", "value": "n1-standard-1"},
+  {"label" : "e2-standard-2", "value": "e2-standard-2"},
+  {"label" : "e2-highmem-2", "value": "e2-highmem-2"},
+  {"label" : "e2-highcpu-2", "value": "e2-highcpu-2"},
+  {"label" : "n2-standard-2", "value": "n2-standard-2"},
+  {"label" : "n2-highmem-2", "value": "n2-highmem-2"},
+  {"label" : "n2-highcpu-2", "value": "n2-highcpu-2"},
+  {"label" : "n2d-standard-2", "value": "n2d-standard-2"},
+  {"label" : "n2d-highmem-2", "value": "n2d-highmem-2"}
+]
