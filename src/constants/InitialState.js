@@ -23,6 +23,7 @@ const INITIAL_STATE = {
     show: false,
     options: { title: '' },
   },
+  jobs: { replication: [], recovery: [] },
 };
 
 export default INITIAL_STATE;

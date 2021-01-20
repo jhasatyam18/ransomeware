@@ -15,8 +15,10 @@ import { closeModal } from './ModalActions';
 export function fetchDrPlans(key) {
   return (dispatch) => {
     dispatch(clearMessages());
+    dispatch(showApplicationLoader('PROTECTION_PLAN', 'Loading protection plans...'));
     return callAPI(API_FETCH_DR_PLANS)
       .then((json) => {
+        dispatch(hideApplicationLoader('PROTECTION_PLAN'));
         if (json.hasError) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
@@ -27,7 +29,8 @@ export function fetchDrPlans(key) {
         }
       },
       (err) => {
-        alert(err);
+        dispatch(hideApplicationLoader('PROTECTION_PLAN'));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
   };
 }
@@ -108,12 +111,13 @@ export function stopPlan(id) {
   };
 }
 
-export function deletePlan() {
+export function deletePlan(id) {
   return (dispatch, getState) => {
     const { drPlans } = getState();
     const { selectedPlans } = drPlans;
     const ids = Object.keys(selectedPlans);
-    const url = API_DELETE_DR_PLAN.replace('<id>', ids[0]);
+    const planID = (typeof id === 'undefined' ? ids[0] : id);
+    const url = API_DELETE_DR_PLAN.replace('<id>', planID);
     const obj = createPayload(API_TYPES.DELETE, {});
     return callAPI(url, obj).then((json) => {
       if (json.hasError) {
@@ -194,7 +198,7 @@ export function onProtectionPlanChange({ value }) {
         if (json && json.hasError) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
-          dispatch(valueChange('ui.recovery.vms', json.protectedEntities.VirtualMachines));
+          dispatch(valueChange('ui.recovery.vms', json.protectedEntities.virtualMachines));
         }
       },
       (err) => {

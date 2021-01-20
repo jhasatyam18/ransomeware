@@ -3,7 +3,7 @@ import { JOB_COMPLETION_STATUS, JOB_RUNNING_STATUS } from '../../constants/AppSt
 import 'boxicons';
 
 function StatusItemRenderer({ data }) {
-  if (data.Status === JOB_COMPLETION_STATUS) {
+  if (data.status === JOB_COMPLETION_STATUS) {
     return (
       <div className="container">
         <div className="row">
@@ -11,13 +11,13 @@ function StatusItemRenderer({ data }) {
             <box-icon color="white" name="check" />
           </div>
           <div className="col-9">
-            {data.Status}
+            {data.status}
           </div>
         </div>
       </div>
     );
   }
-  if (data.Status === JOB_RUNNING_STATUS) {
+  if (data.status === JOB_RUNNING_STATUS) {
     return (
       <div className="container">
         <div className="row">
@@ -25,12 +25,15 @@ function StatusItemRenderer({ data }) {
             <box-icon color="white" animation="burst" name="dots-horizontal-rounded" />
           </div>
           <div className="col-9">
-            {data.Status}
+            {data.status}
           </div>
         </div>
       </div>
     );
   }
+  return (
+    <div>{data.status}</div>
+  );
 }
 
 export default StatusItemRenderer;

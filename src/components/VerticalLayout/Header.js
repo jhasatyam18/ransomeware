@@ -4,12 +4,13 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import NotificationDropdown from '../CommonForBoth/TopbarDropdown/NotificationDropdown';
 import ProfileMenu from '../CommonForBoth/TopbarDropdown/ProfileMenu';
-// import logoLightPng from '../../assets/images/logo-light.png';
+import dmlogoname from '../../assets/images/logo_name.png';
+import dmlogo from '../../assets/images/dm_logo.png';
 
 // i18n
 
 // Redux Store
-import { changeLeftSidebarType } from '../../store/actions';
+import { changeLeftSidebarType, refresh } from '../../store/actions';
 
 class Header extends Component {
   constructor(props) {
@@ -17,6 +18,12 @@ class Header extends Component {
     // TOGGLE MENU
     this.toggleMenu = this.toggleMenu.bind(this);
     this.toggleFullscreen = this.toggleFullscreen.bind(this);
+    this.onRefresh = this.onRefresh.bind(this);
+  }
+
+  onRefresh() {
+    const { dispatch } = this.props;
+    dispatch(refresh());
   }
 
   toggleMenu() {
@@ -65,10 +72,10 @@ class Header extends Component {
                 {/* brand logo */}
                 <Link to="/" className="logo logo-light">
                   <span className="logo-sm">
-                    D
+                    <img src={dmlogo} className="logo-size" alt="DATAMOTIVE" />
                   </span>
                   <span className="logo-lg">
-                    DATAMOTIVE
+                    <img src={dmlogoname} className="logo-name-size" alt="DATAMOTIVE" />
                   </span>
                 </Link>
               </div>
@@ -82,7 +89,16 @@ class Header extends Component {
               </button>
             </div>
             <div className="d-flex">
-
+              <div className="dropdown d-none d-lg-inline-block ml-1">
+                <button
+                  type="button"
+                  onClick={this.onRefresh}
+                  className="btn header-item noti-icon waves-effect"
+                  data-toggle="refresh"
+                >
+                  <box-icon name="refresh" color="#a6b0cf" animation="spin-hover" />
+                </button>
+              </div>
               <div className="dropdown d-none d-lg-inline-block ml-1">
                 <button
                   type="button"

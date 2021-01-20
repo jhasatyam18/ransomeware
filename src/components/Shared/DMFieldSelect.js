@@ -82,10 +82,13 @@ class DMFieldSelect extends Component {
 
   render() {
     const { field, fieldKey, user } = this.props;
-    const { label } = field;
+    const { label, shouldShow } = field;
     const { value } = this.state;
     const { errors } = user;
     const hasErrors = !!(errors && errors[fieldKey] !== undefined);
+    const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
+
+    if (!showField) return null;
     return (
       <>
         <FormGroup className="row mb-4 form-group">

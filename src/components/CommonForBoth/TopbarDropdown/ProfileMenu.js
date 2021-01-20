@@ -54,7 +54,7 @@ class ProfileMenu extends Component {
             <span className="d-none d-xl-inline-block ml-2 mr-1">
               {name}
             </span>
-            <i className="mdi mdi-chevron-down d-none d-xl-inline-block" />
+            <i className="bx bx-chevron-down" />
           </DropdownToggle>
           <DropdownMenu right>
             <DropdownItem tag="a" href="/profile">

@@ -60,10 +60,10 @@ export function getRecoveryPayload(user) {
   const result = getKeyStruct('recovery.', values);
   const vmnames = [];
   Object.keys(vms).forEach((key) => {
-    const { Name } = vms[key];
-    vmnames.push(Name);
+    const { name } = vms[key];
+    vmnames.push(name);
   });
   result.recovery.vmNames = vmnames;
-  result.recovery.drplanID = parseInt(`${result.recovery.drplanID}`, 10);
+  result.recovery.protectionplanID = parseInt(`${result.recovery.protectionplanID}`, 10);
   return result;
 }

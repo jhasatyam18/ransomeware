@@ -16,8 +16,8 @@ class ConfirmationModal extends Component {
   onConfirm() {
     const { dispatch, modal } = this.props;
     const { options } = modal;
-    const { confirmAction } = options;
-    dispatch(confirmAction());
+    const { confirmAction, id } = options;
+    dispatch(confirmAction(id));
   }
 
   renderFooter() {

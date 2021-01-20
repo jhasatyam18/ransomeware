@@ -29,7 +29,7 @@ class SiteActionBar extends Component {
 
   createSite() {
     const { dispatch } = this.props;
-    const options = { isEdit: false, title: 'Create New Site' };
+    const options = { isEdit: false, title: 'Create Site' };
     dispatch(clearValues());
     dispatch(openModal(MODAL_CONFIGURE_NEW_SITE, options));
   }

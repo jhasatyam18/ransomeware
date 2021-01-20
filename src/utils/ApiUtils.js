@@ -37,7 +37,7 @@ export function callAPI(URL, obj = {}) {
         store.dispatch(closeModal());
       }
       if (response.status !== 204 && !response.ok) {
-        return { hasError: true, message: response.statusText, status: response.status };
+        return { hasError: true, message: response.statusText, status: response.status, body: response.body };
       }
       if (response.status === 204) {
         response.hasError = false;

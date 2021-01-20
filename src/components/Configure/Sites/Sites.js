@@ -22,7 +22,7 @@ class Sites extends Component {
           <Container fluid>
             <Card>
               <CardBody>
-                <CardTitle className="mb-4">Configured Sites</CardTitle>
+                <CardTitle className="mb-4">Sites</CardTitle>
                 <SitesTable user={user} sites={sites} dispatch={dispatch} />
               </CardBody>
             </Card>

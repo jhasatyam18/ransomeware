@@ -5,13 +5,27 @@ function OsTypeItemRenderer({ data }) {
   if (data.guestOS.toLowerCase().indexOf('window') !== -1) {
     return (
       <div>
-        <box-icon type="logo" color="green" name="windows" />
+        <i className="fab fa-windows fa-2x" />
+      </div>
+    );
+  }
+  if (data.guestOS.toLowerCase().indexOf('centos') !== -1) {
+    return (
+      <div>
+        <i className="fab fa-centos fa-2x" />
+      </div>
+    );
+  }
+  if (data.guestOS.toLowerCase().indexOf('red hat') !== -1) {
+    return (
+      <div>
+        <i className="fab fa-redhat fa-2x" />
       </div>
     );
   }
   return (
     <div>
-      <box-icon type="logo" color="black" name="tux" />
+      <i className="fab fa-linux fa-2x" />
     </div>
   );
 }

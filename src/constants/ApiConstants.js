@@ -5,14 +5,23 @@ export const API_FETCH_SITE_VMS = 'api/v1/sites/<id>/vms';
 export const API_CREATE_SITES = 'api/v1/sites';
 export const API_DELETE_SITES = 'api/v1/sites/<id>';
 // dr plan
-export const API_FETCH_DR_PLANS = 'api/v1/dr/plans';
-export const API_FETCH_DR_PLAN_BY_ID = 'api/v1/dr/plans/<id>';
-export const API_START_DR_PLAN = 'api/v1/dr/plans/<id>/start';
-export const API_STOP_DR_PLAN = 'api/v1/dr/plans/<id>/stop';
-export const API_DELETE_DR_PLAN = 'api/v1/dr/plans/<id>';
+export const API_FETCH_DR_PLANS = 'api/v1/protection/plans';
+export const API_FETCH_DR_PLAN_BY_ID = 'api/v1/protection/plans/<id>';
+export const API_START_DR_PLAN = 'api/v1/protection/plans/<id>/start';
+export const API_STOP_DR_PLAN = 'api/v1/protection/plans/<id>/stop';
+export const API_DELETE_DR_PLAN = 'api/v1/protection/plans/<id>';
 // jobs
-export const API_REPLICATION_JOBS = 'api/v1/jobs/disks';
-export const API_DR_PLAN_REPLICATION_JOBS = 'api/v1/jobs/dr/plans/<id>';
+export const API_REPLICATION_JOBS = 'api/v1/jobs/replication/disks';
+export const API_PROTECTOIN_PLAN_REPLICATION_JOBS = 'api/v1/jobs/replication/disks?protectionplanid=<id>';
+export const API_RECOVERY_JOBS = 'api/v1/jobs/recover/vms';
+export const API_RECOVERY_PLAN_RECOVERY_JOBS = 'api/v1/jobs/recover/protectionplans/<id>';
 
 // recovery
 export const API_RECOVER = 'api/v1/recover';
+
+// instance type json
+export const API_AWS_INSTANCES = 'aws_instances.json';
+export const API_GCP_INSTANCES = 'gcp_instances.json';
+export const API_AWS_RGIONS = 'aws_regions.json';
+export const API_AWS_AVAILABILLITY_ZONES = 'aws_availability_zones.json';
+export const API_GCP_AVAILABILLITY_ZONES = 'gcp_zones.json';

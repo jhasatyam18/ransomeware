@@ -1,0 +1,12 @@
+[
+  {"label": "us-central1-a", "value": "us-central1-a"},
+  {"label": "asia-east1", "value": "asia-east1"},
+  {"label": "asia-east2", "value": "asia-east2"},
+  {"label": "asia-northeast1", "value": "asia-northeast1"},
+  {"label": "asia-northeast2", "value": "asia-northeast2"}, 
+  {"label": "asia-northeast3", "value": "asia-northeast3"},
+  {"label": "asia-south1", "value": "asia-south1"},
+  {"label": "asia-southeast1", "value": "asia-southeast1"},
+  {"label": "asia-southeast2", "value": "asia-southeast2"},
+  {"label": "australia-southeast1", "value": "australia-southeast1"}
+]
