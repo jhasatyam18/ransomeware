@@ -62,7 +62,7 @@ class ProfileMenu extends Component {
               {t('Profile')}
             </DropdownItem>
             <div className="dropdown-divider" />
-            <Link className="dropdown-item" onClick={this.logout}>
+            <Link to="/logout" className="dropdown-item" onClick={this.logout}>
               <i className="bx bx-power-off font-size-16 align-middle mr-1 text-danger" />
               <span>{t('Logout')}</span>
             </Link>

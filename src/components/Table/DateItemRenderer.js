@@ -2,14 +2,18 @@ import React from 'react';
 import 'boxicons';
 
 function DateItemRenderer({ data, field }) {
-  if (data[field] === 0) {
-    return null;
-  }
   const time = data[field] * 1000;
   const d = new Date(time);
-  const locale = `${d.toLocaleDateString()}-${d.toLocaleTimeString()}`;
+  let resp = `${d.toLocaleDateString()}-${d.toLocaleTimeString()}`;
+
+  if (data[field] === 0) {
+    resp = '-';
+    return (
+      <>{resp}</>
+    );
+  }
   return (
-    <>{locale}</>
+    <>{resp}</>
   );
 }
 
