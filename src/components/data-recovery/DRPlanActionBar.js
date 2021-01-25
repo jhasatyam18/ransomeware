@@ -5,7 +5,7 @@ import {
 } from '../../store/actions/DrPlanActions';
 import { openModal } from '../../store/actions/ModalActions';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
-import { CREATE_DR_PLAN_WIZARDS, RECOVERY_WIZARDS } from '../../constants/WizardConstants';
+import { CREATE_DR_PLAN_WIZARDS, MIGRAION_WIZARDS, RECOVERY_WIZARDS } from '../../constants/WizardConstants';
 import { openWizard } from '../../store/actions/WizardActions';
 import { fetchSites } from '../../store/actions/SiteActions';
 import { clearValues } from '../../store/actions';
@@ -17,6 +17,7 @@ class DRPlanActionBar extends Component {
     this.onDelete = this.onDelete.bind(this);
     this.onCreate = this.onCreate.bind(this);
     this.onInitiateRecovery = this.onInitiateRecovery.bind(this);
+    this.onMigrate = this.onMigrate.bind(this);
   }
 
   onCreate() {
@@ -31,6 +32,13 @@ class DRPlanActionBar extends Component {
     dispatch(clearValues());
     dispatch(fetchDrPlans('ui.values.drplan'));
     dispatch(openWizard(RECOVERY_WIZARDS.options, RECOVERY_WIZARDS.steps));
+  }
+
+  onMigrate() {
+    const { dispatch } = this.props;
+    dispatch(clearValues());
+    dispatch(fetchDrPlans('ui.values.drplan'));
+    dispatch(openWizard(MIGRAION_WIZARDS.options, MIGRAION_WIZARDS.steps));
   }
 
   onDelete() {
@@ -81,6 +89,10 @@ class DRPlanActionBar extends Component {
             <button type="button" className="btn btn-hover" color="secondary" onClick={this.onInitiateRecovery}>
               <i className="bx bx-stop-circle" />
               Recovery
+            </button>
+            <button type="button" className="btn btn-hover" color="secondary" onClick={this.onMigrate}>
+              <i className="bx bx-stop-circle" />
+              Migrate
             </button>
           </div>
         </div>

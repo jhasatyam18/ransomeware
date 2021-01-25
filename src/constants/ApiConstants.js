@@ -12,12 +12,18 @@ export const API_STOP_DR_PLAN = 'api/v1/protection/plans/<id>/stop';
 export const API_DELETE_DR_PLAN = 'api/v1/protection/plans/<id>';
 // jobs
 export const API_REPLICATION_JOBS = 'api/v1/jobs/replication/disks';
+export const API_REPLICATION_VM_JOBS = 'api/v1/jobs/replication/vms';
+export const API_PROTECTTION_PLAN_REPLICATION_VM_JOBS = 'api/v1/jobs/replication/vms?protectionplanid=<id>';
 export const API_PROTECTOIN_PLAN_REPLICATION_JOBS = 'api/v1/jobs/replication/disks?protectionplanid=<id>';
 export const API_RECOVERY_JOBS = 'api/v1/jobs/recover/vms';
 export const API_RECOVERY_PLAN_RECOVERY_JOBS = 'api/v1/jobs/recover/protectionplans/<id>';
 
 // recovery
 export const API_RECOVER = 'api/v1/recover';
+
+// migration
+export const API_VALIDATE_MIGRATION = 'api/v1/migrate/validate';
+export const API_MIGRATE = 'api/v1/migrate';
 
 // instance type json
 export const API_AWS_INSTANCES = 'aws_instances.json';

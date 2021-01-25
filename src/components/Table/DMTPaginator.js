@@ -78,7 +78,7 @@ class DMTPaginator extends Component {
 
   renderFilter() {
     const { showFilter } = this.props;
-    if (showFilter) {
+    if (showFilter === true) {
       return (
         <div className="col-auto">
           <label className="sr-only" htlmFor="datableSearch" />
