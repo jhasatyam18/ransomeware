@@ -8,10 +8,10 @@ function StatusItemRenderer({ data }) {
       <div className="container">
         <div className="row">
           <div className="col-2">
-            <box-icon color="white" name="check" />
+            <box-icon color="green" name="check" />
           </div>
           <div className="col-10">
-            {data.Status}
+            {data.status}
           </div>
         </div>
       </div>

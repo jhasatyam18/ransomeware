@@ -15,3 +15,8 @@ export const DROP_DOWN_ACTION_TYPES = {
   WIZARD: 'WIZARED',
   MODAL: 'MODAL',
 };
+
+export const REPLICATION_JOB_TYPE = {
+  DISK: 'DISK',
+  VM: 'VM',
+};

@@ -44,3 +44,13 @@ export const RECOVERY_JOBS = [
   { label: 'Status', field: 'status' },
   { label: 'Message', field: 'failureMessage' },
 ];
+
+export const REPLICATION_VM_JOBS = [
+  { label: 'Virtual Machine', field: 'vmName' },
+  { label: 'Start Time', field: 'startTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'End Time', field: 'endTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Iteration Number', field: 'iterationNumber' },
+  { label: 'State', field: 'status' },
+  { label: 'Sync Status', field: 'syncStatus' },
+  { label: 'Message', field: 'failureMessage' },
+];

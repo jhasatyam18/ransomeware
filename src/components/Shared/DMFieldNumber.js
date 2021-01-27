@@ -17,7 +17,7 @@ class placeHolderNumber extends Component {
   }
 
   componentDidMount() {
-    const { user, fieldKey, field } = this.props;
+    const { user, fieldKey, field, dispatch } = this.props;
     const { values } = user;
     const { defaultValue } = field;
     const value = getValue(fieldKey, values);
@@ -25,6 +25,7 @@ class placeHolderNumber extends Component {
       this.setState({ value });
     } else {
       this.setState({ value: defaultValue });
+      dispatch(valueChange(fieldKey, defaultValue));
     }
   }
 
