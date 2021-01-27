@@ -1,7 +1,11 @@
-import { addErrorMessage, removeErrorMessage, valueChange } from '../store/actions';
+import { addErrorMessage, hideApplicationLoader, removeErrorMessage, showApplicationLoader, valueChange } from '../store/actions';
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
 import { getValue } from './InputUtils';
 import { MESSAGE_TYPES } from '../constants/MessageConstants';
+import { API_TYPES, callAPI, createPayload } from './ApiUtils';
+import { API_VALIDATE_MIGRATION } from '../constants/ApiConstants';
+import { getRecoveryPayload } from './PayloadUtil';
+import { addMessage } from '../store/actions/MessageActions';
 
 export function isRequired(value) {
   if (!value) {
@@ -102,12 +106,43 @@ export function validateDRPlanProtectData({ user, dispatch }) {
   const { values } = user;
   const vms = getValue('ui.site.seletedVMs', values);
   if (!vms || Object.keys(vms).length === 0) {
-    dispatch(addErrorMessage(MESSAGE_TYPES.ERROR, 'Please select virtual machines.'));
+    dispatch(addMessage('Select virtual machine.', MESSAGE_TYPES.ERROR));
     return false;
   }
   return true;
 }
 
 export function noValidate() {
+  return true;
+}
+
+export async function validateMigrationVMs({ user, dispatch }) {
+  const initialCheckPass = validateDRPlanProtectData({ user, dispatch });
+  if (initialCheckPass) {
+    try {
+      const { values } = user;
+      const vms = getValue('ui.site.seletedVMs', values);
+      if (vms) {
+        const payload = getRecoveryPayload(user);
+        const obj = createPayload(API_TYPES.POST, { ...payload.recovery });
+        dispatch(showApplicationLoader('VALIDATING_MIGRATION_MACHINBES', 'Validating virtual machines.'));
+        const powerOnVMs = await callAPI(API_VALIDATE_MIGRATION, obj);
+        dispatch(hideApplicationLoader('VALIDATING_MIGRATION_MACHINBES'));
+        // TODO : remove this condition post BE FIX
+        if (powerOnVMs === null) {
+          return true;
+        }
+        if (powerOnVMs.length !== 0) {
+          dispatch(addMessage('Make sure all selected virtual machines were powered off and their replication status is in In-Sync state.', MESSAGE_TYPES.ERROR, true));
+          return false;
+        }
+      }
+    } catch (error) {
+      addErrorMessage(error.message, MESSAGE_TYPES.ERROR);
+      return false;
+    }
+  } else {
+    return false;
+  }
   return true;
 }

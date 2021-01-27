@@ -11,13 +11,25 @@ import { MESSAGE_TYPES } from '../constants/MessageConstants';
 class AppMessage extends Component {
   constructor() {
     super();
+    this.onDismiss = this.onDismiss.bind(this);
+  }
+
+  componentDidMount() {
     setTimeout(
       () => {
-        const { msgID, dispatch } = this.props;
-        dispatch(removeMessage(msgID));
+        const { msgID, dispatch, message } = this.props;
+        const { isSticky } = message;
+        if (!isSticky) {
+          dispatch(removeMessage(msgID));
+        }
       },
       10000,
     );
+  }
+
+  onDismiss() {
+    const { msgID, dispatch } = this.props;
+    dispatch(removeMessage(msgID));
   }
 
   getClassName(type) {
@@ -47,7 +59,7 @@ class AppMessage extends Component {
     if (!message || !message.text) { return null; }
     return (
       <div className={`${messageClass}`}>
-        <UncontrolledAlert color={messageClass} role="alert">
+        <UncontrolledAlert color={messageClass} role="alert" toggle={this.onDismiss}>
           {msg}
         </UncontrolledAlert>
       </div>

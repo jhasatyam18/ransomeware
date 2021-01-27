@@ -44,7 +44,6 @@ export function getCreateDRPlanPayload(user, sites) {
   Object.keys(vms).forEach((key) => {
     const vm = vms[key];
     vm.id = 0;
-
     result.drplan.protectedEntities.VirtualMachines.push(vm);
   });
   return result;
@@ -54,7 +53,7 @@ function getFilteredObject(data, keyToMatch, arrayFieldKey) {
   return String(data[arrayFieldKey]) === String(keyToMatch);
 }
 
-export function getRecoveryPayload(user) {
+export function getRecoveryPayload(user, isMigration = false) {
   const { values } = user;
   const vms = getValue('ui.site.seletedVMs', values);
   const result = getKeyStruct('recovery.', values);
@@ -65,5 +64,6 @@ export function getRecoveryPayload(user) {
   });
   result.recovery.vmNames = vmnames;
   result.recovery.protectionplanID = parseInt(`${result.recovery.protectionplanID}`, 10);
+  result.recovery.isMigration = isMigration;
   return result;
 }

@@ -1,3 +1,5 @@
+import { REPLICATION_JOB_TYPE } from './InputConstants';
+
 const INITIAL_STATE = {
   global: {
     loaderKeys: {},
@@ -23,7 +25,7 @@ const INITIAL_STATE = {
     show: false,
     options: { title: '' },
   },
-  jobs: { replication: [], recovery: [] },
+  jobs: { replication: [], recovery: [], replicationType: REPLICATION_JOB_TYPE.VM },
 };
 
 export default INITIAL_STATE;

@@ -4,7 +4,7 @@ import { Modal, Row, Col } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
 import { closeWizard } from '../../store/actions/WizardActions';
 import { clearValues } from '../../store/actions';
-import { DRPLAN_GENERAL_SETTINGS_STEP, DRPLAN_PROTECT_STEP, DRPLAN_RECOVERY_STEP, PROTECTION_PLAN_SUMMARY_STEP, RECOVERY_GENERAL_STEP, RECOVERY_PROTECT_VM_STEP, RECOVERY_SUMMARY } from '../../constants/WizardConstants';
+import { DRPLAN_GENERAL_SETTINGS_STEP, DRPLAN_PROTECT_STEP, DRPLAN_RECOVERY_STEP, PROTECTION_PLAN_SUMMARY_STEP, RECOVERY_GENERAL_STEP, RECOVERY_PROTECT_VM_STEP, RECOVERY_SUMMARY, MIGRATION_GENERAL_STEP } from '../../constants/WizardConstants';
 import Pages404 from '../../pages/Page-404';
 import DRPlanRecoveryConfigStep from './DRPlanRecoveryConfigStep';
 import DRPlanProtectVMStep from './DRPlanProtectVMStep';
@@ -14,6 +14,7 @@ import RecoveryGeneralStep from './RecoveryGeneralStep';
 import RecoveryMachines from './RecoveryMachines';
 import RecoverySummary from './RecoverySummary';
 import ProtectionPlanSummaryStep from './ProtectionPlanSummaryStep';
+import MigrationGeneralStep from './MigrationGeneralStep';
 
 class DMWizard extends React.Component {
   constructor() {
@@ -31,9 +32,17 @@ class DMWizard extends React.Component {
     const { steps } = wizard;
     const { currentStep } = this.state;
     if (!(currentStep >= steps.length - 1)) {
-      const { validate } = steps[currentStep];
-      if (validate(user, dispatch, steps[currentStep].fields)) {
-        this.setState({ currentStep: currentStep + 1 });
+      const { validate, isAync } = steps[currentStep];
+      const isValidated = validate(user, dispatch, steps[currentStep].fields);
+      if (isAync) {
+        isValidated.then((response) => {
+          if (response) {
+            this.setNextStep();
+          }
+        });
+      }
+      if (isValidated && typeof isAync === 'undefined') {
+        this.setNextStep();
       }
     }
   }
@@ -67,6 +76,11 @@ class DMWizard extends React.Component {
     this.setState({ currentStep, wizardSize: (wizardSize === 'xl' ? 'lg' : 'xl') });
   }
 
+  setNextStep() {
+    const { currentStep } = this.state;
+    this.setState({ currentStep: currentStep + 1 });
+  }
+
   getStep(name) {
     switch (name) {
       case DRPLAN_GENERAL_SETTINGS_STEP:
@@ -83,6 +97,8 @@ class DMWizard extends React.Component {
         return <RecoverySummary {...this.props} />;
       case PROTECTION_PLAN_SUMMARY_STEP:
         return <ProtectionPlanSummaryStep {...this.props} />;
+      case MIGRATION_GENERAL_STEP:
+        return <MigrationGeneralStep {...this.props} />;
       default:
         return <Pages404 />;
     }

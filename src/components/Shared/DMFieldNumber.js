@@ -27,6 +27,7 @@ class placeHolderNumber extends Component {
     } else {
       dispatch(valueChange(fieldKey, defaultValue));
       this.setState({ value: defaultValue });
+      dispatch(valueChange(fieldKey, defaultValue));
     }
   }
 

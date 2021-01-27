@@ -13,6 +13,11 @@ export default function jobs(state = INITIAL_STATE.jobs, action) {
         ...state, recovery: action.recovery,
       };
 
+    case Types.CHANGE_REPLICATION_JOB_TYPE:
+      return {
+        ...state, replicationType: action.jobType,
+      };
+
     default:
       return state;
   }

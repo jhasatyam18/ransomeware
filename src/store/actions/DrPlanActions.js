@@ -2,7 +2,7 @@ import { fetchByDelay } from '../../utils/SlowFetch';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import * as Types from '../../constants/actionTypes';
 import {
-  API_FETCH_DR_PLANS, API_START_DR_PLAN, API_STOP_DR_PLAN, API_DELETE_DR_PLAN, API_FETCH_DR_PLAN_BY_ID, API_RECOVER,
+  API_FETCH_DR_PLANS, API_START_DR_PLAN, API_STOP_DR_PLAN, API_DELETE_DR_PLAN, API_FETCH_DR_PLAN_BY_ID, API_RECOVER, API_MIGRATE,
 } from '../../constants/ApiConstants';
 import { addMessage, clearMessages } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
@@ -145,7 +145,7 @@ export function onConfigureDRPlan() {
     const { user, sites } = getState();
     const payload = getCreateDRPlanPayload(user, sites.sites);
     const obj = createPayload(API_TYPES.POST, { ...payload.drplan });
-    dispatch(showApplicationLoader('configuring-new-dr-plan', 'Configuring new Protection plan'));
+    dispatch(showApplicationLoader('configuring-new-dr-plan', 'Configuring new protection plan.'));
     return callAPI(API_FETCH_DR_PLANS, obj).then((json) => {
       dispatch(hideApplicationLoader('configuring-new-dr-plan'));
       if (json.hasError) {
@@ -215,6 +215,30 @@ export function startRecovery() {
     const obj = createPayload(API_TYPES.POST, { ...payload.recovery });
     dispatch(showApplicationLoader('RECOVERY-API-EXECUTION', 'Initiating Recovery'));
     return callAPI(API_RECOVER, obj).then((json) => {
+      dispatch(hideApplicationLoader('RECOVERY-API-EXECUTION'));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        dispatch(closeWizard());
+        dispatch(clearValues());
+        dispatch(addMessage('Recovery Started Successfully', MESSAGE_TYPES.SUCCESS));
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('RECOVERY-API-EXECUTION'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+  };
+}
+
+export function startMigration() {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const values = user;
+    const payload = getRecoveryPayload(values, true);
+    const obj = createPayload(API_TYPES.POST, { ...payload.recovery });
+    dispatch(showApplicationLoader('RECOVERY-API-EXECUTION', 'Initiating Migration'));
+    return callAPI(API_MIGRATE, obj).then((json) => {
       dispatch(hideApplicationLoader('RECOVERY-API-EXECUTION'));
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
