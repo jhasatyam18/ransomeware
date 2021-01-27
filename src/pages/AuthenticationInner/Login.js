@@ -61,7 +61,7 @@ class Login extends Component {
                     <div>
                       <Link to="/">
                         <div className="avatar-md profile-user-wid mb-4">
-                          <span className="avatar-title rounded-circle bg-light">
+                          <span className="avatar-title rounded-circle bg-light logo-position">
                             <img
                               src={logo}
                               alt=""
@@ -101,10 +101,9 @@ class Login extends Component {
                             onChange={this.handleChange}
                           />
                         </div>
-
                         <div className="mt-3">
                           <button
-                            className="btn btn-primary btn-block waves-effect waves-light"
+                            className="btn btn-success btn-block waves-effect waves-light"
                             type="submit"
                             onClick={this.onSubmit}
                           >

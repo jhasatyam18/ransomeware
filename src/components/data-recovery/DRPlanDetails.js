@@ -1,6 +1,7 @@
 import React, { Component, Suspense } from 'react';
 import { Card, Container, CardBody, Row, Col, CardTitle, Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap';
 import classnames from 'classnames';
+import { withTranslation } from 'react-i18next';
 import { deletePlan, fetchDRPlanById, fetchDrPlans, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
 import DMTable from '../Table/DMTable';
 import { TABLE_PROTECT_VM_VMWARE } from '../../constants/TableConstants';
@@ -41,7 +42,7 @@ class DRPlanDetails extends Component {
     }
     const { platformDetails } = site;
     const keys = [{ label: 'Name', field: 'platformName' }, { label: 'Platform Type', field: 'platformType' }, { label: 'Hostname', field: 'hostname' }, { label: 'Port', field: 'port' },
-      { label: 'Region', field: 'region' }, { label: 'Zone', field: 'availZone' }, { label: 'Project ID', field: 'projectId' }, { label: 'Datamotive Server IP', field: 'serverIp' },
+      { label: 'Region', field: 'region' }, { label: 'Zone', field: 'availZone' }, { label: 'Projec  t ID', field: 'projectId' }, { label: 'Datamotive Server IP', field: 'serverIp' },
       { label: 'Datamotive Server Port', field: 'serverPort' }, { label: 'Machine IP', field: 'prepMachineIP' }];
     const fields = keys.map((ele) => {
       const { field, label } = ele;
@@ -104,19 +105,19 @@ class DRPlanDetails extends Component {
   }
 
   renderActions() {
-    const { drPlans, dispatch } = this.props;
+    const { drPlans, dispatch, t } = this.props;
     const { details } = drPlans;
-    const actions = [{ label: 'Start', action: startPlan, id: details.id, disabled: details.status !== REPLICATION_STATUS.STOPPED },
-      { label: 'Stop', action: stopPlan, id: details.id, disabled: details.status === REPLICATION_STATUS.STOPPED },
-      { label: 'Remove', action: deletePlan, id: details.id, type: DROP_DOWN_ACTION_TYPES.MODAL, MODAL_COMPONENT: MODAL_CONFIRMATION_WARNING, options: { title: 'Alert', confirmAction: deletePlan, message: 'Are you sure want to delete  ?', id: details.id } },
-      { label: 'Recover', type: DROP_DOWN_ACTION_TYPES.WIZARD, wizard: RECOVERY_WIZARDS, init: fetchDrPlans, initValue: 'ui.values.drplan' }];
+    const actions = [{ label: 'start', action: startPlan, id: details.id, disabled: details.status !== REPLICATION_STATUS.STOPPED },
+      { label: 'stop', action: stopPlan, id: details.id, disabled: details.status === REPLICATION_STATUS.STOPPED },
+      { label: 'remove', action: deletePlan, id: details.id, type: DROP_DOWN_ACTION_TYPES.MODAL, MODAL_COMPONENT: MODAL_CONFIRMATION_WARNING, options: { title: 'Alert', confirmAction: deletePlan, message: 'Are you sure want to delete  ?', id: details.id } },
+      { label: 'recover', type: DROP_DOWN_ACTION_TYPES.WIZARD, wizard: RECOVERY_WIZARDS, init: fetchDrPlans, initValue: 'ui.values.drplan' }];
     return (
-      <DropdownActions title="Actions" dispatch={dispatch} actions={actions} />
+      <DropdownActions title={t('actions')} dispatch={dispatch} actions={actions} />
     );
   }
 
   render() {
-    const { drPlans, dispatch } = this.props;
+    const { drPlans, dispatch, t } = this.props;
     const { details } = drPlans;
     const { activeTab } = this.state;
     if (!details || Object.keys(details).length === 0) {
@@ -132,7 +133,8 @@ class DRPlanDetails extends Component {
               <Row>
                 <Col sm={8}>
                   <CardTitle className="mb-4 title-color">
-                    Protection Plan : &nbsp;&nbsp;
+                    {t('protection.plan')}
+                    : &nbsp;&nbsp;
                     {name}
                     &nbsp;&nbsp;
                     {this.renderStatus()}
@@ -144,7 +146,7 @@ class DRPlanDetails extends Component {
               </Row>
               <Row>
                 <Col sm={5}>
-                  <CardTitle className="title-color">Protected Site</CardTitle>
+                  <CardTitle className="title-color">{t('protected.site')}</CardTitle>
                   <Card>
                     {this.renderSite(protectedSite)}
                   </Card>
@@ -155,7 +157,7 @@ class DRPlanDetails extends Component {
                   </div>
                 </Col>
                 <Col sm={5}>
-                  <CardTitle className="title-color">Recovery Site</CardTitle>
+                  <CardTitle className="title-color">{t('recovery.site')}</CardTitle>
                   {this.renderSite(recoverySite)}
                 </Col>
               </Row>
@@ -166,22 +168,22 @@ class DRPlanDetails extends Component {
               <Nav tabs className="nav-tabs-custom nav-justified">
                 <NavItem>
                   <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '1' })} onClick={() => { this.toggleTab('1'); }}>
-                    <span className="d-none d-sm-block">Protected Virtual Machines</span>
+                    <span className="d-none d-sm-block">{t('protected.virtual.machines')}</span>
                   </NavLink>
                 </NavItem>
                 <NavItem>
                   <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '2' })} onClick={() => { this.toggleTab('2'); }}>
-                    <span className="d-none d-sm-block">Recovery Configuration</span>
+                    <span className="d-none d-sm-block">{t('recovery.configuration')}</span>
                   </NavLink>
                 </NavItem>
                 <NavItem>
                   <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '3' })} onClick={() => { this.toggleTab('3'); }}>
-                    <span className="d-none d-sm-block">Replications</span>
+                    <span className="d-none d-sm-block">{t('replications')}</span>
                   </NavLink>
                 </NavItem>
                 <NavItem>
                   <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '4' })} onClick={() => { this.toggleTab('4'); }}>
-                    <span className="d-none d-sm-block">Recovery</span>
+                    <span className="d-none d-sm-block">{t('recovery')}</span>
                   </NavLink>
                 </NavItem>
               </Nav>
@@ -230,4 +232,4 @@ class DRPlanDetails extends Component {
     );
   }
 }
-export default DRPlanDetails;
+export default (withTranslation()(DRPlanDetails));

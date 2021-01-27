@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {
   Col, FormFeedback, FormGroup, Input, Label,
 } from 'reactstrap';
+import { withTranslation } from 'react-i18next';
 import { FIELDS, FIELD_TYPE } from '../../constants/FieldsConstant';
 import { validateField } from '../../utils/validationUtils';
 import { getValue } from '../../utils/InputUtils';
@@ -75,7 +76,7 @@ class DMFieldText extends Component {
   }
 
   render() {
-    const { field, fieldKey, user } = this.props;
+    const { field, fieldKey, user, t } = this.props;
     const { label, shouldShow } = field;
     const { errors } = user;
     const { value, type } = this.state;
@@ -87,7 +88,7 @@ class DMFieldText extends Component {
       <>
         <FormGroup className="row mb-4 form-group">
           <Label for={fieldKey} className="col-sm-3 col-form-Label">
-            {label}
+            {t(label)}
           </Label>
           <Col sm={9}>
             <Input
@@ -113,4 +114,4 @@ const propTypes = {
 };
 DMFieldText.propTypes = propTypes;
 
-export default DMFieldText;
+export default (withTranslation()(DMFieldText));

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {
   Card, CardBody, CardTitle, Container,
 } from 'reactstrap';
+import { withTranslation } from 'react-i18next';
 import { fetchSites } from '../../../store/actions/SiteActions';
 import SitesTable from './SitesTable';
 
@@ -14,7 +15,7 @@ class Sites extends Component {
   }
 
   render() {
-    const { sites, dispatch, user } = this.props;
+    const { sites, dispatch, user, t } = this.props;
 
     return (
       <>
@@ -22,7 +23,7 @@ class Sites extends Component {
           <Container fluid>
             <Card>
               <CardBody>
-                <CardTitle className="mb-4">Sites</CardTitle>
+                <CardTitle className="mb-4">{t('sites')}</CardTitle>
                 <SitesTable user={user} sites={sites} dispatch={dispatch} />
               </CardBody>
             </Card>
@@ -41,4 +42,4 @@ const propTypes = {
 };
 Sites.propTypes = propTypes;
 
-export default Sites;
+export default (withTranslation()(Sites));

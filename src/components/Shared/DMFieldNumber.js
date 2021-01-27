@@ -4,6 +4,7 @@ import {
   Col, FormFeedback, FormGroup, Input, Label,
 } from 'reactstrap';
 import { isNumber } from 'lodash';
+import { withTranslation } from 'react-i18next';
 import { valueChange } from '../../store/actions/UserActions';
 import { FIELDS } from '../../constants/FieldsConstant';
 import { validateField } from '../../utils/validationUtils';
@@ -24,6 +25,7 @@ class placeHolderNumber extends Component {
     if (value && isNumber(value)) {
       this.setState({ value });
     } else {
+      dispatch(valueChange(fieldKey, defaultValue));
       this.setState({ value: defaultValue });
       dispatch(valueChange(fieldKey, defaultValue));
     }
@@ -62,7 +64,7 @@ class placeHolderNumber extends Component {
   }
 
   render() {
-    const { field, fieldKey, user } = this.props;
+    const { field, fieldKey, user, t } = this.props;
     const { label, shouldShow, min, max } = field;
     const { errors } = user;
     const { value } = this.state;
@@ -73,7 +75,7 @@ class placeHolderNumber extends Component {
       <>
         <FormGroup className="row mb-4 form-group">
           <Label for={fieldKey} className="col-sm-3 col-form-Label">
-            {label}
+            {t(label)}
           </Label>
           <Col sm={9}>
             <Input
@@ -100,4 +102,4 @@ const propTypes = {
 };
 placeHolderNumber.propTypes = propTypes;
 
-export default placeHolderNumber;
+export default (withTranslation()(placeHolderNumber));

@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 
 // MetisMenu
 import MetisMenu from 'metismenujs';
-import { withRouter, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 // i18n
 import { withTranslation } from 'react-i18next';
@@ -89,25 +89,25 @@ class SidebarContent extends Component {
             <li>
               <Link to={DASHBOARD_PATH} className="waves-effect" style={{ color: this.isActive(DASHBOARD_PATH) }}>
                 <i className="fa fa-desktop fa-s-lg" style={{ fontSize: 16, color: this.isActive(DASHBOARD_PATH) }} />
-                <span>Dashboard</span>
+                <span>{t('dashboard')}</span>
               </Link>
             </li>
             <li>
               <Link to="/#" className="has-arrow waves-effect">
                 <i className="fa fa-cog fa-s-lg" />
-                <span>{t('Configure')}</span>
+                <span>{t('configure')}</span>
               </Link>
               <ul className="sub-menu" aria-expanded="false">
                 <li>
                   <Link to={SITES_PATH} style={{ color: this.isActive(SITES_PATH) }}>
                     <i className="bx bx-cloud" style={{ color: this.isActive(SITES_PATH) }} />
-                    {t('Sites')}
+                    {t('sites')}
                   </Link>
                 </li>
                 <li>
                   <Link to={PROTECTION_PLANS_PATH} className="waves-effect" style={{ color: this.isActive(PROTECTION_PLANS_PATH) }}>
                     <i className="bx bx-layer" style={{ color: this.isActive(PROTECTION_PLANS_PATH) }} />
-                    <span>Protection Plans</span>
+                    <span>{t('protection.plans')}</span>
                   </Link>
                 </li>
               </ul>
@@ -115,7 +115,7 @@ class SidebarContent extends Component {
             <li>
               <Link to={JOBS} className="waves-effect" style={{ color: this.isActive(JOBS) }}>
                 <i className="fa fa-tasks" style={{ fontSize: 16, color: this.isActive(JOBS) }} />
-                <span>Jobs</span>
+                <span>{t('jobs')}</span>
               </Link>
             </li>
           </ul>
@@ -130,4 +130,4 @@ SidebarContent.propTypes = {
   type: PropTypes.string,
 };
 
-export default withRouter(withTranslation()(SidebarContent));
+export default (withTranslation()(SidebarContent));

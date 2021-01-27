@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withTranslation } from 'react-i18next';
 import { Container, Card, Row, Col, CardBody, Media } from 'reactstrap';
 import BandwidthChart from './BandwidthChart';
 
@@ -7,9 +8,9 @@ class Dashboard extends Component {
     super();
     this.state = {
       reports: [
-        { title: 'Configured Sites', icon: 'cloud', description: '3' },
-        { title: 'Active Protection Plans', icon: 'layer', description: '2' },
-        { title: 'Protected Virtual Machines', icon: 'desktop', description: '20' },
+        { title: 'configured.sites', icon: 'cloud', description: '3' },
+        { title: 'active.protection.plans', icon: 'layer', description: '2' },
+        { title: 'protected.virtual.machines', icon: 'desktop', description: '20' },
       ],
       status: [
         { title: 'Alert', icon: 'error-alt', description: '0' },
@@ -22,6 +23,7 @@ class Dashboard extends Component {
 
   render() {
     const { reports, status } = this.state;
+    const { t } = this.props;
     return (
       <>
         <Container fluid>
@@ -35,7 +37,7 @@ class Dashboard extends Component {
                         <Media>
                           <Media body>
                             <p className="text-muted font-weight-medium">
-                              {report.title}
+                              {t(report.title)}
                             </p>
                             <h4 className="mb-0">{report.description}</h4>
                           </Media>
@@ -88,4 +90,4 @@ class Dashboard extends Component {
   }
 }
 
-export default Dashboard;
+export default (withTranslation()(Dashboard));
