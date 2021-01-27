@@ -5,12 +5,13 @@ import {
   DropdownMenu,
   DropdownItem,
 } from 'reactstrap';
+import { withTranslation } from 'react-i18next';
 import { openWizard } from '../../store/actions/WizardActions';
 import { DROP_DOWN_ACTION_TYPES } from '../../constants/InputConstants';
 import { openModal } from '../../store/actions/ModalActions';
 
 const DropdownActions = (props) => {
-  const { actions, dispatch } = props;
+  const { actions, dispatch, t } = props;
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const toggle = () => setDropdownOpen((prevState) => !prevState);
   const { title } = props;
@@ -48,7 +49,7 @@ const DropdownActions = (props) => {
             const { label, disabled } = item;
             return (
               <DropdownItem right onClick={() => onActionClick(item)} disabled={disabled}>
-                {label}
+                {t(label)}
               </DropdownItem>
             );
           })}
@@ -57,4 +58,4 @@ const DropdownActions = (props) => {
     </div>
   );
 };
-export default DropdownActions;
+export default (withTranslation()(DropdownActions));

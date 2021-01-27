@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { withTranslation } from 'react-i18next';
 import {
   drPlanStopStart, startPlan, stopPlan, deletePlan, fetchDrPlans,
 } from '../../store/actions/DrPlanActions';
@@ -58,29 +59,30 @@ class DRPlanActionBar extends Component {
   }
 
   render() {
+    const { t } = this.props;
     return (
       <>
         <div className="btn-toolbar padding-left-20" role="toolbar" aria-label="Toolbar with button groups">
           <div className="btn-group mr-2" role="group" aria-label="dr_plan_action group">
             <button type="button" className="btn btn-hover" color="secondary" onClick={this.onCreate}>
               <i className="bx bx-plus" />
-              New Plan
+              {t('new.plan')}
             </button>
             <button type="button" className="btn btn-hover" color="secondary" onClick={this.onDelete}>
               <i className="bx bx-trash" />
-              Remove
+              {t('remove')}
             </button>
             <button type="button" className="btn btn-hover" color="secondary" onClick={() => { this.planAction(startPlan); }}>
               <i className="bx bx-play-circle" />
-              Start
+              {t('start')}
             </button>
             <button type="button" className="btn btn-hover" color="secondary" onClick={() => { this.planAction(stopPlan); }}>
               <i className="bx bx-stop-circle" />
-              Stop
+              {t('stop')}
             </button>
             <button type="button" className="btn btn-hover" color="secondary" onClick={this.onInitiateRecovery}>
               <i className="bx bx-stop-circle" />
-              Recovery
+              {t('recovery')}
             </button>
           </div>
         </div>
@@ -93,4 +95,4 @@ const propTypes = {
   selectedPlans: PropTypes.any.isRequired,
 };
 DRPlanActionBar.propTypes = propTypes;
-export default DRPlanActionBar;
+export default (withTranslation()(DRPlanActionBar));

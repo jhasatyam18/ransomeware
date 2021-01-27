@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {
   Card, CardBody, CardTitle, Container, Row, Col,
 } from 'reactstrap';
+import { withTranslation } from 'react-i18next';
 import DMTable from '../Table/DMTable';
 import { fetchDrPlans, handleDrPlanTableSelection } from '../../store/actions/DrPlanActions';
 import { TABLE_HEADER_DR_PLANS } from '../../constants/TableConstants';
@@ -15,7 +16,7 @@ class DRPlans extends Component {
   }
 
   render() {
-    const { drPlans, dispatch } = this.props;
+    const { drPlans, dispatch, t } = this.props;
     if (!drPlans && !drPlans.plans) { return null; }
     const data = (drPlans && drPlans.plans ? drPlans.plans : []);
     const { selectedPlans } = drPlans;
@@ -24,7 +25,7 @@ class DRPlans extends Component {
         <Container fluid>
           <Card>
             <CardBody>
-              <CardTitle className="mb-4">Recovery Plans</CardTitle>
+              <CardTitle className="mb-4">{t('recovery.plans')}</CardTitle>
               <Row>
                 <Col>
                   <DRPlanActionBar dispatch={dispatch} selectedPlans={selectedPlans} />
@@ -54,4 +55,4 @@ const propTypes = {
 };
 DRPlans.propTypes = propTypes;
 
-export default DRPlans;
+export default (withTranslation()(DRPlans));

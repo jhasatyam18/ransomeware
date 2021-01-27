@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {
   Col, FormFeedback, FormGroup, Input, Label,
 } from 'reactstrap';
+import { withTranslation } from 'react-i18next';
 import { FIELDS } from '../../constants/FieldsConstant';
 import { getValue } from '../../utils/InputUtils';
 import { valueChange } from '../../store/actions/UserActions';
@@ -81,7 +82,7 @@ class DMFieldSelect extends Component {
   }
 
   render() {
-    const { field, fieldKey, user } = this.props;
+    const { field, fieldKey, user, t } = this.props;
     const { label, shouldShow } = field;
     const { value } = this.state;
     const { errors } = user;
@@ -93,7 +94,7 @@ class DMFieldSelect extends Component {
       <>
         <FormGroup className="row mb-4 form-group">
           <Label for="horizontal-firstname-Input" className="col-sm-3 col-form-Label">
-            {label}
+            {t(label)}
           </Label>
           <Col sm={9}>
             <Input type="select" id={fieldKey} onSelect={this.handleChange} className="form-control form-control-sm custom-select" onChange={this.handleChange} value={value} invalid={hasErrors}>
@@ -112,4 +113,4 @@ const propTypes = {
 };
 DMFieldSelect.propTypes = propTypes;
 
-export default DMFieldSelect;
+export default (withTranslation()(DMFieldSelect));

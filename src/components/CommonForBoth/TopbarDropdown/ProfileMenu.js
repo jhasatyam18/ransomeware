@@ -6,7 +6,7 @@ import {
   DropdownMenu,
   DropdownItem,
 } from 'reactstrap';
-import { withRouter, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 // i18n
 import { withTranslation } from 'react-i18next';
@@ -59,12 +59,12 @@ class ProfileMenu extends Component {
           <DropdownMenu right>
             <DropdownItem tag="a" href="/profile">
               <i className="bx bx-user font-size-16 align-middle mr-1" />
-              {t('Profile')}
+              {t('profile')}
             </DropdownItem>
             <div className="dropdown-divider" />
             <Link to="/logout" className="dropdown-item" onClick={this.logout}>
               <i className="bx bx-power-off font-size-16 align-middle mr-1 text-danger" />
-              <span>{t('Logout')}</span>
+              <span>{t('logout')}</span>
             </Link>
           </DropdownMenu>
         </Dropdown>
@@ -77,4 +77,4 @@ ProfileMenu.propTypes = {
   t: PropTypes.any,
 };
 
-export default withRouter(withTranslation()(ProfileMenu));
+export default (withTranslation()(ProfileMenu));

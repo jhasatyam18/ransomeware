@@ -12,52 +12,52 @@ export const FIELD_TYPE = {
 export const FIELDS = {
   // CONFIGURE SITE FIELDS
   'configureSite.siteType': {
-    label: 'Site Type', placeHolderText: 'Select Site', type: FIELD_TYPE.SELECT, options: [{ label: 'Protect', value: 'Protect' }, { label: 'Recovery', value: 'Recovery' }], validate: (value, user) => isEmpty(value, user), errorMessage: 'Select site type', shouldShow: true,
+    label: 'site.type', placeHolderText: 'Select Site', type: FIELD_TYPE.SELECT, options: [{ label: 'protect', value: 'Protect' }, { label: 'recovery', value: 'Recovery' }], validate: (value, user) => isEmpty(value, user), errorMessage: 'Select site type', shouldShow: true,
   },
   'configureSite.platformDetails.platformType': {
-    label: 'Platform Type', description: 'Select Platform Type', type: FIELD_TYPE.SELECT, options: [{ label: 'VMware', value: 'VMware' }, { label: 'AWS', value: 'AWS' }, { label: 'GCP', value: 'GCP' }], validate: (value, user) => isEmpty(value, user), errorMessage: 'Select Platform Type', shouldShow: true, onChange: (user, dispatch) => onPlatformTypeChange(user, dispatch),
+    label: 'platform.type', description: 'Select Platform Type', type: FIELD_TYPE.SELECT, options: [{ label: 'vmware', value: 'VMware' }, { label: 'aws', value: 'AWS' }, { label: 'gcp', value: 'GCP' }], validate: (value, user) => isEmpty(value, user), errorMessage: 'Select Platform Type', shouldShow: true, onChange: (user, dispatch) => onPlatformTypeChange(user, dispatch),
   },
   'configureSite.platformDetails.platformName': {
-    label: 'Platform Name', description: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Platform name required', shouldShow: true,
+    label: 'platform.name', description: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Platform name required', shouldShow: true,
   },
   'configureSite.Description': {
-    label: 'Description', description: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Site Description Required', shouldShow: true,
+    label: 'description', description: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Site Description Required', shouldShow: true,
   },
   'configureSite.platformDetails.hostname': {
-    label: 'vCenter Server IP', description: '', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], errorMessage: 'Enter valid IP address', shouldShow: (user) => isPlatformTypeVMware(user),
+    label: 'vCenter.server.IP', description: '', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], errorMessage: 'Enter valid IP address', shouldShow: (user) => isPlatformTypeVMware(user),
   },
   'configureSite.platformDetails.port': {
-    label: 'Port', description: '', defaultValue: 443, min: 1, max: 65536, type: FIELD_TYPE.NUMBER, errorMessage: 'Port value required, if different.', shouldShow: (user) => isPlatformTypeVMware(user),
+    label: 'port', description: '', defaultValue: 443, min: 1, max: 65536, type: FIELD_TYPE.NUMBER, errorMessage: 'Port value required, if different.', shouldShow: (user) => isPlatformTypeVMware(user),
   },
   'configureSite.platformDetails.username': {
-    label: 'Username', description: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Username required', shouldShow: (user) => isPlatformTypeVMware(user),
+    label: 'username', description: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Username required', shouldShow: (user) => isPlatformTypeVMware(user),
   },
   'configureSite.platformDetails.password': {
-    label: 'Password', description: '', type: FIELD_TYPE.PASSOWRD, validate: (value, user) => isEmpty(value, user), errorMessage: 'Password required', shouldShow: (user) => isPlatformTypeVMware(user),
+    label: 'password', description: '', type: FIELD_TYPE.PASSOWRD, validate: (value, user) => isEmpty(value, user), errorMessage: 'Password required', shouldShow: (user) => isPlatformTypeVMware(user),
   },
   'configureSite.platformDetails.region': {
-    label: 'Region', description: '', type: FIELD_TYPE.SELECT, errorMessage: 'Region required', shouldShow: (user) => isPlatformTypeAWS(user), options: (user) => getRegionOptions(user),
+    label: 'region', description: '', type: FIELD_TYPE.SELECT, errorMessage: 'Region required', shouldShow: (user) => isPlatformTypeAWS(user), options: (user) => getRegionOptions(user),
   },
   'configureSite.platformDetails.availZone': {
-    label: 'Zone', description: '', type: FIELD_TYPE.SELECT, patterns: [HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX], errorMessage: 'Zone required', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user), options: (user) => getAvailibilityZoneOptions(user),
+    label: 'zone', description: '', type: FIELD_TYPE.SELECT, patterns: [HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX], errorMessage: 'Zone required', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user), options: (user) => getAvailibilityZoneOptions(user),
   },
   'configureSite.platformDetails.secretKey': {
-    label: 'Secret Key', description: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), shouldShow: (user) => isPlatformTypeAWS(user),
+    label: 'secret.key', description: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), shouldShow: (user) => isPlatformTypeAWS(user),
   },
   'configureSite.platformDetails.accessKey': {
-    label: 'Access Key', description: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Access Key is required', shouldShow: (user) => isPlatformTypeAWS(user),
+    label: 'access.key', description: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Access Key is required', shouldShow: (user) => isPlatformTypeAWS(user),
   },
   'configureSite.platformDetails.projectId': {
-    label: 'Project ID', description: '', type: FIELD_TYPE.TEXT, patterns: [HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX], errorMessage: 'Project ID is required', shouldShow: (user) => isPlatformTypeGCP(user),
+    label: 'project.ID', description: '', type: FIELD_TYPE.TEXT, patterns: [HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX], errorMessage: 'Project ID is required', shouldShow: (user) => isPlatformTypeGCP(user),
   },
   'configureSite.platformDetails.serverIp': {
-    label: 'Datamotive Server IP', description: '', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], errorMessage: 'Enter valid IP address', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
+    label: 'datamotive.server.IP', description: '', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], errorMessage: 'Enter valid IP address', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
   },
   'configureSite.platformDetails.serverPort': {
-    label: 'Server Port', description: '', defaultValue: 5000, min: 1, max: 65536, type: FIELD_TYPE.NUMBER, errorMessage: 'Server Port is required, if different.', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
+    label: 'server.port', description: '', defaultValue: 5000, min: 1, max: 65536, type: FIELD_TYPE.NUMBER, errorMessage: 'Server Port is required, if different.', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
   },
   'configureSite.platformDetails.prepMachineIP': {
-    label: 'Preparation Machine IP', description: '', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], errorMessage: 'Enter valid Machine IP address', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
+    label: 'preparation.machine.IP', description: '', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], errorMessage: 'Enter valid Machine IP address', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
   },
 
   'TEST.site.platformName': {
@@ -65,44 +65,44 @@ export const FIELDS = {
   },
 
   'drplan.name': {
-    label: 'Name', description: 'Disaster recovery plan name', type: FIELD_TYPE.TEXT, errorMessage: 'Required disaster recovery plan name', shouldShow: true, validate: (value, user) => isEmpty(value, user),
+    label: 'name', description: 'Disaster recovery plan name', type: FIELD_TYPE.TEXT, errorMessage: 'Required disaster recovery plan name', shouldShow: true, validate: (value, user) => isEmpty(value, user),
   },
   'drplan.replicationInterval': {
-    label: 'Replication Interval (Minutes)', description: 'Replication Interval', type: FIELD_TYPE.NUMBER, errorMessage: 'Replication Interval Rquired', shouldShow: true, defaultValue: 10,
+    label: 'replication.interval.(minutes)', description: 'Replication Interval', type: FIELD_TYPE.NUMBER, errorMessage: 'Replication Interval Rquired', shouldShow: true, defaultValue: 10,
   },
   'drplan.retryCount': {
-    label: 'Retry Count', description: 'Retry Count', type: FIELD_TYPE.NUMBER, errorMessage: 'Retry Count', shouldShow: true,
+    label: 'retry.count', description: 'Retry Count', type: FIELD_TYPE.NUMBER, errorMessage: 'Retry Count', shouldShow: true,
   },
   'drplan.failureActions': {
-    label: 'Failure Actions', description: 'Failure Actions', type: FIELD_TYPE.TEXT, errorMessage: 'Failure Actions', shouldShow: true, validate: (value, user) => isEmpty(value, user),
+    label: 'failure.actions', description: 'Failure Actions', type: FIELD_TYPE.TEXT, errorMessage: 'Failure Actions', shouldShow: true, validate: (value, user) => isEmpty(value, user),
   },
   'drplan.throttleTime': {
-    label: 'Throttle Time', description: 'Failure Actions', type: FIELD_TYPE.TEXT, errorMessage: 'Failure Actions', shouldShow: true, validate: (value, user) => isEmpty(value, user),
+    label: 'throttle.time', description: 'Failure Actions', type: FIELD_TYPE.TEXT, errorMessage: 'Failure Actions', shouldShow: true, validate: (value, user) => isEmpty(value, user),
   },
   'drplan.throttleBandwidth': {
-    label: 'Throttle Bandwidth', description: 'Retry Count', type: FIELD_TYPE.NUMBER, errorMessage: 'Retry Count', shouldShow: true,
+    label: 'throttle.bandwidth', description: 'Retry Count', type: FIELD_TYPE.NUMBER, errorMessage: 'Retry Count', shouldShow: true,
   },
   'drplan.protectedSite': {
-    label: 'Protect Site', placeHolderText: 'Protect Site', type: FIELD_TYPE.SELECT, options: (user) => getSitesOptions(user), errorMessage: 'Select site', shouldShow: true, validate: (user) => validateDrSiteSelection(user), onChange: (user, dispatch) => onProtectSiteChange(user, dispatch),
+    label: 'protect.site', placeHolderText: 'Protect Site', type: FIELD_TYPE.SELECT, options: (user) => getSitesOptions(user), errorMessage: 'Select site', shouldShow: true, validate: (user) => validateDrSiteSelection(user), onChange: (user, dispatch) => onProtectSiteChange(user, dispatch),
   },
   'drplan.recoverySite': {
-    label: 'Recovery Site', placeHolderText: 'Recovery Site', type: FIELD_TYPE.SELECT, options: (user) => getSitesOptions(user), errorMessage: 'Select recovery site. Recovery can protect sites can not be same.', shouldShow: true, validate: (user) => validateDrSiteSelection(user), onChange: (user, dispatch) => onRecoverSiteChange(user, dispatch),
+    label: 'recovery.site', placeHolderText: 'Recovery Site', type: FIELD_TYPE.SELECT, options: (user) => getSitesOptions(user), errorMessage: 'Select recovery site. Recovery can protect sites can not be same.', shouldShow: true, validate: (user) => validateDrSiteSelection(user), onChange: (user, dispatch) => onRecoverSiteChange(user, dispatch),
   },
   'drplan.recoveryEntities.name': { label: '', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: null, errorMessage: '', shouldShow: false },
   'drplan.recoveryEntities.networkConfig': { label: '', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: null, errorMessage: '', shouldShow: false },
   'drplan.recoveryEntities.preScript': { label: '', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: null, errorMessage: '', shouldShow: false },
   'drplan.recoveryEntities.postScript': { label: '', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: null, errorMessage: '', shouldShow: false },
 
-  'drplan.recoveryEntities.instanceDetails.amiID': { label: 'AMI ID', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'AMI ID required', shouldShow: true },
-  'drplan.recoveryEntities.instanceDetails.instanceType': { label: 'Instance Type', placeHolderText: '', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Instance Type required', shouldShow: true, options: (user) => getInstanceTypeOptions(user) },
-  'drplan.recoveryEntities.instanceDetails.availabilityZone': { label: 'Availability Zone', placeHolderText: '', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Availability Zone required', shouldShow: true, options: (user) => getAvailibilityZoneOptions(user) },
-  'drplan.recoveryEntities.instanceDetails.volumeType': { label: 'Volume Type', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Volume Type required', shouldShow: true },
+  'drplan.recoveryEntities.instanceDetails.amiID': { label: 'ami.ID', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'AMI ID required', shouldShow: true },
+  'drplan.recoveryEntities.instanceDetails.instanceType': { label: 'instance.type', placeHolderText: '', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Instance Type required', shouldShow: true, options: (user) => getInstanceTypeOptions(user) },
+  'drplan.recoveryEntities.instanceDetails.availabilityZone': { label: 'availability.zone', placeHolderText: '', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Availability Zone required', shouldShow: true, options: (user) => getAvailibilityZoneOptions(user) },
+  'drplan.recoveryEntities.instanceDetails.volumeType': { label: 'volume.type', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Volume Type required', shouldShow: true },
 
   'drplan.protectedEntities.Name': { label: '', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: null, errorMessage: '', shouldShow: false },
 
-  'recovery.protectionplanID': { label: 'Protection Plan', placeHolderText: '', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (user) => getDRPlanOptions(user), onChange: (user, dispatch) => onProtectionPlanChange(user, dispatch) },
-  'recovery.dryrun': { label: 'Dry Run', placeHolderText: '', type: FIELD_TYPE.CHECKBOX, validate: null, errorMessage: '', shouldShow: true, defaultValue: true },
-  'recovery.winUser': { label: 'Machine Username', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: null, errorMessage: '', shouldShow: true },
-  'recovery.winPassword': { label: 'Machine Password', placeHolderText: '', type: FIELD_TYPE.PASSOWRD, validate: null, errorMessage: '', shouldShow: true },
+  'recovery.protectionplanID': { label: 'protection.plan', placeHolderText: '', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (user) => getDRPlanOptions(user), onChange: (user, dispatch) => onProtectionPlanChange(user, dispatch) },
+  'recovery.dryrun': { label: 'dry.run', placeHolderText: '', type: FIELD_TYPE.CHECKBOX, validate: null, errorMessage: '', shouldShow: true, defaultValue: true },
+  'recovery.winUser': { label: 'machine.username', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: null, errorMessage: '', shouldShow: true },
+  'recovery.winPassword': { label: 'machine.password', placeHolderText: '', type: FIELD_TYPE.PASSOWRD, validate: null, errorMessage: '', shouldShow: true },
   'recovery.vmNames': { label: '', placeHolderText: '', type: FIELD_TYPE.PASSOWRD, validate: null, errorMessage: '', shouldShow: false },
 };

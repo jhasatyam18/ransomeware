@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {
   Col, FormGroup, Label,
 } from 'reactstrap';
+import { withTranslation } from 'react-i18next';
 import { getValue } from '../../utils/InputUtils';
 import { valueChange } from '../../store/actions';
 
@@ -28,7 +29,7 @@ class DMFieldCheckbox extends Component {
   }
 
   render() {
-    const { field, fieldKey, user } = this.props;
+    const { field, fieldKey, user, t } = this.props;
     const { label, shouldShow } = field;
     const { value } = this.state;
     const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
@@ -38,7 +39,7 @@ class DMFieldCheckbox extends Component {
       <>
         <FormGroup className="row mb-4 form-group">
           <Label for={fieldKey} className="col-sm-3 col-form-Label">
-            {label}
+            {t(label)}
           </Label>
           <Col sm={9}>
             <form>
@@ -58,4 +59,4 @@ const propTypes = {
 };
 DMFieldCheckbox.propTypes = propTypes;
 
-export default DMFieldCheckbox;
+export default (withTranslation()(DMFieldCheckbox));

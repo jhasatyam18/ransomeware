@@ -6,16 +6,18 @@ import {
 import {
   Table, Thead, Tr, Th, Tbody, Td,
 } from 'react-super-responsive-table';
+import { withTranslation } from 'react-i18next';
 import SimpleBar from 'simplebar-react';
 import DMTableRow from './DMTableRows';
 
 class DMTable extends Component {
   renderHeaderLables(columns) {
+    const { t } = this.props;
     return columns
       .map((col) => (
         <Th key={col.lable}>
           {' '}
-          {col.label}
+          {t(col.label)}
           {' '}
         </Th>
       ));
@@ -102,4 +104,4 @@ const propTypes = {
 
 DMTable.propTypes = propTypes;
 
-export default DMTable;
+export default (withTranslation()(DMTable));

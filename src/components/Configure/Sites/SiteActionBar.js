@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { withTranslation } from 'react-i18next';
 import { openModal } from '../../../store/actions/ModalActions';
 import { MODAL_CONFIGURE_NEW_SITE, MODAL_CONFIRMATION_WARNING } from '../../../constants/Modalconstant';
 import { clearValues, valueChange } from '../../../store/actions';
@@ -57,21 +58,22 @@ class SiteActionBar extends Component {
   }
 
   render() {
+    const { t } = this.props;
     return (
       <>
         <div className="btn-toolbar padding-left-20" role="toolbar" aria-label="Toolbar with button groups">
           <div className="btn-group mr-2" role="group" aria-label="First group">
             <button className="btn btn-hover" color="secondary" type="button" onClick={this.createSite}>
               <i className="bx bx-plus" />
-              New Site
+              {t('new.site')}
             </button>
             <button className="btn btn-hover" color="secondary" type="button" onClick={this.deleteSelectedSites} disabled={this.shouldShowAction(false)}>
               <i className="bx bx-trash" />
-              Remove
+              {t('remove')}
             </button>
             <button className="btn btn-hover" color="secondary" type="button" onClick={this.reconfigureSite} disabled={this.shouldShowAction(true)}>
               <i className="bx bxs-edit" />
-              Reconfigure
+              {t('reconfigure')}
             </button>
           </div>
         </div>
@@ -84,4 +86,4 @@ const propTypes = {
   selectedSites: PropTypes.any.isRequired,
 };
 SiteActionBar.propTypes = propTypes;
-export default SiteActionBar;
+export default (withTranslation()(SiteActionBar));

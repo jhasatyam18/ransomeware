@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardTitle, Col, Row } from 'reactstrap';
 import { getValue } from '../../utils/InputUtils';
 
 class ProtectionPlanSummaryStep extends Component {
   render() {
-    const { user } = this.props;
+    const { user, t } = this.props;
     const { values } = user;
     const name = getValue('drplan.name', values);
     const pSite = getValue('drplan.protectedSite', values);
@@ -24,7 +25,7 @@ class ProtectionPlanSummaryStep extends Component {
     return (
       <>
         <Card className="padding-20">
-          <CardTitle>Summary</CardTitle>
+          <CardTitle>{t('summary')}</CardTitle>
           <CardBody>
             <Row>
               <Col sm={12}>
@@ -70,4 +71,4 @@ class ProtectionPlanSummaryStep extends Component {
   }
 }
 
-export default ProtectionPlanSummaryStep;
+export default (withTranslation()(ProtectionPlanSummaryStep));

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col } from 'reactstrap';
 
@@ -6,6 +7,7 @@ import { Container, Row, Col } from 'reactstrap';
 
 class Pages404 extends Component {
   render() {
+    const { t } = this.props;
     return (
       <>
         <div className="account-pages my-5 pt-5">
@@ -18,13 +20,13 @@ class Pages404 extends Component {
                     0
                     4
                   </h1>
-                  <h4 className="text-uppercase">Sorry, page not found</h4>
+                  <h4 className="text-uppercase">{t('sorry.page.not.found')}</h4>
                   <div className="mt-5 text-center">
                     <Link
                       className="btn btn-primary waves-effect waves-light"
                       to="/dashboard"
                     >
-                      Back to Dashboard
+                      {t('back.to.dashboard')}
                     </Link>
                   </div>
                 </div>
@@ -37,4 +39,4 @@ class Pages404 extends Component {
   }
 }
 
-export default Pages404;
+export default (withTranslation()(Pages404));
