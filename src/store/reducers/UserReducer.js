@@ -19,6 +19,10 @@ export default function user(state = INITIAL_STATE.user, action) {
       return {
         ...state, isValidating: false, isAuthenticated: false, token: '',
       };
+    case Types.APP_TYPE:
+      return {
+        ...state, appType: action.appType,
+      };
     case Types.VALUE_CHANGE:
       return {
         ...state,

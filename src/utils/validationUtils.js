@@ -128,14 +128,11 @@ export async function validateMigrationVMs({ user, dispatch }) {
         dispatch(showApplicationLoader('VALIDATING_MIGRATION_MACHINBES', 'Validating virtual machines.'));
         const powerOnVMs = await callAPI(API_VALIDATE_MIGRATION, obj);
         dispatch(hideApplicationLoader('VALIDATING_MIGRATION_MACHINBES'));
-        // TODO : remove this condition post BE FIX
-        if (powerOnVMs === null) {
+        if (powerOnVMs.vms === null) {
           return true;
         }
-        if (powerOnVMs.length !== 0) {
-          dispatch(addMessage('Make sure all selected virtual machines were powered off and their replication status is in In-Sync state.', MESSAGE_TYPES.ERROR, true));
-          return false;
-        }
+        dispatch(addMessage('Make sure all selected virtual machines were powered off and their replication status is in In-Sync state.', MESSAGE_TYPES.ERROR, true));
+        return false;
       }
     } catch (error) {
       addErrorMessage(error.message, MESSAGE_TYPES.ERROR);

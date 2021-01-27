@@ -20,3 +20,7 @@ export const REPLICATION_JOB_TYPE = {
   DISK: 'DISK',
   VM: 'VM',
 };
+
+export const APP_TYPE = {
+  CLIENT: 'CLIENT', SERVER: 'SERVER',
+};

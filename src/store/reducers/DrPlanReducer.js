@@ -5,7 +5,7 @@ export default function drPlans(state = INITIAL_STATE.drPlans, action) {
   switch (action.type) {
     case Types.FETCH_DR_PALNS:
       return {
-        selectedPlans: [],
+        ...state,
         plans: action.plans,
       };
     case Types.UPDATE_SELECTED_DR_PLAN:

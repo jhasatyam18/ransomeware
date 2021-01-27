@@ -16,7 +16,7 @@ class DRPlans extends Component {
   }
 
   render() {
-    const { drPlans, dispatch, t } = this.props;
+    const { drPlans, dispatch, t, user } = this.props;
     if (!drPlans && !drPlans.plans) { return null; }
     const data = (drPlans && drPlans.plans ? drPlans.plans : []);
     const { selectedPlans } = drPlans;
@@ -25,10 +25,10 @@ class DRPlans extends Component {
         <Container fluid>
           <Card>
             <CardBody>
-              <CardTitle className="mb-4">{t('recovery.plans')}</CardTitle>
+              <CardTitle className="mb-4">{t('protection.plans')}</CardTitle>
               <Row>
                 <Col>
-                  <DRPlanActionBar dispatch={dispatch} selectedPlans={selectedPlans} />
+                  <DRPlanActionBar dispatch={dispatch} selectedPlans={selectedPlans} user={user} />
                 </Col>
               </Row>
               <DMTable

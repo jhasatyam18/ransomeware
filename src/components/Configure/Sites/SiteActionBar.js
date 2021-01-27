@@ -6,6 +6,7 @@ import { MODAL_CONFIGURE_NEW_SITE, MODAL_CONFIRMATION_WARNING } from '../../../c
 import { clearValues, valueChange } from '../../../store/actions';
 import { deleteSites } from '../../../store/actions/SiteActions';
 import { FIELDS } from '../../../constants/FieldsConstant';
+import ActionButton from '../../Common/ActionButton';
 
 class SiteActionBar extends Component {
   constructor() {
@@ -59,25 +60,20 @@ class SiteActionBar extends Component {
 
   render() {
     const { t } = this.props;
+    const actions = [{ label: 'New', onClick: this.createSite, icon: 'fa fa-plus', isDisabled: false },
+      { label: 'remove', onClick: this.deleteSelectedSites, icon: 'fa fa-trash', isDisabled: this.shouldShowAction(false) },
+      { label: 'Edit', reconfigureSite: this.reconfigureSite, icon: 'fa fa-edit', isDisabled: this.shouldShowAction(true) }];
     return (
-      <>
-        <div className="btn-toolbar padding-left-20" role="toolbar" aria-label="Toolbar with button groups">
-          <div className="btn-group mr-2" role="group" aria-label="First group">
-            <button className="btn btn-hover" color="secondary" type="button" onClick={this.createSite}>
-              <i className="bx bx-plus" />
-              {t('new.site')}
-            </button>
-            <button className="btn btn-hover" color="secondary" type="button" onClick={this.deleteSelectedSites} disabled={this.shouldShowAction(false)}>
-              <i className="bx bx-trash" />
-              {t('remove')}
-            </button>
-            <button className="btn btn-hover" color="secondary" type="button" onClick={this.reconfigureSite} disabled={this.shouldShowAction(true)}>
-              <i className="bx bxs-edit" />
-              {t('reconfigure')}
-            </button>
-          </div>
+      <div className="btn-toolbar padding-left-20">
+        <div className="btn-group" role="group" aria-label="First group">
+          {actions.map((item) => {
+            const { label, onClick, icon, isDisabled } = item;
+            return (
+              <ActionButton label={label} onClick={onClick} icon={icon} isDisabled={isDisabled} t={t} />
+            );
+          })}
         </div>
-      </>
+      </div>
     );
   }
 }
