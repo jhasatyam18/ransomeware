@@ -2,7 +2,6 @@ import { logOutUser } from '../store/actions';
 import { getApplicationToken } from './CookieUtils';
 import store from '../store/index';
 import { closeModal } from '../store/actions/ModalActions';
-import { closeWizard } from '../store/actions/WizardActions';
 
 export const API_TYPES = { POST: 'POST', PUT: 'PUT', DELETE: 'DELETE' };
 
@@ -36,7 +35,6 @@ export function callAPI(URL, obj = {}) {
       if (response.status === 401) {
         store.dispatch(logOutUser());
         store.dispatch(closeModal());
-        store.dispatch(closeWizard());
       }
       if (response.status !== 204 && !response.ok) {
         return { hasError: true, message: response.statusText, status: response.status, body: response.body };

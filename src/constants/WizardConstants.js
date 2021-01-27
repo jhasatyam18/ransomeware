@@ -1,5 +1,5 @@
 import { onConfigureDRPlan, startMigration, startRecovery } from '../store/actions/DrPlanActions';
-import { noValidate, validateDRPlanProtectData, validateSteps, updateScripts } from '../utils/validationUtils';
+import { noValidate, validateDRPlanProtectData, validateSteps, validateMigrationVMs } from '../utils/validationUtils';
 
 export const DRPLAN_GENERAL_SETTINGS_STEP = 'DRPLAN_GENERAL_SETTINGS_STEP';
 export const DRPLAN_RECOVERY_STEP = 'DRPLAN_RECOVERY_STEP';
@@ -11,7 +11,6 @@ export const PROTECTION_PLAN_SUMMARY_STEP = 'PROTECTION_PLAN_SUMMARY_STEP';
 export const RECOVERY_GENERAL_STEP = 'RECOVERY_GENERAL_STEP';
 export const RECOVERY_PROTECT_VM_STEP = 'RECOVERY_PROTECT_VM_STEP';
 export const MIGRATION_GENERAL_STEP = 'MIGRATION_GENERAL_STEP';
-export const RECOVERY_SCRIPTS_STEP = 'RECOVERY_SCRIPTS_STEP';
 
 export const RECOVERY_GENERAL_STEP_FIELDS = ['recovery.protectionplanID', 'recovery.dryrun', 'recovery.winUser', 'recovery.winPassword'];
 export const MIGRATION_GENERAL_STEP_FIELDS = ['recovery.protectionplanID', 'recovery.winUser', 'recovery.winPassword'];
@@ -37,7 +36,6 @@ export const RECOVERY_WIZARDS = {
 export const MIGRAION_WIZARDS = {
   options: { title: 'Migrate', onFinish: startMigration },
   steps: [{ label: 'General', title: '', component: MIGRATION_GENERAL_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: MIGRATION_GENERAL_STEP_FIELDS },
-    { label: 'Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => noValidate({ user, dispatch }) },
-    { label: 'Scripts', title: '', component: RECOVERY_SCRIPTS_STEP, validate: (user, dispatch) => updateScripts(user, dispatch), isAync: true },
+    { label: 'Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateMigrationVMs({ user, dispatch }), isAync: true },
     { label: 'Summary', title: '', component: RECOVERY_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch) }],
 };

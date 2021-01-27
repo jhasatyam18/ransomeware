@@ -53,7 +53,7 @@ class DMTable extends Component {
   renderRows() {
     const {
       dispatch, data, columns, isSelectable, onSelect, selectedData, primaryKey,
-      user } = this.props;
+    } = this.props;
     return data.map((row, index) => (
       <DMTableRow
         columns={columns}
@@ -64,7 +64,6 @@ class DMTable extends Component {
         onSelect={onSelect}
         selectedData={selectedData}
         primaryKey={primaryKey}
-        user={user}
       />
     ));
   }

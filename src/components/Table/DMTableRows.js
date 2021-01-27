@@ -2,17 +2,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Tr, Td, Th } from 'react-super-responsive-table';
 import { getAppKey } from '../../utils/AppUtils';
-import { DATE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDARER,
-  VM_SIZE_ITEM_RENDERER, STATUS_ITEM_RENDERER, TRANSFER_SIZE_ITEM_RENDERER,
-  PRE_SCRIPT_ITEM_RENDERER, POST_SCRIPT_ITEM_RENDERER } from '../../constants/TableConstants';
+import { DATE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDARER, VM_SIZE_ITEM_RENDERER, STATUS_ITEM_RENDERER, TRANSFER_SIZE_ITEM_RENDERER } from '../../constants/TableConstants';
 import OsTypeItemRenderer from './OsTypeItemRenderer';
 import VMSizeItemRenderer from './VMSizeItemRenderer';
 import DRPlanNameItemRenderer from './DRPlanNameItemRenderer';
 import DateItemRenderer from './DateItemRenderer';
 import StatusItemRenderer from './StatusItemRenderer';
 import TransferSizeItemRenderer from './TransferSizeItemRenderer';
-import ScriptItemRender from './ScriptItemRender';
-import { SCRIPT_TYPES } from '../../constants/InputConstants';
 
 class DMTableRow extends Component {
   constructor() {
@@ -26,7 +22,6 @@ class DMTableRow extends Component {
   }
 
   getItemRenderer(render, data, field) {
-    const { user, dispatch } = this.props;
     switch (render) {
       case OS_TYPE_ITEM_RENDARER:
         return <OsTypeItemRenderer data={data} />;
@@ -40,10 +35,6 @@ class DMTableRow extends Component {
         return <StatusItemRenderer data={data} />;
       case TRANSFER_SIZE_ITEM_RENDERER:
         return <TransferSizeItemRenderer data={data} />;
-      case PRE_SCRIPT_ITEM_RENDERER:
-        return <ScriptItemRender data={data} user={user} dispatch={dispatch} type={SCRIPT_TYPES.PRE_SCRIPT} />;
-      case POST_SCRIPT_ITEM_RENDERER:
-        return <ScriptItemRender data={data} user={user} dispatch={dispatch} type={SCRIPT_TYPES.POST_SCRIPT} />;
       default:
         return (<div> 404 </div>);
     }

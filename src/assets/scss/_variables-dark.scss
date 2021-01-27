@@ -74,7 +74,6 @@ $apex-grid-color: #32394e;
 // Color system
 
 $white: #fff;
-$off-white:#f1f2f6;
 $gray-100: #212529;
 $gray-200: #2a3042;
 $gray-300: #32394e;
@@ -237,7 +236,7 @@ $sizes: map-merge(
 // Settings for the `<body>` element.
 
 $body-bg: #222736;
-$body-color: $gray-900;
+$body-color: $gray-400;
 
 // Links
 //
