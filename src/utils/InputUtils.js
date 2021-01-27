@@ -1,5 +1,5 @@
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
-import { PLATFORM_TYPES } from '../constants/InputConstants';
+import { PLATFORM_TYPES, SCRIPT_TYPES } from '../constants/InputConstants';
 
 export function getValue(key, values) {
   const ret = values[key];
@@ -105,6 +105,19 @@ export function getRegionOptions(user) {
   if (zones) {
     zones.reduce((previous, next) => {
       previous.push({ label: next.label, value: next.value });
+      return previous;
+    }, result);
+  }
+  return result;
+}
+
+export function getScriptsOptions({ user, type }) {
+  const { values } = user;
+  const options = (type === SCRIPT_TYPES.POST_SCRIPT ? getValue('ui.scripts.post', values) : getValue('ui.scripts.pre', values));
+  const result = [];
+  if (options) {
+    options.reduce((previous, next) => {
+      previous.push({ label: next, value: next });
       return previous;
     }, result);
   }

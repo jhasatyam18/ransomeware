@@ -8,7 +8,7 @@ import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
 import { CREATE_DR_PLAN_WIZARDS, MIGRAION_WIZARDS, RECOVERY_WIZARDS } from '../../constants/WizardConstants';
 import { openWizard } from '../../store/actions/WizardActions';
 import { fetchSites } from '../../store/actions/SiteActions';
-import { clearValues } from '../../store/actions';
+import { clearValues, fetchScripts } from '../../store/actions';
 
 class DRPlanActionBar extends Component {
   constructor() {
@@ -38,6 +38,7 @@ class DRPlanActionBar extends Component {
     const { dispatch } = this.props;
     dispatch(clearValues());
     dispatch(fetchDrPlans('ui.values.drplan'));
+    dispatch(fetchScripts());
     dispatch(openWizard(MIGRAION_WIZARDS.options, MIGRAION_WIZARDS.steps));
   }
 

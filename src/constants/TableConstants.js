@@ -4,6 +4,8 @@ export const DR_PLAN_NAME_ITEM_RENDERER = 'DR_PLAN_NAME_ITEM_RENDERER';
 export const DATE_ITEM_RENDERER = 'DateItemRenderer';
 export const STATUS_ITEM_RENDERER = 'STATUS_ITEM_RENDERER';
 export const TRANSFER_SIZE_ITEM_RENDERER = 'TRANSFER_SIZE_ITEM_RENDERER';
+export const PRE_SCRIPT_ITEM_RENDERER = 'PRE_SCRIPT_ITEM_RENDERER';
+export const POST_SCRIPT_ITEM_RENDERER = 'POST_SCRIPT_ITEM_RENDERER';
 
 export const TABLE_HEADER_SITES = [
   { label: 'Site Type', field: 'siteType' },
@@ -46,11 +48,17 @@ export const RECOVERY_JOBS = [
 ];
 
 export const REPLICATION_VM_JOBS = [
+  { label: '#', field: 'iterationNumber' },
   { label: 'Virtual Machine', field: 'vmName' },
   { label: 'Start Time', field: 'startTime', itemRenderer: DATE_ITEM_RENDERER },
   { label: 'End Time', field: 'endTime', itemRenderer: DATE_ITEM_RENDERER },
-  { label: 'Iteration Number', field: 'iterationNumber' },
   { label: 'State', field: 'status' },
   { label: 'Sync Status', field: 'syncStatus' },
   { label: 'Message', field: 'failureMessage' },
+];
+
+export const TABLE_PRE_POST_SCRIPT = [
+  { label: 'Name', field: 'name' },
+  { label: 'Pre Script', field: 'preScript', itemRenderer: PRE_SCRIPT_ITEM_RENDERER },
+  { label: 'Post Script', field: 'preScript', itemRenderer: POST_SCRIPT_ITEM_RENDERER },
 ];

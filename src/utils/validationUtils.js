@@ -3,8 +3,8 @@ import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
 import { getValue } from './InputUtils';
 import { MESSAGE_TYPES } from '../constants/MessageConstants';
 import { API_TYPES, callAPI, createPayload } from './ApiUtils';
-import { API_VALIDATE_MIGRATION } from '../constants/ApiConstants';
-import { getRecoveryPayload } from './PayloadUtil';
+import { API_UPDATE_VMS_SCRIPTS, API_VALIDATE_MIGRATION } from '../constants/ApiConstants';
+import { getRecoveryPayload, getUpdateScriptPayload } from './PayloadUtil';
 import { addMessage } from '../store/actions/MessageActions';
 
 export function isRequired(value) {
@@ -116,7 +116,7 @@ export function noValidate() {
   return true;
 }
 
-export async function validateMigrationVMs({ user, dispatch }) {
+export async function validateMigrationVMs(user, dispatch) {
   const initialCheckPass = validateDRPlanProtectData({ user, dispatch });
   if (initialCheckPass) {
     try {
@@ -142,6 +142,28 @@ export async function validateMigrationVMs({ user, dispatch }) {
       return false;
     }
   } else {
+    return false;
+  }
+  return true;
+}
+
+export async function updateScripts(user, dispatch) {
+  try {
+    const { values } = user;
+    const vms = getValue('ui.site.seletedVMs', values);
+    if (vms) {
+      const payload = getUpdateScriptPayload(user);
+      const obj = createPayload(API_TYPES.POST, { ...payload });
+      dispatch(showApplicationLoader('UPDATING_VM_SCRIPTS', 'Updating virtualmachine scripts.'));
+      const updatedVMs = await callAPI(API_UPDATE_VMS_SCRIPTS, obj);
+      dispatch(hideApplicationLoader('UPDATING_VM_SCRIPTS'));
+      if (updatedVMs.length === payload.virtualMachines.length) {
+        return true;
+      }
+      return false;
+    }
+  } catch (error) {
+    addErrorMessage(MESSAGE_TYPES.ERROR, error);
     return false;
   }
   return true;

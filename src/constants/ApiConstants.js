@@ -25,6 +25,10 @@ export const API_RECOVER = 'api/v1/recover';
 export const API_VALIDATE_MIGRATION = 'api/v1/migrate/validate';
 export const API_MIGRATE = 'api/v1/migrate';
 
+// scripts
+export const API_GET_VMS_SCRIPTS = 'api/v1/recover/scripts';
+export const API_UPDATE_VMS_SCRIPTS = 'api/v1/recover/vms/scripts';
+
 // instance type json
 export const API_AWS_INSTANCES = 'aws_instances.json';
 export const API_GCP_INSTANCES = 'gcp_instances.json';

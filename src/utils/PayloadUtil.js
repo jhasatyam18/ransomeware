@@ -67,3 +67,15 @@ export function getRecoveryPayload(user, isMigration = false) {
   result.recovery.isMigration = isMigration;
   return result;
 }
+
+export function getUpdateScriptPayload(user) {
+  const { values } = user;
+  const vms = getValue('ui.site.seletedVMs', values);
+  const result = {};
+  const virtualMachines = [];
+  Object.keys(vms).forEach((key) => {
+    virtualMachines.push(vms[key]);
+  });
+  result.virtualMachines = virtualMachines;
+  return result;
+}

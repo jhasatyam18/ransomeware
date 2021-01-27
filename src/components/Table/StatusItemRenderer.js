@@ -22,7 +22,7 @@ function StatusItemRenderer({ data }) {
       <div className="container">
         <div className="row">
           <div className="col-2">
-            <box-icon color="white" animation="burst" name="dots-horizontal-rounded" />
+            <box-icon color="white" animation="burst" name="transfer-alt" />
           </div>
           <div className="col-10">
             Running

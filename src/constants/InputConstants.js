@@ -20,3 +20,8 @@ export const REPLICATION_JOB_TYPE = {
   DISK: 'DISK',
   VM: 'VM',
 };
+
+export const SCRIPT_TYPES = {
+  PRE_SCRIPT: 'preScript',
+  POST_SCRIPT: 'postScript',
+};

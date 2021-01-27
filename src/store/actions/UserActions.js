@@ -3,18 +3,19 @@
 import jsCookie from 'js-cookie';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import * as Types from '../../constants/actionTypes';
-import { API_AUTHENTICATE, API_AWS_AVAILABILLITY_ZONES, API_AWS_RGIONS, API_GCP_AVAILABILLITY_ZONES, API_INFO } from '../../constants/ApiConstants';
+import { API_AUTHENTICATE, API_AWS_AVAILABILLITY_ZONES, API_AWS_RGIONS, API_GCP_AVAILABILLITY_ZONES, API_GET_VMS_SCRIPTS, API_INFO } from '../../constants/ApiConstants';
 
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { setCookie } from '../../utils/CookieUtils';
 import { APPLICATION_API_TOKEN } from '../../constants/UserConstant';
 import { addMessage, clearMessages } from './MessageActions';
 import { onInit } from '../../utils/HistoryUtil';
-import { PLATFORM_TYPES } from '../../constants/InputConstants';
+import { PLATFORM_TYPES, SCRIPT_TYPES } from '../../constants/InputConstants';
 import { fetchDRPlanById, fetchDrPlans } from './DrPlanActions';
 import { JOBS, PROTECTION_PLANS_PATH, SITES_PATH } from '../../constants/RouterConstants';
 import { fetchSites } from './SiteActions';
 import { fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
+import { getValue } from '../../utils/InputUtils';
 
 export function login({ username, password, history }) {
   return (dispatch) => {
@@ -197,5 +198,45 @@ export function refresh() {
       default:
         dispatch(addMessage('NO PATH MATCH', MESSAGE_TYPES.ERROR));
     }
+  };
+}
+
+export function updateScriptPath({ data, type, val }) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const selectedVMs = getValue('ui.site.seletedVMs', values);
+    const vms = [];
+    let newVMs = {};
+    Object.keys(selectedVMs).forEach((key) => { vms.push(selectedVMs[key]); });
+    vms.forEach((vm) => {
+      const nVM = vm;
+      if (vm.id === data.id && vm.moref === data.moref) {
+        if (type === SCRIPT_TYPES.POST_SCRIPT) {
+          nVM.postScript = val;
+        } else {
+          nVM.preScript = val;
+        }
+      }
+      newVMs = { ...newVMs, [nVM.moref]: nVM };
+    });
+    dispatch(valueChange('ui.site.seletedVMs', newVMs));
+  };
+}
+
+export function fetchScripts() {
+  return (dispatch) => {
+    dispatch(clearMessages());
+    return callAPI(API_GET_VMS_SCRIPTS).then((json) => {
+      if (json.hasError) {
+        dispatch(addErrorMessage(MESSAGE_TYPES.ERROR, 'Failed to fetch scripts.'));
+      } else {
+        dispatch(valueChange('ui.scripts.pre', json.preScripts));
+        dispatch(valueChange('ui.scripts.post', json.postScripts));
+      }
+    },
+    (err) => {
+      alert(err);
+    });
   };
 }
