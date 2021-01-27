@@ -118,6 +118,38 @@ class SidebarContent extends Component {
                 <span>{t('jobs')}</span>
               </Link>
             </li>
+            <li>
+              <Link to="/#" className="has-arrow waves-effect">
+                <i className="fa fa-chart-bar fa-s-lg" style={{ fontSize: 16 }} />
+                <span>{t('Monitor')}</span>
+              </Link>
+              <ul className="sub-menu" aria-expanded="false">
+                <li>
+                  <Link to="/TEST">
+                    <i className="bx bx-line-chart" />
+                    {t('Activity')}
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/TEST" className="waves-effect">
+                    <i className="fa fa-history" />
+                    <span>Logs</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/TEST" className="waves-effect">
+                    <i className="bx bxs-report" />
+                    <span>Reports</span>
+                  </Link>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <Link to="/TEST" className="waves-effect">
+                <i className="bx bx-stats" style={{ fontSize: 16 }} />
+                <span>Analytics</span>
+              </Link>
+            </li>
           </ul>
         </div>
       </>

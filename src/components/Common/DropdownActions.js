@@ -48,7 +48,7 @@ const DropdownActions = (props) => {
           {actions.map((item) => {
             const { label, disabled } = item;
             return (
-              <DropdownItem right onClick={() => onActionClick(item)} disabled={disabled}>
+              <DropdownItem right onClick={() => onActionClick(item)} disabled={disabled} style={{ color: (!disabled ? 'white' : '') }}>
                 {t(label)}
               </DropdownItem>
             );

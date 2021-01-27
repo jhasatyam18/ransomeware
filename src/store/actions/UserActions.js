@@ -10,7 +10,7 @@ import { setCookie } from '../../utils/CookieUtils';
 import { APPLICATION_API_TOKEN } from '../../constants/UserConstant';
 import { addMessage, clearMessages } from './MessageActions';
 import { onInit } from '../../utils/HistoryUtil';
-import { PLATFORM_TYPES } from '../../constants/InputConstants';
+import { APP_TYPE, PLATFORM_TYPES } from '../../constants/InputConstants';
 import { fetchDRPlanById, fetchDrPlans } from './DrPlanActions';
 import { JOBS, PROTECTION_PLANS_PATH, SITES_PATH } from '../../constants/RouterConstants';
 import { fetchSites } from './SiteActions';
@@ -28,6 +28,7 @@ export function login({ username, password, history }) {
         setCookie(APPLICATION_API_TOKEN, json.token);
         dispatch(loginSuccess(json.token, username));
         dispatch(clearMessages());
+        dispatch(getInfo());
         if (history) {
           onInit(history);
         }
@@ -87,6 +88,12 @@ export function removeErrorMessage(key) {
     key,
   };
 }
+export function changeAppType(appType) {
+  return {
+    type: Types.APP_TYPE,
+    appType,
+  };
+}
 export function getInfo(history) {
   return (dispatch) => {
     dispatch(clearMessages());
@@ -95,6 +102,8 @@ export function getInfo(history) {
         setCookie(APPLICATION_API_TOKEN, json.token, '');
       } else {
         dispatch(loginSuccess(json.token, 'admin'));
+        const appType = (json.servicetype === 'Client' ? APP_TYPE.CLIENT : APP_TYPE.SERVER);
+        dispatch(changeAppType(appType));
         dispatch(clearMessages());
         if (history) {
           onInit(history);

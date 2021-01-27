@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import {
-  drPlanStopStart, startPlan, stopPlan, deletePlan, fetchDrPlans,
+  drPlanStopStart, deletePlan, fetchDrPlans, startPlan, stopPlan,
 } from '../../store/actions/DrPlanActions';
 import { openModal } from '../../store/actions/ModalActions';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
@@ -10,6 +10,8 @@ import { CREATE_DR_PLAN_WIZARDS, MIGRAION_WIZARDS, RECOVERY_WIZARDS } from '../.
 import { openWizard } from '../../store/actions/WizardActions';
 import { fetchSites } from '../../store/actions/SiteActions';
 import { clearValues } from '../../store/actions';
+import { APP_TYPE } from '../../constants/InputConstants';
+import ActionButton from '../Common/ActionButton';
 
 class DRPlanActionBar extends Component {
   constructor() {
@@ -48,6 +50,22 @@ class DRPlanActionBar extends Component {
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   }
 
+  getActionButtons(actions) {
+    const { t } = this.props;
+    return (
+      <div className="btn-toolbar padding-left-20">
+        <div className="btn-group" role="group" aria-label="First group">
+          {actions.map((item) => {
+            const { label, onClick, icon, isDisabled } = item;
+            return (
+              <ActionButton label={label} onClick={onClick} icon={icon} isDisabled={isDisabled} t={t} />
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
   planAction(action) {
     const { dispatch } = this.props;
     dispatch(drPlanStopStart(action));
@@ -66,39 +84,37 @@ class DRPlanActionBar extends Component {
     return true;
   }
 
-  render() {
-    const { t } = this.props;
+  renderServerOptions() {
+    const actions = [{ label: 'recover', onClick: this.onInitiateRecovery, icon: 'fa fa-recycle', isDisabled: false },
+      { label: 'Migrate', onClick: this.onMigrate, icon: 'fa fa-truck', isDisabled: false }];
     return (
       <>
-        <div className="btn-toolbar padding-left-20" role="toolbar" aria-label="Toolbar with button groups">
-          <div className="btn-group mr-2" role="group" aria-label="dr_plan_action group">
-            <button type="button" className="btn btn-hover" color="secondary" onClick={this.onCreate}>
-              <i className="bx bx-plus" />
-              {t('new.plan')}
-            </button>
-            <button type="button" className="btn btn-hover" color="secondary" onClick={this.onDelete}>
-              <i className="bx bx-trash" />
-              {t('remove')}
-            </button>
-            <button type="button" className="btn btn-hover" color="secondary" onClick={() => { this.planAction(startPlan); }}>
-              <i className="bx bx-play-circle" />
-              {t('start')}
-            </button>
-            <button type="button" className="btn btn-hover" color="secondary" onClick={() => { this.planAction(stopPlan); }}>
-              <i className="bx bx-stop-circle" />
-              {t('stop')}
-            </button>
-            <button type="button" className="btn btn-hover" color="secondary" onClick={this.onInitiateRecovery}>
-              <i className="bx bx-stop-circle" />
-              {t('recovery')}
-            </button>
-            <button type="button" className="btn btn-hover" color="secondary" onClick={this.onMigrate}>
-              <i className="bx bx-stop-circle" />
-              Migrate
-            </button>
-          </div>
-        </div>
+        {this.getActionButtons(actions)}
       </>
+    );
+  }
+
+  renderClientOptions() {
+    const actions = [{ label: 'New', onClick: this.onCreate, icon: 'fa fa-plus', isDisabled: false },
+      { label: 'remove', onClick: this.onDelete, icon: 'fa fa-trash', isDisabled: this.shouldShowAction(false) },
+      { label: 'start', onClick: () => { this.planAction(startPlan); }, icon: 'fa fa-play', isDisabled: this.shouldShowAction(false) },
+      { label: 'stop', onClick: () => { this.planAction(stopPlan); }, icon: 'fa fa-stop', isDisabled: this.shouldShowAction(false) }];
+    return (
+      <>
+        {this.getActionButtons(actions)}
+      </>
+    );
+  }
+
+  render() {
+    const { user } = this.props;
+    const { appType } = user;
+    return (
+      <div className="btn-toolbar padding-left-20">
+        <div className="btn-group" role="group" aria-label="First group">
+          {appType === APP_TYPE.CLIENT ? this.renderClientOptions() : this.renderServerOptions()}
+        </div>
+      </div>
     );
   }
 }

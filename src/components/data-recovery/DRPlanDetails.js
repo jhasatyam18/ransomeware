@@ -5,10 +5,10 @@ import { withTranslation } from 'react-i18next';
 import { deletePlan, fetchDRPlanById, fetchDrPlans, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
 import DMTable from '../Table/DMTable';
 import { TABLE_PROTECT_VM_VMWARE } from '../../constants/TableConstants';
-import { DROP_DOWN_ACTION_TYPES, REPLICATION_STATUS } from '../../constants/InputConstants';
+import { APP_TYPE, DROP_DOWN_ACTION_TYPES, REPLICATION_STATUS } from '../../constants/InputConstants';
 import DropdownActions from '../Common/DropdownActions';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
-import { RECOVERY_WIZARDS } from '../../constants/WizardConstants';
+import { MIGRAION_WIZARDS, RECOVERY_WIZARDS } from '../../constants/WizardConstants';
 
 const Replication = React.lazy(() => import('../Jobs/Replication'));
 const Recovery = React.lazy(() => import('../Jobs/Recovery'));
@@ -105,12 +105,18 @@ class DRPlanDetails extends Component {
   }
 
   renderActions() {
-    const { drPlans, dispatch, t } = this.props;
+    const { drPlans, dispatch, t, user } = this.props;
     const { details } = drPlans;
-    const actions = [{ label: 'start', action: startPlan, id: details.id, disabled: details.status !== REPLICATION_STATUS.STOPPED },
-      { label: 'stop', action: stopPlan, id: details.id, disabled: details.status === REPLICATION_STATUS.STOPPED },
-      { label: 'remove', action: deletePlan, id: details.id, type: DROP_DOWN_ACTION_TYPES.MODAL, MODAL_COMPONENT: MODAL_CONFIRMATION_WARNING, options: { title: 'Alert', confirmAction: deletePlan, message: 'Are you sure want to delete  ?', id: details.id } },
-      { label: 'recover', type: DROP_DOWN_ACTION_TYPES.WIZARD, wizard: RECOVERY_WIZARDS, init: fetchDrPlans, initValue: 'ui.values.drplan' }];
+    const { appType } = user;
+    let actions = [];
+    if (appType === APP_TYPE.CLIENT) {
+      actions = [{ label: 'start', action: startPlan, id: details.id, disabled: details.status !== REPLICATION_STATUS.STOPPED },
+        { label: 'stop', action: stopPlan, id: details.id, disabled: details.status === REPLICATION_STATUS.STOPPED },
+        { label: 'remove', action: deletePlan, id: details.id, disabled: details.status !== REPLICATION_STATUS.STOPPED, type: DROP_DOWN_ACTION_TYPES.MODAL, MODAL_COMPONENT: MODAL_CONFIRMATION_WARNING, options: { title: 'Alert', confirmAction: deletePlan, message: 'Are you sure want to delete  ?', id: details.id } }];
+    } else {
+      actions = [{ label: 'recover', type: DROP_DOWN_ACTION_TYPES.WIZARD, wizard: RECOVERY_WIZARDS, init: fetchDrPlans, initValue: 'ui.values.drplan' },
+        { label: 'Migrate', type: DROP_DOWN_ACTION_TYPES.WIZARD, wizard: MIGRAION_WIZARDS, init: fetchDrPlans, initValue: 'ui.values.drplan' }];
+    }
     return (
       <DropdownActions title={t('actions')} dispatch={dispatch} actions={actions} />
     );

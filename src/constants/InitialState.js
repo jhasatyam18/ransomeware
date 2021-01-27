@@ -1,4 +1,4 @@
-import { REPLICATION_JOB_TYPE } from './InputConstants';
+import { APP_TYPE, REPLICATION_JOB_TYPE } from './InputConstants';
 
 const INITIAL_STATE = {
   global: {
@@ -12,6 +12,7 @@ const INITIAL_STATE = {
     isValidating: false,
     values: {},
     errors: {},
+    appType: APP_TYPE.CLIENT,
   },
   sites: { sites: [], selectedSites: [] },
   drPlans: { plans: [], selectedPlans: [], details: {} },

@@ -42,7 +42,7 @@
   "new.plan": "New Plan ",
   "start": "Start ",
   "stop": "Stop ",
-  "recover": "Recover ",
+  "recover": "Recover",
   "replications": "Replications ",
   "recovery.configuration": "Recovery Configuration ",
   "select.virtual.machine.for.protection": "Select Virtual Machine for protection ",
@@ -77,5 +77,6 @@
   "no.data.to.display": "No Data To Display",
   "search": "Search",
   "recovery.type": "Recovery Type",
-  "message": "Message"
+  "message": "Message",
+  "protection.plans": "Protection Plans"
 }
