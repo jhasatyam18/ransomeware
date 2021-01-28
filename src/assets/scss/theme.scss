@@ -283,6 +283,24 @@ span.flatpickr-weekday {
   flex-flow: row-reverse;
 }
 
-.logo-position{
-margin-top: -50%;
+.login{
+  .logo{
+  margin-top: -50%;
+  }
+
+  .sign-up{
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    padding-left: 10px;
+  }
+
+  .logo__name{
+    margin-top: -40px;
+  }
+
+  .dmname{
+      margin-left: 80px;
+      margin-top: -90px;  
+  }
 }

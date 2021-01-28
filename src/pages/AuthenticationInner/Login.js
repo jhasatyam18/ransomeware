@@ -12,6 +12,7 @@ import { AvForm, AvField } from 'availity-reactstrap-validation';
 
 // import images
 import logo from '../../assets/images/logo.png';
+import logoName from '../../assets/images/name.png';
 import { getInfo, login } from '../../store/actions';
 
 class Login extends Component {
@@ -60,13 +61,20 @@ class Login extends Component {
                   <CardBody className="pt-0">
                     <div>
                       <Link to="/">
-                        <div className="avatar-md profile-user-wid mb-4">
-                          <span className="avatar-title rounded-circle bg-light logo-position">
+                        <div className="avatar-md profile-user-wid mb-4 login">
+                          <span className="avatar-title rounded-circle bg-light logo">
                             <img
                               src={logo}
                               alt=""
                               className="rounded-circle"
                               height="34"
+                            />
+                          </span>
+                          <span className="logo-lg">
+                            <img
+                              src={logoName}
+                              className="logo-name-size dmname"
+                              alt="DATAMOTIVE"
                             />
                           </span>
                         </div>
@@ -109,6 +117,15 @@ class Login extends Component {
                           >
                             Log In
                           </button>
+                        </div>
+                        <div className="container login">
+                          <div className="row">
+                            <div className="col-sm-8 text-align sign-up">
+                              <a href="">Sign Up</a>
+                              <p className="text-align "> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</p>
+                              <a href="">Forgot Password</a>
+                            </div>
+                          </div>
                         </div>
                       </AvForm>
                     </div>
