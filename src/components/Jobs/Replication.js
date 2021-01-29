@@ -73,13 +73,13 @@ class Replication extends Component {
         <Container fluid>
           <Card>
             <CardBody>
-              <Row>
-                <Col sm={8}>
-                  <DMTPaginator data={replication} setData={this.setDataForDisplay} showFilter="false" columns={REPLICATION_VM_JOBS} />
-                </Col>
+              <Row className="padding-left-20">
                 <Col sm={4}>
+                  {this.renderOptions()}
+                </Col>
+                <Col sm={8}>
                   <div className="display__flex__reverse">
-                    {this.renderOptions()}
+                    <DMTPaginator data={replication} setData={this.setDataForDisplay} showFilter="false" columns={REPLICATION_VM_JOBS} />
                   </div>
                 </Col>
               </Row>
@@ -105,13 +105,13 @@ class Replication extends Component {
         <Container fluid>
           <Card>
             <CardBody>
-              <Row>
-                <Col sm={8}>
-                  <DMTPaginator data={replication} setData={this.setDataForDisplay} showFilter="false" columns={REPLICATION_VM_JOBS} />
-                </Col>
+              <Row className="padding-left-20">
                 <Col sm={4}>
+                  {this.renderOptions()}
+                </Col>
+                <Col sm={8}>
                   <div className="display__flex__reverse">
-                    {this.renderOptions()}
+                    <DMTPaginator data={replication} setData={this.setDataForDisplay} showFilter="false" columns={REPLICATION_VM_JOBS} />
                   </div>
                 </Col>
               </Row>

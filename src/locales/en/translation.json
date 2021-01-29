@@ -18,7 +18,8 @@
   "reconfigure": "Rconfigure ",
   "create.site": "Create Site",
   "site.type": "Site Type ",
-  "protect": "Protect ",
+  "protect": "Protect",
+  "protection": "Protection",
   "recovery": "Recovery ",
   "platform.type": "Platform Type ",
   "vmware": "VMware ",
@@ -63,7 +64,7 @@
   "availability.zone": "Availability Zone ",
   "volume.type": "Volume Type ",
   "protection.plan": "Protection Plan ",
-  "dry.run": "Dry Run ",
+  "dry.run": "Test Recovery",
   "enter.username": "Enter Username",
   "enter.password": "Enter Password",
   "machine.username": "Machine Username",
@@ -78,5 +79,7 @@
   "search": "Search",
   "recovery.type": "Recovery Type",
   "message": "Message",
-  "protection.plans": "Protection Plans"
+  "protection.plans": "Protection Plans",
+  "recovery.jobs": "Recovery Jobs",
+  "replication.jobs": "Replication Jobs"
 }

@@ -104,8 +104,8 @@ class DMTPaginator extends Component {
     return (
       <>
         <Row>
-          <Col sm={8}>
-            <ButtonGroup style={{ paddingLeft: 20 }}>
+          <Col sm={12}>
+            <ButtonGroup style={{ paddingLeft: 20 }} className="btn-group-sm">
               <Button disabled={disablePrivious} onClick={this.onBack}>
                 <box-icon type="solid" name="chevron-left" size="xs" />
               </Button>

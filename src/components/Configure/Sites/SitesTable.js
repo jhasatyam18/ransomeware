@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Col, Row } from 'reactstrap';
 import DMTable from '../../Table/DMTable';
 import { TABLE_HEADER_SITES } from '../../../constants/TableConstants';
-import { handleSiteTableSelection } from '../../../store/actions/SiteActions';
+import { handleSiteTableSelection, selectAllSites } from '../../../store/actions/SiteActions';
 import SiteActionBar from './SiteActionBar';
 
 class SitesTable extends Component {
@@ -25,6 +25,8 @@ class SitesTable extends Component {
           onSelect={handleSiteTableSelection}
           selectedData={selectedSites}
           primaryKey="id"
+          name="sites"
+          onSelectAll={selectAllSites}
         />
 
       </>

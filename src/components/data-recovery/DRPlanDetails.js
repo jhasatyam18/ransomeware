@@ -112,7 +112,7 @@ class DRPlanDetails extends Component {
     if (appType === APP_TYPE.CLIENT) {
       actions = [{ label: 'start', action: startPlan, id: details.id, disabled: details.status !== REPLICATION_STATUS.STOPPED },
         { label: 'stop', action: stopPlan, id: details.id, disabled: details.status === REPLICATION_STATUS.STOPPED },
-        { label: 'remove', action: deletePlan, id: details.id, disabled: details.status !== REPLICATION_STATUS.STOPPED, type: DROP_DOWN_ACTION_TYPES.MODAL, MODAL_COMPONENT: MODAL_CONFIRMATION_WARNING, options: { title: 'Alert', confirmAction: deletePlan, message: 'Are you sure want to delete  ?', id: details.id } }];
+        { label: 'remove', action: deletePlan, id: details.id, disabled: details.status !== REPLICATION_STATUS.STOPPED, type: DROP_DOWN_ACTION_TYPES.MODAL, MODAL_COMPONENT: MODAL_CONFIRMATION_WARNING, options: { title: 'Confirmation', confirmAction: deletePlan, message: 'Are you sure want to delete  ?', id: details.id } }];
     } else {
       actions = [{ label: 'recover', type: DROP_DOWN_ACTION_TYPES.WIZARD, wizard: RECOVERY_WIZARDS, init: fetchDrPlans, initValue: 'ui.values.drplan' },
         { label: 'Migrate', type: DROP_DOWN_ACTION_TYPES.WIZARD, wizard: MIGRAION_WIZARDS, init: fetchDrPlans, initValue: 'ui.values.drplan' }];
@@ -184,12 +184,12 @@ class DRPlanDetails extends Component {
                 </NavItem>
                 <NavItem>
                   <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '3' })} onClick={() => { this.toggleTab('3'); }}>
-                    <span className="d-none d-sm-block">{t('replications')}</span>
+                    <span className="d-none d-sm-block">{t('replication.jobs')}</span>
                   </NavLink>
                 </NavItem>
                 <NavItem>
                   <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '4' })} onClick={() => { this.toggleTab('4'); }}>
-                    <span className="d-none d-sm-block">{t('recovery')}</span>
+                    <span className="d-none d-sm-block">{t('recovery.jobs')}</span>
                   </NavLink>
                 </NavItem>
               </Nav>

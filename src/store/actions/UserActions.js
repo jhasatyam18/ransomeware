@@ -102,7 +102,7 @@ export function getInfo(history) {
         setCookie(APPLICATION_API_TOKEN, json.token, '');
       } else {
         dispatch(loginSuccess(json.token, 'admin'));
-        const appType = (json.servicetype === 'Client' ? APP_TYPE.CLIENT : APP_TYPE.SERVER);
+        const appType = (json.serviceType === 'Client' ? APP_TYPE.CLIENT : APP_TYPE.SERVER);
         dispatch(changeAppType(appType));
         dispatch(clearMessages());
         if (history) {

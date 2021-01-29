@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Tr, Td, Th } from 'react-super-responsive-table';
+import { Tr, Th } from 'react-super-responsive-table';
 import { getAppKey } from '../../utils/AppUtils';
-import { DATE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDARER, VM_SIZE_ITEM_RENDERER, STATUS_ITEM_RENDERER, TRANSFER_SIZE_ITEM_RENDERER, RECOVERY_TYPE_ITEM_RENDERER } from '../../constants/TableConstants';
+import { DATE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDARER, VM_SIZE_ITEM_RENDERER, STATUS_ITEM_RENDERER, TRANSFER_SIZE_ITEM_RENDERER, RECOVERY_TYPE_ITEM_RENDERER, TIME_DURATION_RENDERER, RECOVERY_SITE_LINK_ITEM_RENDERER, SSH_RDP_ITEM_RENDERER } from '../../constants/TableConstants';
 import OsTypeItemRenderer from './OsTypeItemRenderer';
 import VMSizeItemRenderer from './VMSizeItemRenderer';
 import DRPlanNameItemRenderer from './DRPlanNameItemRenderer';
@@ -10,6 +10,9 @@ import DateItemRenderer from './DateItemRenderer';
 import StatusItemRenderer from './StatusItemRenderer';
 import TransferSizeItemRenderer from './TransferSizeItemRenderer';
 import RecoveryTypeItemRenderer from './RecoveryTypeItemRenderer';
+import TimeDurationItemRenderer from './TimeDurationItemRenderer';
+import RecoverySiteLinkRenderer from './RecoverySiteLinkRenderer';
+import SshRdpRenderer from './SshRdpRenderer';
 
 class DMTableRow extends Component {
   constructor() {
@@ -23,6 +26,7 @@ class DMTableRow extends Component {
   }
 
   getItemRenderer(render, data, field) {
+    const { user } = this.props;
     switch (render) {
       case OS_TYPE_ITEM_RENDARER:
         return <OsTypeItemRenderer data={data} />;
@@ -33,11 +37,17 @@ class DMTableRow extends Component {
       case DATE_ITEM_RENDERER:
         return <DateItemRenderer data={data} field={field} />;
       case STATUS_ITEM_RENDERER:
-        return <StatusItemRenderer data={data} />;
+        return <StatusItemRenderer data={data} field={field} />;
       case TRANSFER_SIZE_ITEM_RENDERER:
         return <TransferSizeItemRenderer data={data} />;
       case RECOVERY_TYPE_ITEM_RENDERER:
         return <RecoveryTypeItemRenderer data={data} field={field} />;
+      case TIME_DURATION_RENDERER:
+        return <TimeDurationItemRenderer data={data} field={field} />;
+      case RECOVERY_SITE_LINK_ITEM_RENDERER:
+        return <RecoverySiteLinkRenderer data={data} field={field} user={user} />;
+      case SSH_RDP_ITEM_RENDERER:
+        return <SshRdpRenderer data={data} field={field} user={user} />;
       default:
         return (<div> 404 </div>);
     }
@@ -86,7 +96,7 @@ class DMTableRow extends Component {
     }
     if (isSelectable) {
       return (
-        <Td>
+        <Th>
           <div className="custom-control custom-checkbox">
             <input
               type="checkbox"
@@ -100,7 +110,7 @@ class DMTableRow extends Component {
               &nbsp;
             </label>
           </div>
-        </Td>
+        </Th>
       );
     }
     return null;

@@ -5,9 +5,13 @@ export const DATE_ITEM_RENDERER = 'DateItemRenderer';
 export const STATUS_ITEM_RENDERER = 'STATUS_ITEM_RENDERER';
 export const TRANSFER_SIZE_ITEM_RENDERER = 'TRANSFER_SIZE_ITEM_RENDERER';
 export const RECOVERY_TYPE_ITEM_RENDERER = 'RECOVERY_TYPE_ITEM_RENDERER';
+export const RECOVERY_SITE_LINK_ITEM_RENDERER = 'RECOVERY_SITE_LINK_ITEM_RENDERER';
+export const SSH_RDP_ITEM_RENDERER = 'SSH_RDP_ITEM_RENDERER';
+// show time taken by any job
+export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
 
 export const TABLE_HEADER_SITES = [
-  { label: 'site.type', field: 'siteType' },
+  { label: 'site.type', field: 'siteType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER },
   { label: 'description', field: 'description' },
   { label: 'platform', field: 'platformDetails.platformType' },
 ];
@@ -15,9 +19,9 @@ export const TABLE_HEADER_SITES = [
 export const TABLE_HEADER_DR_PLANS = [
   { label: 'name', field: 'name', itemRenderer: DR_PLAN_NAME_ITEM_RENDERER },
   { label: 'protected.site', field: 'protectedSite.platformDetails.platformName' },
-  { label: 'recovery.site', field: 'recoverySite.platformDetails.platformName' },
+  { label: 'recovery.site', field: 'recoverySite.platformDetails.platformName', itemRenderer: RECOVERY_SITE_LINK_ITEM_RENDERER },
   { label: 'replication.interval', field: 'replicationInterval' },
-  { label: 'status', field: 'status' },
+  { label: 'status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
 ];
 
 export const TABLE_PROTECT_VM_VMWARE = [
@@ -28,10 +32,9 @@ export const TABLE_PROTECT_VM_VMWARE = [
 
 export const REPLICATION_JOBS = [
   { label: 'Virtual Machine', field: 'vmName' },
-  { label: 'Disk', field: 'diskId' },
-  { label: 'Size', field: 'transferSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
-  { label: 'Start Time', field: 'startTime', itemRenderer: DATE_ITEM_RENDERER },
-  { label: 'End Time', field: 'endTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Disk Id', field: 'diskId' },
+  { label: 'Data Transfer', field: 'transferSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
+  { label: 'Replication Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
 ];
 
@@ -39,19 +42,16 @@ export const RECOVERY_JOBS = [
   { label: 'Virtual Machine', field: 'vmName' },
   // { label: 'Disk', field: 'DiskID' },
   // { label: 'Size', field: 'TransferSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
-  { label: 'Start Time', field: 'startTime', itemRenderer: DATE_ITEM_RENDERER },
-  { label: 'End Time', field: 'endTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Start Time', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Recovery Type', field: 'recoveryType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER },
   { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
-  { label: 'Message', field: 'failureMessage' },
+  { label: 'IP Address', field: 'failureMessage', itemRenderer: SSH_RDP_ITEM_RENDERER },
 ];
 
 export const REPLICATION_VM_JOBS = [
   { label: 'Virtual Machine', field: 'vmName' },
-  { label: 'Start Time', field: 'startTime', itemRenderer: DATE_ITEM_RENDERER },
-  { label: 'End Time', field: 'endTime', itemRenderer: DATE_ITEM_RENDERER },
-  { label: 'Iteration Number', field: 'iterationNumber' },
-  { label: 'State', field: 'status' },
-  { label: 'Sync Status', field: 'syncStatus' },
-  { label: 'Message', field: 'failureMessage' },
+  { label: 'Itration Number', field: 'iterationNumber' },
+  { label: 'Replication Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
+  { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
+  { label: 'Sync', field: 'syncStatus', itemRenderer: STATUS_ITEM_RENDERER },
 ];

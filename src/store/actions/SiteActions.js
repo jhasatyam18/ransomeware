@@ -38,23 +38,6 @@ export function sitesFetched(sites) {
   };
 }
 
-export function handleSiteTableSelection(data, isSelected, primaryKey) {
-  return (dispatch, getState) => {
-    const { sites } = getState();
-    const { selectedSites } = sites;
-    if (isSelected) {
-      if (!selectedSites || selectedSites.length === 0 || !selectedSites[data[primaryKey]]) {
-        const newSites = { ...selectedSites, [data[primaryKey]]: data };
-        dispatch(updateSelectedSites(newSites));
-      }
-    } else if (selectedSites[data[primaryKey]]) {
-      const newSites = selectedSites;
-      delete newSites[data[primaryKey]];
-      dispatch(updateSelectedSites(newSites));
-    }
-  };
-}
-
 export function updateSelectedSites(selectedSites) {
   return {
     type: Types.UPDATE_SELECTED_SITES,
@@ -146,27 +129,6 @@ export function onProtectSiteChange({ value }) {
   };
 }
 
-export function handleProtectVMSeletion(data, isSelected, primaryKey) {
-  return (dispatch, getState) => {
-    const { user } = getState();
-    const { values } = user;
-    let selectedVMs = getValue('ui.site.seletedVMs', values);
-    if (!selectedVMs) {
-      selectedVMs = {};
-    }
-    if (isSelected) {
-      if (!selectedVMs || selectedVMs.length === 0 || !selectedVMs[data[primaryKey]]) {
-        const newVMs = { ...selectedVMs, [data[primaryKey]]: data };
-        dispatch(valueChange('ui.site.seletedVMs', newVMs));
-      }
-    } else if (selectedVMs[data[primaryKey]]) {
-      const newVMs = selectedVMs;
-      delete newVMs[data[primaryKey]];
-      dispatch(valueChange('ui.site.seletedVMs', newVMs));
-    }
-  };
-}
-
 export function onRecoverSiteChange({ value }) {
   return (dispatch, getState) => {
     const { user } = getState();
@@ -213,5 +175,75 @@ export function fetchAvailibilityZones({ value }) {
       (err) => {
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
+  };
+}
+
+export function selectAllSites(value) {
+  return (dispatch, getState) => {
+    const { sites } = getState();
+    if (value) {
+      let newSites = {};
+      sites.sites.forEach((key) => {
+        newSites = { ...newSites, [key.id]: key };
+      });
+      dispatch(updateSelectedSites(newSites));
+    } else {
+      dispatch(updateSelectedSites([]));
+    }
+  };
+}
+
+export function handleSiteTableSelection(data, isSelected, primaryKey) {
+  return (dispatch, getState) => {
+    const { sites } = getState();
+    const { selectedSites } = sites;
+    if (isSelected) {
+      if (!selectedSites || selectedSites.length === 0 || !selectedSites[data[primaryKey]]) {
+        const newSites = { ...selectedSites, [data[primaryKey]]: data };
+        dispatch(updateSelectedSites(newSites));
+      }
+    } else if (selectedSites[data[primaryKey]]) {
+      const newSites = selectedSites;
+      delete newSites[data[primaryKey]];
+      dispatch(updateSelectedSites(newSites));
+    }
+  };
+}
+
+export function handleProtectVMSeletion(data, isSelected, primaryKey) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    let selectedVMs = getValue('ui.site.seletedVMs', values);
+    if (!selectedVMs) {
+      selectedVMs = {};
+    }
+    if (isSelected) {
+      if (!selectedVMs || selectedVMs.length === 0 || !selectedVMs[data[primaryKey]]) {
+        const newVMs = { ...selectedVMs, [data[primaryKey]]: data };
+        dispatch(valueChange('ui.site.seletedVMs', newVMs));
+      }
+    } else if (selectedVMs[data[primaryKey]]) {
+      const newVMs = selectedVMs;
+      delete newVMs[data[primaryKey]];
+      dispatch(valueChange('ui.site.seletedVMs', newVMs));
+    }
+  };
+}
+
+export function handleSelectAllRecoveryVMs(value) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const data = getValue('ui.recovery.vms', values);
+    let selectedVMs = {};
+    if (value) {
+      data.forEach((vm) => {
+        selectedVMs = { ...selectedVMs, [vm.moref]: vm };
+      });
+      dispatch(valueChange('ui.site.seletedVMs', selectedVMs));
+    } else {
+      dispatch(valueChange('ui.site.seletedVMs', selectedVMs));
+    }
   };
 }

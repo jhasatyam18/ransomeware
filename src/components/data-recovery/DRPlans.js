@@ -39,6 +39,7 @@ class DRPlans extends Component {
                 onSelect={handleDrPlanTableSelection}
                 selectedData={selectedPlans}
                 primaryKey="id"
+                user={user}
               />
             </CardBody>
           </Card>

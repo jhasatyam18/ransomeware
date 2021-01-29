@@ -46,7 +46,7 @@ class DRPlanActionBar extends Component {
 
   onDelete() {
     const { dispatch } = this.props;
-    const options = { title: 'Alert', confirmAction: deletePlan, message: 'Are you sure want to delete  ?' };
+    const options = { title: 'Confirmation', confirmAction: deletePlan, message: 'Are you sure want to delete  ?' };
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   }
 
@@ -86,7 +86,7 @@ class DRPlanActionBar extends Component {
 
   renderServerOptions() {
     const actions = [{ label: 'recover', onClick: this.onInitiateRecovery, icon: 'fa fa-recycle', isDisabled: false },
-      { label: 'Migrate', onClick: this.onMigrate, icon: 'fa fa-truck', isDisabled: false }];
+      { label: 'Migrate', onClick: this.onMigrate, icon: 'fa fa-share-square', isDisabled: false }];
     return (
       <>
         {this.getActionButtons(actions)}

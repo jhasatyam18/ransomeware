@@ -23,8 +23,10 @@ export function validateField(fieldKey, value, dispatch, user) {
     let isValid = false;
     patterns.forEach((pattern) => {
       const re = new RegExp(pattern);
-      if (value.match(re) !== null) {
-        isValid = true;
+      if (value) {
+        if (value.match(re) !== null) {
+          isValid = true;
+        }
       }
     });
     if (!isValid) {
