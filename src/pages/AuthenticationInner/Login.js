@@ -7,19 +7,19 @@ import {
   Row, Col, CardBody, Card, Container,
 } from 'reactstrap';
 
-// availity-reactstrap-validation
-import { AvForm, AvField } from 'availity-reactstrap-validation';
-
 // import images
+import { validateField } from '../../utils/validationUtils';
 import logo from '../../assets/images/logo.png';
 import logoName from '../../assets/images/name.png';
 import { getInfo, login } from '../../store/actions';
+import DMField from '../../components/Shared/DMField';
+import { FIELDS } from '../../constants/FieldsConstant';
+import { getValue } from '../../utils/InputUtils';
 
 class Login extends Component {
   constructor() {
     super();
     this.onSubmit = this.onSubmit.bind(this);
-    this.state = { userName: '', password: '' };
   }
 
   componentDidMount() {
@@ -34,13 +34,24 @@ class Login extends Component {
   }
 
   onSubmit(e) {
+    const { user, dispatch } = this.props;
+    const { values } = user;
+    const username = getValue('login.username', values);
+    const password = getValue('login.password', values);
+
+    if (!username && !password) {
+      validateField(FIELDS['login.username'], 'login.username', username, dispatch, user);
+      validateField(FIELDS['login.password'], 'login.password', password, dispatch, user);
+      return;
+    }
     e.preventDefault();
-    const { dispatch, history } = this.props;
-    const { userName, password } = this.state;
-    dispatch(login({ username: userName, password, history }));
+    const { history } = this.props;
+    dispatch(login({ username: getValue('login.username', values), password: getValue('login.password', values), history }));
   }
 
   render() {
+    const { dispatch, user } = this.props;
+    const fields = Object.keys(FIELDS).filter((key) => key.indexOf('login') !== -1);
     return (
       <>
         <div className="account-pages my-5 pt-sm-5">
@@ -81,53 +92,25 @@ class Login extends Component {
                       </Link>
                     </div>
                     <div className="p-2">
-                      <AvForm className="form-horizontal">
-                        <div className="form-group">
-                          <AvField
-                            name="username"
-                            label="Username"
-                            value=""
-                            className="form-control"
-                            placeholder="Enter username"
-                            type="text"
-                            id="userName"
-                            onChange={this.handleChange}
-                            autoComplete="off"
-                            required
-                          />
-                        </div>
-
-                        <div className="form-group">
-                          <AvField
-                            name="password"
-                            label="Password"
-                            value=""
-                            type="password"
-                            id="password"
-                            required
-                            placeholder="Enter password"
-                            onChange={this.handleChange}
-                          />
-                        </div>
-                        <div className="mt-3">
-                          <button
-                            className="btn btn-success btn-block waves-effect waves-light"
-                            type="submit"
-                            onClick={this.onSubmit}
-                          >
-                            Log In
-                          </button>
-                        </div>
-                        <div className="container login">
-                          <div className="row">
-                            <div className="col-sm-8 text-align sign-up">
-                              <a href="">Sign Up</a>
-                              <p className="text-align "> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</p>
-                              <a href="">Forgot Password</a>
-                            </div>
+                      {fields.map((field) => (<DMField dispatch={dispatch} user={user} fieldKey={field} />))}
+                      <div className="mt-3">
+                        <button
+                          className="btn btn-success btn-block waves-effect waves-light"
+                          type="submit"
+                          onClick={this.onSubmit}
+                        >
+                          Log In
+                        </button>
+                      </div>
+                      <div className="container login">
+                        <div className="row">
+                          <div className="col-sm-8 text-align sign-up">
+                            <a href="">Sign Up</a>
+                            <p className="text-align "> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</p>
+                            <a href="">Forgot Password</a>
                           </div>
                         </div>
-                      </AvForm>
+                      </div>
                     </div>
                   </CardBody>
                 </Card>

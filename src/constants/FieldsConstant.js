@@ -110,4 +110,6 @@ export const FIELDS = {
   'ui.values.replication.interval.type': {
     label: 'Unit', placeHolderText: 'Select replication unit', type: FIELD_TYPE.SELECT, options: [{ label: 'Day', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_DAY }, { label: 'Hour', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_HOUR }, { label: 'Minutes', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_MIN }], validate: (value, user) => isEmpty(value, user), errorMessage: 'Select replication unit.', shouldShow: true, defaultValue: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_MIN,
   },
+  'login.username': { label: 'Username', id: 'userName', name: 'Username', placeHolderText: 'Enter username', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Username required', shouldShow: true, layout: 'vertical' },
+  'login.password': { label: 'Password', id: 'password', name: 'Password', placeHolderText: 'Enter password', type: FIELD_TYPE.PASSOWRD, validate: (value, user) => isEmpty(value, user), errorMessage: 'Password required', shouldShow: true, layout: 'vertical' },
 };

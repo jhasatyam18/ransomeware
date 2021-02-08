@@ -71,7 +71,7 @@ class DMFieldText extends Component {
     const { fieldKey, field } = this.props;
     if (hasError) {
       return (
-        <FormFeedback for={fieldKey}>{field.errorMessage}</FormFeedback>
+        <FormFeedback className="valid-feedback" for={fieldKey}>{field.errorMessage}</FormFeedback>
       );
     }
     return null;
@@ -92,7 +92,7 @@ class DMFieldText extends Component {
 
   render() {
     const { field, fieldKey, user, hideLabel } = this.props;
-    const { shouldShow, placeHolderText } = field;
+    const { label, shouldShow, layout, placeHolderText } = field;
     const { errors } = user;
     const { value, type } = this.state;
     const hasErrors = !!(errors && errors[fieldKey] !== undefined);
@@ -100,6 +100,30 @@ class DMFieldText extends Component {
     const css = hideLabel ? '' : 'row mb-4 form-group';
     if (!showField) return null;
     const placeH = placeHolderText || '';
+    if (layout === 'vertical') {
+      return (
+        <form>
+          <div className="form-group">
+            <Label for={fieldKey}>
+              {label}
+            </Label>
+            <input
+              type={type}
+              className={`form-control form-control-sm  form-control ${hasErrors ? 'is-invalid' : ''}`}
+              id={fieldKey}
+              value={value}
+              onBlur={this.onBlur}
+              onChange={this.handleChange}
+              invalid={hasErrors}
+              placeholder={placeH}
+              autoComplete="off"
+            />
+            {this.showPasswordToggle()}
+            {this.renderError(hasErrors)}
+          </div>
+        </form>
+      );
+    }
     return (
       <>
         <FormGroup className={css}>
