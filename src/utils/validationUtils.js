@@ -1,6 +1,6 @@
 import { addErrorMessage, hideApplicationLoader, removeErrorMessage, showApplicationLoader, valueChange } from '../store/actions';
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
-import { getValue } from './InputUtils';
+import { createVMConfigStackObject, getValue } from './InputUtils';
 import { MESSAGE_TYPES } from '../constants/MessageConstants';
 import { API_TYPES, callAPI, createPayload } from './ApiUtils';
 import { API_VALIDATE_MIGRATION } from '../constants/ApiConstants';
@@ -14,9 +14,9 @@ export function isRequired(value) {
   return null;
 }
 
-export function validateField(fieldKey, value, dispatch, user) {
-  const { patterns, validate, errorMessage } = FIELDS[fieldKey];
-  const field = FIELDS[fieldKey];
+export function validateField(field, fieldKey, value, dispatch, user) {
+  const { patterns, validate, errorMessage } = field;
+  // const field = FIELDS[fieldKey];
   const { type } = field;
   const { errors } = user;
   if (patterns) {
@@ -64,25 +64,25 @@ export function validateConfigureSite(user, dispatch) {
     const { shouldShow } = field;
     const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
     if (showField) {
-      if (!validateField(fieldKey, getValue(fieldKey, values), dispatch, user)) {
+      if (!validateField(field, fieldKey, getValue(fieldKey, values), dispatch, user)) {
         isClean = false;
       }
     } else {
-      dispatch(valueChange(fieldKey, getValue(fieldKey, values)));
+      dispatch(valueChange(field, fieldKey, getValue(fieldKey, values)));
     }
   });
   return isClean;
 }
 
-export function validateSteps(user, dispatch, fields) {
+export function validateSteps(user, dispatch, fields, staticFields) {
   const { values } = user;
   let isClean = true;
   fields.map((fieldKey) => {
-    const field = FIELDS[fieldKey];
+    const field = staticFields ? staticFields[fieldKey] : FIELDS[fieldKey];
     const { shouldShow } = field;
     const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
     if (showField) {
-      if (!validateField(fieldKey, getValue(fieldKey, values), dispatch, user)) {
+      if (!validateField(field, fieldKey, getValue(fieldKey, values), dispatch, user)) {
         isClean = false;
       }
     }
@@ -144,4 +144,25 @@ export async function validateMigrationVMs({ user, dispatch }) {
     return false;
   }
   return true;
+}
+
+export function validateVMConfiguration({ user, dispatch }) {
+  const { values } = user;
+  const vms = getValue('ui.site.seletedVMs', values);
+  let fields = {};
+  Object.keys(vms).forEach((vm) => {
+    const vmConfig = createVMConfigStackObject(vm);
+    const { data } = vmConfig;
+    data.forEach((item) => {
+      const { children } = item;
+      Object.keys(children).forEach((key) => {
+        fields = { ...fields, [key]: children[key] };
+      });
+    });
+  });
+  const response = validateSteps(user, dispatch, Object.keys(fields), fields);
+  if (!response) {
+    dispatch(addMessage('Check node configuration. One or more required field data is not provided.', MESSAGE_TYPES.ERROR));
+  }
+  return response;
 }

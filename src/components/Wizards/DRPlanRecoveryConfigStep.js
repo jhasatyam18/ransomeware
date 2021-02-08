@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import { CardBody, Form } from 'reactstrap';
 import DMField from '../Shared/DMField';
-import { DRPLAN_RECOVERY_CONFIG_AWS_STEP_FIELDS } from '../../constants/WizardConstants';
 
 class DRPlanRecoveryConfigStep extends Component {
   render() {
     const { dispatch, user } = this.props;
-    const fields = DRPLAN_RECOVERY_CONFIG_AWS_STEP_FIELDS;
+    const fields = []; // DRPLAN_RECOVERY_CONFIG_AWS_STEP_FIELDS;
     return (
       <>
         <CardBody className="modal-card-body">

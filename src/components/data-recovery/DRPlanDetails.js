@@ -9,6 +9,8 @@ import { APP_TYPE, DROP_DOWN_ACTION_TYPES, REPLICATION_STATUS } from '../../cons
 import DropdownActions from '../Common/DropdownActions';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
 import { MIGRAION_WIZARDS, RECOVERY_WIZARDS } from '../../constants/WizardConstants';
+import CheckBox from '../Common/CheckBox';
+import DisplayString from '../Common/DisplayString';
 
 const Replication = React.lazy(() => import('../Jobs/Replication'));
 const Recovery = React.lazy(() => import('../Jobs/Recovery'));
@@ -64,22 +66,35 @@ class DRPlanDetails extends Component {
     return fields;
   }
 
-  renderRecoveryConfig(config) {
-    if (!config || !config.instanceDetails) {
+  renderField(label, field) {
+    const type = (typeof field);
+    switch (type) {
+      case 'boolean':
+        return <CheckBox name={label} selected={field} />;
+      default:
+        return <DisplayString value={field} />;
+    }
+  }
+
+  renderRecoveryConfig() {
+    const { drPlans } = this.props;
+    const { details } = drPlans;
+    if (!details) {
       return null;
     }
-    const { instanceDetails } = config;
-    const keys = [{ label: 'AMIID', field: 'amiID' }, { label: 'Instance Type', field: 'instanceType' }, { label: 'Availability Zone', field: 'availabilityZone' }, { label: 'Volume Type', field: 'volumeType' }];
+    const keys = [{ label: 'Replication Interval', field: 'replicationInterval' }, { label: 'Subnet', field: 'subnet' }, { label: 'Encryption On Wire', field: 'isEncryptionOnWire' },
+      { label: 'Encryption On Rest', field: 'isEncryptionOnRest' }, { label: 'Enable Compression', field: 'isCompression' },
+      { label: 'Pre Script', field: 'preScript' }, { label: 'Post Script', field: 'postScript' }];
     const fields = keys.map((ele) => {
       const { field, label } = ele;
-      if (instanceDetails[field]) {
+      if (typeof details[field] !== 'undefined') {
         return (
           <div className="stack__info">
             <div className="label">
               {label}
             </div>
             <div className="value">
-              {instanceDetails[field]}
+              {this.renderField(label, details[field])}
             </div>
           </div>
 
@@ -129,7 +144,7 @@ class DRPlanDetails extends Component {
     if (!details || Object.keys(details).length === 0) {
       return null;
     }
-    const { name, protectedSite, recoverySite, protectedEntities, recoveryEntities, id } = details;
+    const { name, protectedSite, recoverySite, protectedEntities, id } = details;
     const { virtualMachines } = protectedEntities;
     return (
       <>
@@ -208,7 +223,7 @@ class DRPlanDetails extends Component {
                 <TabPane tabId="2" className="p-3">
                   <Row>
                     <Col sm="4">
-                      {this.renderRecoveryConfig(recoveryEntities)}
+                      {this.renderRecoveryConfig()}
                     </Col>
                   </Row>
                 </TabPane>

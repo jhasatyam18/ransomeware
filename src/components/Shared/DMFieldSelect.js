@@ -4,7 +4,6 @@ import {
   Col, FormFeedback, FormGroup, Input, Label,
 } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
-import { FIELDS } from '../../constants/FieldsConstant';
 import { getValue } from '../../utils/InputUtils';
 import { valueChange } from '../../store/actions/UserActions';
 import { validateField } from '../../utils/validationUtils';
@@ -17,12 +16,16 @@ class DMFieldSelect extends Component {
   }
 
   componentDidMount() {
-    const { fieldKey, user } = this.props;
+    const { fieldKey, user, field, dispatch } = this.props;
+    const { defaultValue } = field;
     const { values } = user;
-    const { value } = this.state;
     const fieldValue = getValue(fieldKey, values);
-    if (fieldValue !== value) {
+    if (fieldValue) {
       this.setState({ value: fieldValue });
+    }
+    if (!fieldValue && defaultValue) {
+      this.setState({ value: defaultValue });
+      dispatch(valueChange(fieldKey, defaultValue));
     }
   }
 
@@ -39,10 +42,10 @@ class DMFieldSelect extends Component {
   }
 
   onBlur = () => {
-    const { fieldKey, dispatch, user } = this.props;
+    const { fieldKey, dispatch, user, field } = this.props;
     const { value } = this.state;
     dispatch(valueChange(fieldKey, value));
-    validateField(fieldKey, value, dispatch, user);
+    validateField(field, fieldKey, value, dispatch, user);
   }
 
   handleChange = (e) => {
@@ -72,31 +75,42 @@ class DMFieldSelect extends Component {
   }
 
   renderError(hasError) {
-    const { fieldKey } = this.props;
+    const { field, fieldKey } = this.props;
     if (hasError) {
       return (
-        <FormFeedback for={fieldKey}>{FIELDS[fieldKey].errorMessage}</FormFeedback>
+        <FormFeedback for={fieldKey}>{field.errorMessage}</FormFeedback>
       );
     }
     return null;
   }
 
+  renderLabel() {
+    const { t, hideLabel, field } = this.props;
+    const { label } = field;
+    if (hideLabel) {
+      return null;
+    }
+    return (
+      <Label for="horizontal-firstname-Input" className="col-sm-4 col-form-Label">
+        {t(label)}
+      </Label>
+    );
+  }
+
   render() {
-    const { field, fieldKey, user, t } = this.props;
-    const { label, shouldShow } = field;
+    const { field, fieldKey, user, hideLabel } = this.props;
+    const { shouldShow } = field;
     const { value } = this.state;
     const { errors } = user;
     const hasErrors = !!(errors && errors[fieldKey] !== undefined);
     const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
-
     if (!showField) return null;
+    const css = hideLabel ? '' : 'row mb-4 form-group';
     return (
       <>
-        <FormGroup className="row mb-4 form-group">
-          <Label for="horizontal-firstname-Input" className="col-sm-3 col-form-Label">
-            {t(label)}
-          </Label>
-          <Col sm={9}>
+        <FormGroup className={css}>
+          {this.renderLabel()}
+          <Col sm={hideLabel ? 12 : 8}>
             <Input type="select" id={fieldKey} onSelect={this.handleChange} className="form-control form-control-sm custom-select" onChange={this.handleChange} value={value} invalid={hasErrors}>
               <option key={`${fieldKey}-default`} value="-">  </option>
               {this.renderOptions()}

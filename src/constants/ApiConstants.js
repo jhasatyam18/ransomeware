@@ -10,6 +10,9 @@ export const API_FETCH_DR_PLAN_BY_ID = 'api/v1/protection/plans/<id>';
 export const API_START_DR_PLAN = 'api/v1/protection/plans/<id>/start';
 export const API_STOP_DR_PLAN = 'api/v1/protection/plans/<id>/stop';
 export const API_DELETE_DR_PLAN = 'api/v1/protection/plans/<id>';
+export const API_SCRIPTS = 'api/v1/scripts';
+export const API_SITE_NETWORKS = 'api/v1/sites/<id>/networks';
+
 // jobs
 export const API_REPLICATION_JOBS = 'api/v1/jobs/replication/disks';
 export const API_REPLICATION_VM_JOBS = 'api/v1/jobs/replication/vms';
@@ -29,5 +32,6 @@ export const API_MIGRATE = 'api/v1/migrate';
 export const API_AWS_INSTANCES = 'aws_instances.json';
 export const API_GCP_INSTANCES = 'gcp_instances.json';
 export const API_AWS_RGIONS = 'aws_regions.json';
+export const API_GCP_RGIONS = 'gcp_regions.json';
 export const API_AWS_AVAILABILLITY_ZONES = 'aws_availability_zones.json';
 export const API_GCP_AVAILABILLITY_ZONES = 'gcp_zones.json';

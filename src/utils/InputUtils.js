@@ -1,5 +1,7 @@
+import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
-import { PLATFORM_TYPES } from '../constants/InputConstants';
+import { PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS } from '../constants/InputConstants';
+import { isEmpty } from './validationUtils';
 
 export function getValue(key, values) {
   const ret = values[key];
@@ -48,7 +50,7 @@ export function isPlatformTypeGCP(user) {
 
 export function getSitesOptions(user) {
   const { values } = user;
-  const sites = getValue('ui.values.sites', values);
+  const sites = getValue(STATIC_KEYS.UI_SITES, values);
   const result = [];
   if (sites) {
     sites.reduce((previous, next) => {
@@ -61,7 +63,7 @@ export function getSitesOptions(user) {
 
 export function getDRPlanOptions(user) {
   const { values } = user;
-  const plans = getValue('ui.values.drplan', values);
+  const plans = getValue(STATIC_KEYS.UI_PROTECTION_PLANS, values);
   const result = [];
   if (plans) {
     plans.reduce((previous, next) => {
@@ -74,7 +76,7 @@ export function getDRPlanOptions(user) {
 
 export function getInstanceTypeOptions(user) {
   const { values } = user;
-  const instanceTypes = getValue('ui.values.instances', values);
+  const instanceTypes = getValue(STATIC_KEYS.UI_INSTANCES, values);
   const result = [];
   if (instanceTypes) {
     instanceTypes.reduce((previous, next) => {
@@ -87,7 +89,7 @@ export function getInstanceTypeOptions(user) {
 
 export function getAvailibilityZoneOptions(user) {
   const { values } = user;
-  const zones = getValue('ui.values.availabilityZones', values);
+  const zones = getValue(STATIC_KEYS.UI_AVAILABILITY_ZONES, values);
   const result = [];
   if (zones) {
     zones.reduce((previous, next) => {
@@ -100,7 +102,7 @@ export function getAvailibilityZoneOptions(user) {
 
 export function getRegionOptions(user) {
   const { values } = user;
-  const zones = getValue('ui.values.regions', values);
+  const zones = getValue(STATIC_KEYS.UI_REGIONS, values);
   const result = [];
   if (zones) {
     zones.reduce((previous, next) => {
@@ -109,4 +111,107 @@ export function getRegionOptions(user) {
     }, result);
   }
   return result;
+}
+
+export function getScripts(type, user) {
+  const key = (type === SCRIPT_TYPE.PRE ? STATIC_KEYS.UI_SCRIPT_PRE : STATIC_KEYS.UI_SCRIPT_POST);
+  return optionsBuilder(user, key);
+}
+
+export function getPreScriptsOptions(user) {
+  return getScripts(SCRIPT_TYPE.PRE, user);
+}
+
+export function getPostScriptsOptions(user) {
+  return getScripts(SCRIPT_TYPE.POST, user);
+}
+
+export function geBootPriorityOptions() {
+  return [{ label: '1 (Highest)', value: 1 }, { label: '2', value: 2 }, { label: '3', value: 3 }, { label: '4', value: 4 }, { label: '5 (Lowest)', value: 5 }];
+}
+
+export function getStorageTypeOptions(user) {
+  const { values } = user;
+  const recoverySite = getValue('drplan.recoverySite', values);
+  const sites = getValue(STATIC_KEYS.UI_SITES, values);
+  const site = sites.filter((s) => `${s.id}` === `${recoverySite}`)[0];
+  const { platformDetails } = site;
+  const isGCP = (platformDetails.platformType === PLATFORM_TYPES.GCP);
+  if (isGCP) {
+    return [{ label: 'Standard', value: 'pd-standard' }, { label: 'Balanced', value: 'pd-balanced' }, { label: 'SSD', value: 'pd-ssd' }];
+  }
+  return [{ label: 'GP-2', value: 'gp2' }, { label: 'GP-3', value: 'gp3' }, { label: 'IO-1', value: 'io1' }, { label: 'IO-2', value: 'io2' }];
+}
+
+// generate options from plain array ["d1","d2"]
+export function optionsBuilder(user, key) {
+  const { values } = user;
+  const opts = getValue(key, values) || [];
+  const options = [];
+  opts.forEach((op) => {
+    options.push({ label: op, value: op });
+  });
+  return options;
+}
+
+export function getSecurityGroupOption(user) {
+  return optionsBuilder(user, STATIC_KEYS.UI_SECURITY_GROUPS);
+}
+
+export function getSubnetOptions(user) {
+  return optionsBuilder(user, STATIC_KEYS.UI_SUBNETS);
+}
+export function buildRangeOptions(start, end) {
+  const options = [];
+  for (let i = start; i < end; i += 1) {
+    const option = { label: i, value: i };
+    options.push(option);
+  }
+  return options;
+}
+export function getReplicationIntervalOptions(user) {
+  const { values } = user;
+  const intervalType = getValue(STATIC_KEYS.REPLICATION_INTERVAL_TYPE, values);
+  switch (intervalType) {
+    case STATIC_KEYS.REPLICATION_INTERVAL_TYPE_DAY:
+      return buildRangeOptions(1, 10);
+    case STATIC_KEYS.REPLICATION_INTERVAL_TYPE_HOUR:
+      return buildRangeOptions(1, 23);
+    default:
+      return buildRangeOptions(1, 59);
+  }
+}
+
+export function createVMConfigStackObject(key) {
+  const config = {
+    data: [
+      {
+        hasChildren: true,
+        title: 'General',
+        children: {
+          [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
+          [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u) },
+          [`${key}-vmConfig.general.bootOrder`]: { label: 'Boot', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select boot order.', shouldShow: true, options: (u) => geBootPriorityOptions(u) },
+          [`${key}-vmConfig.general.tags`]: { label: 'Tags', type: STACK_COMPONENT_TAGS, validate: null, errorMessage: '', shouldShow: true },
+        },
+      },
+      {
+        hasChildren: true,
+        title: 'Network',
+        children: {
+          [`${key}-vmConfig.network.net1`]: { label: 'Network-1', type: STACK_COMPONENT_NETWORK, validate: null, errorMessage: '', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
+          [`${key}-vmConfig.network.securityGroup`]: { label: 'Security Group', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getSecurityGroupOption(u) },
+        },
+      },
+      {
+        hasChildren: true,
+        title: 'Scripts',
+        children: {
+          [`${key}-vmConfig.scripts.preScript`]: { label: 'Pre', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPreScriptsOptions(u) },
+          [`${key}-vmConfig.scripts.postScript`]: { label: 'Post', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPostScriptsOptions(u) },
+        },
+      },
+    ],
+  };
+  return config;
 }

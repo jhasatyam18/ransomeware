@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Label } from 'reactstrap';
 import DMTable from '../Table/DMTable';
-import { TABLE_PROTECT_VM_VMWARE } from '../../constants/TableConstants';
+import { TABLE_RECOVERY_VMS } from '../../constants/TableConstants';
 import { handleProtectVMSeletion, handleSelectAllRecoveryVMs } from '../../store/actions/SiteActions';
 import { getValue } from '../../utils/InputUtils';
 
@@ -20,7 +20,7 @@ class RecoveryMachines extends Component {
         <Label>Select Virtual Machine for recovery</Label>
         <DMTable
           dispatch={dispatch}
-          columns={TABLE_PROTECT_VM_VMWARE}
+          columns={TABLE_RECOVERY_VMS}
           data={data}
           isSelectable
           onSelect={handleProtectVMSeletion}
@@ -28,6 +28,7 @@ class RecoveryMachines extends Component {
           primaryKey="moref"
           name="recoveryvms"
           onSelectAll={handleSelectAllRecoveryVMs}
+          user={user}
         />
       </>
     );

@@ -6,7 +6,7 @@ const DMWSteps = (props) => {
   return (
     <ul className="step-ul">
       {steps.map((step, index) => (
-        <DMWStep label={step.label} isActive={index === currentStep} isCompleted={currentStep > index} />
+        <DMWStep label={step.label} isActive={index === currentStep} isCompleted={currentStep > index} key={`wizard-step-${index * 1}`} />
       ))}
     </ul>
   );

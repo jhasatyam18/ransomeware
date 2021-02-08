@@ -14,8 +14,6 @@ class ProtectionPlanSummaryStep extends Component {
     const protectedSiteName = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${pSite}`)[0].platformDetails.platformName;
     const recoverySiteName = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${rSite}`)[0].platformDetails.platformName;
     const selectedVMs = getValue('ui.site.seletedVMs', values);
-    const instanceType = getValue('drplan.recoveryEntities.instanceDetails.instanceType', values);
-    const availabilityZone = getValue('drplan.recoveryEntities.instanceDetails.availabilityZone', values);
     let size = 0;
     Object.keys(selectedVMs).forEach((key) => {
       selectedVMs[key].virtualDisks.forEach((disk) => {
@@ -25,7 +23,7 @@ class ProtectionPlanSummaryStep extends Component {
     return (
       <>
         <Card className="padding-20">
-          <CardTitle>{t('summary')}</CardTitle>
+          <CardTitle>{t('Summary')}</CardTitle>
           <CardBody>
             <Row>
               <Col sm={12}>
@@ -54,14 +52,6 @@ class ProtectionPlanSummaryStep extends Component {
                   <Col sm={3}>{`${size} GB`}</Col>
                 </Row>
                 <hr className="mt-3 mb-3" />
-              </Col>
-              <Col sm={12}>
-                <Row>
-                  <Col sm={3} className="text-muted">Instance Type</Col>
-                  <Col sm={3}>{instanceType}</Col>
-                  <Col sm={3} className="text-muted">Zone</Col>
-                  <Col sm={3}>{availabilityZone}</Col>
-                </Row>
               </Col>
             </Row>
           </CardBody>

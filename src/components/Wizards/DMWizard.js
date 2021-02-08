@@ -4,17 +4,18 @@ import { Modal, Row, Col } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
 import { closeWizard } from '../../store/actions/WizardActions';
 import { clearValues } from '../../store/actions';
-import { DRPLAN_GENERAL_SETTINGS_STEP, DRPLAN_PROTECT_STEP, DRPLAN_RECOVERY_STEP, PROTECTION_PLAN_SUMMARY_STEP, RECOVERY_GENERAL_STEP, RECOVERY_PROTECT_VM_STEP, RECOVERY_SUMMARY, MIGRATION_GENERAL_STEP } from '../../constants/WizardConstants';
+import { DRPLAN_PROTECT_STEP, DRPLAN_RECOVERY_STEP, PROTECTION_PLAN_SUMMARY_STEP, RECOVERY_PROTECT_VM_STEP, RECOVERY_SUMMARY, MIGRATION_GENERAL_STEP, DRPLAN_VM_CONFIG_STEP, WIZARD_STEP, RECOVERY_GENERAL_STEP } from '../../constants/WizardConstants';
 import Pages404 from '../../pages/Page-404';
 import DRPlanRecoveryConfigStep from './DRPlanRecoveryConfigStep';
 import DRPlanProtectVMStep from './DRPlanProtectVMStep';
-import DRPlanGeneralSettingsStep from './DRPlanGeneralSettingsStep';
 import DMWSteps from './DNWizardSteps';
-import RecoveryGeneralStep from './RecoveryGeneralStep';
 import RecoveryMachines from './RecoveryMachines';
 import RecoverySummary from './RecoverySummary';
 import ProtectionPlanSummaryStep from './ProtectionPlanSummaryStep';
 import MigrationGeneralStep from './MigrationGeneralStep';
+import VMConfigurationStep from './VMConfigurationStep';
+import WizardStep from './WizardStep';
+import RecoveryGeneralStep from './RecoveryGeneralStep';
 
 class DMWizard extends React.Component {
   constructor() {
@@ -73,7 +74,7 @@ class DMWizard extends React.Component {
 
   onToggle() {
     const { wizardSize, currentStep } = this.state;
-    this.setState({ currentStep, wizardSize: (wizardSize === 'xl' ? 'lg' : 'xl') });
+    this.setState({ currentStep, wizardSize: (wizardSize === 'lg' ? 'xl' : 'lg') });
   }
 
   setNextStep() {
@@ -82,15 +83,14 @@ class DMWizard extends React.Component {
   }
 
   getStep(name) {
+    const { wizard } = this.props;
+    const { steps } = wizard;
+    const { currentStep } = this.state;
     switch (name) {
-      case DRPLAN_GENERAL_SETTINGS_STEP:
-        return <DRPlanGeneralSettingsStep {...this.props} />;
       case DRPLAN_RECOVERY_STEP:
         return <DRPlanRecoveryConfigStep {...this.props} />;
       case DRPLAN_PROTECT_STEP:
         return <DRPlanProtectVMStep {...this.props} />;
-      case RECOVERY_GENERAL_STEP:
-        return <RecoveryGeneralStep {...this.props} />;
       case RECOVERY_PROTECT_VM_STEP:
         return <RecoveryMachines {...this.props} />;
       case RECOVERY_SUMMARY:
@@ -99,6 +99,12 @@ class DMWizard extends React.Component {
         return <ProtectionPlanSummaryStep {...this.props} />;
       case MIGRATION_GENERAL_STEP:
         return <MigrationGeneralStep {...this.props} />;
+      case DRPLAN_VM_CONFIG_STEP:
+        return <VMConfigurationStep {...this.props} />;
+      case WIZARD_STEP:
+        return <WizardStep {...this.props} fields={steps[currentStep].fields} />;
+      case RECOVERY_GENERAL_STEP:
+        return <RecoveryGeneralStep {...this.props} />;
       default:
         return <Pages404 />;
     }
@@ -150,7 +156,7 @@ class DMWizard extends React.Component {
                 <DMWSteps steps={steps} currentStep={currentStep} />
               </Col>
               <Col sm={9}>
-                <SimpleBar style={{ minHeight: 400, maxHeight: 400 }}>
+                <SimpleBar style={{ minHeight: '65vh', maxHeight: '65vh' }}>
                   {this.getStep(steps[currentStep].component)}
                 </SimpleBar>
               </Col>

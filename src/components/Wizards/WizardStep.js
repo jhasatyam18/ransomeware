@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { CardBody, Form } from 'reactstrap';
-import { DRPLAN_GENERAL_SETTINGS_STEP_FIELDS } from '../../constants/WizardConstants';
 import DMField from '../Shared/DMField';
 
-class DRPlanGeneralSettingsStep extends Component {
+class WizardStep extends Component {
   render() {
-    const { dispatch, user } = this.props;
-    const fields = DRPLAN_GENERAL_SETTINGS_STEP_FIELDS;
+    const { dispatch, user, fields } = this.props;
+    if (!fields && fields.length <= 0) {
+      return null;
+    }
     return (
       <>
         <CardBody className="modal-card-body">
@@ -21,4 +22,4 @@ class DRPlanGeneralSettingsStep extends Component {
   }
 }
 
-export default DRPlanGeneralSettingsStep;
+export default WizardStep;

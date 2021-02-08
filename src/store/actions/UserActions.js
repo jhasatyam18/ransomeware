@@ -3,14 +3,14 @@
 import jsCookie from 'js-cookie';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import * as Types from '../../constants/actionTypes';
-import { API_AUTHENTICATE, API_AWS_AVAILABILLITY_ZONES, API_AWS_RGIONS, API_GCP_AVAILABILLITY_ZONES, API_INFO } from '../../constants/ApiConstants';
+import { API_AUTHENTICATE, API_AWS_AVAILABILLITY_ZONES, API_AWS_RGIONS, API_GCP_RGIONS, API_GCP_AVAILABILLITY_ZONES, API_INFO, API_SCRIPTS } from '../../constants/ApiConstants';
 
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { setCookie } from '../../utils/CookieUtils';
 import { APPLICATION_API_TOKEN } from '../../constants/UserConstant';
 import { addMessage, clearMessages } from './MessageActions';
 import { onInit } from '../../utils/HistoryUtil';
-import { APP_TYPE, PLATFORM_TYPES } from '../../constants/InputConstants';
+import { APP_TYPE, PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
 import { fetchDRPlanById, fetchDrPlans } from './DrPlanActions';
 import { JOBS, PROTECTION_PLANS_PATH, SITES_PATH } from '../../constants/RouterConstants';
 import { fetchSites } from './SiteActions';
@@ -102,7 +102,7 @@ export function getInfo(history) {
         setCookie(APPLICATION_API_TOKEN, json.token, '');
       } else {
         dispatch(loginSuccess(json.token, 'admin'));
-        const appType = (json.serviceType === 'Client' ? APP_TYPE.CLIENT : APP_TYPE.SERVER);
+        const appType = json.serviceType === 'Client' ? APP_TYPE.CLIENT : APP_TYPE.SERVER;
         dispatch(changeAppType(appType));
         dispatch(clearMessages());
         if (history) {
@@ -135,18 +135,20 @@ export function hideApplicationLoader(key) {
 export function onPlatformTypeChange({ value }) {
   return (dispatch) => {
     if (value === PLATFORM_TYPES.AWS) {
-      dispatch(fetchAwsRegion());
+      dispatch(fetchRegions(PLATFORM_TYPES.AWS));
       dispatch(fetchAvailibilityZones(PLATFORM_TYPES.AWS));
     } else {
+      dispatch(fetchRegions(PLATFORM_TYPES.GCP));
       dispatch(fetchAvailibilityZones(PLATFORM_TYPES.GCP));
     }
   };
 }
 
-export function fetchAwsRegion() {
+export function fetchRegions(TYPE) {
   return (dispatch) => {
     dispatch(clearMessages());
-    return callAPI(API_AWS_RGIONS)
+    const url = (PLATFORM_TYPES.AWS === TYPE ? API_AWS_RGIONS : API_GCP_RGIONS);
+    return callAPI(url)
       .then((json) => {
         if (json && json.hasError) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
@@ -206,5 +208,25 @@ export function refresh() {
       default:
         dispatch(addMessage('NO PATH MATCH', MESSAGE_TYPES.ERROR));
     }
+  };
+}
+
+export function fetchScript() {
+  return (dispatch) => {
+    dispatch(clearMessages());
+    const url = API_SCRIPTS;
+    return callAPI(url)
+      .then((json) => {
+        if (json && json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          const data = json;
+          dispatch(valueChange(STATIC_KEYS.UI_SCRIPT_PRE, data.preScripts));
+          dispatch(valueChange(STATIC_KEYS.UI_SCRIPT_POST, data.postScripts));
+        }
+      },
+      (err) => {
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
   };
 }

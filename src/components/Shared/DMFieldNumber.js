@@ -32,10 +32,10 @@ class placeHolderNumber extends Component {
   }
 
   onBlur = () => {
-    const { fieldKey, dispatch, user } = this.props;
+    const { fieldKey, dispatch, user, field } = this.props;
     const { value } = this.state;
     dispatch(valueChange(fieldKey, parseInt(value, 10)));
-    validateField(fieldKey, value, dispatch, user);
+    validateField(field, fieldKey, value, dispatch, user);
   }
 
   handleChange = (e) => {
@@ -74,10 +74,10 @@ class placeHolderNumber extends Component {
     return (
       <>
         <FormGroup className="row mb-4 form-group">
-          <Label for={fieldKey} className="col-sm-3 col-form-Label">
+          <Label for={fieldKey} className="col-sm-4 col-form-Label">
             {t(label)}
           </Label>
-          <Col sm={9}>
+          <Col sm={8}>
             <Input
               type="number"
               className="form-control form-control-sm"

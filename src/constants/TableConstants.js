@@ -7,6 +7,8 @@ export const TRANSFER_SIZE_ITEM_RENDERER = 'TRANSFER_SIZE_ITEM_RENDERER';
 export const RECOVERY_TYPE_ITEM_RENDERER = 'RECOVERY_TYPE_ITEM_RENDERER';
 export const RECOVERY_SITE_LINK_ITEM_RENDERER = 'RECOVERY_SITE_LINK_ITEM_RENDERER';
 export const SSH_RDP_ITEM_RENDERER = 'SSH_RDP_ITEM_RENDERER';
+export const VM_USERNAME_ITEM_RENDERER = 'VM_USERNAME_ITEM_RENDERER';
+export const VM_UPASSWORD_ITEM_RENDERER = 'VM_UPASSWORD_ITEM_RENDERER';
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
 
@@ -50,8 +52,14 @@ export const RECOVERY_JOBS = [
 
 export const REPLICATION_VM_JOBS = [
   { label: 'Virtual Machine', field: 'vmName' },
-  { label: 'Itration Number', field: 'iterationNumber' },
+  { label: 'Iteration Number', field: 'iterationNumber' },
   { label: 'Replication Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
   { label: 'Sync', field: 'syncStatus', itemRenderer: STATUS_ITEM_RENDERER },
+];
+
+export const TABLE_RECOVERY_VMS = [
+  { label: 'name', field: 'name' },
+  { label: 'Username', field: 'virtualDisks', itemRenderer: VM_USERNAME_ITEM_RENDERER },
+  { label: 'Password', field: 'guestOS', itemRenderer: VM_UPASSWORD_ITEM_RENDERER },
 ];

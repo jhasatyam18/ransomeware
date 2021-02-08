@@ -304,3 +304,34 @@ span.flatpickr-weekday {
       margin-top: -90px;  
   }
 }
+
+// global variable for padding
+@for $i from 0 through 30 { 
+  .padding-left-#{$i} {
+   padding-left: $i + px;
+  }
+  .padding-right-#{$i} {
+    padding-right: $i + px;
+   }
+   .padding-top-#{$i} {
+    padding-top: $i + px;
+   }
+   .padding-bottom-#{$i} {
+    padding-bottom: $i + px;
+   }
+}
+// global variable for margin
+@for $i from 0 through 30 { 
+  .margin-left-#{$i} {
+    margin-left: $i + px;
+  }
+  .margin-right-#{$i} {
+    margin-right: $i + px;
+   }
+   .margin-top-#{$i} {
+    margin-top: $i + px;
+   }
+   .margin-bottom-#{$i} {
+    margin-bottom: $i + px;
+   }
+}

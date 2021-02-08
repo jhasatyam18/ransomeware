@@ -6,10 +6,10 @@ function RecoverySiteLinkRenderer({ data, user }) {
   const { recoverySite } = data;
   const { platformDetails, siteType } = recoverySite;
   const { appType } = user;
-  const { platformName, serverIp, serverPort } = platformDetails;
+  const { platformName, serverIp } = platformDetails;
   if (siteType === 'Recovery' && appType === APP_TYPE.CLIENT) {
     return (
-      <a href={`https://${serverIp}:${serverPort}/`} target="_blank" rel="noopener noreferrer">
+      <a href={`https://${serverIp}:5000/`} target="_blank" rel="noopener noreferrer">
         {platformName}
       </a>
     );

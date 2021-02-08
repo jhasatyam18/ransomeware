@@ -55,7 +55,7 @@ class DMTable extends Component {
     if (isSelectable && name) {
       return (
         <Th style={{ width: 10 }}>
-          <div className="custom-control custom-checkbox">
+          <div className="custom-control custom-checkbox" key="global-select">
             <input
               type="checkbox"
               className="custom-control-input"
@@ -145,7 +145,7 @@ const propTypes = {
   columns: PropTypes.any.isRequired,
   isSelectable: PropTypes.bool.isRequired,
   onSelect: PropTypes.func.isRequired,
-  onSelectAll: PropTypes.func.isRequired,
+  onSelectAll: PropTypes.func,
   selectedData: PropTypes.any.isRequired,
   primaryKey: PropTypes.string,
   name: PropTypes.string,

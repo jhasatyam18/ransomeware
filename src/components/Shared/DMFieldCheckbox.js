@@ -38,10 +38,10 @@ class DMFieldCheckbox extends Component {
     return (
       <>
         <FormGroup className="row mb-4 form-group">
-          <Label for={fieldKey} className="col-sm-3 col-form-Label">
+          <Label for={fieldKey} className="col-sm-4 col-form-Label">
             {t(label)}
           </Label>
-          <Col sm={9}>
+          <Col sm={8}>
             <form>
               <div className="custom-control custom-checkbox">
                 <input type="checkbox" className="custom-control-input" id={fieldKey} name={fieldKey} checked={value} onChange={this.handleChange} />

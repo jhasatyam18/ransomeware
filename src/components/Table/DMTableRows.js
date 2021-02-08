@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Tr, Th } from 'react-super-responsive-table';
 import { getAppKey } from '../../utils/AppUtils';
-import { DATE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDARER, VM_SIZE_ITEM_RENDERER, STATUS_ITEM_RENDERER, TRANSFER_SIZE_ITEM_RENDERER, RECOVERY_TYPE_ITEM_RENDERER, TIME_DURATION_RENDERER, RECOVERY_SITE_LINK_ITEM_RENDERER, SSH_RDP_ITEM_RENDERER } from '../../constants/TableConstants';
+import { DATE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDARER, VM_SIZE_ITEM_RENDERER, STATUS_ITEM_RENDERER, TRANSFER_SIZE_ITEM_RENDERER, RECOVERY_TYPE_ITEM_RENDERER, TIME_DURATION_RENDERER, RECOVERY_SITE_LINK_ITEM_RENDERER, SSH_RDP_ITEM_RENDERER, VM_USERNAME_ITEM_RENDERER, VM_UPASSWORD_ITEM_RENDERER } from '../../constants/TableConstants';
 import OsTypeItemRenderer from './OsTypeItemRenderer';
 import VMSizeItemRenderer from './VMSizeItemRenderer';
 import DRPlanNameItemRenderer from './DRPlanNameItemRenderer';
@@ -13,6 +13,8 @@ import RecoveryTypeItemRenderer from './RecoveryTypeItemRenderer';
 import TimeDurationItemRenderer from './TimeDurationItemRenderer';
 import RecoverySiteLinkRenderer from './RecoverySiteLinkRenderer';
 import SshRdpRenderer from './SshRdpRenderer';
+import VMUsernameItemRenderer from './VMUsernameItemRenderer';
+import VMPasswordItemRenderer from './VMPasswordItemRenderer';
 
 class DMTableRow extends Component {
   constructor() {
@@ -26,7 +28,7 @@ class DMTableRow extends Component {
   }
 
   getItemRenderer(render, data, field) {
-    const { user } = this.props;
+    const { user, dispatch } = this.props;
     switch (render) {
       case OS_TYPE_ITEM_RENDARER:
         return <OsTypeItemRenderer data={data} />;
@@ -48,6 +50,10 @@ class DMTableRow extends Component {
         return <RecoverySiteLinkRenderer data={data} field={field} user={user} />;
       case SSH_RDP_ITEM_RENDERER:
         return <SshRdpRenderer data={data} field={field} user={user} />;
+      case VM_USERNAME_ITEM_RENDERER:
+        return <VMUsernameItemRenderer data={data} user={user} dispatch={dispatch} />;
+      case VM_UPASSWORD_ITEM_RENDERER:
+        return <VMPasswordItemRenderer data={data} user={user} dispatch={dispatch} />;
       default:
         return (<div> 404 </div>);
     }

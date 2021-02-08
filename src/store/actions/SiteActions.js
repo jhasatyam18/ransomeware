@@ -2,14 +2,14 @@
 
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import * as Types from '../../constants/actionTypes';
-import { API_AWS_AVAILABILLITY_ZONES, API_AWS_INSTANCES, API_CREATE_SITES, API_DELETE_SITES, API_FETCH_SITES, API_FETCH_SITE_VMS, API_GCP_AVAILABILLITY_ZONES, API_GCP_INSTANCES } from '../../constants/ApiConstants';
+import { API_AWS_AVAILABILLITY_ZONES, API_AWS_INSTANCES, API_CREATE_SITES, API_DELETE_SITES, API_FETCH_SITES, API_FETCH_SITE_VMS, API_GCP_AVAILABILLITY_ZONES, API_GCP_INSTANCES, API_SITE_NETWORKS } from '../../constants/ApiConstants';
 import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { closeModal } from './ModalActions';
 import { hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { getValue } from '../../utils/InputUtils';
-import { PLATFORM_TYPES } from '../../constants/InputConstants';
+import { PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
 
 export function fetchSites(key) {
   return (dispatch) => {
@@ -136,6 +136,7 @@ export function onRecoverSiteChange({ value }) {
     const platfromType = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${value}`)[0].platformDetails.platformType;
     const url = (platfromType === PLATFORM_TYPES.AWS ? API_AWS_INSTANCES : API_GCP_INSTANCES);
     dispatch(fetchAvailibilityZones({ value }));
+    dispatch(fetchNetworks(value));
     return callAPI(url)
       .then((json) => {
         if (json && json.hasError) {
@@ -245,5 +246,27 @@ export function handleSelectAllRecoveryVMs(value) {
     } else {
       dispatch(valueChange('ui.site.seletedVMs', selectedVMs));
     }
+  };
+}
+
+export function fetchNetworks(id) {
+  return (dispatch) => {
+    dispatch(showApplicationLoader('FETCHING_SITE_NETWORK', 'Loading network info...'));
+    const url = API_SITE_NETWORKS.replace('<id>', id);
+    return callAPI(url)
+      .then((json) => {
+        dispatch(hideApplicationLoader('FETCHING_SITE_NETWORK'));
+        if (json && json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          const data = json;
+          dispatch(valueChange(STATIC_KEYS.UI_SECURITY_GROUPS, (data.securityGroups ? data.securityGroups : [])));
+          dispatch(valueChange(STATIC_KEYS.UI_SUBNETS, (data.subnets ? data.subnets : [])));
+        }
+      },
+      (err) => {
+        dispatch(hideApplicationLoader('FETCHING_SITE_SUBNET'));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
   };
 }

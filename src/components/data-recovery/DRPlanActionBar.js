@@ -9,7 +9,7 @@ import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
 import { CREATE_DR_PLAN_WIZARDS, MIGRAION_WIZARDS, RECOVERY_WIZARDS } from '../../constants/WizardConstants';
 import { openWizard } from '../../store/actions/WizardActions';
 import { fetchSites } from '../../store/actions/SiteActions';
-import { clearValues } from '../../store/actions';
+import { clearValues, fetchScript } from '../../store/actions';
 import { APP_TYPE } from '../../constants/InputConstants';
 import ActionButton from '../Common/ActionButton';
 
@@ -27,6 +27,7 @@ class DRPlanActionBar extends Component {
     const { dispatch } = this.props;
     dispatch(clearValues());
     dispatch(fetchSites('ui.values.sites'));
+    dispatch(fetchScript());
     dispatch(openWizard(CREATE_DR_PLAN_WIZARDS.options, CREATE_DR_PLAN_WIZARDS.steps));
   }
 
@@ -53,12 +54,12 @@ class DRPlanActionBar extends Component {
   getActionButtons(actions) {
     const { t } = this.props;
     return (
-      <div className="btn-toolbar padding-left-20">
+      <div className="btn-toolbar">
         <div className="btn-group" role="group" aria-label="First group">
           {actions.map((item) => {
             const { label, onClick, icon, isDisabled } = item;
             return (
-              <ActionButton label={label} onClick={onClick} icon={icon} isDisabled={isDisabled} t={t} />
+              <ActionButton label={label} onClick={onClick} icon={icon} isDisabled={isDisabled} t={t} key={`${label}-${icon}`} />
             );
           })}
         </div>

@@ -5,13 +5,14 @@ import DMFieldSelect from './DMFieldSelect';
 import DMFieldText from './DMFieldText';
 import DMFieldNumber from './DMFieldNumber';
 import DMFieldCheckbox from './DMFieldCheckbox';
+import { getFieldCompponents } from '../../utils/ComponentFatory';
 // Import Images
 
 class DMField extends Component {
   renderField() {
     const { dispatch, fieldKey, user } = this.props;
     const field = FIELDS[fieldKey];
-    const { type } = field;
+    const { type, COMPONENT } = field;
     switch (type) {
       case FIELD_TYPE.SELECT:
         return <DMFieldSelect dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} />;
@@ -19,6 +20,8 @@ class DMField extends Component {
         return <DMFieldNumber dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} />;
       case FIELD_TYPE.CHECKBOX:
         return <DMFieldCheckbox dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} />;
+      case FIELD_TYPE.CUSTOM:
+        return getFieldCompponents(dispatch, fieldKey, user, COMPONENT);
       default:
         return <DMFieldText dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} />;
     }

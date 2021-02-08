@@ -4,7 +4,7 @@ import {
   Col, FormFeedback, FormGroup, Input, Label,
 } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
-import { FIELDS, FIELD_TYPE } from '../../constants/FieldsConstant';
+import { FIELD_TYPE } from '../../constants/FieldsConstant';
 import { validateField } from '../../utils/validationUtils';
 import { getValue } from '../../utils/InputUtils';
 import { valueChange } from '../../store/actions/UserActions';
@@ -27,10 +27,10 @@ class DMFieldText extends Component {
   }
 
   onBlur = () => {
-    const { fieldKey, dispatch, user } = this.props;
+    const { fieldKey, dispatch, user, field } = this.props;
     const { value } = this.state;
     dispatch(valueChange(fieldKey, value));
-    validateField(fieldKey, value, dispatch, user);
+    validateField(field, fieldKey, value, dispatch, user);
   }
 
   handleChange = (e) => {
@@ -46,12 +46,14 @@ class DMFieldText extends Component {
   }
 
   showPasswordToggle() {
-    const { fieldKey, user, field } = this.props;
+    const { fieldKey, user, field, hidepassword } = this.props;
     const { errors } = user;
     const hasErrors = !!(errors && errors[fieldKey] !== undefined);
     const { type } = field;
     const { state } = this;
-
+    if (hidepassword) {
+      return null;
+    }
     if (type === FIELD_TYPE.PASSOWRD && !hasErrors) {
       return (
         <button
@@ -66,31 +68,43 @@ class DMFieldText extends Component {
   }
 
   renderError(hasError) {
-    const { fieldKey } = this.props;
+    const { fieldKey, field } = this.props;
     if (hasError) {
       return (
-        <FormFeedback for={fieldKey}>{FIELDS[fieldKey].errorMessage}</FormFeedback>
+        <FormFeedback for={fieldKey}>{field.errorMessage}</FormFeedback>
       );
     }
     return null;
   }
 
+  renderLabel() {
+    const { t, hideLabel, field } = this.props;
+    const { label } = field;
+    if (hideLabel) {
+      return null;
+    }
+    return (
+      <Label for="horizontal-firstname-Input" className="col-sm-4 col-form-Label">
+        {t(label)}
+      </Label>
+    );
+  }
+
   render() {
-    const { field, fieldKey, user, t } = this.props;
-    const { label, shouldShow } = field;
+    const { field, fieldKey, user, hideLabel } = this.props;
+    const { shouldShow, placeHolderText } = field;
     const { errors } = user;
     const { value, type } = this.state;
     const hasErrors = !!(errors && errors[fieldKey] !== undefined);
     const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
-
+    const css = hideLabel ? '' : 'row mb-4 form-group';
     if (!showField) return null;
+    const placeH = placeHolderText || '';
     return (
       <>
-        <FormGroup className="row mb-4 form-group">
-          <Label for={fieldKey} className="col-sm-3 col-form-Label">
-            {t(label)}
-          </Label>
-          <Col sm={9}>
+        <FormGroup className={css}>
+          {this.renderLabel()}
+          <Col sm={hideLabel ? 12 : 8}>
             <Input
               type={type}
               className="form-control form-control-sm"
@@ -100,6 +114,7 @@ class DMFieldText extends Component {
               onChange={this.handleChange}
               invalid={hasErrors}
               autoComplete="off"
+              placeholder={placeH}
             />
             {this.showPasswordToggle()}
             {this.renderError(hasErrors)}
