@@ -109,7 +109,7 @@ class DMFieldText extends Component {
             </Label>
             <input
               type={type}
-              className={`form-control form-control-sm  form-control ${hasErrors ? 'is-invalid' : ''}`}
+              className={`form-control ${hasErrors ? 'is-invalid' : ''}`}
               id={fieldKey}
               value={value}
               onBlur={this.onBlur}
@@ -131,7 +131,7 @@ class DMFieldText extends Component {
           <Col sm={hideLabel ? 12 : 8}>
             <Input
               type={type}
-              className="form-control form-control-sm"
+              className="form-control"
               id={fieldKey}
               value={value}
               onBlur={this.onBlur}
