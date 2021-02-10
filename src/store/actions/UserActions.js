@@ -15,6 +15,7 @@ import { fetchDRPlanById, fetchDrPlans } from './DrPlanActions';
 import { JOBS, PROTECTION_PLANS_PATH, SITES_PATH } from '../../constants/RouterConstants';
 import { fetchSites } from './SiteActions';
 import { fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
+import { fetchByDelay } from '../../utils/SlowFetch';
 
 export function login({ username, password, history }) {
   return (dispatch) => {
@@ -27,7 +28,6 @@ export function login({ username, password, history }) {
       } else {
         setCookie(APPLICATION_API_TOKEN, json.token);
         dispatch(loginSuccess(json.token, username));
-        dispatch(clearMessages());
         dispatch(getInfo());
         if (history) {
           onInit(history);
@@ -103,8 +103,10 @@ export function getInfo(history) {
       } else {
         dispatch(loginSuccess(json.token, 'admin'));
         const appType = json.serviceType === 'Client' ? APP_TYPE.CLIENT : APP_TYPE.SERVER;
+        const { licenseType, isLicenseExpired, licenseExpiredTime, version, serviceType } = json;
         dispatch(changeAppType(appType));
-        dispatch(clearMessages());
+        fetchByDelay(dispatch, updateLicenseInfo, 2000, { licenseType, isLicenseExpired, licenseExpiredTime, version, serviceType });
+        dispatch(validateLicense(licenseExpiredTime));
         if (history) {
           onInit(history);
         }
@@ -146,7 +148,6 @@ export function onPlatformTypeChange({ value }) {
 
 export function fetchRegions(TYPE) {
   return (dispatch) => {
-    dispatch(clearMessages());
     const url = (PLATFORM_TYPES.AWS === TYPE ? API_AWS_RGIONS : API_GCP_RGIONS);
     return callAPI(url)
       .then((json) => {
@@ -213,7 +214,6 @@ export function refresh() {
 
 export function fetchScript() {
   return (dispatch) => {
-    dispatch(clearMessages());
     const url = API_SCRIPTS;
     return callAPI(url)
       .then((json) => {
@@ -228,5 +228,26 @@ export function fetchScript() {
       (err) => {
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
+  };
+}
+
+export function updateLicenseInfo(license) {
+  return {
+    type: Types.APP_LICENSE_INFO,
+    license,
+  };
+}
+
+export function validateLicense() {
+  return (dispatch) => {
+    const today = new Date();
+    // const eDate = new Date(expDate * 1000);
+    const checkDate = new Date();
+    checkDate.setDate(today.getDate() + 8);
+    const diff = Math.ceil(checkDate - today);
+    const difference = 691100000;
+    if (difference <= diff) {
+      dispatch(addMessage('There is expired or expiring license. Please check about info for more details.', MESSAGE_TYPES.WARNING, true));
+    }
   };
 }

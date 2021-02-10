@@ -92,7 +92,7 @@ class Login extends Component {
                       </Link>
                     </div>
                     <div className="p-2">
-                      {fields.map((field) => (<DMField dispatch={dispatch} user={user} fieldKey={field} />))}
+                      {fields.map((field) => (<DMField dispatch={dispatch} user={user} fieldKey={field} key={`login-${field}`} />))}
                       <div className="mt-3">
                         <button
                           className="btn btn-success btn-block waves-effect waves-light"

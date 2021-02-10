@@ -13,6 +13,7 @@ export const AUTHENTICATE_USER_FAILED = 'AUTHENTICATE_USER_FAILED';
 export const VERIFY_TOKEN = 'VERIFY_TOKEN';
 export const LOG_OUT_USER = 'LOG_OUT_USER';
 export const APP_TYPE = 'APP_TYPE';
+export const APP_LICENSE_INFO = 'APP_LICENSE_INFO';
 
 // Messages
 export const ADD_MESSAGE = 'ADD_MESSAGE';

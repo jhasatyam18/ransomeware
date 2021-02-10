@@ -189,7 +189,7 @@ class DRPlanDetails extends Component {
               <Nav tabs className="nav-tabs-custom nav-justified">
                 <NavItem>
                   <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '1' })} onClick={() => { this.toggleTab('1'); }}>
-                    <span className="d-none d-sm-block">{t('protected.virtual.machines')}</span>
+                    <span className="d-none d-sm-block">{t('Protected Nodes')}</span>
                   </NavLink>
                 </NavItem>
                 <NavItem>

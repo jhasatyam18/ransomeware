@@ -13,6 +13,8 @@ import { withTranslation } from 'react-i18next';
 
 // users
 import { logOutUser } from '../../../store/actions';
+import { openModal } from '../../../store/actions/ModalActions';
+import { MODAL_ABOUT } from '../../../constants/Modalconstant';
 
 class ProfileMenu extends Component {
   constructor(props) {
@@ -23,11 +25,17 @@ class ProfileMenu extends Component {
     };
     this.toggle = this.toggle.bind(this);
     this.logout = this.logout.bind(this);
+    this.aboutModal = this.aboutModal.bind(this);
   }
 
   logout() {
     const { dispatch } = this.props;
     dispatch(logOutUser());
+  }
+
+  aboutModal() {
+    const { dispatch } = this.props;
+    dispatch(openModal(MODAL_ABOUT, { title: 'About' }));
   }
 
   toggle() {
@@ -57,9 +65,9 @@ class ProfileMenu extends Component {
             <i className="bx bx-chevron-down" />
           </DropdownToggle>
           <DropdownMenu right>
-            <DropdownItem tag="a" href="/profile">
-              <i className="bx bx-user font-size-16 align-middle mr-1" />
-              {t('profile')}
+            <DropdownItem onClick={this.aboutModal}>
+              <i className="bx bx-info-circle font-size-16 align-middle mr-1" />
+              {t('About')}
             </DropdownItem>
             <div className="dropdown-divider" />
             <Link to="/logout" className="dropdown-item" onClick={this.logout}>

@@ -4,7 +4,7 @@ import * as Types from '../../constants/actionTypes';
 import {
   API_FETCH_DR_PLANS, API_START_DR_PLAN, API_STOP_DR_PLAN, API_DELETE_DR_PLAN, API_FETCH_DR_PLAN_BY_ID, API_RECOVER, API_MIGRATE,
 } from '../../constants/ApiConstants';
-import { addMessage, clearMessages } from './MessageActions';
+import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { fetchSites } from './SiteActions';
 import { getCreateDRPlanPayload, getRecoveryPayload } from '../../utils/PayloadUtil';
@@ -14,7 +14,6 @@ import { closeModal } from './ModalActions';
 
 export function fetchDrPlans(key) {
   return (dispatch) => {
-    dispatch(clearMessages());
     dispatch(showApplicationLoader('PROTECTION_PLAN', 'Loading protection plans...'));
     return callAPI(API_FETCH_DR_PLANS)
       .then((json) => {

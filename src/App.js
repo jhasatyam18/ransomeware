@@ -1,4 +1,4 @@
-import React, { Component, Profiler, Suspense } from 'react';
+import React, { Component, Suspense } from 'react';
 import './assets/scss/theme.scss';
 import PropTypes from 'prop-types';
 import Login from './pages/AuthenticationInner/Login';
@@ -25,19 +25,17 @@ class App extends Component {
     const { user } = this.props;
     const { isAuthenticated } = user;
     return (
-      <Profiler>
-        <div className="app">
-          <Suspense fallback={<div>Loading...</div>}>
-            {isAuthenticated ? <VerticalLayout {...this.props} /> : <Login {...this.props} />}
-          </Suspense>
-          <Suspense fallback={<div>Loading...</div>}>
-            <MessageContainer />
-            <ModalContainer />
-            <WizardContainer />
-            <GlobalContainer />
-          </Suspense>
-        </div>
-      </Profiler>
+      <div className="app">
+        <Suspense fallback={<div>Loading...</div>}>
+          {isAuthenticated ? <VerticalLayout {...this.props} /> : <Login {...this.props} />}
+        </Suspense>
+        <Suspense fallback={<div>Loading...</div>}>
+          <MessageContainer />
+          <ModalContainer />
+          <WizardContainer />
+          <GlobalContainer />
+        </Suspense>
+      </div>
     );
   }
 }

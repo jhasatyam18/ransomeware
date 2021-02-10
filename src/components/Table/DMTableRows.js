@@ -90,8 +90,15 @@ class DMTableRow extends Component {
   }
 
   renderCheckBox(index) {
-    const { isSelectable, selectedData } = this.props;
-    const rKey = `${index}-${getAppKey()}`;
+    const { isSelectable, selectedData, primaryKey, name } = this.props;
+    let rKey = '';
+    const keyVal = (typeof index !== 'undefined' ? index : getAppKey());
+    if (name) {
+      rKey = `chk-${primaryKey}-${keyVal}-${name}`;
+    } else {
+      rKey = `chk-${primaryKey}-${keyVal}`;
+    }
+
     let showSelected = false;
     let hasOwnDataInSelection = null;
     if (selectedData) {
@@ -131,7 +138,7 @@ class DMTableRow extends Component {
     ));
     return (
       <Tr>
-        {this.renderCheckBox()}
+        {this.renderCheckBox(index)}
         {cells}
       </Tr>
     );
@@ -142,9 +149,9 @@ const propTypes = {
   data: PropTypes.any.isRequired,
   columns: PropTypes.any.isRequired,
   index: PropTypes.any.isRequired,
-  isSelectable: PropTypes.bool.isRequired,
-  onSelect: PropTypes.func.isRequired,
-  selectedData: PropTypes.any.isRequired,
+  isSelectable: PropTypes.bool,
+  onSelect: PropTypes.func,
+  selectedData: PropTypes.any,
   primaryKey: PropTypes.string,
 };
 

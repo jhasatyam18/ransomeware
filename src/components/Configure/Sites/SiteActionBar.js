@@ -69,7 +69,7 @@ class SiteActionBar extends Component {
           {actions.map((item) => {
             const { label, onClick, icon, isDisabled } = item;
             return (
-              <ActionButton label={label} onClick={onClick} icon={icon} isDisabled={isDisabled} t={t} />
+              <ActionButton label={label} onClick={onClick} icon={icon} isDisabled={isDisabled} t={t} key={`sitebar-${label}`} />
             );
           })}
         </div>

@@ -12,7 +12,7 @@ class RecoveryGeneralStep extends Component {
         <CardBody className="modal-card-body">
           <Form>
             {
-              fields.map((field) => (<DMField dispatch={dispatch} user={user} fieldKey={field} />))
+              fields.map((field) => (<DMField dispatch={dispatch} user={user} fieldKey={field} key={`RecoveryGeneralStep-${field}`} />))
             }
           </Form>
         </CardBody>

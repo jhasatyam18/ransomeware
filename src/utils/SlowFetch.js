@@ -1,8 +1,8 @@
 // time-delayed function
-export function fetchByDelay(dispatch, fun, delay) {
+export function fetchByDelay(dispatch, fun, delay, args) {
   setTimeout(
     () => {
-      dispatch(fun());
+      dispatch(fun(args));
     },
     delay,
   );

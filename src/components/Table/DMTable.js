@@ -100,7 +100,7 @@ class DMTable extends Component {
 
   renderRows() {
     const {
-      dispatch, data, columns, isSelectable, onSelect, selectedData, primaryKey, user,
+      dispatch, data, columns, isSelectable, onSelect, selectedData, primaryKey, user, name,
     } = this.props;
     return data.map((row, index) => (
       <DMTableRow
@@ -113,6 +113,7 @@ class DMTable extends Component {
         selectedData={selectedData}
         primaryKey={primaryKey}
         user={user}
+        name={name}
       />
     ));
   }
@@ -143,10 +144,10 @@ const propTypes = {
   dispatch: PropTypes.func.isRequired,
   data: PropTypes.any.isRequired,
   columns: PropTypes.any.isRequired,
-  isSelectable: PropTypes.bool.isRequired,
-  onSelect: PropTypes.func.isRequired,
+  isSelectable: PropTypes.bool,
+  onSelect: PropTypes.func,
   onSelectAll: PropTypes.func,
-  selectedData: PropTypes.any.isRequired,
+  selectedData: PropTypes.any,
   primaryKey: PropTypes.string,
   name: PropTypes.string,
 };

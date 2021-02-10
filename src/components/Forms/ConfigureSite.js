@@ -12,7 +12,7 @@ class ConfigureSite extends Component {
         <CardBody className="modal-card-body">
           <Form>
             {
-              fields.map((field) => (<DMField dispatch={dispatch} user={user} fieldKey={field} />))
+              fields.map((field) => (<DMField dispatch={dispatch} user={user} fieldKey={field} key={`configureSite-${field}`} />))
             }
           </Form>
         </CardBody>

@@ -13,7 +13,7 @@ import { PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
 
 export function fetchSites(key) {
   return (dispatch) => {
-    dispatch(showApplicationLoader('Fetching', 'Retriving configured sites'));
+    dispatch(showApplicationLoader('Fetching', 'Loading configured sites'));
     return callAPI(API_FETCH_SITES)
       .then((json) => {
         dispatch(hideApplicationLoader('Fetching'));

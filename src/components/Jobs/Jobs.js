@@ -36,7 +36,7 @@ class Jobs extends Component {
   renderNav() {
     const { activeTab } = this.state;
     const navs = JOBS_TABS.map((tab) => (
-      <NavItem>
+      <NavItem key={`jobs-navItem-${tab.activeTab}`}>
         <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === `${tab.activeTab}` })} onClick={() => { this.toggleTab(`${tab.activeTab}`); }}>
           <span className="d-none d-sm-block">{tab.title}</span>
         </NavLink>

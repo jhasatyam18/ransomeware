@@ -13,6 +13,7 @@ const INITIAL_STATE = {
     values: {},
     errors: {},
     appType: APP_TYPE.CLIENT,
+    license: { licenseType: '-', isLicenseExpired: false, licenseExpiredTime: null, version: '-' },
   },
   sites: { sites: [], selectedSites: [] },
   drPlans: { plans: [], selectedPlans: [], details: {} },
