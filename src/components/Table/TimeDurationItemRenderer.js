@@ -6,6 +6,9 @@ import DateItemRenderer from './DateItemRenderer';
 function TimeDurationItemRenderer({ data }) {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const { startTime, endTime } = data;
+  if (endTime === 0) {
+    return (<DateItemRenderer data={data} field="startTime" />);
+  }
   if (startTime && endTime) {
     const key = `key-${startTime}${endTime}`;
     const sDate = new Date(startTime * 1000);
@@ -14,7 +17,7 @@ function TimeDurationItemRenderer({ data }) {
     return (
       <div>
         <button type="button" id={key} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} className="btn noPadding">
-          {duration}
+          { duration === '-' ? '0 Minute' : duration }
         </button>
         <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: 'black' }}>
           <PopoverBody>

@@ -110,11 +110,9 @@ class DMTPaginator extends Component {
                 <box-icon type="solid" name="chevron-left" size="xs" />
               </Button>
               <Button>
-                Page
-                &nbsp;&nbsp;
                 {cP}
                  &nbsp;&nbsp;
-                of
+                /
                 &nbsp; &nbsp;
                 {tPages}
               </Button>

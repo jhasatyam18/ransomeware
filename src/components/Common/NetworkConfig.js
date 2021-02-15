@@ -21,9 +21,13 @@ class NetworkConfig extends Component {
     }
   }
 
-  changeNetworkType(type) {
+  changeNetworkType(e) {
     const { dispatch, networkKey } = this.props;
-    dispatch(valueChange(networkKey, type));
+    if (e.target.checked) {
+      dispatch(valueChange(networkKey, 'public'));
+    } else {
+      dispatch(valueChange(networkKey, ''));
+    }
   }
 
   renderIPField() {
@@ -50,17 +54,16 @@ class NetworkConfig extends Component {
         <Form className="padding-left-10">
           <div className="form-check-inline">
             <Label className="form-check-label" for="vms-options">
-              <input type="radio" className="form-check-input" id="vms-options" name="jobsType" value={isPublic} checked={isPublic} onChange={() => { this.changeNetworkType('public'); }} />
-              Auto
+              <input type="checkbox" className="form-check-input" id="vms-options" checked={isPublic} onChange={this.changeNetworkType} />
+              Public (Auto)
             </Label>
           </div>
           <div className="form-check-inline">
             <Label className="form-check-label" for="disks-options">
-              <input type="radio" className="form-check-input" id="disks-options" name="jobsType" value={!isPublic} checked={!isPublic} onChange={() => { this.changeNetworkType('private'); }} />
+              <input type="checkbox" disabled className="form-check-input" id="disks-options" checked="true" />
               Manual
             </Label>
           </div>
-          {this.renderIPField()}
         </Form>
       </div>
     );

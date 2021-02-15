@@ -14,6 +14,7 @@ class ProtectionPlanSummaryStep extends Component {
     const protectedSiteName = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${pSite}`)[0].platformDetails.platformName;
     const recoverySiteName = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${rSite}`)[0].platformDetails.platformName;
     const selectedVMs = getValue('ui.site.seletedVMs', values);
+    const replicationUnit = getValue('ui.values.replication.interval.type', values);
     let size = 0;
     Object.keys(selectedVMs).forEach((key) => {
       selectedVMs[key].virtualDisks.forEach((disk) => {
@@ -31,7 +32,10 @@ class ProtectionPlanSummaryStep extends Component {
                   <Col sm={3} className="text-muted">Name</Col>
                   <Col sm={3}>{name}</Col>
                   <Col sm={3} className="text-muted">Replication Interval</Col>
-                  <Col sm={3}>{replicationInterval}</Col>
+                  <Col sm={3}>
+                    {replicationInterval}
+                    {replicationUnit}
+                  </Col>
                 </Row>
                 <hr className="mt-3 mb-3" />
               </Col>

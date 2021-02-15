@@ -5,15 +5,27 @@ import { TABLE_PROTECT_VM_VMWARE } from '../../constants/TableConstants';
 import { getValue } from '../../utils/InputUtils';
 
 class RecoverySummary extends Component {
+  getRecoveryType() {
+    const { user } = this.props;
+    const { values } = user;
+    const type = getValue('ui.isMigration.workflow', values);
+    if (type) {
+      return 'Migration';
+    }
+    const dryRun = getValue('recovery.dryrun', values);
+    return (dryRun ? 'TEST' : 'FULL');
+  }
+
   render() {
     const { dispatch, user } = this.props;
     const { values } = user;
     const selectedVMs = getValue('ui.site.seletedVMs', values);
     const protectionplanID = getValue('recovery.protectionplanID', values);
     const selectedDrPlan = getValue('ui.values.drplan', values).filter((plan) => `${plan.id}` === `${protectionplanID}`)[0];
-    const dryRun = getValue('recovery.dryrun', values);
     const data = [];
     const { name } = selectedDrPlan;
+    const type = getValue('ui.isMigration.workflow', values);
+    const summaryTitle = type ? 'Migration Summary' : 'Recovery Summary';
     let size = 0;
     Object.keys(selectedVMs).forEach((key) => {
       data.push(selectedVMs[key]);
@@ -24,7 +36,7 @@ class RecoverySummary extends Component {
     return (
       <>
         <Card className="padding-20">
-          <CardTitle>Recovery Summary</CardTitle>
+          <CardTitle>{summaryTitle}</CardTitle>
           <CardBody>
             <Row>
               <Col sm={12}>
@@ -32,7 +44,7 @@ class RecoverySummary extends Component {
                   <Col sm={3} className="text-muted">Plan</Col>
                   <Col sm={3}>{name}</Col>
                   <Col sm={3} className="text-muted">Recovery Type</Col>
-                  <Col sm={3}>{(dryRun ? 'TEST' : 'FULL')}</Col>
+                  <Col sm={3}>{this.getRecoveryType()}</Col>
                 </Row>
                 <hr className="mt-3 mb-3" />
               </Col>

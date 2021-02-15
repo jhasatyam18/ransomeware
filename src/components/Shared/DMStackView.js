@@ -40,7 +40,7 @@ class DMStackView extends Component {
           <Col sm={4} className="key child">
             {`${children[conf].label}`}
           </Col>
-          <Col sm={8} className="value noPadding">
+          <Col sm={8} className="value padding-top-10 padding-bottom-10">
             {getStackComponent(dispatch, user, children, conf)}
           </Col>
         </Row>

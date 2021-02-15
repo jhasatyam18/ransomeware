@@ -238,15 +238,13 @@ export function updateLicenseInfo(license) {
   };
 }
 
-export function validateLicense() {
+export function validateLicense(licenseExpiredTime) {
   return (dispatch) => {
     const today = new Date();
-    // const eDate = new Date(expDate * 1000);
-    const checkDate = new Date();
-    checkDate.setDate(today.getDate() + 8);
-    const diff = Math.ceil(checkDate - today);
+    const eDate = new Date(licenseExpiredTime * 1000);
+    const diff = Math.ceil(eDate - today);
     const difference = 691100000;
-    if (difference <= diff) {
+    if (difference > diff) {
       dispatch(addMessage('There is expired or expiring license. Please check about info for more details.', MESSAGE_TYPES.WARNING, true));
     }
   };

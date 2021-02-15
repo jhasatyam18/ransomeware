@@ -14,10 +14,16 @@ class DMFieldCheckbox extends Component {
   }
 
   componentDidMount() {
-    const { user, fieldKey } = this.props;
+    const { user, fieldKey, defaultValue, dispatch } = this.props;
     const { values } = user;
-    const v = getValue(fieldKey, values);
-    this.setState({ value: v });
+    let v = getValue(fieldKey, values);
+    if (typeof value !== 'undefined') {
+      this.setState({ value: v });
+    } else {
+      v = (typeof defaultValue !== 'undefined' ? defaultValue : false);
+      dispatch(valueChange(fieldKey, v));
+      this.setState({ value: v });
+    }
   }
 
   handleChange = (e) => {

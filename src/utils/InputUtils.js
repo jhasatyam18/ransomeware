@@ -199,7 +199,7 @@ export function createVMConfigStackObject(key) {
         hasChildren: true,
         title: 'Network',
         children: {
-          [`${key}-vmConfig.network.net1`]: { label: 'Network-1', type: STACK_COMPONENT_NETWORK, validate: null, errorMessage: '', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
+          [`${key}-vmConfig.network.net1`]: { label: 'IP Address', type: STACK_COMPONENT_NETWORK, validate: null, errorMessage: '', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
           [`${key}-vmConfig.network.securityGroup`]: { label: 'Security Group', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getSecurityGroupOption(u) },
         },
       },

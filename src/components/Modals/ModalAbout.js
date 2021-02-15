@@ -25,7 +25,7 @@ class ModalAbout extends Component {
     const { user } = this.props;
     const { license } = user;
     const { version, serviceType, licenseType, licenseExpiredTime } = license;
-    const d = new Date(licenseExpiredTime);
+    const d = new Date(licenseExpiredTime * 1000);
     const resp = `${d.toLocaleDateString()}-${d.toLocaleTimeString()}`;
     const info = [
       { label: 'Version', value: version },

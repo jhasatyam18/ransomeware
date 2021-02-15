@@ -7,10 +7,9 @@ import ProfileMenu from '../CommonForBoth/TopbarDropdown/ProfileMenu';
 import dmlogoname from '../../assets/images/logo_name.png';
 import dmlogo from '../../assets/images/dm_logo.png';
 
-// i18n
-
 // Redux Store
 import { changeLeftSidebarType, refresh } from '../../store/actions';
+import { APP_TYPE } from '../../constants/InputConstants';
 
 class Header extends Component {
   constructor(props) {
@@ -61,6 +60,19 @@ class Header extends Component {
     }
   }
 
+  renderAppType() {
+    const { user } = this.props;
+    const { appType } = user;
+    const type = appType === APP_TYPE.CLIENT ? 'Client' : 'Server';
+    return (
+      <div className="dropdown d-none d-lg-inline-block ml-1">
+        <button type="button" className="btn header-item noti-icon waves-effect">
+          {` ${type}`}
+        </button>
+      </div>
+    );
+  }
+
   render() {
     return (
       <>
@@ -68,8 +80,6 @@ class Header extends Component {
           <div className="navbar-header">
             <div className="d-flex">
               <div className="navbar-brand-box">
-
-                {/* brand logo */}
                 <Link to="/" className="logo logo-light">
                   <span className="logo-sm">
                     <img src={dmlogo} className="logo-size" alt="DATAMOTIVE" />
@@ -87,6 +97,7 @@ class Header extends Component {
               >
                 <i className="fa fa-bars" />
               </button>
+              {this.renderAppType()}
             </div>
             <div className="d-flex">
               <div className="dropdown d-none d-lg-inline-block ml-1">
@@ -112,7 +123,6 @@ class Header extends Component {
 
               <NotificationDropdown />
               <ProfileMenu {...this.props} />
-
             </div>
           </div>
         </header>
@@ -122,8 +132,8 @@ class Header extends Component {
 }
 
 function mapStateToProps(state) {
-  const { layout } = state;
-  return { layout };
+  const { layout, user } = state;
+  return { layout, user };
 }
 export default connect(mapStateToProps)(Header);
 

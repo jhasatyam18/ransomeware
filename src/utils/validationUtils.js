@@ -3,7 +3,7 @@ import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
 import { createVMConfigStackObject, getValue } from './InputUtils';
 import { MESSAGE_TYPES } from '../constants/MessageConstants';
 import { API_TYPES, callAPI, createPayload } from './ApiUtils';
-import { API_VALIDATE_MIGRATION } from '../constants/ApiConstants';
+import { API_VALIDATE_MIGRATION, API_VALIDATE_RECOVERY } from '../constants/ApiConstants';
 import { getRecoveryPayload } from './PayloadUtil';
 import { addMessage } from '../store/actions/MessageActions';
 
@@ -128,12 +128,14 @@ export async function validateMigrationVMs({ user, dispatch }) {
         const payload = getRecoveryPayload(user);
         const obj = createPayload(API_TYPES.POST, { ...payload.recovery });
         dispatch(showApplicationLoader('VALIDATING_MIGRATION_MACHINBES', 'Validating virtual machines.'));
-        const powerOnVMs = await callAPI(API_VALIDATE_MIGRATION, obj);
+        const response = await callAPI(API_VALIDATE_MIGRATION, obj);
         dispatch(hideApplicationLoader('VALIDATING_MIGRATION_MACHINBES'));
-        if (powerOnVMs.vms === null) {
+        if (response.failedVMs === null) {
           return true;
         }
-        dispatch(addMessage('Make sure all selected virtual machines were powered off and their replication status is in In-Sync state.', MESSAGE_TYPES.ERROR, true));
+        if (response.failedVMs.length !== 0) {
+          dispatch(addMessage('Make sure all selected virtual machines were powered off and their replication status is in In-Sync state.', MESSAGE_TYPES.ERROR, false));
+        }
         return false;
       }
     } catch (error) {
@@ -165,4 +167,38 @@ export function validateVMConfiguration({ user, dispatch }) {
     dispatch(addMessage('Check node configuration. One or more required field data is not provided.', MESSAGE_TYPES.ERROR));
   }
   return response;
+}
+
+export async function validateRecoveryVMs({ user, dispatch }) {
+  const initialCheckPass = validateDRPlanProtectData({ user, dispatch });
+  if (initialCheckPass) {
+    try {
+      const { values } = user;
+      const vms = getValue('ui.site.seletedVMs', values);
+      if (vms) {
+        const payload = getRecoveryPayload(user);
+        const obj = createPayload(API_TYPES.POST, { ...payload.recovery });
+        dispatch(showApplicationLoader('VALIDATING_RECOVERY_MACHINES', 'Validating virtual machines.'));
+        const response = await callAPI(API_VALIDATE_RECOVERY, obj);
+        dispatch(hideApplicationLoader('VALIDATING_RECOVERY_MACHINES'));
+        if (response.failedVMs === null && response.warningVMs === null) {
+          return true;
+        }
+        if (response.failedVMs.length !== 0) {
+          dispatch(addMessage(`Following virtual machines [${response.failedVMs.join(', ')}] has not completed any replication iteration.`, MESSAGE_TYPES.ERROR, false));
+        }
+        if (response.warningVMs.length !== 0) {
+          dispatch(addMessage(`Folloing virtual machines [${response.warningVMs.join(',')}] replciation running. Are you sure want to continue.`, MESSAGE_TYPES.ERROR, false));
+          return true;
+        }
+        return false;
+      }
+    } catch (error) {
+      addErrorMessage(error.message, MESSAGE_TYPES.ERROR);
+      return false;
+    }
+  } else {
+    return false;
+  }
+  return true;
 }

@@ -6,9 +6,6 @@ import {
   DropdownItem,
 } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
-import { openWizard } from '../../store/actions/WizardActions';
-import { DROP_DOWN_ACTION_TYPES } from '../../constants/InputConstants';
-import { openModal } from '../../store/actions/ModalActions';
 
 const DropdownActions = (props) => {
   const { actions, dispatch, t } = props;
@@ -16,18 +13,7 @@ const DropdownActions = (props) => {
   const toggle = () => setDropdownOpen((prevState) => !prevState);
   const { title } = props;
   function onActionClick(item) {
-    const { action, id, type, options, MODAL_COMPONENT, wizard, init, initValue } = item;
-    if (init && initValue) {
-      dispatch(init(initValue));
-    }
-    if (type && type === DROP_DOWN_ACTION_TYPES.MODAL) {
-      dispatch(openModal(MODAL_COMPONENT, options));
-      return;
-    }
-    if (type && type === DROP_DOWN_ACTION_TYPES.WIZARD) {
-      dispatch(openWizard(wizard.options, wizard.steps));
-      return;
-    }
+    const { action, id } = item;
     dispatch(action(id));
   }
 

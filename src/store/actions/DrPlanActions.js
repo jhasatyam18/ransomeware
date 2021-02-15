@@ -9,8 +9,9 @@ import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { fetchSites } from './SiteActions';
 import { getCreateDRPlanPayload, getRecoveryPayload } from '../../utils/PayloadUtil';
 import { clearValues, hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
-import { closeWizard } from './WizardActions';
+import { closeWizard, openWizard } from './WizardActions';
 import { closeModal } from './ModalActions';
+import { MIGRAION_WIZARDS, RECOVERY_WIZARDS } from '../../constants/WizardConstants';
 
 export function fetchDrPlans(key) {
   return (dispatch) => {
@@ -245,12 +246,30 @@ export function startMigration() {
       } else {
         dispatch(closeWizard());
         dispatch(clearValues());
-        dispatch(addMessage('Migration Initiated Successfully', MESSAGE_TYPES.SUCCESS));
+        dispatch(addMessage('Migration Initiated Successfully.', MESSAGE_TYPES.SUCCESS));
       }
     },
     (err) => {
       dispatch(hideApplicationLoader('RECOVERY-API-EXECUTION'));
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
+  };
+}
+
+export function openMigrationWizard() {
+  return (dispatch) => {
+    dispatch(clearValues());
+    dispatch(fetchDrPlans('ui.values.drplan'));
+    dispatch(valueChange('ui.isMigration.workflow', true));
+    dispatch(openWizard(MIGRAION_WIZARDS.options, MIGRAION_WIZARDS.steps));
+  };
+}
+
+export function openRecoveryWizard() {
+  return (dispatch) => {
+    dispatch(clearValues());
+    dispatch(fetchDrPlans('ui.values.drplan'));
+    dispatch(valueChange('ui.isMigration.workflow', false));
+    dispatch(openWizard(RECOVERY_WIZARDS.options, RECOVERY_WIZARDS.steps));
   };
 }

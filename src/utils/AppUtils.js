@@ -27,3 +27,13 @@ export function formatTime(seconds) {
   }
   return '-';
 }
+
+export function getInterval(duration) {
+  if (duration >= 1440) {
+    return `${duration / 1440} Days`;
+  }
+  if (duration > 59 && duration < 1440) {
+    return `${duration / 60} Hours`;
+  }
+  return `${duration} Minutes`;
+}

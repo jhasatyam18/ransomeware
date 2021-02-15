@@ -23,6 +23,7 @@ export const API_RECOVERY_PLAN_RECOVERY_JOBS = 'api/v1/jobs/recover/protectionpl
 
 // recovery
 export const API_RECOVER = 'api/v1/recover';
+export const API_VALIDATE_RECOVERY = 'api/v1/recover/validate';
 
 // migration
 export const API_VALIDATE_MIGRATION = 'api/v1/migrate/validate';

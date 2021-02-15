@@ -38,16 +38,16 @@ export const FIELDS = {
     label: 'password', description: '', type: FIELD_TYPE.PASSOWRD, validate: (value, user) => isEmpty(value, user), errorMessage: 'Password required', shouldShow: (user) => isPlatformTypeVMware(user),
   },
   'configureSite.platformDetails.region': {
-    label: 'region', description: '', type: FIELD_TYPE.SELECT, errorMessage: 'Region required', shouldShow: true, options: (user) => getRegionOptions(user),
+    label: 'region', description: '', type: FIELD_TYPE.SELECT, errorMessage: 'Region required', shouldShow: (user) => !isPlatformTypeVMware(user), options: (user) => getRegionOptions(user),
   },
   'configureSite.platformDetails.availZone': {
     label: 'zone', description: '', type: FIELD_TYPE.SELECT, patterns: [HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX], errorMessage: 'Zone required', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user), options: (user) => getAvailibilityZoneOptions(user),
   },
-  'configureSite.platformDetails.secretKey': {
-    label: 'secret.key', description: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), shouldShow: (user) => isPlatformTypeAWS(user),
-  },
   'configureSite.platformDetails.accessKey': {
     label: 'access.key', description: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Access Key is required', shouldShow: (user) => isPlatformTypeAWS(user),
+  },
+  'configureSite.platformDetails.secretKey': {
+    label: 'secret.key', description: '', type: FIELD_TYPE.PASSOWRD, validate: (value, user) => isEmpty(value, user), shouldShow: (user) => isPlatformTypeAWS(user),
   },
   'configureSite.platformDetails.projectId': {
     label: 'project.ID', description: '', type: FIELD_TYPE.TEXT, patterns: [HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX], errorMessage: 'Project ID is required', shouldShow: (user) => isPlatformTypeGCP(user),
@@ -58,9 +58,9 @@ export const FIELDS = {
   'configureSite.platformDetails.serverPort': {
     label: 'server.port', description: '', defaultValue: 5000, min: 1, max: 65536, type: FIELD_TYPE.NUMBER, errorMessage: 'Server Port is required, if different.', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
   },
-  'configureSite.platformDetails.prepMachineIP': {
-    label: 'preparation.machine.IP', description: '', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], errorMessage: 'Enter valid Machine IP address', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
-  },
+  // 'configureSite.platformDetails.prepMachineIP': {
+  //   label: 'preparation.machine.IP', description: '', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], errorMessage: 'Enter valid Machine IP address', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
+  // },
 
   'TEST.site.platformName': {
     label: 'Platform Name', description: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Platform name required',
@@ -76,8 +76,8 @@ export const FIELDS = {
 
   'drplan.subnet': { label: 'Subnet', placeHolderText: 'Subnet', type: FIELD_TYPE.SELECT, options: (user) => getSubnetOptions(user), errorMessage: 'Select subnet', shouldShow: true, validate: null },
   'drplan.isEncryptionOnWire': { label: 'Encryption On Wire', description: 'Encryption On Wire', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
-  'drplan.isEncryptionOnRest': { label: 'Encryption On Rest', description: 'Encryption On Rest', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
-  'drplan.isCompression': { label: 'Enable Compression', description: 'Enable Compression', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'drplan.isEncryptionOnRest': { label: 'Encryption At Rest', description: 'Encryption On Rest', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'drplan.isCompression': { label: 'Compression', description: 'Enable Compression', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: true },
   'drplan.isDedupe': { label: 'Enable Dedupe', description: 'Enable Compression', type: FIELD_TYPE.CHECKBOX, shouldShow: false, defaultValue: false },
   'drplan.preScript': { label: 'Pre Script', placeHolderText: 'Pre Script', type: FIELD_TYPE.SELECT, options: (user) => getPreScriptsOptions(user), errorMessage: 'Select pre script', shouldShow: true },
   'drplan.postScript': { label: 'Post Script', placeHolderText: 'Post Script', type: FIELD_TYPE.SELECT, options: (user) => getPostScriptsOptions(user), errorMessage: 'Select post script', shouldShow: true },
@@ -95,10 +95,10 @@ export const FIELDS = {
     label: 'throttle.bandwidth', description: 'Retry Count', type: FIELD_TYPE.NUMBER, errorMessage: 'Retry Count', shouldShow: true,
   },
   'drplan.protectedSite': {
-    label: 'protect.site', placeHolderText: 'Protect Site', type: FIELD_TYPE.SELECT, options: (user) => getSitesOptions(user), errorMessage: 'Select site', shouldShow: true, validate: (user) => validateDrSiteSelection(user), onChange: (user, dispatch) => onProtectSiteChange(user, dispatch),
+    label: 'protect.site', placeHolderText: 'Protect Site', type: FIELD_TYPE.SELECT, options: (user) => getSitesOptions(user), errorMessage: 'Select protection site. Protection and recovery sites cannot be same.', shouldShow: true, validate: (user) => validateDrSiteSelection(user), onChange: (user, dispatch) => onProtectSiteChange(user, dispatch),
   },
   'drplan.recoverySite': {
-    label: 'recovery.site', placeHolderText: 'Recovery Site', type: FIELD_TYPE.SELECT, options: (user) => getSitesOptions(user), errorMessage: 'Select recovery site. Recovery can protect sites can not be same.', shouldShow: true, validate: (user) => validateDrSiteSelection(user), onChange: (user, dispatch) => onRecoverSiteChange(user, dispatch),
+    label: 'recovery.site', placeHolderText: 'Recovery Site', type: FIELD_TYPE.SELECT, options: (user) => getSitesOptions(user), errorMessage: 'Select recovery site. Recovery and protection sites cannot be same.', shouldShow: true, validate: (user) => validateDrSiteSelection(user), onChange: (user, dispatch) => onRecoverSiteChange(user, dispatch),
   },
   'drplan.recoveryEntities.name': { label: '', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: null, errorMessage: '', shouldShow: false },
   'drplan.protectedEntities.Name': { label: '', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: null, errorMessage: '', shouldShow: false },
@@ -108,7 +108,7 @@ export const FIELDS = {
   // 'recovery.winPassword': { label: 'machine.password', placeHolderText: '', type: FIELD_TYPE.PASSOWRD, validate: null, errorMessage: '', shouldShow: true },
   'recovery.vmNames': { label: '', placeHolderText: '', type: FIELD_TYPE.PASSOWRD, validate: null, errorMessage: '', shouldShow: false },
   'ui.values.replication.interval.type': {
-    label: 'Unit', placeHolderText: 'Select replication unit', type: FIELD_TYPE.SELECT, options: [{ label: 'Day', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_DAY }, { label: 'Hour', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_HOUR }, { label: 'Minutes', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_MIN }], validate: (value, user) => isEmpty(value, user), errorMessage: 'Select replication unit.', shouldShow: true, defaultValue: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_MIN,
+    label: 'Unit', placeHolderText: 'Select replication unit', type: FIELD_TYPE.SELECT, options: [{ label: 'Days', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_DAY }, { label: 'Hours', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_HOUR }, { label: 'Minutes', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_MIN }], validate: (value, user) => isEmpty(value, user), errorMessage: 'Select replication unit.', shouldShow: true, defaultValue: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_MIN,
   },
   'login.username': { label: 'Username', id: 'userName', name: 'Username', placeHolderText: 'Enter username', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Username required', shouldShow: true, layout: 'vertical' },
   'login.password': { label: 'Password', id: 'password', name: 'Password', placeHolderText: 'Enter password', type: FIELD_TYPE.PASSOWRD, validate: (value, user) => isEmpty(value, user), errorMessage: 'Password required', shouldShow: true, layout: 'vertical' },

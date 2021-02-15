@@ -14,6 +14,13 @@ function RecoverySiteLinkRenderer({ data, user }) {
       </a>
     );
   }
+  if (siteType === 'Protect' && appType === APP_TYPE.SERVER) {
+    return (
+      <a href={`https://${serverIp}:5001/`} target="_blank" rel="noopener noreferrer">
+        {platformName}
+      </a>
+    );
+  }
   return platformName;
 }
 

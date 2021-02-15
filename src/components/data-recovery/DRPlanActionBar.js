@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import {
-  drPlanStopStart, deletePlan, fetchDrPlans, startPlan, stopPlan,
+  drPlanStopStart, deletePlan, startPlan, stopPlan, openRecoveryWizard, openMigrationWizard,
 } from '../../store/actions/DrPlanActions';
 import { openModal } from '../../store/actions/ModalActions';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
-import { CREATE_DR_PLAN_WIZARDS, MIGRAION_WIZARDS, RECOVERY_WIZARDS } from '../../constants/WizardConstants';
+import { CREATE_DR_PLAN_WIZARDS } from '../../constants/WizardConstants';
 import { openWizard } from '../../store/actions/WizardActions';
 import { fetchSites } from '../../store/actions/SiteActions';
 import { clearValues, fetchScript } from '../../store/actions';
@@ -33,16 +33,13 @@ class DRPlanActionBar extends Component {
 
   onInitiateRecovery() {
     const { dispatch } = this.props;
-    dispatch(clearValues());
-    dispatch(fetchDrPlans('ui.values.drplan'));
-    dispatch(openWizard(RECOVERY_WIZARDS.options, RECOVERY_WIZARDS.steps));
+    dispatch(openRecoveryWizard());
   }
 
   onMigrate() {
     const { dispatch } = this.props;
     dispatch(clearValues());
-    dispatch(fetchDrPlans('ui.values.drplan'));
-    dispatch(openWizard(MIGRAION_WIZARDS.options, MIGRAION_WIZARDS.steps));
+    dispatch(openMigrationWizard());
   }
 
   onDelete() {

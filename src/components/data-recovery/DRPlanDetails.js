@@ -2,13 +2,12 @@ import React, { Component, Suspense } from 'react';
 import { Card, Container, CardBody, Row, Col, CardTitle, Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap';
 import classnames from 'classnames';
 import { withTranslation } from 'react-i18next';
-import { deletePlan, fetchDRPlanById, fetchDrPlans, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
+import { deletePlan, fetchDRPlanById, openMigrationWizard, openRecoveryWizard, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
 import DMTable from '../Table/DMTable';
 import { TABLE_PROTECT_VM_VMWARE } from '../../constants/TableConstants';
 import { APP_TYPE, DROP_DOWN_ACTION_TYPES, REPLICATION_STATUS } from '../../constants/InputConstants';
 import DropdownActions from '../Common/DropdownActions';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
-import { MIGRAION_WIZARDS, RECOVERY_WIZARDS } from '../../constants/WizardConstants';
 import CheckBox from '../Common/CheckBox';
 import DisplayString from '../Common/DisplayString';
 
@@ -44,8 +43,8 @@ class DRPlanDetails extends Component {
     }
     const { platformDetails } = site;
     const keys = [{ label: 'Name', field: 'platformName' }, { label: 'Platform Type', field: 'platformType' }, { label: 'Hostname', field: 'hostname' }, { label: 'Port', field: 'port' },
-      { label: 'Region', field: 'region' }, { label: 'Zone', field: 'availZone' }, { label: 'Projec  t ID', field: 'projectId' }, { label: 'Datamotive Server IP', field: 'serverIp' },
-      { label: 'Datamotive Server Port', field: 'serverPort' }, { label: 'Machine IP', field: 'prepMachineIP' }];
+      { label: 'Region', field: 'region' }, { label: 'Zone', field: 'availZone' }, { label: 'Project ID', field: 'projectId' }, { label: 'Datamotive Server IP', field: 'serverIp' },
+      { label: 'Datamotive Server Port', field: 'serverPort' }];
     const fields = keys.map((ele) => {
       const { field, label } = ele;
       if (platformDetails[field]) {
@@ -129,8 +128,8 @@ class DRPlanDetails extends Component {
         { label: 'stop', action: stopPlan, id: details.id, disabled: details.status === REPLICATION_STATUS.STOPPED },
         { label: 'remove', action: deletePlan, id: details.id, disabled: details.status !== REPLICATION_STATUS.STOPPED, type: DROP_DOWN_ACTION_TYPES.MODAL, MODAL_COMPONENT: MODAL_CONFIRMATION_WARNING, options: { title: 'Confirmation', confirmAction: deletePlan, message: 'Are you sure want to delete  ?', id: details.id } }];
     } else {
-      actions = [{ label: 'recover', type: DROP_DOWN_ACTION_TYPES.WIZARD, wizard: RECOVERY_WIZARDS, init: fetchDrPlans, initValue: 'ui.values.drplan' },
-        { label: 'Migrate', type: DROP_DOWN_ACTION_TYPES.WIZARD, wizard: MIGRAION_WIZARDS, init: fetchDrPlans, initValue: 'ui.values.drplan' }];
+      actions = [{ label: 'recover', action: openRecoveryWizard },
+        { label: 'Migrate', action: openMigrationWizard }];
     }
     return (
       <DropdownActions title={t('actions')} dispatch={dispatch} actions={actions} />
@@ -189,7 +188,7 @@ class DRPlanDetails extends Component {
               <Nav tabs className="nav-tabs-custom nav-justified">
                 <NavItem>
                   <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '1' })} onClick={() => { this.toggleTab('1'); }}>
-                    <span className="d-none d-sm-block">{t('Protected Nodes')}</span>
+                    <span className="d-none d-sm-block">{t('Virtual Machines')}</span>
                   </NavLink>
                 </NavItem>
                 <NavItem>
