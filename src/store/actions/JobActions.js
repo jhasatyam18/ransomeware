@@ -29,7 +29,7 @@ export function changeReplicationJobType(jobType) {
 
 export function fetchReplicationJobs(id) {
   return (dispatch, getState) => {
-    dispatch(showApplicationLoader('JOBS_DATA', 'Fetching jobs...'));
+    dispatch(showApplicationLoader('JOBS_DATA', 'Loading jobs...'));
     dispatch(setReplicationJobs([]));
     const { jobs } = getState();
     const { replicationType } = jobs;
@@ -55,7 +55,7 @@ export function fetchReplicationJobs(id) {
 
 export function fetchRecoveryJobs(id) {
   return (dispatch) => {
-    dispatch(showApplicationLoader('JOBS_DATA', 'Fetching jobs...'));
+    dispatch(showApplicationLoader('JOBS_DATA', 'Loading jobs...'));
     const url = (id === 0 ? API_RECOVERY_JOBS : API_RECOVERY_PLAN_RECOVERY_JOBS.replace('<id>', id));
     dispatch(setRecoveryJobs([]));
     return callAPI(url).then((json) => {

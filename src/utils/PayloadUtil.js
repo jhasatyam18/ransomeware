@@ -86,7 +86,7 @@ export function getVMConfigPayload(user) {
     const isPublicIP = (getValue(`${key}-vmConfig.network.net1`, values) === 'public');
     const privateIP = (isPublicIP ? '' : getValue(`${key}-vmConfig.network.net1-manual-ip`, values));
     const sgs = getValue(`${key}-vmConfig.network.securityGroup`, values);
-    const securityGroups = sgs || '';
+    const securityGroups = joinArray(sgs, ',');
     const preScript = getValue(`${key}-vmConfig.scripts.preScript`, values);
     const postScript = getValue(`${key}-vmConfig.scripts.postScript`, values);
     instanceDetails.push({ instanceName, instanceType, volumeType, tags, bootPriority, isPublicIP, privateIP, securityGroups, preScript, postScript });
@@ -118,4 +118,11 @@ function getRecoveryConfigVMDetails(user) {
     machineDetails.push({ vmName: name, winUser: (userName && userName !== '' ? userName : ''), winPassword: (password && password !== '' ? password : '') });
   });
   return machineDetails;
+}
+
+function joinArray(data, delimiter) {
+  if (data && data.length > 0) {
+    return data.join(delimiter);
+  }
+  return '';
 }

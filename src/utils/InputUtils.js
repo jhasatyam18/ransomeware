@@ -1,4 +1,4 @@
-import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
+import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
 import { PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS } from '../constants/InputConstants';
 import { isEmpty } from './validationUtils';
@@ -200,7 +200,7 @@ export function createVMConfigStackObject(key) {
         title: 'Network',
         children: {
           [`${key}-vmConfig.network.net1`]: { label: 'IP Address', type: STACK_COMPONENT_NETWORK, validate: null, errorMessage: '', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
-          [`${key}-vmConfig.network.securityGroup`]: { label: 'Security Group', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getSecurityGroupOption(u) },
+          [`${key}-vmConfig.network.securityGroup`]: { label: 'Security Groups', type: STACK_COMPONENT_SECURITY_GROUP, validate: null, errorMessage: '', shouldShow: true },
         },
       },
       {

@@ -125,7 +125,7 @@ export async function validateMigrationVMs({ user, dispatch }) {
       const { values } = user;
       const vms = getValue('ui.site.seletedVMs', values);
       if (vms) {
-        const payload = getRecoveryPayload(user);
+        const payload = getRecoveryPayload(user, true);
         const obj = createPayload(API_TYPES.POST, { ...payload.recovery });
         dispatch(showApplicationLoader('VALIDATING_MIGRATION_MACHINBES', 'Validating virtual machines.'));
         const response = await callAPI(API_VALIDATE_MIGRATION, obj);

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Badge } from 'reactstrap';
-import { JOB_COMPLETION_STATUS, JOB_RUNNING_STATUS, JOB_IN_PROGRESS, JOB_FAILED, JOB_INIT_FAILED, JOB_IN_SYNC, JOB_COMPLETED_WITH_ERRORS, JOB_ONGOING, JOB_STOPPED } from '../../constants/AppStatus';
+import { JOB_COMPLETION_STATUS, JOB_RUNNING_STATUS, JOB_IN_PROGRESS, JOB_FAILED, JOB_INIT_FAILED, JOB_IN_SYNC, JOB_COMPLETED_WITH_ERRORS, JOB_ONGOING, JOB_STOPPED, JOB_INIT_SUCCESS } from '../../constants/AppStatus';
 import 'boxicons';
 
 function StatusItemRenderer({ data, field }) {
@@ -14,7 +14,7 @@ function StatusItemRenderer({ data, field }) {
   status = status.toLowerCase();
   const resp = status.charAt(0).toUpperCase() + status.slice(1);
 
-  if (status === JOB_COMPLETION_STATUS) {
+  if (status === JOB_COMPLETION_STATUS || status === JOB_INIT_SUCCESS) {
     return (
       <div>
         <Badge className="font-size-13 badge-soft-success" color="success" pill>
