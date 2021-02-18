@@ -7,7 +7,7 @@ function VMPasswordItemRenderer({ data, user, dispatch }) {
   if (user && dispatch && data && data.guestOS) {
     return (
       <div>
-        <DMFieldText dispatch={dispatch} fieldKey={`${data.moref}-password`} field={username} user={user} hideLabel="true" hidepassword="true" />
+        <DMFieldText dispatch={dispatch} fieldKey={`${data.moref}-password`} field={username} user={user} hideLabel="true" />
       </div>
     );
   }

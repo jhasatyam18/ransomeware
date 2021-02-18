@@ -34,6 +34,7 @@ class ProtectionPlanSummaryStep extends Component {
                   <Col sm={3} className="text-muted">Replication Interval</Col>
                   <Col sm={3}>
                     {replicationInterval}
+                    {' '}
                     {replicationUnit}
                   </Col>
                 </Row>

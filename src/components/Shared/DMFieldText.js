@@ -51,20 +51,15 @@ class DMFieldText extends Component {
     const hasErrors = !!(errors && errors[fieldKey] !== undefined);
     const { type } = field;
     const { state } = this;
-    if (hidepassword) {
+    if (hidepassword || hasErrors || type !== FIELD_TYPE.PASSOWRD) {
       return null;
     }
-    if (type === FIELD_TYPE.PASSOWRD && !hasErrors) {
-      return (
-        <button
-          type="button"
-          className="btn buttonwrapper waves-effect"
-          onClick={this.typeToggle}
-        >
-          {state.type === FIELD_TYPE.PASSOWRD ? <i className="fas fa-eye" /> : <i className="fas fa-eye-slash" />}
-        </button>
-      );
-    }
+    const icon = (state.type === FIELD_TYPE.PASSOWRD ? 'hide' : 'show');
+    return (
+      <span className="field-icon">
+        <box-icon name={icon} color="white" onClick={this.typeToggle} style={{ height: 16, width: 16 }} />
+      </span>
+    );
   }
 
   renderError(hasError) {
@@ -107,18 +102,20 @@ class DMFieldText extends Component {
             <Label for={fieldKey}>
               {label}
             </Label>
-            <input
-              type={type}
-              className={`form-control ${hasErrors ? 'is-invalid' : ''}`}
-              id={fieldKey}
-              value={value}
-              onBlur={this.onBlur}
-              onChange={this.handleChange}
-              invalid={hasErrors}
-              placeholder={placeH}
-              autoComplete="off"
-            />
-            {this.showPasswordToggle()}
+            <span>
+              <input
+                type={type}
+                className={`form-control ${hasErrors ? 'is-invalid' : ''}`}
+                id={fieldKey}
+                value={value}
+                onBlur={this.onBlur}
+                onChange={this.handleChange}
+                invalid={hasErrors}
+                placeholder={placeH}
+                autoComplete="off"
+              />
+              {this.showPasswordToggle()}
+            </span>
             {this.renderError(hasErrors)}
           </div>
         </form>
@@ -129,18 +126,20 @@ class DMFieldText extends Component {
         <FormGroup className={css}>
           {this.renderLabel()}
           <Col sm={hideLabel ? 12 : 8}>
-            <Input
-              type={type}
-              className="form-control"
-              id={fieldKey}
-              value={value}
-              onBlur={this.onBlur}
-              onChange={this.handleChange}
-              invalid={hasErrors}
-              autoComplete="off"
-              placeholder={placeH}
-            />
-            {this.showPasswordToggle()}
+            <div>
+              <Input
+                type={type}
+                className="form-control"
+                id={fieldKey}
+                value={value}
+                onBlur={this.onBlur}
+                onChange={this.handleChange}
+                invalid={hasErrors}
+                autoComplete="off"
+                placeholder={placeH}
+              />
+              {this.showPasswordToggle()}
+            </div>
             {this.renderError(hasErrors)}
           </Col>
         </FormGroup>

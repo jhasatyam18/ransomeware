@@ -44,12 +44,17 @@ export const REPLICATION_JOBS = [
 
 export const RECOVERY_JOBS = [
   { label: 'Virtual Machine', field: 'vmName' },
-  // { label: 'Disk', field: 'DiskID' },
-  // { label: 'Size', field: 'TransferSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Recovery Type', field: 'recoveryType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER },
   { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
   { label: 'IP Address', field: 'failureMessage', itemRenderer: SSH_RDP_ITEM_RENDERER },
+];
+
+export const PROTECTION_PLAN_RECOVERY_JOBS = [
+  { label: 'Virtual Machine', field: 'vmNames' },
+  { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
+  { label: 'Recovery Type', field: 'recoveryType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER },
+  { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
 ];
 
 export const REPLICATION_VM_JOBS = [
