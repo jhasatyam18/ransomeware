@@ -1,8 +1,8 @@
 import React from 'react';
 
-function TransferSizeItemRenderer({ data }) {
+function TransferSizeItemRenderer({ data, field }) {
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-  const bytes = data.transferSize * 1024 * 1024;
+  const bytes = data[field] * 1024 * 1024;
   const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
   if (bytes === 0) return '0 Byte';
   return (

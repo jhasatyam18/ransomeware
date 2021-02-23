@@ -37,6 +37,7 @@ export const TABLE_PROTECT_VM_VMWARE = [
 export const REPLICATION_JOBS = [
   { label: 'Virtual Machine', field: 'vmName' },
   { label: 'Disk Id', field: 'diskId' },
+  { label: 'Data Changed', field: 'changedSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Data Transfered', field: 'transferSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Replication Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
@@ -60,6 +61,8 @@ export const PROTECTION_PLAN_RECOVERY_JOBS = [
 export const REPLICATION_VM_JOBS = [
   { label: 'Virtual Machine', field: 'vmName' },
   { label: 'Iterations', field: 'iterationNumber' },
+  { label: 'Changed', field: 'changedSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
+  { label: 'Transferred', field: 'transferredSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Replication Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
   { label: 'Sync', field: 'syncStatus', itemRenderer: STATUS_ITEM_RENDERER },
@@ -69,4 +72,14 @@ export const TABLE_RECOVERY_VMS = [
   { label: 'name', field: 'name' },
   { label: 'Username', field: 'virtualDisks', itemRenderer: VM_USERNAME_ITEM_RENDERER },
   { label: 'Password', field: 'guestOS', itemRenderer: VM_UPASSWORD_ITEM_RENDERER },
+];
+
+export const TABLE_PROTECTION_PLAN_REPLICATIONS = [
+  { label: 'name', field: 'name' },
+  { label: 'Iteration', field: 'totalIteration' },
+  { label: 'Total Changed', field: 'totalChangedSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
+  { label: 'Total Transferred', field: 'totalTransferredSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
+  { label: 'Data Reduction (%)', field: 'dataReductionRatio' },
+  { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
+  { label: 'Sync', field: 'syncStatus', itemRenderer: STATUS_ITEM_RENDERER },
 ];

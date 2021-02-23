@@ -119,13 +119,13 @@ class DMTable extends Component {
   }
 
   render() {
-    const { data } = this.props;
+    const { data, auto } = this.props;
     return (
       <Row>
         <Col>
           <Card>
             <CardBody>
-              <SimpleBar style={{ minHeight: 400, maxHeight: 550 }}>
+              <SimpleBar style={auto ? {} : { minHeight: 400, maxHeight: 550 }}>
                 <Table className="table table-bordered">
                   {this.renderHeaders()}
                   <Tbody>

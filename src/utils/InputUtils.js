@@ -155,11 +155,25 @@ export function optionsBuilder(user, key) {
 }
 
 export function getSecurityGroupOption(user) {
-  return optionsBuilder(user, STATIC_KEYS.UI_SECURITY_GROUPS);
+  const { values } = user;
+  const opts = getValue(STATIC_KEYS.UI_SECURITY_GROUPS, values) || [];
+  const options = [];
+  opts.forEach((op) => {
+    const name = (op.name && op.name !== '' ? op.name : op.id);
+    options.push({ label: name, value: op.id });
+  });
+  return options || [];
 }
 
 export function getSubnetOptions(user) {
-  return optionsBuilder(user, STATIC_KEYS.UI_SUBNETS);
+  const { values } = user;
+  const opts = getValue(STATIC_KEYS.UI_SUBNETS, values) || [];
+  const options = [];
+  opts.forEach((op) => {
+    const name = (op.name && op.name !== '' ? `(${op.id}) ${op.name}` : op.id);
+    options.push({ label: name, value: op.id });
+  });
+  return options;
 }
 export function buildRangeOptions(start, end) {
   const options = [];

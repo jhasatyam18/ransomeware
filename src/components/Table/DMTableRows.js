@@ -42,7 +42,7 @@ class DMTableRow extends Component {
       case STATUS_ITEM_RENDERER:
         return <StatusItemRenderer data={data} field={field} />;
       case TRANSFER_SIZE_ITEM_RENDERER:
-        return <TransferSizeItemRenderer data={data} />;
+        return <TransferSizeItemRenderer data={data} field={field} />;
       case RECOVERY_TYPE_ITEM_RENDERER:
         return <RecoveryTypeItemRenderer data={data} field={field} />;
       case TIME_DURATION_RENDERER:

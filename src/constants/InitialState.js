@@ -27,7 +27,7 @@ const INITIAL_STATE = {
     show: false,
     options: { title: '' },
   },
-  jobs: { replication: [], recovery: [], replicationType: REPLICATION_JOB_TYPE.VM },
+  jobs: { replication: [], recovery: [], replicationType: REPLICATION_JOB_TYPE.PLAN },
 };
 
 export default INITIAL_STATE;

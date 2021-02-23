@@ -19,6 +19,7 @@ export const DROP_DOWN_ACTION_TYPES = {
 export const REPLICATION_JOB_TYPE = {
   DISK: 'DISK',
   VM: 'VM',
+  PLAN: 'PLAN',
 };
 
 export const APP_TYPE = {

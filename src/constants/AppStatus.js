@@ -9,3 +9,4 @@ export const JOB_COMPLETED_WITH_ERRORS = 'completed with errors';
 export const JOB_INIT_FAILED = 'init-failed';
 export const JOB_INIT_SUCCESS = 'init-success';
 export const JOB_INIT_PROGRESS = 'init-in-progress';
+export const JOB_SYNC_FAILED = 'sync-failed';

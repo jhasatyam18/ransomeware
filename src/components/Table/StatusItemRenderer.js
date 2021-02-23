@@ -1,6 +1,6 @@
 import React from 'react';
 import { Badge } from 'reactstrap';
-import { JOB_COMPLETION_STATUS, JOB_RUNNING_STATUS, JOB_IN_PROGRESS, JOB_FAILED, JOB_INIT_FAILED, JOB_IN_SYNC, JOB_COMPLETED_WITH_ERRORS, JOB_ONGOING, JOB_STOPPED, JOB_INIT_SUCCESS, JOB_INIT_PROGRESS } from '../../constants/AppStatus';
+import { JOB_COMPLETION_STATUS, JOB_RUNNING_STATUS, JOB_IN_PROGRESS, JOB_FAILED, JOB_INIT_FAILED, JOB_IN_SYNC, JOB_COMPLETED_WITH_ERRORS, JOB_ONGOING, JOB_STOPPED, JOB_INIT_SUCCESS, JOB_INIT_PROGRESS, JOB_SYNC_FAILED } from '../../constants/AppStatus';
 import 'boxicons';
 
 function StatusItemRenderer({ data, field }) {
@@ -34,7 +34,7 @@ function StatusItemRenderer({ data, field }) {
       </div>
     );
   }
-  if (status === JOB_FAILED || status === JOB_STOPPED || status === JOB_INIT_FAILED) {
+  if (status === JOB_FAILED || status === JOB_STOPPED || status === JOB_INIT_FAILED || status === JOB_SYNC_FAILED) {
     return (
       <div>
         <Badge title={data.failureMessage} className="font-size-13 badge-soft-danger" color="danger" pill>

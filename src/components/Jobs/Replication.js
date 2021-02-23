@@ -5,6 +5,7 @@ import { REPLICATION_JOBS, REPLICATION_VM_JOBS } from '../../constants/TableCons
 import DMTPaginator from '../Table/DMTPaginator';
 import { changeReplicationJobType, fetchReplicationJobs } from '../../store/actions/JobActions';
 import { REPLICATION_JOB_TYPE } from '../../constants/InputConstants';
+import ProtectionPlanReplications from './ProtectionPlanReplications';
 
 class Replication extends Component {
   constructor() {
@@ -42,19 +43,25 @@ class Replication extends Component {
   renderOptions() {
     const { jobs } = this.props;
     const { replicationType } = jobs;
-    const isVM = (replicationType === REPLICATION_JOB_TYPE.VM);
+    // const isVM = (replicationType === REPLICATION_JOB_TYPE.VM);
     return (
       <>
         <Form>
           <div className="form-check-inline">
+            <Label className="form-check-label" for="plan-options">
+              <input type="radio" className="form-check-input" id="plan-options" name="jobsType" value={replicationType === REPLICATION_JOB_TYPE.PLAN} checked={replicationType === REPLICATION_JOB_TYPE.PLAN} onChange={() => { this.changeJobType(REPLICATION_JOB_TYPE.PLAN); }} />
+              Protection Plan
+            </Label>
+          </div>
+          <div className="form-check-inline">
             <Label className="form-check-label" for="vms-options">
-              <input type="radio" className="form-check-input" id="vms-options" name="jobsType" value={isVM} checked={isVM} onChange={() => { this.changeJobType(REPLICATION_JOB_TYPE.VM); }} />
+              <input type="radio" className="form-check-input" id="vms-options" name="jobsType" value={replicationType === REPLICATION_JOB_TYPE.VM} checked={replicationType === REPLICATION_JOB_TYPE.VM} onChange={() => { this.changeJobType(REPLICATION_JOB_TYPE.VM); }} />
               Virtual Machines
             </Label>
           </div>
           <div className="form-check-inline">
             <Label className="form-check-label" for="disks-options">
-              <input type="radio" className="form-check-input" id="disks-options" name="jobsType" value={!isVM} checked={!isVM} onChange={() => { this.changeJobType(REPLICATION_JOB_TYPE.DISK); }} />
+              <input type="radio" className="form-check-input" id="disks-options" name="jobsType" value={replicationType === REPLICATION_JOB_TYPE.DISK} checked={replicationType === REPLICATION_JOB_TYPE.DISK} onChange={() => { this.changeJobType(REPLICATION_JOB_TYPE.DISK); }} />
               Disks
             </Label>
           </div>
@@ -74,10 +81,10 @@ class Replication extends Component {
           <Card>
             <CardBody>
               <Row className="padding-left-20">
-                <Col sm={4}>
+                <Col sm={8}>
                   {this.renderOptions()}
                 </Col>
-                <Col sm={8}>
+                <Col sm={4}>
                   <div className="display__flex__reverse">
                     <DMTPaginator data={replication} setData={this.setDataForDisplay} showFilter="false" columns={REPLICATION_VM_JOBS} />
                   </div>
@@ -106,10 +113,10 @@ class Replication extends Component {
           <Card>
             <CardBody>
               <Row className="padding-left-20">
-                <Col sm={4}>
+                <Col sm={8}>
                   {this.renderOptions()}
                 </Col>
-                <Col sm={8}>
+                <Col sm={4}>
                   <div className="display__flex__reverse">
                     <DMTPaginator data={replication} setData={this.setDataForDisplay} showFilter="false" columns={REPLICATION_VM_JOBS} />
                   </div>
@@ -127,13 +134,53 @@ class Replication extends Component {
     );
   }
 
+  renderDrReplications() {
+    const { jobs } = this.props;
+    const { replication, replicationType } = jobs;
+    if (replicationType !== REPLICATION_JOB_TYPE.PLAN || replication.length <= 0) {
+      return null;
+    }
+    const data = replication[0];
+    const { name } = data;
+    if (typeof name === 'undefined') {
+      return null;
+    }
+    return (
+      <Row className="padding-top-20">
+        <Col sm={12}>
+          {replication.map((plan) => <ProtectionPlanReplications title={plan.name} vms={plan.vms} />)}
+        </Col>
+      </Row>
+    );
+  }
+
+  renderProtectionPlanJobs() {
+    return (
+      <>
+        <Container fluid>
+          <Card>
+            <CardBody>
+              <Row className="padding-left-20">
+                <Col sm={12}>
+                  {this.renderOptions()}
+                </Col>
+              </Row>
+              {this.renderDrReplications()}
+            </CardBody>
+          </Card>
+        </Container>
+      </>
+    );
+  }
+
   render() {
     const { jobs } = this.props;
     const { replicationType } = jobs;
-    const isVM = (replicationType === REPLICATION_JOB_TYPE.VM);
     return (
       <>
-        {isVM ? this.renderVMJobs() : this.renderDiskJobs()}
+        {replicationType === REPLICATION_JOB_TYPE.VM ? this.renderVMJobs() : null}
+        {replicationType === REPLICATION_JOB_TYPE.DISK ? this.renderDiskJobs() : null}
+        {replicationType === REPLICATION_JOB_TYPE.PLAN ? this.renderProtectionPlanJobs() : null}
       </>
     );
   }
