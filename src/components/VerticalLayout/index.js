@@ -91,7 +91,7 @@ class Layout extends Component {
               <Suspense fallback={<div>Loading...</div>}>
                 <Switch>
                   <Route path={LOGIN_PATH} render={() => <Login {...this.props} />} />
-                  <Route path={DASHBOARD_PATH} render={() => <Dashboard />} />
+                  <Route path={DASHBOARD_PATH} render={() => <Dashboard {...this.props} />} />
                   <Route path={SITES_PATH} render={() => <Sites user={user} sites={sites} dispatch={dispatch} />} />
                   <Route path={PROTECTION_PLANS_PATH} render={() => <DRPlans user={user} sites={sites} dispatch={dispatch} drPlans={drPlans} />} />
                   <Route path={PROTECTION_PLAN_DETAILS} render={() => <DRPlanDetails {...this.props} />} />

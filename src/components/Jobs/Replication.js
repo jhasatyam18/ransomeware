@@ -135,7 +135,7 @@ class Replication extends Component {
   }
 
   renderDrReplications() {
-    const { jobs } = this.props;
+    const { jobs, protectionplanID } = this.props;
     const { replication, replicationType } = jobs;
     if (replicationType !== REPLICATION_JOB_TYPE.PLAN || replication.length <= 0) {
       return null;
@@ -148,7 +148,15 @@ class Replication extends Component {
     return (
       <Row className="padding-top-20">
         <Col sm={12}>
-          {replication.map((plan) => <ProtectionPlanReplications title={plan.name} vms={plan.vms} />)}
+          {replication.map((plan) => {
+            if (protectionplanID === null || protectionplanID === 0) {
+              return <ProtectionPlanReplications title={plan.name} vms={plan.vms} />;
+            }
+            if (protectionplanID !== 0 && protectionplanID === plan.id) {
+              return <ProtectionPlanReplications title={plan.name} vms={plan.vms} />;
+            }
+            return null;
+          })}
         </Col>
       </Row>
     );

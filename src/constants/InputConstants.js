@@ -22,6 +22,11 @@ export const REPLICATION_JOB_TYPE = {
   PLAN: 'PLAN',
 };
 
+export const RECOVERY_JOB_TYPE = {
+  PLAN: 'PLAN',
+  VM: 'VM',
+};
+
 export const APP_TYPE = {
   CLIENT: 'CLIENT', SERVER: 'SERVER',
 };

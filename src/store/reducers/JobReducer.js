@@ -17,7 +17,10 @@ export default function jobs(state = INITIAL_STATE.jobs, action) {
       return {
         ...state, replicationType: action.jobType,
       };
-
+    case Types.CHANGE_RECOVERY_JOB_TYPE:
+      return {
+        ...state, recoveryType: action.jobType,
+      };
     default:
       return state;
   }

@@ -1,16 +1,19 @@
 import React, { Component } from 'react';
-import { Card, CardBody, Container } from 'reactstrap';
+import { Card, CardBody, Col, Container, Form, Label, Row } from 'reactstrap';
 import DMTable from '../Table/DMTable';
 import { PROTECTION_PLAN_RECOVERY_JOBS, RECOVERY_JOBS } from '../../constants/TableConstants';
 import DMTPaginator from '../Table/DMTPaginator';
-import { fetchRecoveryJobs } from '../../store/actions/JobActions';
+import { fetchRecoveryJobs, changeRecoveryJobType } from '../../store/actions/JobActions';
 import { fetchDrPlans } from '../../store/actions/DrPlanActions';
+import { RECOVERY_JOB_TYPE } from '../../constants/InputConstants';
+import ProtectionPlanRecovery from './ProtectionPlanRecovery';
 
 class Recovery extends Component {
   constructor() {
     super();
     this.state = { dataToDisplay: [] };
     this.setDataForDisplay = this.setDataForDisplay.bind(this);
+    this.changeJobType = this.changeJobType.bind(this);
   }
 
   componentDidMount() {
@@ -31,7 +34,38 @@ class Recovery extends Component {
     dispatch(fetchRecoveryJobs(protectionplanID));
   }
 
-  render() {
+  changeJobType(type) {
+    const { dispatch, protectionplanID } = this.props;
+    dispatch(changeRecoveryJobType(type));
+    setTimeout(() => {
+      dispatch(fetchRecoveryJobs(protectionplanID));
+    }, 1000);
+  }
+
+  renderOptions() {
+    const { jobs } = this.props;
+    const { recoveryType } = jobs;
+    return (
+      <>
+        <Form>
+          <div className="form-check-inline">
+            <Label className="form-check-label" for="rec-plan-options">
+              <input type="radio" className="form-check-input" id="rec-plan-options" name="jobsType" value={recoveryType === RECOVERY_JOB_TYPE.PLAN} checked={recoveryType === RECOVERY_JOB_TYPE.PLAN} onChange={() => { this.changeJobType(RECOVERY_JOB_TYPE.PLAN); }} />
+              Protection Plan
+            </Label>
+          </div>
+          <div className="form-check-inline">
+            <Label className="form-check-label" for="rec-vms-options">
+              <input type="radio" className="form-check-input" id="rec-vms-options" name="jobsType" value={recoveryType === RECOVERY_JOB_TYPE.VM} checked={recoveryType === RECOVERY_JOB_TYPE.VM} onChange={() => { this.changeJobType(RECOVERY_JOB_TYPE.VM); }} />
+              Virtual Machines
+            </Label>
+          </div>
+        </Form>
+      </>
+    );
+  }
+
+  renderVMJobs() {
     const { jobs, user } = this.props;
     const { recovery } = jobs;
     const { dataToDisplay } = this.state;
@@ -42,9 +76,16 @@ class Recovery extends Component {
         <Container fluid>
           <Card>
             <CardBody>
-              <div className="display__flex__reverse">
-                <DMTPaginator data={recovery} setData={this.setDataForDisplay} showFilter="true" columns={cols} />
-              </div>
+              <Row className="padding-left-20">
+                <Col sm={8}>
+                  {this.renderOptions()}
+                </Col>
+                <Col sm={4}>
+                  <div className="display__flex__reverse">
+                    <DMTPaginator data={recovery} setData={this.setDataForDisplay} showFilter="true" columns={cols} />
+                  </div>
+                </Col>
+              </Row>
               <DMTable
                 dispatch={dispatch}
                 columns={cols}
@@ -56,6 +97,70 @@ class Recovery extends Component {
         </Container>
       </>
     );
+  }
+
+  renderDrRecovery() {
+    const { jobs, protectionplanID } = this.props;
+    const { recovery, recoveryType } = jobs;
+    if (recoveryType !== RECOVERY_JOB_TYPE.PLAN || recovery.length <= 0) {
+      return null;
+    }
+    const data = recovery[0];
+    const { name } = data;
+    if (typeof name === 'undefined') {
+      return null;
+    }
+    return (
+      <Row className="padding-top-20">
+        <Col sm={12}>
+          {recovery.map((plan) => {
+            if (protectionplanID === null || protectionplanID === 0) {
+              return <ProtectionPlanRecovery title={plan.name} vms={plan.protectionPlanJobs} />;
+            }
+            if (protectionplanID !== 0 && protectionplanID === plan.id) {
+              return <ProtectionPlanRecovery title={plan.name} vms={plan.protectionPlanJobs} />;
+            }
+            return null;
+          })}
+        </Col>
+      </Row>
+    );
+  }
+
+  renderPlanJobs() {
+    return (
+      <>
+        <Container fluid>
+          <Card>
+            <CardBody>
+              <Row className="padding-left-20">
+                <Col sm={12}>
+                  {this.renderOptions()}
+                </Col>
+              </Row>
+              {this.renderDrRecovery()}
+            </CardBody>
+          </Card>
+        </Container>
+      </>
+    );
+  }
+
+  render() {
+    const { jobs } = this.props;
+    const { recoveryType } = jobs;
+    try {
+      return (
+        <>
+          {recoveryType === RECOVERY_JOB_TYPE.VM ? this.renderVMJobs() : null}
+          {recoveryType === RECOVERY_JOB_TYPE.PLAN ? this.renderPlanJobs() : null}
+        </>
+      );
+    } catch (err) {
+      return (
+        'ERROR'
+      );
+    }
   }
 }
 

@@ -134,7 +134,7 @@ export async function validateMigrationVMs({ user, dispatch }) {
           return true;
         }
         if (response.failedVMs.length !== 0) {
-          dispatch(addMessage('Make sure all selected virtual machines were powered off and their replication status is in In-Sync state.', MESSAGE_TYPES.ERROR, false));
+          dispatch(addMessage('Make sure all selected virtual machines were powered off and have zero changed data.', MESSAGE_TYPES.ERROR, false));
         }
         return false;
       }

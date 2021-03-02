@@ -26,12 +26,19 @@ export const TABLE_HEADER_DR_PLANS = [
   { label: 'recovery.site', field: 'recoverySite.platformDetails.platformName', itemRenderer: RECOVERY_SITE_LINK_ITEM_RENDERER },
   { label: 'replication.interval', field: 'replicationInterval', itemRenderer: REPLICATION_INTERVAL_ITEM_RENDERER },
   { label: 'status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
+  { label: 'Recovery Status', field: 'recoveryStatus', itemRenderer: STATUS_ITEM_RENDERER },
 ];
-
 export const TABLE_PROTECT_VM_VMWARE = [
   { label: 'name', field: 'name' },
   { label: 'size', field: 'virtualDisks', itemRenderer: VM_SIZE_ITEM_RENDERER },
   { label: 'os', field: 'guestOS', itemRenderer: OS_TYPE_ITEM_RENDARER },
+];
+export const TABLE_PROTECTION_PLAN_VMS = [
+  { label: 'name', field: 'name' },
+  { label: 'size', field: 'virtualDisks', itemRenderer: VM_SIZE_ITEM_RENDERER },
+  { label: 'os', field: 'guestOS', itemRenderer: OS_TYPE_ITEM_RENDARER },
+  { label: 'Last Run Time', field: 'lastRunTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Recovery Status', field: 'recoveryStatus' },
 ];
 
 export const REPLICATION_JOBS = [
@@ -82,4 +89,11 @@ export const TABLE_PROTECTION_PLAN_REPLICATIONS = [
   { label: 'Data Reduction (%)', field: 'dataReductionRatio' },
   { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
   { label: 'Sync', field: 'syncStatus', itemRenderer: STATUS_ITEM_RENDERER },
+];
+
+export const TABLE_PROTECTION_PLAN_RECOVERY = [
+  { label: 'Virtual Machines', field: 'vmNames' },
+  { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
+  { label: 'Recovery Type', field: 'recoveryType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER },
+  { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
 ];

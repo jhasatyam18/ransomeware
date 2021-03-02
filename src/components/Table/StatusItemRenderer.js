@@ -12,8 +12,10 @@ function StatusItemRenderer({ data, field }) {
     return '-';
   }
   status = status.toLowerCase();
-  const resp = status.charAt(0).toUpperCase() + status.slice(1);
-
+  let resp = status.charAt(0).toUpperCase() + status.slice(1);
+  if (resp === 'Partialycompleted') {
+    resp = 'Partially Completed';
+  }
   if (status === JOB_COMPLETION_STATUS || status === JOB_INIT_SUCCESS) {
     return (
       <div>
@@ -43,7 +45,7 @@ function StatusItemRenderer({ data, field }) {
       </div>
     );
   }
-  if (status === JOB_IN_SYNC) {
+  if (status === JOB_IN_SYNC || status === 'migrated') {
     return (
       <div>
         <Badge className="font-size-13 badge-soft-success" color="success" pill>
@@ -51,6 +53,16 @@ function StatusItemRenderer({ data, field }) {
         </Badge>
       </div>
 
+    );
+  }
+  if (status === JOB_ONGOING) {
+    return (
+      <div>
+        <Badge className="font-size-13 badge-soft-info" color="info" pill>
+          &nbsp;&nbsp;
+          {resp}
+        </Badge>
+      </div>
     );
   }
   if (status === JOB_ONGOING || status === JOB_INIT_PROGRESS) {
@@ -80,7 +92,12 @@ function StatusItemRenderer({ data, field }) {
     );
   }
   return (
-    <div>{resp}</div>
+    <div>
+      <Badge className="font-size-13 badge-soft-info" color="info" pill>
+        &nbsp;&nbsp;
+        {resp}
+      </Badge>
+    </div>
   );
 }
 

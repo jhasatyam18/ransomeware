@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import { withTranslation } from 'react-i18next';
 import { deletePlan, fetchDRPlanById, openMigrationWizard, openRecoveryWizard, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
 import DMTable from '../Table/DMTable';
-import { TABLE_PROTECT_VM_VMWARE } from '../../constants/TableConstants';
+import { TABLE_PROTECTION_PLAN_VMS } from '../../constants/TableConstants';
 import { APP_TYPE, DROP_DOWN_ACTION_TYPES, REPLICATION_STATUS } from '../../constants/InputConstants';
 import DropdownActions from '../Common/DropdownActions';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
@@ -37,14 +37,17 @@ class DRPlanDetails extends Component {
     }
   }
 
-  renderSite(site) {
+  renderSite(site, isRecoverySite = false) {
     if (!site || !site.platformDetails) {
       return null;
     }
     const { platformDetails } = site;
-    const keys = [{ label: 'Name', field: 'platformName' }, { label: 'Platform Type', field: 'platformType' }, { label: 'Hostname', field: 'hostname' }, { label: 'Port', field: 'port' },
+    const keys = [{ label: 'Name', field: 'platformName' }, { label: 'Platform Type', field: 'platformType' }, { label: 'Hostname', field: 'hostname' },
       { label: 'Region', field: 'region' }, { label: 'Zone', field: 'availZone' }, { label: 'Project ID', field: 'projectId' }, { label: 'Datamotive Server IP', field: 'serverIp' },
       { label: 'Datamotive Server Port', field: 'serverPort' }];
+    if (!isRecoverySite) {
+      keys.splice(3, 0, { label: 'Port', field: 'port' });
+    }
     const fields = keys.map((ele) => {
       const { field, label } = ele;
       if (platformDetails[field]) {
@@ -107,14 +110,20 @@ class DRPlanDetails extends Component {
   renderStatus() {
     const { drPlans } = this.props;
     const { details } = drPlans;
-    const { status } = details;
+    const { status, recoveryStatus } = details;
+    if (recoveryStatus !== '') {
+      return (
+        <span className="badge badge-success">{recoveryStatus}</span>
+      );
+    }
+
     if (status === REPLICATION_STATUS.STOPPED) {
       return (
         <span className="badge badge-danger">STOPPED</span>
       );
     }
     return (
-      <span className="badge badge-success">RUNNING</span>
+      <span className="badge badge-info">RUNNING</span>
     );
   }
 
@@ -178,7 +187,7 @@ class DRPlanDetails extends Component {
                 </Col>
                 <Col sm={5}>
                   <CardTitle className="title-color">{t('recovery.site')}</CardTitle>
-                  {this.renderSite(recoverySite)}
+                  {this.renderSite(recoverySite, true)}
                 </Col>
               </Row>
             </CardBody>
@@ -213,7 +222,7 @@ class DRPlanDetails extends Component {
                     <Col sm="12">
                       <DMTable
                         dispatch={dispatch}
-                        columns={TABLE_PROTECT_VM_VMWARE}
+                        columns={TABLE_PROTECTION_PLAN_VMS}
                         data={virtualMachines}
                       />
                     </Col>

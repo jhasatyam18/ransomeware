@@ -2,39 +2,18 @@ import React, { Component } from 'react';
 import { Card, CardBody, Col, Row } from 'reactstrap';
 
 class ReplicationStat extends Component {
-  constructor() {
-    super();
-    this.state = {
-      statTasks: [
-        { label: 'Completed', value: '122', icon: 'fa fa-clipboard-check', color: 'green' },
-        { label: 'Running', value: '12', icon: 'fa fa-spinner fa-spin', color: 'orange' },
-        { label: 'Failures', value: '2', icon: 'fa fa-exclamation-triangle', color: 'red' },
-      ],
-      statTest: [
-        { label: 'Test Executions', value: '14', icon: 'fa fa-tasks' },
-        { label: 'Full Recovery', value: '10', icon: 'fa fa-bullseye', color: 'green' },
-        { label: 'Migrations', value: '4', icon: 'fa fa-cloud', color: '#87CEEB' },
-      ],
-      statRep: [
-        { label: 'Copies', value: '54', icon: 'fa fa-camera', color: '#87CEEB' },
-        { label: 'Change Rate', value: '8 GB', icon: 'fa fa-copy', color: 'green' },
-        { label: 'Data Reduction', value: '60%', icon: 'fa fa-file-archive', color: 'green' },
-      ],
-    };
-  }
-
   renderData(steps) {
     return (
       <div className="dashboard_replicaiton_info">
         {steps.map((task) => (
           <div className="dashboard_item">
             <Row>
-              <Col sm={9}>
+              <Col sm={7}>
                 <i className={task.icon} style={{ color: task.color }} />
                 &nbsp;&nbsp;
                 {`${task.label}`}
               </Col>
-              <Col sm={3}>
+              <Col sm={5}>
                 <p style={{ color: 'white' }}>{task.value}</p>
               </Col>
             </Row>
@@ -46,7 +25,25 @@ class ReplicationStat extends Component {
   }
 
   render() {
-    const { statTasks, statTest, statRep } = this.state;
+    const { dashboard } = this.props;
+    const { replicationStats } = dashboard;
+    const { completed, running, failures, testExecutions = 0, fullRecovery = 0, migrations = 0 } = replicationStats;
+    const data = { statTasks: [
+      { label: 'Completed', value: completed, icon: 'fa fa-clipboard-check', color: 'green' },
+      { label: 'Running', value: running, icon: 'fa fa-spinner fa-spin', color: 'orange' },
+      { label: 'Failures', value: failures, icon: 'fa fa-exclamation-triangle', color: 'red' },
+    ],
+    statTest: [
+      { label: 'Test Executions', value: testExecutions, icon: 'fa fa-tasks' },
+      { label: 'Full Recovery', value: fullRecovery, icon: 'fa fa-bullseye', color: 'green' },
+      { label: 'Migrations', value: migrations, icon: 'fa fa-cloud', color: '#87CEEB' },
+    ],
+    statRep: [
+      { label: 'Copies', value: '54', icon: 'fa fa-camera', color: '#87CEEB' },
+      { label: 'Change Rate', value: '8 GB', icon: 'fa fa-copy', color: 'green' },
+      { label: 'Data Reduction', value: '60%', icon: 'fa fa-file-archive', color: 'green' },
+    ] };
+    const { statRep, statTest, statTasks } = data;
     return (
       <>
         <Card>

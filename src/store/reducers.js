@@ -10,9 +10,10 @@ import global from './reducers/Global';
 import wizard from './reducers/WizardReducer';
 import drPlans from './reducers/DrPlanReducer';
 import jobs from './reducers/JobReducer';
+import dashboard from './reducers/DashboardReducer';
 
 const rootReducer = combineReducers({
-  layout, user, messages, sites, modal, global, wizard, drPlans, jobs,
+  layout, user, messages, sites, modal, global, wizard, drPlans, jobs, dashboard,
 });
 
 export default rootReducer;

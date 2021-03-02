@@ -6,27 +6,25 @@ import NodeInfo from './NodeInfo';
 import ProtectedVsUnProtectedVMs from './ProtectedVsUnProtectedVMs';
 import ReplicationStat from './ReplicationStat';
 import Events from './Events';
+import { fetchDashboardData } from '../../store/actions/DashboardActions';
+import { SITES_PATH, PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 
 class Dashboard extends Component {
-  constructor() {
-    super();
-    this.state = {
-      reports: [
-        { title: 'Sites', icon: 'cloud', description: '5' },
-        { title: 'Protection Plans', icon: 'layer', description: '4' },
-        { title: 'Protected Machines', icon: 'desktop', description: '39' },
-        { title: 'Storage', icon: 'hdd', description: '2.25 TB' },
-        // { title: 'Snapshots', icon: 'camera', description: '112' },
-        // { title: 'Data Protected Per/Hour', icon: 'data', description: '8 GB' },
-        // { title: 'Data Reduction', icon: 'file', description: '60 %' },
-        // { title: 'TBB', icon: 'file', description: '60 %' },
-
-      ],
-    };
+  componentDidMount() {
+    const { dispatch } = this.props;
+    dispatch(fetchDashboardData());
   }
 
   render() {
-    const { reports } = this.state;
+    const { dashboard } = this.props;
+    const { titles } = dashboard;
+    const { sites, protectionPlans, vms, storage } = titles;
+    const reports = [
+      { title: 'Sites', icon: 'cloud', description: sites, link: SITES_PATH },
+      { title: 'Protection Plans', icon: 'layer', description: protectionPlans, link: PROTECTION_PLANS_PATH },
+      { title: 'Protected Machines', icon: 'desktop', description: vms },
+      { title: 'Storage', icon: 'hdd', description: (storage > 1024 ? `${storage} TB` : `${storage} GB`) },
+    ];
     return (
       <>
         <Container fluid>
@@ -42,7 +40,7 @@ class Dashboard extends Component {
                             <p className="text-muted font-weight-medium">
                               {report.title}
                             </p>
-                            <Link href="/dashboard"><h4 className="mb-0">{report.description}</h4></Link>
+                            <Link to={report.link}><h4 className="mb-0">{report.description}</h4></Link>
                           </Media>
                           <div className="mini-stat-icon avatar-sm rounded-circle align-self-center">
                             <span className="">
@@ -58,8 +56,8 @@ class Dashboard extends Component {
             </Col>
           </Row>
           <Row>
-            <Col sm={8}><ReplicationStat /></Col>
-            <Col sm={4}><BandwidthChart /></Col>
+            <Col sm={8}><ReplicationStat {...this.props} /></Col>
+            <Col sm={4}><BandwidthChart {...this.props} /></Col>
           </Row>
           <Row>
             <ProtectedVsUnProtectedVMs />

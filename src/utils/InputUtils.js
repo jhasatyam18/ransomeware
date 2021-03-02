@@ -170,7 +170,7 @@ export function getSubnetOptions(user) {
   const opts = getValue(STATIC_KEYS.UI_SUBNETS, values) || [];
   const options = [];
   opts.forEach((op) => {
-    const name = (op.name && op.name !== '' ? `(${op.id}) ${op.name}` : op.id);
+    const name = (op.name && op.name !== '' ? `${op.id} (${op.name})` : op.id);
     options.push({ label: name, value: op.id });
   });
   return options;

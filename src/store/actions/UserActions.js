@@ -88,10 +88,11 @@ export function removeErrorMessage(key) {
     key,
   };
 }
-export function changeAppType(appType) {
+export function changeAppType(appType, platformType = '') {
   return {
     type: Types.APP_TYPE,
     appType,
+    platformType,
   };
 }
 export function getInfo(history) {
@@ -104,7 +105,7 @@ export function getInfo(history) {
         dispatch(loginSuccess(json.token, 'admin'));
         const appType = json.serviceType === 'Client' ? APP_TYPE.CLIENT : APP_TYPE.SERVER;
         const { licenseType, isLicenseExpired, licenseExpiredTime, version, serviceType } = json;
-        dispatch(changeAppType(appType));
+        dispatch(changeAppType(appType, json.platformType));
         fetchByDelay(dispatch, updateLicenseInfo, 2000, { licenseType, isLicenseExpired, licenseExpiredTime, version, serviceType });
         dispatch(validateLicense(licenseExpiredTime));
         if (history) {
