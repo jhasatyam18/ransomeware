@@ -155,6 +155,16 @@ export function onRecoverSiteChange({ value }) {
   };
 }
 
+export function updateAvailabilityZones({ value }) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const data = getValue('ui.values.regions', values);
+    const zones = data.filter((item) => item.value === value);
+    dispatch(valueChange('ui.values.availabilityZones', (zones[0] ? zones[0].zones : [])));
+  };
+}
+
 export function fetchAvailibilityZones({ value }) {
   return (dispatch, getState) => {
     const { user } = getState();

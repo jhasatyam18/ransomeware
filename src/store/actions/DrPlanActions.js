@@ -144,7 +144,6 @@ export function onConfigureDRPlan() {
   return (dispatch, getState) => {
     const { user, sites } = getState();
     const payload = getCreateDRPlanPayload(user, sites.sites);
-    dispatch(addMessage(JSON.stringify(payload.drplan), MESSAGE_TYPES.INFO));
     const obj = createPayload(API_TYPES.POST, { ...payload.drplan });
     dispatch(showApplicationLoader('configuring-new-dr-plan', 'Configuring new protection plan.'));
     return callAPI(API_FETCH_DR_PLANS, obj).then((json) => {

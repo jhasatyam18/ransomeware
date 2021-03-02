@@ -1,6 +1,6 @@
 import { onPlatformTypeChange } from '../store/actions';
 import { onProtectionPlanChange } from '../store/actions/DrPlanActions';
-import { onProtectSiteChange, onRecoverSiteChange } from '../store/actions/SiteActions';
+import { onProtectSiteChange, onRecoverSiteChange, updateAvailabilityZones } from '../store/actions/SiteActions';
 import { getAvailibilityZoneOptions, getDRPlanOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationIntervalOptions, getSitesOptions, getSubnetOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware } from '../utils/InputUtils';
 import { isEmpty, validateDrSiteSelection } from '../utils/validationUtils';
 import { STATIC_KEYS } from './InputConstants';
@@ -40,7 +40,7 @@ export const FIELDS = {
     label: 'password', description: '', type: FIELD_TYPE.PASSOWRD, validate: (value, user) => isEmpty(value, user), errorMessage: 'Password required', shouldShow: (user) => isPlatformTypeVMware(user),
   },
   'configureSite.platformDetails.region': {
-    label: 'region', description: '', type: FIELD_TYPE.SELECT, errorMessage: 'Region required', shouldShow: (user) => !isPlatformTypeVMware(user), options: (user) => getRegionOptions(user),
+    label: 'region', description: '', type: FIELD_TYPE.SELECT, errorMessage: 'Region required', shouldShow: (user) => !isPlatformTypeVMware(user), options: (user) => getRegionOptions(user), onChange: (user, dispatch) => updateAvailabilityZones(user, dispatch),
   },
   'configureSite.platformDetails.availZone': {
     label: 'zone', description: '', type: FIELD_TYPE.SELECT, patterns: [HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX], errorMessage: 'Zone required', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user), options: (user) => getAvailibilityZoneOptions(user),

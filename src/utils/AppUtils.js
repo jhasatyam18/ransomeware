@@ -11,19 +11,19 @@ export function getAppKey() {
 export function formatTime(seconds) {
   const day = Math.floor(seconds / (3600 * 24));
   const hour = Math.floor(seconds % (3600 * 24) / 3600);
-  const min = Math.ceil(seconds % 3600 / 60);
-  const sec = Math.ceil(seconds % 60);
+  const min = Math.floor(seconds % 3600 / 60);
+  const sec = (seconds % 60);
   if (day > 0) {
-    return (day > 1 ? `${day} Days` : `${day} Day`);
+    return (day > 1 ? `${day}d ${hour}h ${min}m` : `${day}d`);
   }
   if (hour > 0) {
-    return (hour > 1 ? ` ${hour} Hours` : `${hour} Hour`);
+    return (hour > 1 ? `${hour}h ${min}m ${sec}s` : `${hour}h`);
   }
   if (min > 0) {
-    return (min > 1 ? ` ${min} Minutes` : `${min} Minute`);
+    return (min > 1 ? `${min}m ${sec}s` : `${min}m`);
   }
   if (sec > 0) {
-    return ` ${sec} Seconds`;
+    return ` ${sec}s`;
   }
   return '-';
 }

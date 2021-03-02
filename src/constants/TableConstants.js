@@ -47,14 +47,14 @@ export const REPLICATION_JOBS = [
   { label: 'Data Changed', field: 'changedSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Data Transfered', field: 'transferSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Replication Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
-  { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
+  { label: 'Job Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
 ];
 
 export const RECOVERY_JOBS = [
   { label: 'Virtual Machine', field: 'vmName' },
   { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Recovery Type', field: 'recoveryType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER },
-  { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
+  { label: 'Job Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
   { label: 'IP Address', field: 'failureMessage', itemRenderer: SSH_RDP_ITEM_RENDERER },
 ];
 
@@ -62,7 +62,7 @@ export const PROTECTION_PLAN_RECOVERY_JOBS = [
   { label: 'Virtual Machine', field: 'vmNames' },
   { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Recovery Type', field: 'recoveryType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER },
-  { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
+  { label: 'Job Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
 ];
 
 export const REPLICATION_VM_JOBS = [
@@ -71,8 +71,8 @@ export const REPLICATION_VM_JOBS = [
   { label: 'Changed', field: 'changedSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Transferred', field: 'transferredSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Replication Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
-  { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
-  { label: 'Sync', field: 'syncStatus', itemRenderer: STATUS_ITEM_RENDERER },
+  { label: 'Job Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
+  { label: 'Sync Status', field: 'syncStatus', itemRenderer: STATUS_ITEM_RENDERER },
 ];
 
 export const TABLE_RECOVERY_VMS = [
@@ -87,8 +87,8 @@ export const TABLE_PROTECTION_PLAN_REPLICATIONS = [
   { label: 'Total Changed', field: 'totalChangedSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Total Transferred', field: 'totalTransferredSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Data Reduction (%)', field: 'dataReductionRatio' },
-  { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
-  { label: 'Sync', field: 'syncStatus', itemRenderer: STATUS_ITEM_RENDERER },
+  { label: 'Job Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
+  { label: 'Sync Status', field: 'syncStatus', itemRenderer: STATUS_ITEM_RENDERER },
 ];
 
 export const TABLE_PROTECTION_PLAN_RECOVERY = [
