@@ -12,15 +12,34 @@ export function formatTime(seconds) {
   const day = Math.floor(seconds / (3600 * 24));
   const hour = Math.floor(seconds % (3600 * 24) / 3600);
   const min = Math.floor(seconds % 3600 / 60);
-  const sec = (seconds % 60);
+  const sec = Math.floor(seconds % 60);
+
   if (day > 0) {
-    return (day > 1 ? `${day}d ${hour}h ${min}m` : `${day}d`);
+    if (hour > 0) {
+      if (min > 0) {
+        if (sec > 0) {
+          return (`${hour}h ${min}m ${sec}s`);
+        }
+        return (`${hour}h ${min}`);
+      }
+      return (`${hour}h`);
+    }
+    return (`${day}d`);
   }
   if (hour > 0) {
-    return (hour > 1 ? `${hour}h ${min}m ${sec}s` : `${hour}h`);
+    if (min > 0) {
+      if (sec > 0) {
+        return (`${hour}h ${min}m ${sec}s`);
+      }
+      return (`${hour}h ${min}`);
+    }
+    return (`${hour}h`);
   }
   if (min > 0) {
-    return (min > 1 ? `${min}m ${sec}s` : `${min}m`);
+    if (sec > 0) {
+      return (`${min}m ${sec}s`);
+    }
+    return (`${min}m`);
   }
   if (sec > 0) {
     return ` ${sec}s`;
