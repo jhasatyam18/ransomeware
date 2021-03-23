@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="styles.css">
+  <title>Datamotive Cloud Disaster Recovery & Migration User’s Guide</title>
+</head>
+
+<body>
+  <div class="wrapper">
+    <div class="sidebar">
+      <ul>
+        <li><a href="index.html">Introduction</a></li>
+        <li><a href="architecture.html">Architecture</a></li>
+        <li><a href="benefits.html">Capabilities and Benefits</a></li>
+        <li><a href="supportmatrix.html">Support Matrix</a></li>
+        <li><a href="authentication.html">Authentication</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li>
+          <a href="sitesConfiguration.html">Sites configuration</a>
+          <ol type="a">
+            <li><a href="vmwareSite.html">VMware Site</a></li>
+            <li><a href="aws.html">AWS Site</a></li>
+            <li><a href="gcp.html">GCP Site</a></li>
+            <li><a href="editSite.html">Edit Site</a></li>
+            <li><a href="removeSite.html">Remove Site</a></li>
+          </ol>
+        </li>
+        <li><a href="protectionPlan.html">Protection plan</a></li>
+        <ol type="a">
+          <li><a href="createProtectionPlan.html">Create Protection Plan</a></li>
+          <li><a href="protectionPlanActions.html">Protection plan actions</a></li>
+        </ol>
+        <li><a href="recovery.html">Recovery</a></li>
+        <ol type="a">
+          <li><a href="testRecovery.html">Test Recovery</a></li>
+          <li><a href="fullRecovery.html">Full Recovery</a></li>
+          <li><a href="migration.html">Migration</a></li>
+        </ol>
+        <li><a href="jobs.html">Jobs</a></li>
+        <ol type="a">
+          <li><a href="replicationJob.html">Replication Job</a></li>
+          <li><a class="active" href="recoveryJob.html">Recovery Job</a></li>
+        </ol>
+      </ul>
+    </div>
+
+    <div class="content">
+      <h2>Recovery Job</h2>
+      <p>
+        The Recovery jobs tab provides details about all the running, completed and failed recovery operations.
+      </p>
+      <h4>Protection Plan</h4>
+      <p>
+        Navigation: Home -> Jobs -> Select Protection Plan.</br>
+        Protection plan recovery details provide a list of protection plans. Each protection plan has
+        its</br>
+        associated recovered (Full / Test) or migrated virtual machine information.
+      </p>
+      <img src="images/recoveryJob.PNG">
+      <p>click on > icon to view protection plan level details.</p>
+      <img src="images/recoveryJob2.PNG">
+      <p>
+
+      </p>
+      <table>
+        <tr>
+          <td><b>Name</b></td>
+          <td>Name of virtual machine associated with the protection plan.</td>
+        </tr>
+        <tr>
+          <td><b>Duration </b></td>
+          <td>The time required to complete the recovery.</td>
+        </tr>
+        <tr>
+          <td><b>Recovery Type</b></td>
+          <td>Recovery Type (Full Recovery, Test Recovery or Migration)</td>
+        </tr>
+        <tr>
+          <td><b>Status</b></td>
+          <td>Recovery/Migration status.</td>
+        </tr>
+      </table>
+
+      <h4>Virtual Machines</h4>
+      <p>Navigation: Home -> Jobs -> Select Virtual Machines.</br>Provides a list of recovered (Test/Full) or migrated
+        virtual machines. </p>
+      <img src="images/recoveryJobsVM.PNG">
+      <p>
+
+      </p>
+      <table>
+        <tr>
+          <td><b>Virtual Machine</b></td>
+          <td>Name of the protected virtual machine.</td>
+        </tr>
+        <tr>
+          <td><b>Duration </b></td>
+          <td>The time required to complete the recovery/migration.</td>
+        </tr>
+        <tr>
+          <td><b>Recovery Type</b></td>
+          <td>Recovery Type (Full Recovery, Test Recovery or Migration)</td>
+        </tr>
+        <tr>
+          <td><b>Job Status</b></td>
+          <td>
+            <p>
+              Recovery job status.</br>
+              1. <b>Completed</b>: Recovery completed successfully.</br>
+              2. <b>Started</b>: Recovery job is running.</br>
+              3. <b>Partially Completed</b>: Recovery completed with errors.</br>
+              4. <b>Failed</b>: Recovery failed.</br>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td><b>IP Address</b></td>
+          <td>Recovered virtual machine IP address.</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</body>
+
+</html>

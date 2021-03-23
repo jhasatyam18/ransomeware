@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="styles.css">
+  <title>Datamotive Cloud Disaster Recovery & Migration User’s Guide</title>
+</head>
+
+<body>
+  <div class="wrapper">
+    <div class="sidebar">
+      <ul>
+        <li><a href="index.html">Introduction</a></li>
+        <li><a href="architecture.html">Architecture</a></li>
+        <li><a href="benefits.html">Capabilities and Benefits</a></li>
+        <li><a href="supportmatrix.html">Support Matrix</a></li>
+        <li><a href="authentication.html">Authentication</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li>
+          <a href="sitesConfiguration.html">Sites configuration</a>
+          <ol type="a">
+            <li><a href="vmwareSite.html">VMware Site</a></li>
+            <li><a href="aws.html">AWS Site</a></li>
+            <li><a href="gcp.html">GCP Site</a></li>
+            <li><a href="editSite.html">Edit Site</a></li>
+            <li><a href="removeSite.html">Remove Site</a></li>
+          </ol>
+        </li>
+        <li><a href="protectionPlan.html">Protection plan</a></li>
+        <ol type="a">
+          <li><a class="active" href="createProtectionPlan.html">Create Protection Plan</a></li>
+          <li><a href="protectionPlanActions.html">Protection plan actions</a></li>
+        </ol>
+        <li><a href="recovery.html">Recovery</a></li>
+        <ol type="a">
+          <li><a href="testRecovery.html">Test Recovery</a></li>
+          <li><a href="fullRecovery.html">Full Recovery</a></li>
+          <li><a href="migration.html">Migration</a></li>
+        </ol>
+        <li><a href="jobs.html">Jobs</a></li>
+        <ol type="a">
+          <li><a href="replicationJob.html">Replication Job</a></li>
+          <li><a href="recoveryJob.html">Recovery Job</a></li>
+        </ol>
+      </ul>
+    </div>
+
+
+    <div class="content">
+      <h2>Create Protection Plan</h2>
+      <p>Prerequisite</p>
+      <h4>VMware platform:</h4>
+      <ol>
+        <li>VMware tools need to be installed in all the Virtual Machines.</li>
+        <li>CBT (Change block tracking) need to enabled for all the Virtual Machines.</li>
+      </ol>
+      <p>To create a new protection plan, click on + New and create protection plan windows will pop-up.</p>
+      <img src="images/createProtectionPlan.PNG">
+
+      <h2>General</h2>
+      <table>
+        <tr>
+          <td><b>Name</b></td>
+          <td> Name of the protection plan.</td>
+        </tr>
+        <tr>
+          <td><b>Protect Site</b></td>
+          <td> Source protection site.</td>
+        </tr>
+        <tr>
+          <td><b>Recovery Site</b></td>
+          <td>Destination recovery site.</td>
+        </tr>
+      </table>
+      <p>Click next for the next section.</p>
+
+      <h2>Virtual Machines</h2>
+      <img src="images/virtualMachines.PNG">
+      <p>Select the virtual machines to be protect and click next.</p>
+
+      <h2>Recovery Configuration</h2>
+      <img src="images/recoveryConfiguration.PNG">
+      <p>Provide the virtual machine specific recover configuration which will be used for creation of </br>instance on
+        recovery site.</p>
+
+      <h2>General</h2>
+      <table>
+        <tr>
+          <td><b>Instance Type</b></td>
+          <td>Instance type on cloud site - Example t2.micro on AWS or n1-standard-1 on GCP.</td>
+        </tr>
+        <tr>
+          <td><b>Volume Type</b></td>
+          <td> Instance volume type on cloud site - Example GP-2 on AWS or standard on GCP.</td>
+        </tr>
+        <tr>
+          <td><b>Boot</b></td>
+          <td> Boot order in which this instance will start. 1 is highest and 5 is lowest.</td>
+        </tr>
+        <tr>
+          <td><b>Tags</b></td>
+          <td>Instance tags.</td>
+        </tr>
+      </table>
+
+      <h2>Network</h2>
+      <img src="images/network.PNG">
+      <p>
+
+
+      </p>
+      <table>
+        <tr>
+          <td><b>IP Address</b></td>
+          <td>Public IP for the instance in cloud site. (Manual will be supported in next release)</td>
+        </tr>
+        <tr>
+          <td><b>Security Groups </b></td>
+          <td>Security Groups in the cloud site. Select multiple if required. For GCP this will be firewall</br> target
+            tags.</td>
+        </tr>
+      </table>
+
+      <h2>Scripts</h2>
+      <img src="images/scripts.PNG">
+      <p>
+
+
+      </p>
+      <table>
+        <tr>
+          <td><b>Pre</b></td>
+          <td>Pre scripts which will run before instance start on recovery site.</td>
+        </tr>
+        <tr>
+          <td><b>Post </b></td>
+          <td>Post scripts which will run after instance start on recovery site.</td>
+        </tr>
+      </table>
+
+      <h2>Replication Configuration</h2>
+      <img src="images/subnet.PNG">
+      <p>
+
+      </p>
+      <table>
+        <tr>
+          <td><b>Subnet</b></td>
+          <td>subnet ID which will assigned to all the instances in this protection plan.</td>
+        </tr>
+      </table>
+      <p>
+
+      </p>
+      <table>
+        <tr>
+          <td><b>Replication interval</b></td>
+          <td>Time interval in which the virtual machine changed data will be replicated.</td>
+        </tr>
+        <tr>
+          <td><b>Encryption On Wire</b></td>
+          <td>Data encryption while transferring from source to destination.</td>
+        </tr>
+        <tr>
+          <td><b>Encryption On Rest</b></td>
+          <td>Data encryption on writing the data to the instance volume.</td>
+        </tr>
+        <tr>
+          <td><b>Compression</b></td>
+          <td>Data compression while transferring from source to destination.</td>
+        </tr>
+      </table>
+
+      <h2>Scripts</h2>
+      <img src="images/protectionPlanScript.PNG">
+      <p>
+
+      </p>
+      <table>
+        <tr>
+          <td><b>Pre Script</b></td>
+          <td>Pre scripts which will run before recovery workflow for this protection plan.</td>
+        </tr>
+        <tr>
+          <td><b>Post Script</b></td>
+          <td>Post scripts which will run after all the instances are recovered on recovery site.</td>
+        </tr>
+      </table>
+      <p>
+
+      </p>
+
+      <h2>Summary</h2>
+      <img src="images/summary.PNG">
+      <p>
+        Review the summary for the protection plan and click finish to configure the protection plan. On</br>
+        successful configuration, replication jobs will start for the virtual machines selected for this
+        protection </br> plan.
+      </p>
+    </div>
+  </div>
+</body>
+
+</html>

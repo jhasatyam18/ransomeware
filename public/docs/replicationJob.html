@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="styles.css">
+  <title>Datamotive Cloud Disaster Recovery & Migration User’s Guide</title>
+</head>
+
+<body>
+  <div class="wrapper">
+    <div class="sidebar">
+      <ul>
+        <li><a href="index.html">Introduction</a></li>
+        <li><a href="architecture.html">Architecture</a></li>
+        <li><a href="benefits.html">Capabilities and Benefits</a></li>
+        <li><a href="supportmatrix.html">Support Matrix</a></li>
+        <li><a href="authentication.html">Authentication</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li>
+          <a href="sitesConfiguration.html">Sites configuration</a>
+          <ol type="a">
+            <li><a href="vmwareSite.html">VMware Site</a></li>
+            <li><a href="aws.html">AWS Site</a></li>
+            <li><a href="gcp.html">GCP Site</a></li>
+            <li><a href="editSite.html">Edit Site</a></li>
+            <li><a href="removeSite.html">Remove Site</a></li>
+          </ol>
+        </li>
+        <li><a href="protectionPlan.html">Protection plan</a></li>
+        <ol type="a">
+          <li><a href="createProtectionPlan.html">Create Protection Plan</a></li>
+          <li><a href="protectionPlanActions.html">Protection plan actions</a></li>
+        </ol>
+        <li><a href="recovery.html">Recovery</a></li>
+        <ol type="a">
+          <li><a href="testRecovery.html">Test Recovery</a></li>
+          <li><a href="fullRecovery.html">Full Recovery</a></li>
+          <li><a href="migration.html">Migration</a></li>
+        </ol>
+        <li><a href="jobs.html">Jobs</a></li>
+        <ol type="a">
+          <li><a class="active" href="replicationJob.html">Replication Job</a></li>
+          <li><a href="recoveryJob.html">Recovery Job</a></li>
+        </ol>
+      </ul>
+    </div>
+
+    <div class="content">
+      <h2>Replication Job</h2>
+      <p>
+        The Replication Jobs tab provides details about all the running, completed, and failed replication</br>
+        iterations. The Replication job section has the following sub-section to show replication jobs base on</br> the
+        grouping criteria.
+      </p>
+      <h4>Protection Plan</h4>
+      <p>
+        Navigation: Home -> Jobs -> Select Protection Plan.</br>
+        Protection plan replication details provide a list of protection plans. Each protection plan has its</br>
+        associated virtual machine replication information.
+      </p>
+      <img src="images/jobsTable.PNG">
+      <p>click on > icon to view protection plan level details.</p>
+      <img src="images/jobsTable2.PNG">
+      <p>
+
+      </p>
+      <table>
+        <tr>
+          <td><b>Name</b></td>
+          <td>Name of virtual machine associated with the protection plan.</td>
+        </tr>
+        <tr>
+          <td><b>Iteration </b></td>
+          <td>The total number of replication iterations completed.</td>
+        </tr>
+        <tr>
+          <td><b>Total Changed</b></td>
+          <td>Total data changed.</td>
+        </tr>
+        <tr>
+          <td><b>Total Transferred</b></td>
+          <td>Total data transferred to the replication server.</td>
+        </tr>
+        <tr>
+          <td><b>Data Reduction (%)</b></td>
+          <td>Overall data reduction.</td>
+        </tr>
+        <tr>
+          <td><b>Job Status</b></td>
+          <td>
+            <p>
+              Status of latest replication iteration.</br>
+              1. <b>Completed</b>: Replication was completed successfully.</br>
+              2. <b>Started</b>: Replication is running.</br>
+              3. <b>Partially Completed</b>: Replication completed with errors.</br>
+              4. <b>Failed</b>: Replication failed.</br>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td><b>Sync Status</b></td>
+          <td>
+            <p>
+              Virtual machine sync status.</br>
+              1. <b>Init-success</b>: The first iteration completed successfully.</br>
+              2. <b>Init-in-progress</b>: The first iteration is running.</br>
+              3. <b>Init-failed</b>: The first iteration failed.</br>
+              4. <b>In-sync</b>: Iteration is completed within configured replication interval time.</br>
+              5. <b>Exceeded-interval</b>: Iteration is completed but took more time than configured replication
+              interval
+              time.</br>
+              6. <b>Sync-failed</b>: Replication iteration failed.</br>
+            </p>
+          </td>
+        </tr>
+      </table>
+
+      <h4>Virtual Machines</h4>
+      <p>Navigation: Home -> Jobs -> Select Virtual Machines.</br>Provides a list of replication details for each
+        protected virtual machine</p>
+      <img src="images/jobsVMTable.PNG">
+      <p>
+
+      </p>
+      <table>
+        <tr>
+          <td><b>Virtual Machine</b></td>
+          <td>Name of the protected virtual machine.</td>
+        </tr>
+        <tr>
+          <td><b>Iteration </b></td>
+          <td>Total number of replication iterations completed.</td>
+        </tr>
+        <tr>
+          <td><b>Changed</b></td>
+          <td>Total changed data discovered.</td>
+        </tr>
+        <tr>
+          <td><b>Transferred</b></td>
+          <td>Total data transferred to the replication server.</td>
+        </tr>
+        <tr>
+          <td><b>Replication Duration</b></td>
+          <td>Time took to complete iteration.</td>
+        </tr>
+        <tr>
+          <td><b>Job Status</b></td>
+          <td>
+            Status of latest replication iteration.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Sync Status</b></td>
+          <td>
+            Virtual machine sync status.
+          </td>
+        </tr>
+      </table>
+
+      <h4>Disks</h4>
+      <p>Navigation: Home -> Jobs -> Select Virtual Machines.</br>
+        Provide a list of replication details for each protected virtual machine disk/volume.
+      </p>
+
+      <img src="images/jobsDisk.PNG">
+      <p>
+
+      </p>
+      <table>
+        <tr>
+          <td><b>Virtual Machine</b></td>
+          <td>Name of the protected virtual machine.</td>
+        </tr>
+        <tr>
+          <td><b>Disk Id </b></td>
+          <td>Disk id of virtual machine.</td>
+        </tr>
+        <tr>
+          <td><b>Data Changed</b></td>
+          <td>Total changed data discovered for the disk.</td>
+        </tr>
+        <tr>
+          <td><b>Data Transferred</b></td>
+          <td>Total data transferred to the replication server.</td>
+        </tr>
+        <tr>
+          <td><b>Replication Duration</b></td>
+          <td>Time took to complete iteration.</td>
+        </tr>
+        <tr>
+          <td><b>Job Status</b></td>
+          <td>
+            Status of latest replication iteration.
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</body>
+
+</html>

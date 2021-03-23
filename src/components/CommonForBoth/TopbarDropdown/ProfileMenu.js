@@ -70,6 +70,13 @@ class ProfileMenu extends Component {
               {t('About')}
             </DropdownItem>
             <div className="dropdown-divider" />
+            <DropdownItem>
+              <a href="docs/index.html" target="_blank" style={{ color: '#BFC8E2' }}>
+                <i className="bx bx-file font-size-16 align-middle mr-1" />
+                {t('Documentation')}
+              </a>
+            </DropdownItem>
+            <div className="dropdown-divider" />
             <Link to="/logout" className="dropdown-item" onClick={this.logout}>
               <i className="bx bx-power-off font-size-16 align-middle mr-1 text-danger" />
               <span>{t('logout')}</span>
