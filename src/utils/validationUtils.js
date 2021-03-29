@@ -138,8 +138,9 @@ export async function validateMigrationVMs({ user, dispatch }) {
         }
         return false;
       }
-    } catch (error) {
-      addErrorMessage(error.message, MESSAGE_TYPES.ERROR);
+    } catch (err) {
+      dispatch(hideApplicationLoader('VALIDATING_MIGRATION_MACHINBES'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       return false;
     }
   } else {
@@ -193,8 +194,9 @@ export async function validateRecoveryVMs({ user, dispatch }) {
         }
         return false;
       }
-    } catch (error) {
-      addErrorMessage(error.message, MESSAGE_TYPES.ERROR);
+    } catch (err) {
+      dispatch(hideApplicationLoader('VALIDATING_RECOVERY_MACHINES'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       return false;
     }
   } else {

@@ -42,7 +42,8 @@ export function callAPI(URL, obj = {}) {
         store.dispatch(clearValues());
       }
       if (response.status !== 204 && !response.ok) {
-        return { hasError: true, message: response.statusText, status: response.status, body: response.body };
+        return response.text()
+          .then((err) => Promise.reject(getErrorText(err)));
       }
       if (response.status === 204) {
         response.hasError = false;
@@ -54,4 +55,8 @@ export function callAPI(URL, obj = {}) {
       data.status = response.status;
       return data;
     });
+}
+
+export function getErrorText(err) {
+  return { code: 0, message: err };
 }

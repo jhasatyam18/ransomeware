@@ -97,8 +97,9 @@ export function setDashboardData() {
       }, vmCount);
       const titles = { sites: sites.sites.length, protectionPlans: plans.length, vms: vmCount, storage };
       dispatch(updateTitleInfo(titles));
-    } catch (error) {
-      alert(error);
+    } catch (err) {
+      dispatch(hideApplicationLoader('LOADING_DASHBOARD_DATA'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     }
   };
 }

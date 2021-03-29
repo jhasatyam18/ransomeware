@@ -50,6 +50,7 @@ export function fetchReplicationJobs(id) {
       }
     },
     (err) => {
+      dispatch(hideApplicationLoader('JOBS_DATA'));
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
   };
@@ -76,6 +77,7 @@ export function fetchRecoveryJobs(id) {
       }
     },
     (err) => {
+      dispatch(hideApplicationLoader('JOBS_DATA'));
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
   };

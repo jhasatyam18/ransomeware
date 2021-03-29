@@ -27,7 +27,8 @@ export function fetchSites(key) {
         }
       },
       (err) => {
-        alert(err);
+        dispatch(hideApplicationLoader('Fetching'));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
   };
 }
@@ -72,7 +73,8 @@ export function confiureSite(payload, isEdit = false) {
       }
     },
     (err) => {
-      alert(err);
+      dispatch(hideApplicationLoader('configuring-new-site'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
   };
 }
@@ -103,7 +105,7 @@ export function deleteSite(id) {
       }
     },
     (err) => {
-      dispatch(addMessage(err, MESSAGE_TYPES.ERROR));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
   };
 }
@@ -124,7 +126,7 @@ export function onProtectSiteChange({ value }) {
         }
       },
       (err) => {
-        alert(err);
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
   };
 }
@@ -275,7 +277,7 @@ export function fetchNetworks(id) {
         }
       },
       (err) => {
-        dispatch(hideApplicationLoader('FETCHING_SITE_SUBNET'));
+        dispatch(hideApplicationLoader('FETCHING_SITE_NETWORK'));
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
   };

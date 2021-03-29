@@ -89,7 +89,7 @@ export function startPlan(id) {
       }
     },
     (err) => {
-      dispatch(addMessage(err, MESSAGE_TYPES.ERROR));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
   };
 }
@@ -106,7 +106,7 @@ export function stopPlan(id) {
       }
     },
     (err) => {
-      dispatch(addMessage(err, MESSAGE_TYPES.ERROR));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
   };
 }
@@ -129,7 +129,7 @@ export function deletePlan(id) {
       }
     },
     (err) => {
-      dispatch(addMessage(err, MESSAGE_TYPES.ERROR));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
   };
 }
@@ -151,14 +151,15 @@ export function onConfigureDRPlan() {
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
-        dispatch(addMessage('Protection plan configuration successfully', MESSAGE_TYPES.SUCCESS));
+        dispatch(addMessage('Protection plan configured successfully.', MESSAGE_TYPES.SUCCESS));
         dispatch(closeWizard());
         dispatch(clearValues());
         fetchByDelay(dispatch, fetchDrPlans, 2000);
       }
     },
     (err) => {
-      alert(err);
+      dispatch(hideApplicationLoader('configuring-new-dr-plan'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
   };
 }
@@ -178,7 +179,8 @@ export function fetchDRPlanById(id) {
       }
     },
     (err) => {
-      dispatch(addMessage(err, MESSAGE_TYPES.ERROR));
+      dispatch(hideApplicationLoader('FETCHING_PROTECTION_PLAN_DETAILS'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
   };
 }
@@ -202,7 +204,7 @@ export function onProtectionPlanChange({ value }) {
         }
       },
       (err) => {
-        alert(err);
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
   };
 }

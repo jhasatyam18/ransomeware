@@ -35,7 +35,7 @@ export function login({ username, password, history }) {
       }
     },
     (err) => {
-      alert(err);
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
   };
 }
@@ -114,7 +114,7 @@ export function getInfo(history) {
       }
     },
     (err) => {
-      alert(err);
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
   };
 }
