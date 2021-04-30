@@ -16,7 +16,7 @@ export const FIELD_TYPE = {
 export const FIELDS = {
   // CONFIGURE SITE FIELDS
   'configureSite.siteType': {
-    label: 'site.type', placeHolderText: 'Select Site', type: FIELD_TYPE.SELECT, options: [{ label: 'Protection', value: 'Protect' }, { label: 'Recover', value: 'Recovery' }], validate: (value, user) => isEmpty(value, user), errorMessage: 'Select site type', shouldShow: true,
+    label: 'site.type', placeHolderText: 'Select Site', type: FIELD_TYPE.SELECT, options: [{ label: 'Protection', value: 'Protection' }, { label: 'Recover', value: 'Recovery' }], validate: (value, user) => isEmpty(value, user), errorMessage: 'Select site type', shouldShow: true,
   },
   'configureSite.platformDetails.platformType': {
     label: 'platform.type', description: 'Select Platform Type', type: FIELD_TYPE.SELECT, options: [{ label: 'VMware', value: 'VMware' }, { label: 'AWS', value: 'AWS' }, { label: 'GCP', value: 'GCP' }], validate: (value, user) => isEmpty(value, user), errorMessage: 'Select Platform Type', shouldShow: true, onChange: (user, dispatch) => onPlatformTypeChange(user, dispatch),
