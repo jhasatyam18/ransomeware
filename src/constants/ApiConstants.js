@@ -22,7 +22,10 @@ export const API_RECOVERY_JOBS = 'api/v1/jobs/recover/vms';
 export const API_RECOVERY_PLAN_RECOVERY_JOBS = 'api/v1/jobs/recover/protectionplans/<id>';
 export const API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS = 'api/v1/jobs/replication/protectionplans';
 export const API_PROTECTION_PLAN_RECOVERY_JOBS_STATUS = 'api/v1/jobs/recover/protectionplans';
-
+export const API_DASHBOARD_TITLE = 'api/v1/dashboard/titles';
+export const API_DASHBOARD_RECOVERY_STATS = 'api/v1/dashboard/recoverystats';
+export const API_DASHBOARD_REPLICATION_STATS = 'api/v1/dashboard/replicationstats';
+export const API_DASHBOARD_BANDWIDTH_USAGE = 'api/v1/dashboard/bandwidthusage';
 // recovery
 export const API_RECOVER = 'api/v1/recover';
 export const API_VALIDATE_RECOVERY = 'api/v1/recover/validate';

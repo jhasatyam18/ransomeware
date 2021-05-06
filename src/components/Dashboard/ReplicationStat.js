@@ -26,8 +26,9 @@ class ReplicationStat extends Component {
 
   render() {
     const { dashboard } = this.props;
-    const { replicationStats } = dashboard;
-    const { completed, running, failures, testExecutions = 0, fullRecovery = 0, migrations = 0 } = replicationStats;
+    const { replicationStats, recoveryStats } = dashboard;
+    const { completed, running, failures } = replicationStats;
+    const { testExecutions = 0, fullRecovery = 0, migrations = 0 } = recoveryStats;
     const data = { statTasks: [
       { label: 'Completed', value: completed, icon: 'fa fa-clipboard-check', color: 'green' },
       { label: 'Running', value: running, icon: 'fa fa-spinner fa-spin', color: 'orange' },
