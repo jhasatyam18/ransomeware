@@ -13,7 +13,7 @@ import { valueChange } from '../../store/actions/UserActions';
 class DMFieldText extends Component {
   constructor() {
     super();
-    this.state = { value: '', type: 'text' };
+    this.state = { value: '', type: 'text', isFocused: false };
     this.typeToggle = this.typeToggle.bind(this);
     this.showPasswordToggle = this.showPasswordToggle.bind(this);
   }
@@ -26,17 +26,24 @@ class DMFieldText extends Component {
     this.setState({ value, type });
   }
 
-  onBlur = () => {
-    const { fieldKey, dispatch, user, field } = this.props;
-    const { value } = this.state;
-    dispatch(valueChange(fieldKey, value));
-    validateField(field, fieldKey, value, dispatch, user);
-  }
-
   handleChange = (e) => {
     this.setState({
       value: e.target.value,
     });
+  }
+
+  handleFocus(val) {
+    this.setState({
+      isFocused: val,
+    });
+  }
+
+  onBlur = () => {
+    const { fieldKey, dispatch, user, field } = this.props;
+    const { value } = this.state;
+    this.setState({ isFocused: false });
+    dispatch(valueChange(fieldKey, value));
+    validateField(field, fieldKey, value, dispatch, user);
   }
 
   typeToggle() {
@@ -55,8 +62,9 @@ class DMFieldText extends Component {
       return null;
     }
     const icon = (state.type === FIELD_TYPE.PASSOWRD ? 'hide' : 'show');
+    const focused = state.isFocused;
     return (
-      <span className="field-icon">
+      <span className={(focused && field.description) ? 'field-icon-focused' : 'field-icon'}>
         <box-icon name={icon} color="white" onClick={this.typeToggle} style={{ height: 16, width: 16 }} />
       </span>
     );
@@ -64,9 +72,15 @@ class DMFieldText extends Component {
 
   renderError(hasError) {
     const { fieldKey, field } = this.props;
+    const { isFocused } = this.state;
     if (hasError) {
       return (
         <FormFeedback className="valid-feedback" for={fieldKey}>{field.errorMessage}</FormFeedback>
+      );
+    }
+    if (isFocused) {
+      return (
+        <small className="form-text text-muted" htmlFor={fieldKey}>{field.description}</small>
       );
     }
     return null;
@@ -87,7 +101,7 @@ class DMFieldText extends Component {
 
   render() {
     const { field, fieldKey, user, hideLabel } = this.props;
-    const { label, shouldShow, layout, placeHolderText } = field;
+    const { shouldShow, placeHolderText } = field;
     const { errors } = user;
     const { value, type } = this.state;
     const hasErrors = !!(errors && errors[fieldKey] !== undefined);
@@ -95,32 +109,6 @@ class DMFieldText extends Component {
     const css = hideLabel ? '' : 'row mb-4 form-group';
     if (!showField) return null;
     const placeH = placeHolderText || '';
-    if (layout === 'vertical') {
-      return (
-        <form>
-          <div className="form-group">
-            <Label for={fieldKey}>
-              {label}
-            </Label>
-            <span>
-              <input
-                type={type}
-                className={`form-control ${hasErrors ? 'is-invalid' : ''}`}
-                id={fieldKey}
-                value={value}
-                onBlur={this.onBlur}
-                onChange={this.handleChange}
-                invalid={hasErrors}
-                placeholder={placeH}
-                autoComplete="off"
-              />
-              {this.showPasswordToggle()}
-            </span>
-            {this.renderError(hasErrors)}
-          </div>
-        </form>
-      );
-    }
     return (
       <>
         <FormGroup className={css}>
@@ -137,6 +125,7 @@ class DMFieldText extends Component {
                 invalid={hasErrors}
                 autoComplete="off"
                 placeholder={placeH}
+                onFocus={() => this.handleFocus(true)}
               />
               {this.showPasswordToggle()}
             </div>

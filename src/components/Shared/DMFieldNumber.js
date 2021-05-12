@@ -14,7 +14,7 @@ import { getValue } from '../../utils/InputUtils';
 class placeHolderNumber extends Component {
   constructor() {
     super();
-    this.state = { value: 0 };
+    this.state = { value: 0, isFocused: false };
   }
 
   componentDidMount() {
@@ -29,13 +29,6 @@ class placeHolderNumber extends Component {
       this.setState({ value: defaultValue });
       dispatch(valueChange(fieldKey, defaultValue));
     }
-  }
-
-  onBlur = () => {
-    const { fieldKey, dispatch, user, field } = this.props;
-    const { value } = this.state;
-    dispatch(valueChange(fieldKey, parseInt(value, 10)));
-    validateField(field, fieldKey, value, dispatch, user);
   }
 
   handleChange = (e) => {
@@ -53,11 +46,31 @@ class placeHolderNumber extends Component {
     }
   }
 
+  handleFocus(val) {
+    this.setState({
+      isFocused: val,
+    });
+  }
+
+  onBlur = () => {
+    const { fieldKey, dispatch, user, field } = this.props;
+    const { value } = this.state;
+    this.setState({ isFocused: false });
+    dispatch(valueChange(fieldKey, parseInt(value, 10)));
+    validateField(field, fieldKey, value, dispatch, user);
+  }
+
   renderError(hasError) {
-    const { fieldKey } = this.props;
+    const { field, fieldKey } = this.props;
+    const { isFocused } = this.state;
     if (hasError) {
       return (
         <FormFeedback for={fieldKey}>{FIELDS[fieldKey].errorMessage}</FormFeedback>
+      );
+    }
+    if (isFocused) {
+      return (
+        <small className="form-text text-muted" htmlFor={fieldKey}>{field.description}</small>
       );
     }
     return null;
@@ -80,7 +93,7 @@ class placeHolderNumber extends Component {
           <Col sm={8}>
             <Input
               type="number"
-              className="form-control form-control-sm"
+              className="form-control"
               id={fieldKey}
               value={value}
               min={min}
@@ -89,6 +102,7 @@ class placeHolderNumber extends Component {
               onChange={this.handleChange}
               invalid={hasErrors}
               autoComplete="off"
+              onFocus={() => this.handleFocus(true)}
             />
             {this.renderError(hasErrors)}
           </Col>

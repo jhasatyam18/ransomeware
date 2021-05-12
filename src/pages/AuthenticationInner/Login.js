@@ -48,13 +48,15 @@ class Login extends Component {
   }
 
   showPassword() {
-    const { type } = this.state;
-    const icon = (type === 'password' ? 'bx bx-hide' : 'bx bx-show');
-    return (
-      <span className="login-icon">
-        <i className={icon} color="white" onKeyDown={this.togglePassword} aria-hidden="true" onClick={this.togglePassword} style={{ height: 20, width: 20 }} />
-      </span>
-    );
+    const { type, password } = this.state;
+    const icon = (type === 'password' ? 'bx bx-hide login-eye' : 'bx bx-show login-eye');
+    if (password.length !== 0) {
+      return (
+        <span className="login-icon">
+          <i className={icon} color="white" onKeyDown={this.togglePassword} aria-hidden="true" onClick={this.togglePassword} />
+        </span>
+      );
+    }
   }
 
   render() {

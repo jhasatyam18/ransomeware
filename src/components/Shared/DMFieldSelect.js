@@ -12,7 +12,7 @@ import { validateField } from '../../utils/validationUtils';
 class DMFieldSelect extends Component {
   constructor() {
     super();
-    this.state = { value: '' };
+    this.state = { value: '', isFocused: false };
   }
 
   componentDidMount() {
@@ -27,6 +27,12 @@ class DMFieldSelect extends Component {
       this.setState({ value: defaultValue });
       dispatch(valueChange(fieldKey, defaultValue));
     }
+  }
+
+  handleFocus(val) {
+    this.setState({
+      isFocused: val,
+    });
   }
 
   getOptions() {
@@ -76,9 +82,15 @@ class DMFieldSelect extends Component {
 
   renderError(hasError) {
     const { field, fieldKey } = this.props;
+    const { isFocused } = this.state;
     if (hasError) {
       return (
-        <FormFeedback for={fieldKey}>{field.errorMessage}</FormFeedback>
+        <FormFeedback htmlFor={fieldKey}>{field.errorMessage}</FormFeedback>
+      );
+    }
+    if (isFocused) {
+      return (
+        <small className="form-text text-muted" htmlFor={fieldKey}>{field.description}</small>
       );
     }
     return null;
@@ -111,7 +123,7 @@ class DMFieldSelect extends Component {
         <FormGroup className={css}>
           {this.renderLabel()}
           <Col sm={hideLabel ? 12 : 8}>
-            <Input type="select" id={fieldKey} onSelect={this.handleChange} className="form-control form-control-sm custom-select" onChange={this.handleChange} value={value} invalid={hasErrors}>
+            <Input type="select" id={fieldKey} onFocus={() => this.handleFocus(true)} onSelect={this.handleChange} onBlur={() => this.handleFocus(false)} className="form-control form-control-sm custom-select" onChange={this.handleChange} value={value} invalid={hasErrors}>
               <option key={`${fieldKey}-default`} value="-">  </option>
               {this.renderOptions()}
             </Input>

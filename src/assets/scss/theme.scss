@@ -377,20 +377,28 @@ span.flatpickr-weekday {
 .logo-size{
   width: 30px;
 }
+
 .loginshowpass{
   position: absolute;
   right: 6%;
   top: 64%;
 }
+
 .field-icon{
-  position: relative;
-  float: right;
-  bottom: 23px;
-  margin-right: 2%;
+  position: absolute;
+  bottom: 5px;
+  right: 20px;
+}
+
+// applicable for textfields, when focused.
+.field-icon-focused{
+  position: absolute;
+  bottom: 25px;
+  right: 20px;
 }
 
 .login-icon{
-  position: relative;
-  float: right;
-  bottom: 44px;
+  position: absolute;
+  bottom: 110px;
+  right: 40px;
 }
