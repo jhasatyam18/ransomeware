@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 // i18n
 import { withTranslation } from 'react-i18next';
-import { DASHBOARD_PATH, JOBS, PROTECTION_PLANS_PATH, SITES_PATH } from '../../constants/RouterConstants';
+import { DASHBOARD_PATH, JOBS, PROTECTION_PLANS_PATH, SITES_PATH, Activity, Logs, Reports, Analytics } from '../../constants/RouterConstants';
 
 class SidebarContent extends Component {
   constructor(props) {
@@ -72,9 +72,9 @@ class SidebarContent extends Component {
     // }
   }
 
-  isActive(path) {
+  isActive(path1, path2, path3) {
     const { pathname } = window.location;
-    if (path === pathname) {
+    if (path1 === pathname || path2 === pathname || path3 === pathname) {
       return '#FFF';
     }
     return '';
@@ -93,8 +93,8 @@ class SidebarContent extends Component {
               </Link>
             </li>
             <li>
-              <Link to="/#" className="has-arrow waves-effect">
-                <i className="fa fa-cog fa-s-lg" />
+              <Link to="/#" className="has-arrow waves-effect" style={{ color: this.isActive(SITES_PATH, PROTECTION_PLANS_PATH) }}>
+                <i className="fa fa-cog fa-s-lg" style={{ fontSize: 16, color: this.isActive(SITES_PATH, PROTECTION_PLANS_PATH) }} />
                 <span>{t('configure')}</span>
               </Link>
               <ul className="sub-menu" aria-expanded="false">
@@ -119,34 +119,34 @@ class SidebarContent extends Component {
               </Link>
             </li>
             <li>
-              <Link to="/#" className="has-arrow waves-effect">
-                <i className="fa fa-chart-bar fa-s-lg" style={{ fontSize: 16 }} />
+              <Link to="/#" className="has-arrow waves-effect" style={{ color: this.isActive(Activity, Logs, Reports) }}>
+                <i className="fa fa-chart-bar fa-s-lg" style={{ fontSize: 16, color: this.isActive(Activity, Logs, Reports) }} />
                 <span>{t('Monitor')}</span>
               </Link>
               <ul className="sub-menu" aria-expanded="false">
                 <li>
-                  <Link to="/TEST">
-                    <i className="bx bx-line-chart" />
+                  <Link to="/Activity" style={{ color: this.isActive(Activity) }}>
+                    <i className="bx bx-line-chart" style={{ fontSize: 16, color: this.isActive(Activity) }} />
                     {t('Activity')}
                   </Link>
                 </li>
                 <li>
-                  <Link to="/TEST" className="waves-effect">
-                    <i className="fa fa-history" />
+                  <Link to="/Logs" className="waves-effect" style={{ color: this.isActive(Logs) }}>
+                    <i className="fa fa-history" style={{ fontSize: 16, color: this.isActive(Logs) }} />
                     <span>Logs</span>
                   </Link>
                 </li>
                 <li>
-                  <Link to="/TEST" className="waves-effect">
-                    <i className="bx bxs-report" />
+                  <Link to="/Reports" className="waves-effect" style={{ color: this.isActive('/Reports') }}>
+                    <i className="bx bxs-report" style={{ fontSize: 16, color: this.isActive('/Reports') }} />
                     <span>Reports</span>
                   </Link>
                 </li>
               </ul>
             </li>
             <li>
-              <Link to="/TEST" className="waves-effect">
-                <i className="bx bx-stats" style={{ fontSize: 16 }} />
+              <Link to="/Analytics" className="waves-effect" style={{ color: this.isActive(Analytics) }}>
+                <i className="bx bx-stats" style={{ fontSize: 16, color: this.isActive(Analytics) }} />
                 <span>Analytics</span>
               </Link>
             </li>

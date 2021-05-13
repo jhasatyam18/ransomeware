@@ -12,7 +12,8 @@ import { addMessage, clearMessages } from './MessageActions';
 import { onInit } from '../../utils/HistoryUtil';
 import { APP_TYPE, PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
 import { fetchDRPlanById, fetchDrPlans } from './DrPlanActions';
-import { JOBS, PROTECTION_PLANS_PATH, SITES_PATH } from '../../constants/RouterConstants';
+import { fetchDashboardData } from './DashboardActions';
+import { JOBS, PROTECTION_PLANS_PATH, SITES_PATH, DASHBOARD_PATH } from '../../constants/RouterConstants';
 import { fetchSites } from './SiteActions';
 import { fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
 import { fetchByDelay } from '../../utils/SlowFetch';
@@ -194,6 +195,9 @@ export function refresh() {
     const { location } = window;
     const { pathname } = location;
     switch (pathname) {
+      case DASHBOARD_PATH:
+        dispatch(fetchDashboardData());
+        break;
       case PROTECTION_PLANS_PATH:
         dispatch(fetchDrPlans());
         break;
@@ -204,15 +208,21 @@ export function refresh() {
         dispatch(fetchRecoveryJobs(0));
         dispatch(fetchReplicationJobs(0));
         break;
-      case pathname.indexOf('/protection/plan/details') !== -1:
-        dispatch(fetchDRPlanById(5));
-        break;
       default:
-        dispatch(addMessage('NO PATH MATCH', MESSAGE_TYPES.ERROR));
+        dispatch(detailPathChecks(pathname));
     }
   };
 }
 
+export function detailPathChecks(pathname) {
+  return (dispatch) => {
+    if (pathname.indexOf('protection/plan/details') !== -1) {
+      const pathArray = pathname.split('/');
+      dispatch(fetchDRPlanById(pathArray[pathArray.length - 1]));
+    }
+    return null;
+  };
+}
 export function fetchScript() {
   return (dispatch) => {
     const url = API_SCRIPTS;
