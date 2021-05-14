@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Col, FormFeedback, FormGroup, Input, Label,
+  Col, FormGroup, Input, Label,
 } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
 import { FIELD_TYPE } from '../../constants/FieldsConstant';
@@ -75,7 +75,7 @@ class DMFieldText extends Component {
     const { isFocused } = this.state;
     if (hasError) {
       return (
-        <FormFeedback className="valid-feedback" for={fieldKey}>{field.errorMessage}</FormFeedback>
+        <small className="form-text textfield-error-color" htmlFor={fieldKey}>{field.errorMessage}</small>
       );
     }
     if (isFocused) {
