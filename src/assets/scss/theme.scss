@@ -337,39 +337,6 @@ span.flatpickr-weekday {
    }
 }
 
-.dashboard_replication_header_state {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  width: 100%;
-  padding-right: 40px;
-}
-
-.dashboard_replicaiton_info {
-  display: flex;
-  flex-direction: row;
-  .dashboard_item {
-    display: flex;
-    flex-direction: column;
-    // border-bottom: 1px solid green;
-    width: 33%;
-    padding-bottom: 20px;
-  }
-  .dashboard_divider {
-    width: 95%;
-    border-bottom: 2px solid #485048;
-  }
-  .name {
-    padding-left: 15px;
-    padding-top: 10px;
-  }
-  .value {
-    padding-left: 15px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-  }
-}
-
 .logo-name-size{
   width: 180px;
 }

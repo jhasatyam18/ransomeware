@@ -40,7 +40,7 @@ export const RECOVERY_WIZARDS = {
     { label: 'Summary', title: '', component: RECOVERY_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch) }],
 };
 
-// Mogration Wizard
+// Migration Wizard
 export const MIGRAION_WIZARDS = {
   options: { title: 'Migrate', onFinish: startMigration },
   steps: [{ label: 'General', title: '', component: MIGRATION_GENERAL_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: MIGRATION_GENERAL_STEP_FIELDS },

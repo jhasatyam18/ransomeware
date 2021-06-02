@@ -57,11 +57,11 @@ class Dashboard extends Component {
           </Row>
           <Row>
             <Col sm={8}><ReplicationStat {...this.props} /></Col>
-            <Col sm={4}><BandwidthChart {...this.props} /></Col>
+            <Col sm={4}><Events /></Col>
           </Row>
           <Row>
-            <ProtectedVsUnProtectedVMs />
-            <Col sm={4}><Events /></Col>
+            <Col className="dashboard_component_size_handle" sm={8}><ProtectedVsUnProtectedVMs /></Col>
+            <Col className="dashboard_component_size_handle" sm={4}><BandwidthChart {...this.props} /></Col>
           </Row>
           <Row>
             <Col xl={12}>

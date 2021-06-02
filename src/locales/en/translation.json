@@ -79,7 +79,11 @@
   "search": "Search",
   "recovery.type": "Recovery Type",
   "message": "Message",
-  "protection.plans": "Protection Plans",
   "recovery.jobs": "Recovery Jobs",
-  "replication.jobs": "Replication Jobs"
+  "replication.jobs": "Replication Jobs",
+  "virtual.machine.protection.analysis": "Virtual Machine Protection Analysis",
+  "protected": "Protected",
+  "unprotected": "Unprotected",
+  "replication.in.sync": "Replication In-Sync",
+  "replication.not.in.sync": "Replication Not In-Sync"
 }
