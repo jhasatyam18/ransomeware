@@ -6,13 +6,18 @@ import NodeInfo from './NodeInfo';
 import ProtectedVsUnProtectedVMs from './ProtectedVsUnProtectedVMs';
 import ReplicationStat from './ReplicationStat';
 import Events from './Events';
-import { fetchDashboardData } from '../../store/actions/DashboardActions';
+import { fetchDashboardData, resetDashboard } from '../../store/actions/DashboardActions';
 import { SITES_PATH, PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 
 class Dashboard extends Component {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch(fetchDashboardData());
+  }
+
+  componentWillUnmount() {
+    const { dispatch } = this.props;
+    dispatch(resetDashboard());
   }
 
   render() {

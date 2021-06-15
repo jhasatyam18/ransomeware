@@ -41,7 +41,7 @@ class DMTable extends Component {
     const { t } = this.props;
     return columns
       .map((col) => (
-        <Th key={col.lable}>
+        <Th key={col.lable} width={`${col.width * 10}%`}>
           {' '}
           {t(col.label)}
           {' '}

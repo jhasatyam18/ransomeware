@@ -1,6 +1,7 @@
 import React, { Component, Suspense } from 'react';
 import { Card, CardBody, Col, Container, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
 import classnames from 'classnames';
+import { resetJobs } from '../../store/actions/JobActions';
 import { JOBS_TABS } from '../../constants/InputConstants';
 
 const Replication = React.lazy(() => import('./Replication'));
@@ -11,6 +12,11 @@ class Jobs extends Component {
     super();
     this.state = { activeTab: '1' };
     this.toggleTab = this.toggleTab.bind(this);
+  }
+
+  componentWillUnmount() {
+    const { dispatch } = this.props;
+    dispatch(resetJobs());
   }
 
   getComponent(tab) {

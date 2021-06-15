@@ -36,7 +36,7 @@ export function fetchDrPlans(key) {
 }
 export function drPlansFetched(plans) {
   return {
-    type: Types.FETCH_DR_PALNS,
+    type: Types.FETCH_DR_PLANS,
     plans,
   };
 }
@@ -187,7 +187,7 @@ export function fetchDRPlanById(id) {
 
 export function drPlanDetailsFetched(details) {
   return {
-    type: Types.FETCH_DR_PALN_DETAILS,
+    type: Types.FETCH_DR_PLAN_DETAILS,
     details,
   };
 }

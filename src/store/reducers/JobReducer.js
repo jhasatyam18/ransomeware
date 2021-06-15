@@ -21,6 +21,8 @@ export default function jobs(state = INITIAL_STATE.jobs, action) {
       return {
         ...state, recoveryType: action.jobType,
       };
+    case Types.RESET_JOBS:
+      return INITIAL_STATE.jobs;
     default:
       return state;
   }

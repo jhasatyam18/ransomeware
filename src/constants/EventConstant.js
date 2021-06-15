@@ -1,0 +1,3 @@
+export const EVENT_LEVELS = {
+  ALL: 'ALL', INFO: 'INFO', WARNING: 'WARNING', ERROR: 'ERROR', CRITICAL: 'CRITICAL',
+};

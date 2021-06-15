@@ -1,13 +1,14 @@
-import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { withTranslation } from 'react-i18next';
+import { Link, withRouter } from 'react-router-dom';
 import {
   Dropdown, DropdownToggle, DropdownMenu, Row, Col,
 } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
-
-// i18n
-import { withTranslation } from 'react-i18next';
+import { ALERTS } from '../../../constants/RouterConstants';
+import { getUnreadAlerts } from '../../../store/actions/AlertActions';
+import { formatTime } from '../../../utils/AppUtils';
 
 class NotificationDropdown extends Component {
   constructor(props) {
@@ -16,12 +17,74 @@ class NotificationDropdown extends Component {
       menu: false,
     };
     this.toggle = this.toggle.bind(this);
+    this.loadAlerts = this.loadAlerts.bind(this);
+    this.navigateToAlerts = this.navigateToAlerts.bind(this);
+    this.pollAlerts = setInterval(this.loadAlerts, 60000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.pollAlerts);
+  }
+
+  loadAlerts() {
+    const { dispatch } = this.props;
+    dispatch(getUnreadAlerts());
   }
 
   toggle() {
     this.setState((prevState) => ({
       menu: !prevState.menu,
     }));
+  }
+
+  navigateToAlerts() {
+    const { history } = this.props;
+    this.toggle();
+    history.push(ALERTS);
+  }
+
+  renderAlerts() {
+    const { alerts } = this.props;
+    const { unread } = alerts;
+    if (unread.length === 0) {
+      return null;
+    }
+    const notifications = (unread.length > 4 ? unread.slice(0, 4) : unread);
+    return (
+      notifications.map((not) => {
+        const t1 = Date.now();
+        const t2 = new Date(not.timeStamp * 1000);
+        let duration = formatTime(Math.ceil(t1 - t2) / 1000);
+        duration = `${duration} ago`;
+        return (
+          <Link to={ALERTS} onClick={this.toggle} key={`not-alert-${not.id}`} className="text-reset notification-item">
+            <div className="media">
+              <div className="media-body">
+                <h6 className="mt-0 mb-1">
+                  {not.title}
+                </h6>
+                <div className="font-size-12 text-muted">
+                  <p className="mb-0">
+                    <i className="mdi mdi-clock-outline" />
+                    {' '}
+                    {duration}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Link>
+        );
+      })
+    );
+  }
+
+  renderAlertCount() {
+    const { alerts } = this.props;
+    const { unread } = alerts;
+    if (unread && unread.length > 0) {
+      return <span className="badge badge-danger badge-pill">{unread.length}</span>;
+    }
+    return null;
   }
 
   render() {
@@ -41,7 +104,7 @@ class NotificationDropdown extends Component {
             id="page-header-notifications-dropdown"
           >
             <box-icon name="bell" color="#a6b0cf" />
-            <span className="badge badge-danger badge-pill" />
+            {this.renderAlertCount()}
           </DropdownToggle>
 
           <DropdownMenu className="dropdown-menu dropdown-menu-lg p-0" right>
@@ -55,27 +118,18 @@ class NotificationDropdown extends Component {
                   </h6>
                 </Col>
                 <div className="col-auto">
-                  <a href="/" className="small">
+                  <Link to={ALERTS} onClick={this.toggle} className="small">
                     {' '}
                     View All
-                  </a>
+                  </Link>
                 </div>
               </Row>
             </div>
 
-            <SimpleBar style={{ height: '230px' }}>
+            <SimpleBar style={{ maxHeight: '230px', minHeight: '100px' }}>
               <Link to="notifications" className="text-reset notification-item" />
+              {this.renderAlerts()}
             </SimpleBar>
-            <div className="p-2 border-top">
-              <Link
-                className="btn btn-sm btn-link font-size-14 btn-block text-center"
-                to="#"
-              >
-                {' '}
-                {t('View all')}
-                {' '}
-              </Link>
-            </div>
           </DropdownMenu>
         </Dropdown>
       </>
@@ -83,8 +137,8 @@ class NotificationDropdown extends Component {
   }
 }
 
-NotificationDropdown.propTypes = {
-  t: PropTypes.any,
-};
-
-export default withTranslation()(NotificationDropdown);
+function mapStateToProps(state) {
+  const { alerts } = state;
+  return { alerts };
+}
+export default connect(mapStateToProps)(withTranslation()(withRouter(NotificationDropdown)));

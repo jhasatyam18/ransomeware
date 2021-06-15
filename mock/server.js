@@ -21,6 +21,8 @@ require('./app/routes/dashboard.routes.js')(app);
 require('./app/routes/jobs.routes.js')(app);
 require('./app/routes/scripts.routes.js')(app);
 require('./app/routes/recovery.routes.js')(app);
+require('./app/routes/event.routes.js')(app);
+require('./app/routes/alert.routes.js')(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;

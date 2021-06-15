@@ -307,7 +307,10 @@ span.flatpickr-weekday {
 }
 
 // global variable for padding
-@for $i from 0 through 30 { 
+@for $i from 0 through 30 {
+  .padding-#{$i} {
+    padding: $i + px
+  }
   .padding-left-#{$i} {
    padding-left: $i + px;
   }
@@ -322,7 +325,10 @@ span.flatpickr-weekday {
    }
 }
 // global variable for margin
-@for $i from 0 through 30 { 
+@for $i from 0 through 30 {
+  .margin-#{$i} {
+    margin: $i + px
+  } 
   .margin-left-#{$i} {
     margin-left: $i + px;
   }

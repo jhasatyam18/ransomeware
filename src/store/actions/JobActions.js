@@ -89,3 +89,9 @@ export function changeRecoveryJobType(jobType) {
     jobType,
   };
 }
+
+export function resetJobs() {
+  return {
+    type: Types.RESET_JOBS,
+  };
+}

@@ -96,7 +96,13 @@ export function updateReplicationStat(replicationStats) {
 
 export function updateRecoveryStat(recoveryStats) {
   return {
-    type: Types.DASHBOARD_REPCOVERY_STAT,
+    type: Types.DASHBOARD_FETCH_DR_PLAN_DETAILS,
     recoveryStats,
+  };
+}
+
+export function resetDashboard() {
+  return {
+    type: Types.RESET_DASHBOARD,
   };
 }

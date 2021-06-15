@@ -3,20 +3,22 @@
 import jsCookie from 'js-cookie';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import * as Types from '../../constants/actionTypes';
-import { API_AUTHENTICATE, API_AWS_AVAILABILLITY_ZONES, API_AWS_RGIONS, API_GCP_RGIONS, API_GCP_AVAILABILLITY_ZONES, API_INFO, API_SCRIPTS } from '../../constants/ApiConstants';
+import { API_AUTHENTICATE, API_AWS_AVAILABILITY_ZONES, API_AWS_REGIONS, API_GCP_REGIONS, API_GCP_AVAILABILITY_ZONES, API_INFO, API_SCRIPTS } from '../../constants/ApiConstants';
 
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { setCookie } from '../../utils/CookieUtils';
-import { APPLICATION_API_TOKEN } from '../../constants/UserConstant';
+import { APPLICATION_API_TOKEN, APPLICATION_API_USER } from '../../constants/UserConstant';
 import { addMessage, clearMessages } from './MessageActions';
 import { onInit } from '../../utils/HistoryUtil';
 import { APP_TYPE, PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
 import { fetchDRPlanById, fetchDrPlans } from './DrPlanActions';
 import { fetchDashboardData } from './DashboardActions';
-import { JOBS, PROTECTION_PLANS_PATH, SITES_PATH, DASHBOARD_PATH } from '../../constants/RouterConstants';
+import { JOBS, PROTECTION_PLANS_PATH, SITES_PATH, DASHBOARD_PATH, ALERTS, EVENTS } from '../../constants/RouterConstants';
 import { fetchSites } from './SiteActions';
 import { fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
 import { fetchByDelay } from '../../utils/SlowFetch';
+import { fetchAlerts, getUnreadAlerts } from './AlertActions';
+import { fetchEvents } from './EventActions';
 
 export function login({ username, password, history }) {
   return (dispatch) => {
@@ -28,6 +30,7 @@ export function login({ username, password, history }) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
         setCookie(APPLICATION_API_TOKEN, json.token);
+        setCookie(APPLICATION_API_USER, username);
         dispatch(loginSuccess(json.token, username));
         dispatch(getInfo());
         if (history) {
@@ -104,11 +107,13 @@ export function getInfo(history) {
         setCookie(APPLICATION_API_TOKEN, json.token, '');
       } else {
         dispatch(loginSuccess(json.token, 'admin'));
+        setCookie(APPLICATION_API_USER, 'admin');
         const appType = json.serviceType === 'Client' ? APP_TYPE.CLIENT : APP_TYPE.SERVER;
         const { licenseType, isLicenseExpired, licenseExpiredTime, version, serviceType } = json;
         dispatch(changeAppType(appType, json.platformType));
         fetchByDelay(dispatch, updateLicenseInfo, 2000, { licenseType, isLicenseExpired, licenseExpiredTime, version, serviceType });
         dispatch(validateLicense(licenseExpiredTime));
+        dispatch(getUnreadAlerts());
         if (history) {
           onInit(history);
         }
@@ -150,7 +155,7 @@ export function onPlatformTypeChange({ value }) {
 
 export function fetchRegions(TYPE) {
   return (dispatch) => {
-    const url = (PLATFORM_TYPES.AWS === TYPE ? API_AWS_RGIONS : API_GCP_RGIONS);
+    const url = (PLATFORM_TYPES.AWS === TYPE ? API_AWS_REGIONS : API_GCP_REGIONS);
     return callAPI(url)
       .then((json) => {
         if (json && json.hasError) {
@@ -171,7 +176,7 @@ export function fetchRegions(TYPE) {
 
 export function fetchAvailibilityZones(type) {
   return (dispatch) => {
-    const url = (type === PLATFORM_TYPES.AWS ? API_AWS_AVAILABILLITY_ZONES : API_GCP_AVAILABILLITY_ZONES);
+    const url = (type === PLATFORM_TYPES.AWS ? API_AWS_AVAILABILITY_ZONES : API_GCP_AVAILABILITY_ZONES);
     return callAPI(url)
       .then((json) => {
         if (json && json.hasError) {
@@ -207,6 +212,12 @@ export function refresh() {
       case JOBS:
         dispatch(fetchRecoveryJobs(0));
         dispatch(fetchReplicationJobs(0));
+        break;
+      case ALERTS:
+        dispatch(fetchAlerts());
+        break;
+      case EVENTS:
+        dispatch(fetchEvents());
         break;
       default:
         dispatch(detailPathChecks(pathname));

@@ -1,3 +1,6 @@
+/**
+ * Router constant for application
+ */
 export const DASHBOARD_PATH = '/dashboard';
 export const SITES_PATH = '/sites';
 export const PROTECTION_PLANS_PATH = '/protection/plans';
@@ -9,3 +12,5 @@ export const Activity = '/Activity';
 export const Logs = '/Logs';
 export const Reports = '/Reports';
 export const Analytics = '/Analytics';
+export const EVENTS = '/monitor/events';
+export const ALERTS = '/monitor/alerts';

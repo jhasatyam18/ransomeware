@@ -5,7 +5,7 @@ module.exports = app => {
       serviceType: "Client", // Client || Server
       platformType: "VMware",
       licenseType: "Trial", isLicenseExpired: false,
-      licenseExpiredTime: 1622187431,
+      licenseExpiredTime: 1627969313,
       version: "0.0.1-142"
     }
     res.send(response);

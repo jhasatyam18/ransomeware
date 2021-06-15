@@ -34,6 +34,8 @@ const INITIAL_STATE = {
     replicationStats: { completed: 0, running: 0, failures: 0, copies: 0, changeRate: 0, dataReduction: 0 },
     recoveryStats: { testExecutions: 0, fullRecovery: 0, migrations: 0 },
   },
+  events: { data: [], selected: {}, filteredData: [] },
+  alerts: { data: [], selected: {}, associatedEvent: {}, unread: [], filteredData: [] },
 };
 
 export default INITIAL_STATE;

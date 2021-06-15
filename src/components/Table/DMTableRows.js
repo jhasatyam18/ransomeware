@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Tr, Th } from 'react-super-responsive-table';
 import { getAppKey } from '../../utils/AppUtils';
-import { DATE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDARER, VM_SIZE_ITEM_RENDERER, STATUS_ITEM_RENDERER, TRANSFER_SIZE_ITEM_RENDERER, RECOVERY_TYPE_ITEM_RENDERER, TIME_DURATION_RENDERER, RECOVERY_SITE_LINK_ITEM_RENDERER, SSH_RDP_ITEM_RENDERER, VM_USERNAME_ITEM_RENDERER, VM_UPASSWORD_ITEM_RENDERER, REPLICATION_INTERVAL_ITEM_RENDERER } from '../../constants/TableConstants';
+import { DATE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDERER, VM_SIZE_ITEM_RENDERER, STATUS_ITEM_RENDERER, TRANSFER_SIZE_ITEM_RENDERER, RECOVERY_TYPE_ITEM_RENDERER, TIME_DURATION_RENDERER, RECOVERY_SITE_LINK_ITEM_RENDERER, SSH_RDP_ITEM_RENDERER, VM_USERNAME_ITEM_RENDERER, VM_UPASSWORD_ITEM_RENDERER, REPLICATION_INTERVAL_ITEM_RENDERER, EVENT_LEVEL_ITEM_RENDERER, ALERT_ACK_ITEM_RENDERER, VIEW_ALERT_INFO_RENDERER } from '../../constants/TableConstants';
 import OsTypeItemRenderer from './OsTypeItemRenderer';
 import VMSizeItemRenderer from './VMSizeItemRenderer';
 import DRPlanNameItemRenderer from './DRPlanNameItemRenderer';
@@ -16,6 +16,9 @@ import SshRdpRenderer from './SshRdpRenderer';
 import VMUsernameItemRenderer from './VMUsernameItemRenderer';
 import VMPasswordItemRenderer from './VMPasswordItemRenderer';
 import ReplicationIntervalItemRenderer from './ReplicationIntervalItemRenderer';
+import EventLevelItemRenderer from './EventLevelItemRenderer';
+import AlertAckItemRenderer from './AlertAckItemRendrer';
+import ViewAlertInfoItemRenderer from './ViewAlertInfoItemRenderer';
 
 class DMTableRow extends Component {
   constructor() {
@@ -31,7 +34,7 @@ class DMTableRow extends Component {
   getItemRenderer(render, data, field) {
     const { user, dispatch } = this.props;
     switch (render) {
-      case OS_TYPE_ITEM_RENDARER:
+      case OS_TYPE_ITEM_RENDERER:
         return <OsTypeItemRenderer data={data} />;
       case VM_SIZE_ITEM_RENDERER:
         return <VMSizeItemRenderer data={data} />;
@@ -57,6 +60,12 @@ class DMTableRow extends Component {
         return <VMPasswordItemRenderer data={data} user={user} dispatch={dispatch} />;
       case REPLICATION_INTERVAL_ITEM_RENDERER:
         return <ReplicationIntervalItemRenderer data={data} field={field} />;
+      case EVENT_LEVEL_ITEM_RENDERER:
+        return <EventLevelItemRenderer data={data} field={field} />;
+      case ALERT_ACK_ITEM_RENDERER:
+        return <AlertAckItemRenderer data={data} field={field} dispatch={dispatch} />;
+      case VIEW_ALERT_INFO_RENDERER:
+        return <ViewAlertInfoItemRenderer data={data} field={field} dispatch={dispatch} />;
       default:
         return (<div> 404 </div>);
     }

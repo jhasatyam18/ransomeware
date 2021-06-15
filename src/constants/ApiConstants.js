@@ -37,7 +37,17 @@ export const API_MIGRATE = 'api/v1/migrate';
 // instance type json
 export const API_AWS_INSTANCES = 'aws_instances.json';
 export const API_GCP_INSTANCES = 'gcp_instances.json';
-export const API_AWS_RGIONS = 'aws_regions.json';
-export const API_GCP_RGIONS = 'gcp_regions.json';
-export const API_AWS_AVAILABILLITY_ZONES = 'aws_availability_zones.json';
-export const API_GCP_AVAILABILLITY_ZONES = 'gcp_zones.json';
+export const API_AWS_REGIONS = 'aws_regions.json';
+export const API_GCP_REGIONS = 'gcp_regions.json';
+export const API_AWS_AVAILABILITY_ZONES = 'aws_availability_zones.json';
+export const API_GCP_AVAILABILITY_ZONES = 'gcp_zones.json';
+
+// events
+export const API_FETCH_EVENTS = 'api/v1/event';
+export const API_FETCH_EVENT_BY_ID = 'api/v1/event/<id>';
+
+// alerts
+export const API_FETCH_ALERTS = 'api/v1/alert';
+export const API_FETCH_UNREAD_ALERTS = 'api/v1/alert/unread';
+export const API_ACKNOWLEDGE_ALERT = 'api/v1/alert/acknowledge/<id>';
+export const API_MARK_ALERT_AS_READ = 'api/v1/alert/read/<id>';

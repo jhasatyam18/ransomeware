@@ -3,7 +3,7 @@ import * as Types from '../../constants/actionTypes';
 
 export default function drPlans(state = INITIAL_STATE.drPlans, action) {
   switch (action.type) {
-    case Types.FETCH_DR_PALNS:
+    case Types.FETCH_DR_PLANS:
       return {
         ...state,
         plans: action.plans,
@@ -13,7 +13,7 @@ export default function drPlans(state = INITIAL_STATE.drPlans, action) {
         plans: state.plans,
         selectedPlans: action.selectedPlans,
       };
-    case Types.FETCH_DR_PALN_DETAILS:
+    case Types.DASHBOARD_FETCH_DR_PLAN_DETAILS:
       return {
         ...state, details: action.details,
       };

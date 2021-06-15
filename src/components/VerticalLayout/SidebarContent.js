@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 // i18n
 import { withTranslation } from 'react-i18next';
-import { DASHBOARD_PATH, JOBS, PROTECTION_PLANS_PATH, SITES_PATH, Activity, Logs, Reports, Analytics } from '../../constants/RouterConstants';
+import { DASHBOARD_PATH, JOBS, PROTECTION_PLANS_PATH, SITES_PATH, Activity, Logs, Reports, Analytics, EVENTS, ALERTS } from '../../constants/RouterConstants';
 
 class SidebarContent extends Component {
   constructor(props) {
@@ -27,49 +27,8 @@ class SidebarContent extends Component {
     }
   }
 
-  // activateParentDropdown = (item) => {
-  //   item.classList.add('active');
-  //   const parent = item.parentElement;
-
-  //   if (parent) {
-  //     parent.classList.add('mm-active');
-  //     const parent2 = parent.parentElement;
-
-  //     if (parent2) {
-  //       parent2.classList.add('mm-show');
-
-  //       const parent3 = parent2.parentElement;
-
-  //       if (parent3) {
-  //         parent3.classList.add('mm-active'); // li
-  //         parent3.childNodes[0].classList.add('mm-active'); // a
-  //         const parent4 = parent3.parentElement;
-  //         if (parent4) {
-  //           parent4.classList.add('mm-active');
-  //         }
-  //       }
-  //     }
-  //     return false;
-  //   }
-  //   return false;
-  // }
-
   initMenu() {
-    // const { location } = this.props;
-    // const { pathname } = location;
     new MetisMenu('#side-menu');
-    // let matchingMenuItem = null;
-    // const ul = document.getElementById('side-menu');
-    // const items = ul.getElementsByTagName('a');
-    // for (let i = 0; i < items.length; i += 1) {
-    //   if (pathname === items[i].pathname) {
-    //     matchingMenuItem = items[i];
-    //     break;
-    //   }
-    // }
-    // if (matchingMenuItem) {
-    //   this.activateParentDropdown(matchingMenuItem);
-    // }
   }
 
   isActive(path1, path2, path3) {
@@ -125,15 +84,15 @@ class SidebarContent extends Component {
               </Link>
               <ul className="sub-menu" aria-expanded="false">
                 <li>
-                  <Link to="/Activity" style={{ color: this.isActive(Activity) }}>
-                    <i className="bx bx-line-chart" style={{ fontSize: 16, color: this.isActive(Activity) }} />
-                    {t('Activity')}
+                  <Link to={EVENTS} style={{ color: this.isActive(EVENTS) }}>
+                    <i className="bx bxs-calendar-event" style={{ fontSize: 16, color: this.isActive(EVENTS) }} />
+                    {t('Events')}
                   </Link>
                 </li>
                 <li>
-                  <Link to="/Logs" className="waves-effect" style={{ color: this.isActive(Logs) }}>
-                    <i className="fa fa-history" style={{ fontSize: 16, color: this.isActive(Logs) }} />
-                    <span>Logs</span>
+                  <Link to={ALERTS} style={{ color: this.isActive(ALERTS) }}>
+                    <i className="bx bx-alarm" style={{ fontSize: 16, color: this.isActive(ALERTS) }} />
+                    <span>Alerts</span>
                   </Link>
                 </li>
                 <li>
