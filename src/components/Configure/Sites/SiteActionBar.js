@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { openModal } from '../../../store/actions/ModalActions';
 import { MODAL_CONFIGURE_NEW_SITE, MODAL_CONFIRMATION_WARNING } from '../../../constants/Modalconstant';
-import { clearValues, valueChange } from '../../../store/actions';
+import { clearValues, fetchRegions, fetchAvailibilityZones, valueChange } from '../../../store/actions';
 import { deleteSites } from '../../../store/actions/SiteActions';
 import { FIELDS } from '../../../constants/FieldsConstant';
 import ActionButton from '../../Common/ActionButton';
@@ -45,7 +45,10 @@ class SiteActionBar extends Component {
   reconfigureSite() {
     const { dispatch, selectedSites } = this.props;
     const siteKey = Object.keys(selectedSites)[0];
+    const selectedSitePlatformType = selectedSites[siteKey].platformDetails.platformType;
     dispatch(clearValues());
+    dispatch(fetchRegions(selectedSitePlatformType));
+    dispatch(fetchAvailibilityZones(selectedSitePlatformType));
     Object.keys(FIELDS).filter((key) => key.indexOf('configureSite') !== -1).map((key) => {
       const parts = key.split('.');
       if (parts.length === 2) {
