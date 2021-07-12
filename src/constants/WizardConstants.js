@@ -34,16 +34,25 @@ export const CREATE_DR_PLAN_WIZARDS = {
 
 // Recovery
 export const RECOVERY_WIZARDS = {
+  // { label: 'General', title: '', component: RECOVERY_GENERAL_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: RECOVERY_GENERAL_STEP_FIELDS },
   options: { title: 'Recovery', onFinish: startRecovery },
-  steps: [{ label: 'General', title: '', component: RECOVERY_GENERAL_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: RECOVERY_GENERAL_STEP_FIELDS },
+  steps: [
     { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), isAync: true },
     { label: 'Summary', title: '', component: RECOVERY_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch) }],
 };
 
 // Migration Wizard
-export const MIGRAION_WIZARDS = {
+export const MIGRATION_WIZARDS = {
   options: { title: 'Migrate', onFinish: startMigration },
-  steps: [{ label: 'General', title: '', component: MIGRATION_GENERAL_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: MIGRATION_GENERAL_STEP_FIELDS },
+  steps: [
     { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateMigrationVMs({ user, dispatch }), isAync: true },
+    { label: 'Summary', title: '', component: RECOVERY_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch) }],
+};
+
+// Test Recovery Wizard
+export const TEST_RECOVERY_WIZARDS = {
+  options: { title: 'Test Recovery', onFinish: startRecovery },
+  steps: [
+    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), isAync: true },
     { label: 'Summary', title: '', component: RECOVERY_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch) }],
 };

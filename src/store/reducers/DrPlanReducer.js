@@ -13,9 +13,9 @@ export default function drPlans(state = INITIAL_STATE.drPlans, action) {
         plans: state.plans,
         selectedPlans: action.selectedPlans,
       };
-    case Types.DASHBOARD_FETCH_DR_PLAN_DETAILS:
+    case Types.FETCH_DR_PLAN_DETAILS:
       return {
-        ...state, details: action.details,
+        ...state, protectionPlan: action.protectionPlan,
       };
     default:
       return state;

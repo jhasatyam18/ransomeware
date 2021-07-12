@@ -32,9 +32,11 @@ const DropdownActions = (props) => {
         </DropdownToggle>
         <DropdownMenu right>
           {actions.map((item) => {
-            const { label, disabled } = item;
+            const { label, disabled, icon } = item;
             return (
               <DropdownItem right onClick={() => onActionClick(item)} disabled={disabled} style={{ color: (!disabled ? 'white' : '') }}>
+                <i className={icon} />
+                &nbsp;&nbsp;
                 {t(label)}
               </DropdownItem>
             );

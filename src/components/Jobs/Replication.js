@@ -1,18 +1,20 @@
 import React, { Component } from 'react';
 import { Card, CardBody, Col, Container, Form, Label, Row } from 'reactstrap';
 import DMTable from '../Table/DMTable';
-import { REPLICATION_JOBS, REPLICATION_VM_JOBS } from '../../constants/TableConstants';
+import { REPLICATION_JOBS, REPLICATION_VM_JOBS, TABLE_FILTER_TEXT } from '../../constants/TableConstants';
 import DMTPaginator from '../Table/DMTPaginator';
 import { changeReplicationJobType, fetchReplicationJobs } from '../../store/actions/JobActions';
 import { REPLICATION_JOB_TYPE } from '../../constants/InputConstants';
 import ProtectionPlanReplications from './ProtectionPlanReplications';
+import { filterData } from '../../utils/AppUtils';
 
 class Replication extends Component {
   constructor() {
     super();
-    this.state = { dataToDisplay: [] };
+    this.state = { dataToDisplay: [], hasFilterString: false, searchData: [] };
     this.setDataForDisplay = this.setDataForDisplay.bind(this);
     this.changeJobType = this.changeJobType.bind(this);
+    this.onFilter = this.onFilter.bind(this);
   }
 
   componentDidMount() {
@@ -21,6 +23,18 @@ class Replication extends Component {
 
   componentWillUnmount() {
     this.state = null;
+  }
+
+  onFilter(criteria) {
+    const { jobs } = this.props;
+    const { replication, replicationType } = jobs;
+    const cols = (replicationType === REPLICATION_JOB_TYPE.DISK ? REPLICATION_JOBS : REPLICATION_VM_JOBS);
+    if (criteria === '') {
+      this.setState({ hasFilterString: false, searchData: [] });
+    } else {
+      const newData = filterData(replication, criteria, cols);
+      this.setState({ hasFilterString: true, searchData: newData });
+    }
   }
 
   setDataForDisplay(data) {
@@ -34,6 +48,7 @@ class Replication extends Component {
 
   changeJobType(type) {
     const { dispatch, protectionplanID } = this.props;
+    this.setState({ hasFilterString: false });
     dispatch(changeReplicationJobType(type));
     setTimeout(() => {
       dispatch(fetchReplicationJobs(protectionplanID));
@@ -43,7 +58,6 @@ class Replication extends Component {
   renderOptions() {
     const { jobs } = this.props;
     const { replicationType } = jobs;
-    // const isVM = (replicationType === REPLICATION_JOB_TYPE.VM);
     return (
       <>
         <Form>
@@ -73,20 +87,28 @@ class Replication extends Component {
   renderDiskJobs() {
     const { jobs } = this.props;
     const { replication } = jobs;
-    const { dataToDisplay } = this.state;
+    const { dataToDisplay, searchData, hasFilterString } = this.state;
     const { dispatch } = this.props;
+    const data = (hasFilterString ? searchData : replication);
     return (
       <>
         <Container fluid>
           <Card>
             <CardBody>
               <Row className="padding-left-20">
-                <Col sm={8}>
+                <Col sm={6}>
                   {this.renderOptions()}
                 </Col>
-                <Col sm={4}>
-                  <div className="display__flex__reverse">
-                    <DMTPaginator data={replication} setData={this.setDataForDisplay} showFilter="false" columns={REPLICATION_VM_JOBS} />
+                <Col sm={6}>
+                  <div className="padding-right-30">
+                    <DMTPaginator
+                      data={data}
+                      setData={this.setDataForDisplay}
+                      showFilter="true"
+                      columns={REPLICATION_JOBS}
+                      onFilter={this.onFilter}
+                      filterHelpText={TABLE_FILTER_TEXT.REPLICATION_JOBS}
+                    />
                   </div>
                 </Col>
               </Row>
@@ -105,20 +127,28 @@ class Replication extends Component {
   renderVMJobs() {
     const { jobs } = this.props;
     const { replication } = jobs;
-    const { dataToDisplay } = this.state;
+    const { dataToDisplay, searchData, hasFilterString } = this.state;
     const { dispatch } = this.props;
+    const data = (hasFilterString ? searchData : replication);
     return (
       <>
         <Container fluid>
           <Card>
             <CardBody>
               <Row className="padding-left-20">
-                <Col sm={8}>
+                <Col sm={6}>
                   {this.renderOptions()}
                 </Col>
-                <Col sm={4}>
-                  <div className="display__flex__reverse">
-                    <DMTPaginator data={replication} setData={this.setDataForDisplay} showFilter="false" columns={REPLICATION_VM_JOBS} />
+                <Col sm={6}>
+                  <div className="padding-right-30">
+                    <DMTPaginator
+                      data={data}
+                      setData={this.setDataForDisplay}
+                      showFilter="true"
+                      onFilter={this.onFilter}
+                      columns={REPLICATION_VM_JOBS}
+                      filterHelpText={TABLE_FILTER_TEXT.REPLICATION_VM_JOBS}
+                    />
                   </div>
                 </Col>
               </Row>

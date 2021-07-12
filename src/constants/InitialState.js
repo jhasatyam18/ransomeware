@@ -17,7 +17,7 @@ const INITIAL_STATE = {
     license: { licenseType: '-', isLicenseExpired: false, licenseExpiredTime: null, version: '-' },
   },
   sites: { sites: [], selectedSites: [] },
-  drPlans: { plans: [], selectedPlans: [], details: {} },
+  drPlans: { plans: [], selectedPlans: [], recoveryPlan: {} },
   modal: {
     content: null,
     options: {},

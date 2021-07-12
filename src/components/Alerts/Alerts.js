@@ -4,10 +4,11 @@ import {
   Card, CardBody, Col, Container, Row,
 } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
-import { TABLE_ALERTS } from '../../constants/TableConstants';
+import { TABLE_ALERTS, TABLE_FILTER_TEXT } from '../../constants/TableConstants';
 import DMTable from '../Table/DMTable';
 import { fetchAlerts, resetAlerts } from '../../store/actions/AlertActions';
 import DMTPaginator from '../Table/DMTPaginator';
+import { filterData } from '../../utils/AppUtils';
 import EventFilter from '../Shared/EventFilter';
 
 /**
@@ -16,8 +17,9 @@ import EventFilter from '../Shared/EventFilter';
 class Alerts extends Component {
   constructor() {
     super();
-    this.state = { dataToDisplay: [] };
+    this.state = { dataToDisplay: [], hasFilterString: false, searchData: [] };
     this.setDataForDisplay = this.setDataForDisplay.bind(this);
+    this.onFilter = this.onFilter.bind(this);
   }
 
   componentDidMount() {
@@ -30,14 +32,26 @@ class Alerts extends Component {
     dispatch(resetAlerts());
   }
 
+  onFilter(criteria) {
+    const { alerts } = this.props;
+    const { data } = alerts;
+    if (criteria === '') {
+      this.setState({ hasFilterString: false, searchData: [] });
+    } else {
+      const newData = filterData(data, criteria, TABLE_ALERTS);
+      this.setState({ hasFilterString: true, searchData: newData });
+    }
+  }
+
   setDataForDisplay(data) {
     this.setState({ dataToDisplay: data });
   }
 
   render() {
     const { alerts, dispatch } = this.props;
-    const { filteredData, data } = alerts;
-    const { dataToDisplay } = this.state;
+    const { data } = alerts;
+    const { dataToDisplay, hasFilterString, searchData } = this.state;
+    const alertsData = (hasFilterString ? searchData : data);
     return (
       <>
         <>
@@ -47,12 +61,19 @@ class Alerts extends Component {
                 <Row className="padding-left-20">
                   <Col sm={2}>
                     <div>
-                      <EventFilter data={data} action="alert" dispatch={dispatch} />
+                      <EventFilter data={data} action="event" dispatch={dispatch} />
                     </div>
                   </Col>
                   <Col sm={10}>
-                    <div className="display__flex__reverse">
-                      <DMTPaginator data={filteredData} setData={this.setDataForDisplay} showFilter="false" columns={TABLE_ALERTS} />
+                    <div className="padding-right-30 padding-left-10">
+                      <DMTPaginator
+                        onFilter={this.onFilter}
+                        data={alertsData}
+                        setData={this.setDataForDisplay}
+                        showFilter="true"
+                        columns={TABLE_ALERTS}
+                        filterHelpText={TABLE_FILTER_TEXT.TABLE_ALERTS}
+                      />
                     </div>
                   </Col>
                 </Row>

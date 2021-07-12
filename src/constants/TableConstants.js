@@ -121,3 +121,13 @@ export const TABLE_ALERTS = [
   { label: 'Date', field: 'timeStamp', itemRenderer: DATE_ITEM_RENDERER },
   { label: 'Acknowledged', field: 'isAcknowledge', itemRenderer: ALERT_ACK_ITEM_RENDERER },
 ];
+
+// table filter help text
+export const TABLE_FILTER_TEXT = {
+  TABLE_ALERTS: 'Data can be filtered on following fields <br/> title, severity, eventType <br /> example:  warning or <br /> severity=warning:eventType=replication',
+  TABLE_EVENTS: 'Data can be filtered on following fields <br/> topic, severity, type and description <br /> example: warning or topic=recovery:severity=warning',
+  REPLICATION_JOBS: 'Data can be filtered on following fields <br/> vmName, diskId and status <br /> example: windows or vmName=windows-10:diskId=2001',
+  REPLICATION_VM_JOBS: 'Data can be filtered on following fields <br/> vmName, iterationNumber, status and syncStatus <br /> example: Windows or vmName=windows',
+  TABLE_PROTECT_VM_VMWARE: 'Data can be filtered on following fields <br/> name and guestOS <br /> example: Windows or name=DBServer:guestOS=windows',
+  TABLE_RECOVERY_VMS: 'Data can be filtered on following fields <br/> name <br /> example: Windows or name=DBServer',
+};

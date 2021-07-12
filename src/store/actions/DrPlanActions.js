@@ -11,7 +11,7 @@ import { getCreateDRPlanPayload, getRecoveryPayload } from '../../utils/PayloadU
 import { clearValues, hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
 import { closeWizard, openWizard } from './WizardActions';
 import { closeModal } from './ModalActions';
-import { MIGRAION_WIZARDS, RECOVERY_WIZARDS } from '../../constants/WizardConstants';
+import { MIGRATION_WIZARDS, RECOVERY_WIZARDS, TEST_RECOVERY_WIZARDS } from '../../constants/WizardConstants';
 
 export function fetchDrPlans(key) {
   return (dispatch) => {
@@ -86,6 +86,7 @@ export function startPlan(id) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
         dispatch(addMessage(json.message, MESSAGE_TYPES.SUCCESS));
+        fetchByDelay(dispatch, refreshPostActon, 100);
       }
     },
     (err) => {
@@ -103,6 +104,7 @@ export function stopPlan(id) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
         dispatch(addMessage(json.message, MESSAGE_TYPES.SUCCESS));
+        fetchByDelay(dispatch, refreshPostActon, 100);
       }
     },
     (err) => {
@@ -126,6 +128,7 @@ export function deletePlan(id) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.SUCCESS));
         dispatch(closeModal());
         fetchByDelay(dispatch, fetchDrPlans, 1000);
+        dispatch(refreshPostActon(true));
       }
     },
     (err) => {
@@ -185,10 +188,10 @@ export function fetchDRPlanById(id) {
   };
 }
 
-export function drPlanDetailsFetched(details) {
+export function drPlanDetailsFetched(protectionPlan) {
   return {
     type: Types.FETCH_DR_PLAN_DETAILS,
-    details,
+    protectionPlan,
   };
 }
 
@@ -208,7 +211,10 @@ export function onProtectionPlanChange({ value }) {
       });
   };
 }
-
+/**
+ * Start Recovery
+ * @returns
+ */
 export function startRecovery() {
   return (dispatch, getState) => {
     const { user } = getState();
@@ -233,6 +239,10 @@ export function startRecovery() {
   };
 }
 
+/**
+ * Start Migration
+ * @returns
+ */
 export function startMigration() {
   return (dispatch, getState) => {
     const { user } = getState();
@@ -257,20 +267,88 @@ export function startMigration() {
   };
 }
 
+/**
+ * Initiate migration wizard
+ * @returns
+ */
 export function openMigrationWizard() {
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    const { drPlans } = getState();
+    const { protectionPlan } = drPlans;
+    const { id } = protectionPlan;
     dispatch(clearValues());
     dispatch(fetchDrPlans('ui.values.drplan'));
     dispatch(valueChange('ui.isMigration.workflow', true));
-    dispatch(openWizard(MIGRAION_WIZARDS.options, MIGRAION_WIZARDS.steps));
+    // set recovery plan id
+    dispatch(valueChange('recovery.protectionplanID', id));
+    // fetch VMs for drPlan
+    dispatch(onProtectionPlanChange({ value: id }));
+    // set is migration flag to false
+    dispatch(valueChange('ui.isMigration.workflow', false));
+    // set is test recovery flag to false
+    dispatch(valueChange('recovery.dryrun', false));
+    dispatch(openWizard(MIGRATION_WIZARDS.options, MIGRATION_WIZARDS.steps));
   };
 }
 
+/**
+ * Initiate recovery wizard
+ * @returns
+ */
 export function openRecoveryWizard() {
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    const { drPlans } = getState();
+    const { protectionPlan } = drPlans;
+    const { id } = protectionPlan;
     dispatch(clearValues());
     dispatch(fetchDrPlans('ui.values.drplan'));
+    // set recovery plan id
+    dispatch(valueChange('recovery.protectionplanID', id));
+    // fetch VMs for drPlan
+    dispatch(onProtectionPlanChange({ value: id }));
+    // set is migration flag to false
     dispatch(valueChange('ui.isMigration.workflow', false));
+    // set is test recovery flag to false
+    dispatch(valueChange('recovery.dryrun', false));
     dispatch(openWizard(RECOVERY_WIZARDS.options, RECOVERY_WIZARDS.steps));
+  };
+}
+
+/**
+ * Initiate test recovery wizard
+ * @returns
+ */
+export function openTestRecoveryWizard() {
+  return (dispatch, getState) => {
+    const { drPlans } = getState();
+    const { protectionPlan } = drPlans;
+    const { id } = protectionPlan;
+    dispatch(clearValues());
+    dispatch(fetchDrPlans('ui.values.drplan'));
+    // set recovery plan id
+    dispatch(valueChange('recovery.protectionplanID', id));
+    // fetch VMs for drPlan
+    dispatch(onProtectionPlanChange({ value: id }));
+    // set is migration flag to false
+    dispatch(valueChange('ui.isMigration.workflow', false));
+    // set is test recovery flag to false
+    dispatch(valueChange('recovery.dryrun', true));
+    dispatch(openWizard(TEST_RECOVERY_WIZARDS.options, RECOVERY_WIZARDS.steps));
+  };
+}
+
+/**
+ * reload data post any action
+ */
+export function refreshPostActon() {
+  return (dispatch) => {
+    const { location } = window;
+    const { pathname } = location;
+    const parts = pathname.split('/');
+    if (pathname && pathname.indexOf('protection/plan/details') !== -1) {
+      dispatch(fetchDRPlanById(parts[parts.length - 1]));
+    } else {
+      dispatch(fetchDrPlans());
+    }
   };
 }

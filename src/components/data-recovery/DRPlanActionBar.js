@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import {
-  drPlanStopStart, deletePlan, startPlan, stopPlan, openRecoveryWizard, openMigrationWizard,
+  drPlanStopStart, deletePlan, openRecoveryWizard, openMigrationWizard,
 } from '../../store/actions/DrPlanActions';
 import { openModal } from '../../store/actions/ModalActions';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
@@ -10,7 +10,6 @@ import { CREATE_DR_PLAN_WIZARDS } from '../../constants/WizardConstants';
 import { openWizard } from '../../store/actions/WizardActions';
 import { fetchSites } from '../../store/actions/SiteActions';
 import { clearValues, fetchScript } from '../../store/actions';
-import { APP_TYPE } from '../../constants/InputConstants';
 import ActionButton from '../Common/ActionButton';
 
 class DRPlanActionBar extends Component {
@@ -92,11 +91,10 @@ class DRPlanActionBar extends Component {
     );
   }
 
-  renderClientOptions() {
-    const actions = [{ label: 'New', onClick: this.onCreate, icon: 'fa fa-plus', isDisabled: false },
-      { label: 'remove', onClick: this.onDelete, icon: 'fa fa-trash', isDisabled: this.shouldShowAction(false) },
-      { label: 'start', onClick: () => { this.planAction(startPlan); }, icon: 'fa fa-play', isDisabled: this.shouldShowAction(false) },
-      { label: 'stop', onClick: () => { this.planAction(stopPlan); }, icon: 'fa fa-stop', isDisabled: this.shouldShowAction(false) }];
+  renderGlobalActions() {
+    const actions = [{ label: 'New', onClick: this.onCreate, icon: 'fa fa-plus', isDisabled: false }, { label: 'remove', onClick: this.onDelete, icon: 'fa fa-trash', isDisabled: this.shouldShowAction(false) }];
+    // { label: 'start', onClick: () => { this.planAction(startPlan); }, icon: 'fa fa-play', isDisabled: this.shouldShowAction(false) },
+    // { label: 'stop', onClick: () => { this.planAction(stopPlan); }, icon: 'fa fa-stop', isDisabled: this.shouldShowAction(false) }
     return (
       <>
         {this.getActionButtons(actions)}
@@ -105,12 +103,10 @@ class DRPlanActionBar extends Component {
   }
 
   render() {
-    const { user } = this.props;
-    const { appType } = user;
     return (
       <div className="btn-toolbar padding-left-20">
         <div className="btn-group" role="group" aria-label="First group">
-          {appType === APP_TYPE.CLIENT ? this.renderClientOptions() : this.renderServerOptions()}
+          { this.renderGlobalActions() }
         </div>
       </div>
     );

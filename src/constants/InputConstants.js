@@ -6,6 +6,10 @@ export const REPLICATION_STATUS = {
   STOPPED: 'Stopped', STARTED: 'STARTED',
 };
 
+export const RECOVERY_STATUS = {
+  RECOVERED: 'Recovered', MIGRATED: 'Migrated',
+};
+
 export const JOBS_TABS = [
   { title: 'Replication', activeTab: 1, component: 'REPLICATION' },
   { title: 'Recovery', activeTab: 2, component: 'RECOVERY' },

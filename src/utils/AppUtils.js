@@ -56,3 +56,90 @@ export function getInterval(duration) {
   }
   return `${duration} Minutes`;
 }
+
+/**
+ * Return fieldKey value from an object.
+ * @param {*} object
+ * @param {*} fieldKey
+ * @returns
+ */
+function getValueByKey(object, fieldKey) {
+  const keys = fieldKey.split('.');
+  if (keys.length === 1) {
+    return object[fieldKey];
+  }
+  let val = object;
+  keys.forEach((key) => {
+    val = val[key];
+  });
+  return val;
+}
+/**
+ * Filter data on text search based on column name search.
+ * user can enter multiple ':' separated clauses
+ * example : vmName=test:os=win
+ * example : status=com:vmName=prod
+ * @param {*} columns
+ * @param {*} criteria
+ * @param {*} data
+ */
+export function filterData(data, criteria, columns) {
+  let response = [];
+  if (!data) {
+    return response;
+  }
+  const isPlainSearch = criteria.split('=').length === 1;
+  if (isPlainSearch) {
+    response = data.filter((row) => searchOnColumn(row, columns, criteria));
+    return response;
+  }
+  const clauses = criteria.split(':');
+  clauses.forEach((clause) => {
+    // filter field and value
+    const query = clause.split('=');
+    if (query.length > 1) {
+      if (response.length === 0) {
+        response = data.filter((row) => hasSearchData(row, query[0], query[1]));
+      } else {
+        response = response.filter((row) => hasSearchData(row, query[0], query[1]));
+      }
+    }
+  });
+  return response;
+}
+
+/**
+ * Search data is present in given object
+ * @param {*} row
+ * @param {*} field
+ * @param {*} value
+ * @returns bool
+ */
+function hasSearchData(row, field, value = '') {
+  if (row && typeof row[field] !== 'undefined') {
+    const text = `${row[field]}`.toLowerCase();
+    if (text.indexOf(value.toLowerCase()) !== -1) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Search value on object for specified table columns
+ * @param {*} row
+ * @param {*} column
+ * @param {*} value
+ * @returns bool
+ */
+function searchOnColumn(row, columns, value) {
+  let hasMatch = false;
+  for (let index = 0; index < columns.length; index += 1) {
+    const colVal = `${getValueByKey(row, columns[index].field)}`;
+    if (colVal.toLowerCase().indexOf(value.toLowerCase()) !== -1) {
+      hasMatch = true;
+      break;
+    }
+  }
+  return hasMatch;
+}

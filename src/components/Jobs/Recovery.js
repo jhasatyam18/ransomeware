@@ -7,13 +7,15 @@ import { fetchRecoveryJobs, changeRecoveryJobType } from '../../store/actions/Jo
 import { fetchDrPlans } from '../../store/actions/DrPlanActions';
 import { RECOVERY_JOB_TYPE } from '../../constants/InputConstants';
 import ProtectionPlanRecovery from './ProtectionPlanRecovery';
+import { filterData } from '../../utils/AppUtils';
 
 class Recovery extends Component {
   constructor() {
     super();
-    this.state = { dataToDisplay: [] };
+    this.state = { dataToDisplay: [], hasFilterString: false, searchData: [] };
     this.setDataForDisplay = this.setDataForDisplay.bind(this);
     this.changeJobType = this.changeJobType.bind(this);
+    this.onFilter = this.onFilter.bind(this);
   }
 
   componentDidMount() {
@@ -22,6 +24,18 @@ class Recovery extends Component {
 
   componentWillUnmount() {
     this.state = null;
+  }
+
+  onFilter(criteria) {
+    const { jobs, protectionplanID } = this.props;
+    const { recovery } = jobs;
+    const cols = (protectionplanID === null || protectionplanID === 0 ? RECOVERY_JOBS : PROTECTION_PLAN_RECOVERY_JOBS);
+    if (criteria === '') {
+      this.setState({ hasFilterString: false, searchData: [] });
+    } else {
+      const newData = filterData(recovery, criteria, cols);
+      this.setState({ hasFilterString: true, searchData: newData });
+    }
   }
 
   setDataForDisplay(data) {
@@ -36,6 +50,7 @@ class Recovery extends Component {
 
   changeJobType(type) {
     const { dispatch, protectionplanID } = this.props;
+    this.setState({ hasFilterString: false });
     dispatch(changeRecoveryJobType(type));
     setTimeout(() => {
       dispatch(fetchRecoveryJobs(protectionplanID));
@@ -68,21 +83,28 @@ class Recovery extends Component {
   renderVMJobs() {
     const { jobs, user } = this.props;
     const { recovery } = jobs;
-    const { dataToDisplay } = this.state;
+    const { dataToDisplay, searchData, hasFilterString } = this.state;
     const { dispatch, protectionplanID } = this.props;
     const cols = (protectionplanID === null || protectionplanID === 0 ? RECOVERY_JOBS : PROTECTION_PLAN_RECOVERY_JOBS);
+    const data = (hasFilterString ? searchData : recovery);
     return (
       <>
         <Container fluid>
           <Card>
             <CardBody>
               <Row className="padding-left-20">
-                <Col sm={8}>
+                <Col sm={6}>
                   {this.renderOptions()}
                 </Col>
-                <Col sm={4}>
-                  <div className="display__flex__reverse">
-                    <DMTPaginator data={recovery} setData={this.setDataForDisplay} showFilter="true" columns={cols} />
+                <Col sm={6}>
+                  <div className="padding-right-30">
+                    <DMTPaginator
+                      data={data}
+                      setData={this.setDataForDisplay}
+                      showFilter="true"
+                      columns={cols}
+                      onFilter={this.onFilter}
+                    />
                   </div>
                 </Col>
               </Row>

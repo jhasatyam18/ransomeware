@@ -2,12 +2,11 @@ import React, { Component, Suspense } from 'react';
 import { Card, Container, CardBody, Row, Col, CardTitle, Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap';
 import classnames from 'classnames';
 import { withTranslation } from 'react-i18next';
-import { deletePlan, fetchDRPlanById, openMigrationWizard, openRecoveryWizard, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
+import { fetchDRPlanById, openMigrationWizard, openRecoveryWizard, openTestRecoveryWizard, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
 import DMTable from '../Table/DMTable';
 import { TABLE_PROTECTION_PLAN_VMS } from '../../constants/TableConstants';
-import { APP_TYPE, DROP_DOWN_ACTION_TYPES, REPLICATION_STATUS } from '../../constants/InputConstants';
+import { RECOVERY_STATUS, REPLICATION_STATUS } from '../../constants/InputConstants';
 import DropdownActions from '../Common/DropdownActions';
-import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
 import CheckBox from '../Common/CheckBox';
 import DisplayString from '../Common/DisplayString';
 
@@ -80,8 +79,8 @@ class DRPlanDetails extends Component {
 
   renderRecoveryConfig() {
     const { drPlans } = this.props;
-    const { details } = drPlans;
-    if (!details) {
+    const { protectionPlan } = drPlans;
+    if (!protectionPlan) {
       return null;
     }
     const keys = [{ label: 'Replication Interval', field: 'replicationInterval' }, { label: 'Subnet', field: 'subnet' }, { label: 'Encryption On Wire', field: 'isEncryptionOnWire' },
@@ -89,14 +88,14 @@ class DRPlanDetails extends Component {
       { label: 'Pre Script', field: 'preScript' }, { label: 'Post Script', field: 'postScript' }];
     const fields = keys.map((ele) => {
       const { field, label } = ele;
-      if (typeof details[field] !== 'undefined') {
+      if (typeof protectionPlan[field] !== 'undefined') {
         return (
           <div className="stack__info">
             <div className="label">
               {label}
             </div>
             <div className="value">
-              {this.renderField(label, details[field])}
+              {this.renderField(label, protectionPlan[field])}
             </div>
           </div>
 
@@ -109,11 +108,11 @@ class DRPlanDetails extends Component {
 
   renderStatus() {
     const { drPlans } = this.props;
-    const { details } = drPlans;
-    const { status, recoveryStatus } = details;
+    const { protectionPlan } = drPlans;
+    const { status, recoveryStatus } = protectionPlan;
     if (recoveryStatus !== '') {
       return (
-        <span className="badge badge-success">{recoveryStatus}</span>
+        <span className="badge badge-success">{recoveryStatus.toUpperCase()}</span>
       );
     }
 
@@ -129,16 +128,22 @@ class DRPlanDetails extends Component {
 
   renderActions() {
     const { drPlans, dispatch, t, user } = this.props;
-    const { details } = drPlans;
-    const { appType } = user;
+    const { platformType } = user;
+    const { protectionPlan } = drPlans;
+    const { protectedSite, recoverySite } = protectionPlan;
+    const protectedSitePlatform = protectedSite.platformDetails.platformType;
+    const recoverySitePlatform = recoverySite.platformDetails.platformType;
+    const isServerActionDisabled = (protectionPlan.recoveryStatus === RECOVERY_STATUS.RECOVERED || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED);
     let actions = [];
-    if (appType === APP_TYPE.CLIENT) {
-      actions = [{ label: 'start', action: startPlan, id: details.id, disabled: details.status !== REPLICATION_STATUS.STOPPED },
-        { label: 'stop', action: stopPlan, id: details.id, disabled: details.status === REPLICATION_STATUS.STOPPED },
-        { label: 'remove', action: deletePlan, id: details.id, disabled: details.status !== REPLICATION_STATUS.STOPPED, type: DROP_DOWN_ACTION_TYPES.MODAL, MODAL_COMPONENT: MODAL_CONFIRMATION_WARNING, options: { title: 'Confirmation', confirmAction: deletePlan, message: 'Are you sure want to delete  ?', id: details.id } }];
+    if (platformType === protectedSitePlatform) {
+      actions.push({ label: 'start', action: startPlan, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS.STARTED });
+      actions.push({ label: 'stop', action: stopPlan, id: protectionPlan.id, disabled: protectionPlan.status === REPLICATION_STATUS.STOPPED });
+    } else if (platformType === recoverySitePlatform) {
+      actions = [{ label: 'recover', action: openRecoveryWizard, icon: 'fa fa-plus', disabled: isServerActionDisabled },
+        { label: 'Migrate', action: openMigrationWizard, icon: 'fa fa-clone', disabled: isServerActionDisabled },
+        { label: 'Test Recovery', action: openTestRecoveryWizard, icon: 'fa fa-check', disabled: isServerActionDisabled }];
     } else {
-      actions = [{ label: 'recover', action: openRecoveryWizard },
-        { label: 'Migrate', action: openMigrationWizard }];
+      // no action to add
     }
     return (
       <DropdownActions title={t('actions')} dispatch={dispatch} actions={actions} />
@@ -147,12 +152,12 @@ class DRPlanDetails extends Component {
 
   render() {
     const { drPlans, dispatch, t } = this.props;
-    const { details } = drPlans;
+    const { protectionPlan } = drPlans;
     const { activeTab } = this.state;
-    if (!details || Object.keys(details).length === 0) {
+    if (!protectionPlan || Object.keys(protectionPlan).length === 0) {
       return null;
     }
-    const { name, protectedSite, recoverySite, protectedEntities, id } = details;
+    const { name, protectedSite, recoverySite, protectedEntities, id } = protectionPlan;
     const { virtualMachines } = protectedEntities;
     return (
       <>

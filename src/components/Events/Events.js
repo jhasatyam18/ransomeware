@@ -4,7 +4,7 @@ import {
   Card, CardBody, Col, Container, Row,
 } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
-import { TABLE_EVENTS } from '../../constants/TableConstants';
+import { TABLE_EVENTS, TABLE_FILTER_TEXT } from '../../constants/TableConstants';
 import DMTable from '../Table/DMTable';
 import { fetchEvents, resetEvents } from '../../store/actions/EventActions';
 import DMTPaginator from '../Table/DMTPaginator';
@@ -53,8 +53,14 @@ class Events extends Component {
                     </div>
                   </Col>
                   <Col sm={10}>
-                    <div className="display__flex__reverse">
-                      <DMTPaginator data={filteredData} setData={this.setDataForDisplay} showFilter="false" columns={TABLE_EVENTS} />
+                    <div className="padding-right-30 padding-left-10">
+                      <DMTPaginator
+                        data={filteredData}
+                        setData={this.setDataForDisplay}
+                        showFilter="true"
+                        columns={TABLE_EVENTS}
+                        filterHelpText={TABLE_FILTER_TEXT.TABLE_EVENTS}
+                      />
                     </div>
                   </Col>
                 </Row>

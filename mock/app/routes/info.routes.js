@@ -3,7 +3,7 @@ module.exports = app => {
     const response = {
       about: "Welcome to Datamotive Management Service",
       serviceType: "Client", // Client || Server
-      platformType: "VMware",
+      platformType: "GCP",
       licenseType: "Trial", isLicenseExpired: false,
       licenseExpiredTime: 1627969313,
       version: "0.0.1-142"

@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
-import { Button, ButtonGroup, Col, Row } from 'reactstrap';
+import ReactHtmlParser from 'react-html-parser';
+import { Button, ButtonGroup, Col, Row, Popover, PopoverBody } from 'reactstrap';
 
 class DMTPaginator extends Component {
   constructor() {
     super();
-    this.state = { totalRows: 0, disablePrivious: false, disableNext: false, index: 0, maxRowPerPage: 100 };
+    this.state = { popoverOpen: false, totalRows: 0, disablePrevious: false, disableNext: false, index: 0, maxRowPerPage: 100, searchStr: '' };
     this.onNext = this.onNext.bind(this);
     this.onBack = this.onBack.bind(this);
-    this.filterData = this.filterData.bind(this);
+    this.onFilter = this.onFilter.bind(this);
+    this.onFilterBlur = this.onFilterBlur.bind(this);
+    this.onFilterFocus = this.onFilterFocus.bind(this);
+    this.onFilterKeyPress = this.onFilterKeyPress.bind(this);
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -16,9 +20,45 @@ class DMTPaginator extends Component {
       const { maxRowPerPage } = prevState;
       const dataToShow = data.slice(0, 0 + maxRowPerPage);
       setData(dataToShow);
-      return ({ index: 0 + maxRowPerPage, totalRows: data.length, maxRowPerPage: 100, disablePrivious: true, disableNext: !(data.length > maxRowPerPage) });
+      return ({ index: 0 + maxRowPerPage, totalRows: data.length, maxRowPerPage: 100, disablePrevious: true, disableNext: !(data.length > maxRowPerPage) });
     }
     return null;
+  }
+
+  onFilterFocus(e) {
+    const { onFilterFocus } = this.props;
+    if (onFilterFocus) {
+      onFilterFocus(e);
+    }
+  }
+
+  onSearchChange = (e) => {
+    this.setState({
+      searchStr: e.target.value,
+    });
+  }
+
+  onFilterKeyPress(e) {
+    if (e.key === 'Enter') {
+      this.onFilter(e);
+    }
+  }
+
+  onFilterBlur(e) {
+    const { onFilterBlur } = this.props;
+    if (onFilterBlur) {
+      onFilterBlur(e);
+    }
+  }
+
+  onFilter(e = null) {
+    const { onFilter } = this.props;
+    const { searchStr } = this.state;
+    this.setState({ popoverOpen: false });
+    const criteria = (e !== null && typeof e.target.value !== 'undefined' ? e.target.value : searchStr);
+    if (onFilter) {
+      onFilter(criteria);
+    }
   }
 
   onNext() {
@@ -26,7 +66,7 @@ class DMTPaginator extends Component {
     const { setData, data } = this.props;
     if (index < data.length) {
       const dataToShow = data.slice(index, index + maxRowPerPage);
-      this.setState({ index: index + maxRowPerPage, disableNext: !(data.length > index + maxRowPerPage), disablePrivious: !(index + maxRowPerPage > maxRowPerPage) });
+      this.setState({ index: index + maxRowPerPage, disableNext: !(data.length > index + maxRowPerPage), disablePrevious: !(index + maxRowPerPage > maxRowPerPage) });
       setData(dataToShow);
     }
   }
@@ -34,79 +74,75 @@ class DMTPaginator extends Component {
   onBack() {
     const { index, maxRowPerPage } = this.state;
     const { setData, data } = this.props;
-    const strat = index - (maxRowPerPage * 2);
-    const dataToShow = data.slice(strat, index - maxRowPerPage);
-    this.setState({ index: index - maxRowPerPage, disableNext: !(data.length > index - maxRowPerPage), disablePrivious: !(index - maxRowPerPage > maxRowPerPage) });
+    const start = index - (maxRowPerPage * 2);
+    const dataToShow = data.slice(start, index - maxRowPerPage);
+    this.setState({ index: index - maxRowPerPage, disableNext: !(data.length > index - maxRowPerPage), disablePrevious: !(index - maxRowPerPage > maxRowPerPage) });
     setData(dataToShow);
   }
 
-  getObjectValue(object, field) {
-    const parts = field.split('.');
-    switch (parts.length) {
-      case 2:
-        return object[parts[0]][parts[1]];
-      case 3:
-        return object[parts[0]][parts[1]][parts[2]];
-      case 4:
-        return object[parts[0]][parts[1]][parts[2]][parts[3]];
-      default:
-        return object[field];
-    }
-  }
-
-  filter(d, columns, userValue) {
-    let hasMatchingRow = false;
-    columns.forEach((value) => {
-      const { itemRenderer, field } = value;
-      if (!itemRenderer) {
-        const val = this.getObjectValue(d, field);
-        if (val && `${val}`.indexOf(userValue) !== -1) {
-          hasMatchingRow = true;
-        }
-      }
+  setPopoverOpen = (show) => {
+    this.setState({
+      popoverOpen: show,
     });
-    return hasMatchingRow;
   }
 
-  filterData(e) {
-    const { data, columns, setData } = this.props;
-    const { target } = e;
-    const { value } = target;
-    const filteredData = data.filter((d) => this.filter(d, columns, value));
-    setData(filteredData);
+  getHelpText(html) {
+    return (
+      <div>
+        { ReactHtmlParser(html) }
+      </div>
+    );
   }
 
   renderFilter() {
-    const { showFilter } = this.props;
-    if (showFilter === true) {
+    const { showFilter, filterHelpText } = this.props;
+    const { popoverOpen } = this.state;
+    if (showFilter && showFilter === 'true') {
       return (
-        <div className="col-auto">
-          <label className="sr-only" htlmFor="datableSearch" />
-          <div className="input-group mb-2">
-            <input
-              type="text"
-              className="form-control"
-              id="datableSearch"
-              placeholder="Search"
-              onChange={(e) => this.filterData(e)}
-            />
-          </div>
+        <div className="input-group">
+          <input
+            type="text"
+            className="form-control"
+            id="datableSearch"
+            placeholder="Search"
+            onFocus={this.onFilterFocus}
+            onBlur={this.onFilterBlur}
+            onKeyPress={this.onFilterKeyPress}
+            onChange={this.onSearchChange}
+            onMouseEnter={() => this.setPopoverOpen(true)}
+            onMouseLeave={() => this.setPopoverOpen(false)}
+            autoComplete="off"
+          />
+          <span className="input-group-append">
+            <div className="input-group-text bg-transparent">
+              <box-icon name="search" className="search__icon" size="15px" color="#FFF" onClick={this.onFilter} />
+            </div>
+          </span>
+          <Popover placement="bottom" isOpen={popoverOpen} target="datableSearch" style={{ backgroundColor: '#222736' }}>
+            <PopoverBody>
+              {this.getHelpText(filterHelpText)}
+            </PopoverBody>
+          </Popover>
         </div>
       );
     }
+    return null;
   }
 
   render() {
-    const { disablePrivious, disableNext, maxRowPerPage } = this.state;
+    const { disablePrevious, disableNext, maxRowPerPage } = this.state;
     const { totalRows, index } = this.state;
     const tPages = Math.ceil(totalRows / maxRowPerPage);
     const cP = (index > 0 ? Math.ceil(index / maxRowPerPage) : 0);
     return (
       <>
         <Row>
-          <Col sm={12}>
+          <Col sm={7} className="padding-0 margin-0 display__flex__reverse">
+            {this.renderFilter()}
+          </Col>
+          <Col sm={5} className="padding-0 margin-0 display__flex__reverse">
             <ButtonGroup style={{ paddingLeft: 20 }} className="btn-group-sm">
-              <Button disabled={disablePrivious} onClick={this.onBack}>
+              <Button disabled={disablePrevious} onClick={this.onBack}>
                 <box-icon type="solid" name="chevron-left" size="xs" />
               </Button>
               <Button>
@@ -121,9 +157,6 @@ class DMTPaginator extends Component {
               </Button>
 
             </ButtonGroup>
-          </Col>
-          <Col sm={4}>
-            {this.renderFilter()}
           </Col>
         </Row>
 
