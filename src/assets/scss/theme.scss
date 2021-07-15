@@ -376,10 +376,48 @@ span.flatpickr-weekday {
   right: 40px;
 }
 
-.textfield-error-color{
-  color: #f46a6a;
+.app_critical{
+  color: $orange;
 }
 
 .search__icon:hover {
   cursor: pointer;
+.app_info{
+  color:$info;
+}
+
+.app_success{
+  color: $success;
+}
+
+.app_warning{
+  color: $warning;
+}
+
+.app_danger{
+  color: $danger;
+}
+
+.app_primary{
+  color: $primary;
+.search__icon:hover {
+  cursor: pointer;
+.app_info{
+  color:$info;
+}
+
+.app_success{
+  color: $success;
+}
+
+.app_warning{
+  color: $warning;
+}
+
+.app_danger{
+  color: $danger;
+}
+
+.app_primary{
+  color: $primary;
 }

@@ -1,13 +1,13 @@
 // Dashboard background color.
-export const BACKGROUND_COLOR = '#222736';
+export const DASHBOARD_BACKGROUND_COLOR = '#222736';
 
 // Virtual Machine Protection Analysis.
-export const ROYAL_BLUE = '#3452e1';
-export const SEA_GREEN = '#34c38f';
+export const SUCCESS = '#34c38f';
+export const DANGER = '#f46a6a';
+export const WARNING = '#f1b44c';
 export const STROKE = {
-  colors: BACKGROUND_COLOR,
+  colors: DASHBOARD_BACKGROUND_COLOR,
 };
-export const COLORS = [ROYAL_BLUE, SEA_GREEN];
 export const LEGEND = {
   show: !1,
 };
