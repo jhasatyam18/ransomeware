@@ -61,3 +61,8 @@ export const MAX_RECOVERY_TIME = 30;
 export const TAB_TYPE = {
   RECOVERY: 'recovery', REPLICATION: 'replication',
 };
+
+export const SETTINGS_TABS = [
+  { title: 'Tech Support', activeTab: 1 },
+  { title: 'Email', activeTab: 2 },
+];

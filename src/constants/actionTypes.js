@@ -72,6 +72,9 @@ export const ACKNOWLEDGE_ALERT = 'ACKNOWLEDGE_ALERT';
 export const FETCH_UNREAD_ALERTS = 'FETCH_UNREAD_ALERTS';
 export const FILTER_ALERTS = 'FILTER_ALERTS';
 
+// support
+export const FETCH_SUPPORT_BUNDLES = 'FETCH_SUPPORT_BUNDLES';
+
 // Reset data
 export const RESET_EVENTS = 'RESET_EVENTS';
 export const RESET_ALERTS = 'RESET_ALERTS';

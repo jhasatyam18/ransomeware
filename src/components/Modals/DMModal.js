@@ -7,6 +7,7 @@ import ModalConfigureSite from './ModalConigureSite';
 import ConfirmationModal from './ConfirmationModal';
 import ModalAbout from './ModalAbout';
 import ModalAlertDetails from './ModalAlertDetails';
+import ModalSupportBundle from './ModalSupportBundle';
 
 class DMModal extends Component {
   constructor() {
@@ -32,6 +33,8 @@ class DMModal extends Component {
           return <ModalAbout dispatch={dispatch} {...this.props} />;
         case MODALS.MODAL_ALERT_DETAILS:
           return <ModalAlertDetails />;
+        case MODALS.MODAL_GENERATE_SUPPORT_BUNDLE:
+          return <ModalSupportBundle />;
         default:
           return (<div>404</div>);
       }

@@ -13,12 +13,13 @@ import { onInit } from '../../utils/HistoryUtil';
 import { APP_TYPE, PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
 import { fetchDRPlanById, fetchDrPlans } from './DrPlanActions';
 import { fetchDashboardData } from './DashboardActions';
-import { JOBS, PROTECTION_PLANS_PATH, SITES_PATH, DASHBOARD_PATH, ALERTS, EVENTS } from '../../constants/RouterConstants';
+import { JOBS, PROTECTION_PLANS_PATH, SITES_PATH, DASHBOARD_PATH, ALERTS, EVENTS, SETTINGS } from '../../constants/RouterConstants';
 import { fetchSites } from './SiteActions';
 import { fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { fetchAlerts, getUnreadAlerts } from './AlertActions';
 import { fetchEvents } from './EventActions';
+import { fetchSupportBundles } from './SupportActions';
 
 export function login({ username, password, history }) {
   return (dispatch) => {
@@ -218,6 +219,9 @@ export function refresh() {
         break;
       case EVENTS:
         dispatch(fetchEvents());
+        break;
+      case SETTINGS:
+        dispatch(fetchSupportBundles());
         break;
       default:
         dispatch(detailPathChecks(pathname));

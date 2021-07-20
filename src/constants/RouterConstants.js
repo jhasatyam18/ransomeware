@@ -14,3 +14,4 @@ export const Reports = '/Reports';
 export const Analytics = '/Analytics';
 export const EVENTS = '/monitor/events';
 export const ALERTS = '/monitor/alerts';
+export const SETTINGS = '/settings';
