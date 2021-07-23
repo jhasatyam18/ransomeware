@@ -376,54 +376,10 @@ span.flatpickr-weekday {
   right: 40px;
 }
 
-.app_critical{
-  color: $orange;
+.textfield-error-color{
+  color: #f46a6a;
 }
 
 .search__icon:hover {
   cursor: pointer;
-}
-
-.app_info{
-  color:$info;
-}
-
-.app_success{
-  color: $success;
-}
-
-.app_warning{
-  color: $warning;
-}
-
-.app_danger{
-  color: $danger;
-}
-
-.app_primary{
-  color: $primary;
-}
-  
-.search__icon:hover {
-  cursor: pointer;
-}
-  
-.app_info{
-  color:$info;
-}
-
-.app_success{
-  color: $success;
-}
-
-.app_warning{
-  color: $warning;
-}
-
-.app_danger{
-  color: $danger;
-}
-
-.app_primary{
-  color: $primary;
 }

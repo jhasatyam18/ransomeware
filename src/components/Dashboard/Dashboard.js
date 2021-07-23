@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 import BandwidthChart from './BandwidthChart';
 import NodeInfo from './NodeInfo';
 import ProtectedVsUnProtectedVMs from './ProtectedVsUnProtectedVMs';
-import RtoRpo from './RtoRpo';
-import DashBoardJob from './DashboardJob';
+import ReplicationStat from './ReplicationStat';
+import Events from './Events';
 import { fetchDashboardData, resetDashboard } from '../../store/actions/DashboardActions';
 import { SITES_PATH, PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 
@@ -61,8 +61,8 @@ class Dashboard extends Component {
             </Col>
           </Row>
           <Row>
-            <Col sm={8}><RtoRpo {...this.props} /></Col>
-            <Col sm={4}><DashBoardJob protectionplanID={0} /></Col>
+            <Col sm={8}><ReplicationStat {...this.props} /></Col>
+            <Col sm={4}><Events /></Col>
           </Row>
           <Row>
             <Col className="dashboard_component_size_handle" sm={8}><ProtectedVsUnProtectedVMs /></Col>

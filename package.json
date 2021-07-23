@@ -67,8 +67,7 @@
     "build-ui": "node scripts/build.js --max_old_space_size=8000 build",
     "lint": "eslint .",
     "format": "prettier --write \"**/*.{js,jsx,json,md,html,css,less,scss}\"",
-    "test": "node scripts/test.js",
-    "dev": "(cd mock && node server.js) & npm run start"
+    "test": "node scripts/test.js"
   },
   "eslintConfig": {
     "extends": [

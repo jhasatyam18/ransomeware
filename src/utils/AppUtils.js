@@ -18,11 +18,11 @@ export function formatTime(seconds) {
     if (hour > 0) {
       if (min > 0) {
         if (sec > 0) {
-          return (`${day}d ${hour}h ${min}m ${sec}s`);
+          return (`${hour}h ${min}m ${sec}s`);
         }
-        return (`${day}d ${hour}h ${min}m`);
+        return (`${hour}h ${min}`);
       }
-      return (`${day}d ${hour}h`);
+      return (`${hour}h`);
     }
     return (`${day}d`);
   }
@@ -31,7 +31,7 @@ export function formatTime(seconds) {
       if (sec > 0) {
         return (`${hour}h ${min}m ${sec}s`);
       }
-      return (`${hour}h ${min}m`);
+      return (`${hour}h ${min}`);
     }
     return (`${hour}h`);
   }
@@ -142,10 +142,4 @@ function searchOnColumn(row, columns, value) {
     }
   }
   return hasMatch;
-}
-// Extract minutes from the timestamp
-export function getMinutes(timestamp) {
-  const date = new Date(timestamp * 1000);
-  const mins = date.getMinutes();
-  return mins;
 }

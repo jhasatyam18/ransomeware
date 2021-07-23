@@ -13,8 +13,6 @@ export const REPLICATION_INTERVAL_ITEM_RENDERER = 'REPLICATION_INTERVAL_ITEM_REN
 export const EVENT_LEVEL_ITEM_RENDERER = 'EVENT_LEVEL_ITEM_RENDERER';
 export const ALERT_ACK_ITEM_RENDERER = 'ALERT_ACK_ITEM_RENDERER';
 export const VIEW_ALERT_INFO_RENDERER = 'VIEW_ALERT_INFO_RENDERER';
-export const SIZE_ITEM_RENDERER = 'SIZE_ITEM_RENDERER';
-export const SUPPORT_BUNDLE_ACTION_ITEM_RENDERER = 'SUPPORT_BUNDLE_ACTION_ITEM_RENDERER';
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
 
@@ -122,17 +120,6 @@ export const TABLE_ALERTS = [
   { label: 'Event Type', field: 'eventType' },
   { label: 'Date', field: 'timeStamp', itemRenderer: DATE_ITEM_RENDERER },
   { label: 'Acknowledged', field: 'isAcknowledge', itemRenderer: ALERT_ACK_ITEM_RENDERER },
-];
-
-// Table fields for ALERTS
-export const SUPPORT_BUNDLES = [
-  { label: 'Bundle Name', field: 'name', width: 3 },
-  { label: 'Description', field: 'description', width: 2 },
-  { label: 'Date', field: 'generatedAt', itemRenderer: DATE_ITEM_RENDERER, width: 1 },
-  { label: 'User', field: 'generatedBy', width: 1 },
-  { label: 'Size', field: 'bundleSize', itemRenderer: SIZE_ITEM_RENDERER, width: 1 },
-  { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER, width: 1 },
-  { label: '', field: 'status', itemRenderer: SUPPORT_BUNDLE_ACTION_ITEM_RENDERER, width: 1 },
 ];
 
 // table filter help text

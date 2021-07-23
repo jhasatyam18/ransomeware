@@ -36,9 +36,6 @@ const INITIAL_STATE = {
   },
   events: { data: [], selected: {}, filteredData: [] },
   alerts: { data: [], selected: {}, associatedEvent: {}, unread: [], filteredData: [] },
-  support: {
-    bundles: [],
-  },
 };
 
 export default INITIAL_STATE;

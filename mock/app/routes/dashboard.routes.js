@@ -1,6 +1,6 @@
 module.exports = app => {
   app.get("/api/v1/dashboard/titles", (req, res) => {
-    const response = { "siteCount": 20, "rpo": 204, "rto": 902, "protectionPlans": 3, "siteConnections": [{ "source": "vmware", "target": "aws" }], "protectedVMs": 3, "protectedStorage": 150 };
+    const response = { "siteCount": 2, "protectionPlans": 3, "siteConnections": [{ "source": "vmware", "target": "aws" }], "protectedVMs": 3, "protectedStorage": 150 };
     res.send(response);
   });
 

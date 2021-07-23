@@ -54,15 +54,3 @@ export const STATIC_KEYS = {
   UI_SECURITY_GROUPS: 'ui.values.securityGroups',
   UI_SUBNETS: 'ui.values.subnets',
 };
-
-// Recovery time in minutes
-export const MAX_RECOVERY_TIME = 30;
-
-export const TAB_TYPE = {
-  RECOVERY: 'recovery', REPLICATION: 'replication',
-};
-
-export const SETTINGS_TABS = [
-  { title: 'Tech Support', activeTab: 1 },
-  { title: 'Email', activeTab: 2 },
-];

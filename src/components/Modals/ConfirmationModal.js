@@ -18,7 +18,6 @@ class ConfirmationModal extends Component {
     const { options } = modal;
     const { confirmAction, id } = options;
     dispatch(confirmAction(id));
-    dispatch(closeModal());
   }
 
   renderFooter() {
@@ -40,7 +39,7 @@ class ConfirmationModal extends Component {
           <div className="container padding-20">
             <div className="row">
               <div className="col-sm-3 confirmation-icon">
-                <i className="fas fa-exclamation-circle" />
+                <i className="mdi mdi-alert-circle-outline" />
               </div>
               <div className="col-sm-8" style={{ margin: 'auto' }}>
                 {message}

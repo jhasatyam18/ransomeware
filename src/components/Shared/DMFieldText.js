@@ -75,7 +75,7 @@ class DMFieldText extends Component {
     const { isFocused } = this.state;
     if (hasError) {
       return (
-        <small className="form-text app_danger" htmlFor={fieldKey}>{field.errorMessage}</small>
+        <small className="form-text textfield-error-color" htmlFor={fieldKey}>{field.errorMessage}</small>
       );
     }
     if (isFocused) {

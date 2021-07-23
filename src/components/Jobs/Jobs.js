@@ -1,10 +1,8 @@
 import React, { Component, Suspense } from 'react';
 import { Card, CardBody, Col, Container, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
 import classnames from 'classnames';
-import { withRouter } from 'react-router-dom';
 import { resetJobs } from '../../store/actions/JobActions';
-import { JOBS_TABS, TAB_TYPE } from '../../constants/InputConstants';
-import { JOBS } from '../../constants/RouterConstants';
+import { JOBS_TABS } from '../../constants/InputConstants';
 
 const Replication = React.lazy(() => import('./Replication'));
 const Recovery = React.lazy(() => import('./Recovery'));
@@ -14,34 +12,6 @@ class Jobs extends Component {
     super();
     this.state = { activeTab: '1' };
     this.toggleTab = this.toggleTab.bind(this);
-  }
-
-  componentDidMount() {
-    const { location, history } = this.props;
-    const { search } = location;
-    const tab = new URLSearchParams(search).get('tab');
-    if (!tab) {
-      history.push(`${JOBS}?tab=replication`);
-      return;
-    }
-    if (tab === TAB_TYPE.RECOVERY) {
-      this.toggleTab('2');
-    } else {
-      this.toggleTab('1');
-    }
-  }
-
-  componentDidUpdate(prevProps) {
-    const { location } = this.props;
-    const { search } = location;
-    const tab = new URLSearchParams(search).get('tab');
-    if (prevProps.location.search !== search) {
-      if (tab === TAB_TYPE.RECOVERY) {
-        this.toggleTab('2');
-      } else {
-        this.toggleTab('1');
-      }
-    }
   }
 
   componentWillUnmount() {
@@ -71,10 +41,9 @@ class Jobs extends Component {
 
   renderNav() {
     const { activeTab } = this.state;
-    const { history } = this.props;
     const navs = JOBS_TABS.map((tab) => (
       <NavItem key={`jobs-navItem-${tab.activeTab}`}>
-        <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === `${tab.activeTab}` })} onClick={() => { history.push(`${JOBS}?tab=${tab.title.toLowerCase()}`); }}>
+        <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === `${tab.activeTab}` })} onClick={() => { this.toggleTab(`${tab.activeTab}`); }}>
           <span className="d-none d-sm-block">{tab.title}</span>
         </NavLink>
       </NavItem>
@@ -139,4 +108,4 @@ class Jobs extends Component {
   }
 }
 
-export default withRouter(Jobs);
+export default Jobs;

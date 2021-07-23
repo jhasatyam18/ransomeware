@@ -85,8 +85,5 @@
   "protected": "Protected",
   "unprotected": "Unprotected",
   "replication.in.sync": "Replication In-Sync",
-  "replication.not.in.sync": "Replication Not In-Sync",
-  "rto":"RTO",
-  "rpo":"RPO",
-  "events":"Events"
+  "replication.not.in.sync": "Replication Not In-Sync"
 }
