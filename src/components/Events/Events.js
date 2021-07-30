@@ -47,12 +47,12 @@ class Events extends Component {
             <Card>
               <CardBody>
                 <Row className="padding-left-20">
-                  <Col sm={2}>
-                    <div>
+                  <Col sm={5}>
+                    <div style={{ maxWidth: '170px' }}>
                       <EventFilter data={data} action="event" dispatch={dispatch} />
                     </div>
                   </Col>
-                  <Col sm={10}>
+                  <Col sm={7}>
                     <div className="padding-right-30 padding-left-10">
                       <DMTPaginator
                         data={filteredData}

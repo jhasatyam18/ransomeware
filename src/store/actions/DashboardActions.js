@@ -2,7 +2,7 @@
 import * as Types from '../../constants/actionTypes';
 import { REPLICATION_JOB_TYPE } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { changeReplicationJobType } from './JobActions';
+import { changeReplicationJobType, fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
 import { addMessage } from './MessageActions';
 import { hideApplicationLoader, showApplicationLoader } from './UserActions';
 import { API_DASHBOARD_TITLE, API_DASHBOARD_REPLICATION_STATS, API_DASHBOARD_RECOVERY_STATS } from '../../constants/ApiConstants';
@@ -13,9 +13,9 @@ export function fetchDashboardTitles() {
     dispatch(showApplicationLoader('DASHBOARD_TITLES', 'Loading Dashboard Titles.'));
     return callAPI(API_DASHBOARD_TITLE)
       .then((json) => {
-        const { siteCount, protectionPlans, protectedVMs, protectedStorage } = json;
+        const { siteCount, protectionPlans, protectedVMs, protectedStorage, rto, rpo } = json;
         dispatch(hideApplicationLoader('DASHBOARD_TITLES'));
-        const titles = { sites: siteCount, protectionPlans, vms: protectedVMs, storage: protectedStorage };
+        const titles = { sites: siteCount, protectionPlans, vms: protectedVMs, storage: protectedStorage, rto, rpo };
         dispatch(updateTitleInfo(titles));
       },
       (err) => {
@@ -64,7 +64,7 @@ export function fetchDashboardData() {
   return (dispatch) => {
     dispatch(changeReplicationJobType(REPLICATION_JOB_TYPE.VM));
     dispatch(showApplicationLoader('LOADING_DASHBOARD_DATA', 'Loading...'));
-    const apis = [dispatch(fetchDashboardTitles()), dispatch(fetchRecoveryStats()), dispatch(fetchReplicationStats())];
+    const apis = [dispatch(fetchDashboardTitles()), dispatch(fetchRecoveryStats()), dispatch(fetchReplicationStats()), dispatch(fetchRecoveryJobs(0)), dispatch(fetchReplicationJobs(0))];
     return Promise.all(apis)
       .then(
         () => {

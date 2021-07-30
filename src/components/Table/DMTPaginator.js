@@ -89,7 +89,7 @@ class DMTPaginator extends Component {
   getHelpText(html) {
     return (
       <div>
-        { ReactHtmlParser(html) }
+        {ReactHtmlParser(html)}
       </div>
     );
   }
@@ -129,38 +129,47 @@ class DMTPaginator extends Component {
     return null;
   }
 
-  render() {
+  renderData() {
     const { disablePrevious, disableNext, maxRowPerPage } = this.state;
     const { totalRows, index } = this.state;
     const tPages = Math.ceil(totalRows / maxRowPerPage);
     const cP = (index > 0 ? Math.ceil(index / maxRowPerPage) : 0);
     return (
-      <>
-        <Row>
-          <Col sm={7} className="padding-0 margin-0 display__flex__reverse">
-            {this.renderFilter()}
-          </Col>
-          <Col sm={5} className="padding-0 margin-0 display__flex__reverse">
-            <ButtonGroup style={{ paddingLeft: 20 }} className="btn-group-sm">
-              <Button disabled={disablePrevious} onClick={this.onBack}>
-                <box-icon type="solid" name="chevron-left" size="xs" />
-              </Button>
-              <Button>
-                {cP}
-                 &nbsp;&nbsp;
-                /
-                &nbsp; &nbsp;
-                {tPages}
-              </Button>
-              <Button disabled={disableNext} onClick={this.onNext}>
-                <box-icon type="solid" name="chevron-right" size="xs" />
-              </Button>
+      <Row>
+        <Col className="padding-0 margin-0 display__flex__reverse" style={{ minWidth: 200 }}>
+          {this.renderFilter()}
+        </Col>
+        <Col className="padding-0 margin-0 display__flex__reverse">
+          <ButtonGroup style={{ paddingRight: 20 }} className="btn-group-sm">
+            <Button disabled={disablePrevious} onClick={this.onBack}>
+              <box-icon type="solid" name="chevron-left" size="xs" />
+            </Button>
+            <Button>
+              {cP}
+              &nbsp;
+              /
+              &nbsp;
+              {tPages}
+            </Button>
+            <Button disabled={disableNext} onClick={this.onNext}>
+              <box-icon type="solid" name="chevron-right" size="xs" />
+            </Button>
 
-            </ButtonGroup>
-          </Col>
-        </Row>
+          </ButtonGroup>
+        </Col>
+      </Row>
+    );
+  }
 
-      </>
+  render() {
+    const { defaultLayout } = this.props;
+    if (defaultLayout) {
+      return (this.renderData());
+    }
+    return (
+      <Row className="float-right">
+        {this.renderData()}
+      </Row>
     );
   }
 }

@@ -3,7 +3,7 @@ import { Row, Col, Card, CardBody } from 'reactstrap';
 import ReactApexChart from 'react-apexcharts';
 // i18n
 import { withTranslation } from 'react-i18next';
-import { STROKE, COLORS, LEGEND } from '../../constants/ProtectionPlanAnalysisConstant';
+import { STROKE, SUCCESS, WARNING, DANGER, LEGEND } from '../../constants/ProtectionPlanAnalysisConstant';
 
 class ProtectedVsUnProtectedVMs extends Component {
   constructor(props) {
@@ -13,14 +13,14 @@ class ProtectedVsUnProtectedVMs extends Component {
       seriesTwo: [37, 2],
       walletOptions: {
         stroke: STROKE,
-        colors: COLORS,
+        colors: [SUCCESS, DANGER],
         labels: ['protected', 'unprotected'],
         legend: LEGEND,
       },
 
       replicationOptions: {
         stroke: STROKE,
-        colors: COLORS,
+        colors: [SUCCESS, WARNING],
         labels: ['replication.in.sync', 'replication.not.in.sync'],
         legend: LEGEND,
       },

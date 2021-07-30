@@ -17,7 +17,7 @@ class BandwidthChart extends Component {
         },
       ],
       options: {
-        chart: { toolbar: 'false' },
+        chart: { toolbar: 'false', foreColor: 'white' },
         dataLabels: { enabled: !1 },
         stroke: { curve: 'smooth', width: 2 },
         markers: { size: 0, style: 'hollow' },

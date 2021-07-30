@@ -96,10 +96,10 @@ class Replication extends Component {
           <Card>
             <CardBody>
               <Row className="padding-left-20">
-                <Col sm={6}>
+                <Col sm={5}>
                   {this.renderOptions()}
                 </Col>
-                <Col sm={6}>
+                <Col sm={7}>
                   <div className="padding-right-30">
                     <DMTPaginator
                       data={data}
@@ -136,10 +136,10 @@ class Replication extends Component {
           <Card>
             <CardBody>
               <Row className="padding-left-20">
-                <Col sm={6}>
+                <Col sm={5}>
                   {this.renderOptions()}
                 </Col>
-                <Col sm={6}>
+                <Col sm={7}>
                   <div className="padding-right-30">
                     <DMTPaginator
                       data={data}
