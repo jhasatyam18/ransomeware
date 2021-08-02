@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom';
 import { withTranslation } from 'react-i18next';
 
 // users
-import { logOutUser } from '../../../store/actions';
+import { logOutUser, initChangePassword } from '../../../store/actions';
 import { openModal } from '../../../store/actions/ModalActions';
 import { MODAL_ABOUT } from '../../../constants/Modalconstant';
 
@@ -26,6 +26,7 @@ class ProfileMenu extends Component {
     this.toggle = this.toggle.bind(this);
     this.logout = this.logout.bind(this);
     this.aboutModal = this.aboutModal.bind(this);
+    this.changePassword = this.changePassword.bind(this);
   }
 
   logout() {
@@ -36,6 +37,11 @@ class ProfileMenu extends Component {
   aboutModal() {
     const { dispatch } = this.props;
     dispatch(openModal(MODAL_ABOUT, { title: 'About' }));
+  }
+
+  changePassword() {
+    const { dispatch } = this.props;
+    dispatch(initChangePassword(true, true));
   }
 
   toggle() {
@@ -66,19 +72,28 @@ class ProfileMenu extends Component {
           </DropdownToggle>
           <DropdownMenu right>
             <DropdownItem onClick={this.aboutModal}>
-              <i className="bx bx-info-circle font-size-16 align-middle mr-1" />
+              <i className="fa fa-info font-size-16 align-middle mr-1" />
+              &nbsp;&nbsp;
               {t('About')}
             </DropdownItem>
             <div className="dropdown-divider" />
             <DropdownItem>
               <a href="docs/index.html" target="_blank" style={{ color: '#BFC8E2' }}>
-                <i className="bx bx-file font-size-16 align-middle mr-1" />
+                <i className="fa fa-book font-size-16 align-middle mr-1" />
+                &nbsp;&nbsp;
                 {t('Documentation')}
               </a>
             </DropdownItem>
             <div className="dropdown-divider" />
+            <DropdownItem onClick={this.changePassword}>
+              <i className="fas fa-key font-size-16 align-middle mr-1" />
+              &nbsp;&nbsp;
+              {t('change.password')}
+            </DropdownItem>
+            <div className="dropdown-divider" />
             <Link to="/logout" className="dropdown-item" onClick={this.logout}>
-              <i className="bx bx-power-off font-size-16 align-middle mr-1 text-danger" />
+              <i className="fas fa-power-off font-size-16 align-middle mr-1 text-danger" />
+              &nbsp;&nbsp;
               <span>{t('logout')}</span>
             </Link>
           </DropdownMenu>

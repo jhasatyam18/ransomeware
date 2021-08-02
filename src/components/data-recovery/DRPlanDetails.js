@@ -36,27 +36,25 @@ class DRPlanDetails extends Component {
     }
   }
 
-  renderSite(site, isRecoverySite = false) {
+  renderSite(site) {
     if (!site || !site.platformDetails) {
       return null;
     }
-    const { platformDetails } = site;
-    const keys = [{ label: 'Name', field: 'platformName' }, { label: 'Platform Type', field: 'platformType' }, { label: 'Hostname', field: 'hostname' },
-      { label: 'Region', field: 'region' }, { label: 'Zone', field: 'availZone' }, { label: 'Project ID', field: 'projectId' }, { label: 'Datamotive Server IP', field: 'serverIp' },
-      { label: 'Datamotive Server Port', field: 'serverPort' }];
-    if (!isRecoverySite) {
-      keys.splice(3, 0, { label: 'Port', field: 'port' });
-    }
+    const { platformDetails, node, name } = site;
+
+    const keys = [{ label: 'Name', field: name }, { label: 'Platform Type', field: platformDetails.platformType }, { label: 'Hostname', field: platformDetails.hostname },
+      { label: 'Region', field: platformDetails.region }, { label: 'Zone', field: platformDetails.availZone }, { label: 'Project ID', field: platformDetails.projectId }, { label: 'Datamotive Node IP', field: node.hostname },
+      { label: 'Datamotive Server Port', field: node.replicationPort }];
     const fields = keys.map((ele) => {
       const { field, label } = ele;
-      if (platformDetails[field]) {
+      if (field) {
         return (
           <div className="stack__info">
             <div className="label">
               {label}
             </div>
             <div className="value">
-              {platformDetails[field]}
+              {field}
             </div>
           </div>
 

@@ -6,6 +6,9 @@ const INITIAL_STATE = {
   },
   messages: {},
   user: {
+    id: 1,
+    passwordChangeReq: false,
+    allowCancel: false,
     isAuthenticated: false,
     token: '',
     userName: '',
@@ -36,6 +39,7 @@ const INITIAL_STATE = {
   },
   events: { data: [], selected: {}, filteredData: [] },
   alerts: { data: [], selected: {}, associatedEvent: {}, unread: [], filteredData: [] },
+  settings: { bundles: [], nodes: [], selectedNodes: [] },
 };
 
 export default INITIAL_STATE;

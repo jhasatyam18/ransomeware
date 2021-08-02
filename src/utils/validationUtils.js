@@ -204,3 +204,26 @@ export async function validateRecoveryVMs({ user, dispatch }) {
   }
   return true;
 }
+
+export function validateForm(formKey, user, dispatch) {
+  const { values } = user;
+  const fields = Object.keys(FIELDS).filter((key) => key.indexOf(formKey) !== -1);
+  let isClean = true;
+  fields.map((fieldKey) => {
+    const field = FIELDS[fieldKey];
+    const { shouldShow, validate } = field;
+    const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
+    if (showField && typeof validate !== 'undefined') {
+      if (!validateField(field, fieldKey, getValue(fieldKey, values), dispatch, user)) {
+        isClean = false;
+      }
+    }
+  });
+  return isClean;
+}
+
+export function validatePassword({ value, user }) {
+  const { values } = user;
+  const password = getValue('user.newPassword', values);
+  return value !== password;
+}

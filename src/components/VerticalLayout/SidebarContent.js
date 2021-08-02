@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 // i18n
 import { withTranslation } from 'react-i18next';
-import { DASHBOARD_PATH, JOBS, PROTECTION_PLANS_PATH, SITES_PATH, Reports, Analytics, EVENTS, ALERTS } from '../../constants/RouterConstants';
+import { DASHBOARD_PATH, JOBS, PROTECTION_PLANS_PATH, SITES_PATH, Reports, Analytics, EVENTS, ALERTS, SETTINGS } from '../../constants/RouterConstants';
 
 class SidebarContent extends Component {
   constructor(props) {
@@ -107,6 +107,12 @@ class SidebarContent extends Component {
               <Link to="/Analytics" className="waves-effect" style={{ color: this.isActive(Analytics) }}>
                 <i className="bx bx-stats" style={{ fontSize: 16, color: this.isActive(Analytics) }} />
                 <span>Analytics</span>
+              </Link>
+            </li>
+            <li>
+              <Link to={SETTINGS} className="waves-effect" style={{ color: this.isActive(SETTINGS) }}>
+                <i className="fas fa-sliders-h" style={{ fontSize: 16, color: this.isActive(SETTINGS) }} />
+                <span>{t('Settings')}</span>
               </Link>
             </li>
           </ul>

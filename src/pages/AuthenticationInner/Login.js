@@ -8,7 +8,7 @@ import {
 } from 'reactstrap';
 // availity-reactstrap-validation
 import { AvForm, AvField } from 'availity-reactstrap-validation';
-
+import ChangePassword from './ChangePassword';
 // import images
 import logo from '../../assets/images/logo.png';
 import logoName from '../../assets/images/name.png';
@@ -24,8 +24,11 @@ class Login extends Component {
   }
 
   componentDidMount() {
-    const { dispatch, history } = this.props;
-    dispatch(getInfo(history));
+    const { dispatch, history, user } = this.props;
+    const { passwordChangeReq } = user;
+    if (!passwordChangeReq) {
+      dispatch(getInfo(history));
+    }
   }
 
   handleChange = (e) => {
@@ -61,6 +64,11 @@ class Login extends Component {
 
   render() {
     const { type } = this.state;
+    const { user } = this.props;
+    const { passwordChangeReq } = user;
+    if (passwordChangeReq) {
+      return (<ChangePassword {...this.props} />);
+    }
     return (
       <>
         <div className="account-pages my-5 pt-sm-5">
@@ -105,10 +113,9 @@ class Login extends Component {
                         <div className="form-group">
                           <AvField
                             name="username"
-                            label="Username"
                             value=""
                             className="form-control"
-                            placeholder="Enter username"
+                            placeholder="Username"
                             type="text"
                             id="userName"
                             onChange={this.handleChange}
@@ -121,10 +128,9 @@ class Login extends Component {
                         <div className="form-group">
                           <AvField
                             name="password"
-                            label="Password"
                             value=""
                             className="form-control"
-                            placeholder="Enter password"
+                            placeholder="Password"
                             type={type}
                             id="password"
                             autoComplete="off"
@@ -136,7 +142,7 @@ class Login extends Component {
 
                         <div className="mt-3">
                           <button
-                            className="btn btn-primary btn-block waves-effect waves-light"
+                            className="btn btn-success btn-block waves-effect waves-light"
                             type="submit"
                             onClick={this.onSubmit}
                           >
@@ -146,9 +152,9 @@ class Login extends Component {
                         <div className="container login">
                           <div className="row">
                             <div className="col-sm-8 text-align sign-up">
-                              <a href="">Sign Up</a>
-                              <p className="text-align "> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</p>
-                              <a href="">Forgot Password</a>
+                              <a href="" className="text-success">Sign Up</a>
+                              <p className="text-align"> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</p>
+                              <a href="" className="text-success">Forgot Password</a>
                             </div>
                           </div>
                         </div>

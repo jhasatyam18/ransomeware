@@ -100,7 +100,7 @@ class DMFieldText extends Component {
   }
 
   render() {
-    const { field, fieldKey, user, hideLabel } = this.props;
+    const { field, fieldKey, user, hideLabel, disabled } = this.props;
     const { shouldShow, placeHolderText } = field;
     const { errors } = user;
     const { value, type } = this.state;
@@ -126,6 +126,7 @@ class DMFieldText extends Component {
                 autoComplete="off"
                 placeholder={placeH}
                 onFocus={() => this.handleFocus(true)}
+                disabled={disabled}
               />
               {this.showPasswordToggle()}
             </div>

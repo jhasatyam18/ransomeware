@@ -1,24 +1,22 @@
 // import { addMessage, clearMessages } from './MessageActions';
-
 import jsCookie from 'js-cookie';
-import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import * as Types from '../../constants/actionTypes';
-import { API_AUTHENTICATE, API_AWS_AVAILABILITY_ZONES, API_AWS_REGIONS, API_GCP_REGIONS, API_GCP_AVAILABILITY_ZONES, API_INFO, API_SCRIPTS } from '../../constants/ApiConstants';
-
+import { API_AUTHENTICATE, API_CHANGE_PASSWORD, API_AWS_AVAILABILITY_ZONES, API_AWS_REGIONS, API_GCP_AVAILABILITY_ZONES, API_GCP_REGIONS, API_INFO, API_SCRIPTS } from '../../constants/ApiConstants';
+import { APP_TYPE, PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
+import { MESSAGE_TYPES } from '../../constants/MessageConstants';
+import { ALERTS, DASHBOARD_PATH, EVENTS, JOBS, PROTECTION_PLANS_PATH, SITES_PATH } from '../../constants/RouterConstants';
+import { APPLICATION_API_TOKEN, APPLICATION_API_USER } from '../../constants/UserConstant';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { setCookie } from '../../utils/CookieUtils';
-import { APPLICATION_API_TOKEN, APPLICATION_API_USER } from '../../constants/UserConstant';
-import { addMessage, clearMessages } from './MessageActions';
 import { onInit } from '../../utils/HistoryUtil';
-import { APP_TYPE, PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
-import { fetchDRPlanById, fetchDrPlans } from './DrPlanActions';
-import { fetchDashboardData } from './DashboardActions';
-import { JOBS, PROTECTION_PLANS_PATH, SITES_PATH, DASHBOARD_PATH, ALERTS, EVENTS } from '../../constants/RouterConstants';
-import { fetchSites } from './SiteActions';
-import { fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { fetchAlerts, getUnreadAlerts } from './AlertActions';
+import { fetchDashboardData } from './DashboardActions';
+import { fetchDRPlanById, fetchDrPlans } from './DrPlanActions';
 import { fetchEvents } from './EventActions';
+import { fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
+import { addMessage, clearMessages } from './MessageActions';
+import { fetchSites } from './SiteActions';
 
 export function login({ username, password, history }) {
   return (dispatch) => {
@@ -29,8 +27,12 @@ export function login({ username, password, history }) {
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
-        setCookie(APPLICATION_API_TOKEN, json.token);
-        setCookie(APPLICATION_API_USER, username);
+        if (username === 'admin' && password === 'admin') {
+          dispatch(saveApplicationToken(json.token));
+          dispatch(initChangePassword(true, false));
+          return;
+        }
+        setSessionInfo(json.token, username);
         dispatch(loginSuccess(json.token, username));
         dispatch(getInfo());
         if (history) {
@@ -143,6 +145,7 @@ export function hideApplicationLoader(key) {
 
 export function onPlatformTypeChange({ value }) {
   return (dispatch) => {
+    dispatch(valueChange('configureSite.node', ''));
     if (value === PLATFORM_TYPES.AWS) {
       dispatch(fetchRegions(PLATFORM_TYPES.AWS));
       dispatch(fetchAvailibilityZones(PLATFORM_TYPES.AWS));
@@ -269,5 +272,47 @@ export function validateLicense(licenseExpiredTime) {
     if (difference > diff) {
       dispatch(addMessage('There is expired or expiring license. Please check about info for more details.', MESSAGE_TYPES.WARNING, true));
     }
+  };
+}
+
+export function initChangePassword(passwordChangeReq, allowCancel) {
+  return {
+    type: Types.APP_USER_CHANGE_PASSWORD,
+    passwordChangeReq,
+    allowCancel,
+  };
+}
+
+export function saveApplicationToken(token) {
+  return {
+    type: Types.AUTHENTICATE_USER_SUCCESS_PARTIAL,
+    token,
+  };
+}
+
+export function setSessionInfo(token, username) {
+  setCookie(APPLICATION_API_TOKEN, token);
+  setCookie(APPLICATION_API_USER, username);
+}
+
+export function changeUserPassword(oldPass, newPass) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { token } = user;
+    dispatch(showApplicationLoader('CHANGE_PASSWORD', 'Changing password...'));
+    const obj = createPayload(API_TYPES.PUT, { username: 'admin', oldPassword: oldPass, newPassword: newPass, id: 1 });
+    return callAPI(API_CHANGE_PASSWORD, obj, token).then((json) => {
+      dispatch(hideApplicationLoader('CHANGE_PASSWORD'));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        dispatch(logOutUser());
+        window.location.reload();
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('CHANGE_PASSWORD'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
   };
 }

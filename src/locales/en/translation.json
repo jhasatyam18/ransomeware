@@ -18,6 +18,8 @@
   "reconfigure": "Rconfigure ",
   "create.site": "Create Site",
   "site.type": "Site Type ",
+  "site.name": "Name",
+  "site.node": "Node",
   "protect": "Protect",
   "protection": "Protection",
   "recovery": "Recovery ",
@@ -88,5 +90,16 @@
   "replication.not.in.sync": "Replication Not In-Sync",
   "rto":"RTO",
   "rpo":"RPO",
-  "events":"Events"
+  "events":"Events",
+  "node.name": "Name",
+  "node.isLocalNode": "Local Node",
+  "node.encryptionKey": "Encryption Key",
+  "node.username": "Username",
+  "node.password": "Password",
+  "node.nodeType": "Type",
+  "node.platformType": "Platform Type",
+  "node.managementPort": "Management Port",
+  "node.replicationPort": "Replication Port",
+  "node.hostname":"Hostname",
+  "change.password": "Change Password"
 }

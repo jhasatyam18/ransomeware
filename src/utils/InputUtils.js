@@ -1,6 +1,7 @@
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
 import { PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS } from '../constants/InputConstants';
+import { NODE_STATUS_ONLINE } from '../constants/AppStatus';
 import { isEmpty } from './validationUtils';
 
 export function getValue(key, values) {
@@ -54,7 +55,7 @@ export function getSitesOptions(user) {
   const result = [];
   if (sites) {
     sites.reduce((previous, next) => {
-      previous.push({ label: next.platformDetails.platformName, value: next.id });
+      previous.push({ label: next.name, value: next.id });
       return previous;
     }, result);
   }
@@ -228,4 +229,75 @@ export function createVMConfigStackObject(key) {
     ],
   };
   return config;
+}
+
+export function getNodeTypeOptions() {
+  return [
+    { label: 'Management', value: 'Management' },
+    { label: 'Replication', value: 'Replication' },
+    { label: 'Windows Preparation Machine', value: 'WinPrepMachine' },
+    { label: 'Dedupe Server', value: 'DedupeServer' },
+  ];
+}
+
+export function getPlatformTypeOptions() {
+  return [
+    { label: 'VMware', value: 'VMware' },
+    { label: 'AWS', value: 'AWS' },
+    { label: 'GCP', value: 'GCP' },
+  ];
+}
+
+export function getSiteNodeOptions(user) {
+  const { values } = user;
+  let nodes = getValue(STATIC_KEYS.UI_SITE_NODES, values);
+  const platfomrType = getValue('configureSite.platformDetails.platformType', values);
+  if (nodes === '' || nodes === null || platfomrType === '') {
+    return [];
+  }
+  nodes = nodes.filter((node) => node.status === NODE_STATUS_ONLINE).filter((oNode) => oNode.platformType === platfomrType);
+  const result = [];
+  if (nodes) {
+    nodes.reduce((previous, next) => {
+      previous.push({ label: next.name, value: next.id });
+      return previous;
+    }, result);
+  }
+  return result;
+}
+
+export function shouldShowNodePlatformType(user) {
+  const { values } = user;
+  const nodeType = getValue('node.nodeType', values);
+  if (nodeType === 'Management' || nodeType === 'Replication') {
+    return true;
+  }
+  return false;
+}
+
+export function shouldShowNodeManagementPort(user) {
+  const { values } = user;
+  const nodeType = getValue('node.nodeType', values);
+  if (nodeType === 'Management' || nodeType === 'DedupeServer') {
+    return true;
+  }
+  return false;
+}
+
+export function shouldShowNodeReplicationPort(user) {
+  const { values } = user;
+  const nodeType = getValue('node.nodeType', values);
+  if (nodeType === 'Management' || nodeType === 'Replication') {
+    return true;
+  }
+  return false;
+}
+
+export function shouldShowNodeEncryptionKey(user) {
+  const { values } = user;
+  const nodeType = getValue('node.nodeType', values);
+  if (nodeType === 'Management' || nodeType === 'Replication') {
+    return true;
+  }
+  return false;
 }

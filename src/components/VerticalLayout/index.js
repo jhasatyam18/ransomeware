@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Route, Switch, withRouter } from 'react-router-dom';
 import DRPlans from '../data-recovery/DRPlans';
 import {
-  DASHBOARD_PATH, SITES_PATH, LOGIN_PATH, PROTECTION_PLANS_PATH, PROTECTION_PLAN_DETAILS, JOBS, EVENTS, ALERTS,
+  DASHBOARD_PATH, SITES_PATH, LOGIN_PATH, PROTECTION_PLANS_PATH, PROTECTION_PLAN_DETAILS, JOBS, EVENTS, ALERTS, SETTINGS,
 } from '../../constants/RouterConstants';
 import Pages404 from '../../pages/Page-404';
 import Login from '../../pages/AuthenticationInner/Login';
@@ -17,7 +17,7 @@ const DRPlanDetails = React.lazy(() => import('components/data-recovery/DRPlanDe
 const Jobs = React.lazy(() => import('components/Jobs/Jobs'));
 const Events = React.lazy(() => import('components/Events/Events'));
 const Alerts = React.lazy(() => import('components/Alerts/Alerts'));
-
+const Settings = React.lazy(() => import('../Settings/Settings'));
 class Layout extends Component {
   constructor(props) {
     super(props);
@@ -100,6 +100,7 @@ class Layout extends Component {
                   <Route path={JOBS} render={() => <Jobs protectionplanID={0} {...this.props} />} />
                   <Route path={EVENTS} render={() => <Events />} />
                   <Route path={ALERTS} render={() => <Alerts />} />
+                  <Route path={SETTINGS} render={() => <Settings />} />
                   <Route component={Pages404} />
                 </Switch>
               </Suspense>

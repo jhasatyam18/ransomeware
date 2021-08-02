@@ -7,6 +7,8 @@ import ModalConfigureSite from './ModalConigureSite';
 import ConfirmationModal from './ConfirmationModal';
 import ModalAbout from './ModalAbout';
 import ModalAlertDetails from './ModalAlertDetails';
+import ModalSupportBundle from './ModalSupportBundle';
+import ModalConfigureNode from './ModalConfigureNode';
 
 class DMModal extends Component {
   constructor() {
@@ -19,7 +21,7 @@ class DMModal extends Component {
     dispatch(closeModal());
   }
 
-  renderContent() {
+  renderContent(options) {
     const { dispatch, modal, user } = this.props;
     const { content } = modal;
     if (content) {
@@ -32,6 +34,10 @@ class DMModal extends Component {
           return <ModalAbout dispatch={dispatch} {...this.props} />;
         case MODALS.MODAL_ALERT_DETAILS:
           return <ModalAlertDetails />;
+        case MODALS.MODAL_GENERATE_SUPPORT_BUNDLE:
+          return <ModalSupportBundle />;
+        case MODALS.MODAL_NODE_CONFIGURATION:
+          return <ModalConfigureNode options={options} />;
         default:
           return (<div>404</div>);
       }
@@ -55,7 +61,7 @@ class DMModal extends Component {
               {' '}
             </h5>
           </div>
-          {this.renderContent()}
+          {this.renderContent(options)}
         </Modal>
       </>
     );

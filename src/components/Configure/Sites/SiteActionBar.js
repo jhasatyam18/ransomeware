@@ -4,9 +4,11 @@ import { withTranslation } from 'react-i18next';
 import { openModal } from '../../../store/actions/ModalActions';
 import { MODAL_CONFIGURE_NEW_SITE, MODAL_CONFIRMATION_WARNING } from '../../../constants/Modalconstant';
 import { clearValues, fetchRegions, fetchAvailibilityZones, valueChange } from '../../../store/actions';
+import { fetchNodes } from '../../../store/actions/NodeActions';
 import { deleteSites } from '../../../store/actions/SiteActions';
 import { FIELDS } from '../../../constants/FieldsConstant';
 import ActionButton from '../../Common/ActionButton';
+import { STATIC_KEYS } from '../../../constants/InputConstants';
 
 class SiteActionBar extends Component {
   constructor() {
@@ -33,6 +35,7 @@ class SiteActionBar extends Component {
     const { dispatch } = this.props;
     const options = { isEdit: false, title: 'Create Site' };
     dispatch(clearValues());
+    dispatch(fetchNodes(STATIC_KEYS.UI_SITE_NODES));
     dispatch(openModal(MODAL_CONFIGURE_NEW_SITE, options));
   }
 
@@ -49,6 +52,7 @@ class SiteActionBar extends Component {
     dispatch(clearValues());
     dispatch(fetchRegions(selectedSitePlatformType));
     dispatch(fetchAvailibilityZones(selectedSitePlatformType));
+    dispatch(fetchNodes(STATIC_KEYS.UI_SITE_NODES));
     Object.keys(FIELDS).filter((key) => key.indexOf('configureSite') !== -1).map((key) => {
       const parts = key.split('.');
       if (parts.length === 2) {

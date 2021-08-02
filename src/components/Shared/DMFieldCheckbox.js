@@ -35,7 +35,7 @@ class DMFieldCheckbox extends Component {
   }
 
   render() {
-    const { field, fieldKey, user, t } = this.props;
+    const { field, fieldKey, user, t, disabled } = this.props;
     const { label, shouldShow } = field;
     const { value } = this.state;
     const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
@@ -49,7 +49,7 @@ class DMFieldCheckbox extends Component {
           </Label>
           <Col sm={8}>
             <div className="custom-control custom-checkbox">
-              <input type="checkbox" className="custom-control-input" id={fieldKey} name={fieldKey} checked={value} onChange={this.handleChange} />
+              <input type="checkbox" className="custom-control-input" id={fieldKey} name={fieldKey} checked={value} onChange={this.handleChange} disabled={disabled} />
               <label className="custom-control-label" htmlFor={fieldKey} />
             </div>
           </Col>

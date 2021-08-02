@@ -110,7 +110,7 @@ class DMFieldSelect extends Component {
   }
 
   render() {
-    const { field, fieldKey, user, hideLabel } = this.props;
+    const { field, fieldKey, user, hideLabel, disabled } = this.props;
     const { shouldShow } = field;
     const { value } = this.state;
     const { errors } = user;
@@ -123,7 +123,7 @@ class DMFieldSelect extends Component {
         <FormGroup className={css}>
           {this.renderLabel()}
           <Col sm={hideLabel ? 12 : 8}>
-            <Input type="select" id={fieldKey} onFocus={() => this.handleFocus(true)} onSelect={this.handleChange} onBlur={() => this.handleFocus(false)} className="form-control form-control-sm custom-select" onChange={this.handleChange} value={value} invalid={hasErrors}>
+            <Input type="select" id={fieldKey} onFocus={() => this.handleFocus(true)} onSelect={this.handleChange} onBlur={() => this.handleFocus(false)} className="form-control form-control-sm custom-select" onChange={this.handleChange} value={value} invalid={hasErrors} disabled={disabled}>
               <option key={`${fieldKey}-default`} value="-">  </option>
               {this.renderOptions()}
             </Input>

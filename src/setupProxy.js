@@ -4,7 +4,15 @@ module.exports = function (app) {
   app.use(
     '/api/v1/*',
     createProxyMiddleware({
-      target: 'http://localhost:3000/', // https://18.221.189.216/ // https://34.71.172.8/ // 51.68.208.96
+      target: 'https://3.19.27.244:5000/', // https://18.221.189.216/ // https://34.71.172.8/ // 51.68.208.96
+      changeOrigin: true,
+      secure: false,
+    }),
+  );
+  app.use(
+    '/support/*',
+    createProxyMiddleware({
+      target: 'https://3.19.27.244:5000/', // https://18.221.189.216/ // https://34.71.172.8/ // 51.68.208.96
       changeOrigin: true,
       secure: false,
     }),

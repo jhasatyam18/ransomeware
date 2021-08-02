@@ -23,6 +23,14 @@ export default function user(state = INITIAL_STATE.user, action) {
       return {
         ...state, appType: action.appType, platformType: action.platformType,
       };
+    case Types.APP_USER_CHANGE_PASSWORD:
+      return {
+        ...state, passwordChangeReq: action.passwordChangeReq, isAuthenticated: false, allowCancel: action.allowCancel,
+      };
+    case Types.AUTHENTICATE_USER_SUCCESS_PARTIAL:
+      return {
+        ...state, token: action.token,
+      };
     case Types.VALUE_CHANGE:
       return {
         ...state,

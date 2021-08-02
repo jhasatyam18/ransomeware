@@ -10,20 +10,20 @@ import { getFieldCompponents } from '../../utils/ComponentFatory';
 
 class DMField extends Component {
   renderField() {
-    const { dispatch, fieldKey, user } = this.props;
+    const { dispatch, fieldKey, user, disabled } = this.props;
     const field = FIELDS[fieldKey];
     const { type, COMPONENT } = field;
     switch (type) {
       case FIELD_TYPE.SELECT:
-        return <DMFieldSelect dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} />;
+        return <DMFieldSelect dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} />;
       case FIELD_TYPE.NUMBER:
-        return <DMFieldNumber dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} />;
+        return <DMFieldNumber dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} />;
       case FIELD_TYPE.CHECKBOX:
-        return <DMFieldCheckbox dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} />;
+        return <DMFieldCheckbox dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} />;
       case FIELD_TYPE.CUSTOM:
         return getFieldCompponents(dispatch, fieldKey, user, COMPONENT);
       default:
-        return <DMFieldText dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} />;
+        return <DMFieldText dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} />;
     }
   }
 

@@ -77,7 +77,7 @@ class placeHolderNumber extends Component {
   }
 
   render() {
-    const { field, fieldKey, user, t } = this.props;
+    const { field, fieldKey, user, t, disabled } = this.props;
     const { label, shouldShow, min, max } = field;
     const { errors } = user;
     const { value } = this.state;
@@ -103,6 +103,7 @@ class placeHolderNumber extends Component {
               invalid={hasErrors}
               autoComplete="off"
               onFocus={() => this.handleFocus(true)}
+              disabled={disabled}
             />
             {this.renderError(hasErrors)}
           </Col>

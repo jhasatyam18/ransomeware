@@ -1,4 +1,5 @@
 export const API_AUTHENTICATE = 'api/v1/login';
+export const API_CHANGE_PASSWORD = 'api/v1/user/1';
 export const API_INFO = 'api/v1/info';
 export const API_FETCH_SITES = 'api/v1/sites';
 export const API_FETCH_SITE_VMS = 'api/v1/sites/<id>/vms';
@@ -51,3 +52,10 @@ export const API_FETCH_ALERTS = 'api/v1/alert';
 export const API_FETCH_UNREAD_ALERTS = 'api/v1/alert/unread';
 export const API_ACKNOWLEDGE_ALERT = 'api/v1/alert/acknowledge/<id>';
 export const API_MARK_ALERT_AS_READ = 'api/v1/alert/read/<id>';
+
+// sb
+export const API_DELETE_SUPPORT_BUNDLE = 'api/v1/support/bundle/<id>';
+export const API_SUPPORT_BUNDLE = 'api/v1/support/bundle';
+
+// nodes
+export const API_NODES = 'api/v1/nodes';

@@ -1,10 +1,10 @@
 import { onPlatformTypeChange } from '../store/actions';
 import { onProtectionPlanChange } from '../store/actions/DrPlanActions';
 import { onProtectSiteChange, onRecoverSiteChange, updateAvailabilityZones } from '../store/actions/SiteActions';
-import { getAvailibilityZoneOptions, getDRPlanOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationIntervalOptions, getSitesOptions, getSubnetOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware } from '../utils/InputUtils';
+import { getAvailibilityZoneOptions, getDRPlanOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationIntervalOptions, getSiteNodeOptions, getSitesOptions, getSubnetOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware, shouldShowNodeEncryptionKey, shouldShowNodePlatformType, shouldShowNodeManagementPort, shouldShowNodeReplicationPort } from '../utils/InputUtils';
 import { isEmpty, validateDrSiteSelection } from '../utils/validationUtils';
 import { STATIC_KEYS } from './InputConstants';
-import { HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX } from './ValidationConstants';
+import { FQDN_REGEX, HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX } from './ValidationConstants';
 
 export const CONFIURE_SITE_GROUP = ['configureSite.platformDetails.type', 'configureSite.platformDetails.platformName'];
 export const REPLICATION_INTERVAL_COMP = 'REPLICATION_INTERVAL_COMP';
@@ -15,17 +15,20 @@ export const FIELD_TYPE = {
 };
 export const FIELDS = {
   // CONFIGURE SITE FIELDS
+  'configureSite.name': {
+    label: 'site.name', description: 'Site name', placeHolderText: 'Select Site', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Site name required', shouldShow: true,
+  },
+  'configureSite.description': {
+    label: 'description', description: 'Site description', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Site Description Required', shouldShow: true,
+  },
   'configureSite.siteType': {
     label: 'site.type', description: 'Site type whether Protection or Recovery', placeHolderText: 'Select Site', type: FIELD_TYPE.SELECT, options: [{ label: 'Protection', value: 'Protection' }, { label: 'Recover', value: 'Recovery' }], validate: (value, user) => isEmpty(value, user), errorMessage: 'Site type required', shouldShow: true,
   },
   'configureSite.platformDetails.platformType': {
     label: 'platform.type', description: 'Platform Type whether VMware or AWS or GCP', type: FIELD_TYPE.SELECT, options: [{ label: 'VMware', value: 'VMware' }, { label: 'AWS', value: 'AWS' }, { label: 'GCP', value: 'GCP' }], validate: (value, user) => isEmpty(value, user), errorMessage: 'Platform Type required', shouldShow: true, onChange: (user, dispatch) => onPlatformTypeChange(user, dispatch),
   },
-  'configureSite.platformDetails.platformName': {
-    label: 'platform.name', description: 'Platform Name for(VMWare/AWS/GCP)', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Platform name required', shouldShow: true,
-  },
-  'configureSite.Description': {
-    label: 'description', description: 'Site description', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Site Description Required', shouldShow: true,
+  'configureSite.node': {
+    label: 'site.node', description: 'Node', type: FIELD_TYPE.SELECT, options: (user) => getSiteNodeOptions(user), validate: (value, user) => isEmpty(value, user), errorMessage: 'Select node', shouldShow: true,
   },
   'configureSite.platformDetails.hostname': {
     label: 'vCenter.server.IP', description: 'vCenter Server IPv4 address', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], errorMessage: 'Enter valid IP address', shouldShow: (user) => isPlatformTypeVMware(user),
@@ -54,12 +57,12 @@ export const FIELDS = {
   'configureSite.platformDetails.projectId': {
     label: 'project.ID', description: 'Project ID for Cloud Site(GCP)', type: FIELD_TYPE.TEXT, patterns: [HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX], errorMessage: 'Project ID is required', shouldShow: (user) => isPlatformTypeGCP(user),
   },
-  'configureSite.platformDetails.serverIp': {
-    label: 'datamotive.server.IP', description: 'Datamotive Management Server IP', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], errorMessage: 'Enter valid IP address', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
-  },
-  'configureSite.platformDetails.serverPort': {
-    label: 'server.port', description: 'Datamotive service port', defaultValue: 5000, min: 1, max: 65536, type: FIELD_TYPE.NUMBER, errorMessage: 'Server Port is required, if different.', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
-  },
+  // 'configureSite.platformDetails.serverIp': {
+  //   label: 'datamotive.server.IP', description: 'Datamotive Management Server IP', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], errorMessage: 'Enter valid IP address', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
+  // },
+  // 'configureSite.platformDetails.serverPort': {
+  //   label: 'server.port', description: 'Datamotive service port', defaultValue: 5000, min: 1, max: 65536, type: FIELD_TYPE.NUMBER, errorMessage: 'Server Port is required, if different.', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
+  // },
   // 'configureSite.platformDetails.prepMachineIP': {
   // label: 'preparation.machine.IP', description: '', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], errorMessage: 'Enter valid Machine IP address', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
   // },
@@ -111,4 +114,26 @@ export const FIELDS = {
   'ui.values.replication.interval.type': {
     label: 'Unit', description: 'Replication interval i.e time gap after which next iteration will start after previous one is completed/failed', placeHolderText: 'Select replication unit', type: FIELD_TYPE.SELECT, options: [{ label: 'Days', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_DAY }, { label: 'Hours', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_HOUR }, { label: 'Minutes', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_MIN }], validate: (value, user) => isEmpty(value, user), errorMessage: 'Invalid replication interval.', shouldShow: true, defaultValue: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_MIN,
   },
+  // Node Fields
+  'node.name': {
+    label: 'node.name', description: 'Node name', placeHolderText: 'name', type: FIELD_TYPE.TEXT, errorMessage: 'Enter name for the node', shouldShow: true, validate: (value, user) => isEmpty(value, user) },
+  'node.hostname': {
+    label: 'node.hostname', description: 'Enter FQDN or IP Address', patterns: [FQDN_REGEX, IP_REGEX], placeHolderText: 'FQDN or IP', type: FIELD_TYPE.TEXT, errorMessage: 'Enter FQDN or IP Address', shouldShow: true, validate: (value, user) => isEmpty(value, user) },
+  'node.username': {
+    label: 'node.username', description: 'Enter node username', placeHolderText: 'Username', type: FIELD_TYPE.TEXT, errorMessage: 'Enter node username', shouldShow: true, validate: (value, user) => isEmpty(value, user) },
+  'node.password': {
+    label: 'node.password', description: 'Enter node password', placeHolderText: 'Password', type: FIELD_TYPE.PASSOWRD, errorMessage: 'Enter node password', shouldShow: true, validate: (value, user) => isEmpty(value, user) },
+  'node.nodeType': {
+    label: 'node.nodeType', description: 'Select node type.', placeHolderText: 'Node type', type: FIELD_TYPE.SELECT, errorMessage: 'Select node type', shouldShow: true, validate: (value, user) => isEmpty(value, user), options: (user) => getNodeTypeOptions(user) },
+  'node.platformType': {
+    label: 'node.platformType', description: 'Select platform type.', placeHolderText: 'Platform type', type: FIELD_TYPE.SELECT, errorMessage: 'Select platform type', shouldShow: (user) => shouldShowNodePlatformType(user), validate: (value, user) => isEmpty(value, user), options: (user) => getPlatformTypeOptions(user) },
+  'node.managementPort': {
+    label: 'node.managementPort', description: 'Node management port', defaultValue: 5000, min: 1, max: 65536, type: FIELD_TYPE.NUMBER, errorMessage: 'Port value required', shouldShow: (user) => shouldShowNodeManagementPort(user),
+  },
+  'node.replicationPort': {
+    label: 'node.replicationPort', description: 'Node replication port', defaultValue: 5001, min: 1, max: 65536, type: FIELD_TYPE.NUMBER, errorMessage: 'Port value required', shouldShow: (user) => shouldShowNodeReplicationPort(user),
+  },
+  'node.encryptionKey': {
+    label: 'node.encryptionKey', description: 'Node encryption key', placeHolderText: 'encryption key', type: FIELD_TYPE.TEXT, errorMessage: 'Enter encryption key for the node', shouldShow: (user) => shouldShowNodeEncryptionKey(user) },
 };
+

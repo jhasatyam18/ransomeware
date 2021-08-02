@@ -1,6 +1,10 @@
 import { STATIC_KEYS } from '../constants/InputConstants';
 import { FIELDS } from '../constants/FieldsConstant';
-import { getValue } from './InputUtils';
+import { getValue,
+  shouldShowNodePlatformType,
+  shouldShowNodeManagementPort,
+  shouldShowNodeReplicationPort,
+  shouldShowNodeEncryptionKey } from './InputUtils';
 
 export function getKeyStruct(filterKey, values) {
   const result = {};
@@ -29,7 +33,17 @@ function setObject(path, value, data) {
 
 export function getConfigureSitePayload(user) {
   const { values } = user;
-  return getKeyStruct('configureSite.', values);
+  const selectedNodeID = getValue('configureSite.node', values);
+  const nodes = getValue(STATIC_KEYS.UI_SITE_NODES, values);
+  let selectedNode = null;
+  nodes.forEach((node) => {
+    if (`${node.id}` === selectedNodeID) {
+      selectedNode = node;
+    }
+  });
+  const payload = getKeyStruct('configureSite.', values);
+  payload.configureSite.node = selectedNode;
+  return payload;
 }
 
 export function getCreateDRPlanPayload(user, sites) {
@@ -125,4 +139,27 @@ function joinArray(data, delimiter) {
     return data.join(delimiter);
   }
   return '';
+}
+
+export function getNodePayload(user) {
+  const { values } = user;
+  const node = getKeyStruct('node.', values);
+  if (!shouldShowNodePlatformType(user)) {
+    node.node.platformType = '';
+  }
+  if (!shouldShowNodeManagementPort(user)) {
+    node.node.managementPort = 0;
+  }
+  if (!shouldShowNodeReplicationPort(user)) {
+    node.node.replicationPort = 0;
+  }
+  if (!shouldShowNodeEncryptionKey(user)) {
+    node.node.encryptionKey = '';
+  }
+  return node;
+}
+
+export function getFormPayload(formKey, user) {
+  const { values } = user;
+  return getKeyStruct(formKey, values);
 }

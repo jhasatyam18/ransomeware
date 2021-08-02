@@ -13,20 +13,26 @@ export const REPLICATION_INTERVAL_ITEM_RENDERER = 'REPLICATION_INTERVAL_ITEM_REN
 export const EVENT_LEVEL_ITEM_RENDERER = 'EVENT_LEVEL_ITEM_RENDERER';
 export const ALERT_ACK_ITEM_RENDERER = 'ALERT_ACK_ITEM_RENDERER';
 export const VIEW_ALERT_INFO_RENDERER = 'VIEW_ALERT_INFO_RENDERER';
+export const SIZE_ITEM_RENDERER = 'SIZE_ITEM_RENDERER';
+export const SUPPORT_BUNDLE_ACTION_ITEM_RENDERER = 'SUPPORT_BUNDLE_ACTION_ITEM_RENDERER';
+export const SERVER_PORT_ITEM_RENDERER = 'SERVER_PORT_ITEM_RENDERER';
+export const NODE_NAME_ITEM_RENDERER = 'NODE_NAME_ITEM_RENDERER';
+
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
 
 export const TABLE_HEADER_SITES = [
+  { label: 'site.name', field: 'name' },
   { label: 'site.type', field: 'siteType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER },
   { label: 'description', field: 'description' },
   { label: 'platform', field: 'platformDetails.platformType' },
-  { label: 'IP Address', field: 'platformDetails.serverIp' },
+  { label: 'Node', field: 'node.name', itemRenderer: NODE_NAME_ITEM_RENDERER },
 ];
 
 export const TABLE_HEADER_DR_PLANS = [
   { label: 'name', field: 'name', itemRenderer: DR_PLAN_NAME_ITEM_RENDERER },
-  { label: 'protected.site', field: 'protectedSite.platformDetails.platformName' },
-  { label: 'recovery.site', field: 'recoverySite.platformDetails.platformName', itemRenderer: RECOVERY_SITE_LINK_ITEM_RENDERER },
+  { label: 'protected.name', field: 'protectedSite.name' },
+  { label: 'recovery.site', field: 'recoverySite.name', itemRenderer: RECOVERY_SITE_LINK_ITEM_RENDERER },
   { label: 'replication.interval', field: 'replicationInterval', itemRenderer: REPLICATION_INTERVAL_ITEM_RENDERER },
   { label: 'status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
   { label: 'Recovery Status', field: 'recoveryStatus', itemRenderer: STATUS_ITEM_RENDERER },
@@ -120,6 +126,27 @@ export const TABLE_ALERTS = [
   { label: 'Event Type', field: 'eventType' },
   { label: 'Date', field: 'timeStamp', itemRenderer: DATE_ITEM_RENDERER },
   { label: 'Acknowledged', field: 'isAcknowledge', itemRenderer: ALERT_ACK_ITEM_RENDERER },
+];
+
+// Table fields for nodes
+export const TABLE_NODES = [
+  { label: 'Name', field: 'name' },
+  { label: 'Hostname', field: 'hostname' },
+  { label: 'Type', field: 'nodeType' },
+  { label: 'Platform Type ', field: 'platformType' },
+  { label: 'Ports', field: 'managementPort', itemRenderer: SERVER_PORT_ITEM_RENDERER },
+  { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
+];
+
+// Table fields for support bundle
+export const SUPPORT_BUNDLES = [
+  { label: 'Bundle Name', field: 'name', width: 3 },
+  { label: 'Description', field: 'description', width: 2 },
+  { label: 'Date', field: 'generatedAt', itemRenderer: DATE_ITEM_RENDERER, width: 1 },
+  { label: 'User', field: 'generatedBy', width: 1 },
+  { label: 'Size', field: 'bundleSize', itemRenderer: SIZE_ITEM_RENDERER, width: 1 },
+  { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER, width: 1 },
+  { label: '', field: 'status', itemRenderer: SUPPORT_BUNDLE_ACTION_ITEM_RENDERER, width: 1 },
 ];
 
 // table filter help text

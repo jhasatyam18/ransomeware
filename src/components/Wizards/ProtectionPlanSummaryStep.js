@@ -11,8 +11,8 @@ class ProtectionPlanSummaryStep extends Component {
     const pSite = getValue('drplan.protectedSite', values);
     const rSite = getValue('drplan.recoverySite', values);
     const replicationInterval = getValue('drplan.replicationInterval', values);
-    const protectedSiteName = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${pSite}`)[0].platformDetails.platformName;
-    const recoverySiteName = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${rSite}`)[0].platformDetails.platformName;
+    const protectedSiteName = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${pSite}`)[0].name;
+    const recoverySiteName = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${rSite}`)[0].name;
     const selectedVMs = getValue('ui.site.seletedVMs', values);
     const replicationUnit = getValue('ui.values.replication.interval.type', values);
     let size = 0;
