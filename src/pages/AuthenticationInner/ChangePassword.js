@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 // Redux
 import { Link, withRouter } from 'react-router-dom';
-import { Card, CardBody, Col, Container, Row } from 'reactstrap';
+import { Card, CardBody, Col, Container, Label, Row } from 'reactstrap';
 import { changeUserPassword } from '../../store/actions';
 // import images
 import logo from '../../assets/images/logo.png';
@@ -83,6 +83,7 @@ class ChangePassword extends Component {
                       </Link>
                     </div>
                     <div className="p-2">
+                      { allowCancel ? null : <Label className="text-danger padding-left-20">Change the default password for user admin</Label>}
                       <DMFieldText dispatch={dispatch} fieldKey="user.oldPassword" field={oldPassword} user={user} hideLabel="true" />
                       <DMFieldText dispatch={dispatch} fieldKey="user.newPassword" field={password} user={user} hideLabel="true" />
                       <DMFieldText dispatch={dispatch} fieldKey="user.confirmPassword" field={cnfPassword} user={user} hideLabel="true" />
