@@ -59,3 +59,8 @@ export const API_SUPPORT_BUNDLE = 'api/v1/support/bundle';
 
 // nodes
 export const API_NODES = 'api/v1/nodes';
+
+// email
+export const API_EMAIL_CONFIGURATION = 'api/v1/email/configuration';
+export const API_EMAIL_CONFIGURE = 'api/v1/email/configure';
+export const API_EMAIL_RECIPIENTS = 'api/v1/email/recipient';

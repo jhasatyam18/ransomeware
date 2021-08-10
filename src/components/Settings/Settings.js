@@ -13,16 +13,23 @@ import {
 } from 'reactstrap';
 import classnames from 'classnames';
 import { withRouter } from 'react-router-dom';
-import { SETTINGS_TABS } from '../../constants/InputConstants';
 import Node from './node/Node';
+import { resetSettings } from '../../store/actions/NodeActions';
+import { SETTINGS_TABS } from '../../constants/InputConstants';
 
 const Support = React.lazy(() => import('./support/Support'));
+const EmailSettings = React.lazy(() => import('./email/EmailSettings'));
 
 class Settings extends Component {
   constructor() {
     super();
     this.state = { activeTab: '1' };
     this.toggleTab = this.toggleTab.bind(this);
+  }
+
+  componentWillUnmount() {
+    const { dispatch } = this.props;
+    dispatch(resetSettings());
   }
 
   toggleTab(tab) {
@@ -57,27 +64,26 @@ class Settings extends Component {
   render() {
     const { activeTab } = this.state;
     return (
-      <>
-        <Container fluid>
-          <Card>
-            <CardBody>
-              {this.renderNav()}
-              <TabContent activeTab={activeTab}>
-                <TabPane tabId={activeTab} className="p-3">
-                  <Row>
-                    <Col sm="12">
-                      <Suspense fallback={<div>Loading...</div>}>
-                        {activeTab === '1' ? <Node /> : null}
-                        {activeTab === '2' ? <Support /> : null}
-                      </Suspense>
-                    </Col>
-                  </Row>
-                </TabPane>
-              </TabContent>
-            </CardBody>
-          </Card>
-        </Container>
-      </>
+      <Container fluid>
+        <Card>
+          <CardBody>
+            {this.renderNav()}
+            <TabContent activeTab={activeTab}>
+              <TabPane tabId={activeTab} className="p-3">
+                <Row>
+                  <Col sm="12">
+                    <Suspense fallback={<div>Loading...</div>}>
+                      {activeTab === '1' ? <Node /> : null}
+                      {activeTab === '2' ? <Support /> : null}
+                      {activeTab === '3' ? <EmailSettings /> : null}
+                    </Suspense>
+                  </Col>
+                </Row>
+              </TabPane>
+            </TabContent>
+          </CardBody>
+        </Card>
+      </Container>
     );
   }
 }

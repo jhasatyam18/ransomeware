@@ -16,7 +16,7 @@ function SupportBundleActionsRenderer({ data, dispatch }) {
     }
     return (
       <a href={downloadUrl}>
-        <box-icon name="download" type="solid" color="#556ee6" />
+        <i className="fas fa-download fa-lg" />
       </a>
     );
   }
@@ -25,17 +25,22 @@ function SupportBundleActionsRenderer({ data, dispatch }) {
     if (data.status === 'inprogress') {
       return '';
     }
+
     return (
-      <box-icon type="solid" color="#f46a6a" name="trash" onClick={onDelete} />
+      <a href="#" onClick={onDelete} className="text-danger" title="Remove">
+        <i className="far fa-trash-alt fa-lg" />
+      </a>
     );
   }
 
   return (
     <div>
-      {renderDownload()}
       &nbsp;
       &nbsp;
       {renderDelete()}
+      &nbsp;
+      &nbsp;
+      {renderDownload()}
     </div>
   );
 }

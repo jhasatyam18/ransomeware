@@ -37,9 +37,11 @@ function StatusItemRenderer({ data, field }) {
     );
   }
   if (status === JOB_FAILED || status === JOB_STOPPED || status === JOB_INIT_FAILED || status === JOB_SYNC_FAILED || status === NODE_STATUS_OFFLINE) {
+    const { failureMessage, errorMessage } = data;
+    const msg = (typeof failureMessage !== 'undefined' ? failureMessage : errorMessage);
     return (
       <div>
-        <Badge title={data.failureMessage} className="font-size-13 badge-soft-danger" color="danger" pill>
+        <Badge title={msg} className="font-size-13 badge-soft-danger" color="danger" pill>
           {resp}
         </Badge>
       </div>

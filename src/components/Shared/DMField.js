@@ -5,7 +5,7 @@ import DMFieldSelect from './DMFieldSelect';
 import DMFieldText from './DMFieldText';
 import DMFieldNumber from './DMFieldNumber';
 import DMFieldCheckbox from './DMFieldCheckbox';
-import { getFieldCompponents } from '../../utils/ComponentFatory';
+import { getFieldComponents } from '../../utils/ComponentFatory';
 // Import Images
 
 class DMField extends Component {
@@ -21,7 +21,7 @@ class DMField extends Component {
       case FIELD_TYPE.CHECKBOX:
         return <DMFieldCheckbox dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} />;
       case FIELD_TYPE.CUSTOM:
-        return getFieldCompponents(dispatch, fieldKey, user, COMPONENT);
+        return getFieldComponents(dispatch, fieldKey, user, COMPONENT);
       default:
         return <DMFieldText dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} />;
     }

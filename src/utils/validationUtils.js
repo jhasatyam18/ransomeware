@@ -211,9 +211,9 @@ export function validateForm(formKey, user, dispatch) {
   let isClean = true;
   fields.map((fieldKey) => {
     const field = FIELDS[fieldKey];
-    const { shouldShow, validate } = field;
+    const { shouldShow, validate, patterns } = field;
     const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
-    if (showField && typeof validate !== 'undefined') {
+    if (showField && (typeof validate !== 'undefined' || typeof patterns !== 'undefined')) {
       if (!validateField(field, fieldKey, getValue(fieldKey, values), dispatch, user)) {
         isClean = false;
       }

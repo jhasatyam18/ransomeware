@@ -1,4 +1,6 @@
+import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { CHANGE_SIDEBAR_TYPE } from '../../constants/actionTypes';
+import { addMessage } from './MessageActions';
 
 export function updateSitebarType(sidebarType, isMobile) {
   return {
@@ -47,7 +49,7 @@ export function changeLeftSidebarType(sidebarType, isMobile) {
           if (!isMobile) manageBodyClass('vertical-collpsed', 'remove');
       }
       dispatch(updateSitebarType(sidebarType, isMobile));
-    } catch (err) { alert(err); }
+    } catch (err) { dispatch(addMessage(err, MESSAGE_TYPES.ERROR)); }
   };
 }
 

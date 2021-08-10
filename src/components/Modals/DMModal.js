@@ -9,6 +9,8 @@ import ModalAbout from './ModalAbout';
 import ModalAlertDetails from './ModalAlertDetails';
 import ModalSupportBundle from './ModalSupportBundle';
 import ModalConfigureNode from './ModalConfigureNode';
+import ModalEmailConfiguration from './ModalEmailConfiguration';
+import ModalEmailRecipient from './ModalEmailRecipient';
 
 class DMModal extends Component {
   constructor() {
@@ -38,6 +40,10 @@ class DMModal extends Component {
           return <ModalSupportBundle />;
         case MODALS.MODAL_NODE_CONFIGURATION:
           return <ModalConfigureNode options={options} />;
+        case MODALS.MODAL_EMAIL_CONFIGURATION:
+          return <ModalEmailConfiguration options={options} />;
+        case MODALS.MODAL_EMAIL_RECIPIENTS_CONFIGURATION:
+          return <ModalEmailRecipient options={options} />;
         default:
           return (<div>404</div>);
       }

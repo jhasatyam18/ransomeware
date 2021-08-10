@@ -301,3 +301,14 @@ export function shouldShowNodeEncryptionKey(user) {
   }
   return false;
 }
+
+export function getEventOptions() {
+  return [
+    { label: 'Recovery', value: 'Recovery' },
+    { label: 'Migration', value: 'Migration' },
+    { label: 'License', value: 'License' },
+    { label: 'Recovery', value: 'Recovery1' },
+    { label: 'Migration', value: 'Migration1' },
+    { label: 'License', value: 'License1' },
+  ];
+}

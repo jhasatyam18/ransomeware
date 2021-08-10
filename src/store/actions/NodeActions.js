@@ -200,3 +200,9 @@ export function nodesFetched(nodes) {
     nodes,
   };
 }
+
+export function resetSettings() {
+  return {
+    type: Types.RESET_SETTINGS,
+  };
+}

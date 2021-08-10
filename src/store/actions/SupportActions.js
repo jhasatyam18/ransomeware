@@ -7,6 +7,7 @@ import { API_DELETE_SUPPORT_BUNDLE, API_SUPPORT_BUNDLE } from '../../constants/A
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 // Util
 import { callAPI, API_TYPES, createPayload } from '../../utils/ApiUtils';
+import { closeModal } from './ModalActions';
 
 /**
  * Fetch all the available support bundles
@@ -46,6 +47,7 @@ export function deleteSupportBundle(id) {
         } else {
           dispatch(addMessage('Support bundle deleted successfully', MESSAGE_TYPES.INFO));
           dispatch(fetchSupportBundles());
+          dispatch(closeModal());
         }
       },
       (err) => {

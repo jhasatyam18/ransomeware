@@ -17,6 +17,7 @@ export const SIZE_ITEM_RENDERER = 'SIZE_ITEM_RENDERER';
 export const SUPPORT_BUNDLE_ACTION_ITEM_RENDERER = 'SUPPORT_BUNDLE_ACTION_ITEM_RENDERER';
 export const SERVER_PORT_ITEM_RENDERER = 'SERVER_PORT_ITEM_RENDERER';
 export const NODE_NAME_ITEM_RENDERER = 'NODE_NAME_ITEM_RENDERER';
+export const EMAIL_RECIPIENT_ACTION_ITEM_RENDER = 'EMAIL_RECIPIENT_ACTION_ITEM_RENDER';
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
@@ -147,6 +148,13 @@ export const SUPPORT_BUNDLES = [
   { label: 'Size', field: 'bundleSize', itemRenderer: SIZE_ITEM_RENDERER, width: 1 },
   { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER, width: 1 },
   { label: '', field: 'status', itemRenderer: SUPPORT_BUNDLE_ACTION_ITEM_RENDERER, width: 1 },
+];
+
+// Table fields for email recipients
+export const TABLE_EMAIL_RECIPIENTS = [
+  { label: 'Email', field: 'emailAddress', width: 3 },
+  { label: 'Subscribed Events', field: 'subscribedEvents', width: 5 },
+  { label: '', field: 'emailAddress', itemRenderer: EMAIL_RECIPIENT_ACTION_ITEM_RENDER, width: 2 },
 ];
 
 // table filter help text

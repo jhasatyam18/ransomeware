@@ -17,7 +17,7 @@ class DMFieldCheckbox extends Component {
     const { user, fieldKey, defaultValue, dispatch } = this.props;
     const { values } = user;
     let v = getValue(fieldKey, values);
-    if (typeof value !== 'undefined') {
+    if (v === true || v === false) {
       this.setState({ value: v });
     } else {
       v = (typeof defaultValue !== 'undefined' ? defaultValue : false);

@@ -123,7 +123,7 @@ class DMFieldText extends Component {
                 onBlur={this.onBlur}
                 onChange={this.handleChange}
                 invalid={hasErrors}
-                autoComplete="off"
+                autoComplete="none"
                 placeholder={placeH}
                 onFocus={() => this.handleFocus(true)}
                 disabled={disabled}

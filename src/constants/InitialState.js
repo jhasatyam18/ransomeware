@@ -39,7 +39,7 @@ const INITIAL_STATE = {
   },
   events: { data: [], selected: {}, filteredData: [] },
   alerts: { data: [], selected: {}, associatedEvent: {}, unread: [], filteredData: [] },
-  settings: { bundles: [], nodes: [], selectedNodes: [] },
+  settings: { bundles: [], nodes: [], selectedNodes: [], emailConfig: null, emailRecipients: [] },
 };
 
 export default INITIAL_STATE;

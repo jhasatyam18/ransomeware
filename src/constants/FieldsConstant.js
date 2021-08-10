@@ -1,13 +1,14 @@
 import { onPlatformTypeChange } from '../store/actions';
 import { onProtectionPlanChange } from '../store/actions/DrPlanActions';
 import { onProtectSiteChange, onRecoverSiteChange, updateAvailabilityZones } from '../store/actions/SiteActions';
-import { getAvailibilityZoneOptions, getDRPlanOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationIntervalOptions, getSiteNodeOptions, getSitesOptions, getSubnetOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware, shouldShowNodeEncryptionKey, shouldShowNodePlatformType, shouldShowNodeManagementPort, shouldShowNodeReplicationPort } from '../utils/InputUtils';
+import { getAvailibilityZoneOptions, getDRPlanOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationIntervalOptions, getSiteNodeOptions, getSitesOptions, getSubnetOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware, shouldShowNodeEncryptionKey, shouldShowNodePlatformType, shouldShowNodeManagementPort, shouldShowNodeReplicationPort, getEventOptions } from '../utils/InputUtils';
 import { isEmpty, validateDrSiteSelection } from '../utils/validationUtils';
 import { STATIC_KEYS } from './InputConstants';
-import { FQDN_REGEX, HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX } from './ValidationConstants';
+import { EMAIL_REGEX, FQDN_REGEX, HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX } from './ValidationConstants';
 
 export const CONFIURE_SITE_GROUP = ['configureSite.platformDetails.type', 'configureSite.platformDetails.platformName'];
 export const REPLICATION_INTERVAL_COMP = 'REPLICATION_INTERVAL_COMP';
+export const MULTISELECT_ITEM_COMP = 'MULTISELECT_ITEM_COMP';
 export const STACK_VIEW_COMPONENT = 'STACK_VIEW_COMPONENT';
 export const PROTECTION_REPLICATION_JOBS = 'PROTECTION_REPLICATION_JOBS';
 export const FIELD_TYPE = {
@@ -135,5 +136,21 @@ export const FIELDS = {
   },
   'node.encryptionKey': {
     label: 'node.encryptionKey', description: 'Node encryption key', placeHolderText: 'encryption key', type: FIELD_TYPE.TEXT, errorMessage: 'Enter encryption key for the node', shouldShow: (user) => shouldShowNodeEncryptionKey(user) },
+  // email configurations
+  'emailConfiguration.emailAddress': {
+    label: 'emailConfiguration.emailAddress', description: 'Email address', placeHolderText: 'Email address', type: FIELD_TYPE.TEXT, errorMessage: 'Enter valid email address', shouldShow: true, patterns: [EMAIL_REGEX] },
+  'emailConfiguration.password': {
+    label: 'emailConfiguration.password', description: 'Email password', placeHolderText: 'Email password', type: FIELD_TYPE.PASSOWRD, errorMessage: 'Enter email password', shouldShow: true, validate: (value, user) => isEmpty(value, user) },
+  'emailConfiguration.smtpHost': {
+    label: 'emailConfiguration.smtpHost', description: 'SMTP host name', placeHolderText: 'SMTP host name', type: FIELD_TYPE.TEXT, errorMessage: 'Enter valid smtp host or ip address', shouldShow: true, validate: (value, user) => isEmpty(value, user) },
+  'emailConfiguration.smtpPort': {
+    label: 'emailConfiguration.smtpPort', description: 'SMTP port', placeHolderText: 'SMTP port', type: FIELD_TYPE.NUMBER, errorMessage: 'Enter valid smtp port', shouldShow: true, validate: (value, user) => isEmpty(value, user) },
+  'emailConfiguration.insecureSkipVerify': {
+    label: 'emailConfiguration.insecureSkipVerify', description: 'Skip SSL certificate', placeHolderText: '', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'emailConfiguration.replicateConfig': {
+    label: 'emailConfiguration.replicateConfig', description: 'Replicate configuration on connected sites', placeHolderText: 'Replicate configuration on connected sites', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'emailRecipient.emailAddress': {
+    label: 'emailRecipient.emailAddress', description: 'Email address of recipient', placeHolderText: 'Email address of recipient', type: FIELD_TYPE.TEXT, shouldShow: true, errorMessage: 'Enter valid email address', patterns: [EMAIL_REGEX] },
+  'emailRecipient.subscribedEvents': {
+    label: 'emailRecipient.subscribedEvents', description: 'Subscribed events for email address', placeHolderText: 'Subscribed events for email address', COMPONENT: MULTISELECT_ITEM_COMP, type: FIELD_TYPE.CUSTOM, shouldShow: true, errorMessage: 'Select at least one event type', validate: (value, user) => isEmpty(value, user), options: (user) => getEventOptions(user) },
 };
-

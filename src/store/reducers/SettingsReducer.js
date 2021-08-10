@@ -9,6 +9,12 @@ export default function settings(state = INITIAL_STATE.settings, action) {
       return { ...state, nodes: action.nodes };
     case Types.SET_SELECTED_NODES:
       return { ...state, selectedNodes: action.selectedNodes };
+    case Types.FETCH_EMAIL_CONFIGURATION:
+      return { ...state, email: action.config };
+    case Types.FETCH_EMAIL_RECIPIENTS:
+      return { ...state, emailRecipients: action.emailRecipients };
+    case Types.RESET_SETTINGS:
+      return { ...INITIAL_STATE.settings };
     default:
       return state;
   }

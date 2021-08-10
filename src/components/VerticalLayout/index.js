@@ -100,7 +100,7 @@ class Layout extends Component {
                   <Route path={JOBS} render={() => <Jobs protectionplanID={0} {...this.props} />} />
                   <Route path={EVENTS} render={() => <Events />} />
                   <Route path={ALERTS} render={() => <Alerts />} />
-                  <Route path={SETTINGS} render={() => <Settings />} />
+                  <Route path={SETTINGS} render={() => <Settings dispatch={dispatch} />} />
                   <Route component={Pages404} />
                 </Switch>
               </Suspense>

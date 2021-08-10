@@ -101,5 +101,14 @@
   "node.managementPort": "Management Port",
   "node.replicationPort": "Replication Port",
   "node.hostname":"Hostname",
-  "change.password": "Change Password"
+  "change.password": "Change Password",
+  "emailConfiguration.emailAddress": "Email Address",
+  "emailConfiguration.password": "Email Password",
+  "emailConfiguration.smtpHost": "SMTP Host",
+  "emailConfiguration.smtpPort": "SMTP Post",
+  "emailConfiguration.insecureSkipVerify": "Skip SSL Certificate Verification",
+  "emailConfiguration.replicateConfig": "Replicate Configuration on connected Sites",
+  "emailRecipient.emailAddress":"Email Address",
+  "emailRecipient.subscribedEvents":"subscribed Events"
+
 }
