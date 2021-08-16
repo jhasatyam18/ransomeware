@@ -1,6 +1,6 @@
 import React from 'react';
-import { getValue } from '../../utils/InputUtils';
-import { JOB_COMPLETION_STATUS } from '../../constants/AppStatus';
+import { getValue } from '../../../utils/InputUtils';
+import { JOB_COMPLETION_STATUS } from '../../../constants/AppStatus';
 // TODO: CURRENT LOGIC IS FOR ALPHA RELEASE ONLY
 // THIS NEED TO REVERT BACK, BACK_END NEED TO PROVIDE THE OS TYPE II RESPONSE
 // TO AVOID THE EXTENSIVE UI LEVEL FILTERING

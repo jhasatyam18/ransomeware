@@ -1,7 +1,7 @@
 import React from 'react';
-import { openModal } from '../../store/actions/ModalActions';
-import { deleteSupportBundle } from '../../store/actions/SupportActions';
-import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
+import { openModal } from '../../../store/actions/ModalActions';
+import { deleteSupportBundle } from '../../../store/actions/SupportActions';
+import { MODAL_CONFIRMATION_WARNING } from '../../../constants/Modalconstant';
 
 function SupportBundleActionsRenderer({ data, dispatch }) {
   function onDelete() {

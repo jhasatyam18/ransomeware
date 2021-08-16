@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Popover, PopoverBody } from 'reactstrap';
-import { formatTime } from '../../utils/AppUtils';
+import { formatTime } from '../../../utils/AppUtils';
 import DateItemRenderer from './DateItemRenderer';
 
 function TimeDurationItemRenderer({ data }) {

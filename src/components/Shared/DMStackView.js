@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, Row } from 'reactstrap';
-import { getStackComponent } from '../../utils/ComponentFatory';
+import { getStackComponent } from '../../utils/ComponentFactory';
 
 class DMStackView extends Component {
   constructor() {

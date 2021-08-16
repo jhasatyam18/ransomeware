@@ -75,7 +75,7 @@ export const FIELDS = {
     label: 'name', description: 'Protection Plan name', type: FIELD_TYPE.TEXT, errorMessage: 'Required disaster recovery plan name', shouldShow: true, validate: (value, user) => isEmpty(value, user),
   },
   'drplan.replicationInterval': {
-    label: 'Interval', description: 'Replication Interval between 2 consecutive iteration', type: FIELD_TYPE.SELECT, options: (user) => getReplicationIntervalOptions(user), errorMessage: 'Replication Interval Rquired', shouldShow: true, defaultValue: 10,
+    label: 'Interval', description: 'Replication Interval between 2 consecutive iteration', type: FIELD_TYPE.SELECT, options: (user) => getReplicationIntervalOptions(user), errorMessage: 'Replication Interval Rquired', shouldShow: true, defaultValue: 10, validate: (value, user) => isEmpty(value, user),
   },
   'replication.inerval': { type: FIELD_TYPE.CUSTOM, COMPONENT: REPLICATION_INTERVAL_COMP },
 

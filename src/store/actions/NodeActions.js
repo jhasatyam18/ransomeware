@@ -1,13 +1,14 @@
 // actions
 import * as Types from '../../constants/actionTypes';
-import { hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
-import { addMessage } from './MessageActions';
 // constants
 import { API_NODES } from '../../constants/ApiConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 // Util
-import { callAPI, API_TYPES, createPayload } from '../../utils/ApiUtils';
+import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
+import { addMessage } from './MessageActions';
 import { closeModal } from './ModalActions';
+import { hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
+
 /**
  * Fetch all the available nodes
  * @returns set of nodes data in redux managed state
@@ -186,6 +187,38 @@ export function handleNodeTableSelection(data, isSelected, primaryKey) {
     }
   };
 }
+
+// /**
+//  * fetch the node encryption key and set result in key
+//  * @param {*} data
+//  * @param {*} value, password of admin
+//  * @param {*} errorKey
+//  * @returns
+//  */
+// export function getNodeEncryptionKey(data, value, errorKey) {
+//   return (dispatch, getState) => {
+//     const { user } = getState();
+//     const useValue = (typeof value === 'string' && value !== '');
+//     const { values } = user;
+//     const url = NODE_GET_ENCRYPTION_KEY.replace('<id>', data.id);
+//     const pass = getValue('ui.encryption.password', values);
+//     const obj = createPayload(API_TYPES.POST, { username: 'admin', password: (useValue === true ? value : pass) });
+//     dispatch(showApplicationLoader(url, `Fetching encryption key ${data.name}`));
+//     return callAPI(url, obj)
+//       .then((json) => {
+//         dispatch(hideApplicationLoader(url));
+//         if (json === '') {
+//           dispatch(valueChange(STATIC_KEYS.UI_ENCRYPTION_KEY, errorKey));
+//           return;
+//         }
+//         dispatch(valueChange(STATIC_KEYS.UI_ENCRYPTION_KEY, json));
+//       },
+//       (err) => {
+//         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+//         dispatch(hideApplicationLoader(url));
+//       });
+//   };
+// }
 
 export function setSelectedNodes(selectedNodes) {
   return {

@@ -1,6 +1,6 @@
 import React from 'react';
 import 'boxicons';
-import { APP_TYPE } from '../../constants/InputConstants';
+import { APP_TYPE } from '../../../constants/InputConstants';
 
 function RecoverySiteLinkRenderer({ data, user }) {
   const { recoverySite } = data;

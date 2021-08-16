@@ -5,7 +5,7 @@ import DMFieldSelect from './DMFieldSelect';
 import DMFieldText from './DMFieldText';
 import DMFieldNumber from './DMFieldNumber';
 import DMFieldCheckbox from './DMFieldCheckbox';
-import { getFieldComponents } from '../../utils/ComponentFatory';
+import { getFieldComponents } from '../../utils/ComponentFactory';
 // Import Images
 
 class DMField extends Component {

@@ -11,6 +11,7 @@ import ModalSupportBundle from './ModalSupportBundle';
 import ModalConfigureNode from './ModalConfigureNode';
 import ModalEmailConfiguration from './ModalEmailConfiguration';
 import ModalEmailRecipient from './ModalEmailRecipient';
+import ModalEncryptionKey from './ModalEncryptionKey';
 
 class DMModal extends Component {
   constructor() {
@@ -44,6 +45,8 @@ class DMModal extends Component {
           return <ModalEmailConfiguration options={options} />;
         case MODALS.MODAL_EMAIL_RECIPIENTS_CONFIGURATION:
           return <ModalEmailRecipient options={options} />;
+        case MODALS.MODAL_SHOW_ENCRYPTION_KEY:
+          return <ModalEncryptionKey options={options} />;
         default:
           return (<div>404</div>);
       }
@@ -59,7 +62,7 @@ class DMModal extends Component {
     }
     return (
       <>
-        <Modal isOpen centered style={{ minWidth: 600, maxHeight: 550 }} scrollable>
+        <Modal isOpen centered scrollable>
           <div className="modal-header">
             <h5 className="modal-title mt-0" id="DMMODAL">
               {' '}

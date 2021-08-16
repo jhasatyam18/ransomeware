@@ -72,10 +72,10 @@ class Node extends Component {
             <CardBody>
               <div className="btn-group padding-left-20" role="group" aria-label="First group">
                 <ActionButton label="New" onClick={this.onAddNewNode} icon="fa fa-plus" isDisabled={false} t={t} key="newNodeConfiguration" />
-                <ActionButton label="Edit" onClick={this.onReconfigureNode} icon="fa fa-edit" isDisabled={selNodes === 0 || selNodes > 1} t={t} key="newsupportbundle" />
-                <ActionButton label="remove" onClick={this.onRemoveNode} icon="fa fa-trash" isDisabled={selNodes === 0 || selNodes > 1} t={t} key="newsupportbundle" />
-                <ActionButton label="Online" onClick={this.onOnlineNode} icon="fas fa-plug" isDisabled={selNodes === 0 || hasOnline} t={t} key="newsupportbundle" iconColor="#34c38f" />
-                <ActionButton label="Offline" onClick={this.onOfflineNode} icon="fas fa-power-off" isDisabled={selNodes === 0 || hasOffline} t={t} key="newsupportbundle" iconColor="#f46a6a" />
+                <ActionButton label="Edit" onClick={this.onReconfigureNode} icon="fa fa-edit" isDisabled={selNodes === 0 || selNodes > 1} t={t} key="addNewNode" />
+                <ActionButton label="remove" onClick={this.onRemoveNode} icon="fa fa-trash" isDisabled={selNodes === 0 || selNodes > 1} t={t} key="removeNode" />
+                <ActionButton label="Online" onClick={this.onOnlineNode} icon="fas fa-plug" isDisabled={selNodes === 0 || hasOnline} t={t} key="makeNodeOnline" iconColor="#34c38f" />
+                <ActionButton label="Offline" onClick={this.onOfflineNode} icon="fas fa-power-off" isDisabled={selNodes === 0 || hasOffline} t={t} key="makeNodeOffline" iconColor="#f46a6a" />
               </div>
               <DMTable
                 dispatch={dispatch}

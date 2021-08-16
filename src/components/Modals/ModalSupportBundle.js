@@ -35,7 +35,7 @@ class ModalSupportBundle extends Component {
     const { description } = this.state;
     const user = getCookie(APPLICATION_API_USER);
     if (description.length === 0) {
-      this.setState({ error: 'Required support bundle generation message' });
+      this.setState({ error: 'Required, message for support bundle generation.' });
       return;
     }
     dispatch(generateSupportBundle({ description, generatedBy: user }));
@@ -51,8 +51,7 @@ class ModalSupportBundle extends Component {
             <CardBody>
               <Form>
                 <div className="form-group row">
-                  <label htmlFor="ack-message-input" className="col-sm-4 col-form-label">Description</label>
-                  <div className="col-sm-8">
+                  <div className="col-sm-12">
                     <Input type="textarea" placeholder="Description for support bundle generation" className="form-control" id="description-input" value={description} autoComplete="off" onChange={this.handleChange} maxLength="80" />
                     {error.length > 0 ? <span className="error">{error}</span> : null}
                   </div>

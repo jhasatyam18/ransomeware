@@ -1,8 +1,8 @@
 import React from 'react';
-import { openModal } from '../../store/actions/ModalActions';
-import { deleteRecipient } from '../../store/actions/EmailActions';
-import { clearValues, valueChange } from '../../store/actions';
-import { MODAL_CONFIRMATION_WARNING, MODAL_EMAIL_RECIPIENTS_CONFIGURATION } from '../../constants/Modalconstant';
+import { openModal } from '../../../store/actions/ModalActions';
+import { deleteRecipient } from '../../../store/actions/EmailActions';
+import { clearValues, valueChange } from '../../../store/actions';
+import { MODAL_CONFIRMATION_WARNING, MODAL_EMAIL_RECIPIENTS_CONFIGURATION } from '../../../constants/Modalconstant';
 
 function EmailRecipientItemRenderer({ data, dispatch }) {
   function onDelete() {

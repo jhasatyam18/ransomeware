@@ -65,7 +65,7 @@
     "start": "node scripts/start.js",
     "build": "react-scripts --max_old_space_size=8000 build",
     "build-ui": "node scripts/build.js --max_old_space_size=8000 build",
-    "lint": "eslint .",
+    "lint": "eslint src",
     "format": "prettier --write \"**/*.{js,jsx,json,md,html,css,less,scss}\"",
     "test": "node scripts/test.js"
   },

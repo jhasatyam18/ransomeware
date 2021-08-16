@@ -1,7 +1,7 @@
 import React from 'react';
-import { openModal } from '../../store/actions/ModalActions';
-import { alertSelected, getAlertEvent, markAsRead } from '../../store/actions/AlertActions';
-import { MODAL_ALERT_DETAILS } from '../../constants/Modalconstant';
+import { openModal } from '../../../store/actions/ModalActions';
+import { alertSelected, getAlertEvent, markAsRead } from '../../../store/actions/AlertActions';
+import { MODAL_ALERT_DETAILS } from '../../../constants/Modalconstant';
 
 function ViewAlertInfoItemRenderer({ data, field, dispatch }) {
   if (!data) {

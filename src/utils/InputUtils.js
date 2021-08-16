@@ -178,7 +178,7 @@ export function getSubnetOptions(user) {
 }
 export function buildRangeOptions(start, end) {
   const options = [];
-  for (let i = start; i < end; i += 1) {
+  for (let i = start; i <= end; i += 1) {
     const option = { label: i, value: i };
     options.push(option);
   }
@@ -193,7 +193,7 @@ export function getReplicationIntervalOptions(user) {
     case STATIC_KEYS.REPLICATION_INTERVAL_TYPE_HOUR:
       return buildRangeOptions(1, 23);
     default:
-      return buildRangeOptions(1, 59);
+      return buildRangeOptions(10, 59);
   }
 }
 
