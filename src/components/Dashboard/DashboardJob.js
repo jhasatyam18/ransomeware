@@ -25,7 +25,6 @@ class DashBoardJob extends Component {
 
   // checks the status and passes the css accordingly.
   checkStatus(data) {
-    const { t } = this.props;
     const { status } = data;
 
     switch (status) {
@@ -35,12 +34,10 @@ class DashBoardJob extends Component {
         return this.renderData(data, 'app_primary bxs-right-arrow-circle bx-fade-right');
       case appStatus.JOB_FAILED:
         return this.renderData(data, 'app_danger bxs-x-circle');
+      case appStatus.JOB_IN_PROGRESS:
+        return this.renderData(data, 'app_primary bxs-right-arrow-circle bx-fade-right');
       default:
-        return (
-          <div>
-            {t('no.data.to.display')}
-          </div>
-        );
+        return this.renderData(data, 'app_secondary bx-info-circle');
     }
   }
 
@@ -65,12 +62,32 @@ class DashBoardJob extends Component {
     );
   }
 
+  renderNoDataToShow() {
+    const { t } = this.props;
+    return (
+      <>
+        <Card>
+          <CardBody>
+            <p className="font-weight-medium color-white">
+              {t('jobs')}
+            </p>
+            {t('no.data.to.display')}
+          </CardBody>
+        </Card>
+      </>
+    );
+  }
+
   render() {
     const { jobs, t } = this.props;
     const { recovery, replication } = jobs;
     const recoveryData = recovery.filter((data) => getMinutes(data.startTime) < MAX_RECOVERY_TIME); // checks if the time if less than 30 mins
     const combinedData = [...recoveryData, ...replication];
     const dataToDisplay = (combinedData.length > 5 ? combinedData.slice(0, 5) : combinedData);
+
+    if (dataToDisplay.length === 0) {
+      return this.renderNoDataToShow();
+    }
     return (
       <>
         <Card>

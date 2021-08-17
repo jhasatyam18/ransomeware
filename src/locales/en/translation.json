@@ -109,6 +109,13 @@
   "emailConfiguration.insecureSkipVerify": "Skip SSL Certificate Verification",
   "emailConfiguration.replicateConfig": "Replicate Configuration on connected Sites",
   "emailRecipient.emailAddress":"Email Address",
-  "emailRecipient.subscribedEvents":"subscribed Events"
-
+  "emailRecipient.subscribedEvents":"subscribed Events",
+  "site.connection":"Site Connection",
+  "replication.nodes":"Replication Nodes",
+  "node":"Node",
+  "type":"Type",
+  "deployed.on":"Deployed On",
+  "ip.address":"IP Address",
+  "vms":"VMs",
+  "usage":"Usage"
 }

@@ -8,6 +8,8 @@ import RtoRpo from './RtoRpo';
 import DashBoardJob from './DashboardJob';
 import { fetchDashboardData, resetDashboard } from '../../store/actions/DashboardActions';
 import { SITES_PATH, PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
+import SiteConnection from './SiteConnection';
+import DashboardEvents from './DashboardEvents';
 
 class Dashboard extends Component {
   componentDidMount() {
@@ -61,12 +63,16 @@ class Dashboard extends Component {
             </Col>
           </Row>
           <Row>
-            <Col sm={8}><RtoRpo {...this.props} /></Col>
+            <Col sm={8}><RtoRpo /></Col>
             <Col sm={4}><DashBoardJob protectionplanID={0} /></Col>
           </Row>
           <Row>
-            <Col className="dashboard_component_size_handle" sm={8}><ProtectedVsUnProtectedVMs /></Col>
+            <Col className="dashboard_component_size_handle" sm={8}><ProtectedVsUnProtectedVMs {...this.props} /></Col>
             <Col className="dashboard_component_size_handle" sm={4}><BandwidthChart {...this.props} /></Col>
+          </Row>
+          <Row>
+            <Col sm={8}><SiteConnection /></Col>
+            <Col sm={4}><DashboardEvents /></Col>
           </Row>
           <Row>
             <Col xl={12}>

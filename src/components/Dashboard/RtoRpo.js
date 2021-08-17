@@ -1,11 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { withTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 import { Row, Col, Card, CardBody, Media } from 'reactstrap';
 import { formatTime } from '../../utils/AppUtils';
 import ReplicationStat from './ReplicationStat';
 
-class RtoRpo extends Component {
-  renderStatTest(steps) {
+function RtoRpo(props) {
+  function renderStatTest(steps) {
     return (
       <div className="dashboard_replicaiton_info stat_test_position">
         {steps.map((task) => (
@@ -27,27 +28,23 @@ class RtoRpo extends Component {
     );
   }
 
-  renderRto(rtoTime) {
+  function renderRto(rtoTime) {
     const tenMinutes = 600; // 600 sec( 10 minutes)
     const fifteenMinutes = 900; // 900 sec (15 minutes)
+    let rtoStatus = null;
 
     if (rtoTime < tenMinutes) {
-      return (
-        this.renderRtoStatus(rtoTime, 'app_success')
-      );
-    } if (rtoTime > tenMinutes && rtoTime < fifteenMinutes) {
-      return (
-        this.renderRtoStatus(rtoTime, 'app_warning')
-      );
-    } if (rtoTime > fifteenMinutes) {
-      return (
-        this.renderRtoStatus(rtoTime, 'app_danger')
-      );
+      rtoStatus = renderRtoStatus(rtoTime, 'app_success');
+    } else if (rtoTime > tenMinutes && rtoTime < fifteenMinutes) {
+      rtoStatus = renderRtoStatus(rtoTime, 'app_warning');
+    } else {
+      rtoStatus = renderRtoStatus(rtoTime, 'app_danger');
     }
+    return rtoStatus;
   }
 
-  renderRtoStatus(rtoTime, css) {
-    const { t } = this.props;
+  function renderRtoStatus(rtoTime, css) {
+    const { t } = props;
     return (
       <div>
         <Media>
@@ -65,10 +62,11 @@ class RtoRpo extends Component {
     );
   }
 
-  renderData() {
-    const { dashboard, t } = this.props;
-    const { titles } = dashboard;
-    const { rpo = 0, rto = 0 } = titles;
+  function renderData() {
+    const { dashboard, t } = props;
+    const { recoveryStats, replicationStats } = dashboard;
+    const { rto = 0 } = recoveryStats;
+    const { rpo = 0 } = replicationStats;
     return (
       <>
         <Col className="dashboard_divider_right">
@@ -87,38 +85,40 @@ class RtoRpo extends Component {
           </div>
         </Col>
         <Col>
-          {this.renderRto(rto)}
+          {renderRto(rto)}
         </Col>
       </>
     );
   }
 
-  render() {
-    const { dashboard } = this.props;
-    const { recoveryStats } = dashboard;
-    const { testExecutions = 0, fullRecovery = 0, migrations = 0 } = recoveryStats;
-    const data = {
-      statTest: [
-        { label: 'Test Executions', value: testExecutions, icon: 'fa fa-tasks' },
-        { label: 'Full Recovery', value: fullRecovery, icon: 'fa fa-bullseye', color: 'app_success' },
-        { label: 'Migrations', value: migrations, icon: 'fa fa-cloud', color: 'app_primary' },
-      ],
-    };
-    const { statTest } = data;
-    return (
-      <>
-        <Card>
-          <CardBody>
-            <Row>
-              {this.renderData()}
-            </Row>
-            {this.renderStatTest(statTest)}
-          </CardBody>
-        </Card>
-        <ReplicationStat {...this.props} />
-      </>
-    );
-  }
+  const { dashboard } = props;
+  const { recoveryStats } = dashboard;
+  const { testExecutions = 0, fullRecovery = 0, migrations = 0 } = recoveryStats;
+  const data = {
+    statTest: [
+      { label: 'Test Executions', value: testExecutions, icon: 'fa fa-tasks' },
+      { label: 'Full Recovery', value: fullRecovery, icon: 'fa fa-bullseye', color: 'app_success' },
+      { label: 'Migrations', value: migrations, icon: 'fa fa-cloud', color: 'app_primary' },
+    ],
+  };
+  const { statTest } = data;
+  return (
+    <>
+      <Card>
+        <CardBody>
+          <Row>
+            {renderData()}
+          </Row>
+          {renderStatTest(statTest)}
+        </CardBody>
+      </Card>
+      <ReplicationStat {...props} />
+    </>
+  );
 }
 
-export default (withTranslation()(RtoRpo));
+function mapStateToProps(state) {
+  const { dashboard } = state;
+  return { dashboard };
+}
+export default connect(mapStateToProps)(withTranslation()(RtoRpo));

@@ -13,9 +13,9 @@ export function fetchDashboardTitles() {
     dispatch(showApplicationLoader('DASHBOARD_TITLES', 'Loading Dashboard Titles.'));
     return callAPI(API_DASHBOARD_TITLE)
       .then((json) => {
-        const { siteCount, protectionPlans, protectedVMs, protectedStorage, rto, rpo } = json;
+        const { siteCount, protectionPlans, protectedVMs, protectedStorage, siteConnections, siteDetails } = json;
         dispatch(hideApplicationLoader('DASHBOARD_TITLES'));
-        const titles = { sites: siteCount, protectionPlans, vms: protectedVMs, storage: protectedStorage, rto, rpo };
+        const titles = { sites: siteCount, protectionPlans, vms: protectedVMs, storage: protectedStorage, siteConnections, siteDetails };
         dispatch(updateTitleInfo(titles));
       },
       (err) => {
@@ -30,9 +30,9 @@ export function fetchReplicationStats() {
     dispatch(showApplicationLoader('DASHBOARD_REPLICATION_STATS', 'Loading Replication Statistics.'));
     return callAPI(API_DASHBOARD_REPLICATION_STATS)
       .then((json) => {
-        const { completed, failed, running } = json;
+        const { completed, failed, running, rpo, inSync, notInsync, dataReduction, changedData } = json;
         dispatch(hideApplicationLoader('DASHBOARD_REPLICATION_STATS'));
-        const stats = { completed, running, failures: failed, copies: 0, changeRate: 0, dataReduction: 0 };
+        const stats = { completed, running, failures: failed, copies: 0, changeRate: 0, dataReduction, rpo, inSync, notInsync, changedData };
         dispatch(updateReplicationStat(stats));
       },
       (err) => {
@@ -47,9 +47,9 @@ export function fetchRecoveryStats() {
     dispatch(showApplicationLoader('DASHBOARD_RECOVERY_STATS', 'Loading Recovery Statistics.'));
     return callAPI(API_DASHBOARD_RECOVERY_STATS)
       .then((json) => {
-        const { testExecutions, fullRecovery, migrations } = json;
+        const { testExecutions, fullRecovery, migrations, rto } = json;
         dispatch(hideApplicationLoader('DASHBOARD_RECOVERY_STATS'));
-        const stats = { testExecutions, fullRecovery, migrations };
+        const stats = { testExecutions, fullRecovery, migrations, rto };
         dispatch(updateRecoveryStat(stats));
       },
       (err) => {
