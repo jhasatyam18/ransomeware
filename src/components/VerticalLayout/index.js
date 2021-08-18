@@ -11,12 +11,12 @@ import Sidebar from './Sidebar';
 import Header from './Header';
 
 // lazy load components
-const Dashboard = React.lazy(() => import('components/Dashboard/Dashboard'));
-const Sites = React.lazy(() => import('components/Configure/Sites/Sites'));
-const DRPlanDetails = React.lazy(() => import('components/data-recovery/DRPlanDetails'));
-const Jobs = React.lazy(() => import('components/Jobs/Jobs'));
-const Events = React.lazy(() => import('components/Events/Events'));
-const Alerts = React.lazy(() => import('components/Alerts/Alerts'));
+const Dashboard = React.lazy(() => import('../Dashboard/Dashboard'));
+const Sites = React.lazy(() => import('../Configure/Sites/Sites'));
+const DRPlanDetails = React.lazy(() => import('../data-recovery/DRPlanDetails'));
+const Jobs = React.lazy(() => import('../Jobs/Jobs'));
+const Events = React.lazy(() => import('../Events/Events'));
+const Alerts = React.lazy(() => import('../Alerts/Alerts'));
 const Settings = React.lazy(() => import('../Settings/Settings'));
 class Layout extends Component {
   constructor(props) {

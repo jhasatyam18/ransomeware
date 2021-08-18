@@ -97,8 +97,12 @@ module.exports = app => {
     res.send(id);
   });
 
-   // Move node to offline
-   app.post("/api/v1/nodes/:id/offline", (req, res) => {
+  // get encryption key of node
+  app.post("/api/v1/nodes/:id/encryption", (req, res) => {
+    res.send(JSON.stringify("234jhad287348aldssd4165f6s1d6sg464asdasn87"));
+  });
+  // Move node to offline
+  app.post("/api/v1/nodes/:id/offline", (req, res) => {
     const id = req.params.id
     let response = [];
     data.forEach(node => {
