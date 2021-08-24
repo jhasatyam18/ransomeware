@@ -1,87 +1,81 @@
-import React, { Component } from 'react';
-
+import React from 'react';
+import { connect } from 'react-redux';
+import { withTranslation } from 'react-i18next';
 import { Card, CardBody, Badge, Col, Row } from 'reactstrap';
 import { Link } from 'react-router-dom';
 
-class NodeInfo extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      nodes: [
-        {
-          id: '72.117.30.68',
-          name: 'DM_VMware_CA',
-          deployedOn: 'VMware_CA',
-          vms: '15',
-          status: 'success',
-          usage: '3',
-          state: 'Online',
-          type: 'Protect',
-        },
-        {
-          id: '34.168.40.56',
-          name: 'DM_AWS_EU',
-          deployedOn: 'AWS_EU (London)',
-          vms: '8',
-          status: 'success',
-          usage: '1.5',
-          state: 'Online',
-          type: 'Protect/Recovery',
-        },
-        {
-          id: '34.189.60.52',
-          name: 'DM_GCP_US',
-          deployedOn: 'GCP_US_WEST',
-          vms: '4',
-          status: 'success',
-          usage: '0.4',
-          state: 'Online',
-          type: 'Recovery',
-        },
-        {
-          id: '20.218.60.22',
-          name: 'DM_VMware_UK',
-          deployedOn: 'VMware_UK',
-          vms: '12',
-          status: 'success',
-          usage: '2',
-          state: 'Online',
-          type: 'Protect',
-        },
-      ],
-    };
+function NodeInfo(props) {
+  function renderNoDataToShow() {
+    const { t } = props;
+    return (
+      <>
+        <Card>
+          <CardBody>
+            <p className="font-weight-medium color-white">
+              {t('replication.nodes')}
+            </p>
+            {t('no.data.to.display')}
+          </CardBody>
+        </Card>
+      </>
+    );
   }
 
-  render() {
-    const { nodes } = this.state;
+  function renderOverallState() {
+    const { dashboard } = props;
+    const { nodes } = dashboard;
+    let badgeColor = '';
+    let OverallStatus = '';
+
+    if (nodes.every((val) => val.status === 'online')) {
+      badgeColor = 'success';
+      OverallStatus = 'online';
+    } else if (nodes.every((val) => val.status === 'offline')) {
+      badgeColor = 'danger';
+      OverallStatus = 'offline';
+    } else {
+      badgeColor = 'warning';
+      OverallStatus = 'warning';
+    }
+    return (
+      <div className="dashboard_replication_header_state">
+        Overall State &nbsp;&nbsp;
+        <Badge className={`font-size-12 badge-soft-${badgeColor}`} color={badgeColor} pill>
+          {OverallStatus}
+        </Badge>
+      </div>
+    );
+  }
+
+  function renderer() {
+    const { dashboard, t } = props;
+    const { nodes } = dashboard;
+    if (!nodes) {
+      return renderNoDataToShow();
+    }
     return (
       <>
         <Card>
           <CardBody>
             <Row>
               <Col sm={9}>
-                <p className="font-weight-medium dashboard-title">Replication Nodes (4)</p>
+                <p className="font-weight-medium dashboard-title">{`Replication Nodes (${nodes.length})`}</p>
               </Col>
               <Col sm={3}>
-                <div className="dashboard_replication_header_state">
-                  Overall State &nbsp;&nbsp;
-                  <Badge className="font-size-12 badge-soft-success" color="success" pill>
-                    Healthy
-                  </Badge>
-                </div>
+                {renderOverallState()}
               </Col>
             </Row>
             <div className="table-responsive">
               <table className="table table-centered table-nowrap mb-0">
                 <thead className="thead-light">
                   <tr>
-                    <th>Node</th>
-                    <th>Type</th>
-                    <th>Deployed On</th>
-                    <th>IP Address</th>
-                    <th>VMs</th>
-                    <th>Usage</th>
-                    <th>Status</th>
+                    <th>{t('node')}</th>
+                    <th>{t('type')}</th>
+                    <th>{t('deployed.on')}</th>
+                    <th>{t('ip.address')}</th>
+                    <th>{t('vms')}</th>
+                    <th>{t('usage')}</th>
+                    <th>{t('status')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -93,7 +87,7 @@ class NodeInfo extends Component {
                       <td>
                         <Link to="#" className="text-body font-weight-bold">
                           {' '}
-                          {node.id}
+                          {node.hostname}
                           {' '}
                         </Link>
                         {' '}
@@ -101,8 +95,8 @@ class NodeInfo extends Component {
                       <td>{node.vms}</td>
                       <td>{`${node.usage} GB`}</td>
                       <td>
-                        <Badge className={`font-size-12 badge-soft-${node.status}`} color={node.status} pill>
-                          {node.state}
+                        <Badge className={`font-size-12 badge-soft-${node.status === 'online' ? 'success' : 'danger'}`} color={node.status === 'online' ? 'success' : 'danger'} pill>
+                          {node.status}
                         </Badge>
                       </td>
                     </tr>
@@ -115,6 +109,12 @@ class NodeInfo extends Component {
       </>
     );
   }
+
+  return renderer();
 }
 
-export default NodeInfo;
+function mapStateToProps(state) {
+  const { dashboard } = state;
+  return { dashboard };
+}
+export default connect(mapStateToProps)(withTranslation()(NodeInfo));

@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactFlow from 'react-flow-renderer';
+import ReactFlow, { Controls } from 'react-flow-renderer';
 import { connect } from 'react-redux';
 import { Card, CardBody } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
@@ -26,6 +26,7 @@ function SiteConnection(props) {
     const { dashboard, t } = props;
     const { titles } = dashboard;
     const { siteConnections, siteDetails } = titles;
+    let siteDetailsToDisplay = [];
     const elements = [];
 
     if (!siteDetails) {
@@ -33,10 +34,12 @@ function SiteConnection(props) {
     }
 
     const displayType = (siteDetails.length > 6 ? 'step' : 'default');
+    siteDetailsToDisplay = (siteDetails.length > 8 ? siteDetails.slice(0, 8) : siteDetails);
+
     // draw nodes
-    for (let i = 0; i < siteDetails.length; i += 1) {
+    for (let i = 0; i < siteDetailsToDisplay.length; i += 1) {
       elements.push(
-        { id: `${siteDetails[i].id}`, data: { label: siteDetails[i].name }, type: displayType, position: { x: NODE_POSITIONS[i].x, y: NODE_POSITIONS[i].y } },
+        { id: `${siteDetailsToDisplay[i].id}`, data: { label: siteDetailsToDisplay[i].name }, type: displayType, position: { x: NODE_POSITIONS[i].x, y: NODE_POSITIONS[i].y } },
       );
     }
 
@@ -51,12 +54,14 @@ function SiteConnection(props) {
 
     const element = elements;
     return (
-      <Card className="site_connection">
+      <Card className="site_connection ">
         <CardBody>
           <p className="font-weight-medium color-white">
             {t('site.connection')}
           </p>
-          <ReactFlow elements={element} />
+          <ReactFlow elements={element} zoomOnScroll={false}>
+            <Controls className="react-flow__controls-custom" showInteractive={false} />
+          </ReactFlow>
         </CardBody>
       </Card>
     );

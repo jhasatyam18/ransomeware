@@ -55,3 +55,9 @@
   display: grid;
   min-height: 365px;
 }
+
+.react-flow__controls-custom{
+  display: flex;
+  left:2px !important;
+  bottom:30px !important;
+}

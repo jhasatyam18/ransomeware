@@ -49,7 +49,6 @@ function ReplicationStat(props) {
         { label: 'Failures', value: failures, icon: 'fa fa-exclamation-triangle', color: 'app_danger' },
       ],
       statRep: [
-        { label: 'Copies', value: '54', icon: 'fa fa-camera', color: 'app_primary' },
         { label: 'Change Rate', value: calculateChangedData(changedData), icon: 'fa fa-copy', color: 'app_success' },
         { label: 'Data Reduction', value: calculateDataReduction(dataReduction), icon: 'fa fa-file-archive', color: 'app_success' },
       ],

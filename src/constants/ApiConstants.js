@@ -27,6 +27,9 @@ export const API_DASHBOARD_TITLE = 'api/v1/dashboard/titles';
 export const API_DASHBOARD_RECOVERY_STATS = 'api/v1/dashboard/recoverystats';
 export const API_DASHBOARD_REPLICATION_STATS = 'api/v1/dashboard/replicationstats';
 export const API_DASHBOARD_BANDWIDTH_USAGE = 'api/v1/dashboard/bandwidthusage';
+export const API_DASHBOARD_VIRTUAL_MACHINE_PROTECTION_ANALYSIS_PROTECTED_VMS = 'api/v1/dashboard/protectedvms';
+export const API_DASHBOARD_NODE_STATS = 'api/v1/dashboard/nodestats';
+
 // recovery
 export const API_RECOVER = 'api/v1/recover';
 export const API_VALIDATE_RECOVERY = 'api/v1/recover/validate';

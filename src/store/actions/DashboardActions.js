@@ -5,7 +5,7 @@ import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { changeReplicationJobType, fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
 import { addMessage } from './MessageActions';
 import { hideApplicationLoader, showApplicationLoader } from './UserActions';
-import { API_DASHBOARD_TITLE, API_DASHBOARD_REPLICATION_STATS, API_DASHBOARD_RECOVERY_STATS } from '../../constants/ApiConstants';
+import { API_DASHBOARD_TITLE, API_DASHBOARD_REPLICATION_STATS, API_DASHBOARD_RECOVERY_STATS, API_DASHBOARD_VIRTUAL_MACHINE_PROTECTION_ANALYSIS_PROTECTED_VMS, API_DASHBOARD_NODE_STATS } from '../../constants/ApiConstants';
 import { callAPI } from '../../utils/ApiUtils';
 
 export function fetchDashboardTitles() {
@@ -64,7 +64,7 @@ export function fetchDashboardData() {
   return (dispatch) => {
     dispatch(changeReplicationJobType(REPLICATION_JOB_TYPE.VM));
     dispatch(showApplicationLoader('LOADING_DASHBOARD_DATA', 'Loading...'));
-    const apis = [dispatch(fetchDashboardTitles()), dispatch(fetchRecoveryStats()), dispatch(fetchReplicationStats()), dispatch(fetchRecoveryJobs(0)), dispatch(fetchReplicationJobs(0))];
+    const apis = [dispatch(fetchDashboardTitles()), dispatch(fetchRecoveryStats()), dispatch(fetchReplicationStats()), dispatch(fetchRecoveryJobs(0)), dispatch(fetchReplicationJobs(0)), dispatch(fetchProtectedVMStat()), dispatch(fetchNodeInfoStat())];
     return Promise.all(apis)
       .then(
         () => {
@@ -77,6 +77,38 @@ export function fetchDashboardData() {
           return new Promise((resolve) => resolve());
         },
       );
+  };
+}
+
+export function fetchProtectedVMStat() {
+  return (dispatch) => {
+    dispatch(showApplicationLoader('DASHBOARD_PROTECTED_VM_STATS', 'Loading Protected VM Statistics.'));
+    return callAPI(API_DASHBOARD_VIRTUAL_MACHINE_PROTECTION_ANALYSIS_PROTECTED_VMS)
+      .then((json) => {
+        const { protectedVMs, unprotectedVMs } = json;
+        dispatch(hideApplicationLoader('DASHBOARD_PROTECTED_VM_STATS'));
+        const stats = { protectedVMs, unprotectedVMs };
+        dispatch(updateProtectedVMStat(stats));
+      },
+      (err) => {
+        dispatch(hideApplicationLoader('DASHBOARD_PROTECTED_VM_STATS'));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  };
+}
+
+export function fetchNodeInfoStat() {
+  return (dispatch) => {
+    dispatch(showApplicationLoader('DASHBOARD_NODE_INFO_STATS', 'Loading Node Info Statistics.'));
+    return callAPI(API_DASHBOARD_NODE_STATS)
+      .then((json) => {
+        dispatch(hideApplicationLoader('DASHBOARD_NODE_INFO_STATS'));
+        dispatch(updateNodeInfoStat(json));
+      },
+      (err) => {
+        dispatch(hideApplicationLoader('DASHBOARD_NODE_INFO_STATS'));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
   };
 }
 
@@ -104,5 +136,19 @@ export function updateRecoveryStat(recoveryStats) {
 export function resetDashboard() {
   return {
     type: Types.RESET_DASHBOARD,
+  };
+}
+
+export function updateProtectedVMStat(protectedVMStat) {
+  return {
+    type: Types.DASHBOARD_PROTECTED_VM_STAT,
+    protectedVMStat,
+  };
+}
+
+export function updateNodeInfoStat(nodeInfoStat) {
+  return {
+    type: Types.DASHBOARD_NODE_INFO_STAT,
+    nodeInfoStat,
   };
 }

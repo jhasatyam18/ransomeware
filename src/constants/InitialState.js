@@ -36,6 +36,8 @@ const INITIAL_STATE = {
     titles: { sites: 0, protectionPlans: 0, vms: 0, storage: 0 },
     replicationStats: { completed: 0, running: 0, failures: 0, copies: 0, changeRate: 0, dataReduction: 0, rpo: 0, inSync: 0, notInsync: 0, changedData: 0 },
     recoveryStats: { testExecutions: 0, fullRecovery: 0, migrations: 0, rto: 0 },
+    protectedVMStats: { protectedVMs: 0, unprotectedVMs: 0 },
+    nodes: [],
   },
   events: { data: [], selected: {}, filteredData: [] },
   alerts: { data: [], selected: {}, associatedEvent: {}, unread: [], filteredData: [] },

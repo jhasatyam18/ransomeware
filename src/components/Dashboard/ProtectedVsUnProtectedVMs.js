@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Row, Col, Card, CardBody } from 'reactstrap';
 import ReactApexChart from 'react-apexcharts';
+import { connect } from 'react-redux';
 // i18n
 import { withTranslation } from 'react-i18next';
 import { STROKE, SUCCESS, WARNING, DANGER, LEGEND } from '../../constants/ProtectionPlanAnalysisConstant';
@@ -9,8 +10,6 @@ class ProtectedVsUnProtectedVMs extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      seriesOne: [39, 21],
-      seriesTwo: [37, 2],
       walletOptions: {
         stroke: STROKE,
         colors: [SUCCESS, DANGER],
@@ -53,8 +52,8 @@ class ProtectedVsUnProtectedVMs extends Component {
     );
   }
 
-  renderData() {
-    const { walletOptions, replicationOptions, seriesOne, seriesTwo } = this.state;
+  renderData(protectedVMSeries, replicationSeries) {
+    const { walletOptions, replicationOptions } = this.state;
     return (
       <>
         <Col>
@@ -62,7 +61,7 @@ class ProtectedVsUnProtectedVMs extends Component {
             <div id="vm-analysis-chart" className="apex-charts">
               <ReactApexChart
                 options={walletOptions}
-                series={seriesOne}
+                series={protectedVMSeries}
                 type="pie"
                 height={200}
               />
@@ -75,13 +74,13 @@ class ProtectedVsUnProtectedVMs extends Component {
               <Col xs="12">
                 <div>
                   <p className="mb-2">{walletOptions.labels[0]}</p>
-                  <h4>39</h4>
+                  <h4>{protectedVMSeries[0]}</h4>
                 </div>
               </Col>
               <Col xs="12">
                 <div>
                   <p className="mb-2">{walletOptions.labels[1]}</p>
-                  <h4>21</h4>
+                  <h4>{protectedVMSeries[1]}</h4>
                 </div>
               </Col>
             </Row>
@@ -92,7 +91,7 @@ class ProtectedVsUnProtectedVMs extends Component {
           <div id="vm-analysis-chart" className="apex-charts">
             <ReactApexChart
               options={replicationOptions}
-              series={seriesTwo}
+              series={replicationSeries}
               type="donut"
               height={200}
             />
@@ -104,13 +103,13 @@ class ProtectedVsUnProtectedVMs extends Component {
               <Col xs="12">
                 <div>
                   <p className="mb-2">{replicationOptions.labels[0]}</p>
-                  <h4>37</h4>
+                  <h4>{replicationSeries[0]}</h4>
                 </div>
               </Col>
               <Col xs="12">
                 <div>
                   <p className="mb-2">{replicationOptions.labels[1]}</p>
-                  <h4>2</h4>
+                  <h4>{replicationSeries[1]}</h4>
                 </div>
               </Col>
             </Row>
@@ -121,8 +120,12 @@ class ProtectedVsUnProtectedVMs extends Component {
   }
 
   render() {
-    const { seriesOne, seriesTwo } = this.state;
-    const { t } = this.props;
+    const { t, dashboard } = this.props;
+    const { protectedVMStats, replicationStats } = dashboard;
+    const { protectedVMs, unprotectedVMs } = protectedVMStats;
+    const { inSync, notInsync } = replicationStats;
+    const protectedVMSeries = [protectedVMs, unprotectedVMs];
+    const replicationSeries = [inSync, notInsync];
     return (
       <>
         <Card>
@@ -131,7 +134,7 @@ class ProtectedVsUnProtectedVMs extends Component {
               {t('virtual.machine.protection.analysis')}
             </p>
             <Row>
-              {(seriesOne.length > 0) && (seriesTwo.length > 0) ? this.renderData() : this.renderNoDataToShow()}
+              {(protectedVMSeries.length > 0) && (replicationSeries.length > 0) ? this.renderData(protectedVMSeries, replicationSeries) : this.renderNoDataToShow()}
             </Row>
           </CardBody>
         </Card>
@@ -140,4 +143,8 @@ class ProtectedVsUnProtectedVMs extends Component {
   }
 }
 
-export default (withTranslation()(ProtectedVsUnProtectedVMs));
+function mapStateToProps(state) {
+  const { dashboard } = state;
+  return { dashboard };
+}
+export default connect(mapStateToProps)(withTranslation()(ProtectedVsUnProtectedVMs));

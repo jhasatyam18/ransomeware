@@ -9,6 +9,10 @@ export default function dashboard(state = INITIAL_STATE.dashboard, action) {
       return { ...state, replicationStats: action.replicationStats };
     case Types.DASHBOARD_FETCH_DR_PLAN_DETAILS:
       return { ...state, recoveryStats: action.recoveryStats };
+    case Types.DASHBOARD_PROTECTED_VM_STAT:
+      return { ...state, protectedVMStats: action.protectedVMStat };
+    case Types.DASHBOARD_NODE_INFO_STAT:
+      return { ...state, nodes: action.nodeInfoStat };
     case Types.RESET_DASHBOARD:
       return INITIAL_STATE.dashboard;
     default:

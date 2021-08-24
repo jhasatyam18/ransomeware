@@ -41,21 +41,23 @@ class Dashboard extends Component {
                 {reports.map((report, key) => (
                   <Col md="3" key={`_col_-${key * 2}`}>
                     <Card className="mini-stats-wid">
-                      <CardBody>
-                        <Media>
-                          <Media body>
-                            <p className="text-muted font-weight-medium">
-                              {report.title}
-                            </p>
-                            <Link to={report.link}><h4 className="mb-0">{report.description}</h4></Link>
+                      <Link to={report.link}>
+                        <CardBody>
+                          <Media>
+                            <Media body>
+                              <p className="text-muted font-weight-medium">
+                                {report.title}
+                              </p>
+                              <h4 className="mb-0">{report.description}</h4>
+                            </Media>
+                            <div className="mini-stat-icon avatar-sm rounded-circle align-self-center">
+                              <span className="">
+                                <box-icon name={report.icon} size="lg" color={report.color ? report.color : 'white'} />
+                              </span>
+                            </div>
                           </Media>
-                          <div className="mini-stat-icon avatar-sm rounded-circle align-self-center">
-                            <span className="">
-                              <box-icon name={report.icon} size="lg" color={report.color ? report.color : 'white'} />
-                            </span>
-                          </div>
-                        </Media>
-                      </CardBody>
+                        </CardBody>
+                      </Link>
                     </Card>
                   </Col>
                 ))}
@@ -67,7 +69,7 @@ class Dashboard extends Component {
             <Col sm={4}><DashBoardJob protectionplanID={0} /></Col>
           </Row>
           <Row>
-            <Col className="dashboard_component_size_handle" sm={8}><ProtectedVsUnProtectedVMs {...this.props} /></Col>
+            <Col className="dashboard_component_size_handle" sm={8}><ProtectedVsUnProtectedVMs /></Col>
             <Col className="dashboard_component_size_handle" sm={4}><BandwidthChart {...this.props} /></Col>
           </Row>
           <Row>
