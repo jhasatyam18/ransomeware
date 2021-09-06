@@ -6,7 +6,7 @@ import {
 import { withTranslation } from 'react-i18next';
 import { TABLE_ALERTS, TABLE_FILTER_TEXT } from '../../constants/TableConstants';
 import DMTable from '../Table/DMTable';
-import { fetchAlerts, resetAlerts } from '../../store/actions/AlertActions';
+import { fetchAlerts, markAsRead, resetAlerts } from '../../store/actions/AlertActions';
 import DMTPaginator from '../Table/DMTPaginator';
 import { filterData } from '../../utils/AppUtils';
 import EventFilter from '../Shared/EventFilter';
@@ -17,9 +17,10 @@ import EventFilter from '../Shared/EventFilter';
 class Alerts extends Component {
   constructor() {
     super();
-    this.state = { dataToDisplay: [], hasFilterString: false, searchData: [] };
+    this.state = { dataToDisplay: [], hasFilterString: false, searchData: [], retryCount: 0 };
     this.setDataForDisplay = this.setDataForDisplay.bind(this);
     this.onFilter = this.onFilter.bind(this);
+    this.markAlertAsRead = this.markAlertAsRead.bind(this);
   }
 
   componentDidMount() {
@@ -47,11 +48,26 @@ class Alerts extends Component {
     this.setState({ dataToDisplay: data });
   }
 
+  markAlertAsRead() {
+    const { retryCount } = this.state;
+    const { dispatch, alerts } = this.props;
+    const { data = [] } = alerts;
+    const unreadAlerts = data.filter((alt) => alt.isRead === false);
+    if (unreadAlerts && unreadAlerts.length > 0 && retryCount <= 2) {
+      unreadAlerts.forEach((alt) => {
+        dispatch(markAsRead(alt.id));
+      });
+      dispatch(fetchAlerts());
+      this.setState({ retryCount: retryCount + 1 });
+    }
+  }
+
   render() {
     const { alerts, dispatch } = this.props;
-    const { data } = alerts;
+    const { data = [] } = alerts;
     const { dataToDisplay, hasFilterString, searchData } = this.state;
     const alertsData = (hasFilterString ? searchData : data);
+    this.markAlertAsRead();
     return (
       <>
         <>

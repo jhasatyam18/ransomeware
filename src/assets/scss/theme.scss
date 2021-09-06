@@ -1,6 +1,7 @@
 @import "./icons.scss";
 @import "./bootstrap-dark.scss";
 @import "./app-dark.scss";
+@import "react-datepicker/dist/react-datepicker.css";
 // @import "./bootstrap.scss";
 // @import "./app.scss";
 
@@ -108,12 +109,19 @@ span.flatpickr-weekday {
 .message__notification__container {
   position: fixed;
   top: 10px;
-  right: 25%;
-  width: 600px;
+  width: 100%;
   transform-style: preserve-3d;
   z-index: 10010;
   transition: transform 0.6s ease-in-out;
   animation: toast-in-top 0.7s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dm__message {
+  min-width: 600px;
+  max-width: 600px;
 }
 
 @keyframes toast-in-left {
@@ -381,4 +389,52 @@ span.flatpickr-weekday {
 
 .search__icon:hover {
   cursor: pointer;
+}
+
+.react-datepicker-popper {
+  z-index: 9999 !important;
+}
+
+.report__content {
+  width: 100%;
+  min-height: calc(100% - 30);
+  .no__data {
+    top: 50%;
+    left: 40%;
+    font-size: larger;
+    position: absolute;
+    text-align: center;
+  }
+  .data {
+    background-color: white;
+  }
+}
+
+.rpt__system__overview {
+  width: 100%;
+  text-align: center;
+  margin: 10px;
+  border: 1px solid #222736;
+  padding: 10px;
+  .title__cards {
+    padding-top: 10px;
+    text-align: left;
+    padding-left: 25px;
+  }
+  .title__values {
+    text-align: left;
+    padding-left: 25px;
+    padding-top: 20px;
+  }
+}
+
+@media print {
+  body {
+    margin: 0;
+    color: #000;
+    background-color: #fff;
+  }
+  header, footer, aside, nav, form, iframe, .menu, .hero, .adslot {
+    display: none;
+  }
 }

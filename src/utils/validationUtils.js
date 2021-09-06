@@ -227,3 +227,15 @@ export function validatePassword({ value, user }) {
   const password = getValue('user.newPassword', values);
   return value !== password;
 }
+
+export function validateReplicationValue({ user }) {
+  const { values = {} } = user;
+  const d = getValue('ui.values.replication.interval.days', values);
+  const h = getValue('ui.values.replication.interval.hours', values);
+  const m = getValue('ui.values.replication.interval.min', values);
+  const z = '0';
+  if (d !== z || h !== z && m !== z) {
+    return true;
+  }
+  return false;
+}

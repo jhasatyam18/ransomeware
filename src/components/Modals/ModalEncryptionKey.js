@@ -73,11 +73,16 @@ class ModalEncryptionKey extends Component {
       });
   }
 
+  isEncryptionKeyFetched() {
+    const { encryptionKey } = this.state;
+    return encryptionKey !== '';
+  }
+
   renderKey() {
     const { options } = this.props;
     const { data } = options;
     const { errorKey, encryptionKey } = this.state;
-    if (encryptionKey === '') {
+    if (!this.isEncryptionKeyFetched()) {
       return null;
     }
     const message = (encryptionKey !== errorKey ? encryptionKey : `Encryption key not configured for ${data.name}`);
@@ -93,27 +98,36 @@ class ModalEncryptionKey extends Component {
     );
   }
 
-  render() {
+  renderForm() {
     const { error, password } = this.state;
+    if (this.isEncryptionKeyFetched()) {
+      return null;
+    }
+    return (
+      <Form>
+        <div className="form-group row">
+          <div className="col-sm-12">
+            <Input type="password" placeholder="Admin password" className="form-control" id="description-input" value={password} autoComplete="off" onChange={this.handleChange} maxLength="80" onKeyPress={this.onFilterKeyPress} />
+            {error.length > 0 ? <span className="error">{error}</span> : null}
+          </div>
+        </div>
+      </Form>
+    );
+  }
+
+  render() {
     return (
       <>
         <Container>
           <Card>
             <CardBody>
-              <Form>
-                <div className="form-group row">
-                  <div className="col-sm-12">
-                    <Input type="password" placeholder="Admin password" className="form-control" id="description-input" value={password} autoComplete="off" onChange={this.handleChange} maxLength="80" onKeyPress={this.onFilterKeyPress} />
-                    {error.length > 0 ? <span className="error">{error}</span> : null}
-                  </div>
-                </div>
-              </Form>
+              {this.renderForm()}
               {this.renderKey()}
             </CardBody>
           </Card>
           <div className="modal-footer">
             <button id="btn-modal-close" type="button" className="btn btn-secondary" onClick={this.onClose}>Close </button>
-            <button id="btn-encryption" type="button" className="btn btn-success" onClick={this.onFetchKey}>  Get Encryption Key </button>
+            {this.isEncryptionKeyFetched() ? null : <button id="btn-encryption" type="button" className="btn btn-success" onClick={this.onFetchKey}>  Get Encryption Key </button>}
           </div>
         </Container>
       </>

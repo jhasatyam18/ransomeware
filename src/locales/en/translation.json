@@ -58,6 +58,7 @@
   "throttle.time": "Throttle Time ",
   "throttle.bandwidth": "Throttle Bandwidth ",
   "protect.site": "Protection Site ",
+  "protected.name": "Protection Site ",
   "recovery.site": "Recovery Site ",
   "ami.ID": "AMI ID ",
   "size": "Size ",
@@ -117,5 +118,16 @@
   "deployed.on":"Deployed On",
   "ip.address":"IP Address",
   "vms":"VMs",
-  "usage":"Usage"
+  "usage":"Usage",
+  "report.startDate": "Start Date",
+  "report.endDate": "End Date",
+  "report.protectionPlans": "Protection Plans",
+  "report.includeSystemOverView":"System Overview",
+  "report.includeProtectedVMS": "Protected Machines",
+  "report.includeSites":"Sites",
+  "report.includeEvents": "Events",
+  "report.includeAlerts": "Alerts",
+  "report.includeReplicationJobs": "Replication Jobs",
+  "report.includeRecoveryJobs": "Recovery Jobs",
+  "report.includeNodes": "Nodes"
 }

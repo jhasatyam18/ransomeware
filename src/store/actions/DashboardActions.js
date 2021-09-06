@@ -30,7 +30,7 @@ export function fetchReplicationStats() {
     dispatch(showApplicationLoader('DASHBOARD_REPLICATION_STATS', 'Loading Replication Statistics.'));
     return callAPI(API_DASHBOARD_REPLICATION_STATS)
       .then((json) => {
-        const { completed, failed, running, rpo, inSync, notInsync, dataReduction, changedData } = json;
+        const { completed = 0, failed = 0, running = 0, rpo = 0, inSync = 0, notInsync = 0, dataReduction = 0, changedData = 0 } = json;
         dispatch(hideApplicationLoader('DASHBOARD_REPLICATION_STATS'));
         const stats = { completed, running, failures: failed, copies: 0, changeRate: 0, dataReduction, rpo, inSync, notInsync, changedData };
         dispatch(updateReplicationStat(stats));

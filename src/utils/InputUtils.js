@@ -176,10 +176,14 @@ export function getSubnetOptions(user) {
   });
   return options;
 }
-export function buildRangeOptions(start, end) {
+export function buildRangeOptions(start, end, label) {
   const options = [];
+  let postFix = '';
+  if (label) {
+    postFix = label;
+  }
   for (let i = start; i <= end; i += 1) {
-    const option = { label: i, value: i };
+    const option = { label: `${i} ${postFix}`, value: i };
     options.push(option);
   }
   return options;
@@ -235,7 +239,7 @@ export function getNodeTypeOptions() {
   return [
     { label: 'Management', value: 'Management' },
     { label: 'Replication', value: 'Replication' },
-    { label: 'Windows Preparation Machine', value: 'WinPrepMachine' },
+    { label: 'Prep Node', value: 'WinPrepMachine' },
     { label: 'Dedupe Server', value: 'DedupeServer' },
   ];
 }
@@ -307,8 +311,20 @@ export function getEventOptions() {
     { label: 'Recovery', value: 'Recovery' },
     { label: 'Migration', value: 'Migration' },
     { label: 'License', value: 'License' },
-    { label: 'Recovery', value: 'Recovery1' },
-    { label: 'Migration', value: 'Migration1' },
-    { label: 'License', value: 'License1' },
   ];
+}
+
+export function getReplicationUnitDays() {
+  const range = buildRangeOptions(2, 30, 'Days');
+  return [{ label: 'Day', value: 0 }, { label: '1 Day', value: 1 }, ...range];
+}
+
+export function getReplicationUnitHours() {
+  const range = buildRangeOptions(2, 23, 'Hours');
+  return [{ label: 'Hours', value: 0 }, { label: '1 Hour', value: 1 }, ...range];
+}
+
+export function getReplicationUnitMins() {
+  const range = buildRangeOptions(2, 59, 'minutes');
+  return [{ label: 'Minutes', value: 0 }, { label: '1 minute', value: 1 }, ...range];
 }

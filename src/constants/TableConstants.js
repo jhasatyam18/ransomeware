@@ -159,6 +159,18 @@ export const TABLE_EMAIL_RECIPIENTS = [
   { label: 'Actions', field: 'emailAddress', itemRenderer: EMAIL_RECIPIENT_ACTION_ITEM_RENDER, width: 2 },
 ];
 
+// Table fields for protected virtual machines report
+export const TABLE_REPORT_PROTECTED_VMS = [
+  { label: 'Name', field: 'name' },
+  { label: 'Protection Plan', field: 'planName' },
+  { label: 'Iteration', field: 'totalIteration' },
+  { label: 'Total Changed', field: 'totalChangedSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
+  { label: 'Total Transferred', field: 'totalTransferredSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
+  { label: 'Data Reduction (%)', field: 'dataReductionRatio' },
+  { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
+  { label: 'Recovery Status', field: 'recoveryStatus' },
+];
+
 // table filter help text
 export const TABLE_FILTER_TEXT = {
   TABLE_ALERTS: 'Data can be filtered on following fields <br/> title, severity, eventType <br /> example:  warning or <br /> severity=warning:eventType=replication',

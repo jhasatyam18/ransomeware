@@ -7,7 +7,7 @@ import {
   Table, Thead, Tr, Th, Tbody, Td,
 } from 'react-super-responsive-table';
 import { withTranslation } from 'react-i18next';
-import SimpleBar from 'simplebar-react';
+// import SimpleBar from 'simplebar-react';
 import DMTableRow from './DMTableRows';
 
 class DMTable extends Component {
@@ -119,20 +119,18 @@ class DMTable extends Component {
   }
 
   render() {
-    const { data, auto } = this.props;
+    const { data, name } = this.props;
     return (
       <Row>
         <Col>
           <Card>
             <CardBody>
-              <SimpleBar style={auto ? {} : { minHeight: 400, maxHeight: 550 }}>
-                <Table className="table table-bordered">
-                  {this.renderHeaders()}
-                  <Tbody>
-                    {data && data.length > 0 ? this.renderRows() : this.renderNoDataToShow()}
-                  </Tbody>
-                </Table>
-              </SimpleBar>
+              <Table className="table table-bordered" id={name}>
+                {this.renderHeaders()}
+                <Tbody id={name}>
+                  {data && data.length > 0 ? this.renderRows() : this.renderNoDataToShow()}
+                </Tbody>
+              </Table>
             </CardBody>
           </Card>
         </Col>

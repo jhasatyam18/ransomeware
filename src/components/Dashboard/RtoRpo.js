@@ -54,7 +54,7 @@ function RtoRpo(props) {
           </Media>
           <div className="mini-stat-icon avatar-sm rounded-circle align-self-center">
             <span className="">
-              <box-icon name="timer" color="white" size="lg" />
+              <i className="fas fa-hourglass-half fa-3x" />
             </span>
           </div>
         </Media>
@@ -78,7 +78,7 @@ function RtoRpo(props) {
               </Media>
               <div className="mini-stat-icon avatar-sm rounded-circle align-self-center">
                 <span className="">
-                  <box-icon name="data" color="white" size="lg" />
+                  <i className="fas fa-history fa-3x" />
                 </span>
               </div>
             </Media>

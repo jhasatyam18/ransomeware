@@ -1,14 +1,12 @@
-import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
-import {
-  Dropdown, DropdownToggle, DropdownMenu, Row, Col,
-} from 'reactstrap';
+import { Col, Dropdown, DropdownMenu, DropdownToggle, Row } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
 import { ALERTS } from '../../../constants/RouterConstants';
 import { getUnreadAlerts } from '../../../store/actions/AlertActions';
-import { formatTime } from '../../../utils/AppUtils';
+import { getAppDateFormat } from '../../../utils/AppUtils';
 
 class NotificationDropdown extends Component {
   constructor(props) {
@@ -52,10 +50,8 @@ class NotificationDropdown extends Component {
     const notifications = (unread.length > 4 ? unread.slice(0, 4) : unread);
     return (
       notifications.map((not) => {
-        const t1 = Date.now();
-        const t2 = new Date(not.timeStamp * 1000);
-        let duration = formatTime(Math.ceil(t1 - t2) / 1000);
-        duration = `${duration} ago`;
+        let t2 = new Date(not.timeStamp * 1000);
+        t2 = getAppDateFormat(t2, true);
         return (
           <Link to={ALERTS} onClick={this.toggle} key={`not-alert-${not.id}`} className="text-reset notification-item">
             <div className="media">
@@ -63,11 +59,11 @@ class NotificationDropdown extends Component {
                 <h6 className="mt-0 mb-1">
                   {not.title}
                 </h6>
-                <div className="font-size-12 text-muted">
+                <div className="font-size-12 text-muted" key={`notification-${not.id}`}>
                   <p className="mb-0">
                     <i className="mdi mdi-clock-outline" />
                     {' '}
-                    {duration}
+                    {t2.toString()}
                   </p>
                 </div>
               </div>

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Route, Switch, withRouter } from 'react-router-dom';
 import DRPlans from '../data-recovery/DRPlans';
 import {
-  DASHBOARD_PATH, SITES_PATH, LOGIN_PATH, PROTECTION_PLANS_PATH, PROTECTION_PLAN_DETAILS, JOBS, EVENTS, ALERTS, SETTINGS,
+  DASHBOARD_PATH, SITES_PATH, LOGIN_PATH, PROTECTION_PLANS_PATH, PROTECTION_PLAN_DETAILS, JOBS, EVENTS, ALERTS, SETTINGS, REPORTS,
 } from '../../constants/RouterConstants';
 import Pages404 from '../../pages/Page-404';
 import Login from '../../pages/AuthenticationInner/Login';
@@ -18,6 +18,7 @@ const Jobs = React.lazy(() => import('../Jobs/Jobs'));
 const Events = React.lazy(() => import('../Events/Events'));
 const Alerts = React.lazy(() => import('../Alerts/Alerts'));
 const Settings = React.lazy(() => import('../Settings/Settings'));
+const Report = React.lazy(() => import('../Report/Report'));
 class Layout extends Component {
   constructor(props) {
     super(props);
@@ -101,6 +102,8 @@ class Layout extends Component {
                   <Route path={EVENTS} render={() => <Events />} />
                   <Route path={ALERTS} render={() => <Alerts />} />
                   <Route path={SETTINGS} render={() => <Settings dispatch={dispatch} />} />
+                  <Route path={ALERTS} render={() => <Alerts />} />
+                  <Route path={REPORTS} render={() => <Report />} />
                   <Route component={Pages404} />
                 </Switch>
               </Suspense>

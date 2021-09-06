@@ -83,7 +83,7 @@ class ChangePassword extends Component {
                       </Link>
                     </div>
                     <div className="p-2">
-                      { allowCancel ? null : <Label className="text-danger padding-left-20">Change the default password for user admin</Label>}
+                      { allowCancel ? null : <Label className="text-danger padding-left-20">Change the default password for &lsquo;admin&rsquo; user</Label>}
                       <DMFieldText dispatch={dispatch} fieldKey="user.oldPassword" field={oldPassword} user={user} hideLabel="true" />
                       <DMFieldText dispatch={dispatch} fieldKey="user.newPassword" field={password} user={user} hideLabel="true" />
                       <DMFieldText dispatch={dispatch} fieldKey="user.confirmPassword" field={cnfPassword} user={user} hideLabel="true" />

@@ -1,14 +1,15 @@
 import { onPlatformTypeChange } from '../store/actions';
 import { onProtectionPlanChange } from '../store/actions/DrPlanActions';
 import { onProtectSiteChange, onRecoverSiteChange, updateAvailabilityZones } from '../store/actions/SiteActions';
-import { getAvailibilityZoneOptions, getDRPlanOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationIntervalOptions, getSiteNodeOptions, getSitesOptions, getSubnetOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware, shouldShowNodeEncryptionKey, shouldShowNodePlatformType, shouldShowNodeManagementPort, shouldShowNodeReplicationPort, getEventOptions } from '../utils/InputUtils';
-import { isEmpty, validateDrSiteSelection } from '../utils/validationUtils';
+import { getAvailibilityZoneOptions, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationIntervalOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getSiteNodeOptions, getSitesOptions, getSubnetOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware, shouldShowNodeEncryptionKey, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort } from '../utils/InputUtils';
+import { isEmpty, validateDrSiteSelection, validateReplicationValue } from '../utils/validationUtils';
 import { STATIC_KEYS } from './InputConstants';
 import { EMAIL_REGEX, FQDN_REGEX, HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX } from './ValidationConstants';
 
 export const CONFIURE_SITE_GROUP = ['configureSite.platformDetails.type', 'configureSite.platformDetails.platformName'];
 export const REPLICATION_INTERVAL_COMP = 'REPLICATION_INTERVAL_COMP';
 export const MULTISELECT_ITEM_COMP = 'MULTISELECT_ITEM_COMP';
+export const DATE_PICKER_COMP = 'DATE_PICKER';
 export const STACK_VIEW_COMPONENT = 'STACK_VIEW_COMPONENT';
 export const PROTECTION_REPLICATION_JOBS = 'PROTECTION_REPLICATION_JOBS';
 export const FIELD_TYPE = {
@@ -81,7 +82,7 @@ export const FIELDS = {
 
   'drplan.subnet': { label: 'Subnet', description: 'Subnets where Protected Entity will be recovered', placeHolderText: 'Subnet', type: FIELD_TYPE.SELECT, options: (user) => getSubnetOptions(user), errorMessage: 'Select subnet', shouldShow: true, validate: null },
   'drplan.isEncryptionOnWire': { label: 'Encryption On Wire', description: 'Encryption On Wire', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
-  'drplan.isEncryptionOnRest': { label: 'Encryption At Rest', description: 'Encryption On Rest', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  // 'drplan.isEncryptionOnRest': { label: 'Encryption At Rest', description: 'Encryption On Rest', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
   'drplan.isCompression': { label: 'Compression', description: 'Enable Compression', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: true },
   'drplan.isDedupe': { label: 'Dedupe', description: 'Enable De-Duplication', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: false },
   'drplan.preScript': { label: 'Pre Script', description: 'Pre Script to execute before Recovery', placeHolderText: 'Pre Script to execute before Recovery', type: FIELD_TYPE.SELECT, options: (user) => getPreScriptsOptions(user), errorMessage: 'Select pre script', shouldShow: true },
@@ -114,6 +115,15 @@ export const FIELDS = {
   'recovery.vmNames': { label: 'recovery.names', description: 'List of VM names which are needed to recover', placeHolderText: '', type: FIELD_TYPE.PASSOWRD, validate: null, errorMessage: '', shouldShow: false },
   'ui.values.replication.interval.type': {
     label: 'Unit', description: 'Replication interval i.e time gap after which next iteration will start after previous one is completed/failed', placeHolderText: 'Select replication unit', type: FIELD_TYPE.SELECT, options: [{ label: 'Days', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_DAY }, { label: 'Hours', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_HOUR }, { label: 'Minutes', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_MIN }], validate: (value, user) => isEmpty(value, user), errorMessage: 'Invalid replication interval.', shouldShow: true, defaultValue: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_MIN,
+  },
+  'ui.values.replication.interval.days': {
+    label: 'Days', description: '', placeHolderText: '', type: FIELD_TYPE.SELECT, options: (user) => getReplicationUnitDays(user), validate: (value, user) => isEmpty(value, user), errorMessage: 'Invalid replication interval.', shouldShow: true, defaultValue: 0,
+  },
+  'ui.values.replication.interval.hours': {
+    label: 'Hours', description: '', placeHolderText: '', type: FIELD_TYPE.SELECT, options: (user) => getReplicationUnitHours(user), validate: (value, user) => isEmpty(value, user), errorMessage: 'Invalid replication interval.', shouldShow: true, defaultValue: 0,
+  },
+  'ui.values.replication.interval.min': {
+    label: 'Minutes', description: '', placeHolderText: '', type: FIELD_TYPE.SELECT, options: (user) => getReplicationUnitMins(user), validate: (value, user) => validateReplicationValue(value, user), errorMessage: 'Invalid replication interval.', shouldShow: true, defaultValue: 0,
   },
   // Node Fields
   'node.name': {
@@ -153,4 +163,14 @@ export const FIELDS = {
     label: 'emailRecipient.emailAddress', description: 'Email address of recipient', placeHolderText: 'Email address of recipient', type: FIELD_TYPE.TEXT, shouldShow: true, errorMessage: 'Enter valid email address', patterns: [EMAIL_REGEX] },
   'emailRecipient.subscribedEvents': {
     label: 'emailRecipient.subscribedEvents', description: 'Subscribed events for email address', placeHolderText: 'Subscribed events for email address', COMPONENT: MULTISELECT_ITEM_COMP, type: FIELD_TYPE.CUSTOM, shouldShow: true, errorMessage: 'Select at least one event type', validate: (value, user) => isEmpty(value, user), options: (user) => getEventOptions(user) },
+  // Report
+  // 'report.startDate': { label: 'report.startDate', description: 'Starting date for report', COMPONENT: DATE_PICKER_COMP, type: FIELD_TYPE.CUSTOM, shouldShow: true, validate: (value, user) => isEmpty(value, user) },
+  // 'report.endDate': { label: 'report.endDate', description: 'End date for report', COMPONENT: DATE_PICKER_COMP, type: FIELD_TYPE.CUSTOM, shouldShow: true, validate: (value, user) => isEmpty(value, user) },
+  'report.includeSystemOverView': { label: 'report.includeSystemOverView', description: 'Add protected virtual machines in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'report.includeProtectedVMS': { label: 'report.includeProtectedVMS', description: 'Add sites in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'report.includeNodes': { label: 'report.includeNodes', description: 'Add nodes in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'report.includeEvents': { label: 'report.includeEvents', description: 'Add events in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'report.includeAlerts': { label: 'report.includeAlerts', description: 'Add alerts in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'report.includeReplicationJobs': { label: 'report.includeReplicationJobs', description: 'Add replication jobs in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'report.includeRecoveryJobs': { label: 'report.includeRecoveryJobs', description: 'Add recovery jobs in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
 };

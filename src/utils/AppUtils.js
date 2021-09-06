@@ -149,3 +149,19 @@ export function getMinutes(timestamp) {
   const mins = date.getMinutes();
   return mins;
 }
+
+export function getAppDateFormat(date, includeTime = false) {
+  if (Date) {
+    const y = date.getFullYear();
+    const m = date.getMonth();
+    const d = date.getDate();
+    if (includeTime) {
+      const h = date.getHours();
+      const mm = date.getMinutes();
+      const s = date.getSeconds();
+      return `${m}-${d}-${y}_${h}-${mm}-${s}`;
+    }
+    return `${m}-${d}-${y}`;
+  }
+  return '';
+}

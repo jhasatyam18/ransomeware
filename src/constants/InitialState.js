@@ -5,8 +5,7 @@ const INITIAL_STATE = {
     loaderKeys: {},
   },
   messages: {},
-  user: {
-    id: 1,
+  user: { id: 1,
     passwordChangeReq: false,
     allowCancel: false,
     isAuthenticated: false,
@@ -21,16 +20,8 @@ const INITIAL_STATE = {
   },
   sites: { sites: [], selectedSites: [] },
   drPlans: { plans: [], selectedPlans: [], recoveryPlan: {} },
-  modal: {
-    content: null,
-    options: {},
-    show: false,
-  },
-  wizard: {
-    steps: [],
-    show: false,
-    options: { title: '' },
-  },
+  modal: { content: null, options: {}, show: false },
+  wizard: { steps: [], show: false, options: { title: '' } },
   jobs: { replication: [], recovery: [], replicationType: REPLICATION_JOB_TYPE.PLAN, recoveryType: RECOVERY_JOB_TYPE.PLAN },
   dashboard: {
     titles: { sites: 0, protectionPlans: 0, vms: 0, storage: 0 },
@@ -42,6 +33,7 @@ const INITIAL_STATE = {
   events: { data: [], selected: {}, filteredData: [] },
   alerts: { data: [], selected: {}, associatedEvent: {}, unread: [], filteredData: [] },
   settings: { bundles: [], nodes: [], selectedNodes: [], emailConfig: null, emailRecipients: [] },
+  reports: { criteria: {}, result: {} },
 };
 
 export default INITIAL_STATE;

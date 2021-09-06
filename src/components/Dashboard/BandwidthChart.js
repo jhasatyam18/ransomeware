@@ -61,12 +61,15 @@ class BandwidthChart extends Component {
     const { dispatch } = this.props;
     callAPI(API_DASHBOARD_BANDWIDTH_USAGE).then((json) => {
       try {
-        const chartpoints = [];
+        let chartPoints = [];
         if (json !== null) {
           json.forEach((item) => {
-            chartpoints.push([item.timeStamp * 1000, item.transferredSize.toFixed(2)]);
+            chartPoints.push([item.timeStamp * 1000, item.transferredSize.toFixed(2)]);
           });
-          this.setState({ series: [{ name: 'MB', data: chartpoints }] });
+          chartPoints = chartPoints
+            .filter((e) => e.transferredSize !== 0)
+            .sort((p, n) => p.timeStamp < n.timeStamp);
+          this.setState({ series: [{ name: 'MB', data: chartPoints }] });
         }
       } catch (e) {
         dispatch(addMessage(e.message, MESSAGE_TYPES.ERROR));

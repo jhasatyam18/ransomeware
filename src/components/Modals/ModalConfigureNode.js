@@ -52,7 +52,9 @@ class ModalConfigureNode extends Component {
     fields.forEach((field) => {
       let shouldDisable = false;
       if (typeof isUpdate !== 'undefined') {
-        shouldDisable = isUpdate && !(field.indexOf('username') !== -1 || field.indexOf('password') !== -1);
+        const allowedFields = ['username', 'password', 'managementPort', 'replicationPort', 'encryptionKey'];
+        const fName = field.split('.')[1];
+        shouldDisable = isUpdate && !(allowedFields.indexOf(fName) !== -1);
       }
       renderFields.push((<DMField dispatch={dispatch} user={user} fieldKey={field} key={`node-${field}`} disabled={shouldDisable} />));
     });

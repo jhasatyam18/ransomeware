@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 // i18n
 import { withTranslation } from 'react-i18next';
-import { DASHBOARD_PATH, JOBS, PROTECTION_PLANS_PATH, SITES_PATH, Reports, Analytics, EVENTS, ALERTS, SETTINGS } from '../../constants/RouterConstants';
+import { DASHBOARD_PATH, JOBS, PROTECTION_PLANS_PATH, SITES_PATH, REPORTS, Analytics, EVENTS, ALERTS, SETTINGS } from '../../constants/RouterConstants';
 
 class SidebarContent extends Component {
   constructor(props) {
@@ -78,8 +78,8 @@ class SidebarContent extends Component {
               </Link>
             </li>
             <li>
-              <Link to="/#" className="has-arrow waves-effect" style={{ color: this.isActive(EVENTS, ALERTS, Reports) }}>
-                <i className="fa fa-chart-bar fa-s-lg" style={{ fontSize: 16, color: this.isActive(EVENTS, ALERTS, Reports) }} />
+              <Link to="/#" className="has-arrow waves-effect" style={{ color: this.isActive(EVENTS, ALERTS, REPORTS) }}>
+                <i className="fa fa-chart-bar fa-s-lg" style={{ fontSize: 16, color: this.isActive(EVENTS, ALERTS, REPORTS) }} />
                 <span>{t('Monitor')}</span>
               </Link>
               <ul className="sub-menu" aria-expanded="false">

@@ -30,7 +30,7 @@ class Dashboard extends Component {
       { title: 'Sites', icon: 'cloud', description: sites, link: SITES_PATH },
       { title: 'Protection Plans', icon: 'layer', description: protectionPlans, link: PROTECTION_PLANS_PATH },
       { title: 'Protected Machines', icon: 'desktop', description: vms },
-      { title: 'Storage', icon: 'hdd', description: (storage > 1024 ? `${storage} TB` : `${storage} GB`) },
+      { title: 'Protected Storage', icon: 'hdd', description: (storage > 1024 ? `${storage} TB` : `${storage} GB`) },
     ];
     return (
       <>

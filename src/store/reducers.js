@@ -14,9 +14,10 @@ import dashboard from './reducers/DashboardReducer';
 import events from './reducers/EventReducer';
 import alerts from './reducers/AlertReducer';
 import settings from './reducers/SettingsReducer';
+import reports from './reducers/ReportReducer';
 
 const rootReducer = combineReducers({
-  layout, user, messages, sites, modal, global, wizard, drPlans, jobs, dashboard, events, alerts, settings,
+  layout, user, messages, sites, modal, global, wizard, drPlans, jobs, dashboard, events, alerts, settings, reports,
 });
 
 export default rootReducer;

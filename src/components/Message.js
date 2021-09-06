@@ -58,7 +58,7 @@ class AppMessage extends Component {
     const msg = message ? message.text : '';
     if (!message || !message.text) { return null; }
     return (
-      <div className={`${messageClass}`}>
+      <div className={`${messageClass} dm__message`}>
         <UncontrolledAlert color={messageClass} role="alert" toggle={this.onDismiss} style={{ maxWidth: 600 }}>
           {msg}
         </UncontrolledAlert>

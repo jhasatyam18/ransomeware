@@ -3,9 +3,12 @@ import 'boxicons';
 
 function VMSizeItemRenderer({ data }) {
   let size = 0;
-  data.virtualDisks.forEach((disk) => {
-    size += disk.size;
-  });
+  const { virtualDisks = [] } = data;
+  if (virtualDisks !== null) {
+    virtualDisks.forEach((disk) => {
+      size += disk.size;
+    });
+  }
   return (
     <div>
       {size}

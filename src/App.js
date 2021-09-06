@@ -18,7 +18,7 @@ const propTypes = {
 class App extends Component {
   componentDidCatch(error) {
     const { dispatch } = this.props;
-    dispatch(addMessage(MESSAGE_TYPES.ERROR, error.toString()));
+    dispatch(addMessage(error.toString(), MESSAGE_TYPES.ERROR));
   }
 
   render() {

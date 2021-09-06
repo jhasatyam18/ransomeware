@@ -3,11 +3,12 @@ import NetworkConfig from '../components/Common/NetworkConfig';
 import DMFieldSelect from '../components/Shared/DMFieldSelect';
 import CloudTags from '../components/Common/CloudTags';
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
-import { FIELDS, MULTISELECT_ITEM_COMP, REPLICATION_INTERVAL_COMP } from '../constants/FieldsConstant';
+import { DATE_PICKER_COMP, FIELDS, MULTISELECT_ITEM_COMP, REPLICATION_INTERVAL_COMP } from '../constants/FieldsConstant';
 import { DATE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDERER, VM_SIZE_ITEM_RENDERER, STATUS_ITEM_RENDERER, TRANSFER_SIZE_ITEM_RENDERER, RECOVERY_TYPE_ITEM_RENDERER, TIME_DURATION_RENDERER, RECOVERY_SITE_LINK_ITEM_RENDERER, SSH_RDP_ITEM_RENDERER, VM_USERNAME_ITEM_RENDERER, VM_UPASSWORD_ITEM_RENDERER, REPLICATION_INTERVAL_ITEM_RENDERER, EVENT_LEVEL_ITEM_RENDERER, ALERT_ACK_ITEM_RENDERER, VIEW_ALERT_INFO_RENDERER, SERVER_PORT_ITEM_RENDERER, SIZE_ITEM_RENDERER, SUPPORT_BUNDLE_ACTION_ITEM_RENDERER, NODE_NAME_ITEM_RENDERER, EMAIL_RECIPIENT_ACTION_ITEM_RENDER, NODE_ACTION_RENDERER } from '../constants/TableConstants';
 import ReplicationInterval from '../components/Forms/ReplicationInterval';
 import SecurityGroups from '../components/Common/SecurityGroups';
 import DMMultiSelect from '../components/Shared/DMMultiSelect';
+import DMDatePicker from '../components/Shared/DMDatePicker';
 
 // Table Item renderers
 import OsTypeItemRenderer from '../components/Table/ItemRenderers/OsTypeItemRenderer';
@@ -54,6 +55,8 @@ export function getFieldComponents(dispatch, fieldKey, user, component) {
       return <ReplicationInterval dispatch={dispatch} fieldKey={fieldKey} user={user} field={field} />;
     case MULTISELECT_ITEM_COMP:
       return <DMMultiSelect dispatch={dispatch} fieldKey={fieldKey} user={user} field={field} />;
+    case DATE_PICKER_COMP:
+      return <DMDatePicker dispatch={dispatch} fieldKey={fieldKey} user={user} field={field} />;
     default:
       return <div>404</div>;
   }

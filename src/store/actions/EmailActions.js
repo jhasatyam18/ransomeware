@@ -24,9 +24,9 @@ export function fetchEmailConfig() {
           dispatch(emailConfigurationFetched(json));
         }
       },
-      (err) => {
+      () => {
         dispatch(hideApplicationLoader(API_EMAIL_CONFIGURATION));
-        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+        // dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
   };
 }
