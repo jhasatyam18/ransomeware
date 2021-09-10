@@ -165,3 +165,21 @@ export function getAppDateFormat(date, includeTime = false) {
   }
   return '';
 }
+
+export function calculateChangedData(val) {
+  try {
+    if (val === 0) {
+      return '';
+    }
+    const units = ['MB', 'GB', 'TB', 'PB'];
+    const factor = 1024;
+    let index = parseInt(Math.floor(Math.log(val) / Math.log(factor)), 10);
+    const result = Math.round(val / (factor ** index), 2);
+    if (index > 3) {
+      index = 3;
+    }
+    return `${result} ${units[index]}`;
+  } catch (error) {
+    return '';
+  }
+}

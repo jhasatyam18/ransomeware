@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, CardBody, Col, Row } from 'reactstrap';
+import { calculateChangedData } from '../../utils/AppUtils';
 
 function ReplicationStat(props) {
   function renderData(steps) {
@@ -31,17 +32,10 @@ function ReplicationStat(props) {
     return `${parseInt(val, 10)}%`;
   }
 
-  function calculateChangedData(val) {
-    if (val === 0) {
-      return;
-    }
-    return `${parseInt(val / 1024, 10)} GB`;
-  }
-
   function renderer() {
     const { dashboard } = props;
     const { replicationStats } = dashboard;
-    const { completed, running, failures, dataReduction = 0, changedData = 0 } = replicationStats;
+    const { completed, running, failures, dataReduction = 0, changedRate = 0 } = replicationStats;
     const data = {
       statTasks: [
         { label: 'Completed', value: completed, icon: 'fa fa-clipboard-check', color: 'app_success' },
@@ -49,7 +43,7 @@ function ReplicationStat(props) {
         { label: 'Failures', value: failures, icon: 'fa fa-exclamation-triangle', color: 'app_danger' },
       ],
       statRep: [
-        { label: 'Change Rate', value: calculateChangedData(changedData), icon: 'fa fa-copy', color: 'app_success' },
+        { label: 'Change Rate', value: calculateChangedData(changedRate), icon: 'fa fa-copy', color: 'app_success' },
         { label: 'Data Reduction', value: calculateDataReduction(dataReduction), icon: 'fa fa-file-archive', color: 'app_success' },
       ],
     };

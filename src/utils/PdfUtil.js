@@ -1,6 +1,6 @@
 import JsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { formatTime } from './AppUtils';
+import { calculateChangedData, formatTime } from './AppUtils';
 
 /**
  * Create empty pdf document object
@@ -66,7 +66,7 @@ export function systemOverview(doc, data) {
   const { titles, recoveryStats, replicationStats } = data;
   const { sites = 0, protectionPlans = 0, vms = 0, storage = 0 } = titles;
   const { testExecutions = 0, fullRecovery = 0, migrations = 0 } = recoveryStats;
-  const { completed, running, failures, dataReduction = 0, changedData = 0, rpo = 0 } = replicationStats;
+  const { completed, running, failures, dataReduction = 0, changedRate = 0, rpo = 0 } = replicationStats;
   autoTable(doc, {
     head: [
       [
@@ -88,7 +88,7 @@ export function systemOverview(doc, data) {
       ['Running', running],
       ['Failures', failures],
       ['Data Reduction', calculateDataReduction(dataReduction)],
-      ['Change Rate', calculateChangedData(changedData)],
+      ['Change Rate', calculateChangedData(changedRate)],
       [{ content: 'Recovery Statistics', colSpan: 2, styles: { halign: 'center' } }],
       ['Test Recoveries', testExecutions],
       ['Full Recoveries', fullRecovery],
@@ -123,11 +123,4 @@ function calculateDataReduction(val) {
     return;
   }
   return `${parseInt(val, 10)}%`;
-}
-
-function calculateChangedData(val) {
-  if (val === 0) {
-    return;
-  }
-  return `${parseInt(val / 1024, 10)} GB`;
 }

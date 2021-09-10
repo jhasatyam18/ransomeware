@@ -173,4 +173,5 @@ export const FIELDS = {
   'report.includeAlerts': { label: 'report.includeAlerts', description: 'Add alerts in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
   'report.includeReplicationJobs': { label: 'report.includeReplicationJobs', description: 'Add replication jobs in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
   'report.includeRecoveryJobs': { label: 'report.includeRecoveryJobs', description: 'Add recovery jobs in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'report.protectionPlans': { label: 'report.protectionPlans', description: 'Select protection plan for report', type: FIELD_TYPE.SELECT, shouldShow: true, options: (user) => getDRPlanOptions(user) },
 };

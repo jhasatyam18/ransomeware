@@ -16,7 +16,7 @@ module.exports = app => {
 
   app.get("/api/v1/dashboard/replicationstats", (req, res) => {
     const response = {
-      "changedData": 15820,
+      "changedRate": 15820,
       "completed": 2,
       "dataReduction": 43.31524397419617,
       "failed": 0,
