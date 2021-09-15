@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Button, Card, CardBody, Col, Form, Row } from 'reactstrap';
-import { FIELDS } from '../../constants/FieldsConstant';
-import { RECOVERY_JOBS, REPLICATION_VM_JOBS, TABLE_ALERTS, TABLE_EVENTS, TABLE_HEADER_DR_PLANS, TABLE_HEADER_SITES, TABLE_NODES, TABLE_REPORT_PROTECTED_VMS } from '../../constants/TableConstants';
-import { valueChange } from '../../store/actions';
-import { exportReportToPDF, generateAuditReport, getCriteria } from '../../store/actions/ReportActions';
-import { hideApplicationLoader, showApplicationLoader } from '../../store/actions/UserActions';
-import DMField from '../Shared/DMField';
+import { Button, Card, CardBody, Col, Row } from 'reactstrap';
+import { fetchDrPlans } from '../../store/actions/DrPlanActions';
+import ReportSideBar from './ReportSideBar';
 import ReportSystemOverview from './ReportSystemOverview';
 import ReportTables from './ReportTables';
+import { exportReportToPDF, generateAuditReport, getCriteria, resetReport } from '../../store/actions/ReportActions';
+import { hideApplicationLoader, showApplicationLoader } from '../../store/actions/UserActions';
+import { valueChange } from '../../store/actions';
+import { RECOVERY_JOBS, REPLICATION_VM_JOBS, TABLE_ALERTS, TABLE_EVENTS, TABLE_HEADER_DR_PLANS, TABLE_HEADER_SITES, TABLE_NODES, TABLE_REPORT_PROTECTED_VMS } from '../../constants/TableConstants';
+import { STATIC_KEYS } from '../../constants/InputConstants';
 
 class Report extends Component {
   constructor() {
@@ -22,10 +23,17 @@ class Report extends Component {
 
   componentDidMount() {
     const { dispatch } = this.props;
-    const d = new Date();
-    d.setDate(d.getDate() - 30);
-    dispatch(valueChange('report.startDate', d));
-    dispatch(valueChange('report.endDate', new Date()));
+    dispatch(fetchDrPlans(STATIC_KEYS.UI_PROTECTION_PLANS));
+    dispatch(valueChange('report.protectionPlan.protectionPlans', 0));
+    // const d = new Date();
+    // d.setDate(d.getDate() - 30);
+    // dispatch(valueChange('report.startDate', d));
+    // dispatch(valueChange('report.endDate', new Date()));
+  }
+
+  componentWillUnmount() {
+    const { dispatch } = this.props;
+    dispatch(resetReport());
   }
 
   toggleCollapse = () => {
@@ -64,18 +72,8 @@ class Report extends Component {
   }
 
   renderForm() {
-    const { user, dispatch } = this.props;
-    const fields = Object.keys(FIELDS).filter((key) => key.indexOf('report.') !== -1);
-    const renderFields = [];
-    fields.forEach((field) => {
-      renderFields.push((<DMField dispatch={dispatch} user={user} fieldKey={field} key={`recipient-${field}`} />));
-    });
     return (
-      <Form>
-        {
-          renderFields
-        }
-      </Form>
+      <ReportSideBar />
     );
   }
 
@@ -89,6 +87,7 @@ class Report extends Component {
         <div className="container padding-top-10">
           {this.renderForm()}
         </div>
+        <Button className="btn btn-outline-success btn-sm" onClick={this.generateReport}>Generate Report</Button>
       </Col>
     );
   }
@@ -143,14 +142,25 @@ class Report extends Component {
 
   render() {
     const { openCollapse } = this.state;
+    const { reports } = this.props;
+    const { result = {} } = reports;
+    const keys = Object.keys(result).length;
+    const hasData = keys !== 0;
     return (
       <Card>
         <CardBody>
           <div className="p-2">
-            <Button className="btn btn-outline-success btn-sm" onClick={this.generateReport}>Create Report</Button>
-            <Button className="btn btn-outline-dark btn-sm margin-left-10" onClick={this.toggleCollapse}>{openCollapse === true ? 'Hide Filter' : 'Show Filter'}</Button>
-            <Button className="btn btn-outline-dark btn-sm margin-left-10" onClick={this.exportToPDF}>Export Data To PDF</Button>
-            {/* <Button className="btn btn-outline-dark btn-sm margin-left-10" onClick={this.printReport}>Print</Button> */}
+            <Button className="btn btn-outline-dark btn-sm margin-left-10" onClick={this.toggleCollapse}>
+              <i className={openCollapse === true ? 'fas fa-arrow-down' : 'fas fa-arrow-right'} title="Report Filter" style={{ fontSize: 16 }} />
+              <span className="padding-left-5">Filter</span>
+            </Button>
+            { hasData
+              ? (
+                <Button className="btn btn-outline-dark btn-sm margin-left-10" onClick={this.exportToPDF}>
+                  <i className="far fa-file-pdf text-danger" style={{ fontSize: 16 }} title="Export to PDF" />
+                  <span className="padding-left-5">Export</span>
+                </Button>
+              ) : null }
           </div>
           <Row>
             {this.renderReportFilter()}

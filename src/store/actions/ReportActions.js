@@ -1,5 +1,5 @@
 import * as Types from '../../constants/actionTypes';
-import { API_FETCH_ALERTS, API_FETCH_DR_PLANS, API_FETCH_EVENTS, API_FETCH_SITES, API_NODES, API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS, API_RECOVERY_JOBS, API_REPLICATION_VM_JOBS } from '../../constants/ApiConstants';
+import { API_FETCH_ALERTS, API_FETCH_DR_PLANS, API_FETCH_DR_PLAN_BY_ID, API_FETCH_EVENTS, API_FETCH_SITES, API_NODES, API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS, API_PROTECTTION_PLAN_REPLICATION_VM_JOBS, API_RECOVERY_JOBS, API_RECOVERY_PLAN_RECOVERY_JOBS, API_REPLICATION_VM_JOBS } from '../../constants/ApiConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { callAPI } from '../../utils/ApiUtils';
 import { getAppDateFormat } from '../../utils/AppUtils';
@@ -34,8 +34,11 @@ export function generateAuditReport() {
 /**
  * @returns Fetch and set sites info for report
  */
-export function reportFetchSites() {
-  return (dispatch) => (
+export function reportFetchSites(id) {
+  return (dispatch) => {
+    if (isPlanSpecificData(id)) {
+      return;
+    }
     callAPI(API_FETCH_SITES)
       .then((json) => {
         if (json.hasError) {
@@ -46,8 +49,8 @@ export function reportFetchSites() {
       },
       (err) => {
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-      })
-  );
+      });
+  };
 }
 
 /**
@@ -72,22 +75,28 @@ export function reportFetchNodes() {
 /**
  * @returns Fetch and set protection plan info for report
  */
-export function reportFetchPlans() {
-  return (dispatch) => (
-    callAPI(API_FETCH_DR_PLANS)
+export function reportFetchPlans(id) {
+  return (dispatch) => {
+    const isPlanSpecific = isPlanSpecificData(id);
+    const url = (isPlanSpecific ? API_FETCH_DR_PLAN_BY_ID.replace('<id>', id) : API_FETCH_DR_PLANS);
+    callAPI(url)
       .then((json) => {
         if (json.hasError) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
-          const data = json;
+          const data = isPlanSpecific ? [json] : json;
+          if (isPlanSpecific && data.length > 0) {
+            const { protectedSite, recoverySite } = data[0];
+            dispatch(setReportObject('sites', [protectedSite, recoverySite]));
+          }
           dispatch(setReportObject('plans', data));
-          dispatch(setProtectedVMs(json));
+          dispatch(setProtectedVMs(data, id));
         }
       },
       (err) => {
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-      })
-  );
+      });
+  };
 }
 
 /**
@@ -131,9 +140,10 @@ export function reportFetchAlerts() {
 /**
  * @returns Fetch and set replication job info for report
  */
-export function reportFetchReplicationJobs() {
-  return (dispatch) => (
-    callAPI(API_REPLICATION_VM_JOBS)
+export function reportFetchReplicationJobs(id) {
+  return (dispatch) => {
+    const url = (isPlanSpecificData(id) ? API_PROTECTTION_PLAN_REPLICATION_VM_JOBS.replace('<id>', id) : API_REPLICATION_VM_JOBS);
+    callAPI(url)
       .then((json) => {
         if (json.hasError) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
@@ -143,16 +153,17 @@ export function reportFetchReplicationJobs() {
       },
       (err) => {
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-      })
-  );
+      });
+  };
 }
 
 /**
  * @returns Fetch and set recovery job info for report
  */
-export function reportFetchRecoveryJobs() {
-  return (dispatch) => (
-    callAPI(API_RECOVERY_JOBS)
+export function reportFetchRecoveryJobs(id) {
+  return (dispatch) => {
+    const url = (isPlanSpecificData(id) ? API_RECOVERY_PLAN_RECOVERY_JOBS.replace('<id>', id) : API_RECOVERY_JOBS);
+    callAPI(url)
       .then((json) => {
         if (json.hasError) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
@@ -162,20 +173,25 @@ export function reportFetchRecoveryJobs() {
       },
       (err) => {
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-      })
-  );
+      });
+  };
 }
 
 /**
  * @param {*} data
  * @returns set protected vm details for report
  */
-export function setProtectedVMs(pPlans) {
-  return (dispatch) => {
+export function setProtectedVMs(pPlans, id) {
+  return (dispatch, getState) => {
     dispatch(setReportObject('protectedVMS', []));
+    const { user } = getState();
+    const criteria = getCriteria(user);
+    if (!criteria.includeProtectedVMS) {
+      return;
+    }
     callAPI(API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS)
       .then((json) => {
-        if (json && json.length > 0 && json.length === pPlans.length) {
+        if ((json && isPlanSpecificData(id)) || (json && json.length > 0 && json.length === pPlans.length)) {
           const protectedVMS = [];
           try {
             pPlans.forEach((plan) => {
@@ -232,7 +248,7 @@ export function resetReport() {
 }
 
 function getRequiredReportObjects(criteria, dispatch) {
-  const apis = [dispatch(reportFetchSites()), dispatch(reportFetchPlans())];
+  const apis = [dispatch(reportFetchSites(criteria.protectionPlanID)), dispatch(reportFetchPlans(criteria.protectionPlanID))];
   if (criteria.includeSystemOverView) {
     apis.push(dispatch(fetchRecoveryStats()));
     apis.push(dispatch(fetchReplicationStats()));
@@ -248,10 +264,10 @@ function getRequiredReportObjects(criteria, dispatch) {
     apis.push(dispatch(reportFetchAlerts()));
   }
   if (criteria.includeReplicationJobs) {
-    apis.push(dispatch(reportFetchReplicationJobs()));
+    apis.push(dispatch(reportFetchReplicationJobs(criteria.protectionPlanID)));
   }
   if (criteria.includeRecoveryJobs) {
-    apis.push(dispatch(reportFetchRecoveryJobs()));
+    apis.push(dispatch(reportFetchRecoveryJobs(criteria.protectionPlanID)));
   }
   return apis;
 }
@@ -261,13 +277,14 @@ export function getCriteria(user) {
   return {
     startDate: getValue('report.startDate', values),
     endDate: getValue('report.endDate', values),
-    includeSystemOverView: getValue('report.includeSystemOverView', values),
-    includeNodes: getValue('report.includeNodes', values),
-    includeEvents: getValue('report.includeEvents', values),
-    includeAlerts: getValue('report.includeAlerts', values),
-    includeReplicationJobs: getValue('report.includeReplicationJobs', values),
-    includeRecoveryJobs: getValue('report.includeRecoveryJobs', values),
-    includeProtectedVMS: getValue('report.includeProtectedVMS', values),
+    includeSystemOverView: getValue('report.system.includeSystemOverView', values),
+    includeNodes: getValue('report.system.includeNodes', values),
+    includeEvents: getValue('report.system.includeEvents', values),
+    includeAlerts: getValue('report.system.includeAlerts', values),
+    includeReplicationJobs: getValue('report.protectionPlan.includeReplicationJobs', values),
+    includeRecoveryJobs: getValue('report.protectionPlan.includeRecoveryJobs', values),
+    includeProtectedVMS: getValue('report.protectionPlan.includeProtectedVMS', values),
+    protectionPlanID: getValue('report.protectionPlan.protectionPlans', values),
   };
 }
 
@@ -311,6 +328,9 @@ export function exportReportToPDF() {
   };
 }
 
+function isPlanSpecificData(id) {
+  return !(`${id}` === '0');
+}
 // function getPDFTableFormat(columns) {
 //   const pdfTableFormat = [];
 //   columns.forEach((col) => {

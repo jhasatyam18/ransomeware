@@ -37,10 +37,7 @@ class ReportSystemOverview extends Component {
   renderTitles() {
     const { dashboard } = this.props;
     const { titles } = dashboard;
-    if (!titles) {
-      return null;
-    }
-    const { sites, protectionPlans, vms, storage } = titles;
+    const { sites, vms, storage, protectionPlans } = titles;
     const data = [
       { title: 'Sites', icon: 'cloud', description: sites },
       { title: 'Protection Plans', icon: 'layer', description: protectionPlans },
@@ -81,6 +78,15 @@ class ReportSystemOverview extends Component {
   }
 
   render() {
+    const { dashboard } = this.props;
+    const { titles } = dashboard;
+    if (!titles) {
+      return null;
+    }
+    const { sites, vms, storage } = titles;
+    if (sites === 0 && vms === 0 && storage === 0) {
+      return null;
+    }
     const { isOpen } = this.state;
     const title = 'System Overview';
     return (

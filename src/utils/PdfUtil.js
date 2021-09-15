@@ -27,7 +27,7 @@ export function addTableFromHtml(doc, id, title) {
       options: {
         startY: doc.lastAutoTable.finalY + 45,
         rowPageBreak: 'auto',
-        margin: { top: 160 },
+        margin: { top: 160, left: 5 },
         bodyStyles: { valign: 'top' },
         styles: { overflow: 'linebreak', cellWidth: 'wrap' },
         columnStyles: { text: { cellWidth: 'auto' } },

@@ -1,7 +1,7 @@
 import { onPlatformTypeChange } from '../store/actions';
 import { onProtectionPlanChange } from '../store/actions/DrPlanActions';
 import { onProtectSiteChange, onRecoverSiteChange, updateAvailabilityZones } from '../store/actions/SiteActions';
-import { getAvailibilityZoneOptions, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationIntervalOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getSiteNodeOptions, getSitesOptions, getSubnetOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware, shouldShowNodeEncryptionKey, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort } from '../utils/InputUtils';
+import { getAvailibilityZoneOptions, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationIntervalOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getReportProtectionPlans, getSiteNodeOptions, getSitesOptions, getSubnetOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware, shouldShowNodeEncryptionKey, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort } from '../utils/InputUtils';
 import { isEmpty, validateDrSiteSelection, validateReplicationValue } from '../utils/validationUtils';
 import { STATIC_KEYS } from './InputConstants';
 import { EMAIL_REGEX, FQDN_REGEX, HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX } from './ValidationConstants';
@@ -13,7 +13,7 @@ export const DATE_PICKER_COMP = 'DATE_PICKER';
 export const STACK_VIEW_COMPONENT = 'STACK_VIEW_COMPONENT';
 export const PROTECTION_REPLICATION_JOBS = 'PROTECTION_REPLICATION_JOBS';
 export const FIELD_TYPE = {
-  CHECKBOX: 'CHECKBOX', TEXT: 'TEXT', SELECT: 'SELECT', NUMBER: 'NUMBER', PASSOWRD: 'PASSWORD', CUSTOM: 'CUSTOM',
+  CHECKBOX: 'CHECKBOX', TEXT: 'TEXT', SELECT: 'SELECT', NUMBER: 'NUMBER', PASSWORD: 'PASSWORD', CUSTOM: 'CUSTOM', RADIO: 'RADIO',
 };
 export const FIELDS = {
   // CONFIGURE SITE FIELDS
@@ -42,7 +42,7 @@ export const FIELDS = {
     label: 'username', description: 'vCenter Server User Name', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Username required', shouldShow: (user) => isPlatformTypeVMware(user),
   },
   'configureSite.platformDetails.password': {
-    label: 'password', description: 'vCenter Server User Password', type: FIELD_TYPE.PASSOWRD, validate: (value, user) => isEmpty(value, user), errorMessage: 'Password required', shouldShow: (user) => isPlatformTypeVMware(user),
+    label: 'password', description: 'vCenter Server User Password', type: FIELD_TYPE.PASSWORD, validate: (value, user) => isEmpty(value, user), errorMessage: 'Password required', shouldShow: (user) => isPlatformTypeVMware(user),
   },
   'configureSite.platformDetails.region': {
     label: 'region', description: 'Cloud Site Region where Management Server is deployed and Protection needs to be done', type: FIELD_TYPE.SELECT, errorMessage: 'Region required', shouldShow: (user) => !isPlatformTypeVMware(user), options: (user) => getRegionOptions(user), onChange: (user, dispatch) => updateAvailabilityZones(user, dispatch),
@@ -54,7 +54,7 @@ export const FIELDS = {
     label: 'access.key', description: 'Access Key for Cloud Site(AWS)', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Access Key is required', shouldShow: (user) => isPlatformTypeAWS(user),
   },
   'configureSite.platformDetails.secretKey': {
-    label: 'secret.key', description: 'Secret Key for Cloud Site(AWS)', type: FIELD_TYPE.PASSOWRD, validate: (value, user) => isEmpty(value, user), shouldShow: (user) => isPlatformTypeAWS(user),
+    label: 'secret.key', description: 'Secret Key for Cloud Site(AWS)', type: FIELD_TYPE.PASSWORD, validate: (value, user) => isEmpty(value, user), shouldShow: (user) => isPlatformTypeAWS(user),
   },
   'configureSite.platformDetails.projectId': {
     label: 'project.ID', description: 'Project ID for Cloud Site(GCP)', type: FIELD_TYPE.TEXT, patterns: [HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX], errorMessage: 'Project ID is required', shouldShow: (user) => isPlatformTypeGCP(user),
@@ -111,8 +111,8 @@ export const FIELDS = {
   'recovery.protectionplanID': { label: 'protection.plan', description: ' Select Protection Plan ', placeHolderText: '', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (user) => getDRPlanOptions(user), onChange: (user, dispatch) => onProtectionPlanChange(user, dispatch) },
   'recovery.dryrun': { label: 'dry.run', description: 'Test recovery flag, check for true', placeHolderText: '', type: FIELD_TYPE.CHECKBOX, validate: null, errorMessage: '', shouldShow: true, defaultValue: true },
   // 'recovery.winUser': { label: 'machine.username', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: null, errorMessage: '', shouldShow: true },
-  // 'recovery.winPassword': { label: 'machine.password', placeHolderText: '', type: FIELD_TYPE.PASSOWRD, validate: null, errorMessage: '', shouldShow: true },
-  'recovery.vmNames': { label: 'recovery.names', description: 'List of VM names which are needed to recover', placeHolderText: '', type: FIELD_TYPE.PASSOWRD, validate: null, errorMessage: '', shouldShow: false },
+  // 'recovery.winPassword': { label: 'machine.password', placeHolderText: '', type: FIELD_TYPE.PASSWORD, validate: null, errorMessage: '', shouldShow: true },
+  'recovery.vmNames': { label: 'recovery.names', description: 'List of VM names which are needed to recover', placeHolderText: '', type: FIELD_TYPE.PASSWORD, validate: null, errorMessage: '', shouldShow: false },
   'ui.values.replication.interval.type': {
     label: 'Unit', description: 'Replication interval i.e time gap after which next iteration will start after previous one is completed/failed', placeHolderText: 'Select replication unit', type: FIELD_TYPE.SELECT, options: [{ label: 'Days', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_DAY }, { label: 'Hours', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_HOUR }, { label: 'Minutes', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_MIN }], validate: (value, user) => isEmpty(value, user), errorMessage: 'Invalid replication interval.', shouldShow: true, defaultValue: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_MIN,
   },
@@ -133,7 +133,7 @@ export const FIELDS = {
   'node.username': {
     label: 'node.username', description: 'Enter node username', placeHolderText: 'Username', type: FIELD_TYPE.TEXT, errorMessage: 'Enter node username', shouldShow: true, validate: (value, user) => isEmpty(value, user) },
   'node.password': {
-    label: 'node.password', description: 'Enter node password', placeHolderText: 'Password', type: FIELD_TYPE.PASSOWRD, errorMessage: 'Enter node password', shouldShow: true, validate: (value, user) => isEmpty(value, user) },
+    label: 'node.password', description: 'Enter node password', placeHolderText: 'Password', type: FIELD_TYPE.PASSWORD, errorMessage: 'Enter node password', shouldShow: true, validate: (value, user) => isEmpty(value, user) },
   'node.nodeType': {
     label: 'node.nodeType', description: 'Select node type.', placeHolderText: 'Node type', type: FIELD_TYPE.SELECT, errorMessage: 'Select node type', shouldShow: true, validate: (value, user) => isEmpty(value, user), options: (user) => getNodeTypeOptions(user) },
   'node.platformType': {
@@ -150,7 +150,7 @@ export const FIELDS = {
   'emailConfiguration.emailAddress': {
     label: 'emailConfiguration.emailAddress', description: 'Email address', placeHolderText: 'Email address', type: FIELD_TYPE.TEXT, errorMessage: 'Enter valid email address', shouldShow: true, patterns: [EMAIL_REGEX] },
   'emailConfiguration.password': {
-    label: 'emailConfiguration.password', description: 'Email password', placeHolderText: 'Email password', type: FIELD_TYPE.PASSOWRD, errorMessage: 'Enter email password', shouldShow: true, validate: (value, user) => isEmpty(value, user) },
+    label: 'emailConfiguration.password', description: 'Email password', placeHolderText: 'Email password', type: FIELD_TYPE.PASSWORD, errorMessage: 'Enter email password', shouldShow: true, validate: (value, user) => isEmpty(value, user) },
   'emailConfiguration.smtpHost': {
     label: 'emailConfiguration.smtpHost', description: 'SMTP host name', placeHolderText: 'SMTP host name', type: FIELD_TYPE.TEXT, errorMessage: 'Enter valid smtp host or ip address', shouldShow: true, validate: (value, user) => isEmpty(value, user) },
   'emailConfiguration.smtpPort': {
@@ -166,12 +166,13 @@ export const FIELDS = {
   // Report
   // 'report.startDate': { label: 'report.startDate', description: 'Starting date for report', COMPONENT: DATE_PICKER_COMP, type: FIELD_TYPE.CUSTOM, shouldShow: true, validate: (value, user) => isEmpty(value, user) },
   // 'report.endDate': { label: 'report.endDate', description: 'End date for report', COMPONENT: DATE_PICKER_COMP, type: FIELD_TYPE.CUSTOM, shouldShow: true, validate: (value, user) => isEmpty(value, user) },
-  'report.includeSystemOverView': { label: 'report.includeSystemOverView', description: 'Add protected virtual machines in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
-  'report.includeProtectedVMS': { label: 'report.includeProtectedVMS', description: 'Add sites in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
-  'report.includeNodes': { label: 'report.includeNodes', description: 'Add nodes in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
-  'report.includeEvents': { label: 'report.includeEvents', description: 'Add events in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
-  'report.includeAlerts': { label: 'report.includeAlerts', description: 'Add alerts in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
-  'report.includeReplicationJobs': { label: 'report.includeReplicationJobs', description: 'Add replication jobs in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
-  'report.includeRecoveryJobs': { label: 'report.includeRecoveryJobs', description: 'Add recovery jobs in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
-  'report.protectionPlans': { label: 'report.protectionPlans', description: 'Select protection plan for report', type: FIELD_TYPE.SELECT, shouldShow: true, options: (user) => getDRPlanOptions(user) },
+  'report.system.includeSystemOverView': { label: 'report.includeSystemOverView', description: 'Add protected virtual machines in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'report.system.includeNodes': { label: 'report.includeNodes', description: 'Add nodes in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'report.system.includeEvents': { label: 'report.includeEvents', description: 'Add events in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'report.system.includeAlerts': { label: 'report.includeAlerts', description: 'Add alerts in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'report.protectionPlan.protectionPlans': { label: 'report.protectionPlans', description: 'Select protection plan for report', type: FIELD_TYPE.SELECT, shouldShow: true, options: (user) => getReportProtectionPlans(user), defaultValue: 0 },
+  // 'report.protectionPlan.sites': { label: 'Sites', description: 'Include sites in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: true },
+  'report.protectionPlan.includeProtectedVMS': { label: 'report.includeProtectedVMS', description: 'Add sites in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'report.protectionPlan.includeReplicationJobs': { label: 'report.includeReplicationJobs', description: 'Add replication jobs in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'report.protectionPlan.includeRecoveryJobs': { label: 'report.includeRecoveryJobs', description: 'Add recovery jobs in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
 };

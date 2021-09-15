@@ -48,7 +48,7 @@ class DMFieldText extends Component {
 
   typeToggle() {
     const { state } = this;
-    const newtype = (state.type === FIELD_TYPE.PASSOWRD ? FIELD_TYPE.TEXT : FIELD_TYPE.PASSOWRD);
+    const newtype = (state.type === FIELD_TYPE.PASSWORD ? FIELD_TYPE.TEXT : FIELD_TYPE.PASSWORD);
     this.setState({ type: newtype });
   }
 
@@ -58,10 +58,10 @@ class DMFieldText extends Component {
     const hasErrors = !!(errors && errors[fieldKey] !== undefined);
     const { type } = field;
     const { state } = this;
-    if (hidepassword || hasErrors || type !== FIELD_TYPE.PASSOWRD) {
+    if (hidepassword || hasErrors || type !== FIELD_TYPE.PASSWORD) {
       return null;
     }
-    const icon = (state.type === FIELD_TYPE.PASSOWRD ? 'hide' : 'show');
+    const icon = (state.type === FIELD_TYPE.PASSWORD ? 'hide' : 'show');
     const focused = state.isFocused;
     return (
       <span className={(focused && field.description) ? 'field-icon-focused' : 'field-icon'}>

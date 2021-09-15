@@ -162,12 +162,12 @@ export const TABLE_EMAIL_RECIPIENTS = [
 // Table fields for protected virtual machines report
 export const TABLE_REPORT_PROTECTED_VMS = [
   { label: 'Name', field: 'name' },
-  { label: 'Protection Plan', field: 'planName' },
+  { label: 'Plan', field: 'planName' },
   { label: 'Iteration', field: 'totalIteration' },
-  { label: 'Total Changed', field: 'totalChangedSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
-  { label: 'Total Transferred', field: 'totalTransferredSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
-  { label: 'Data Reduction (%)', field: 'dataReductionRatio' },
-  { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
+  { label: 'Changed', field: 'totalChangedSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
+  { label: 'Transferred', field: 'totalTransferredSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
+  { label: 'Reduction (%)', field: 'dataReductionRatio' },
+  // { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
   { label: 'Recovery Status', field: 'recoveryStatus' },
 ];
 

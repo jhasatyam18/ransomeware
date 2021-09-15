@@ -328,3 +328,15 @@ export function getReplicationUnitMins() {
   const range = buildRangeOptions(2, 59, 'minutes');
   return [{ label: 'Minutes', value: 0 }, { label: '1 minute', value: 1 }, ...range];
 }
+
+export function getReportTypeOptions() {
+  return [
+    { label: 'Protection Plan', value: 'pp', name: 'rpt-group' },
+    { label: 'Over all', value: 'overall', name: 'rpt-group' },
+  ];
+}
+
+export function getReportProtectionPlans(user) {
+  const result = [{ label: 'All', value: 0 }];
+  return [...result, ...getDRPlanOptions(user)];
+}

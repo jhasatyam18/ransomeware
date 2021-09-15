@@ -1,11 +1,12 @@
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { FIELDS, FIELD_TYPE } from '../../constants/FieldsConstant';
+import { getFieldComponents } from '../../utils/ComponentFactory';
+import DMFieldCheckbox from './DMFieldCheckbox';
+import DMFieldNumber from './DMFieldNumber';
+import DMFieldRadio from './DMFieldRadio';
 import DMFieldSelect from './DMFieldSelect';
 import DMFieldText from './DMFieldText';
-import DMFieldNumber from './DMFieldNumber';
-import DMFieldCheckbox from './DMFieldCheckbox';
-import { getFieldComponents } from '../../utils/ComponentFactory';
 // Import Images
 
 class DMField extends Component {
@@ -20,6 +21,8 @@ class DMField extends Component {
         return <DMFieldNumber dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} />;
       case FIELD_TYPE.CHECKBOX:
         return <DMFieldCheckbox dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} />;
+      case FIELD_TYPE.RADIO:
+        return <DMFieldRadio dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} />;
       case FIELD_TYPE.CUSTOM:
         return getFieldComponents(dispatch, fieldKey, user, COMPONENT);
       default:

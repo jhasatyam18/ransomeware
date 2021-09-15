@@ -41,9 +41,9 @@ class ChangePassword extends Component {
   render() {
     const { dispatch, user } = this.props;
     const { allowCancel } = user;
-    const oldPassword = { label: 'Current password', placeHolderText: 'Enter current password', type: FIELD_TYPE.PASSOWRD, validate: (v, u) => isEmpty(v, u), errorMessage: 'Enter current password', shouldShow: true };
-    const password = { label: 'New Password', placeHolderText: 'Enter new password', type: FIELD_TYPE.PASSOWRD, patterns: [PASSWORD_REGEX], errorMessage: 'Password should have 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character and be at least 8 characters long.', shouldShow: true };
-    const cnfPassword = { label: 'Confirm Password', placeHolderText: 'Confirm password', type: FIELD_TYPE.PASSOWRD, validate: (v, u) => validatePassword(v, u), errorMessage: 'New password and confirm password does not match', shouldShow: true };
+    const oldPassword = { label: 'Current password', placeHolderText: 'Enter current password', type: FIELD_TYPE.PASSWORD, validate: (v, u) => isEmpty(v, u), errorMessage: 'Enter current password', shouldShow: true };
+    const password = { label: 'New Password', placeHolderText: 'Enter new password', type: FIELD_TYPE.PASSWORD, patterns: [PASSWORD_REGEX], errorMessage: 'Password should have 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character and be at least 8 characters long.', shouldShow: true };
+    const cnfPassword = { label: 'Confirm Password', placeHolderText: 'Confirm password', type: FIELD_TYPE.PASSWORD, validate: (v, u) => validatePassword(v, u), errorMessage: 'New password and confirm password does not match', shouldShow: true };
     return (
       <>
         <div className="account-pages my-5 pt-sm-5">

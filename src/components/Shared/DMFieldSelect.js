@@ -20,10 +20,10 @@ class DMFieldSelect extends Component {
     const { defaultValue } = field;
     const { values } = user;
     const fieldValue = getValue(fieldKey, values);
-    if (fieldValue) {
+    if (typeof fieldValue !== 'undefined') {
       this.setState({ value: fieldValue });
     }
-    if (!fieldValue && defaultValue) {
+    if (!fieldValue && typeof fieldValue !== 'undefined') {
       this.setState({ value: defaultValue });
       dispatch(valueChange(fieldKey, defaultValue));
     }
