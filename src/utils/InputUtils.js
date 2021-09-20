@@ -239,7 +239,7 @@ export function getNodeTypeOptions() {
   return [
     { label: 'Management', value: 'Management' },
     { label: 'Replication', value: 'Replication' },
-    { label: 'Prep Node', value: 'WinPrepMachine' },
+    { label: 'Prep Node', value: 'PrepNode' },
     { label: 'Dedupe Server', value: 'DedupeServer' },
   ];
 }
