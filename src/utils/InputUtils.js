@@ -62,6 +62,12 @@ export function getSitesOptions(user) {
   return result;
 }
 
+export function getDefaultRecoverySite(user) {
+  const { values } = user;
+  const drPlan = getValue('ui.reverse.drPlan', values);
+  return drPlan.recoverySite.id;
+}
+
 export function getDRPlanOptions(user) {
   const { values } = user;
   const plans = getValue(STATIC_KEYS.UI_PROTECTION_PLANS, values);

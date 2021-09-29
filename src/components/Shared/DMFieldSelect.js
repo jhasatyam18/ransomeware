@@ -23,9 +23,21 @@ class DMFieldSelect extends Component {
     if (typeof fieldValue !== 'undefined') {
       this.setState({ value: fieldValue });
     }
+
     if (!fieldValue && typeof fieldValue !== 'undefined') {
       this.setState({ value: defaultValue });
       dispatch(valueChange(fieldKey, defaultValue));
+    }
+
+    if (!fieldValue && defaultValue) {
+      let defaultVal;
+      if (typeof defaultValue === 'function') {
+        defaultVal = defaultValue(user);
+      } else {
+        defaultVal = defaultValue;
+      }
+      this.setState({ value: defaultVal });
+      dispatch(valueChange(fieldKey, defaultVal));
     }
   }
 

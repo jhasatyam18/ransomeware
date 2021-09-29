@@ -9,6 +9,7 @@ export const JOB_COMPLETED_WITH_ERRORS = 'completed with errors';
 export const JOB_INIT_FAILED = 'init-failed';
 export const JOB_INIT_SUCCESS = 'init-success';
 export const JOB_INIT_PROGRESS = 'init-in-progress';
+export const JOB_INIT_SYNC_PROGRESS = 'init-sync-in-progress';
 export const JOB_SYNC_FAILED = 'sync-failed';
 export const NODE_STATUS_ONLINE = 'online';
 export const NODE_STATUS_OFFLINE = 'offline';

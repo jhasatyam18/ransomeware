@@ -68,3 +68,8 @@ export const NODE_GET_ENCRYPTION_KEY = 'api/v1/nodes/<id>/encryption';
 export const API_EMAIL_CONFIGURATION = 'api/v1/email/configuration';
 export const API_EMAIL_CONFIGURE = 'api/v1/email/configure';
 export const API_EMAIL_RECIPIENTS = 'api/v1/email/recipient';
+
+// reverse
+export const API_REVERSE = 'api/v1/protection/plans/<id>/reverse';
+export const API_FETCH_REVERSE_DR_PLAN_BY_ID = 'api/v1/protection/plans/<id>/reverse';
+export const API_VALIDATE_REVERSE_PLAN = 'api/v1/protection/plans/<id>/reverse/validate';

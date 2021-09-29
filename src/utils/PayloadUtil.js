@@ -134,6 +134,24 @@ function getRecoveryConfigVMDetails(user) {
   return machineDetails;
 }
 
+export function getReversePlanPayload(user) {
+  const { values } = user;
+  const sites = getValue('ui.values.sites', values);
+  const drplan = getValue('ui.reverse.drPlan', values);
+  const selectedRSite = getValue('reverse.recoverySite', values);
+  const rSite = sites.filter((site) => getFilteredObject(site, selectedRSite, 'id'))[0];
+  const replType = getValue('reverse.replType', values);
+  const recoverySufffix = getValue('reverse.suffix', values);
+  if (replType === STATIC_KEYS.DIFFERENTIAL) {
+    drplan.isDifferential = true;
+  } else {
+    drplan.isDifferential = false;
+  }
+  drplan.recoverySite = rSite;
+  drplan.recoveryEntities.suffix = recoverySufffix;
+  return drplan;
+}
+
 function joinArray(data, delimiter) {
   if (data && data.length > 0) {
     return data.join(delimiter);

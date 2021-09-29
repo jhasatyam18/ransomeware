@@ -44,6 +44,8 @@ export const STATIC_KEYS = {
   REPLICATION_INTERVAL_TYPE_DAY: 'day',
   REPLICATION_INTERVAL_TYPE_HOUR: 'hour',
   REPLICATION_INTERVAL_TYPE_MIN: 'miniutes',
+  FULL_INCREMENTAL: 'Full incremental',
+  DIFFERENTIAL: 'Differential',
   UI_SITES: 'ui.values.sites',
   UI_PROTECTION_PLANS: 'ui.values.drplan',
   UI_INSTANCES: 'ui.values.instances',

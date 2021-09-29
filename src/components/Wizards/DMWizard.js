@@ -4,7 +4,7 @@ import { Modal, Row, Col } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
 import { closeWizard } from '../../store/actions/WizardActions';
 import { clearValues } from '../../store/actions';
-import { DRPLAN_PROTECT_STEP, DRPLAN_RECOVERY_STEP, PROTECTION_PLAN_SUMMARY_STEP, RECOVERY_PROTECT_VM_STEP, RECOVERY_SUMMARY, MIGRATION_GENERAL_STEP, DRPLAN_VM_CONFIG_STEP, WIZARD_STEP, RECOVERY_GENERAL_STEP } from '../../constants/WizardConstants';
+import { DRPLAN_PROTECT_STEP, DRPLAN_RECOVERY_STEP, PROTECTION_PLAN_SUMMARY_STEP, RECOVERY_PROTECT_VM_STEP, RECOVERY_SUMMARY, MIGRATION_GENERAL_STEP, DRPLAN_VM_CONFIG_STEP, WIZARD_STEP, RECOVERY_GENERAL_STEP, REVERSE_CONFIG_STEP, REVERSE_SUMMARY } from '../../constants/WizardConstants';
 import Pages404 from '../../pages/Page-404';
 import DRPlanRecoveryConfigStep from './DRPlanRecoveryConfigStep';
 import DRPlanProtectVMStep from './DRPlanProtectVMStep';
@@ -16,6 +16,8 @@ import MigrationGeneralStep from './MigrationGeneralStep';
 import VMConfigurationStep from './VMConfigurationStep';
 import WizardStep from './WizardStep';
 import RecoveryGeneralStep from './RecoveryGeneralStep';
+import ReversePlanConfigStep from './ReversePlanConfigStep';
+import ReversePlanSummary from './ReversePlanSummary';
 
 class DMWizard extends React.Component {
   constructor() {
@@ -105,6 +107,10 @@ class DMWizard extends React.Component {
         return <WizardStep {...this.props} fields={steps[currentStep].fields} />;
       case RECOVERY_GENERAL_STEP:
         return <RecoveryGeneralStep {...this.props} />;
+      case REVERSE_CONFIG_STEP:
+        return <ReversePlanConfigStep {...this.props} />;
+      case REVERSE_SUMMARY:
+        return <ReversePlanSummary {...this.props} />;
       default:
         return <Pages404 />;
     }

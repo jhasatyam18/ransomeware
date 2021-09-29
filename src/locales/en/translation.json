@@ -129,5 +129,7 @@
   "report.includeAlerts": "Alerts",
   "report.includeReplicationJobs": "Replication Jobs",
   "report.includeRecoveryJobs": "Recovery Jobs",
-  "report.includeNodes": "Nodes"
+  "report.includeNodes": "Nodes",
+  "reverse.replType": "Replication Type",
+  "reverse.suffix": "Recovery Machines Suffix"
 }

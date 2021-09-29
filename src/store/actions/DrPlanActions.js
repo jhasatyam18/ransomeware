@@ -2,16 +2,16 @@ import { fetchByDelay } from '../../utils/SlowFetch';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import * as Types from '../../constants/actionTypes';
 import {
-  API_FETCH_DR_PLANS, API_START_DR_PLAN, API_STOP_DR_PLAN, API_DELETE_DR_PLAN, API_FETCH_DR_PLAN_BY_ID, API_RECOVER, API_MIGRATE,
+  API_FETCH_DR_PLANS, API_START_DR_PLAN, API_STOP_DR_PLAN, API_DELETE_DR_PLAN, API_FETCH_DR_PLAN_BY_ID, API_FETCH_REVERSE_DR_PLAN_BY_ID, API_RECOVER, API_MIGRATE, API_REVERSE,
 } from '../../constants/ApiConstants';
 import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { fetchSites } from './SiteActions';
-import { getCreateDRPlanPayload, getRecoveryPayload } from '../../utils/PayloadUtil';
+import { getCreateDRPlanPayload, getRecoveryPayload, getReversePlanPayload } from '../../utils/PayloadUtil';
 import { clearValues, hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
 import { closeWizard, openWizard } from './WizardActions';
 import { closeModal } from './ModalActions';
-import { MIGRATION_WIZARDS, RECOVERY_WIZARDS, TEST_RECOVERY_WIZARDS } from '../../constants/WizardConstants';
+import { MIGRATION_WIZARDS, RECOVERY_WIZARDS, TEST_RECOVERY_WIZARDS, REVERSE_WIZARDS } from '../../constants/WizardConstants';
 
 export function fetchDrPlans(key) {
   return (dispatch) => {
@@ -211,10 +211,32 @@ export function onProtectionPlanChange({ value }) {
       });
   };
 }
-/**
- * Start Recovery
- * @returns
- */
+
+export function onReverseProtectionPlanChange(id) {
+  return (dispatch) => {
+    const url = API_FETCH_REVERSE_DR_PLAN_BY_ID.replace('<id>', id);
+    dispatch(showApplicationLoader(url, 'Loading reverse protection plan'));
+    return callAPI(url)
+      .then((json) => {
+        dispatch(hideApplicationLoader(url));
+        if (json && json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          if (json === null) {
+            dispatch(addMessage('Fetch reverse protection plan failed.', MESSAGE_TYPES.ERROR));
+            return;
+          }
+          dispatch(valueChange('ui.reverse.drPlan', json));
+          dispatch(openWizard(REVERSE_WIZARDS.options, REVERSE_WIZARDS.steps));
+        }
+      },
+      (err) => {
+        dispatch(hideApplicationLoader(url));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  };
+}
+
 export function startRecovery() {
   return (dispatch, getState) => {
     const { user } = getState();
@@ -267,10 +289,31 @@ export function startMigration() {
   };
 }
 
-/**
- * Initiate migration wizard
- * @returns
- */
+export function startReversePlan() {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const values = user;
+    const drplan = getReversePlanPayload(values);
+    const url = API_REVERSE.replace('<id>', drplan.id);
+    const obj = createPayload(API_TYPES.POST, { ...drplan });
+    dispatch(showApplicationLoader('REVERSE-API-EXECUTION', 'Initiating Reverse Protection Plan'));
+    return callAPI(url, obj).then((json) => {
+      dispatch(hideApplicationLoader('REVERSE-API-EXECUTION'));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        dispatch(closeWizard());
+        dispatch(clearValues());
+        dispatch(addMessage('Reverse Protection Plan Configured Successfully.', MESSAGE_TYPES.SUCCESS));
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('REVERSE-API-EXECUTION'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+  };
+}
+
 export function openMigrationWizard() {
   return (dispatch, getState) => {
     const { drPlans } = getState();
@@ -314,10 +357,6 @@ export function openRecoveryWizard() {
   };
 }
 
-/**
- * Initiate test recovery wizard
- * @returns
- */
 export function openTestRecoveryWizard() {
   return (dispatch, getState) => {
     const { drPlans } = getState();
@@ -350,5 +389,17 @@ export function refreshPostActon() {
     } else {
       dispatch(fetchDrPlans());
     }
+  };
+}
+
+export function openReverseWizard() {
+  return (dispatch, getState) => {
+    const { drPlans } = getState();
+    const { protectionPlan } = drPlans;
+    const { id } = protectionPlan;
+    dispatch(clearValues());
+    dispatch(fetchDrPlans('ui.values.drplan'));
+    dispatch(fetchSites('ui.values.sites'));
+    dispatch(onReverseProtectionPlanChange(id));
   };
 }

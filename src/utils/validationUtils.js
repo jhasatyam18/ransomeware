@@ -3,8 +3,8 @@ import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
 import { createVMConfigStackObject, getValue } from './InputUtils';
 import { MESSAGE_TYPES } from '../constants/MessageConstants';
 import { API_TYPES, callAPI, createPayload } from './ApiUtils';
-import { API_VALIDATE_MIGRATION, API_VALIDATE_RECOVERY } from '../constants/ApiConstants';
-import { getRecoveryPayload } from './PayloadUtil';
+import { API_VALIDATE_MIGRATION, API_VALIDATE_RECOVERY, API_VALIDATE_REVERSE_PLAN } from '../constants/ApiConstants';
+import { getRecoveryPayload, getReversePlanPayload } from './PayloadUtil';
 import { addMessage } from '../store/actions/MessageActions';
 
 export function isRequired(value) {
@@ -238,4 +238,44 @@ export function validateReplicationValue({ user }) {
     return true;
   }
   return false;
+}
+
+export async function validateReversePlan({ user, dispatch }) {
+  const initialCheckPass = validateReverseData({ user, dispatch });
+  if (initialCheckPass) {
+    try {
+      const drplan = getReversePlanPayload(user);
+      const obj = createPayload(API_TYPES.POST, { ...drplan });
+      const url = API_VALIDATE_REVERSE_PLAN.replace('<id>', drplan.id);
+      dispatch(showApplicationLoader('VALIDATING_REVERSE_PLAN', 'Validating reverse plan.'));
+      const response = await callAPI(url, obj);
+      dispatch(hideApplicationLoader('VALIDATING_REVERSE_PLAN'));
+      if (!response.isRecoverySiteOnline) {
+        dispatch(addMessage('Recovery site is not reachable. Please select a different recovery site.', MESSAGE_TYPES.ERROR, true));
+        return false;
+      }
+      if (response.failedVMs === null) {
+        return true;
+      }
+      if (response.failedVMs.length !== 0) {
+        dispatch(addMessage(`Some virtual machines [${response.failedVMs.join(', ')}] do not have snapshot on the recovery site. Please select full incremental for replication type and click next.`, MESSAGE_TYPES.ERROR, true));
+      }
+      return false;
+    } catch (err) {
+      dispatch(hideApplicationLoader('VALIDATING_REVERSE_PLAN'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      return false;
+    }
+  } else {
+    return false;
+  }
+}
+
+export function validateReverseData({ user, dispatch }) {
+  const { values } = user;
+  const field = FIELDS['reverse.suffix'];
+  if (!validateField(field, 'reverse.suffix', getValue('reverse.suffix', values), dispatch, user)) {
+    return false;
+  }
+  return true;
 }

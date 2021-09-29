@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import {
-  drPlanStopStart, deletePlan, openRecoveryWizard, openMigrationWizard,
+  drPlanStopStart, deletePlan, openRecoveryWizard, openMigrationWizard, openReverseWizard,
 } from '../../store/actions/DrPlanActions';
 import ActionButton from '../Common/ActionButton';
 import { openModal } from '../../store/actions/ModalActions';
@@ -20,6 +20,7 @@ class DRPlanActionBar extends Component {
     this.onCreate = this.onCreate.bind(this);
     this.onInitiateRecovery = this.onInitiateRecovery.bind(this);
     this.onMigrate = this.onMigrate.bind(this);
+    this.onReverse = this.onReverse.bind(this);
   }
 
   onCreate() {
@@ -39,6 +40,11 @@ class DRPlanActionBar extends Component {
     const { dispatch } = this.props;
     dispatch(clearValues());
     dispatch(openMigrationWizard());
+  }
+
+  onReverse() {
+    const { dispatch } = this.props;
+    dispatch(openReverseWizard());
   }
 
   onDelete() {
@@ -83,7 +89,8 @@ class DRPlanActionBar extends Component {
 
   renderServerOptions() {
     const actions = [{ label: 'recover', onClick: this.onInitiateRecovery, icon: 'fa fa-recycle', isDisabled: false },
-      { label: 'Migrate', onClick: this.onMigrate, icon: 'fa fa-share-square', isDisabled: false }];
+      { label: 'Migrate', onClick: this.onMigrate, icon: 'fa fa-share-square', isDisabled: false },
+      { label: 'Reverse', onClick: this.onReverse, icon: 'fa fa-backward', isDisabled: false }];
     return (
       <>
         {this.getActionButtons(actions)}
