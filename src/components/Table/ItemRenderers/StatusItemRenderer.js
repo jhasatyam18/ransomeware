@@ -67,7 +67,7 @@ function StatusItemRenderer({ data, field }) {
       </div>
     );
   }
-  if (status === JOB_ONGOING || status === JOB_INIT_PROGRESS || status == JOB_INIT_SYNC_PROGRESS) {
+  if (status === JOB_ONGOING || status === JOB_INIT_PROGRESS || status === JOB_INIT_SYNC_PROGRESS) {
     return (
       <div>
         <Badge className="font-size-13 badge-soft-info" color="info" pill>
