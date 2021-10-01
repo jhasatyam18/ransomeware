@@ -27,6 +27,7 @@ class ModalEmailConfiguration extends Component {
     const { isUpdate, id } = options;
     if (validateForm('emailConfiguration.', user, dispatch)) {
       const payload = getFormPayload('emailConfiguration.', user);
+      payload.emailConfiguration.insecureSkipVerify = !payload.emailConfiguration.insecureSkipVerify;
       if (isUpdate) {
         dispatch(configureEmail({ ...payload.emailConfiguration, ID: id }));
       } else {

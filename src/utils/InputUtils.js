@@ -177,11 +177,43 @@ export function getSubnetOptions(user) {
   const opts = getValue(STATIC_KEYS.UI_SUBNETS, values) || [];
   const options = [];
   opts.forEach((op) => {
-    const name = (op.name && op.name !== '' ? `${op.id} (${op.name})` : op.id);
+    const name = getSubnetLabel(op);
     options.push({ label: name, value: op.id });
   });
   return options;
 }
+
+export function getGCPExternalIPOptions(user) {
+  const { values } = user;
+  const options = [];
+  options.push({ label: 'None', value: 'None' });
+  options.push({ label: 'Auto', value: 'Ephemeral' });
+  const ips = getValue(STATIC_KEYS.UI_RESERVE_IPS, values) || [];
+  ips.forEach((op) => {
+    if (op.ipType === 'EXTERNAL') {
+      options.push({ label: op.name, value: op.name });
+    }
+  });
+  return options;
+}
+
+export function getGCPNetworkTierOptions() {
+  const options = [];
+  options.push({ label: 'Standard', value: 'Standard' });
+  options.push({ label: 'Premium', value: 'Premium' });
+  return options;
+}
+
+function getSubnetLabel(subnet) {
+  if (subnet.cidr && subnet.cidr !== '') {
+    return `${subnet.cidr} - ${subnet.id}`;
+  }
+  if (subnet.name && subnet.name !== '') {
+    return `${subnet.name} - ${subnet.id}`;
+  }
+  return subnet.id;
+}
+
 export function buildRangeOptions(start, end, label) {
   const options = [];
   let postFix = '';
@@ -207,7 +239,19 @@ export function getReplicationIntervalOptions(user) {
   }
 }
 
-export function createVMConfigStackObject(key) {
+export function createVMConfigStackObject(vm, user) {
+  const { values } = user;
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+  switch (recoveryPlatform) {
+    case PLATFORM_TYPES.GCP:
+      return getGCPVMConfig(vm);
+    default:
+      return getAwsVMConfig(vm);
+  }
+}
+
+export function getGCPVMConfig(vm) {
+  const key = (typeof vm === 'string' ? vm : vm.moref);
   const config = {
     data: [
       {
@@ -216,7 +260,7 @@ export function createVMConfigStackObject(key) {
         children: {
           [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
           [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u) },
-          [`${key}-vmConfig.general.bootOrder`]: { label: 'Boot', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select boot order.', shouldShow: true, options: (u) => geBootPriorityOptions(u) },
+          [`${key}-vmConfig.general.bootOrder`]: { label: 'Boot Order', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select boot order.', shouldShow: true, options: (u) => geBootPriorityOptions(u) },
           [`${key}-vmConfig.general.tags`]: { label: 'Tags', type: STACK_COMPONENT_TAGS, validate: null, errorMessage: '', shouldShow: true },
         },
       },
@@ -224,8 +268,43 @@ export function createVMConfigStackObject(key) {
         hasChildren: true,
         title: 'Network',
         children: {
-          [`${key}-vmConfig.network.net1`]: { label: 'IP Address', type: STACK_COMPONENT_NETWORK, validate: null, errorMessage: '', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
-          [`${key}-vmConfig.network.securityGroup`]: { label: 'Security Groups', type: STACK_COMPONENT_SECURITY_GROUP, validate: null, errorMessage: '', shouldShow: true },
+          [`${key}-vmConfig.network.net1`]: { label: 'IP Address', type: STACK_COMPONENT_NETWORK, validate: null, errorMessage: '', shouldShow: true, options: (u) => getInstanceTypeOptions(u), data: vm },
+          [`${key}-vmConfig.network.securityGroup`]: { label: 'Firewall Tags', type: STACK_COMPONENT_SECURITY_GROUP, validate: null, errorMessage: '', shouldShow: true },
+        },
+      },
+      {
+        hasChildren: true,
+        title: 'Scripts',
+        children: {
+          [`${key}-vmConfig.scripts.preScript`]: { label: 'Pre', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPreScriptsOptions(u) },
+          [`${key}-vmConfig.scripts.postScript`]: { label: 'Post', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPostScriptsOptions(u) },
+        },
+      },
+    ],
+  };
+  return config;
+}
+
+export function getAwsVMConfig(vm) {
+  const key = (typeof vm === 'string' ? vm : vm.moref);
+  const config = {
+    data: [
+      {
+        hasChildren: true,
+        title: 'General',
+        children: {
+          [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
+          [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u) },
+          [`${key}-vmConfig.general.bootOrder`]: { label: 'Boot Order', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select boot order.', shouldShow: true, options: (u) => geBootPriorityOptions(u) },
+          [`${key}-vmConfig.general.tags`]: { label: 'Tags', type: STACK_COMPONENT_TAGS, validate: null, errorMessage: '', shouldShow: true },
+        },
+      },
+      {
+        hasChildren: true,
+        title: 'Network',
+        children: {
+          [`${key}-vmConfig.network.net1`]: { label: 'IP Address', type: STACK_COMPONENT_NETWORK, validate: null, errorMessage: '', shouldShow: true, options: (u) => getInstanceTypeOptions(u), data: vm },
+          // [`${key}-vmConfig.network.securityGroup`]: { label: 'Security Groups', type: STACK_COMPONENT_SECURITY_GROUP, validate: null, errorMessage: '', shouldShow: true },
         },
       },
       {
@@ -345,4 +424,12 @@ export function getReportTypeOptions() {
 export function getReportProtectionPlans(user) {
   const result = [{ label: 'All', value: 0 }];
   return [...result, ...getDRPlanOptions(user)];
+}
+
+export function getNetInfo(networkKey, index, values) {
+  const isPublicIP = getValue(`${networkKey}-eth-${index}-isPublic`, values) || false;
+  const subnet = getValue(`${networkKey}-eth-${index}-subnet`, values) || '';
+  const privateIP = getValue(`${networkKey}-eth-${index}-privateIP`, values) || '-';
+  const publicIP = getValue(`${networkKey}-eth-${index}-publicIP`, values) || '';
+  return { hasPublicIP: (isPublicIP ? 'Yes' : 'No'), subnet, privateIP, isPublicIP, publicIP };
 }

@@ -1,11 +1,13 @@
 import { addErrorMessage, hideApplicationLoader, removeErrorMessage, showApplicationLoader, valueChange } from '../store/actions';
+import { addMessage } from '../store/actions/MessageActions';
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
-import { createVMConfigStackObject, getValue } from './InputUtils';
 import { MESSAGE_TYPES } from '../constants/MessageConstants';
 import { API_TYPES, callAPI, createPayload } from './ApiUtils';
 import { API_VALIDATE_MIGRATION, API_VALIDATE_RECOVERY, API_VALIDATE_REVERSE_PLAN } from '../constants/ApiConstants';
-import { getRecoveryPayload, getReversePlanPayload } from './PayloadUtil';
-import { addMessage } from '../store/actions/MessageActions';
+import { getRecoveryPayload, getReversePlanPayload, getVMNetworkConfig } from './PayloadUtil';
+import { IP_REGEX } from '../constants/ValidationConstants';
+import { PLATFORM_TYPES, STATIC_KEYS } from '../constants/InputConstants';
+import { createVMConfigStackObject, getValue } from './InputUtils';
 
 export function isRequired(value) {
   if (!value) {
@@ -154,7 +156,7 @@ export function validateVMConfiguration({ user, dispatch }) {
   const vms = getValue('ui.site.seletedVMs', values);
   let fields = {};
   Object.keys(vms).forEach((vm) => {
-    const vmConfig = createVMConfigStackObject(vm);
+    const vmConfig = createVMConfigStackObject(vm, user);
     const { data } = vmConfig;
     data.forEach((item) => {
       const { children } = item;
@@ -166,8 +168,114 @@ export function validateVMConfiguration({ user, dispatch }) {
   const response = validateSteps(user, dispatch, Object.keys(fields), fields);
   if (!response) {
     dispatch(addMessage('Check node configuration. One or more required field data is not provided.', MESSAGE_TYPES.ERROR));
+    return false;
   }
-  return response;
+  // validate Network
+
+  return validateNetworkConfig(user, dispatch);
+}
+
+export function validateNetworkConfig(user, dispatch) {
+  const { values } = user;
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+  switch (recoveryPlatform) {
+    case PLATFORM_TYPES.AWS:
+      return validateAWSNetworks(user, dispatch);
+    case PLATFORM_TYPES.GCP:
+      return validateGCPNetworks(user, dispatch);
+    default:
+      return true;
+  }
+}
+
+export function validateGCPNetworks(user, dispatch) {
+  const { values } = user;
+  const vms = getValue('ui.site.seletedVMs', values);
+  const subnets = getValue(STATIC_KEYS.UI_SUBNETS, values);
+  let isClean = true;
+  let message = '';
+  // empty config
+  const ips = [];
+  Object.keys(vms).forEach((vm) => {
+    const netConfigs = getVMNetworkConfig(`${vm}`, values);
+    const vpc = [];
+    if (netConfigs.length === 0) {
+      message = `Network configuration required for ${vms[vm].name}`;
+      isClean = false;
+    } else {
+      for (let i = 0; i < netConfigs.length; i += 1) {
+        if (netConfigs[i].subnet === '') {
+          message = `Network configure missing for nic-${i}`;
+          isClean = false;
+        }
+        if (typeof netConfigs.privateIP !== 'undefined' && netConfigs.privateIP !== '') {
+          ips.push(netConfigs.privateIP);
+        }
+        if (typeof netConfigs.publicIP !== 'undefined' && netConfigs.publicIP !== '') {
+          ips.push(netConfigs.publicIP);
+        }
+        for (let j = 0; j < subnets.length; j += 1) {
+          if (subnets[j].id === netConfigs[i].subnet) {
+            vpc.push(subnets[j].vpcID);
+          }
+        }
+      }
+      // unique network check
+      const vpcSet = [...new Set(vpc)];
+      if (vpcSet.length !== vpc.length && message === '') {
+        message = 'Network/subnet must be unique for each network interface';
+        isClean = false;
+      }
+    }
+  });
+  // duplicate ip check
+  const ipSet = [...new Set(ips)];
+  if (ipSet.length !== ips.length && message === '') {
+    message = 'Duplicate ip address not allowed';
+    isClean = false;
+  }
+  if (!isClean) {
+    dispatch(addMessage(message, MESSAGE_TYPES.ERROR));
+  }
+  return isClean;
+}
+
+export function validateAWSNetworks(user, dispatch) {
+  const { values } = user;
+  const vms = getValue('ui.site.seletedVMs', values);
+  const subnets = getValue(STATIC_KEYS.UI_SUBNETS, values);
+  let isClean = true;
+  let message = '';
+  Object.keys(vms).forEach((vm) => {
+    const netConfigs = getVMNetworkConfig(`${vm}`, values);
+    if (netConfigs.length === 0) {
+      message = `Network configuration required for ${vms[vm].name}`;
+      isClean = false;
+    }
+    const vpc = [];
+    for (let i = 0; i < netConfigs.length; i += 1) {
+      if (netConfigs[i].subnet === '') {
+        isClean = false;
+        message = `Subnet missing for ${vms[vm].name}`;
+      }
+      for (let j = 0; j < subnets.length; j += 1) {
+        if (subnets[j].id === netConfigs[i].subnet) {
+          vpc.push(subnets[j].vpcID);
+        }
+      }
+    }
+
+    const vpcSet = [...new Set(vpc)];
+    // nics with different vpcid
+    if (vpcSet.length > 1) {
+      message = 'Network interfaces and an instance-level security groups may not be specified on the same request';
+      isClean = false;
+    }
+  });
+  if (!isClean) {
+    dispatch(addMessage(message, MESSAGE_TYPES.ERROR));
+  }
+  return isClean;
 }
 
 export async function validateRecoveryVMs({ user, dispatch }) {
@@ -275,6 +383,98 @@ export function validateReverseData({ user, dispatch }) {
   const { values } = user;
   const field = FIELDS['reverse.suffix'];
   if (!validateField(field, 'reverse.suffix', getValue('reverse.suffix', values), dispatch, user)) {
+    return false;
+  }
+  return true;
+}
+
+export function validateOptionalIPAddress({ value }) {
+  if (value !== '') {
+    const re = new RegExp(IP_REGEX);
+    if (value.match(re) === null) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export function validateNicConfig(dispatch, user, options) {
+  const { values } = user;
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+  switch (recoveryPlatform) {
+    case PLATFORM_TYPES.AWS:
+      return validateAWSNic(dispatch, user, options);
+    case PLATFORM_TYPES.GCP:
+      return validateGCPNicConfig(dispatch, user, options);
+    default:
+      return true;
+  }
+}
+
+function validateGCPNicConfig(dispatch, user, options) {
+  const { values, errors } = user;
+  const { networkKey } = options;
+  const subnet = getValue(`${networkKey}-subnet`, values) || '';
+  const pvtIP = getValue(`${networkKey}-privateIP`, values) || '';
+  const pubIP = getValue(`${networkKey}-publicIP`, values) || '';
+  if (subnet === '' || subnet === '-') {
+    dispatch(addMessage('Select network subnet', MESSAGE_TYPES.ERROR));
+    return false;
+  }
+  if (pvtIP !== '') {
+    if (errors && errors[`${networkKey}-privateIP`]) {
+      return false;
+    }
+  }
+  if (pubIP === '') {
+    dispatch(addMessage('Select external ip config', MESSAGE_TYPES.ERROR));
+    return false;
+  }
+  return true;
+}
+function validateAWSNic(dispatch, user, options) {
+  const { networkKey } = options;
+  const { values, errors } = user;
+  const subnet = getValue(`${networkKey}-subnet`, values);
+  const pvtIP = getValue(`${networkKey}-privateIP`, values) || '';
+  const sg = getValue(`${networkKey}-securityGroups`, values) || [];
+  if (subnet === '' || subnet === '-') {
+    dispatch(addMessage('Select network subnet', MESSAGE_TYPES.ERROR));
+    return false;
+  }
+  if (pvtIP !== '') {
+    if (errors && errors[`${networkKey}-privateIP`]) {
+      return false;
+    }
+  }
+  if (sg.length === 0) {
+    dispatch(addMessage('Select security group', MESSAGE_TYPES.ERROR));
+    return false;
+  }
+  const sgs = getValue(STATIC_KEYS.UI_SECURITY_GROUPS, values) || [];
+  const subnets = getValue(STATIC_KEYS.UI_SUBNETS, values);
+  let subnetVPCID = 0;
+  subnets.forEach((sub) => {
+    if (sub.id === subnet) {
+      subnetVPCID = sub.vpcID;
+    }
+  });
+  const vpcIDs = [];
+  sgs.forEach((g) => {
+    sg.forEach((s) => {
+      if (g.id === s) {
+        vpcIDs.push(g.vpcID);
+      }
+    });
+  });
+  const vpcSet = [...new Set(vpcIDs)];
+  if (vpcSet.length > 1) {
+    dispatch(addMessage('Security group must be from same VPC.'));
+    return false;
+  }
+  // check subnet and sgs from same vpc
+  if (vpcSet[0] !== subnetVPCID) {
+    dispatch(addMessage('Security group and subnet must be from same VPC.'));
     return false;
   }
   return true;

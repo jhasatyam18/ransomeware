@@ -139,6 +139,7 @@ export function onRecoverSiteChange({ value }) {
     const url = (platfromType === PLATFORM_TYPES.AWS ? API_AWS_INSTANCES : API_GCP_INSTANCES);
     dispatch(fetchAvailibilityZones({ value }));
     dispatch(fetchNetworks(value));
+    dispatch(valueChange('ui.values.recoveryPlatform', platfromType));
     return callAPI(url)
       .then((json) => {
         if (json && json.hasError) {
@@ -274,6 +275,7 @@ export function fetchNetworks(id) {
           const data = json;
           dispatch(valueChange(STATIC_KEYS.UI_SECURITY_GROUPS, (data.securityGroups ? data.securityGroups : [])));
           dispatch(valueChange(STATIC_KEYS.UI_SUBNETS, (data.subnets ? data.subnets : [])));
+          dispatch(valueChange(STATIC_KEYS.UI_RESERVE_IPS, (data.ipAddress ? data.ipAddress : [])));
         }
       },
       (err) => {

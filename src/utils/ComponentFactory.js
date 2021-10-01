@@ -34,11 +34,11 @@ import NodeNameItemRenderer from '../components/Table/ItemRenderers/NodeNameItem
 import EmailRecipientItemRenderer from '../components/Table/ItemRenderers/EmailRecipientItemRenderer';
 import NodeActionItemRenderer from '../components/Table/ItemRenderers/NodeActionItemRenderer';
 
-export function getStackComponent(dispatch, user, children, conf) {
+export function getStackComponent(dispatch, user, children, conf, data) {
   const field = children[conf];
   switch (field.type) {
     case STACK_COMPONENT_NETWORK:
-      return <NetworkConfig dispatch={dispatch} networkKey={conf} field={children[conf]} user={user} />;
+      return <NetworkConfig dispatch={dispatch} networkKey={conf} field={children[conf]} user={user} data={data} />;
     case STACK_COMPONENT_TAGS:
       return <CloudTags dispatch={dispatch} vmKey={conf} user={user} />;
     case STACK_COMPONENT_SECURITY_GROUP:

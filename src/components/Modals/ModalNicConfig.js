@@ -1,0 +1,111 @@
+import React, { Component } from 'react';
+import { withTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { Card, CardBody, Container, Form } from 'reactstrap';
+import DMFieldRadio from '../Shared/DMFieldRadio';
+import DMFieldText from '../Shared/DMFieldText';
+import DMFieldCheckbox from '../Shared/DMFieldCheckbox';
+import DMFieldSelect from '../Shared/DMFieldSelect';
+import DMMultiSelect from '../Shared/DMMultiSelect';
+import { PLATFORM_TYPES } from '../../constants/InputConstants';
+import { FIELD_TYPE, MULTISELECT_ITEM_COMP } from '../../constants/FieldsConstant';
+import { closeModal } from '../../store/actions/ModalActions';
+import { getGCPExternalIPOptions, getGCPNetworkTierOptions, getSecurityGroupOption, getSubnetOptions, getValue } from '../../utils/InputUtils';
+import { isEmpty, validateNicConfig, validateOptionalIPAddress } from '../../utils/validationUtils';
+
+/**
+ * Component for network adapter config
+ */
+class ModalNicConfig extends Component {
+  constructor() {
+    super();
+    this.onClose = this.onClose.bind(this);
+  }
+
+  onClose() {
+    const { dispatch, user, options } = this.props;
+    const result = validateNicConfig(dispatch, user, options);
+    if (result) {
+      dispatch(closeModal());
+    }
+  }
+
+  renderAWSConfig() {
+    const { dispatch, user, options } = this.props;
+    const { networkKey, index } = options;
+    const showPublicChk = index === 0;
+    const subnetField = { label: 'Subnet', description: '', type: FIELD_TYPE.SELECT, options: (u) => getSubnetOptions(u), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select subnet', shouldShow: true };
+    const chkField = { label: 'Public', description: '', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: false };
+    const privateIPField = { label: 'Private IP', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.TEXT, shouldShow: true, validate: (v, u) => validateOptionalIPAddress(v, u), errorMessage: 'Invalid ip address or ip is not in subnet cidr range' };
+    const securityGroup = { label: 'Security  Groups', placeHolderText: 'security group', description: '', type: FIELD_TYPE.CUSTOM, shouldShow: true, validate: (v, u) => isEmpty(v, u), errorMessage: 'Select security group', COMPONENT: MULTISELECT_ITEM_COMP, options: (u) => getSecurityGroupOption(u) };
+    return (
+      <>
+        <Container>
+          <Card>
+            <CardBody>
+              <Form>
+                <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-subnet`} field={subnetField} user={user} />
+                {showPublicChk ? (
+                  <DMFieldCheckbox dispatch={dispatch} fieldKey={`${networkKey}-isPublic`} field={chkField} user={user} />
+                )
+                  : null}
+                <DMFieldText dispatch={dispatch} fieldKey={`${networkKey}-privateIP`} field={privateIPField} user={user} />
+                <DMMultiSelect dispatch={dispatch} fieldKey={`${networkKey}-securityGroups`} field={securityGroup} user={user} />
+              </Form>
+            </CardBody>
+          </Card>
+          <div className="modal-footer">
+            <button type="button" className="btn btn-secondary" onClick={this.onClose}>Save and close </button>
+          </div>
+        </Container>
+      </>
+    );
+  }
+
+  renderGCPConfig() {
+    const { dispatch, user, options } = this.props;
+    const { networkKey } = options;
+    const subnetField = { label: 'Subnet', description: '', type: FIELD_TYPE.SELECT, options: (u) => getSubnetOptions(u), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select subnet', shouldShow: true };
+    const privateIPField = { label: 'Private IP', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.TEXT, shouldShow: true, validate: (v, u) => validateOptionalIPAddress(v, u), errorMessage: 'Invalid ip address or ip is not in subnet cidr range' };
+    const publicIP = { label: 'External IP', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.SELECT, shouldShow: true, errorMessage: 'Select external', options: (u) => getGCPExternalIPOptions(u), validate: (v, u) => isEmpty(v, u) };
+    const networkTier = { label: 'Network Tier', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.RADIO, shouldShow: true, errorMessage: 'Select network tire', options: (u) => getGCPNetworkTierOptions(u), defaultValue: 'Standard' };
+
+    return (
+      <>
+        <Container>
+          <Card>
+            <CardBody>
+              <Form>
+                <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-subnet`} field={subnetField} user={user} />
+                <DMFieldText dispatch={dispatch} fieldKey={`${networkKey}-privateIP`} field={privateIPField} user={user} />
+                <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-publicIP`} field={publicIP} user={user} />
+                <DMFieldRadio dispatch={dispatch} fieldKey={`${networkKey}-networkTier`} field={networkTier} user={user} />
+              </Form>
+            </CardBody>
+          </Card>
+          <div className="modal-footer">
+            <button type="button" className="btn btn-secondary" onClick={this.onClose}>Save and close </button>
+          </div>
+        </Container>
+      </>
+    );
+  }
+
+  render() {
+    const { user } = this.props;
+    const { values } = user;
+    const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+    switch (recoveryPlatform) {
+      case PLATFORM_TYPES.GCP:
+        return this.renderGCPConfig();
+      default:
+        return this.renderAWSConfig();
+    }
+  }
+}
+
+function mapStateToProps(state) {
+  const { user } = state;
+  return { user };
+}
+export default connect(mapStateToProps)(withTranslation()(ModalNicConfig));

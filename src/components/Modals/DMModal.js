@@ -12,6 +12,7 @@ import ModalConfigureNode from './ModalConfigureNode';
 import ModalEmailConfiguration from './ModalEmailConfiguration';
 import ModalEmailRecipient from './ModalEmailRecipient';
 import ModalEncryptionKey from './ModalEncryptionKey';
+import ModalNicConfig from './ModalNicConfig';
 
 class DMModal extends Component {
   constructor() {
@@ -47,6 +48,8 @@ class DMModal extends Component {
           return <ModalEmailRecipient options={options} />;
         case MODALS.MODAL_SHOW_ENCRYPTION_KEY:
           return <ModalEncryptionKey options={options} />;
+        case MODALS.MODAL_NETWORK_CONFIG:
+          return <ModalNicConfig options={options} />;
         default:
           return (<div>404</div>);
       }
@@ -57,12 +60,13 @@ class DMModal extends Component {
   render() {
     const { modal } = this.props;
     const { show, options } = modal;
+    const { css } = options;
     if (!show) {
       return null;
     }
     return (
       <>
-        <Modal isOpen centered scrollable>
+        <Modal isOpen centered scrollable className={css}>
           <div className="modal-header">
             <h5 className="modal-title mt-0" id="DMMODAL">
               {' '}

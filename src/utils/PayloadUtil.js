@@ -1,4 +1,4 @@
-import { STATIC_KEYS } from '../constants/InputConstants';
+import { PLATFORM_TYPES, STATIC_KEYS } from '../constants/InputConstants';
 import { FIELDS } from '../constants/FieldsConstant';
 import { getValue,
   shouldShowNodePlatformType,
@@ -97,15 +97,46 @@ export function getVMConfigPayload(user) {
     const volumeType = getValue(`${key}-vmConfig.general.volumeType`, values);
     const tags = getValue(`${key}-vmConfig.general.tags`, values) || [];
     const bootPriority = parseInt(getValue(`${key}-vmConfig.general.bootOrder`, values), 10);
-    const isPublicIP = (getValue(`${key}-vmConfig.network.net1`, values) === 'public');
-    const privateIP = (isPublicIP ? '' : getValue(`${key}-vmConfig.network.net1-manual-ip`, values));
-    const sgs = getValue(`${key}-vmConfig.network.securityGroup`, values);
+    // const isPublicIP = (getValue(`${key}-vmConfig.network.net1`, values) === 'public');
+    // const privateIP = (isPublicIP ? '' : getValue(`${key}-vmConfig.network.net1-manual-ip`, values));
+    const networks = getVMNetworkConfig(key, values);
+    const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+    let sgs = getValue(`${key}-vmConfig.network.securityGroup`, values);
+    if (recoveryPlatform === PLATFORM_TYPES.AWS) {
+      sgs = [];
+    }
     const securityGroups = joinArray(sgs, ',');
     const preScript = getValue(`${key}-vmConfig.scripts.preScript`, values);
     const postScript = getValue(`${key}-vmConfig.scripts.postScript`, values);
-    instanceDetails.push({ instanceName, instanceType, volumeType, tags, bootPriority, isPublicIP, privateIP, securityGroups, preScript, postScript });
+    instanceDetails.push({ instanceName, instanceType, volumeType, tags, bootPriority, networks, securityGroups, preScript, postScript });
   });
   return instanceDetails;
+}
+
+export function getVMNetworkConfig(key, values) {
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+  const networkKey = `${key}-vmConfig.network.net1`;
+  const eths = getValue(networkKey, values) || [];
+  let networks = [];
+  let hasPublicIP = false;
+  for (let index = 0; index < eths.length; index += 1) {
+    const isPublicIP = getValue(`${networkKey}-eth-${index}-isPublic`, values) || false;
+    const subnet = getValue(`${networkKey}-eth-${index}-subnet`, values);
+    const privateIP = getValue(`${networkKey}-eth-${index}-privateIP`, values) || '';
+    const publicIP = getValue(`${networkKey}-eth-${index}-publicIP`, values) || '';
+    const sgs = getValue(`${networkKey}-eth-${index}-securityGroups`, values) || '';
+    const networkTier = getValue(`${networkKey}-eth-${index}-networkTier`, values) || '';
+    if (isPublicIP) {
+      hasPublicIP = true;
+    }
+    networks.push({ isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier });
+  }
+
+  // aws. if public ip is associated then additional networks not allowed
+  if (hasPublicIP && recoveryPlatform === PLATFORM_TYPES.AWS) {
+    networks = networks.filter((net) => net.isPublicIP);
+  }
+  return networks;
 }
 
 function getReplicationInterval(type, value) {

@@ -438,3 +438,8 @@ span.flatpickr-weekday {
     display: none;
   }
 }
+
+.disabled {
+  color: gray;
+  pointer-events: none;
+}

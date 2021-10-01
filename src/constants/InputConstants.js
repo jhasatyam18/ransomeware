@@ -56,6 +56,7 @@ export const STATIC_KEYS = {
   UI_SECURITY_GROUPS: 'ui.values.securityGroups',
   UI_SUBNETS: 'ui.values.subnets',
   UI_SITE_NODES: 'ui.values.nodes',
+  UI_RESERVE_IPS: 'ui.values.reserveips',
 };
 
 // Recovery time in minutes

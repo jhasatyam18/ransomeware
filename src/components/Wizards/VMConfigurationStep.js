@@ -6,7 +6,7 @@ import { createVMConfigStackObject, getValue } from '../../utils/InputUtils';
 class VMConfigurationStep extends Component {
   renderVMConfig(vm) {
     const { dispatch, user } = this.props;
-    const config = createVMConfigStackObject(vm.moref);
+    const config = createVMConfigStackObject(vm, user);
     return (
       <DMAccordion title={vm.name} config={config} dispatch={dispatch} user={user} key={`accordion-vm-config-${vm.name}`} />
     );

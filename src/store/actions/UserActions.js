@@ -17,6 +17,7 @@ import { fetchEvents } from './EventActions';
 import { fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
 import { addMessage, clearMessages } from './MessageActions';
 import { fetchSites } from './SiteActions';
+import { getValue } from '../../utils/InputUtils';
 
 export function login({ username, password, history }) {
   return (dispatch) => {
@@ -314,5 +315,22 @@ export function changeUserPassword(oldPass, newPass) {
       dispatch(hideApplicationLoader('CHANGE_PASSWORD'));
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
+  };
+}
+
+export function removeNicConfig(networkKey, index) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const nicCards = getValue(networkKey, values);
+    if (nicCards && nicCards.length >= 2) {
+      const newNicCards = [];
+      nicCards.forEach((nic, i) => {
+        if (i !== index) {
+          newNicCards.push(nic);
+        }
+      });
+      dispatch(valueChange(networkKey, newNicCards));
+    }
   };
 }
