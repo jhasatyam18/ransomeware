@@ -16,6 +16,7 @@ export const PROTECTION_PLAN_SUMMARY_STEP = 'PROTECTION_PLAN_SUMMARY_STEP';
 export const RECOVERY_GENERAL_STEP = 'RECOVERY_GENERAL_STEP';
 export const RECOVERY_PROTECT_VM_STEP = 'RECOVERY_PROTECT_VM_STEP';
 export const MIGRATION_GENERAL_STEP = 'MIGRATION_GENERAL_STEP';
+export const RECOVERY_CONFIG = 'RECOEVRY_CONFIG';
 export const REVERSE_CONFIG_STEP = 'REVERSE_CONFIG_STEP';
 export const REVERSE_SUMMARY = 'REVERSE_SUMMARY';
 
@@ -40,6 +41,7 @@ export const RECOVERY_WIZARDS = {
   options: { title: 'Recovery', onFinish: startRecovery },
   steps: [
     { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), isAync: true },
+    { label: 'Recovery Configuration', title: '', component: RECOVERY_CONFIG, validate: (user, dispatch) => noValidate(user, dispatch) },
     { label: 'Summary', title: '', component: RECOVERY_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch) }],
 };
 
@@ -48,6 +50,7 @@ export const MIGRATION_WIZARDS = {
   options: { title: 'Migrate', onFinish: startMigration },
   steps: [
     { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateMigrationVMs({ user, dispatch }), isAync: true },
+    { label: 'Recovery Configuration', title: '', component: RECOVERY_CONFIG, validate: (user, dispatch) => noValidate(user, dispatch) },
     { label: 'Summary', title: '', component: RECOVERY_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch) }],
 };
 
@@ -56,6 +59,7 @@ export const TEST_RECOVERY_WIZARDS = {
   options: { title: 'Test Recovery', onFinish: startRecovery },
   steps: [
     { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), isAync: true },
+    { label: 'Recovery Configuration', title: '', component: RECOVERY_CONFIG, validate: (user, dispatch) => noValidate(user, dispatch) },
     { label: 'Summary', title: '', component: RECOVERY_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch) }],
 };
 

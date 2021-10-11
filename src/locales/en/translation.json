@@ -131,5 +131,7 @@
   "report.includeRecoveryJobs": "Recovery Jobs",
   "report.includeNodes": "Nodes",
   "reverse.replType": "Replication Type",
-  "reverse.suffix": "Recovery Machines Suffix"
+  "reverse.suffix": "Recovery Machines Suffix",
+  "recovery.installSystemAgent" : "Install System Agents",
+  "recovery.installCloudPkg" : "Install Cloud Packages"
 }
