@@ -395,7 +395,13 @@ export function getEventOptions() {
   return [
     { label: 'Recovery', value: 'Recovery' },
     { label: 'Migration', value: 'Migration' },
+    { label: 'Replication', value: 'Replication' },
     { label: 'License', value: 'License' },
+    { label: 'ProtectionPlan', value: 'ProtectionPlan' },
+    { label: 'Site', value: 'Site' },
+    { label: 'Node', value: 'Node' },
+    { label: 'Credential', value: 'Credential' },
+    { label: 'Monitoring', value: 'Monitoring' },
   ];
 }
 
