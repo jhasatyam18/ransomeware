@@ -13,7 +13,12 @@ class AwsNetworkConfig extends Component {
     const { values } = user;
     const eths = getValue(`${networkKey}`, values) || [];
     if (!eths || eths.length === 0) {
-      const { virtualNics = [] } = data;
+      let { virtualNics = [] } = data;
+      // if not virtual nic found then allow single nic configuration.
+      // this code need to be removed post AWS VNIC BE code gets fixed.
+      if (virtualNics === null) {
+        virtualNics = [{ emptyObj: 'To allow one nic configuration' }];
+      }
       for (let index = 0; index < virtualNics.length; index += 1) {
         dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, ''));
         dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, false));
