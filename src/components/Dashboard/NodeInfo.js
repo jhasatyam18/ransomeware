@@ -59,7 +59,7 @@ function NodeInfo(props) {
           <CardBody>
             <Row>
               <Col sm={9}>
-                <p className="font-weight-medium dashboard-title">{`Replication Nodes (${nodes.length})`}</p>
+                <p className="font-weight-medium dashboard-title">{`${t('datamotive.nodes')} (${nodes.length})`}</p>
               </Col>
               <Col sm={3}>
                 {renderOverallState()}
