@@ -16,6 +16,7 @@ const INITIAL_STATE = {
     errors: {},
     appType: APP_TYPE.CLIENT,
     platformType: '',
+    localVMIP: '',
     license: { licenseType: '-', isLicenseExpired: false, licenseExpiredTime: null, version: '-' },
   },
   sites: { sites: [], selectedSites: [] },

@@ -126,18 +126,17 @@ class DRPlanDetails extends Component {
 
   renderActions() {
     const { drPlans, dispatch, t, user } = this.props;
-    const { platformType } = user;
+    const { platformType, localVMIP } = user;
     const { protectionPlan } = drPlans;
     const { protectedSite, recoverySite } = protectionPlan;
     const protectedSitePlatform = protectedSite.platformDetails.platformType;
-    const recoverySitePlatform = recoverySite.platformDetails.platformType;
     const isServerActionDisabled = (protectionPlan.recoveryStatus === RECOVERY_STATUS.RECOVERED || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED);
     const isReverseActionDisabled = !(protectionPlan.recoveryStatus === RECOVERY_STATUS.RECOVERED || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED);
     let actions = [];
-    if (platformType === protectedSitePlatform) {
+    if (platformType === protectedSitePlatform && localVMIP !== recoverySite.node.hostname) {
       actions.push({ label: 'start', action: startPlan, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS.STARTED });
       actions.push({ label: 'stop', action: stopPlan, id: protectionPlan.id, disabled: protectionPlan.status === REPLICATION_STATUS.STOPPED });
-    } else if (platformType === recoverySitePlatform) {
+    } else if (localVMIP === recoverySite.node.hostname) {
       actions = [{ label: 'recover', action: openRecoveryWizard, icon: 'fa fa-plus', disabled: isServerActionDisabled },
         { label: 'Migrate', action: openMigrationWizard, icon: 'fa fa-clone', disabled: isServerActionDisabled },
         { label: 'Reverse', action: openReverseWizard, icon: 'fa fa-backward', disabled: isReverseActionDisabled },

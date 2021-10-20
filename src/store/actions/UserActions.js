@@ -95,11 +95,12 @@ export function removeErrorMessage(key) {
     key,
   };
 }
-export function changeAppType(appType, platformType = '') {
+export function changeAppType(appType, platformType = '', localVMIP = '') {
   return {
     type: Types.APP_TYPE,
     appType,
     platformType,
+    localVMIP,
   };
 }
 export function getInfo(history) {
@@ -113,7 +114,7 @@ export function getInfo(history) {
         setCookie(APPLICATION_API_USER, 'admin');
         const appType = json.serviceType === 'Client' ? APP_TYPE.CLIENT : APP_TYPE.SERVER;
         const { licenseType, isLicenseExpired, licenseExpiredTime, version, serviceType } = json;
-        dispatch(changeAppType(appType, json.platformType));
+        dispatch(changeAppType(appType, json.platformType, json.localVMIP));
         fetchByDelay(dispatch, updateLicenseInfo, 2000, { licenseType, isLicenseExpired, licenseExpiredTime, version, serviceType });
         dispatch(validateLicense(licenseExpiredTime));
         dispatch(getUnreadAlerts());

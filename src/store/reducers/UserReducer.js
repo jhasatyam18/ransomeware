@@ -21,7 +21,7 @@ export default function user(state = INITIAL_STATE.user, action) {
       };
     case Types.APP_TYPE:
       return {
-        ...state, appType: action.appType, platformType: action.platformType,
+        ...state, appType: action.appType, platformType: action.platformType, localVMIP: action.localVMIP,
       };
     case Types.APP_USER_CHANGE_PASSWORD:
       return {
