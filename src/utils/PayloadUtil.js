@@ -64,6 +64,7 @@ export function getCreateDRPlanPayload(user, sites) {
   result.drplan.protectedEntities.Name = 'dummy';
   result.drplan.recoveryEntities.instanceDetails = getVMConfigPayload(user);
   result.drplan.replicationInterval = getReplicationInterval(getValue(STATIC_KEYS.REPLICATION_INTERVAL_TYPE, values), getValue('drplan.replicationInterval', values));
+  result.drplan.startTime = getUnixTimeFromDate(result.drplan.startTime);
   return result;
 }
 
@@ -211,4 +212,14 @@ export function getNodePayload(user) {
 export function getFormPayload(formKey, user) {
   const { values } = user;
   return getKeyStruct(formKey, values);
+}
+
+function getUnixTimeFromDate(date) {
+  if (date === null) { // TODO: null check is not working
+    return 0;
+  }
+  if (typeof date.getMonth === 'function') {
+    return parseInt((date.getTime() / 1000).toFixed(0), 10);
+  }
+  return date;
 }

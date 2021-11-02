@@ -260,7 +260,7 @@ export function getGCPVMConfig(vm) {
         children: {
           [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
           [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u) },
-          [`${key}-vmConfig.general.bootOrder`]: { label: 'Boot Order', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select boot order.', shouldShow: true, options: (u) => geBootPriorityOptions(u) },
+          // [`${key}-vmConfig.general.bootOrder`]: { label: 'Boot Order', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select boot order.', shouldShow: true, options: (u) => geBootPriorityOptions(u) },
           [`${key}-vmConfig.general.tags`]: { label: 'Tags', type: STACK_COMPONENT_TAGS, validate: null, errorMessage: '', shouldShow: true },
         },
       },
@@ -295,7 +295,7 @@ export function getAwsVMConfig(vm) {
         children: {
           [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
           [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u) },
-          [`${key}-vmConfig.general.bootOrder`]: { label: 'Boot Order', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select boot order.', shouldShow: true, options: (u) => geBootPriorityOptions(u) },
+          // [`${key}-vmConfig.general.bootOrder`]: { label: 'Boot Order', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select boot order.', shouldShow: true, options: (u) => geBootPriorityOptions(u) },
           [`${key}-vmConfig.general.tags`]: { label: 'Tags', type: STACK_COMPONENT_TAGS, validate: null, errorMessage: '', shouldShow: true },
         },
       },

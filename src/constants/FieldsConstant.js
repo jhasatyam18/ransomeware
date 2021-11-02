@@ -79,7 +79,7 @@ export const FIELDS = {
     label: 'Interval', description: 'Replication Interval between 2 consecutive iteration', type: FIELD_TYPE.SELECT, options: (user) => getReplicationIntervalOptions(user), errorMessage: 'Replication Interval Rquired', shouldShow: true, defaultValue: 10, validate: (value, user) => isEmpty(value, user),
   },
   'replication.inerval': { type: FIELD_TYPE.CUSTOM, COMPONENT: REPLICATION_INTERVAL_COMP },
-
+  'drplan.startTime': { label: 'Start Time', description: 'Start date and time for replication', COMPONENT: DATE_PICKER_COMP, type: FIELD_TYPE.CUSTOM, shouldShow: true, showTime: true, minDate: true },
   'drplan.subnet': { label: 'Subnet', description: 'Subnets where Protected Entity will be recovered', placeHolderText: 'Subnet', type: FIELD_TYPE.SELECT, options: (user) => getSubnetOptions(user), errorMessage: 'Select subnet', shouldShow: true, validate: null },
   'drplan.isEncryptionOnWire': { label: 'Encryption On Wire', description: 'Encryption On Wire', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
   // 'drplan.isEncryptionOnRest': { label: 'Encryption At Rest', description: 'Encryption On Rest', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
@@ -89,6 +89,12 @@ export const FIELDS = {
   'drplan.preScript': { label: 'Pre Script', description: 'Pre Script to execute before Recovery', placeHolderText: 'Pre Script to execute before Recovery', type: FIELD_TYPE.SELECT, options: (user) => getPreScriptsOptions(user), errorMessage: 'Select pre script', shouldShow: true },
   'drplan.postScript': { label: 'Post Script', description: 'Post Script to execute post Recovery', placeHolderText: 'Post Script to execute post Recovery', type: FIELD_TYPE.SELECT, options: (user) => getPostScriptsOptions(user), errorMessage: 'Select post script', shouldShow: true },
 
+  'drplan.scriptTimeout': {
+    label: 'Script Timeout', description: 'Script timeout in seconds', type: FIELD_TYPE.NUMBER, errorMessage: 'Script Timeout is not valid', shouldShow: true, defaultValue: 300,
+  },
+  'drplan.bootDelay': {
+    label: 'Boot Delay (seconds)', description: 'Boot delay between two boot orders in seconds', type: FIELD_TYPE.NUMBER, errorMessage: 'Boot delay is not valid', shouldShow: true, defaultValue: 0,
+  },
   'drplan.retryCount': {
     label: 'retry.count', description: 'Retry Count, if specified action is failed', type: FIELD_TYPE.NUMBER, errorMessage: 'Retry Count not valid(must be a integer)', shouldShow: true,
   },

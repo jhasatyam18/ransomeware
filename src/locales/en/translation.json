@@ -134,5 +134,6 @@
   "reverse.suffix": "Recovery Machines Suffix",
   "recovery.installSystemAgent" : "Install System Agents",
   "recovery.installCloudPkg" : "Install Cloud Packages",
-  "datamotive.nodes": "Nodes"
+  "datamotive.nodes": "Nodes",
+  "bootOrder": "Boot Order"
 }

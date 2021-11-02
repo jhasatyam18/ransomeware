@@ -19,6 +19,7 @@ export const SERVER_PORT_ITEM_RENDERER = 'SERVER_PORT_ITEM_RENDERER';
 export const NODE_NAME_ITEM_RENDERER = 'NODE_NAME_ITEM_RENDERER';
 export const NODE_ACTION_RENDERER = 'NODE_ACTION_RENDERER';
 export const EMAIL_RECIPIENT_ACTION_ITEM_RENDER = 'EMAIL_RECIPIENT_ACTION_ITEM_RENDER';
+export const VM_BOOT_ORDER_ITEM_RENDER = 'VM_BOOT_ORDER_ITEM_RENDER';
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
@@ -44,6 +45,12 @@ export const TABLE_PROTECT_VM_VMWARE = [
   { label: 'size', field: 'virtualDisks', itemRenderer: VM_SIZE_ITEM_RENDERER },
   { label: 'os', field: 'guestOS', itemRenderer: OS_TYPE_ITEM_RENDERER },
 ];
+
+export const TABLE_BOOT_VM_VMWARE = [
+  { label: 'name', field: 'name' },
+  { label: 'bootOrder', field: 'guestOS', itemRenderer: VM_BOOT_ORDER_ITEM_RENDER },
+];
+
 export const TABLE_PROTECTION_PLAN_VMS = [
   { label: 'name', field: 'name' },
   { label: 'size', field: 'virtualDisks', itemRenderer: VM_SIZE_ITEM_RENDERER },

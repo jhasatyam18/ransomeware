@@ -10,7 +10,7 @@ import { getValue } from '../../utils/InputUtils';
 class DMDatePicker extends Component {
   constructor() {
     super();
-    this.state = { value: '' };
+    this.state = { value: new Date() };
   }
 
   componentDidMount() {
@@ -35,6 +35,36 @@ class DMDatePicker extends Component {
     dispatch(valueChange(fieldKey, date));
   }
 
+  minDate() {
+    const { field } = this.props;
+    const { minDate } = field;
+    return minDate ? new Date() : 'undefined';
+  }
+
+  minTime() {
+    const { field } = this.props;
+    const { minDate, showTime } = field;
+    if (minDate && showTime) {
+      return new Date();
+    }
+    return 'undefined';
+  }
+
+  maxTime() {
+    const { field } = this.props;
+    const { minDate, showTime } = field;
+    if (minDate && showTime) {
+      return new Date().setHours(23, 55);
+    }
+    return 'undefined';
+  }
+
+  dateFormat() {
+    const { field } = this.props;
+    const { showTime } = field;
+    return showTime ? 'MMMM d, yyyy h:mm aa' : 'MMMM d, yyyy';
+  }
+
   renderLabel() {
     const { t, hideLabel, field } = this.props;
     const { label } = field;
@@ -42,7 +72,7 @@ class DMDatePicker extends Component {
       return null;
     }
     return (
-      <Label for="horizontal-firstname-Input" className="col-sm-4 col-form-Label">
+      <Label for="horizontal-firstname-Input" className="col-sm-4 col-form-Label padding-top-5">
         {t(label)}
       </Label>
     );
@@ -50,11 +80,12 @@ class DMDatePicker extends Component {
 
   render() {
     const { field, fieldKey, user, hideLabel, disabled } = this.props;
-    const { shouldShow } = field;
+    const { shouldShow, showTime } = field;
     const { value } = this.state;
     const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
     if (!showField) return null;
     const css = hideLabel ? '' : 'row mb-4 form-group';
+    const interval = showTime ? 15 : 'undefined';
     return (
       <>
         <FormGroup className={css}>
@@ -65,6 +96,12 @@ class DMDatePicker extends Component {
               selected={value}
               onChange={(date) => this.handleChange(date)}
               disabled={disabled}
+              showTimeSelect={showTime}
+              minDate={this.minDate()}
+              minTime={this.minTime()}
+              maxTime={this.maxTime()}
+              timeIntervals={interval}
+              dateFormat={this.dateFormat()}
               key={`datepicker-${fieldKey}`}
             />
           </Col>
