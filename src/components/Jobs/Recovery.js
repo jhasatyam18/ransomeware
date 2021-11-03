@@ -3,6 +3,7 @@ import { Card, CardBody, Col, Container, Form, Label, Row } from 'reactstrap';
 import DMTable from '../Table/DMTable';
 import { PROTECTION_PLAN_RECOVERY_JOBS, RECOVERY_JOBS } from '../../constants/TableConstants';
 import DMTPaginator from '../Table/DMTPaginator';
+import DMBreadCrumb from '../Common/DMBreadCrumb';
 import { fetchRecoveryJobs, changeRecoveryJobType } from '../../store/actions/JobActions';
 import { fetchDrPlans } from '../../store/actions/DrPlanActions';
 import { RECOVERY_JOB_TYPE } from '../../constants/InputConstants';
@@ -89,34 +90,30 @@ class Recovery extends Component {
     const data = (hasFilterString ? searchData : recovery);
     return (
       <>
-        <Container fluid>
-          <Card>
-            <CardBody>
-              <Row className="padding-left-20">
-                <Col sm={5}>
-                  {this.renderOptions()}
-                </Col>
-                <Col sm={7}>
-                  <div className="padding-right-30">
-                    <DMTPaginator
-                      data={data}
-                      setData={this.setDataForDisplay}
-                      showFilter="true"
-                      columns={cols}
-                      onFilter={this.onFilter}
-                    />
-                  </div>
-                </Col>
-              </Row>
-              <DMTable
-                dispatch={dispatch}
+
+        <Row className="padding-left-20">
+          <Col sm={5}>
+            {this.renderOptions()}
+          </Col>
+          <Col sm={7}>
+            <div className="padding-right-30">
+              <DMTPaginator
+                data={data}
+                setData={this.setDataForDisplay}
+                showFilter="true"
                 columns={cols}
-                data={dataToDisplay}
-                user={user}
+                onFilter={this.onFilter}
               />
-            </CardBody>
-          </Card>
-        </Container>
+            </div>
+          </Col>
+        </Row>
+        <DMTable
+          dispatch={dispatch}
+          columns={cols}
+          data={dataToDisplay}
+          user={user}
+        />
+
       </>
     );
   }
@@ -152,18 +149,12 @@ class Recovery extends Component {
   renderPlanJobs() {
     return (
       <>
-        <Container fluid>
-          <Card>
-            <CardBody>
-              <Row className="padding-left-20">
-                <Col sm={12}>
-                  {this.renderOptions()}
-                </Col>
-              </Row>
-              {this.renderDrRecovery()}
-            </CardBody>
-          </Card>
-        </Container>
+        <Row className="padding-left-20">
+          <Col sm={12}>
+            {this.renderOptions()}
+          </Col>
+        </Row>
+        {this.renderDrRecovery()}
       </>
     );
   }
@@ -174,8 +165,17 @@ class Recovery extends Component {
     try {
       return (
         <>
-          {recoveryType === RECOVERY_JOB_TYPE.VM ? this.renderVMJobs() : null}
-          {recoveryType === RECOVERY_JOB_TYPE.PLAN ? this.renderPlanJobs() : null}
+          <>
+            <Container fluid>
+              <Card>
+                <CardBody>
+                  <DMBreadCrumb links={[{ label: 'recovery', link: '#' }]} />
+                  {recoveryType === RECOVERY_JOB_TYPE.VM ? this.renderVMJobs() : null}
+                  {recoveryType === RECOVERY_JOB_TYPE.PLAN ? this.renderPlanJobs() : null}
+                </CardBody>
+              </Card>
+            </Container>
+          </>
         </>
       );
     } catch (err) {

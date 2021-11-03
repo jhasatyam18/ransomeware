@@ -9,6 +9,7 @@ import DMTable from '../Table/DMTable';
 import { fetchEvents, resetEvents } from '../../store/actions/EventActions';
 import DMTPaginator from '../Table/DMTPaginator';
 import EventFilter from '../Shared/EventFilter';
+import DMBreadCrumb from '../Common/DMBreadCrumb';
 
 /**
  * Component to render all events
@@ -46,6 +47,7 @@ class Events extends Component {
           <Container fluid>
             <Card>
               <CardBody>
+                <DMBreadCrumb links={[{ label: 'events', link: '#' }]} />
                 <Row className="padding-left-20">
                   <Col sm={5}>
                     <div style={{ maxWidth: '170px' }}>

@@ -1,89 +1,22 @@
-import React, { Component, Suspense } from 'react';
-import {
-  Card,
-  CardBody,
-  Col,
-  Container,
-  Nav,
-  NavItem,
-  NavLink,
-  Row,
-  TabContent,
-  TabPane,
-} from 'reactstrap';
-import classnames from 'classnames';
-import { withRouter } from 'react-router-dom';
-import Node from './node/Node';
-import { resetSettings } from '../../store/actions/NodeActions';
-import { SETTINGS_TABS } from '../../constants/InputConstants';
+import React, { Component } from 'react';
+import { Route, Switch, withRouter } from 'react-router-dom';
+import { EMAIL_SETTINGS_PATH, LICENSE_SETTINGS_PATH, SUPPORT_BUNDLE_PATH } from '../../constants/RouterConstants';
+import Pages404 from '../../pages/Page-404';
 
-const Support = React.lazy(() => import('./support/Support'));
 const EmailSettings = React.lazy(() => import('./email/EmailSettings'));
-
+const Support = React.lazy(() => import('./support/Support'));
+const License = React.lazy(() => import('./License/License'));
 class Settings extends Component {
-  constructor() {
-    super();
-    this.state = { activeTab: '1' };
-    this.toggleTab = this.toggleTab.bind(this);
-  }
-
-  componentWillUnmount() {
-    const { dispatch } = this.props;
-    dispatch(resetSettings());
-  }
-
-  toggleTab(tab) {
-    const { activeTab } = this.state;
-    if (activeTab !== tab) {
-      this.setState({
-        activeTab: `${tab}`,
-      });
-    }
-  }
-
-  renderNav() {
-    const { activeTab } = this.state;
-    const navs = SETTINGS_TABS.map((tab) => (
-      <NavItem key={`settings-navItem-${tab.activeTab}`}>
-        <NavLink
-          style={{ cursor: 'pointer' }}
-          className={classnames({ active: activeTab === `${tab.activeTab}` })}
-          onClick={() => this.toggleTab(tab.activeTab)}
-        >
-          <span className="d-none d-sm-block">{tab.title}</span>
-        </NavLink>
-      </NavItem>
-    ));
-    return (
-      <Nav tabs className="nav-tabs-custom nav-justified">
-        {navs}
-      </Nav>
-    );
-  }
-
   render() {
-    const { activeTab } = this.state;
     return (
-      <Container fluid>
-        <Card>
-          <CardBody>
-            {this.renderNav()}
-            <TabContent activeTab={activeTab}>
-              <TabPane tabId={activeTab} className="p-3">
-                <Row>
-                  <Col sm="12">
-                    <Suspense fallback={<div>Loading...</div>}>
-                      {activeTab === '1' ? <Node /> : null}
-                      {activeTab === '2' ? <Support /> : null}
-                      {activeTab === '3' ? <EmailSettings /> : null}
-                    </Suspense>
-                  </Col>
-                </Row>
-              </TabPane>
-            </TabContent>
-          </CardBody>
-        </Card>
-      </Container>
+
+      <Switch>
+        <Route path={EMAIL_SETTINGS_PATH} render={() => <EmailSettings />} />
+        <Route path={SUPPORT_BUNDLE_PATH} render={() => <Support />} />
+        <Route path={LICENSE_SETTINGS_PATH} render={() => <License />} />
+        <Route component={Pages404} />
+      </Switch>
+
     );
   }
 }

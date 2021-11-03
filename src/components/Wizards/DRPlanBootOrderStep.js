@@ -19,7 +19,7 @@ class DRPlanBootOrderStep extends Component {
             <DMField dispatch={dispatch} user={user} fieldKey="drplan.bootDelay" />
           </Col>
         </Row>
-        <Label>{t('Select Virtual Machine boot order')}</Label>
+        <Label>{t('boot.order.message')}</Label>
         <DMTable
           dispatch={dispatch}
           columns={TABLE_BOOT_VM_VMWARE}

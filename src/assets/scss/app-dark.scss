@@ -85,3 +85,44 @@
 .app_secondary{
   color:$gray-800;
 }
+
+// upload license
+.upload__form {
+  display: flex;
+  width: calc(100% - 20px);
+  min-height: 250px;
+  padding: 5px;
+  margin: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  .upload__icon {
+    padding-bottom: 5px;
+    text-align: center;
+    color: white;
+  }
+  .details {
+    padding: 20px;
+    width: 100%;
+  }
+  .label {
+    cursor: pointer;
+  }
+  .upload__success__info {
+    padding-top: 15px;
+    color: $green;
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.upload__init, .upload__uploading, .upload__validating  {
+  border: 1px dashed white;
+}
+.upload__success {    
+  border: 1px dashed $green;
+}
+.upload__error {
+  color: $red;
+  border: 1px dashed $red;
+}

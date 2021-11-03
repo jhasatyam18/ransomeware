@@ -15,6 +15,8 @@ export default function settings(state = INITIAL_STATE.settings, action) {
       return { ...state, emailRecipients: action.emailRecipients };
     case Types.RESET_SETTINGS:
       return { ...INITIAL_STATE.settings };
+    case Types.FETCH_LICENSES:
+      return { ...state, licenses: action.licenses };
     default:
       return state;
   }

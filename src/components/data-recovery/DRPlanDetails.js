@@ -4,11 +4,13 @@ import classnames from 'classnames';
 import { withTranslation } from 'react-i18next';
 import { fetchDRPlanById, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
 import DMTable from '../Table/DMTable';
+import DMBreadCrumb from '../Common/DMBreadCrumb';
 import { TABLE_PROTECTION_PLAN_VMS } from '../../constants/TableConstants';
 import { RECOVERY_STATUS, REPLICATION_STATUS } from '../../constants/InputConstants';
 import DropdownActions from '../Common/DropdownActions';
 import CheckBox from '../Common/CheckBox';
 import DisplayString from '../Common/DisplayString';
+import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 
 const Replication = React.lazy(() => import('../Jobs/Replication'));
 const Recovery = React.lazy(() => import('../Jobs/Recovery'));
@@ -163,12 +165,11 @@ class DRPlanDetails extends Component {
         <Container fluid>
           <Card>
             <CardBody>
-              <Row>
+              <DMBreadCrumb links={[{ label: 'protection.plans', link: PROTECTION_PLANS_PATH }, { label: name, link: '#' }]} />
+              <Row className="margin-left-5">
                 <Col sm={8}>
                   <CardTitle className="mb-4 title-color">
-                    {t('protection.plan')}
-                    : &nbsp;&nbsp;
-                    {name}
+                    {t('Status')}
                     &nbsp;&nbsp;
                     {this.renderStatus()}
                   </CardTitle>
@@ -177,7 +178,7 @@ class DRPlanDetails extends Component {
                   {this.renderActions()}
                 </Col>
               </Row>
-              <Row>
+              <Row className="margin-left-5">
                 <Col sm={5}>
                   <CardTitle className="title-color">{t('protected.site')}</CardTitle>
                   <Card>

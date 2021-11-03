@@ -215,8 +215,12 @@ export function getFormPayload(formKey, user) {
 }
 
 function getUnixTimeFromDate(date) {
-  if (date === null) { // TODO: null check is not working
+  if (date === null) {
     return 0;
+  }
+  if (date === '') {
+    const d = new Date();
+    return parseInt((d.getTime() / 1000).toFixed(0), 10);
   }
   if (typeof date.getMonth === 'function') {
     return parseInt((date.getTime() / 1000).toFixed(0), 10);

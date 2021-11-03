@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Card, CardBody, Container, Row } from 'reactstrap';
 import DMTable from '../../Table/DMTable';
 import ActionButton from '../../Common/ActionButton';
+import DMBreadCrumb from '../../Common/DMBreadCrumb';
 import { fetchSupportBundles, supportBundleFetched } from '../../../store/actions/SupportActions';
 import { openModal } from '../../../store/actions/ModalActions';
 import { SUPPORT_BUNDLES } from '../../../constants/TableConstants';
@@ -36,20 +37,23 @@ class Support extends Component {
     const { bundles } = settings;
     return (
       <>
-        <Container fluid>
-          <Card>
-            <CardBody>
-              <Row className="padding-left-30">
-                <ActionButton label="Generate" onClick={this.onGenerate} icon="fa fa-plus" isDisabled={false} t={t} key="newsupportbundle" />
-              </Row>
-              <DMTable
-                dispatch={dispatch}
-                columns={SUPPORT_BUNDLES}
-                data={bundles}
-              />
-            </CardBody>
-          </Card>
-        </Container>
+        <>
+          <Container fluid>
+            <Card>
+              <CardBody>
+                <DMBreadCrumb links={[{ label: 'tech.support', link: '#' }]} />
+                <Row className="padding-left-30">
+                  <ActionButton label="Generate" onClick={this.onGenerate} icon="fa fa-plus" isDisabled={false} t={t} key="newsupportbundle" />
+                </Row>
+                <DMTable
+                  dispatch={dispatch}
+                  columns={SUPPORT_BUNDLES}
+                  data={bundles}
+                />
+              </CardBody>
+            </Card>
+          </Container>
+        </>
       </>
     );
   }

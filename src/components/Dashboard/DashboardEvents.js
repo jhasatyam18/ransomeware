@@ -5,7 +5,7 @@ import { withTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { fetchEvents, resetEvents } from '../../store/actions/EventActions';
 import { EVENT_LEVELS } from '../../constants/EventConstant';
-import { EVENTS } from '../../constants/RouterConstants';
+import { EVENTS_PATH } from '../../constants/RouterConstants';
 
 class DashBoardEvents extends Component {
   componentDidMount() {
@@ -47,7 +47,7 @@ class DashBoardEvents extends Component {
         </div>
         <Media body>
           <div>
-            <Link to={EVENTS} style={{ color: 'white' }}>
+            <Link to={EVENTS_PATH} style={{ color: 'white' }}>
               {data.description.length > 65 ? `${data.description.substr(0, 65)}....` : data.description}
             </Link>
           </div>

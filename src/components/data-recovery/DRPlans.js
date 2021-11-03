@@ -1,13 +1,14 @@
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Card, CardBody, CardTitle, Container, Row, Col,
-} from 'reactstrap';
+import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
+import {
+  Card, CardBody, Col, Container, Row,
+} from 'reactstrap';
 import DMTable from '../Table/DMTable';
-import { fetchDrPlans, handleDrPlanTableSelection } from '../../store/actions/DrPlanActions';
-import { TABLE_HEADER_DR_PLANS } from '../../constants/TableConstants';
 import DRPlanActionBar from './DRPlanActionBar';
+import DMBreadCrumb from '../Common/DMBreadCrumb';
+import { TABLE_HEADER_DR_PLANS } from '../../constants/TableConstants';
+import { fetchDrPlans, handleDrPlanTableSelection } from '../../store/actions/DrPlanActions';
 
 class DRPlans extends Component {
   componentDidMount() {
@@ -16,7 +17,7 @@ class DRPlans extends Component {
   }
 
   render() {
-    const { drPlans, dispatch, t, user } = this.props;
+    const { drPlans, dispatch, user } = this.props;
     if (!drPlans && !drPlans.plans) { return null; }
     const data = (drPlans && drPlans.plans ? drPlans.plans : []);
     const { selectedPlans } = drPlans;
@@ -25,7 +26,7 @@ class DRPlans extends Component {
         <Container fluid>
           <Card>
             <CardBody>
-              <CardTitle className="mb-4">{t('protection.plans')}</CardTitle>
+              <DMBreadCrumb links={[{ label: 'protection.plans', link: '#' }]} />
               <Row>
                 <Col>
                   <DRPlanActionBar dispatch={dispatch} selectedPlans={selectedPlans} user={user} />

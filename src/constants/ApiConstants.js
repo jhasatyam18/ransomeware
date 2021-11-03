@@ -73,3 +73,10 @@ export const API_EMAIL_RECIPIENTS = 'api/v1/email/recipient';
 export const API_REVERSE = 'api/v1/protection/plans/<id>/reverse';
 export const API_FETCH_REVERSE_DR_PLAN_BY_ID = 'api/v1/protection/plans/<id>/reverse';
 export const API_VALIDATE_REVERSE_PLAN = 'api/v1/protection/plans/<id>/reverse/validate';
+
+// License
+export const API_LICENSE = 'api/v1/license';
+export const API_LICENSE_ACTIVATE_DEACTIVATE = 'api/v1/license/<type>/<id>';
+export const API_LICENSE_UPLOAD = 'api/v1/license/upload';
+export const API_LICENSE_UPLOAD_VALIDATE = 'api/v1/license/validate/<file>';
+export const API_LICENSE_INSTALL = 'api/v1/license/install/<file>';

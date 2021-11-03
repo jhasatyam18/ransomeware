@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Card, Col, Row } from 'reactstrap';
-import ActionButton from '../../Common/ActionButton';
-import DMTable from '../../Table/DMTable';
+import { Card, CardBody, Col, Container, Row } from 'reactstrap';
+import { MODAL_EMAIL_CONFIGURATION, MODAL_EMAIL_RECIPIENTS_CONFIGURATION } from '../../../constants/Modalconstant';
+import { TABLE_EMAIL_RECIPIENTS } from '../../../constants/TableConstants';
 import { clearValues, valueChange } from '../../../store/actions';
 import { fetchEmailConfig, fetchEmailRecipients } from '../../../store/actions/EmailActions';
 import { openModal } from '../../../store/actions/ModalActions';
-import { TABLE_EMAIL_RECIPIENTS } from '../../../constants/TableConstants';
-import { MODAL_EMAIL_CONFIGURATION, MODAL_EMAIL_RECIPIENTS_CONFIGURATION } from '../../../constants/Modalconstant';
+import ActionButton from '../../Common/ActionButton';
+import DMBreadCrumb from '../../Common/DMBreadCrumb';
+import DMTable from '../../Table/DMTable';
 
 class EmailSettings extends Component {
   constructor() {
@@ -52,19 +53,29 @@ class EmailSettings extends Component {
     const { settings, t, dispatch } = this.props;
     const { emailRecipients } = settings;
     return (
-      <Card className="margin-top-10">
-        <div className="btn-toolbar padding-left-20">
-          <div className="btn-group" role="group" aria-label="First group">
-            <ActionButton label="New" onClick={this.onConfigureRecipient} icon="fa fa-plus" isDisabled={false} t={t} key="newRecipient" />
-          </div>
-        </div>
-        <DMTable
-          columns={TABLE_EMAIL_RECIPIENTS}
-          data={emailRecipients}
-          primaryKey="id"
-          dispatch={dispatch}
-        />
-      </Card>
+      <>
+        <>
+          <Container fluid>
+            <Card>
+              <CardBody>
+                <DMBreadCrumb links={[{ label: 'support', link: '#' }]} />
+                <div className="btn-toolbar padding-left-20">
+                  <div className="btn-group" role="group" aria-label="First group">
+                    <ActionButton label="New" onClick={this.onConfigureRecipient} icon="fa fa-plus" isDisabled={false} t={t} key="newRecipient" />
+                  </div>
+                </div>
+                <DMTable
+                  columns={TABLE_EMAIL_RECIPIENTS}
+                  data={emailRecipients}
+                  primaryKey="id"
+                  dispatch={dispatch}
+                />
+
+              </CardBody>
+            </Card>
+          </Container>
+        </>
+      </>
     );
   }
 
@@ -73,32 +84,50 @@ class EmailSettings extends Component {
     const { email } = settings;
     if (email == null) {
       return (
-        <Row>
-          <Col sm={6} className="text-danger"> Email settings not configured.</Col>
-          <Col sm={6}>
-            <ActionButton label="Configure Now" onClick={this.onConfigureEmail} isDisabled={false} t={t} key="configureEmail" />
-          </Col>
-        </Row>
+        <>
+          <>
+            <Container fluid>
+              <Card>
+                <CardBody>
+                  <DMBreadCrumb links={[{ label: 'email', link: '#' }]} />
+                  <Row>
+                    <Col sm={6} className="text-danger"> Email settings not configured.</Col>
+                    <Col sm={6}>
+                      <ActionButton label="Configure Now" onClick={this.onConfigureEmail} isDisabled={false} t={t} key="configureEmail" />
+                    </Col>
+                  </Row>
+                </CardBody>
+              </Card>
+            </Container>
+          </>
+        </>
       );
     }
     const fields = [{ label: 'Email Address', value: email.emailAddress }, { label: 'SMTP Host', value: email.smtpHost }, { label: 'SMTP Port', value: email.smtpPort }];
     return (
       <div>
-        <Row className="padding-top-10 padding-bottom-10 margin-left-10">
-          <Col sm={12} className="margin-top-10">
-            <ActionButton label="Reconfigure" onClick={this.onReconfigureEmail} isDisabled={false} t={t} key="reconfigureEmail" />
-          </Col>
-          <Col sm={4}>
-            {
-              fields.map((f) => (
-                <Row>
-                  <Col className="margin-top-10" sm={6}>{f.label}</Col>
-                  <Col className="margin-top-10 text-muted" sm={6}>{f.value}</Col>
-                </Row>
-              ))
-            }
-          </Col>
-        </Row>
+        <Container fluid>
+          <Card>
+            <CardBody>
+              <DMBreadCrumb links={[{ label: 'email', link: '#' }]} />
+              <Row className="padding-top-10 padding-bottom-10 margin-left-10">
+                <Col sm={12} className="margin-top-10">
+                  <ActionButton label="Reconfigure" onClick={this.onReconfigureEmail} isDisabled={false} t={t} key="reconfigureEmail" />
+                </Col>
+                <Col sm={4}>
+                  {
+                    fields.map((f) => (
+                      <Row>
+                        <Col className="margin-top-10" sm={6}>{f.label}</Col>
+                        <Col className="margin-top-10 text-muted" sm={6}>{f.value}</Col>
+                      </Row>
+                    ))
+                  }
+                </Col>
+              </Row>
+            </CardBody>
+          </Card>
+        </Container>
         {this.renderRecipients()}
       </div>
     );

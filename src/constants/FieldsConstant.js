@@ -93,7 +93,7 @@ export const FIELDS = {
     label: 'Script Timeout', description: 'Script timeout in seconds', type: FIELD_TYPE.NUMBER, errorMessage: 'Script Timeout is not valid', shouldShow: true, defaultValue: 300,
   },
   'drplan.bootDelay': {
-    label: 'Boot Delay (seconds)', description: 'Boot delay between two boot orders in seconds', type: FIELD_TYPE.NUMBER, errorMessage: 'Boot delay is not valid', shouldShow: true, defaultValue: 0,
+    label: 'boot.delay', description: 'Boot delay between two boot orders in seconds', type: FIELD_TYPE.NUMBER, errorMessage: 'Boot delay is not valid', shouldShow: true, defaultValue: 0,
   },
   'drplan.retryCount': {
     label: 'retry.count', description: 'Retry Count, if specified action is failed', type: FIELD_TYPE.NUMBER, errorMessage: 'Retry Count not valid(must be a integer)', shouldShow: true,

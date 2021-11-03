@@ -2,13 +2,14 @@ import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Card, CardBody, Container } from 'reactstrap';
-import ActionButton from '../../Common/ActionButton';
-import DMTable from '../../Table/DMTable';
-import { openModal } from '../../../store/actions/ModalActions';
-import { valueChange, clearValues } from '../../../store/actions';
-import { fetchNodes, handleNodeTableSelection, moveNodesToOffline, removeNode, moveNodesToOnline } from '../../../store/actions/NodeActions';
+import { MODAL_CONFIRMATION_WARNING, MODAL_NODE_CONFIGURATION } from '../../../constants/Modalconstant';
 import { TABLE_NODES } from '../../../constants/TableConstants';
-import { MODAL_NODE_CONFIGURATION, MODAL_CONFIRMATION_WARNING } from '../../../constants/Modalconstant';
+import { clearValues, valueChange } from '../../../store/actions';
+import { openModal } from '../../../store/actions/ModalActions';
+import { fetchNodes, handleNodeTableSelection, moveNodesToOffline, moveNodesToOnline, removeNode } from '../../../store/actions/NodeActions';
+import ActionButton from '../../Common/ActionButton';
+import DMBreadCrumb from '../../Common/DMBreadCrumb';
+import DMTable from '../../Table/DMTable';
 
 class Node extends Component {
   componentDidMount() {
@@ -70,6 +71,7 @@ class Node extends Component {
         <Container fluid>
           <Card>
             <CardBody>
+              <DMBreadCrumb links={[{ label: 'Nodes', link: '#' }]} />
               <div className="btn-group padding-left-20" role="group" aria-label="First group">
                 <ActionButton label="New" onClick={this.onAddNewNode} icon="fa fa-plus" isDisabled={false} t={t} key="newNodeConfiguration" />
                 <ActionButton label="Edit" onClick={this.onReconfigureNode} icon="fa fa-edit" isDisabled={selNodes === 0 || selNodes > 1} t={t} key="addNewNode" />

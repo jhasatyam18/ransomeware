@@ -3,6 +3,7 @@ import { Card, CardBody, Col, Container, Form, Label, Row } from 'reactstrap';
 import DMTable from '../Table/DMTable';
 import { REPLICATION_JOBS, REPLICATION_VM_JOBS, TABLE_FILTER_TEXT } from '../../constants/TableConstants';
 import DMTPaginator from '../Table/DMTPaginator';
+import DMBreadCrumb from '../Common/DMBreadCrumb';
 import { changeReplicationJobType, fetchReplicationJobs } from '../../store/actions/JobActions';
 import { REPLICATION_JOB_TYPE } from '../../constants/InputConstants';
 import ProtectionPlanReplications from './ProtectionPlanReplications';
@@ -92,34 +93,30 @@ class Replication extends Component {
     const data = (hasFilterString ? searchData : replication);
     return (
       <>
-        <Container fluid>
-          <Card>
-            <CardBody>
-              <Row className="padding-left-20">
-                <Col sm={5}>
-                  {this.renderOptions()}
-                </Col>
-                <Col sm={7}>
-                  <div className="padding-right-30">
-                    <DMTPaginator
-                      data={data}
-                      setData={this.setDataForDisplay}
-                      showFilter="true"
-                      columns={REPLICATION_JOBS}
-                      onFilter={this.onFilter}
-                      filterHelpText={TABLE_FILTER_TEXT.REPLICATION_JOBS}
-                    />
-                  </div>
-                </Col>
-              </Row>
-              <DMTable
-                dispatch={dispatch}
+
+        <Row className="padding-left-20">
+          <Col sm={5}>
+            {this.renderOptions()}
+          </Col>
+          <Col sm={7}>
+            <div className="padding-right-30">
+              <DMTPaginator
+                data={data}
+                setData={this.setDataForDisplay}
+                showFilter="true"
                 columns={REPLICATION_JOBS}
-                data={dataToDisplay}
+                onFilter={this.onFilter}
+                filterHelpText={TABLE_FILTER_TEXT.REPLICATION_JOBS}
               />
-            </CardBody>
-          </Card>
-        </Container>
+            </div>
+          </Col>
+        </Row>
+        <DMTable
+          dispatch={dispatch}
+          columns={REPLICATION_JOBS}
+          data={dataToDisplay}
+        />
+
       </>
     );
   }
@@ -132,34 +129,30 @@ class Replication extends Component {
     const data = (hasFilterString ? searchData : replication);
     return (
       <>
-        <Container fluid>
-          <Card>
-            <CardBody>
-              <Row className="padding-left-20">
-                <Col sm={5}>
-                  {this.renderOptions()}
-                </Col>
-                <Col sm={7}>
-                  <div className="padding-right-30">
-                    <DMTPaginator
-                      data={data}
-                      setData={this.setDataForDisplay}
-                      showFilter="true"
-                      onFilter={this.onFilter}
-                      columns={REPLICATION_VM_JOBS}
-                      filterHelpText={TABLE_FILTER_TEXT.REPLICATION_VM_JOBS}
-                    />
-                  </div>
-                </Col>
-              </Row>
-              <DMTable
-                dispatch={dispatch}
+
+        <Row className="padding-left-20">
+          <Col sm={5}>
+            {this.renderOptions()}
+          </Col>
+          <Col sm={7}>
+            <div className="padding-right-30">
+              <DMTPaginator
+                data={data}
+                setData={this.setDataForDisplay}
+                showFilter="true"
+                onFilter={this.onFilter}
                 columns={REPLICATION_VM_JOBS}
-                data={dataToDisplay}
+                filterHelpText={TABLE_FILTER_TEXT.REPLICATION_VM_JOBS}
               />
-            </CardBody>
-          </Card>
-        </Container>
+            </div>
+          </Col>
+        </Row>
+        <DMTable
+          dispatch={dispatch}
+          columns={REPLICATION_VM_JOBS}
+          data={dataToDisplay}
+        />
+
       </>
     );
   }
@@ -195,18 +188,14 @@ class Replication extends Component {
   renderProtectionPlanJobs() {
     return (
       <>
-        <Container fluid>
-          <Card>
-            <CardBody>
-              <Row className="padding-left-20">
-                <Col sm={12}>
-                  {this.renderOptions()}
-                </Col>
-              </Row>
-              {this.renderDrReplications()}
-            </CardBody>
-          </Card>
-        </Container>
+
+        <Row className="padding-left-20">
+          <Col sm={12}>
+            {this.renderOptions()}
+          </Col>
+        </Row>
+        {this.renderDrReplications()}
+
       </>
     );
   }
@@ -216,9 +205,18 @@ class Replication extends Component {
     const { replicationType } = jobs;
     return (
       <>
-        {replicationType === REPLICATION_JOB_TYPE.VM ? this.renderVMJobs() : null}
-        {replicationType === REPLICATION_JOB_TYPE.DISK ? this.renderDiskJobs() : null}
-        {replicationType === REPLICATION_JOB_TYPE.PLAN ? this.renderProtectionPlanJobs() : null}
+        <>
+          <Container fluid>
+            <Card>
+              <CardBody>
+                <DMBreadCrumb links={[{ label: 'replication', link: '#' }]} />
+                {replicationType === REPLICATION_JOB_TYPE.VM ? this.renderVMJobs() : null}
+                {replicationType === REPLICATION_JOB_TYPE.DISK ? this.renderDiskJobs() : null}
+                {replicationType === REPLICATION_JOB_TYPE.PLAN ? this.renderProtectionPlanJobs() : null}
+              </CardBody>
+            </Card>
+          </Container>
+        </>
       </>
     );
   }

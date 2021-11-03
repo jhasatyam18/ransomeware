@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Button, Card, CardBody, Col, Row } from 'reactstrap';
+import { Button, Card, CardBody, Col, Container, Row } from 'reactstrap';
 import { fetchDrPlans } from '../../store/actions/DrPlanActions';
 import ReportSideBar from './ReportSideBar';
 import ReportSystemOverview from './ReportSystemOverview';
 import ReportTables from './ReportTables';
+import DMBreadCrumb from '../Common/DMBreadCrumb';
 import { exportReportToPDF, generateAuditReport, getCriteria, resetReport } from '../../store/actions/ReportActions';
 import { hideApplicationLoader, showApplicationLoader } from '../../store/actions/UserActions';
 import { valueChange } from '../../store/actions';
@@ -107,7 +108,7 @@ class Report extends Component {
         {includeEvents === true ? <ReportTables title="Events" columns={TABLE_EVENTS} dataSource="events" printView={printView} /> : null}
         {includeAlerts === true ? <ReportTables title="Alerts" columns={TABLE_ALERTS} dataSource="alerts" printView={printView} /> : null}
         {includeReplicationJobs === true ? <ReportTables title="Replication Jobs" columns={REPLICATION_VM_JOBS} dataSource="replication" printView={printView} /> : null}
-        {includeRecoveryJobs === true ? <ReportTables title="Recovery Jobs" columns={RECOVERY_JOBS} dataSource="recovery" printView={printView} /> : null }
+        {includeRecoveryJobs === true ? <ReportTables title="Recovery Jobs" columns={RECOVERY_JOBS} dataSource="recovery" printView={printView} /> : null}
       </>
     );
   }
@@ -147,27 +148,32 @@ class Report extends Component {
     const keys = Object.keys(result).length;
     const hasData = keys !== 0;
     return (
-      <Card>
-        <CardBody>
-          <div className="p-2">
-            <Button className="btn btn-outline-dark btn-sm margin-left-10" onClick={this.toggleCollapse}>
-              <i className={openCollapse === true ? 'fas fa-arrow-down' : 'fas fa-arrow-right'} title="Report Filter" style={{ fontSize: 16 }} />
-              <span className="padding-left-5">Filter</span>
-            </Button>
-            { hasData
-              ? (
-                <Button className="btn btn-outline-dark btn-sm margin-left-10" onClick={this.exportToPDF}>
-                  <i className="far fa-file-pdf text-danger" style={{ fontSize: 16 }} title="Export to PDF" />
-                  <span className="padding-left-5">Export</span>
+      <>
+        <>
+          <Container fluid>
+            <Card>
+              <CardBody>
+                <DMBreadCrumb links={[{ label: 'support', link: '#' }]} />
+                <Button className="btn btn-outline-dark btn-sm margin-left-15" onClick={this.toggleCollapse}>
+                  <i className={openCollapse === true ? 'fas fa-arrow-down' : 'fas fa-arrow-right'} title="Report Filter" style={{ fontSize: 16 }} />
+                  <span className="padding-left-5">Filter</span>
                 </Button>
-              ) : null }
-          </div>
-          <Row>
-            {this.renderReportFilter()}
-            {this.renderReportContents()}
-          </Row>
-        </CardBody>
-      </Card>
+                {hasData
+                  ? (
+                    <Button className="btn btn-outline-dark btn-sm" onClick={this.exportToPDF}>
+                      <i className="far fa-file-pdf text-danger" style={{ fontSize: 16 }} title="Export to PDF" />
+                      <span className="padding-left-5">Export</span>
+                    </Button>
+                  ) : null}
+                <Row>
+                  {this.renderReportFilter()}
+                  {this.renderReportContents()}
+                </Row>
+              </CardBody>
+            </Card>
+          </Container>
+        </>
+      </>
     );
   }
 }

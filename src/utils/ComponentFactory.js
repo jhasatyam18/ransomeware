@@ -4,7 +4,7 @@ import DMFieldSelect from '../components/Shared/DMFieldSelect';
 import CloudTags from '../components/Common/CloudTags';
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
 import { DATE_PICKER_COMP, FIELDS, MULTISELECT_ITEM_COMP, REPLICATION_INTERVAL_COMP } from '../constants/FieldsConstant';
-import { DATE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDERER, VM_SIZE_ITEM_RENDERER, STATUS_ITEM_RENDERER, TRANSFER_SIZE_ITEM_RENDERER, RECOVERY_TYPE_ITEM_RENDERER, TIME_DURATION_RENDERER, RECOVERY_SITE_LINK_ITEM_RENDERER, SSH_RDP_ITEM_RENDERER, VM_USERNAME_ITEM_RENDERER, VM_UPASSWORD_ITEM_RENDERER, REPLICATION_INTERVAL_ITEM_RENDERER, EVENT_LEVEL_ITEM_RENDERER, ALERT_ACK_ITEM_RENDERER, VIEW_ALERT_INFO_RENDERER, SERVER_PORT_ITEM_RENDERER, SIZE_ITEM_RENDERER, SUPPORT_BUNDLE_ACTION_ITEM_RENDERER, NODE_NAME_ITEM_RENDERER, EMAIL_RECIPIENT_ACTION_ITEM_RENDER, NODE_ACTION_RENDERER, VM_BOOT_ORDER_ITEM_RENDER } from '../constants/TableConstants';
+import { DATE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDERER, VM_SIZE_ITEM_RENDERER, STATUS_ITEM_RENDERER, TRANSFER_SIZE_ITEM_RENDERER, RECOVERY_TYPE_ITEM_RENDERER, TIME_DURATION_RENDERER, RECOVERY_SITE_LINK_ITEM_RENDERER, SSH_RDP_ITEM_RENDERER, VM_USERNAME_ITEM_RENDERER, VM_UPASSWORD_ITEM_RENDERER, REPLICATION_INTERVAL_ITEM_RENDERER, EVENT_LEVEL_ITEM_RENDERER, ALERT_ACK_ITEM_RENDERER, VIEW_ALERT_INFO_RENDERER, SERVER_PORT_ITEM_RENDERER, SIZE_ITEM_RENDERER, SUPPORT_BUNDLE_ACTION_ITEM_RENDERER, NODE_NAME_ITEM_RENDERER, EMAIL_RECIPIENT_ACTION_ITEM_RENDER, NODE_ACTION_RENDERER, VM_BOOT_ORDER_ITEM_RENDER, LICENSE_USAGE_ITEM_RENDERER, LICENSE_ACTION_ITEM_RENDERER, LICENSE_STATUS_ITEM_RENDER } from '../constants/TableConstants';
 import ReplicationInterval from '../components/Forms/ReplicationInterval';
 import SecurityGroups from '../components/Common/SecurityGroups';
 import DMMultiSelect from '../components/Shared/DMMultiSelect';
@@ -34,6 +34,9 @@ import NodeNameItemRenderer from '../components/Table/ItemRenderers/NodeNameItem
 import EmailRecipientItemRenderer from '../components/Table/ItemRenderers/EmailRecipientItemRenderer';
 import NodeActionItemRenderer from '../components/Table/ItemRenderers/NodeActionItemRenderer';
 import VMBootOrderItemRenderer from '../components/Table/ItemRenderers/VMBootOrderItemRenderer';
+import LicenseUsageItemRenderer from '../components/Table/ItemRenderers/LicenseUsageItemRenderer';
+import LicenseActionItemRenderer from '../components/Table/ItemRenderers/LicenseActionItemRenderer';
+import LicenseStatusItemRender from '../components/Table/ItemRenderers/LicenseStatusItemRender';
 
 export function getStackComponent(dispatch, user, children, conf, data) {
   const field = children[conf];
@@ -111,6 +114,12 @@ export function getItemRendererComponent(render, data, field, user, dispatch) {
       return <NodeActionItemRenderer data={data} dispatch={dispatch} />;
     case VM_BOOT_ORDER_ITEM_RENDER:
       return <VMBootOrderItemRenderer data={data} user={user} dispatch={dispatch} />;
+    case LICENSE_USAGE_ITEM_RENDERER:
+      return <LicenseUsageItemRenderer data={data} field={field} />;
+    case LICENSE_ACTION_ITEM_RENDERER:
+      return <LicenseActionItemRenderer data={data} dispatch={dispatch} />;
+    case LICENSE_STATUS_ITEM_RENDER:
+      return <LicenseStatusItemRender data={data} field={field} />;
     default:
       return (<div> 404 </div>);
   }

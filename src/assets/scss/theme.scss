@@ -443,3 +443,12 @@ span.flatpickr-weekday {
   color: gray;
   pointer-events: none;
 }
+
+.progress span {
+  position:absolute;
+  width:100%;
+  text-align:center;
+  z-index:2;
+  color:white;
+  margin-top: 5px;
+}

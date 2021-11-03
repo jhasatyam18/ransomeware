@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Card, CardBody, CardTitle, Container,
-} from 'reactstrap';
+import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
+import {
+  Card, CardBody, Container,
+} from 'reactstrap';
 import { fetchSites } from '../../../store/actions/SiteActions';
+import DMBreadCrumb from '../../Common/DMBreadCrumb';
 import SitesTable from './SitesTable';
-
 // Import Images
 class Sites extends Component {
   componentDidMount() {
@@ -15,7 +15,7 @@ class Sites extends Component {
   }
 
   render() {
-    const { sites, dispatch, user, t } = this.props;
+    const { sites, dispatch, user } = this.props;
 
     return (
       <>
@@ -23,7 +23,7 @@ class Sites extends Component {
           <Container fluid>
             <Card>
               <CardBody>
-                <CardTitle className="mb-4">{t('sites')}</CardTitle>
+                <DMBreadCrumb links={[{ label: 'sites', link: '#' }]} />
                 <SitesTable user={user} sites={sites} dispatch={dispatch} />
               </CardBody>
             </Card>

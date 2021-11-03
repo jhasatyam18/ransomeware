@@ -17,7 +17,7 @@ const INITIAL_STATE = {
     appType: APP_TYPE.CLIENT,
     platformType: '',
     localVMIP: '',
-    license: { licenseType: '-', isLicenseExpired: false, licenseExpiredTime: null, version: '-' },
+    license: { applicationKey: '', version: '-' },
   },
   sites: { sites: [], selectedSites: [] },
   drPlans: { plans: [], selectedPlans: [], recoveryPlan: {} },
@@ -33,7 +33,7 @@ const INITIAL_STATE = {
   },
   events: { data: [], selected: {}, filteredData: [] },
   alerts: { data: [], selected: {}, associatedEvent: {}, unread: [], filteredData: [] },
-  settings: { bundles: [], nodes: [], selectedNodes: [], emailConfig: null, emailRecipients: [] },
+  settings: { bundles: [], nodes: [], selectedNodes: [], emailConfig: null, emailRecipients: [], licenses: [] },
   reports: { criteria: {}, result: {} },
 };
 

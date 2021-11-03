@@ -94,3 +94,6 @@ export const RESET_REPORT = 'RESET_SETTINGS';
 // report
 export const SET_REPORT_CRITERIA = 'SET_REPORT_CRITERIA';
 export const SET_REPORT_OBJECT = 'SET_REPORT_OBJECT';
+
+// Licenses
+export const FETCH_LICENSES = 'FETCH_LICENSES';

@@ -1,13 +1,11 @@
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-
 // MetisMenu
 import MetisMenu from 'metismenujs';
-import { Link } from 'react-router-dom';
-
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 // i18n
 import { withTranslation } from 'react-i18next';
-import { DASHBOARD_PATH, JOBS, PROTECTION_PLANS_PATH, SITES_PATH, REPORTS, Analytics, EVENTS, ALERTS, SETTINGS } from '../../constants/RouterConstants';
+import { Link } from 'react-router-dom';
+import { getSideBarContents } from '../../utils/AppUtils';
 
 class SidebarContent extends Component {
   constructor(props) {
@@ -39,82 +37,46 @@ class SidebarContent extends Component {
     return '';
   }
 
-  render() {
+  renderItem(item) {
     const { t } = this.props;
+    return (
+      <li>
+        <Link to={item.to} className="waves-effect" style={{ color: this.isActive(item.isActivePath.join(',')) }}>
+          <i className={item.icon} style={{ fontSize: 16, color: this.isActive(item.isActivePath.join(',')) }} />
+          <span>{t(item.label)}</span>
+        </Link>
+      </li>
+    );
+  }
+
+  renderMenu(menuItems) {
+    const { t } = this.props;
+    const sidebarMenu = menuItems.map((menu) => {
+      if (menu.hasSubMenu) {
+        return (
+          <li>
+            <Link to="/#" className="has-arrow waves-effect" style={{ color: this.isActive(menu.isActivePath.join(',')) }}>
+              <i className={menu.icon} style={{ fontSize: 16, color: this.isActive(menu.isActivePath.join(',')) }} />
+              <span>{t(menu.label)}</span>
+            </Link>
+            <ul className="sub-menu" aria-expanded="false">
+              {this.renderMenu(menu.subMenu)}
+            </ul>
+          </li>
+        );
+      }
+      return this.renderItem(menu);
+    });
+    return sidebarMenu;
+  }
+
+  render() {
+    const menuItems = getSideBarContents();
     return (
       <>
         <div id="sidebar-menu">
           <ul className="metismenu list-unstyled" id="side-menu">
-            <li>
-              <Link to={DASHBOARD_PATH} className="waves-effect" style={{ color: this.isActive(DASHBOARD_PATH) }}>
-                <i className="fa fa-desktop fa-s-lg" style={{ fontSize: 16, color: this.isActive(DASHBOARD_PATH) }} />
-                <span>{t('dashboard')}</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/#" className="has-arrow waves-effect" style={{ color: this.isActive(SITES_PATH, PROTECTION_PLANS_PATH) }}>
-                <i className="fa fa-cog fa-s-lg" style={{ fontSize: 16, color: this.isActive(SITES_PATH, PROTECTION_PLANS_PATH) }} />
-                <span>{t('configure')}</span>
-              </Link>
-              <ul className="sub-menu" aria-expanded="false">
-                <li>
-                  <Link to={SITES_PATH} style={{ color: this.isActive(SITES_PATH) }}>
-                    <i className="bx bx-cloud" style={{ color: this.isActive(SITES_PATH) }} />
-                    {t('sites')}
-                  </Link>
-                </li>
-                <li>
-                  <Link to={PROTECTION_PLANS_PATH} className="waves-effect" style={{ color: this.isActive(PROTECTION_PLANS_PATH) }}>
-                    <i className="bx bx-layer" style={{ color: this.isActive(PROTECTION_PLANS_PATH) }} />
-                    <span>{t('protection.plans')}</span>
-                  </Link>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <Link to={JOBS} className="waves-effect" style={{ color: this.isActive(JOBS) }}>
-                <i className="fa fa-tasks" style={{ fontSize: 16, color: this.isActive(JOBS) }} />
-                <span>{t('jobs')}</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/#" className="has-arrow waves-effect" style={{ color: this.isActive(EVENTS, ALERTS, REPORTS) }}>
-                <i className="fa fa-chart-bar fa-s-lg" style={{ fontSize: 16, color: this.isActive(EVENTS, ALERTS, REPORTS) }} />
-                <span>{t('Monitor')}</span>
-              </Link>
-              <ul className="sub-menu" aria-expanded="false">
-                <li>
-                  <Link to={EVENTS} style={{ color: this.isActive(EVENTS) }}>
-                    <i className="bx bxs-calendar-event" style={{ fontSize: 16, color: this.isActive(EVENTS) }} />
-                    {t('Events')}
-                  </Link>
-                </li>
-                <li>
-                  <Link to={ALERTS} style={{ color: this.isActive(ALERTS) }}>
-                    <i className="bx bx-alarm" style={{ fontSize: 16, color: this.isActive(ALERTS) }} />
-                    <span>Alerts</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/Reports" className="waves-effect" style={{ color: this.isActive('/Reports') }}>
-                    <i className="bx bxs-report" style={{ fontSize: 16, color: this.isActive('/Reports') }} />
-                    <span>Reports</span>
-                  </Link>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <Link to="/Analytics" className="waves-effect" style={{ color: this.isActive(Analytics) }}>
-                <i className="bx bx-stats" style={{ fontSize: 16, color: this.isActive(Analytics) }} />
-                <span>Analytics</span>
-              </Link>
-            </li>
-            <li>
-              <Link to={SETTINGS} className="waves-effect" style={{ color: this.isActive(SETTINGS) }}>
-                <i className="fas fa-sliders-h" style={{ fontSize: 16, color: this.isActive(SETTINGS) }} />
-                <span>{t('Settings')}</span>
-              </Link>
-            </li>
+            {this.renderMenu(menuItems)}
           </ul>
         </div>
       </>

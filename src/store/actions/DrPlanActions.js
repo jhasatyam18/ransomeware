@@ -326,8 +326,6 @@ export function openMigrationWizard() {
     dispatch(valueChange('recovery.protectionplanID', id));
     // fetch VMs for drPlan
     dispatch(onProtectionPlanChange({ value: id }));
-    // set is migration flag to false
-    dispatch(valueChange('ui.isMigration.workflow', false));
     // set is test recovery flag to false
     dispatch(valueChange('recovery.dryrun', false));
     dispatch(openWizard(MIGRATION_WIZARDS.options, MIGRATION_WIZARDS.steps));

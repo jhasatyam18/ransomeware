@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { REPLICATION_JOB_TYPE, RECOVERY_JOB_TYPE, MAX_RECOVERY_TIME } from '../../constants/InputConstants';
-import { JOBS } from '../../constants/RouterConstants';
 import { changeReplicationJobType, changeRecoveryJobType, fetchReplicationJobs, fetchRecoveryJobs, resetJobs } from '../../store/actions/JobActions';
 import * as appStatus from '../../constants/AppStatus';
 import { getMinutes } from '../../utils/AppUtils';
+import { JOBS_PATH } from '../../constants/RouterConstants';
 
 class DashBoardJob extends Component {
   componentDidMount() {
@@ -53,7 +53,7 @@ class DashBoardJob extends Component {
         </div>
         <Media body>
           <div>
-            <Link to={(data.recoveryType ? `${JOBS}?tab=recovery` : `${JOBS}?tab=replication`)} style={{ color: 'white' }}>
+            <Link to={(data.recoveryType ? `${JOBS_PATH}?tab=recovery` : `${JOBS_PATH}?tab=replication`)} style={{ color: 'white' }}>
               {message.length > 65 ? `${message.substr(0, 65)}....` : message}
             </Link>
           </div>

@@ -1,15 +1,13 @@
-import React, { Component, Suspense } from 'react';
 import PropTypes from 'prop-types';
+import React, { Component, Suspense } from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
-import DRPlans from '../data-recovery/DRPlans';
-import {
-  DASHBOARD_PATH, SITES_PATH, LOGIN_PATH, PROTECTION_PLANS_PATH, PROTECTION_PLAN_DETAILS, JOBS, EVENTS, ALERTS, SETTINGS, REPORTS,
-} from '../../constants/RouterConstants';
-import Pages404 from '../../pages/Page-404';
+import { ALERTS_PATH, DASHBOARD_PATH, EVENTS_PATH, JOBS_PATH, LOGIN_PATH, NODES_PATH, PROTECTION_PLANS_PATH, PROTECTION_PLAN_DETAILS_PATH, REPORTS_PATH, SETTINGS_PATH, SITES_PATH } from '../../constants/RouterConstants';
 import Login from '../../pages/AuthenticationInner/Login';
-import Sidebar from './Sidebar';
+import Pages404 from '../../pages/Page-404';
+import DRPlans from '../data-recovery/DRPlans';
+import Node from '../Settings/node/Node';
 import Header from './Header';
-
+import Sidebar from './Sidebar';
 // lazy load components
 const Dashboard = React.lazy(() => import('../Dashboard/Dashboard'));
 const Sites = React.lazy(() => import('../Configure/Sites/Sites'));
@@ -17,8 +15,12 @@ const DRPlanDetails = React.lazy(() => import('../data-recovery/DRPlanDetails'))
 const Jobs = React.lazy(() => import('../Jobs/Jobs'));
 const Events = React.lazy(() => import('../Events/Events'));
 const Alerts = React.lazy(() => import('../Alerts/Alerts'));
-const Settings = React.lazy(() => import('../Settings/Settings'));
+// const Settings = React.lazy(() => import('../Settings/Settings'));
 const Report = React.lazy(() => import('../Report/Report'));
+const Settings = React.lazy(() => import('../Settings/Settings'));
+
+// Settings
+// const EmailSettings = React.lazy(() => import('../Settings/email/EmailSettings'));
 class Layout extends Component {
   constructor(props) {
     super(props);
@@ -94,16 +96,16 @@ class Layout extends Component {
               <Suspense fallback={<div>Loading...</div>}>
                 <Switch>
                   <Route path={LOGIN_PATH} render={() => <Login {...this.props} />} />
+                  <Route path={NODES_PATH} render={() => <Node />} />
                   <Route path={DASHBOARD_PATH} render={() => <Dashboard {...this.props} />} />
                   <Route path={SITES_PATH} render={() => <Sites user={user} sites={sites} dispatch={dispatch} />} />
                   <Route path={PROTECTION_PLANS_PATH} render={() => <DRPlans user={user} sites={sites} dispatch={dispatch} drPlans={drPlans} />} />
-                  <Route path={PROTECTION_PLAN_DETAILS} render={() => <DRPlanDetails {...this.props} />} />
-                  <Route path={JOBS} render={() => <Jobs protectionplanID={0} {...this.props} />} />
-                  <Route path={EVENTS} render={() => <Events />} />
-                  <Route path={ALERTS} render={() => <Alerts />} />
-                  <Route path={SETTINGS} render={() => <Settings dispatch={dispatch} />} />
-                  <Route path={ALERTS} render={() => <Alerts />} />
-                  <Route path={REPORTS} render={() => <Report />} />
+                  <Route path={PROTECTION_PLAN_DETAILS_PATH} render={() => <DRPlanDetails {...this.props} />} />
+                  <Route path={JOBS_PATH} render={() => <Jobs protectionplanID={0} {...this.props} />} />
+                  <Route path={EVENTS_PATH} render={() => <Events />} />
+                  <Route path={ALERTS_PATH} render={() => <Alerts />} />
+                  <Route path={REPORTS_PATH} render={() => <Report />} />
+                  <Route path={SETTINGS_PATH} render={() => <Settings />} />
                   <Route component={Pages404} />
                 </Switch>
               </Suspense>

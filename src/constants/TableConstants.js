@@ -20,6 +20,9 @@ export const NODE_NAME_ITEM_RENDERER = 'NODE_NAME_ITEM_RENDERER';
 export const NODE_ACTION_RENDERER = 'NODE_ACTION_RENDERER';
 export const EMAIL_RECIPIENT_ACTION_ITEM_RENDER = 'EMAIL_RECIPIENT_ACTION_ITEM_RENDER';
 export const VM_BOOT_ORDER_ITEM_RENDER = 'VM_BOOT_ORDER_ITEM_RENDER';
+export const LICENSE_USAGE_ITEM_RENDERER = 'LICENSE_USAGE_ITEM_RENDERER';
+export const LICENSE_ACTION_ITEM_RENDERER = 'LICENSE_ACTION_ITEM_RENDERER';
+export const LICENSE_STATUS_ITEM_RENDER = 'LICENSE_STATUS_ITEM_RENDER';
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
@@ -176,6 +179,16 @@ export const TABLE_REPORT_PROTECTED_VMS = [
   { label: 'Reduction (%)', field: 'dataReductionRatio' },
   // { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
   { label: 'Recovery Status', field: 'recoveryStatus' },
+];
+
+export const TABLE_LICENSES = [
+  { label: 'Type', field: 'licenseType' },
+  { label: 'Registered On', field: 'createTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Status', field: 'isActive', itemRenderer: LICENSE_STATUS_ITEM_RENDER },
+  { label: 'Recoveries', field: 'completedRecoveries', itemRenderer: LICENSE_USAGE_ITEM_RENDERER },
+  { label: 'Migrations', field: 'completedMigrations', itemRenderer: LICENSE_USAGE_ITEM_RENDERER },
+  { label: 'Valid Till', field: 'expiredTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Actions', field: 'isActive', itemRenderer: LICENSE_ACTION_ITEM_RENDERER },
 ];
 
 // table filter help text

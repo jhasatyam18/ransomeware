@@ -4,7 +4,7 @@ import * as Types from '../../constants/actionTypes';
 import { API_AUTHENTICATE, API_CHANGE_PASSWORD, API_AWS_AVAILABILITY_ZONES, API_AWS_REGIONS, API_GCP_AVAILABILITY_ZONES, API_GCP_REGIONS, API_INFO, API_SCRIPTS } from '../../constants/ApiConstants';
 import { APP_TYPE, PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { ALERTS, DASHBOARD_PATH, EVENTS, JOBS, PROTECTION_PLANS_PATH, SITES_PATH } from '../../constants/RouterConstants';
+import { ALERTS_PATH, DASHBOARD_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH } from '../../constants/RouterConstants';
 import { APPLICATION_API_TOKEN, APPLICATION_API_USER } from '../../constants/UserConstant';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { setCookie } from '../../utils/CookieUtils';
@@ -18,6 +18,10 @@ import { fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
 import { addMessage, clearMessages } from './MessageActions';
 import { fetchSites } from './SiteActions';
 import { getValue } from '../../utils/InputUtils';
+import { fetchLicenses } from './LicenseActions';
+import { fetchSupportBundles } from './SupportActions';
+import { fetchEmailConfig, fetchEmailRecipients } from './EmailActions';
+import { fetchNodes } from './NodeActions';
 
 export function login({ username, password, history }) {
   return (dispatch) => {
@@ -113,10 +117,10 @@ export function getInfo(history) {
         dispatch(loginSuccess(json.token, 'admin'));
         setCookie(APPLICATION_API_USER, 'admin');
         const appType = json.serviceType === 'Client' ? APP_TYPE.CLIENT : APP_TYPE.SERVER;
-        const { licenseType, isLicenseExpired, licenseExpiredTime, version, serviceType } = json;
+        const { version, serviceType, nodeKey, licenses } = json;
         dispatch(changeAppType(appType, json.platformType, json.localVMIP));
-        fetchByDelay(dispatch, updateLicenseInfo, 2000, { licenseType, isLicenseExpired, licenseExpiredTime, version, serviceType });
-        dispatch(validateLicense(licenseExpiredTime));
+        fetchByDelay(dispatch, updateLicenseInfo, 2000, { nodeKey, version, serviceType, activeLicenses: licenses });
+        // dispatch(validateLicense(licenseExpiredTime));
         dispatch(getUnreadAlerts());
         if (history) {
           onInit(history);
@@ -214,15 +218,28 @@ export function refresh() {
       case SITES_PATH:
         dispatch(fetchSites());
         break;
-      case JOBS:
+      case JOBS_PATH:
         dispatch(fetchRecoveryJobs(0));
         dispatch(fetchReplicationJobs(0));
         break;
-      case ALERTS:
+      case ALERTS_PATH:
         dispatch(fetchAlerts());
         break;
-      case EVENTS:
+      case EVENTS_PATH:
         dispatch(fetchEvents());
+        break;
+      case LICENSE_SETTINGS_PATH:
+        dispatch(fetchLicenses());
+        break;
+      case SUPPORT_BUNDLE_PATH:
+        dispatch(fetchSupportBundles());
+        break;
+      case NODES_PATH:
+        dispatch(fetchNodes());
+        break;
+      case EMAIL_SETTINGS_PATH:
+        dispatch(fetchEmailConfig());
+        dispatch(fetchEmailRecipients());
         break;
       default:
         dispatch(detailPathChecks(pathname));

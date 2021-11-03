@@ -1,3 +1,5 @@
+import * as RPATH from '../constants/RouterConstants';
+
 const KEY_NAME = 'datamotive';
 let startValue = 1;
 export function getAppKey() {
@@ -182,4 +184,54 @@ export function calculateChangedData(val) {
   } catch (error) {
     return '';
   }
+}
+
+export function getSideBarContents() {
+  const menu = [
+    { label: 'dashboard', to: RPATH.DASHBOARD_PATH, icon: 'fa fa-desktop fa-s-lg', isActivePath: [RPATH.DASHBOARD_PATH], hasChildren: false },
+    { label: 'configure',
+      to: '#',
+      icon: 'fa fa-cog fa-s-lg',
+      isActivePath: [RPATH.SITES_PATH, RPATH.PROTECTION_PLANS_PATH, RPATH.NODES_PATH],
+      hasSubMenu: true,
+      subMenu: [
+        { label: 'nodes', to: RPATH.NODES_PATH, icon: 'fas fa-network-wired', isActivePath: [RPATH.NODES_PATH], hasChildren: false },
+        { label: 'sites', to: RPATH.SITES_PATH, icon: 'fa fa-cloud', isActivePath: [RPATH.SITES_PATH], hasChildren: false },
+        { label: 'protection.plans', to: RPATH.PROTECTION_PLANS_PATH, icon: 'fas fa-layer-group', isActivePath: [RPATH.PROTECTION_PLANS_PATH], hasChildren: false },
+      ],
+    },
+    { label: 'jobs',
+      to: '#',
+      icon: 'fa fa-tasks',
+      isActivePath: [RPATH.JOBS_PATH, RPATH.JOBS_REPLICATION_PATH, RPATH.JOBS_RECOVERY_PATH],
+      hasSubMenu: true,
+      subMenu: [
+        { label: 'replication', to: RPATH.JOBS_REPLICATION_PATH, icon: 'far fa-clone', isActivePath: [RPATH.JOBS_REPLICATION_PATH], hasChildren: false },
+        { label: 'recovery', to: RPATH.JOBS_RECOVERY_PATH, icon: 'far fa-clone', isActivePath: [RPATH.JOBS_RECOVERY_PATH], hasChildren: false },
+      ],
+    },
+    { label: 'monitor',
+      to: '#',
+      icon: 'fa fa-chart-bar fa-s-lg',
+      isActivePath: [RPATH.EVENTS_PATH, RPATH.ALERTS_PATH, RPATH.REPORTS_PATH],
+      hasSubMenu: true,
+      subMenu: [
+        { label: 'events', to: RPATH.EVENTS_PATH, icon: 'bx bxs-calendar-event', isActivePath: [RPATH.EVENTS_PATH], hasChildren: false },
+        { label: 'alerts', to: RPATH.ALERTS_PATH, icon: 'bx bx-alarm', isActivePath: [RPATH.ALERTS_PATH], hasChildren: false },
+        { label: 'report', to: RPATH.REPORTS_PATH, icon: 'bx bxs-report', isActivePath: [RPATH.REPORTS_PATH], hasChildren: false },
+      ],
+    },
+    { label: 'settings',
+      to: '#',
+      icon: 'fas fa-sliders-h',
+      isActivePath: [RPATH.LICENSE_SETTINGS_PATH, RPATH.SUPPORT_BUNDLE_PATH, RPATH.EMAIL_SETTINGS_PATH],
+      hasSubMenu: true,
+      subMenu: [
+        { label: 'license', to: RPATH.LICENSE_SETTINGS_PATH, icon: 'fas fa-id-card', isActivePath: [RPATH.LICENSE_SETTINGS_PATH], hasChildren: false },
+        { label: 'email', to: RPATH.EMAIL_SETTINGS_PATH, icon: 'far fa-envelope', isActivePath: [RPATH.EMAIL_SETTINGS_PATH], hasChildren: false },
+        { label: 'tech.support', to: RPATH.SUPPORT_BUNDLE_PATH, icon: 'fas fa-headset', isActivePath: [RPATH.SUPPORT_BUNDLE_PATH], hasChildren: false },
+      ],
+    },
+  ];
+  return menu;
 }

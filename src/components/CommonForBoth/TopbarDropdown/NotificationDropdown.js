@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import { Col, Dropdown, DropdownMenu, DropdownToggle, Row } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
-import { ALERTS } from '../../../constants/RouterConstants';
+import { ALERTS_PATH } from '../../../constants/RouterConstants';
 import { getUnreadAlerts } from '../../../store/actions/AlertActions';
 import { getAppDateFormat } from '../../../utils/AppUtils';
 
@@ -38,7 +38,7 @@ class NotificationDropdown extends Component {
   navigateToAlerts() {
     const { history } = this.props;
     this.toggle();
-    history.push(ALERTS);
+    history.push(ALERTS_PATH);
   }
 
   renderAlerts() {
@@ -53,7 +53,7 @@ class NotificationDropdown extends Component {
         let t2 = new Date(not.timeStamp * 1000);
         t2 = getAppDateFormat(t2, true);
         return (
-          <Link to={ALERTS} onClick={this.toggle} key={`not-alert-${not.id}`} className="text-reset notification-item">
+          <Link to={ALERTS_PATH} onClick={this.toggle} key={`not-alert-${not.id}`} className="text-reset notification-item">
             <div className="media">
               <div className="media-body">
                 <h6 className="mt-0 mb-1">
@@ -114,7 +114,7 @@ class NotificationDropdown extends Component {
                   </h6>
                 </Col>
                 <div className="col-auto">
-                  <Link to={ALERTS} onClick={this.toggle} className="small">
+                  <Link to={ALERTS_PATH} onClick={this.toggle} className="small">
                     {' '}
                     View All
                   </Link>

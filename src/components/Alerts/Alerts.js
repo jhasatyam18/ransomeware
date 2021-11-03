@@ -10,6 +10,7 @@ import { fetchAlerts, markAsRead, resetAlerts } from '../../store/actions/AlertA
 import DMTPaginator from '../Table/DMTPaginator';
 import { filterData } from '../../utils/AppUtils';
 import EventFilter from '../Shared/EventFilter';
+import DMBreadCrumb from '../Common/DMBreadCrumb';
 
 /**
  * Component to render Alerts.
@@ -74,6 +75,7 @@ class Alerts extends Component {
           <Container fluid>
             <Card>
               <CardBody>
+                <DMBreadCrumb links={[{ label: 'alerts', link: '#' }]} />
                 <Row className="padding-left-20">
                   <Col sm={5}>
                     <div style={{ maxWidth: '170px' }}>

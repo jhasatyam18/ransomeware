@@ -93,6 +93,17 @@ function StatusItemRenderer({ data, field }) {
       </div>
     );
   }
+  // active status
+  if (data[field] === true) {
+    return (
+      <div>
+        <Badge className="font-size-13 badge-soft-info" color="info" pill>
+          &nbsp;&nbsp;
+          Active
+        </Badge>
+      </div>
+    );
+  }
   return (
     <div>
       <Badge className="font-size-13 badge-soft-info" color="info" pill>

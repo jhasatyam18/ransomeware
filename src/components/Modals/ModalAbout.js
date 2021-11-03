@@ -24,14 +24,20 @@ class ModalAbout extends Component {
   render() {
     const { user } = this.props;
     const { license } = user;
-    const { version, serviceType, licenseType, licenseExpiredTime } = license;
-    const d = new Date(licenseExpiredTime * 1000);
-    const resp = `${d.toLocaleDateString()}-${d.toLocaleTimeString()}`;
+    const { version, serviceType, nodeKey, activeLicenses } = license;
+    let key = '';
+    for (let i = 0; i < nodeKey.length; i += 1) {
+      if (i !== 0 && i % 4 === 0) {
+        key = `${key}-${nodeKey[i]}`;
+      } else {
+        key = `${key}${nodeKey[i]}`;
+      }
+    }
     const info = [
       { label: 'Version', value: version },
       { label: 'Service Type', value: serviceType },
-      { label: 'License Type', value: licenseType },
-      { label: 'License Validity', value: resp },
+      { label: 'Node Key ', value: key },
+      { label: 'Actives Licenses', value: activeLicenses },
     ];
     return (
       <>
@@ -42,7 +48,7 @@ class ModalAbout extends Component {
                 <Col sm={4}>
                   {`${task.label}`}
                 </Col>
-                <Col sm={4}>
+                <Col sm={8}>
                   <p style={{ color: 'white' }}>{task.value}</p>
                 </Col>
               </Row>

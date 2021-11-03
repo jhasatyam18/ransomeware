@@ -13,6 +13,7 @@ import ModalEmailConfiguration from './ModalEmailConfiguration';
 import ModalEmailRecipient from './ModalEmailRecipient';
 import ModalEncryptionKey from './ModalEncryptionKey';
 import ModalNicConfig from './ModalNicConfig';
+import ModalLicense from './ModalLicense';
 
 class DMModal extends Component {
   constructor() {
@@ -50,6 +51,8 @@ class DMModal extends Component {
           return <ModalEncryptionKey options={options} />;
         case MODALS.MODAL_NETWORK_CONFIG:
           return <ModalNicConfig options={options} />;
+        case MODALS.MODAL_INSTALL_NEW_LICENSE:
+          return <ModalLicense options={options} />;
         default:
           return (<div>404</div>);
       }
