@@ -29,18 +29,22 @@ export function changeReplicationJobType(jobType) {
 
 export function fetchReplicationJobs(id) {
   return (dispatch, getState) => {
-    dispatch(showApplicationLoader('JOBS_DATA', 'Loading jobs...'));
     dispatch(setReplicationJobs([]));
     const { jobs } = getState();
     const { replicationType } = jobs;
     let url = '';
+    let type = '';
     if (replicationType === REPLICATION_JOB_TYPE.DISK) {
+      type = 'disk replication';
       url = (id === 0 ? API_REPLICATION_JOBS : API_PROTECTOIN_PLAN_REPLICATION_JOBS.replace('<id>', id));
     } else if (replicationType === REPLICATION_JOB_TYPE.VM) {
+      type = 'virtual machine replication';
       url = (id === 0 ? API_REPLICATION_VM_JOBS : API_PROTECTTION_PLAN_REPLICATION_VM_JOBS.replace('<id>', id));
     } else {
+      type = 'protection plan replication';
       url = API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS;
     }
+    dispatch(showApplicationLoader('JOBS_DATA', `Loading ${type} jobs...`));
     return callAPI(url).then((json) => {
       dispatch(hideApplicationLoader('JOBS_DATA'));
       if (json.hasError) {
@@ -58,16 +62,19 @@ export function fetchReplicationJobs(id) {
 
 export function fetchRecoveryJobs(id) {
   return (dispatch, getState) => {
-    dispatch(showApplicationLoader('JOBS_DATA', 'Loading jobs...'));
     dispatch(setRecoveryJobs([]));
     const { jobs } = getState();
     const { recoveryType } = jobs;
     let url = '';
+    let type = '';
     if (recoveryType === RECOVERY_JOB_TYPE.VM) {
+      type = 'virtual machine recovery';
       url = (id === 0 ? API_RECOVERY_JOBS : API_RECOVERY_PLAN_RECOVERY_JOBS.replace('<id>', id));
     } else {
+      type = 'protection plan recovery';
       url = API_PROTECTION_PLAN_RECOVERY_JOBS_STATUS;
     }
+    dispatch(showApplicationLoader('JOBS_DATA', `Loading ${type} jobs...`));
     return callAPI(url).then((json) => {
       dispatch(hideApplicationLoader('JOBS_DATA'));
       if (json.hasError) {

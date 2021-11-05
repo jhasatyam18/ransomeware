@@ -1,27 +1,27 @@
 // import { addMessage, clearMessages } from './MessageActions';
 import jsCookie from 'js-cookie';
 import * as Types from '../../constants/actionTypes';
-import { API_AUTHENTICATE, API_CHANGE_PASSWORD, API_AWS_AVAILABILITY_ZONES, API_AWS_REGIONS, API_GCP_AVAILABILITY_ZONES, API_GCP_REGIONS, API_INFO, API_SCRIPTS } from '../../constants/ApiConstants';
+import { API_AUTHENTICATE, API_AWS_AVAILABILITY_ZONES, API_AWS_REGIONS, API_CHANGE_PASSWORD, API_GCP_AVAILABILITY_ZONES, API_GCP_REGIONS, API_INFO, API_SCRIPTS } from '../../constants/ApiConstants';
 import { APP_TYPE, PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { ALERTS_PATH, DASHBOARD_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH } from '../../constants/RouterConstants';
+import { ALERTS_PATH, DASHBOARD_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH } from '../../constants/RouterConstants';
 import { APPLICATION_API_TOKEN, APPLICATION_API_USER } from '../../constants/UserConstant';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { setCookie } from '../../utils/CookieUtils';
 import { onInit } from '../../utils/HistoryUtil';
+import { getValue } from '../../utils/InputUtils';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { fetchAlerts, getUnreadAlerts } from './AlertActions';
 import { fetchDashboardData } from './DashboardActions';
 import { fetchDRPlanById, fetchDrPlans } from './DrPlanActions';
+import { fetchEmailConfig, fetchEmailRecipients } from './EmailActions';
 import { fetchEvents } from './EventActions';
 import { fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
-import { addMessage, clearMessages } from './MessageActions';
-import { fetchSites } from './SiteActions';
-import { getValue } from '../../utils/InputUtils';
 import { fetchLicenses } from './LicenseActions';
-import { fetchSupportBundles } from './SupportActions';
-import { fetchEmailConfig, fetchEmailRecipients } from './EmailActions';
+import { addMessage, clearMessages } from './MessageActions';
 import { fetchNodes } from './NodeActions';
+import { fetchSites } from './SiteActions';
+import { fetchSupportBundles } from './SupportActions';
 
 export function login({ username, password, history }) {
   return (dispatch) => {
@@ -218,9 +218,11 @@ export function refresh() {
       case SITES_PATH:
         dispatch(fetchSites());
         break;
-      case JOBS_PATH:
-        dispatch(fetchRecoveryJobs(0));
+      case JOBS_REPLICATION_PATH:
         dispatch(fetchReplicationJobs(0));
+        break;
+      case JOBS_RECOVERY_PATH:
+        dispatch(fetchRecoveryJobs(0));
         break;
       case ALERTS_PATH:
         dispatch(fetchAlerts());

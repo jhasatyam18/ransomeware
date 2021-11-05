@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { Card, CardBody, Col, Container, Form, Label, Row } from 'reactstrap';
-import DMTable from '../Table/DMTable';
-import { REPLICATION_JOBS, REPLICATION_VM_JOBS, TABLE_FILTER_TEXT } from '../../constants/TableConstants';
-import DMTPaginator from '../Table/DMTPaginator';
-import DMBreadCrumb from '../Common/DMBreadCrumb';
-import { changeReplicationJobType, fetchReplicationJobs } from '../../store/actions/JobActions';
 import { REPLICATION_JOB_TYPE } from '../../constants/InputConstants';
-import ProtectionPlanReplications from './ProtectionPlanReplications';
+import { REPLICATION_JOBS, REPLICATION_VM_JOBS, TABLE_FILTER_TEXT } from '../../constants/TableConstants';
+import { changeReplicationJobType, fetchReplicationJobs } from '../../store/actions/JobActions';
 import { filterData } from '../../utils/AppUtils';
+import DMBreadCrumb from '../Common/DMBreadCrumb';
+import DMTable from '../Table/DMTable';
+import DMTPaginator from '../Table/DMTPaginator';
+import ProtectionPlanReplications from './ProtectionPlanReplications';
 
 class Replication extends Component {
   constructor() {
@@ -53,7 +53,7 @@ class Replication extends Component {
     dispatch(changeReplicationJobType(type));
     setTimeout(() => {
       dispatch(fetchReplicationJobs(protectionplanID));
-    }, 1000);
+    }, 100);
   }
 
   renderOptions() {

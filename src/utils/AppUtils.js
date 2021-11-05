@@ -207,7 +207,7 @@ export function getSideBarContents() {
       hasSubMenu: true,
       subMenu: [
         { label: 'replication', to: RPATH.JOBS_REPLICATION_PATH, icon: 'far fa-clone', isActivePath: [RPATH.JOBS_REPLICATION_PATH], hasChildren: false },
-        { label: 'recovery', to: RPATH.JOBS_RECOVERY_PATH, icon: 'far fa-clone', isActivePath: [RPATH.JOBS_RECOVERY_PATH], hasChildren: false },
+        { label: 'recovery', to: RPATH.JOBS_RECOVERY_PATH, icon: 'fas fa-undo', isActivePath: [RPATH.JOBS_RECOVERY_PATH], hasChildren: false },
       ],
     },
     { label: 'monitor',

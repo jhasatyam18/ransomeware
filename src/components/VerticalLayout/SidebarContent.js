@@ -37,12 +37,18 @@ class SidebarContent extends Component {
     return '';
   }
 
+  renderIcon(item) {
+    return (
+      <i className={item.icon} style={{ fontSize: 16, color: this.isActive(item.isActivePath.join(',')) }} />
+    );
+  }
+
   renderItem(item) {
     const { t } = this.props;
     return (
       <li>
         <Link to={item.to} className="waves-effect" style={{ color: this.isActive(item.isActivePath.join(',')) }}>
-          <i className={item.icon} style={{ fontSize: 16, color: this.isActive(item.isActivePath.join(',')) }} />
+          {this.renderIcon(item)}
           <span>{t(item.label)}</span>
         </Link>
       </li>
