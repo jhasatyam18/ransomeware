@@ -23,6 +23,8 @@ export const VM_BOOT_ORDER_ITEM_RENDER = 'VM_BOOT_ORDER_ITEM_RENDER';
 export const LICENSE_USAGE_ITEM_RENDERER = 'LICENSE_USAGE_ITEM_RENDERER';
 export const LICENSE_ACTION_ITEM_RENDERER = 'LICENSE_ACTION_ITEM_RENDERER';
 export const LICENSE_STATUS_ITEM_RENDER = 'LICENSE_STATUS_ITEM_RENDER';
+export const THROTTLING_ACTION_ITEM_RENDER = 'THROTTLING_ACTION_ITEM_RENDER';
+export const THROTTLING_TIME_ITEM_RENDER = 'THROTTLING_TIME_ITEM_RENDER';
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
@@ -167,6 +169,17 @@ export const TABLE_EMAIL_RECIPIENTS = [
   { label: 'Email', field: 'emailAddress', width: 3 },
   { label: 'Subscribed Events', field: 'subscribedEvents', width: 5 },
   { label: 'Actions', field: 'emailAddress', itemRenderer: EMAIL_RECIPIENT_ACTION_ITEM_RENDER, width: 2 },
+];
+
+// Table fields for email recipients
+export const TABLE_THROTTLING_NODES = [
+  { label: 'Name', field: 'name' },
+  { label: 'Hostname', field: 'hostname' },
+  { label: 'Bandwidth Limit (Mbps)', field: 'bandwidthLimit' },
+  { label: 'Time Limit (Mbps)', field: 'timeLimit' },
+  { label: 'Time Period', field: 'startTime', itemRenderer: THROTTLING_TIME_ITEM_RENDER },
+  { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
+  { label: 'Actions', field: 'throttling', itemRenderer: THROTTLING_ACTION_ITEM_RENDER, width: 2 },
 ];
 
 // Table fields for protected virtual machines report

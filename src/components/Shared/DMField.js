@@ -8,11 +8,12 @@ import DMFieldRadio from './DMFieldRadio';
 import DMFieldSelect from './DMFieldSelect';
 import DMFieldText from './DMFieldText';
 import DMFieldLabel from './DMFieldLabel';
+import DMFieldRange from './DMFieldRange';
 // Import Images
 
 class DMField extends Component {
   renderField() {
-    const { dispatch, fieldKey, user, disabled, text } = this.props;
+    const { dispatch, fieldKey, user, disabled, text, hideLabel } = this.props;
     const field = FIELDS[fieldKey];
     const { type, COMPONENT } = field;
     switch (type) {
@@ -21,13 +22,15 @@ class DMField extends Component {
       case FIELD_TYPE.NUMBER:
         return <DMFieldNumber dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} />;
       case FIELD_TYPE.CHECKBOX:
-        return <DMFieldCheckbox dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} />;
+        return <DMFieldCheckbox dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} hideLabel={hideLabel} />;
       case FIELD_TYPE.RADIO:
         return <DMFieldRadio dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} />;
       case FIELD_TYPE.LABEL:
         return <DMFieldLabel dispatch={dispatch} fieldKey={fieldKey} field={field} text={text} user={user} />;
+      case FIELD_TYPE.RANGE:
+        return <DMFieldRange dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} hideLabel={hideLabel} />;
       case FIELD_TYPE.CUSTOM:
-        return getFieldComponents(dispatch, fieldKey, user, COMPONENT);
+        return getFieldComponents(dispatch, fieldKey, user, COMPONENT, hideLabel);
       default:
         return <DMFieldText dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} />;
     }

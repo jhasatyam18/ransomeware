@@ -14,6 +14,7 @@ import ModalEmailRecipient from './ModalEmailRecipient';
 import ModalEncryptionKey from './ModalEncryptionKey';
 import ModalNicConfig from './ModalNicConfig';
 import ModalLicense from './ModalLicense';
+import ModalBandwidthConfig from './ModalBandwidthConfig';
 
 class DMModal extends Component {
   constructor() {
@@ -47,6 +48,8 @@ class DMModal extends Component {
           return <ModalEmailConfiguration options={options} />;
         case MODALS.MODAL_EMAIL_RECIPIENTS_CONFIGURATION:
           return <ModalEmailRecipient options={options} />;
+        case MODALS.MODAL_BANDWIDTH_CONFIGURATION:
+          return <ModalBandwidthConfig options={options} />;
         case MODALS.MODAL_SHOW_ENCRYPTION_KEY:
           return <ModalEncryptionKey options={options} />;
         case MODALS.MODAL_NETWORK_CONFIG:

@@ -439,3 +439,12 @@ export function getNetInfo(networkKey, index, values) {
   const publicIP = getValue(`${networkKey}-eth-${index}-publicIP`, values) || '';
   return { hasPublicIP: (isPublicIP ? 'Yes' : 'No'), subnet, privateIP, isPublicIP, publicIP };
 }
+
+export function shouldShowBandwidthConfig(user) {
+  const { values } = user;
+  const limit = getValue('throttling.bandwidthLimit', values);
+  if (limit === true) {
+    return true;
+  }
+  return false;
+}

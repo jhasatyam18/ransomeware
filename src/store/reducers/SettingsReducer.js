@@ -13,6 +13,8 @@ export default function settings(state = INITIAL_STATE.settings, action) {
       return { ...state, email: action.config };
     case Types.FETCH_EMAIL_RECIPIENTS:
       return { ...state, emailRecipients: action.emailRecipients };
+    case Types.FETCH_THROTTLING_REPLNODES:
+      return { ...state, replNodes: action.replNodes };
     case Types.RESET_SETTINGS:
       return { ...INITIAL_STATE.settings };
     case Types.FETCH_LICENSES:

@@ -67,6 +67,7 @@ export const TAB_TYPE = {
 };
 export const SETTINGS_TABS = [
   { title: 'Nodes', activeTab: 1 },
-  { title: 'Tech Support', activeTab: 2 },
-  { title: 'Email', activeTab: 3 },
+  { title: 'Throttling', activeTab: 2 },
+  { title: 'Tech Support', activeTab: 3 },
+  { title: 'Email', activeTab: 4 },
 ];

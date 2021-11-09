@@ -160,5 +160,14 @@
   "monitor": "Monitor",
   "settings": "Settings",
   "boot.delay": "Boot Delay",
-  "boot.order.message": "Select Virtual Machine boot order"
+  "boot.order.message": "Select Virtual Machine boot order",
+  "throttling.isLimitEnabled": "Enable Limit",
+  "throttling.bandwidthLimit": "Bandwidth (Mbps)",
+  "throttling.applyToAll": "Apply To All Replication Nodes",
+  "throttling.startTime": "Start Time",
+  "throttling.endTime": "End Time",
+  "throttling.isTimeEnabled": "Enable Time Limit",
+  "throttling.timeLimit": "Bandwidth (Mbps)",
+  "throttling": "Throttling",
+  "bandwidth.throttling": "Bandwidth Throttling"
 }

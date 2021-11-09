@@ -50,6 +50,7 @@
     "react-router-dom": "^5.2.0",
     "react-script": "^2.0.5",
     "react-super-responsive-table": "^5.1.4",
+    "react-time-picker": "^4.4.2",
     "react-toastr": "^3.0.0",
     "react-transition-group": "^4.4.2",
     "reactstrap": "^8.7.1",

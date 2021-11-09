@@ -18,6 +18,7 @@ export const ALERTS_PATH = '/monitor/alerts';
 export const SETTINGS_PATH = '/settings/*';
 export const LICENSE_SETTINGS_PATH = '/settings/license';
 export const EMAIL_SETTINGS_PATH = '/settings/email';
+export const THROTTLING_SETTINGS_PATH = '/settings/throttling';
 export const SUPPORT_BUNDLE_PATH = '/settings/support';
 export const JOBS_PATH = '/jobs/*';
 export const JOBS_REPLICATION_PATH = '/jobs/replication';

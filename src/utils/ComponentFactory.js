@@ -1,42 +1,44 @@
 import React from 'react';
-import NetworkConfig from '../components/Common/NetworkConfig';
-import DMFieldSelect from '../components/Shared/DMFieldSelect';
 import CloudTags from '../components/Common/CloudTags';
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
-import { DATE_PICKER_COMP, FIELDS, MULTISELECT_ITEM_COMP, REPLICATION_INTERVAL_COMP } from '../constants/FieldsConstant';
-import { DATE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDERER, VM_SIZE_ITEM_RENDERER, STATUS_ITEM_RENDERER, TRANSFER_SIZE_ITEM_RENDERER, RECOVERY_TYPE_ITEM_RENDERER, TIME_DURATION_RENDERER, RECOVERY_SITE_LINK_ITEM_RENDERER, SSH_RDP_ITEM_RENDERER, VM_USERNAME_ITEM_RENDERER, VM_UPASSWORD_ITEM_RENDERER, REPLICATION_INTERVAL_ITEM_RENDERER, EVENT_LEVEL_ITEM_RENDERER, ALERT_ACK_ITEM_RENDERER, VIEW_ALERT_INFO_RENDERER, SERVER_PORT_ITEM_RENDERER, SIZE_ITEM_RENDERER, SUPPORT_BUNDLE_ACTION_ITEM_RENDERER, NODE_NAME_ITEM_RENDERER, EMAIL_RECIPIENT_ACTION_ITEM_RENDER, NODE_ACTION_RENDERER, VM_BOOT_ORDER_ITEM_RENDER, LICENSE_USAGE_ITEM_RENDERER, LICENSE_ACTION_ITEM_RENDERER, LICENSE_STATUS_ITEM_RENDER } from '../constants/TableConstants';
+import { DATE_PICKER_COMP, FIELDS, MULTISELECT_ITEM_COMP, REPLICATION_INTERVAL_COMP, TIME_PICKER_COMP } from '../constants/FieldsConstant';
+import { ALERT_ACK_ITEM_RENDERER, DATE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, EMAIL_RECIPIENT_ACTION_ITEM_RENDER, THROTTLING_ACTION_ITEM_RENDER, EVENT_LEVEL_ITEM_RENDERER, NODE_ACTION_RENDERER, NODE_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDERER, RECOVERY_SITE_LINK_ITEM_RENDERER, RECOVERY_TYPE_ITEM_RENDERER, REPLICATION_INTERVAL_ITEM_RENDERER, SERVER_PORT_ITEM_RENDERER, SIZE_ITEM_RENDERER, SSH_RDP_ITEM_RENDERER, STATUS_ITEM_RENDERER, SUPPORT_BUNDLE_ACTION_ITEM_RENDERER, TIME_DURATION_RENDERER, TRANSFER_SIZE_ITEM_RENDERER, VIEW_ALERT_INFO_RENDERER, VM_SIZE_ITEM_RENDERER, VM_UPASSWORD_ITEM_RENDERER, VM_USERNAME_ITEM_RENDERER, VM_BOOT_ORDER_ITEM_RENDER, LICENSE_USAGE_ITEM_RENDERER, LICENSE_ACTION_ITEM_RENDERER, LICENSE_STATUS_ITEM_RENDER, THROTTLING_TIME_ITEM_RENDER } from '../constants/TableConstants';
 import ReplicationInterval from '../components/Forms/ReplicationInterval';
+import NetworkConfig from '../components/Common/NetworkConfig';
 import SecurityGroups from '../components/Common/SecurityGroups';
-import DMMultiSelect from '../components/Shared/DMMultiSelect';
 import DMDatePicker from '../components/Shared/DMDatePicker';
-
+import DMFieldSelect from '../components/Shared/DMFieldSelect';
+import DMMultiSelect from '../components/Shared/DMMultiSelect';
+import DMTimePicker from '../components/Shared/DMTimePicker';
+import AlertAckItemRenderer from '../components/Table/ItemRenderers/AlertAckItemRendrer';
+import DateItemRenderer from '../components/Table/ItemRenderers/DateItemRenderer';
+import DRPlanNameItemRenderer from '../components/Table/ItemRenderers/DRPlanNameItemRenderer';
+import EmailRecipientItemRenderer from '../components/Table/ItemRenderers/EmailRecipientItemRenderer';
+import EventLevelItemRenderer from '../components/Table/ItemRenderers/EventLevelItemRenderer';
+import NodeActionItemRenderer from '../components/Table/ItemRenderers/NodeActionItemRenderer';
+import NodeNameItemRenderer from '../components/Table/ItemRenderers/NodeNameItemRenderer';
 // Table Item renderers
 import OsTypeItemRenderer from '../components/Table/ItemRenderers/OsTypeItemRenderer';
-import VMSizeItemRenderer from '../components/Table/ItemRenderers/VMSizeItemRenderer';
-import DRPlanNameItemRenderer from '../components/Table/ItemRenderers/DRPlanNameItemRenderer';
-import DateItemRenderer from '../components/Table/ItemRenderers/DateItemRenderer';
-import StatusItemRenderer from '../components/Table/ItemRenderers/StatusItemRenderer';
-import TransferSizeItemRenderer from '../components/Table/ItemRenderers/TransferSizeItemRenderer';
-import RecoveryTypeItemRenderer from '../components/Table/ItemRenderers/RecoveryTypeItemRenderer';
-import TimeDurationItemRenderer from '../components/Table/ItemRenderers/TimeDurationItemRenderer';
 import RecoverySiteLinkRenderer from '../components/Table/ItemRenderers/RecoverySiteLinkRenderer';
-import SshRdpRenderer from '../components/Table/ItemRenderers/SshRdpRenderer';
-import VMUsernameItemRenderer from '../components/Table/ItemRenderers/VMUsernameItemRenderer';
-import VMPasswordItemRenderer from '../components/Table/ItemRenderers/VMPasswordItemRenderer';
+import RecoveryTypeItemRenderer from '../components/Table/ItemRenderers/RecoveryTypeItemRenderer';
 import ReplicationIntervalItemRenderer from '../components/Table/ItemRenderers/ReplicationIntervalItemRenderer';
-import EventLevelItemRenderer from '../components/Table/ItemRenderers/EventLevelItemRenderer';
-import AlertAckItemRenderer from '../components/Table/ItemRenderers/AlertAckItemRendrer';
-import ViewAlertInfoItemRenderer from '../components/Table/ItemRenderers/ViewAlertInfoItemRenderer';
 import ServerPortItemRenderer from '../components/Table/ItemRenderers/ServerPortItemRenderer';
 import SizeItemRenderer from '../components/Table/ItemRenderers/SizeItemRenderer';
+import SshRdpRenderer from '../components/Table/ItemRenderers/SshRdpRenderer';
+import StatusItemRenderer from '../components/Table/ItemRenderers/StatusItemRenderer';
 import SupportBundleActionsRenderer from '../components/Table/ItemRenderers/SupportBundleActionsRenderer';
-import NodeNameItemRenderer from '../components/Table/ItemRenderers/NodeNameItemRenderer';
-import EmailRecipientItemRenderer from '../components/Table/ItemRenderers/EmailRecipientItemRenderer';
-import NodeActionItemRenderer from '../components/Table/ItemRenderers/NodeActionItemRenderer';
 import VMBootOrderItemRenderer from '../components/Table/ItemRenderers/VMBootOrderItemRenderer';
 import LicenseUsageItemRenderer from '../components/Table/ItemRenderers/LicenseUsageItemRenderer';
 import LicenseActionItemRenderer from '../components/Table/ItemRenderers/LicenseActionItemRenderer';
 import LicenseStatusItemRender from '../components/Table/ItemRenderers/LicenseStatusItemRender';
+import TimeDurationItemRenderer from '../components/Table/ItemRenderers/TimeDurationItemRenderer';
+import TransferSizeItemRenderer from '../components/Table/ItemRenderers/TransferSizeItemRenderer';
+import ViewAlertInfoItemRenderer from '../components/Table/ItemRenderers/ViewAlertInfoItemRenderer';
+import VMPasswordItemRenderer from '../components/Table/ItemRenderers/VMPasswordItemRenderer';
+import VMSizeItemRenderer from '../components/Table/ItemRenderers/VMSizeItemRenderer';
+import VMUsernameItemRenderer from '../components/Table/ItemRenderers/VMUsernameItemRenderer';
+import ThrottlingItemRenderer from '../components/Table/ItemRenderers/ThrottlingItemRenderer';
+import ThrottlingTimeRenderer from '../components/Table/ItemRenderers/ThrottlingTimeRenderer';
 
 export function getStackComponent(dispatch, user, children, conf, data) {
   const field = children[conf];
@@ -52,15 +54,17 @@ export function getStackComponent(dispatch, user, children, conf, data) {
   }
 }
 
-export function getFieldComponents(dispatch, fieldKey, user, component) {
+export function getFieldComponents(dispatch, fieldKey, user, component, hideLabel) {
   const field = FIELDS[fieldKey];
   switch (component) {
     case REPLICATION_INTERVAL_COMP:
-      return <ReplicationInterval dispatch={dispatch} fieldKey={fieldKey} user={user} field={field} />;
+      return <ReplicationInterval dispatch={dispatch} fieldKey={fieldKey} user={user} field={field} hideLabel={hideLabel} />;
     case MULTISELECT_ITEM_COMP:
-      return <DMMultiSelect dispatch={dispatch} fieldKey={fieldKey} user={user} field={field} />;
+      return <DMMultiSelect dispatch={dispatch} fieldKey={fieldKey} user={user} field={field} hideLabel={hideLabel} />;
     case DATE_PICKER_COMP:
-      return <DMDatePicker dispatch={dispatch} fieldKey={fieldKey} user={user} field={field} />;
+      return <DMDatePicker dispatch={dispatch} fieldKey={fieldKey} user={user} field={field} hideLabel={hideLabel} />;
+    case TIME_PICKER_COMP:
+      return <DMTimePicker dispatch={dispatch} fieldKey={fieldKey} user={user} field={field} hideLabel={hideLabel} />;
     default:
       return <div>404</div>;
   }
@@ -110,6 +114,8 @@ export function getItemRendererComponent(render, data, field, user, dispatch) {
       return <NodeNameItemRenderer data={data} />;
     case EMAIL_RECIPIENT_ACTION_ITEM_RENDER:
       return <EmailRecipientItemRenderer data={data} dispatch={dispatch} />;
+    case THROTTLING_ACTION_ITEM_RENDER:
+      return <ThrottlingItemRenderer data={data} dispatch={dispatch} />;
     case NODE_ACTION_RENDERER:
       return <NodeActionItemRenderer data={data} dispatch={dispatch} />;
     case VM_BOOT_ORDER_ITEM_RENDER:
@@ -120,6 +126,8 @@ export function getItemRendererComponent(render, data, field, user, dispatch) {
       return <LicenseActionItemRenderer data={data} dispatch={dispatch} />;
     case LICENSE_STATUS_ITEM_RENDER:
       return <LicenseStatusItemRender data={data} field={field} />;
+    case THROTTLING_TIME_ITEM_RENDER:
+      return <ThrottlingTimeRenderer data={data} field={field} />;
     default:
       return (<div> 404 </div>);
   }

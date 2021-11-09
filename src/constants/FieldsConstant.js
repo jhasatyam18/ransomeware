@@ -1,3 +1,4 @@
+import { onLimitChange, onTimeLimitChange } from '../store/actions/ThrottlingAction';
 import { onPlatformTypeChange } from '../store/actions';
 import { onProtectionPlanChange } from '../store/actions/DrPlanActions';
 import { onProtectSiteChange, onRecoverSiteChange, updateAvailabilityZones } from '../store/actions/SiteActions';
@@ -10,10 +11,11 @@ export const CONFIURE_SITE_GROUP = ['configureSite.platformDetails.type', 'confi
 export const REPLICATION_INTERVAL_COMP = 'REPLICATION_INTERVAL_COMP';
 export const MULTISELECT_ITEM_COMP = 'MULTISELECT_ITEM_COMP';
 export const DATE_PICKER_COMP = 'DATE_PICKER';
+export const TIME_PICKER_COMP = 'TIME_PICKER';
 export const STACK_VIEW_COMPONENT = 'STACK_VIEW_COMPONENT';
 export const PROTECTION_REPLICATION_JOBS = 'PROTECTION_REPLICATION_JOBS';
 export const FIELD_TYPE = {
-  CHECKBOX: 'CHECKBOX', TEXT: 'TEXT', SELECT: 'SELECT', NUMBER: 'NUMBER', PASSWORD: 'PASSWORD', CUSTOM: 'CUSTOM', RADIO: 'RADIO',
+  CHECKBOX: 'CHECKBOX', TEXT: 'TEXT', SELECT: 'SELECT', NUMBER: 'NUMBER', PASSWORD: 'PASSWORD', CUSTOM: 'CUSTOM', RADIO: 'RADIO', RANGE: 'RANGE',
 };
 export const FIELDS = {
   // CONFIGURE SITE FIELDS
@@ -191,4 +193,12 @@ export const FIELDS = {
   'reverse.replType': { label: 'reverse.replType', type: FIELD_TYPE.SELECT, errorMessage: 'Replication type required', shouldShow: true, options: [{ label: 'Full Incremental', value: STATIC_KEYS.FULL_INCREMENTAL }, { label: 'Differential', value: STATIC_KEYS.DIFFERENTIAL }], defaultValue: STATIC_KEYS.DIFFERENTIAL },
   'reverse.interval': { label: 'replication.interval', placeHolderText: 'Replication Interval', type: FIELD_TYPE.LABEL, shouldShow: true },
   'reverse.suffix': { label: 'reverse.suffix', placeHolderText: 'Recovery Machines Suffix', type: FIELD_TYPE.TEXT, shouldShow: true, validate: (value, user) => isEmpty(value, user), errorMessage: 'Recovery machines suffix is required' },
+  // Throttling
+  'throttling.isLimitEnabled': { label: 'throttling.isLimitEnabled', description: 'Enable Bandwidth Limit', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: false, onChange: (user, dispatch) => onLimitChange(user, dispatch) },
+  'throttling.bandwidthLimit': { label: 'throttling.bandwidthLimit', description: 'Bandwidth in Mbps', defaultValue: 0, min: 0, max: 1000, type: FIELD_TYPE.RANGE, errorMessage: 'Bandwidth is required', shouldShow: true, validate: (value, user) => isEmpty(value, user) },
+  'throttling.applyToAll': { label: 'throttling.applyToAll', description: 'Apply To All Replication Nodes', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: true },
+  'throttling.startTime': { label: 'throttling.startTime', description: 'Bandwidth Throttling Start Time', COMPONENT: TIME_PICKER_COMP, type: FIELD_TYPE.CUSTOM, shouldShow: true, validate: (value, user) => isEmpty(value, user) },
+  'throttling.endTime': { label: 'throttling.endTime', description: 'Bandwidth Throttling End Time', COMPONENT: TIME_PICKER_COMP, type: FIELD_TYPE.CUSTOM, shouldShow: true, validate: (value, user) => isEmpty(value, user) },
+  'throttling.isTimeEnabled': { label: 'throttling.isTimeEnabled', description: 'Enable Bandwidth Time Limit', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: false, onChange: (user, dispatch) => onTimeLimitChange(user, dispatch) },
+  'throttling.timeLimit': { label: 'throttling.timeLimit', description: 'Bandwidth in Mbps', defaultValue: 0, min: 0, max: 1000, type: FIELD_TYPE.RANGE, errorMessage: 'Bandwidth is required', shouldShow: true, validate: (value, user) => isEmpty(value, user) },
 };

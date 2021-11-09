@@ -80,3 +80,8 @@ export const API_LICENSE_ACTIVATE_DEACTIVATE = 'api/v1/license/<type>/<id>';
 export const API_LICENSE_UPLOAD = 'api/v1/license/upload';
 export const API_LICENSE_UPLOAD_VALIDATE = 'api/v1/license/validate/<file>';
 export const API_LICENSE_INSTALL = 'api/v1/license/install/<file>';
+// throttling
+export const API_THROTTLING_CONFIGURATION = 'api/v1/bandwidth/config';
+export const API_UPDATE_THROTTLING_CONFIGURATION = 'api/v1/bandwidth/config/replNode/<id>';
+export const API_THROTTLING_REPLNODES = 'api/v1/bandwidth/replnodes';
+export const API_THROTTLING_USAGE = 'api/v1/bandwidth/usage';

@@ -227,3 +227,18 @@ function getUnixTimeFromDate(date) {
   }
   return date;
 }
+
+export function getBandwidthPayload(formKey, user) {
+  const payload = getFormPayload(formKey, user);
+  payload.throttling.startTime = getTimeFromDate(payload.throttling.startTime);
+  payload.throttling.endTime = getTimeFromDate(payload.throttling.endTime);
+  return payload;
+}
+
+function getTimeFromDate(value) {
+  if (value === '') {
+    return '';
+  }
+  const date = new Date(value);
+  return `${date.getHours()}:${date.getMinutes()}`;
+}
