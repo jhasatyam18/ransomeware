@@ -137,9 +137,9 @@ export const TABLE_EVENTS = [
 export const TABLE_ALERTS = [
   { label: 'Title', field: 'title', itemRenderer: VIEW_ALERT_INFO_RENDERER },
   { label: 'Severity', field: 'severity', itemRenderer: EVENT_LEVEL_ITEM_RENDERER },
-  { label: 'Event Type', field: 'eventType' },
-  { label: 'Date', field: 'timeStamp', itemRenderer: DATE_ITEM_RENDERER },
-  { label: 'Acknowledged', field: 'isAcknowledge', itemRenderer: ALERT_ACK_ITEM_RENDERER },
+  { label: 'Created', field: 'createdTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Last Updated', field: 'updatedTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Status', field: 'isAcknowledge', itemRenderer: ALERT_ACK_ITEM_RENDERER },
 ];
 
 // Table fields for nodes
@@ -150,7 +150,7 @@ export const TABLE_NODES = [
   { label: 'Platform Type ', field: 'platformType' },
   { label: 'Ports', field: 'managementPort', itemRenderer: SERVER_PORT_ITEM_RENDERER },
   { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
-  { label: 'Actions', field: 'status', itemRenderer: NODE_ACTION_RENDERER },
+  { label: 'Key', field: 'status', itemRenderer: NODE_ACTION_RENDERER },
 ];
 
 // Table fields for support bundle

@@ -104,18 +104,22 @@ class ModalAlertDetails extends Component {
   renderAlertInfo() {
     const { alerts } = this.props;
     const { selected } = alerts;
-    const { eventType, description } = selected;
+    const { eventType, description, occurrence } = selected;
     return (
       <Row className="row row-grid">
         <Col className="mt-2" sm={4}>Severity</Col>
         <Col className="mt-2 text-muted" sm={8}><EventLevelItemRenderer data={selected} field="severity" /></Col>
-        <Col className="mt-2" sm={4}>Date</Col>
-        <Col className="mt-2 text-muted" sm={8}><DateItemRenderer data={selected} field="timeStamp" /></Col>
 
         <Col className="mt-2" sm={4}>Event Type</Col>
         <Col className="mt-2 text-muted" sm={8}>{eventType}</Col>
         <Col className="mt-2" sm={4}>Description</Col>
         <Col className="mt-2 text-muted" sm={8}>{description}</Col>
+        <Col className="mt-2" sm={4}>Created</Col>
+        <Col className="mt-2 text-muted" sm={8}><DateItemRenderer data={selected} field="createdTime" /></Col>
+        <Col className="mt-2" sm={4}>Updated</Col>
+        <Col className="mt-2 text-muted" sm={8}><DateItemRenderer data={selected} field="updatedTime" /></Col>
+        <Col className="mt-2" sm={4}>Occurrence</Col>
+        <Col className="mt-2 text-muted" sm={8}>{occurrence}</Col>
       </Row>
     );
   }
@@ -129,7 +133,7 @@ class ModalAlertDetails extends Component {
         <Col className="mt-2" sm={4}>Event ID</Col>
         <Col className="mt-2 text-muted" sm={8}>{id}</Col>
         <Col className="mt-2" sm={4}>Level</Col>
-        <Col className="mt-2 text-muted" sm={8}><EventLevelItemRenderer data={associatedEvent} field="level" /></Col>
+        <Col className="mt-2 text-muted" sm={8}><EventLevelItemRenderer data={associatedEvent} field="severity" /></Col>
 
         <Col className="mt-2" sm={4}>Topic</Col>
         <Col className="mt-2 text-muted" sm={8}>{topic}</Col>

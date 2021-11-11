@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardTitle, Col, Row } from 'reactstrap';
+import { convertMinutesToDaysHourFormat } from '../../utils/AppUtils';
 import { getValue } from '../../utils/InputUtils';
 
 class ProtectionPlanSummaryStep extends Component {
@@ -10,7 +11,7 @@ class ProtectionPlanSummaryStep extends Component {
     const name = getValue('drplan.name', values);
     const pSite = getValue('drplan.protectedSite', values);
     const rSite = getValue('drplan.recoverySite', values);
-    const replicationInterval = getValue('drplan.replicationInterval', values);
+    const replicationInterval = `Every ${convertMinutesToDaysHourFormat(getValue('drplan.replicationInterval', values))}`;
     const protectedSiteName = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${pSite}`)[0].name;
     const recoverySiteName = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${rSite}`)[0].name;
     const selectedVMs = getValue('ui.site.seletedVMs', values);

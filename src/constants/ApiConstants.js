@@ -29,6 +29,7 @@ export const API_DASHBOARD_REPLICATION_STATS = 'api/v1/dashboard/replicationstat
 export const API_DASHBOARD_BANDWIDTH_USAGE = 'api/v1/dashboard/bandwidthusage';
 export const API_DASHBOARD_VIRTUAL_MACHINE_PROTECTION_ANALYSIS_PROTECTED_VMS = 'api/v1/dashboard/protectedvms';
 export const API_DASHBOARD_NODE_STATS = 'api/v1/dashboard/nodestats';
+export const API_DASHBOARD_UNACK_ALERTS = 'api/v1/dashboard/unackalerts';
 
 // recovery
 export const API_RECOVER = 'api/v1/recover';

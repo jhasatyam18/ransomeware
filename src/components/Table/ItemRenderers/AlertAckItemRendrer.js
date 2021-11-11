@@ -1,12 +1,24 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Col, Popover, PopoverBody, Row } from 'reactstrap';
+import { MODAL_ALERT_DETAILS } from '../../../constants/Modalconstant';
+import { alertSelected, getAlertEvent } from '../../../store/actions/AlertActions';
+import { openModal } from '../../../store/actions/ModalActions';
 import DateItemRenderer from './DateItemRenderer';
 
 function AlertAckItemRenderer({ data, field }) {
+  const dispatch = useDispatch();
   const [popoverOpen, setPopoverOpen] = useState(false);
   if (!data) {
     return '-';
   }
+
+  function onViewDetails() {
+    dispatch(alertSelected(data));
+    dispatch(getAlertEvent(data.eventID));
+    dispatch(openModal(MODAL_ALERT_DETAILS, { title: data.title }));
+  }
+
   let isAcknowledged = data[field];
   const key = `alert-popover-key-${data.id}`;
   if (data.severity === 'INFO' || data.severity === 'WARNING') {
@@ -15,9 +27,6 @@ function AlertAckItemRenderer({ data, field }) {
 
   function acknowledgeBy() {
     if (isAcknowledged) {
-      if (data.severity === 'INFO' || data.severity === 'WARNING') {
-        return 'System';
-      }
       return data.acknowledgeBy;
     }
     return '-';
@@ -25,9 +34,6 @@ function AlertAckItemRenderer({ data, field }) {
 
   function acknowledgeMessage() {
     if (isAcknowledged) {
-      if (data.severity === 'INFO' || data.severity === 'WARNING') {
-        return 'Auto acknowledge by the system';
-      }
       return data.acknowledgeMessage;
     }
     return '-';
@@ -62,11 +68,12 @@ function AlertAckItemRenderer({ data, field }) {
       </Popover>
     );
   }
-
   return (
     <div>
-      <box-icon id={key} name={isAcknowledged ? 'check' : 'error-alt'} color={isAcknowledged ? 'green' : 'red'} style={{ width: 25 }} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} />
-      {renderTooltip()}
+      <a href="#" onClick={onViewDetails} style={{ fontSize: '16px' }}>
+        <i className={`${isAcknowledged ? 'fas fa-check-circle text-success' : 'fas fa-exclamation-triangle text-danger'}`} id={key} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} />
+        {renderTooltip()}
+      </a>
     </div>
   );
 }

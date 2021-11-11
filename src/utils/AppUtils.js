@@ -155,7 +155,7 @@ export function getMinutes(timestamp) {
 export function getAppDateFormat(date, includeTime = false) {
   if (Date) {
     const y = date.getFullYear();
-    const m = date.getMonth();
+    const m = date.getMonth() + 1;
     const d = date.getDate();
     if (includeTime) {
       const h = date.getHours();
@@ -235,4 +235,27 @@ export function getSideBarContents() {
     },
   ];
   return menu;
+}
+
+export function convertMinutesToDaysHourFormat(value = 0) {
+  let result = '';
+  let interval = value;
+  if (interval >= 1440) {
+    const d = Math.floor((interval / 1440));
+    result = (d > 1 ? `${d} Days` : `${d} Day`);
+    while (interval >= 1440) {
+      interval -= 1440;
+    }
+  }
+  if (interval >= 60) {
+    const h = Math.floor(interval / 60);
+    result = (h > 1 ? `${result} ${h} Hours` : `${result} ${h} Hour`);
+    while (interval >= 60) {
+      interval -= 60;
+    }
+  }
+  if (interval < 60 && interval > 0) {
+    result = (interval > 1 ? `${result} ${interval} Minutes` : `${result} ${interval} Minute`);
+  }
+  return result;
 }

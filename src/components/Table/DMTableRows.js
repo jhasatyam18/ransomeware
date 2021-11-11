@@ -93,7 +93,7 @@ class DMTableRow extends Component {
   render() {
     const { data, columns, index } = this.props;
     const cells = columns.map((tableHeader) => (
-      <Th key={`${tableHeader.field}-${index}`}>
+      <Th key={`${tableHeader.field}-${index}`} className="itemRendererContainer">
         {this.renderCellContent(tableHeader, data)}
       </Th>
     ));

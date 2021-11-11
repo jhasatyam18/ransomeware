@@ -1,10 +1,12 @@
 import React from 'react';
-import { getInterval } from '../../../utils/AppUtils';
+import { convertMinutesToDaysHourFormat } from '../../../utils/AppUtils';
 
 function ReplicationIntervalItemRenderer({ data, field }) {
-  const resp = getInterval(data[field]);
+  const resp = convertMinutesToDaysHourFormat(data[field]);
   return (
-    <>{resp}</>
+    <div>
+      {resp}
+    </div>
   );
 }
 

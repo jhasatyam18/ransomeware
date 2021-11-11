@@ -1,9 +1,9 @@
-import { onLimitChange, onTimeLimitChange } from '../store/actions/ThrottlingAction';
 import { onPlatformTypeChange } from '../store/actions';
 import { onProtectionPlanChange } from '../store/actions/DrPlanActions';
 import { onProtectSiteChange, onRecoverSiteChange, updateAvailabilityZones } from '../store/actions/SiteActions';
-import { getAvailibilityZoneOptions, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationIntervalOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getReportProtectionPlans, getSiteNodeOptions, getSitesOptions, getSubnetOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware, shouldShowNodeEncryptionKey, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort, getDefaultRecoverySite } from '../utils/InputUtils';
-import { isEmpty, validateDrSiteSelection, validateReplicationValue } from '../utils/validationUtils';
+import { onLimitChange, onTimeLimitChange } from '../store/actions/ThrottlingAction';
+import { getAvailibilityZoneOptions, getDefaultRecoverySite, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getReportProtectionPlans, getSiteNodeOptions, getSitesOptions, getSubnetOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware, shouldShowNodeEncryptionKey, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort } from '../utils/InputUtils';
+import { isEmpty, validateDrSiteSelection, validateReplicationInterval, validateReplicationValue } from '../utils/validationUtils';
 import { STATIC_KEYS } from './InputConstants';
 import { EMAIL_REGEX, FQDN_REGEX, HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX } from './ValidationConstants';
 
@@ -78,7 +78,7 @@ export const FIELDS = {
     label: 'name', description: 'Protection Plan name', type: FIELD_TYPE.TEXT, errorMessage: 'Required disaster recovery plan name', shouldShow: true, validate: (value, user) => isEmpty(value, user),
   },
   'drplan.replicationInterval': {
-    label: 'Interval', description: 'Replication Interval between 2 consecutive iteration', type: FIELD_TYPE.SELECT, options: (user) => getReplicationIntervalOptions(user), errorMessage: 'Replication Interval Rquired', shouldShow: true, defaultValue: 10, validate: (value, user) => isEmpty(value, user),
+    label: 'Interval', type: FIELD_TYPE.CUSTOM, COMPONENT: REPLICATION_INTERVAL_COMP, validate: (value, user) => validateReplicationInterval(value, user),
   },
   'replication.inerval': { type: FIELD_TYPE.CUSTOM, COMPONENT: REPLICATION_INTERVAL_COMP },
   'drplan.startTime': { label: 'Start Time', description: 'Start date and time for replication', COMPONENT: DATE_PICKER_COMP, type: FIELD_TYPE.CUSTOM, shouldShow: true, showTime: true, minDate: true },

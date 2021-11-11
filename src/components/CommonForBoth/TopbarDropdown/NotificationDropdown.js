@@ -6,7 +6,6 @@ import { Col, Dropdown, DropdownMenu, DropdownToggle, Row } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
 import { ALERTS_PATH } from '../../../constants/RouterConstants';
 import { getUnreadAlerts } from '../../../store/actions/AlertActions';
-import { getAppDateFormat } from '../../../utils/AppUtils';
 
 class NotificationDropdown extends Component {
   constructor(props) {
@@ -50,8 +49,7 @@ class NotificationDropdown extends Component {
     const notifications = (unread.length > 4 ? unread.slice(0, 4) : unread);
     return (
       notifications.map((not) => {
-        let t2 = new Date(not.timeStamp * 1000);
-        t2 = getAppDateFormat(t2, true);
+        const t2 = new Date(not.updatedTime * 1000);
         return (
           <Link to={ALERTS_PATH} onClick={this.toggle} key={`not-alert-${not.id}`} className="text-reset notification-item">
             <div className="media">
@@ -63,7 +61,7 @@ class NotificationDropdown extends Component {
                   <p className="mb-0">
                     <i className="mdi mdi-clock-outline" />
                     {' '}
-                    {t2.toString()}
+                    {`${t2.toLocaleDateString()}-${t2.toLocaleTimeString()}`}
                   </p>
                 </div>
               </div>

@@ -83,7 +83,7 @@ class DashBoardJob extends Component {
     const { recovery, replication } = jobs;
     const recoveryData = recovery.filter((data) => getMinutes(data.startTime) < MAX_RECOVERY_TIME); // checks if the time if less than 30 mins
     const combinedData = [...recoveryData, ...replication];
-    const dataToDisplay = (combinedData.length > 5 ? combinedData.slice(0, 5) : combinedData);
+    const dataToDisplay = (combinedData.length > 2 ? combinedData.slice(0, 2) : combinedData);
 
     if (dataToDisplay.length === 0) {
       return this.renderNoDataToShow();
@@ -91,7 +91,7 @@ class DashBoardJob extends Component {
     return (
       <>
         <Card>
-          <CardBody style={{ minHeight: 365 }}>
+          <CardBody style={{ minHeight: 190 }}>
             <p className="font-weight-medium color-white">
               {t('jobs')}
             </p>

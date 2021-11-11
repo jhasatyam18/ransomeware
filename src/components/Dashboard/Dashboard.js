@@ -10,6 +10,7 @@ import { fetchDashboardData, resetDashboard } from '../../store/actions/Dashboar
 import { SITES_PATH, PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import SiteConnection from './SiteConnection';
 import DashboardEvents from './DashboardEvents';
+import DashboardAlertOverview from './DashboardAlertOverview';
 
 class Dashboard extends Component {
   componentDidMount() {
@@ -65,8 +66,17 @@ class Dashboard extends Component {
             </Col>
           </Row>
           <Row>
+            <Col sm={4}>
+              <Row>
+                <Col sm={12}>
+                  <DashboardAlertOverview />
+                </Col>
+                <Col sm={12}>
+                  <DashBoardJob protectionplanID={0} />
+                </Col>
+              </Row>
+            </Col>
             <Col sm={8}><RtoRpo /></Col>
-            <Col sm={4}><DashBoardJob protectionplanID={0} /></Col>
           </Row>
           <Row>
             <Col className="dashboard_component_size_handle" sm={8}><ProtectedVsUnProtectedVMs /></Col>

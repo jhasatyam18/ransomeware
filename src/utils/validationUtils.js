@@ -479,3 +479,24 @@ function validateAWSNic(dispatch, user, options) {
   }
   return true;
 }
+
+export function validateReplicationInterval({ value, dispatch }) {
+  try {
+    if (Number.isNaN(value, 2)) {
+      dispatch(addMessage('Select replication interval', MESSAGE_TYPES.ERROR));
+      return true;
+    }
+    if (value <= 0) {
+      dispatch(addMessage('Select replication interval', MESSAGE_TYPES.ERROR));
+      return true;
+    }
+    if (value <= 10) {
+      dispatch(addMessage('Minimum replication interval is 10 minutes', MESSAGE_TYPES.ERROR));
+      return true;
+    }
+  } catch (err) {
+    dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    return true;
+  }
+  return false;
+}

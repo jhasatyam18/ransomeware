@@ -25,4 +25,4 @@ package.json
 package-lock.json
 .eslintcache
 debug.log
-setupProxy.js
+/src/setupProxy.js

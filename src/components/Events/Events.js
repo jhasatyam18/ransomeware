@@ -10,6 +10,7 @@ import { fetchEvents, resetEvents } from '../../store/actions/EventActions';
 import DMTPaginator from '../Table/DMTPaginator';
 import EventFilter from '../Shared/EventFilter';
 import DMBreadCrumb from '../Common/DMBreadCrumb';
+import { filterData } from '../../utils/AppUtils';
 
 /**
  * Component to render all events
@@ -17,7 +18,8 @@ import DMBreadCrumb from '../Common/DMBreadCrumb';
 class Events extends Component {
   constructor() {
     super();
-    this.state = { dataToDisplay: [] };
+    this.state = { dataToDisplay: [], hasFilterString: false, searchData: [] };
+    this.onFilter = this.onFilter.bind(this);
     this.setDataForDisplay = this.setDataForDisplay.bind(this);
   }
 
@@ -33,6 +35,17 @@ class Events extends Component {
     dispatch(resetEvents());
   }
 
+  onFilter(criteria) {
+    const { events } = this.props;
+    const { data } = events;
+    if (criteria === '') {
+      this.setState({ hasFilterString: false, searchData: [] });
+    } else {
+      const newData = filterData(data, criteria, TABLE_EVENTS);
+      this.setState({ hasFilterString: true, searchData: newData });
+    }
+  }
+
   setDataForDisplay(data) {
     this.setState({ dataToDisplay: data });
   }
@@ -40,7 +53,15 @@ class Events extends Component {
   render() {
     const { events, dispatch } = this.props;
     const { filteredData, data } = events;
-    const { dataToDisplay } = this.state;
+    const { dataToDisplay, hasFilterString, searchData } = this.state;
+    let eventsData = [];
+    if (hasFilterString) {
+      eventsData = searchData;
+    } else if (filterData.length > 0) {
+      eventsData = filteredData;
+    } else {
+      eventsData = data;
+    }
     return (
       <>
         <>
@@ -57,7 +78,8 @@ class Events extends Component {
                   <Col sm={7}>
                     <div className="padding-right-30 padding-left-10">
                       <DMTPaginator
-                        data={filteredData}
+                        onFilter={this.onFilter}
+                        data={eventsData}
                         setData={this.setDataForDisplay}
                         showFilter="true"
                         columns={TABLE_EVENTS}

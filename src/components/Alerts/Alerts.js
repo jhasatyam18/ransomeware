@@ -65,9 +65,17 @@ class Alerts extends Component {
 
   render() {
     const { alerts, dispatch } = this.props;
-    const { data = [] } = alerts;
+    const { data = [], filteredData } = alerts;
     const { dataToDisplay, hasFilterString, searchData } = this.state;
-    const alertsData = (hasFilterString ? searchData : data);
+    let alertsData = [];
+    if (hasFilterString) {
+      alertsData = searchData;
+    } else if (filterData.length > 0) {
+      alertsData = filteredData;
+    } else {
+      alertsData = data;
+    }
+
     this.markAlertAsRead();
     return (
       <>
@@ -79,7 +87,7 @@ class Alerts extends Component {
                 <Row className="padding-left-20">
                   <Col sm={5}>
                     <div style={{ maxWidth: '170px' }}>
-                      <EventFilter data={data} action="event" dispatch={dispatch} />
+                      <EventFilter data={data} action="alert" dispatch={dispatch} />
                     </div>
                   </Col>
                   <Col sm={7}>
