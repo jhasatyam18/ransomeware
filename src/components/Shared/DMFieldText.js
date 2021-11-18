@@ -1,13 +1,14 @@
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Col, FormGroup, Input, Label,
-} from 'reactstrap';
+import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
+import {
+  Col, FormGroup, Row,
+} from 'reactstrap';
 import { FIELD_TYPE } from '../../constants/FieldsConstant';
-import { validateField } from '../../utils/validationUtils';
-import { getValue } from '../../utils/InputUtils';
 import { valueChange } from '../../store/actions/UserActions';
+import { getValue } from '../../utils/InputUtils';
+import { validateField } from '../../utils/validationUtils';
+import DMToolTip from './DMToolTip';
 // Import Images
 
 class DMFieldText extends Component {
@@ -24,6 +25,12 @@ class DMFieldText extends Component {
     const { type } = field;
     const value = getValue(fieldKey, values);
     this.setState({ value, type });
+  }
+
+  handleKeyPress = (e) => {
+    if (e.target.charCode === 13) {
+      e.preventDefault();
+    }
   }
 
   handleChange = (e) => {
@@ -72,15 +79,9 @@ class DMFieldText extends Component {
 
   renderError(hasError) {
     const { fieldKey, field } = this.props;
-    const { isFocused } = this.state;
     if (hasError) {
       return (
         <small className="form-text app_danger" htmlFor={fieldKey}>{field.errorMessage}</small>
-      );
-    }
-    if (isFocused) {
-      return (
-        <small className="form-text text-muted" htmlFor={fieldKey}>{field.description}</small>
       );
     }
     return null;
@@ -93,9 +94,20 @@ class DMFieldText extends Component {
       return null;
     }
     return (
-      <Label for="horizontal-firstname-Input" className="col-sm-4 col-form-Label">
+      <label htmlFor="horizontal-Input margin-top-10 padding-top=10" className="col-sm-4 col-form-Label">
         {t(label)}
-      </Label>
+      </label>
+    );
+  }
+
+  renderTooltip() {
+    const { field } = this.props;
+    const { fieldInfo } = field;
+    if (typeof fieldInfo === 'undefined') {
+      return null;
+    }
+    return (
+      <DMToolTip tooltip={fieldInfo} />
     );
   }
 
@@ -114,22 +126,30 @@ class DMFieldText extends Component {
         <FormGroup className={css}>
           {this.renderLabel()}
           <Col sm={hideLabel ? 12 : 8}>
-            <div>
-              <Input
-                type={type}
-                className="form-control"
-                id={fieldKey}
-                value={value}
-                onBlur={this.onBlur}
-                onChange={this.handleChange}
-                invalid={hasErrors}
-                autoComplete="none"
-                placeholder={placeH}
-                onFocus={() => this.handleFocus(true)}
-                disabled={disabled}
-              />
-              {this.showPasswordToggle()}
-            </div>
+            <Row>
+              <Col sm={11}>
+                <div>
+                  <input
+                    type={type}
+                    className="form-control"
+                    id={fieldKey}
+                    value={value}
+                    onBlur={this.onBlur}
+                    onChange={this.handleChange}
+                    invalid={hasErrors}
+                    autoComplete="none"
+                    placeholder={placeH}
+                    onFocus={() => this.handleFocus(true)}
+                    disabled={disabled}
+                    onKeyPress={this.handleKeyPress}
+                  />
+                  {this.showPasswordToggle()}
+                </div>
+              </Col>
+              <Col sm={1}>
+                {this.renderTooltip()}
+              </Col>
+            </Row>
             {this.renderError(hasErrors)}
           </Col>
         </FormGroup>

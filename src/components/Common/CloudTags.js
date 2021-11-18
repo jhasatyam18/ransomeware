@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Badge, Col, FormGroup, Input, Row } from 'reactstrap';
+import DMToolTip from '../Shared/DMToolTip';
 import { valueChange } from '../../store/actions';
 import { addMessage } from '../../store/actions/MessageActions';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
@@ -70,6 +71,8 @@ class CloudTags extends Component {
 
   render() {
     const { tagKey, tagValue } = this.state;
+    const { field = {} } = this.props;
+    const { fieldInfo } = field;
     return (
       <>
         <Row className="padding-left-10">
@@ -103,7 +106,7 @@ class CloudTags extends Component {
               </Col>
             </FormGroup>
           </Col>
-          <Col sm={2}>
+          <Col sm={1}>
             <FormGroup className="row mb-4 form-group">
               <Col sm={12}>
                 <div className="wizard-header-options">
@@ -111,6 +114,13 @@ class CloudTags extends Component {
                     <box-icon name="plus-circle" color="white" onClick={this.addTags} />
                   </div>
                 </div>
+              </Col>
+            </FormGroup>
+          </Col>
+          <Col sm={1}>
+            <FormGroup className="row mb-4 form-group">
+              <Col sm={12}>
+                <DMToolTip tooltip={fieldInfo} />
               </Col>
             </FormGroup>
           </Col>

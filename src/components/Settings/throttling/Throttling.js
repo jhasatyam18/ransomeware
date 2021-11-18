@@ -12,6 +12,7 @@ import ActionButton from '../../Common/ActionButton';
 import DMBreadCrumb from '../../Common/DMBreadCrumb';
 import DMField from '../../Shared/DMField';
 import DMTable from '../../Table/DMTable';
+import DMToolTip from '../../Shared/DMToolTip';
 
 class Throttling extends Component {
   constructor() {
@@ -88,8 +89,11 @@ class Throttling extends Component {
               <Col sm={2}>
                 <DMField dispatch={dispatch} user={user} fieldKey="throttling.isLimitEnabled" hideLabel="true" />
               </Col>
-              <Col sm={10}>
+              <Col sm={8}>
                 <DMField dispatch={dispatch} user={user} fieldKey="throttling.bandwidthLimit" disabled={limitDisabled} hideLabel="true" />
+              </Col>
+              <Col sm={2}>
+                <DMToolTip tooltip="info.throttling.limit.enabled" />
               </Col>
             </Row>
           </div>
@@ -103,8 +107,11 @@ class Throttling extends Component {
               <Col sm={2}>
                 <DMField dispatch={dispatch} user={user} fieldKey="throttling.isTimeEnabled" hideLabel="true" />
               </Col>
-              <Col sm={10}>
+              <Col sm={8}>
                 <DMField dispatch={dispatch} user={user} fieldKey="throttling.timeLimit" disabled={timeDisabled} hideLabel="true" />
+              </Col>
+              <Col sm={2}>
+                <DMToolTip tooltip="info.throttling.time.limit.enabled" />
               </Col>
             </Row>
           </div>
@@ -118,8 +125,11 @@ class Throttling extends Component {
               <Col sm={2}>
                 {' '}
               </Col>
-              <Col sm={10} className="padding-left-20">
+              <Col sm={8} className="padding-left-20">
                 <DMField dispatch={dispatch} user={user} fieldKey="throttling.startTime" disabled={timeDisabled} hideLabel="true" />
+              </Col>
+              <Col sm={2}>
+                <DMToolTip tooltip="info.throttling.time.limit.start" />
               </Col>
             </Row>
           </div>
@@ -133,8 +143,11 @@ class Throttling extends Component {
               <Col sm={2}>
                 {' '}
               </Col>
-              <Col sm={10} className="padding-left-20">
+              <Col sm={8} className="padding-left-20">
                 <DMField dispatch={dispatch} user={user} fieldKey="throttling.endTime" disabled={timeDisabled} hideLabel="true" />
+              </Col>
+              <Col sm={2}>
+                <DMToolTip tooltip="info.throttling.time.limit.end" />
               </Col>
             </Row>
           </div>

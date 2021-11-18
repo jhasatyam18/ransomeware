@@ -46,7 +46,7 @@ export function getStackComponent(dispatch, user, children, conf, data) {
     case STACK_COMPONENT_NETWORK:
       return <NetworkConfig dispatch={dispatch} networkKey={conf} field={children[conf]} user={user} data={data} />;
     case STACK_COMPONENT_TAGS:
-      return <CloudTags dispatch={dispatch} vmKey={conf} user={user} />;
+      return <CloudTags dispatch={dispatch} vmKey={conf} user={user} field={field} />;
     case STACK_COMPONENT_SECURITY_GROUP:
       return <SecurityGroups dispatch={dispatch} vmKey={conf} user={user} />;
     default:

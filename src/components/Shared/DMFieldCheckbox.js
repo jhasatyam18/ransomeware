@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Col, FormGroup, Label,
+  Col, FormGroup, Label, Row,
 } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
+import DMToolTip from './DMToolTip';
 import { getValue } from '../../utils/InputUtils';
 import { valueChange } from '../../store/actions';
 
@@ -56,9 +57,20 @@ class DMFieldCheckbox extends Component {
       return null;
     }
     return (
-      <Label for="horizontal-firstname-Input" className="col-sm-4 col-form-Label">
+      <Label for="dm-checkbox" className="col-sm-4 col-form-Label">
         {t(label)}
       </Label>
+    );
+  }
+
+  renderTooltip() {
+    const { field } = this.props;
+    const { fieldInfo } = field;
+    if (typeof fieldInfo === 'undefined') {
+      return null;
+    }
+    return (
+      <DMToolTip tooltip={fieldInfo} />
     );
   }
 
@@ -74,10 +86,17 @@ class DMFieldCheckbox extends Component {
         <FormGroup className={css}>
           {this.renderLabel()}
           <Col sm={hideLabel ? 12 : 8}>
-            <div className="custom-control custom-checkbox">
-              <input type="checkbox" className="custom-control-input" id={fieldKey} name={fieldKey} checked={value} onChange={this.handleChange} disabled={disabled} />
-              <label className="custom-control-label" htmlFor={fieldKey} />
-            </div>
+            <Row>
+              <Col sm={1}>
+                <div className="custom-control custom-checkbox">
+                  <input type="checkbox" className="custom-control-input" id={fieldKey} name={fieldKey} checked={value} onChange={this.handleChange} disabled={disabled} />
+                  <label className="custom-control-label" htmlFor={fieldKey} />
+                </div>
+              </Col>
+              <Col sm={2}>
+                {this.renderTooltip()}
+              </Col>
+            </Row>
           </Col>
         </FormGroup>
       </>

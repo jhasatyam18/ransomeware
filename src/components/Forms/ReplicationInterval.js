@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import { Col, Input, Row } from 'reactstrap';
+import DMToolTip from '../Shared/DMToolTip';
 import { valueChange } from '../../store/actions';
 import { buildRangeOptions, getValue } from '../../utils/InputUtils';
 
@@ -84,7 +85,7 @@ function ReplicationInterval(props) {
         <Col sm={4}>
           Replication Interval
         </Col>
-        <Col sm={8}>
+        <Col sm={7}>
           <Row>
             <Col sm={4}>
               <Input type="select" className="form-control form-control-sm custom-select" onChange={handleDaysSelect} value={days}>
@@ -111,6 +112,9 @@ function ReplicationInterval(props) {
               </Input>
             </Col>
           </Row>
+        </Col>
+        <Col sm={1}>
+          <DMToolTip tooltip="info.replication.interval" />
         </Col>
       </Row>
     </>

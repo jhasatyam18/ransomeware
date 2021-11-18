@@ -2,7 +2,8 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDatePicker from 'react-datepicker';
 import { withTranslation } from 'react-i18next';
-import { Col, FormGroup, Label } from 'reactstrap';
+import { Col, FormGroup, Label, Row } from 'reactstrap';
+import DMToolTip from './DMToolTip';
 import { valueChange } from '../../store/actions/UserActions';
 import { getValue } from '../../utils/InputUtils';
 // Import Images
@@ -78,6 +79,17 @@ class DMDatePicker extends Component {
     );
   }
 
+  renderTooltip() {
+    const { field } = this.props;
+    const { fieldInfo } = field;
+    if (typeof fieldInfo === 'undefined') {
+      return null;
+    }
+    return (
+      <DMToolTip tooltip={fieldInfo} />
+    );
+  }
+
   render() {
     const { field, fieldKey, user, hideLabel, disabled } = this.props;
     const { shouldShow, showTime } = field;
@@ -91,19 +103,26 @@ class DMDatePicker extends Component {
         <FormGroup className={css}>
           {this.renderLabel()}
           <Col sm={hideLabel ? 12 : 8}>
-            <ReactDatePicker
-              className="form-control form-control-sm custom-select"
-              selected={value}
-              onChange={(date) => this.handleChange(date)}
-              disabled={disabled}
-              showTimeSelect={showTime}
-              minDate={this.minDate()}
-              minTime={this.minTime()}
-              maxTime={this.maxTime()}
-              timeIntervals={interval}
-              dateFormat={this.dateFormat()}
-              key={`datepicker-${fieldKey}`}
-            />
+            <Row>
+              <Col sm={11}>
+                <ReactDatePicker
+                  className="form-control form-control-sm custom-select"
+                  selected={value}
+                  onChange={(date) => this.handleChange(date)}
+                  disabled={disabled}
+                  showTimeSelect={showTime}
+                  minDate={this.minDate()}
+                  minTime={this.minTime()}
+                  maxTime={this.maxTime()}
+                  timeIntervals={interval}
+                  dateFormat={this.dateFormat()}
+                  key={`datepicker-${fieldKey}`}
+                />
+              </Col>
+              <Col sm={1}>
+                {this.renderTooltip()}
+              </Col>
+            </Row>
           </Col>
         </FormGroup>
       </>

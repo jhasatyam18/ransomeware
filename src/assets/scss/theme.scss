@@ -457,3 +457,15 @@ span.flatpickr-weekday {
   height: 100%;
   padding: 0.5rem;
 }
+
+.info__container {
+  position: relative;
+  min-height: 15px;
+  height: 100%;
+  .info__icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+  }
+}

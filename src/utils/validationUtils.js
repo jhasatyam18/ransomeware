@@ -490,7 +490,7 @@ export function validateReplicationInterval({ value, dispatch }) {
       dispatch(addMessage('Select replication interval', MESSAGE_TYPES.ERROR));
       return true;
     }
-    if (value <= 10) {
+    if (value < 10) {
       dispatch(addMessage('Minimum replication interval is 10 minutes', MESSAGE_TYPES.ERROR));
       return true;
     }

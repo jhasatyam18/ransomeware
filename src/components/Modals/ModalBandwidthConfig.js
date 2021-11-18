@@ -3,6 +3,7 @@ import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { CardBody, Col, Row } from 'reactstrap';
 import DMField from '../Shared/DMField';
+import DMToolTip from '../Shared/DMToolTip';
 import { addMessage } from '../../store/actions/MessageActions';
 import { closeModal } from '../../store/actions/ModalActions';
 import { configureBandwidth } from '../../store/actions/ThrottlingAction';
@@ -70,8 +71,11 @@ class ModalBandwidthConfig extends Component {
                 <Col sm={2}>
                   <DMField dispatch={dispatch} user={user} fieldKey="throttling.isLimitEnabled" hideLabel="true" />
                 </Col>
-                <Col sm={10}>
+                <Col sm={8}>
                   <DMField dispatch={dispatch} user={user} fieldKey="throttling.bandwidthLimit" disabled={limitDisabled} hideLabel="true" />
+                </Col>
+                <Col sm={2}>
+                  <DMToolTip tooltip="info.throttling.limit.enabled" />
                 </Col>
               </Row>
             </div>
@@ -85,8 +89,11 @@ class ModalBandwidthConfig extends Component {
                 <Col sm={2}>
                   <DMField dispatch={dispatch} user={user} fieldKey="throttling.isTimeEnabled" hideLabel="true" />
                 </Col>
-                <Col sm={10}>
+                <Col sm={8}>
                   <DMField dispatch={dispatch} user={user} fieldKey="throttling.timeLimit" disabled={timeDisabled} hideLabel="true" />
+                </Col>
+                <Col sm={2}>
+                  <DMToolTip tooltip="info.throttling.time.limit.enabled" />
                 </Col>
               </Row>
             </div>
@@ -100,8 +107,11 @@ class ModalBandwidthConfig extends Component {
                 <Col sm={2}>
                   {' '}
                 </Col>
-                <Col sm={10} className="padding-left-20">
+                <Col sm={8} className="padding-left-20">
                   <DMField dispatch={dispatch} user={user} fieldKey="throttling.startTime" disabled={timeDisabled} hideLabel="true" />
+                </Col>
+                <Col sm={2}>
+                  <DMToolTip tooltip="info.throttling.time.limit.start" />
                 </Col>
               </Row>
             </div>
@@ -115,8 +125,11 @@ class ModalBandwidthConfig extends Component {
                 <Col sm={2}>
                   {' '}
                 </Col>
-                <Col sm={10} className="padding-left-20">
+                <Col sm={8} className="padding-left-20">
                   <DMField dispatch={dispatch} user={user} fieldKey="throttling.endTime" disabled={timeDisabled} hideLabel="true" />
+                </Col>
+                <Col sm={2}>
+                  <DMToolTip tooltip="info.throttling.time.limit.end" />
                 </Col>
               </Row>
             </div>

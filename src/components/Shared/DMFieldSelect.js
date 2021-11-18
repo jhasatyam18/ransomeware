@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Col, FormFeedback, FormGroup, Input, Label,
+  Col, FormFeedback, FormGroup, Input, Label, Row,
 } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
+import DMToolTip from './DMToolTip';
 import { getValue } from '../../utils/InputUtils';
 import { valueChange } from '../../store/actions/UserActions';
 import { validateField } from '../../utils/validationUtils';
@@ -12,7 +13,7 @@ import { validateField } from '../../utils/validationUtils';
 class DMFieldSelect extends Component {
   constructor() {
     super();
-    this.state = { value: '', isFocused: false };
+    this.state = { value: '' };
   }
 
   componentDidMount() {
@@ -39,12 +40,6 @@ class DMFieldSelect extends Component {
       this.setState({ value: defaultVal });
       dispatch(valueChange(fieldKey, defaultVal));
     }
-  }
-
-  handleFocus(val) {
-    this.setState({
-      isFocused: val,
-    });
   }
 
   getOptions() {
@@ -94,15 +89,9 @@ class DMFieldSelect extends Component {
 
   renderError(hasError) {
     const { field, fieldKey } = this.props;
-    const { isFocused } = this.state;
     if (hasError) {
       return (
         <FormFeedback htmlFor={fieldKey}>{field.errorMessage}</FormFeedback>
-      );
-    }
-    if (isFocused) {
-      return (
-        <small className="form-text text-muted" htmlFor={fieldKey}>{field.description}</small>
       );
     }
     return null;
@@ -121,6 +110,17 @@ class DMFieldSelect extends Component {
     );
   }
 
+  renderTooltip() {
+    const { field } = this.props;
+    const { fieldInfo } = field;
+    if (typeof fieldInfo === 'undefined') {
+      return null;
+    }
+    return (
+      <DMToolTip tooltip={fieldInfo} />
+    );
+  }
+
   render() {
     const { field, fieldKey, user, hideLabel, disabled } = this.props;
     const { shouldShow } = field;
@@ -135,10 +135,17 @@ class DMFieldSelect extends Component {
         <FormGroup className={css}>
           {this.renderLabel()}
           <Col sm={hideLabel ? 12 : 8}>
-            <Input type="select" id={fieldKey} onFocus={() => this.handleFocus(true)} onSelect={this.handleChange} onBlur={() => this.handleFocus(false)} className="form-control form-control-sm custom-select" onChange={this.handleChange} value={value} invalid={hasErrors} disabled={disabled}>
-              <option key={`${fieldKey}-default`} value="-">  </option>
-              {this.renderOptions()}
-            </Input>
+            <Row>
+              <Col sm={11}>
+                <Input type="select" id={fieldKey} onSelect={this.handleChange} className="form-control form-control-sm custom-select" onChange={this.handleChange} value={value} invalid={hasErrors} disabled={disabled}>
+                  <option key={`${fieldKey}-default`} value="-">  </option>
+                  {this.renderOptions()}
+                </Input>
+              </Col>
+              <Col sm={1}>
+                {this.renderTooltip()}
+              </Col>
+            </Row>
             {this.renderError(hasErrors)}
           </Col>
         </FormGroup>

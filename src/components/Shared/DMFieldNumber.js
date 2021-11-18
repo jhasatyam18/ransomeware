@@ -1,20 +1,18 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import {
-  Col, FormFeedback, FormGroup, Input, Label,
-} from 'reactstrap';
 import { isNumber } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
-import { valueChange } from '../../store/actions/UserActions';
+import { Col, FormFeedback, FormGroup, Input, Row } from 'reactstrap';
 import { FIELDS } from '../../constants/FieldsConstant';
-import { validateField } from '../../utils/validationUtils';
+import { valueChange } from '../../store/actions/UserActions';
 import { getValue } from '../../utils/InputUtils';
-// Import Images
+import { validateField } from '../../utils/validationUtils';
+import DMToolTip from './DMToolTip';
 
 class placeHolderNumber extends Component {
   constructor() {
     super();
-    this.state = { value: 0, isFocused: false };
+    this.state = { value: 0 };
   }
 
   componentDidMount() {
@@ -46,67 +44,84 @@ class placeHolderNumber extends Component {
     }
   }
 
-  handleFocus(val) {
-    this.setState({
-      isFocused: val,
-    });
-  }
-
   onBlur = () => {
     const { fieldKey, dispatch, user, field } = this.props;
     const { value } = this.state;
-    this.setState({ isFocused: false });
     dispatch(valueChange(fieldKey, parseInt(value, 10)));
     validateField(field, fieldKey, value, dispatch, user);
   }
 
   renderError(hasError) {
-    const { field, fieldKey } = this.props;
-    const { isFocused } = this.state;
+    const { fieldKey } = this.props;
     if (hasError) {
       return (
         <FormFeedback for={fieldKey}>{FIELDS[fieldKey].errorMessage}</FormFeedback>
       );
     }
-    if (isFocused) {
-      return (
-        <small className="form-text text-muted" htmlFor={fieldKey}>{field.description}</small>
-      );
-    }
     return null;
   }
 
+  renderTooltip() {
+    const { field } = this.props;
+    const { fieldInfo } = field;
+    if (typeof fieldInfo === 'undefined') {
+      return null;
+    }
+    return (
+      <DMToolTip tooltip={fieldInfo} />
+    );
+  }
+
+  renderLabel() {
+    const { t, hideLabel, field } = this.props;
+    const { label } = field;
+    if (hideLabel) {
+      return null;
+    }
+    return (
+      <label htmlFor="horizontal-Input margin-top-10 padding-top=10" className="col-sm-4 col-form-Label">
+        {t(label)}
+      </label>
+    );
+  }
+
   render() {
-    const { field, fieldKey, user, t, disabled } = this.props;
-    const { label, shouldShow, min, max } = field;
+    const { field, fieldKey, user, disabled, hideLabel } = this.props;
+    const { shouldShow, min, max } = field;
     const { errors } = user;
     const { value } = this.state;
     const hasErrors = !!(errors && errors[fieldKey] !== undefined);
     const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
+    const css = hideLabel ? '' : 'row mb-4 form-group';
     if (!showField) return null;
     return (
       <>
-        <FormGroup className="row mb-4 form-group">
-          <Label for={fieldKey} className="col-sm-4 col-form-Label">
-            {t(label)}
-          </Label>
-          <Col sm={8}>
-            <Input
-              type="number"
-              className="form-control"
-              id={fieldKey}
-              value={value}
-              min={min}
-              max={max}
-              onBlur={this.onBlur}
-              onChange={this.handleChange}
-              invalid={hasErrors}
-              autoComplete="off"
-              onFocus={() => this.handleFocus(true)}
-              disabled={disabled}
-            />
-            {this.renderError(hasErrors)}
+        <FormGroup className={css}>
+          {this.renderLabel()}
+          <Col sm={hideLabel ? 12 : 8}>
+            <Row>
+              <Col sm={11}>
+                <Input
+                  type="number"
+                  className="form-control"
+                  id={fieldKey}
+                  value={value}
+                  min={min}
+                  max={max}
+                  onBlur={this.onBlur}
+                  onChange={this.handleChange}
+                  invalid={hasErrors}
+                  autoComplete="off"
+                  disabled={disabled}
+                />
+                {this.renderError(hasErrors)}
+              </Col>
+              <Col sm={1}>
+                {this.renderTooltip()}
+              </Col>
+            </Row>
           </Col>
+
         </FormGroup>
       </>
     );

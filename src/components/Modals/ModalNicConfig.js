@@ -34,10 +34,10 @@ class ModalNicConfig extends Component {
     const { dispatch, user, options } = this.props;
     const { networkKey, index } = options;
     const showPublicChk = index === 0;
-    const subnetField = { label: 'Subnet', description: '', type: FIELD_TYPE.SELECT, options: (u) => getSubnetOptions(u), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select subnet', shouldShow: true };
-    const chkField = { label: 'Public', description: '', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: false };
-    const privateIPField = { label: 'Private IP', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.TEXT, shouldShow: true, validate: (v, u) => validateOptionalIPAddress(v, u), errorMessage: 'Invalid ip address or ip is not in subnet cidr range' };
-    const securityGroup = { label: 'Security  Groups', placeHolderText: 'security group', description: '', type: FIELD_TYPE.CUSTOM, shouldShow: true, validate: (v, u) => isEmpty(v, u), errorMessage: 'Select security group', COMPONENT: MULTISELECT_ITEM_COMP, options: (u) => getSecurityGroupOption(u) };
+    const subnetField = { label: 'Subnet', description: '', type: FIELD_TYPE.SELECT, options: (u) => getSubnetOptions(u), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select subnet', shouldShow: true, fieldInfo: 'info.protectionplan.network.aws.subnet' };
+    const chkField = { label: 'Public', description: '', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: false, fieldInfo: 'info.protectionplan.network.aws.public' };
+    const privateIPField = { label: 'Private IP', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.TEXT, shouldShow: true, validate: (v, u) => validateOptionalIPAddress(v, u), errorMessage: 'Invalid ip address or ip is not in subnet cidr range', fieldInfo: 'info.protectionplan.network.aws.privateip' };
+    const securityGroup = { label: 'Security  Groups', placeHolderText: 'security group', description: '', type: FIELD_TYPE.CUSTOM, shouldShow: true, validate: (v, u) => isEmpty(v, u), errorMessage: 'Select security group', COMPONENT: MULTISELECT_ITEM_COMP, options: (u) => getSecurityGroupOption(u), fieldInfo: 'info.protectionplan.network.aws.security.group' };
     return (
       <>
         <Container>
@@ -65,10 +65,10 @@ class ModalNicConfig extends Component {
   renderGCPConfig() {
     const { dispatch, user, options } = this.props;
     const { networkKey } = options;
-    const subnetField = { label: 'Subnet', description: '', type: FIELD_TYPE.SELECT, options: (u) => getSubnetOptions(u), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select subnet', shouldShow: true };
-    const privateIPField = { label: 'Private IP', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.TEXT, shouldShow: true, validate: (v, u) => validateOptionalIPAddress(v, u), errorMessage: 'Invalid ip address or ip is not in subnet cidr range' };
-    const publicIP = { label: 'External IP', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.SELECT, shouldShow: true, errorMessage: 'Select external', options: (u) => getGCPExternalIPOptions(u), validate: (v, u) => isEmpty(v, u) };
-    const networkTier = { label: 'Network Tier', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.RADIO, shouldShow: true, errorMessage: 'Select network tire', options: (u) => getGCPNetworkTierOptions(u), defaultValue: 'Standard' };
+    const subnetField = { fieldInfo: 'info.protectionplan.network.gcp.subnet', label: 'Subnet', description: '', type: FIELD_TYPE.SELECT, options: (u) => getSubnetOptions(u), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select subnet', shouldShow: true };
+    const privateIPField = { fieldInfo: 'info.protectionplan.network.gcp.privateip', label: 'Private IP', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.TEXT, shouldShow: true, validate: (v, u) => validateOptionalIPAddress(v, u), errorMessage: 'Invalid ip address or ip is not in subnet cidr range' };
+    const publicIP = { fieldInfo: 'info.protectionplan.network.gcp.externalip', label: 'External IP', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.SELECT, shouldShow: true, errorMessage: 'Select external', options: (u) => getGCPExternalIPOptions(u), validate: (v, u) => isEmpty(v, u) };
+    const networkTier = { fieldInfo: 'info.protectionplan.network.gcp.tier', label: 'Network Tier', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.RADIO, shouldShow: true, errorMessage: 'Select network tire', options: (u) => getGCPNetworkTierOptions(u), defaultValue: 'Standard' };
 
     return (
       <>

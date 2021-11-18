@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Badge, Col, FormGroup, Input, Label, Row } from 'reactstrap';
+import DMToolTip from './DMToolTip';
 import { getValue } from '../../utils/InputUtils';
 import { valueChange } from '../../store/actions';
 
@@ -96,6 +97,17 @@ class DMMultiSelect extends Component {
     });
   }
 
+  renderTooltip() {
+    const { field = {} } = this.props;
+    const { fieldInfo } = field;
+    if (typeof fieldInfo === 'undefined') {
+      return null;
+    }
+    return (
+      <DMToolTip tooltip={fieldInfo} />
+    );
+  }
+
   render() {
     const { fieldKey, hideLabel } = this.props;
     const { value } = this.state;
@@ -105,14 +117,21 @@ class DMMultiSelect extends Component {
         <FormGroup className={css}>
           {this.renderLabel()}
           <Col sm={hideLabel ? 12 : 8}>
-            <div>
-              <Input type="select" id={fieldKey} onSelect={this.handleChange} className="form-control form-control-sm custom-select" onChange={this.handleChange} value={value}>
-                <option key={`${fieldKey}-default`} value="-">  </option>
-                {this.renderOptions()}
-              </Input>
-            </div>
             <Row>
-              {this.renderItems()}
+              <Col sm={11}>
+                <div>
+                  <Input type="select" id={fieldKey} onSelect={this.handleChange} className="form-control form-control-sm custom-select" onChange={this.handleChange} value={value}>
+                    <option key={`${fieldKey}-default`} value="-">  </option>
+                    {this.renderOptions()}
+                  </Input>
+                </div>
+                <Row>
+                  {this.renderItems()}
+                </Row>
+              </Col>
+              <Col sm={1}>
+                {this.renderTooltip()}
+              </Col>
             </Row>
           </Col>
         </FormGroup>
