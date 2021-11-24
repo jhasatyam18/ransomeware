@@ -72,3 +72,14 @@ export const REVERSE_WIZARDS = {
     { label: 'Reverse Plan', title: '', component: REVERSE_CONFIG_STEP, validate: (user, dispatch) => validateReversePlan({ user, dispatch }), isAync: true },
     { label: 'Summary', title: '', component: REVERSE_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch) }],
 };
+
+// Protection Plan update
+export const UPDATE_PROTECTION_PLAN_WIZARDS = {
+  options: { title: 'Update Protection Plan', onFinish: onConfigureDRPlan },
+  steps: [{ label: 'Virtual Machines', title: '', component: DRPLAN_PROTECT_STEP, validate: (user, dispatch) => validateDRPlanProtectData({ user, dispatch }) },
+    { label: 'Recovery Configuration', title: '', component: DRPLAN_VM_CONFIG_STEP, validate: (user, dispatch) => validateVMConfiguration({ user, dispatch }) },
+    { label: 'Boot Order', title: '', component: DRPLAN_BOOT_ORDER_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
+    { label: 'Replication Configuration', title: '', component: WIZARD_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: DRPLAN_PROTECTION_CONFIG_STEP_FIELDS },
+    { label: 'Scripts', title: '', component: WIZARD_STEP, validate: (user, dispatch) => noValidate(user, dispatch), fields: DRPLAN_SCRIPTS_CONFIG_STEP_FIELDS },
+    { label: 'Summary', title: '', component: PROTECTION_PLAN_SUMMARY_STEP, validate: (user, dispatch) => noValidate(user, dispatch) }],
+};

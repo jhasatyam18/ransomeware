@@ -20,14 +20,20 @@ class ModalNicConfig extends Component {
   constructor() {
     super();
     this.onClose = this.onClose.bind(this);
+    this.onSave = this.onSave.bind(this);
   }
 
-  onClose() {
+  onSave() {
     const { dispatch, user, options } = this.props;
     const result = validateNicConfig(dispatch, user, options);
     if (result) {
       dispatch(closeModal());
     }
+  }
+
+  onClose() {
+    const { dispatch } = this.props;
+    dispatch(closeModal());
   }
 
   renderAWSConfig() {
@@ -55,7 +61,8 @@ class ModalNicConfig extends Component {
             </CardBody>
           </Card>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={this.onClose}>Save and close </button>
+            <button type="button" className="btn btn-secondary" onClick={this.onSave}>Save</button>
+            <button type="button" className="btn btn-secondary" onClick={this.onClose}>Close</button>
           </div>
         </Container>
       </>
@@ -84,7 +91,8 @@ class ModalNicConfig extends Component {
             </CardBody>
           </Card>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={this.onClose}>Save and close </button>
+            <button type="button" className="btn btn-secondary" onClick={this.onSave}>Save</button>
+            <button type="button" className="btn btn-secondary" onClick={this.onClose}>Close</button>
           </div>
         </Container>
       </>

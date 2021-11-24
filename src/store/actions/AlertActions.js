@@ -1,10 +1,12 @@
-import { addMessage } from './MessageActions';
-import { hideApplicationLoader, showApplicationLoader } from './UserActions';
-import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { API_FETCH_ALERTS, API_FETCH_EVENT_BY_ID, API_ACKNOWLEDGE_ALERT, API_MARK_ALERT_AS_READ, API_FETCH_UNREAD_ALERTS } from '../../constants/ApiConstants';
 import * as Types from '../../constants/actionTypes';
-import { EVENT_LEVELS } from '../../constants/EventConstant';
+import { API_ACKNOWLEDGE_ALERT, API_ALERT_TAKE_VM_ACTION, API_FETCH_ALERTS, API_FETCH_DR_PLAN_BY_ID, API_FETCH_EVENT_BY_ID, API_FETCH_UNREAD_ALERTS, API_MARK_ALERT_AS_READ } from '../../constants/ApiConstants';
+import { EVENT_LEVELS, VM_CONFIG_ACTION_EVENT, VM_DISK_ACTION_EVENT } from '../../constants/EventConstant';
+import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
+import { drPlanDetailsFetched, openEditProtectionPlanWizard } from './DrPlanActions';
+import { addMessage } from './MessageActions';
+import { closeModal } from './ModalActions';
+import { hideApplicationLoader, showApplicationLoader } from './UserActions';
 
 /**
  * Action to fetch all alerts
@@ -129,6 +131,63 @@ export function filterDataByType(data, type, action) {
       dispatch(setFilteredEvents(filterData));
     }
     return null;
+  };
+}
+
+export function takeVMAction(alert, associatedEvent) {
+  return (dispatch) => {
+    if (VM_DISK_ACTION_EVENT.indexOf(associatedEvent.type) !== -1) {
+      dispatch(takeActionOnVMAlert(alert, associatedEvent.id));
+      dispatch(acknowledgeAlert(alert));
+    }
+    if (VM_CONFIG_ACTION_EVENT.indexOf(associatedEvent.type) !== -1) {
+      dispatch(acknowledgeAlert(alert));
+      dispatch(closeModal());
+      dispatch(initEditPlanAction(associatedEvent));
+    }
+  };
+}
+
+export function initEditPlanAction(event) {
+  return async (dispatch) => {
+    function fetchProtection(id) {
+      return callAPI(API_FETCH_DR_PLAN_BY_ID.replace('<id>', id)).then((json) => {
+        dispatch(drPlanDetailsFetched(json));
+        return json;
+      },
+      (err) => {
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+        return false;
+      });
+    }
+    const parts = event.impactedObjectURNs.split(',');
+    const urn = parts[0].split(':');
+    if (urn.length > 1) {
+      const pPlan = await fetchProtection(urn[2]);
+      dispatch(openEditProtectionPlanWizard(pPlan, true));
+    }
+  };
+}
+
+export function takeActionOnVMAlert(alert) {
+  return (dispatch) => {
+    const url = API_ALERT_TAKE_VM_ACTION.replace('<id>', alert.id);
+    const payload = createPayload(API_TYPES.POST, alert);
+    return callAPI(url, payload)
+      .then((json) => {
+        dispatch(hideApplicationLoader('VM_ACTION'));
+        if (json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          dispatch(addMessage('Action initialed successfully', MESSAGE_TYPES.SUCCESS));
+          dispatch(closeModal());
+          dispatch(acknowledgeAlert(alert));
+        }
+      },
+      (err) => {
+        dispatch(hideApplicationLoader('VM_ACTION'));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
   };
 }
 

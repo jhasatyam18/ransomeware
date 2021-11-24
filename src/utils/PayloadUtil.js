@@ -94,6 +94,7 @@ export function getVMConfigPayload(user) {
   Object.keys(vms).forEach((key) => {
     const { name } = vms[key];
     const instanceName = name;
+    const id = getValue(`${key}-vmConfig.general.id`, values);
     const instanceType = getValue(`${key}-vmConfig.general.instanceType`, values);
     const volumeType = getValue(`${key}-vmConfig.general.volumeType`, values);
     const tags = getValue(`${key}-vmConfig.general.tags`, values) || [];
@@ -109,7 +110,11 @@ export function getVMConfigPayload(user) {
     const securityGroups = joinArray(sgs, ',');
     const preScript = getValue(`${key}-vmConfig.scripts.preScript`, values);
     const postScript = getValue(`${key}-vmConfig.scripts.postScript`, values);
-    instanceDetails.push({ instanceName, instanceType, volumeType, tags, bootPriority, networks, securityGroups, preScript, postScript });
+    if (typeof id !== 'undefined' && id !== '') {
+      instanceDetails.push({ id, instanceName, instanceType, volumeType, tags, bootPriority, networks, securityGroups, preScript, postScript });
+    } else {
+      instanceDetails.push({ instanceName, instanceType, volumeType, tags, bootPriority, networks, securityGroups, preScript, postScript });
+    }
   });
   return instanceDetails;
 }
@@ -121,6 +126,7 @@ export function getVMNetworkConfig(key, values) {
   let networks = [];
   let hasPublicIP = false;
   for (let index = 0; index < eths.length; index += 1) {
+    const id = getValue(`${networkKey}-eth-${index}-id`, values);
     const isPublicIP = getValue(`${networkKey}-eth-${index}-isPublic`, values) || false;
     const subnet = getValue(`${networkKey}-eth-${index}-subnet`, values);
     const privateIP = getValue(`${networkKey}-eth-${index}-privateIP`, values) || '';
@@ -130,7 +136,11 @@ export function getVMNetworkConfig(key, values) {
     if (isPublicIP) {
       hasPublicIP = true;
     }
-    networks.push({ isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier });
+    if (typeof id !== 'undefined' && id !== '') {
+      networks.push({ id, isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier });
+    } else {
+      networks.push({ isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier });
+    }
   }
 
   // aws. if public ip is associated then additional networks not allowed
@@ -241,4 +251,30 @@ function getTimeFromDate(value) {
   }
   const date = new Date(value);
   return `${date.getHours()}:${date.getMinutes()}`;
+}
+
+export function getEditProtectionPlanPayload(user, sites) {
+  const { values } = user;
+  const vms = getValue('ui.site.seletedVMs', values);
+  const result = getKeyStruct('drplan.', values);
+  const rSite = sites.filter((site) => getFilteredObject(site, result.drplan.recoverySite, 'id'))[0];
+  const pSite = sites.filter((site) => getFilteredObject(site, result.drplan.protectedSite, 'id'))[0];
+  result.drplan.recoverySite = rSite;
+  result.drplan.protectedSite = pSite;
+  result.drplan.recoveryEntities.name = 'dummy';
+  result.drplan.protectedEntities.id = getValue('ui.edit.plan.protectedEntities.id', values);
+  result.drplan.recoveryEntities.id = getValue('ui.edit.plan.recoveryEntities.id', values);
+  result.drplan.remoteProtectionPlanId = getValue('ui.edit.plan.remoteProtectionPlanId', values);
+  result.drplan.id = getValue('ui.edit.plan.id', values);
+  result.drplan.status = getValue('ui.edit.plan.status', values);
+  result.drplan.protectedEntities.VirtualMachines = [];
+  Object.keys(vms).forEach((key) => {
+    const vm = vms[key];
+    result.drplan.protectedEntities.VirtualMachines.push(vm);
+  });
+  result.drplan.protectedEntities.Name = 'dummy';
+  result.drplan.recoveryEntities.instanceDetails = getVMConfigPayload(user);
+  result.drplan.replicationInterval = getReplicationInterval(getValue(STATIC_KEYS.REPLICATION_INTERVAL_TYPE, values), getValue('drplan.replicationInterval', values));
+  result.drplan.startTime = getUnixTimeFromDate(result.drplan.startTime);
+  return result;
 }
