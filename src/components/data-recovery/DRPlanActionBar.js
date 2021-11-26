@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import {
-  drPlanStopStart, deletePlan, openRecoveryWizard, openMigrationWizard, openReverseWizard,
+  drPlanStopStart, deletePlan, openRecoveryWizard, openMigrationWizard, openReverseWizard, openEditProtectionPlanWizard,
 } from '../../store/actions/DrPlanActions';
 import ActionButton from '../Common/ActionButton';
 import { openModal } from '../../store/actions/ModalActions';
@@ -21,6 +21,7 @@ class DRPlanActionBar extends Component {
     this.onInitiateRecovery = this.onInitiateRecovery.bind(this);
     this.onMigrate = this.onMigrate.bind(this);
     this.onReverse = this.onReverse.bind(this);
+    this.showEdit = this.showEdit.bind(this);
   }
 
   onCreate() {
@@ -51,6 +52,11 @@ class DRPlanActionBar extends Component {
     const { dispatch } = this.props;
     const options = { title: 'Confirmation', confirmAction: deletePlan, message: 'Are you sure want to delete  ?' };
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
+  }
+
+  onEdit = () => {
+    const { dispatch } = this.props;
+    dispatch(openEditProtectionPlanWizard());
   }
 
   getActionButtons(actions) {
@@ -87,6 +93,26 @@ class DRPlanActionBar extends Component {
     return true;
   }
 
+  showEdit() {
+    const { selectedPlans, user } = this.props;
+    const { platformType } = user;
+    if (!selectedPlans) {
+      return true;
+    }
+    const keys = Object.keys(selectedPlans);
+    if (keys.length > 1) {
+      return true;
+    }
+    if (keys.length === 1) {
+      const plan = selectedPlans[keys[0]];
+      const { protectedSite } = plan;
+      if (protectedSite.platformDetails.platformType === platformType) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   renderServerOptions() {
     const actions = [{ label: 'recover', onClick: this.onInitiateRecovery, icon: 'fa fa-recycle', isDisabled: false },
       { label: 'Migrate', onClick: this.onMigrate, icon: 'fa fa-share-square', isDisabled: false },
@@ -99,9 +125,11 @@ class DRPlanActionBar extends Component {
   }
 
   renderGlobalActions() {
-    const actions = [{ label: 'New', onClick: this.onCreate, icon: 'fa fa-plus', isDisabled: false }, { label: 'remove', onClick: this.onDelete, icon: 'fa fa-trash', isDisabled: this.shouldShowAction(false) }];
-    // { label: 'start', onClick: () => { this.planAction(startPlan); }, icon: 'fa fa-play', isDisabled: this.shouldShowAction(false) },
-    // { label: 'stop', onClick: () => { this.planAction(stopPlan); }, icon: 'fa fa-stop', isDisabled: this.shouldShowAction(false) }
+    const actions = [{ label: 'New', onClick: this.onCreate, icon: 'fa fa-plus', isDisabled: false },
+      { label: 'Edit', onClick: this.onEdit, icon: 'fa fa-edit', isDisabled: this.showEdit() },
+      { label: 'remove', onClick: this.onDelete, icon: 'fa fa-trash', isDisabled: this.shouldShowAction(false) }];
+      // { label: 'start', onClick: () => { this.planAction(startPlan); }, icon: 'fa fa-play', isDisabled: this.shouldShowAction(false) },
+      // { label: 'stop', onClick: () => { this.planAction(stopPlan); }, icon: 'fa fa-stop', isDisabled: this.shouldShowAction(false) }
     return (
       <>
         {this.getActionButtons(actions)}

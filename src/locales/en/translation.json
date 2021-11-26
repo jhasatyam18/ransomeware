@@ -170,6 +170,10 @@
   "throttling.timeLimit": "Bandwidth (Mbps)",
   "throttling": "Throttling",
   "bandwidth.throttling": "Bandwidth Throttling",
+  "edit": "Edit",
+  "take.action": "Take Action",
+  "take.action.tooltip.vm.disk.operation": "Take action will acknowledge the alert and protection plan will be updated with the disk changes. The changes will automatically synchronize on recovery site in the next iteration.",
+  "take.action.tooltip.vm.reconfigure.operation": "Take action will acknowledge the alert and will open the edit protection plan window through which you can modify the impacted virtual machine configuration. The changes will automatically synchronize on recovery site in the next iteration.",
 
   "info.site.type": "Select the site type. Supported site types are AWS, GCP and VMware.",
   "info.encryption.wire": "Wire encryption protects data as it moves into, through, and out of any network",

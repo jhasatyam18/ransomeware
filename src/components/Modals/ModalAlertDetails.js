@@ -1,14 +1,15 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { Card, CardBody, Col, Container, Form, Input, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
+import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
-import EventLevelItemRenderer from '../Table/ItemRenderers/EventLevelItemRenderer';
+import { connect } from 'react-redux';
+import { Card, CardBody, Col, Container, Form, Input, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
 import DateItemRenderer from '../Table/ItemRenderers/DateItemRenderer';
+import EventLevelItemRenderer from '../Table/ItemRenderers/EventLevelItemRenderer';
+import { acknowledgeAlert, takeVMAction } from '../../store/actions/AlertActions';
 import { closeModal } from '../../store/actions/ModalActions';
-import { acknowledgeAlert } from '../../store/actions/AlertActions';
-import { APPLICATION_API_USER } from '../../constants/UserConstant';
 import { getCookie } from '../../utils/CookieUtils';
+import { VM_CONFIG_ACTION_EVENT, VM_DISK_ACTION_EVENT } from '../../constants/EventConstant';
+import { APPLICATION_API_USER } from '../../constants/UserConstant';
 
 /**
  * Component to render Alert details.
@@ -32,6 +33,20 @@ class ModalAlertDetails extends Component {
   onClose() {
     const { dispatch } = this.props;
     dispatch(closeModal());
+  }
+
+  takeAction = () => {
+    const { alerts, dispatch } = this.props;
+    const { associatedEvent, selected } = alerts;
+    const { ackMessage } = this.state;
+    const user = getCookie(APPLICATION_API_USER);
+    if (ackMessage.length === 0) {
+      this.setState({ error: 'Required acknowledge message' });
+      return;
+    }
+    selected.acknowledgeMessage = ackMessage;
+    selected.acknowledgeBy = user;
+    dispatch(takeVMAction(selected, associatedEvent));
   }
 
   acknowledgeAndClose() {
@@ -183,9 +198,27 @@ class ModalAlertDetails extends Component {
       return (
         <>
           <button type="button" className="btn btn-secondary" onClick={this.acknowledgeAndClose}>
-            Acknowledge and Close
+            Acknowledge
           </button>
         </>
+      );
+    }
+    return null;
+  }
+
+  renderTakeAction() {
+    const { alerts, t } = this.props;
+    const { associatedEvent, selected } = alerts;
+    const { type } = associatedEvent;
+    if (selected.isAcknowledge) {
+      return null;
+    }
+    if (VM_DISK_ACTION_EVENT.indexOf(type) !== -1 || VM_CONFIG_ACTION_EVENT.indexOf(type) !== -1) {
+      const toolTip = (VM_DISK_ACTION_EVENT.indexOf(type) !== -1 ? t('take.action.tooltip.vm.disk.operation') : t('take.action.tooltip.vm.reconfigure.operation'));
+      return (
+        <button type="button" className="btn btn-secondary" onClick={this.takeAction} title={toolTip}>
+          {t('take.action')}
+        </button>
       );
     }
     return null;
@@ -222,8 +255,9 @@ class ModalAlertDetails extends Component {
           </Card>
           {this.renderAckMessageInput()}
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={this.onClose}>Close </button>
+            {this.renderTakeAction()}
             {this.renderAcknowledge()}
+            <button type="button" className="btn btn-secondary" onClick={this.onClose}>Close </button>
           </div>
         </Container>
       </>

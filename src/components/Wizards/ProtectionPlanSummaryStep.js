@@ -18,9 +18,11 @@ class ProtectionPlanSummaryStep extends Component {
     const replicationUnit = getValue('ui.values.replication.interval.type', values);
     let size = 0;
     Object.keys(selectedVMs).forEach((key) => {
-      selectedVMs[key].virtualDisks.forEach((disk) => {
-        size += disk.size;
-      });
+      if (typeof selectedVMs[key].virtualDisks !== 'undefined' && selectedVMs[key].virtualDisks !== null) {
+        selectedVMs[key].virtualDisks.forEach((disk) => {
+          size += disk.size;
+        });
+      }
     });
     return (
       <>
@@ -55,7 +57,7 @@ class ProtectionPlanSummaryStep extends Component {
                   <Col sm={3} className="text-muted">Virtual Machines</Col>
                   <Col sm={3}>{Object.keys(selectedVMs).length}</Col>
                   <Col sm={3} className="text-muted">Total Storage</Col>
-                  <Col sm={3}>{`${size} GB`}</Col>
+                  <Col sm={3}>{`${size === 0 ? '-' : size} GB`}</Col>
                 </Row>
                 <hr className="mt-3 mb-3" />
               </Col>

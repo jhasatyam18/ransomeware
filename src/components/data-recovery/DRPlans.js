@@ -8,12 +8,19 @@ import DMTable from '../Table/DMTable';
 import DRPlanActionBar from './DRPlanActionBar';
 import DMBreadCrumb from '../Common/DMBreadCrumb';
 import { TABLE_HEADER_DR_PLANS } from '../../constants/TableConstants';
-import { fetchDrPlans, handleDrPlanTableSelection } from '../../store/actions/DrPlanActions';
+import { drPlansFetched, fetchDrPlans, handleDrPlanTableSelection, updateSelectedPlans } from '../../store/actions/DrPlanActions';
 
 class DRPlans extends Component {
   componentDidMount() {
     const { dispatch } = this.props;
+    dispatch(updateSelectedPlans({}));
     dispatch(fetchDrPlans());
+  }
+
+  componentWillUnmount() {
+    const { dispatch } = this.props;
+    dispatch(drPlansFetched([]));
+    dispatch(updateSelectedPlans({}));
   }
 
   render() {
@@ -40,6 +47,7 @@ class DRPlans extends Component {
                 onSelect={handleDrPlanTableSelection}
                 selectedData={selectedPlans}
                 primaryKey="id"
+                selectionInput="rdo"
                 user={user}
               />
             </CardBody>

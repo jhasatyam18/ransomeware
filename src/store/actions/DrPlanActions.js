@@ -2,16 +2,18 @@ import { fetchByDelay } from '../../utils/SlowFetch';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import * as Types from '../../constants/actionTypes';
 import {
-  API_FETCH_DR_PLANS, API_START_DR_PLAN, API_STOP_DR_PLAN, API_DELETE_DR_PLAN, API_FETCH_DR_PLAN_BY_ID, API_FETCH_REVERSE_DR_PLAN_BY_ID, API_RECOVER, API_MIGRATE, API_REVERSE,
+  API_FETCH_DR_PLANS, API_START_DR_PLAN, API_STOP_DR_PLAN, API_DELETE_DR_PLAN, API_FETCH_DR_PLAN_BY_ID, API_FETCH_REVERSE_DR_PLAN_BY_ID, API_RECOVER, API_MIGRATE, API_REVERSE, API_PROTECTION_PLAN_VMS, API_PROTECTION_PLAN_UPDATE, API_PROTECTION_PLAN_PROTECTED_VMS,
 } from '../../constants/ApiConstants';
 import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
-import { fetchSites } from './SiteActions';
-import { getCreateDRPlanPayload, getRecoveryPayload, getReversePlanPayload } from '../../utils/PayloadUtil';
-import { clearValues, hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
+import { fetchNetworks, fetchSites, onRecoverSiteChange } from './SiteActions';
+import { getCreateDRPlanPayload, getEditProtectionPlanPayload, getRecoveryPayload, getReversePlanPayload } from '../../utils/PayloadUtil';
+import { clearValues, fetchScript, hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
 import { closeWizard, openWizard } from './WizardActions';
 import { closeModal } from './ModalActions';
-import { MIGRATION_WIZARDS, RECOVERY_WIZARDS, TEST_RECOVERY_WIZARDS, REVERSE_WIZARDS } from '../../constants/WizardConstants';
+import { MIGRATION_WIZARDS, RECOVERY_WIZARDS, TEST_RECOVERY_WIZARDS, REVERSE_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS } from '../../constants/WizardConstants';
+import { getValue } from '../../utils/InputUtils';
+import { PLATFORM_TYPES } from '../../constants/InputConstants';
 
 export function fetchDrPlans(key) {
   return (dispatch) => {
@@ -400,4 +402,258 @@ export function openReverseWizard() {
     dispatch(fetchSites('ui.values.sites'));
     dispatch(onReverseProtectionPlanChange(id));
   };
+}
+
+function getSelectedPlanID(drPlans) {
+  const { selectedPlans } = drPlans;
+  const ids = Object.values(selectedPlans);
+  if (ids && ids.length > 0) {
+    return ids[0];
+  }
+  return null;
+}
+
+export function openEditProtectionPlanWizard(plan, isEventAction = false) {
+  return (dispatch, getState) => {
+    const { drPlans } = getState();
+    dispatch(clearValues());
+    const selectedPlan = (typeof plan === 'undefined' ? getSelectedPlanID(drPlans) : plan);
+    const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(selectedPlan.recoverySite.id)), dispatch(fetchScript())];
+    return Promise.all(apis).then(
+      () => {
+        dispatch(valueChange('ui.selected.protection.planID', selectedPlan.id));
+        dispatch(valueChange('drplan.recoverySite', selectedPlan.recoverySite.id));
+        dispatch(valueChange('ui.values.recoveryPlatform', selectedPlan.recoverySite.platformDetails.platformType));
+        dispatch(setProtectionPlanDataForUpdate(selectedPlan, isEventAction));
+        return new Promise((resolve) => resolve());
+      },
+      (err) => {
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+        return new Promise((resolve) => resolve());
+      },
+    );
+  };
+}
+
+export function setProtectionPlanDataForUpdate(selectedPlan, isEventAction = false) {
+  return (dispatch) => {
+    dispatch(showApplicationLoader('UPDATE_PROTECTION_PLAN', 'Loading protection plan data...'));
+    const wiz = UPDATE_PROTECTION_PLAN_WIZARDS;
+    wiz.options.title = `Edit Plan - ${selectedPlan.name}`;
+    wiz.options.onFinish = onEditProtectionPlan;
+    const apis = [dispatch(setProtectionPlanVMsForUpdate(selectedPlan, isEventAction))];
+    return Promise.all(apis)
+      .then(
+        () => {
+          dispatch(hideApplicationLoader('UPDATE_PROTECTION_PLAN'));
+          dispatch(onRecoverSiteChange({ value: selectedPlan.recoverySite.id }));
+          dispatch(openWizard(wiz.options, UPDATE_PROTECTION_PLAN_WIZARDS.steps));
+          return new Promise((resolve) => resolve());
+        },
+        (err) => {
+          dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+          dispatch(hideApplicationLoader('UPDATE_PROTECTION_PLAN'));
+          return new Promise((resolve) => resolve());
+        },
+      );
+  };
+}
+
+export function onEditProtectionPlan() {
+  return (dispatch, getState) => {
+    const { user, sites } = getState();
+    const { values } = user;
+    const payload = getEditProtectionPlanPayload(user, sites.sites);
+    const obj = createPayload(API_TYPES.PUT, { ...payload.drplan });
+    const id = getValue('ui.selected.protection.planID', values);
+    const url = API_PROTECTION_PLAN_UPDATE.replace('<id>', id);
+    dispatch(showApplicationLoader('update-dr-plan', 'Updating protection plan...'));
+    return callAPI(url, obj).then((json) => {
+      dispatch(hideApplicationLoader('update-dr-plan'));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        dispatch(addMessage('Protection plan configured successfully.', MESSAGE_TYPES.SUCCESS));
+        dispatch(closeWizard());
+        dispatch(clearValues());
+        fetchByDelay(dispatch, fetchDrPlans, 2000);
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('update-dr-plan'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+  };
+}
+
+export function setProtectionPlanVMsForUpdate(protectionPlan, isEventAction = false) {
+  return (dispatch) => {
+    const { protectedSite, protectedEntities, id } = protectionPlan;
+    const { virtualMachines } = protectedEntities;
+    let url = (isEventAction ? API_PROTECTION_PLAN_PROTECTED_VMS.replace('<id>', id) : API_PROTECTION_PLAN_VMS.replace('<sid>', protectedSite.id));
+    url = url.replace('<pid>', id);
+    return callAPI(url)
+      .then((json) => {
+        if (json && json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          let data = json;
+          let selectedVMS = {};
+          if (data === null) {
+            data = [];
+          }
+          dispatch(valueChange('ui.site.vms', data));
+          if (isEventAction) {
+            data.forEach((vm) => {
+              selectedVMS = { ...selectedVMS, [vm.moref]: { id: vm.id, ...vm } };
+            });
+          } else {
+            // set selected vms for plan update
+            data.forEach((vm) => {
+              virtualMachines.forEach((pvm) => {
+                if (pvm.moref === vm.moref) {
+                  // for update vm id is required
+                  selectedVMS = { ...selectedVMS, [vm.moref]: { id: pvm.id, ...vm } };
+                }
+              });
+            });
+          }
+          dispatch(valueChange('ui.site.seletedVMs', selectedVMS));
+          dispatch(setProtectionPlanVMConfig(selectedVMS, protectionPlan));
+        }
+      },
+      (err) => {
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  };
+}
+
+export function setProtectionPlanVMConfig(selectedVMS, protectionPlan) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const { protectedEntities, recoveryEntities } = protectionPlan;
+    dispatch(valueChange('drplan.id', protectionPlan.id));
+    dispatch(valueChange('ui.edit.plan.remoteProtectionPlanId', protectionPlan.remoteProtectionPlanId));
+    dispatch(valueChange('drplan.name', protectionPlan.name));
+    dispatch(valueChange('drplan.bootDelay', protectionPlan.bootDelay));
+    dispatch(valueChange('drplan.preScript', protectionPlan.preScript));
+    dispatch(valueChange('drplan.postScript', protectionPlan.postScript));
+    dispatch(valueChange('drplan.protectedSite', protectionPlan.protectedSite.id));
+    dispatch(valueChange('drplan.recoverySite', protectionPlan.recoverySite.id));
+    dispatch(valueChange('drplan.replicationInterval', protectionPlan.replicationInterval));
+    dispatch(valueChange('drplan.scriptTimeout', protectionPlan.scriptTimeout));
+    dispatch(valueChange('ui.edit.plan.protectedEntities.id', protectedEntities.id));
+    dispatch(valueChange('ui.edit.plan.recoveryEntities.id', recoveryEntities.id));
+    dispatch(valueChange('ui.edit.plan.status', protectionPlan.status));
+    dispatch(valueChange('ui.edit.plan.id', protectionPlan.id));
+    const time = protectionPlan.startTime * 1000;
+    const d = new Date(time);
+    dispatch(valueChange('drplan.startTime', d));
+    dispatch(valueChange('drplan.isEncryptionOnWire', protectionPlan.isEncryptionOnWire));
+    dispatch(valueChange('drplan.isEncryptionOnRest', protectionPlan.isEncryptionOnRest));
+    dispatch(valueChange('drplan.isCompression', protectionPlan.isCompression));
+    dispatch(valueChange('drplan.isDeDupe', protectionPlan.isDeDupe));
+    dispatch(valueChange('drplan.enableReverse', protectionPlan.enableReverse));
+    dispatch(valueChange('drplan.postScript', protectionPlan.postScript));
+    dispatch(valueChange('drplan.preScript', protectionPlan.preScript));
+    const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+    switch (recoveryPlatform) {
+      case PLATFORM_TYPES.AWS:
+        return setAWSVMDetails(selectedVMS, protectionPlan, dispatch);
+      case PLATFORM_TYPES.GCP:
+        return setGCPVMDetails(selectedVMS, protectionPlan, dispatch);
+      default:
+        dispatch(addMessage('Unknown platform type', MESSAGE_TYPES.ERROR));
+        dispatch(clearValues());
+        dispatch(closeModal());
+        dispatch(closeWizard());
+    }
+  };
+}
+
+function setAWSVMDetails(selectedVMS, protectionPlan, dispatch) {
+  const vms = Object.values(selectedVMS);
+  const { recoveryEntities } = protectionPlan;
+  const { instanceDetails } = recoveryEntities;
+  vms.forEach((vm) => {
+    const key = vm.moref;
+    instanceDetails.forEach((ins) => {
+      if (ins.instanceName === vm.name) {
+        dispatch(valueChange(`${key}-vmConfig.general.id`, ins.id));
+        dispatch(valueChange(`${key}-vmConfig.general.instanceType`, ins.instanceType));
+        dispatch(valueChange(`${key}-vmConfig.general.volumeType`, ins.volumeType));
+        dispatch(valueChange(`${key}-vmConfig.general.bootOrder`, ins.bootPriority));
+        dispatch(valueChange(`${key}-vmConfig.scripts.preScript`, ins.preScript));
+        dispatch(valueChange(`${key}-vmConfig.scripts.postScript`, ins.postScript));
+        if (ins.tags && ins.tags.length > 0) {
+          const tagsData = [];
+          ins.tags.forEach((tag) => {
+            tagsData.push({ id: tag.id, key: tag.key, value: tag.value });
+          });
+          dispatch(valueChange(`${key}-vmConfig.general.tags`, tagsData));
+        }
+        // network config "vm-1442-vmConfig.network.net1"
+        const networkKey = `${key}-vmConfig.network.net1`;
+        const eths = [];
+        if (ins.networks && ins.networks.length > 0) {
+          ins.networks.forEach((net, index) => {
+            dispatch(valueChange(`${networkKey}-eth-${index}-id`, net.id));
+            dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, net.Subnet));
+            dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, net.isPublicIP));
+            dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
+            const sgs = (net.securityGroups ? net.securityGroups.split(',') : []);
+            dispatch(valueChange(`${networkKey}-eth-${index}-securityGroups`, sgs));
+            eths.push({ key: `${networkKey}-eth-${index}`, isPublicIP: net.isPublicIP, publicIP: '', privateIP: net.privateIP, subnet: net.Subnet, securityGroup: sgs });
+          });
+          dispatch(valueChange(`${networkKey}`, eths));
+        }
+      }
+    });
+  });
+}
+
+function setGCPVMDetails(selectedVMS, protectionPlan, dispatch) {
+  const vms = Object.values(selectedVMS);
+  const { recoveryEntities } = protectionPlan;
+  const { instanceDetails } = recoveryEntities;
+  vms.forEach((vm) => {
+    const key = vm.moref;
+    instanceDetails.forEach((ins) => {
+      if (ins.instanceName === vm.name) {
+        dispatch(valueChange(`${key}-vmConfig.general.id`, ins.id));
+        dispatch(valueChange(`${key}-vmConfig.general.instanceType`, ins.instanceType));
+        dispatch(valueChange(`${key}-vmConfig.general.volumeType`, ins.volumeType));
+        dispatch(valueChange(`${key}-vmConfig.general.bootOrder`, ins.bootPriority));
+        dispatch(valueChange(`${key}-vmConfig.scripts.preScript`, ins.preScript));
+        dispatch(valueChange(`${key}-vmConfig.scripts.postScript`, ins.postScript));
+        if (ins.securityGroups && ins.securityGroups.length > 0) {
+          const selSgs = ins.securityGroups.split(',') || '';
+          dispatch(valueChange(`${key}-vmConfig.network.securityGroup`, selSgs));
+        }
+        if (ins.tags && ins.tags.length > 0) {
+          const tagsData = [];
+          ins.tags.forEach((tag) => {
+            tagsData.push({ id: tag.id, key: tag.key, value: tag.value });
+          });
+          dispatch(valueChange(`${key}-vmConfig.general.tags`, tagsData));
+        }
+        // network config "vm-1442-vmConfig.network.net1"
+        const networkKey = `${key}-vmConfig.network.net1`;
+        const eths = [];
+        if (ins.networks && ins.networks.length > 0) {
+          ins.networks.forEach((net, index) => {
+            dispatch(valueChange(`${networkKey}-eth-${index}-id`, net.id));
+            dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, net.Subnet));
+            dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
+            dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, net.publicIP));
+            dispatch(valueChange(`${networkKey}-eth-${index}-networkTier`, net.networkTier));
+            dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, false));
+            eths.push({ key: `${networkKey}-eth-${index}`, isPublicIP: false, publicIP: '', privateIP: '', subnet: '', securityGroup: '' });
+          });
+          dispatch(valueChange(`${networkKey}`, eths));
+        }
+      }
+    });
+  });
 }

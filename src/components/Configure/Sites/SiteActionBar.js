@@ -68,8 +68,8 @@ class SiteActionBar extends Component {
   render() {
     const { t } = this.props;
     const actions = [{ label: 'New', onClick: this.createSite, icon: 'fa fa-plus', isDisabled: false },
-      { label: 'remove', onClick: this.deleteSelectedSites, icon: 'fa fa-trash', isDisabled: this.shouldShowAction(false) },
-      { label: 'Edit', onClick: this.reconfigureSite, icon: 'fa fa-edit', isDisabled: this.shouldShowAction(true) }];
+      { label: 'Edit', onClick: this.reconfigureSite, icon: 'fa fa-edit', isDisabled: this.shouldShowAction(true) },
+      { label: 'remove', onClick: this.deleteSelectedSites, icon: 'fa fa-trash', isDisabled: this.shouldShowAction(false) }];
     return (
       <div className="btn-toolbar padding-left-20">
         <div className="btn-group" role="group" aria-label="First group">

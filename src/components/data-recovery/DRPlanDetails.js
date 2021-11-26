@@ -2,7 +2,7 @@ import React, { Component, Suspense } from 'react';
 import { Card, Container, CardBody, Row, Col, CardTitle, Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap';
 import classnames from 'classnames';
 import { withTranslation } from 'react-i18next';
-import { fetchDRPlanById, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
+import { deletePlan, fetchDRPlanById, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
 import DMTable from '../Table/DMTable';
 import DMBreadCrumb from '../Common/DMBreadCrumb';
 import { TABLE_PROTECTION_PLAN_VMS } from '../../constants/TableConstants';
@@ -19,6 +19,7 @@ class DRPlanDetails extends Component {
   constructor() {
     super();
     this.state = { activeTab: '1' };
+    this.showEdit = this.showEdit.bind(this);
   }
 
   componentDidMount() {
@@ -36,6 +37,20 @@ class DRPlanDetails extends Component {
         activeTab: tab,
       });
     }
+  }
+
+  showEdit() {
+    const { drPlans, user } = this.props;
+    const { protectionPlan } = drPlans;
+    if (!protectionPlan) {
+      return true;
+    }
+    const { protectedSite } = protectionPlan;
+    const { platformDetails } = protectedSite;
+    if (platformDetails.platformType === user.platformType) {
+      return false;
+    }
+    return true;
   }
 
   renderSite(site) {
@@ -138,6 +153,8 @@ class DRPlanDetails extends Component {
     if (platformType === protectedSitePlatform && localVMIP !== recoverySite.node.hostname) {
       actions.push({ label: 'start', action: startPlan, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS.STARTED });
       actions.push({ label: 'stop', action: stopPlan, id: protectionPlan.id, disabled: protectionPlan.status === REPLICATION_STATUS.STOPPED });
+      actions.push({ label: 'edit', action: openEditProtectionPlanWizard, id: protectionPlan, disabled: this.showEdit() });
+      actions.push({ label: 'remove', action: deletePlan, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS.STARTED });
     } else if (localVMIP === recoverySite.node.hostname) {
       actions = [{ label: 'recover', action: openRecoveryWizard, icon: 'fa fa-plus', disabled: isServerActionDisabled },
         { label: 'Migrate', action: openMigrationWizard, icon: 'fa fa-clone', disabled: isServerActionDisabled },
