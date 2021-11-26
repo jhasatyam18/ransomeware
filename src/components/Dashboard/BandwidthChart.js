@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Card, CardBody } from 'reactstrap';
 import ReactApexChart from 'react-apexcharts';
-import { callAPI } from '../../utils/ApiUtils';
+import { Card, CardBody } from 'reactstrap';
 import { API_DASHBOARD_BANDWIDTH_USAGE } from '../../constants/ApiConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
+import { SUCCESS, DANGER } from '../../constants/ProtectionPlanAnalysisConstant';
 import { addMessage } from '../../store/actions/MessageActions';
+import { callAPI } from '../../utils/ApiUtils';
 
 class BandwidthChart extends Component {
   constructor(props) {
@@ -12,27 +13,31 @@ class BandwidthChart extends Component {
     this.state = {
       series: [
         {
-          name: 'GB',
+          name: 'Upload Speed',
+          data: [],
+        },
+        {
+          name: 'Download Speed',
           data: [],
         },
       ],
       options: {
-        chart: { toolbar: 'false', foreColor: 'white' },
+        chart: { toolbar: 'false', foreColor: 'white', stacked: true },
+        colors: [DANGER, SUCCESS],
         dataLabels: { enabled: !1 },
         stroke: { curve: 'smooth', width: 2 },
         markers: { size: 0, style: 'hollow' },
         xaxis: {
           type: 'datetime',
         },
-        tooltip: { theme: 'dark', x: { format: 'dd MMM yyyy' } },
         fill: {
           type: 'gradient',
           gradient: {
-            shadeIntensity: 1,
             opacityFrom: 0.6,
-            opacityTo: 0.05,
+            opacityTo: 0.8,
           },
         },
+        tooltip: { theme: 'dark', x: { format: 'dd MMM yyyy HH:ss' } },
         grid: {
           xaxis: {
             lines: {
@@ -61,15 +66,18 @@ class BandwidthChart extends Component {
     const { dispatch } = this.props;
     callAPI(API_DASHBOARD_BANDWIDTH_USAGE).then((json) => {
       try {
-        let chartPoints = [];
+        const uploadSpeed = [];
+        const downloadSpeed = [];
         if (json !== null) {
           json.forEach((item) => {
-            chartPoints.push([item.timeStamp * 1000, item.transferredSize.toFixed(2)]);
+            uploadSpeed.push([item.timeStamp * 1000, item.uploadSpeed]);
+            downloadSpeed.push([item.timeStamp * 1000, item.uploadSpeed]);
           });
-          chartPoints = chartPoints
-            .filter((e) => e.transferredSize !== 0)
-            .sort((p, n) => p.timeStamp < n.timeStamp);
-          this.setState({ series: [{ name: 'MB', data: chartPoints }] });
+
+          this.setState({
+            series: [
+              { name: 'Upload Speed', data: uploadSpeed },
+              { name: 'Download Speed', data: downloadSpeed }] });
         }
       } catch (e) {
         dispatch(addMessage(e.message, MESSAGE_TYPES.ERROR));
