@@ -344,7 +344,7 @@ export function getSiteNodeOptions(user) {
   if (nodes === '' || nodes === null || platfomrType === '') {
     return [];
   }
-  nodes = nodes.filter((node) => node.status === NODE_STATUS_ONLINE).filter((oNode) => oNode.platformType === platfomrType);
+  nodes = nodes.filter((node) => node.status === NODE_STATUS_ONLINE).filter((oNode) => oNode.platformType === platfomrType && oNode.nodeType === 'Management');
   const result = [];
   if (nodes) {
     nodes.reduce((previous, next) => {

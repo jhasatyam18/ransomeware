@@ -211,7 +211,8 @@ export function getNodePayload(user) {
     node.node.managementPort = 0;
   }
   if (!shouldShowNodeReplicationPort(user)) {
-    node.node.replicationPort = 0;
+    node.node.replicationCtrlPort = 0;
+    node.node.replicationDataPort = 0;
   }
   if (!shouldShowNodeEncryptionKey(user)) {
     node.node.encryptionKey = '';

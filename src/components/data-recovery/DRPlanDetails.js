@@ -61,7 +61,7 @@ class DRPlanDetails extends Component {
 
     const keys = [{ label: 'Name', field: name }, { label: 'Platform Type', field: platformDetails.platformType }, { label: 'Hostname', field: platformDetails.hostname },
       { label: 'Region', field: platformDetails.region }, { label: 'Zone', field: platformDetails.availZone }, { label: 'Project ID', field: platformDetails.projectId }, { label: 'Datamotive Node IP', field: node.hostname },
-      { label: 'Datamotive Server Port', field: node.replicationPort }];
+      { label: 'Datamotive Server Port', field: node.replicationDataPort }];
     const fields = keys.map((ele) => {
       const { field, label } = ele;
       if (field) {

@@ -2,7 +2,16 @@ import React from 'react';
 
 function ServerPortItemRenderer({ data }) {
   const mgmtPort = data.managementPort;
-  const replPort = data.replicationPort;
+  const replCtrlPort = data.replicationCtrlPort;
+  const replDataPort = data.replicationDataPort;
+  let replPort = 0;
+  if (replCtrlPort !== 0 && replDataPort !== 0) {
+    replPort = `${replCtrlPort}, ${replDataPort}`;
+  } else if (replCtrlPort !== 0) {
+    replPort = replCtrlPort;
+  } else if (replCtrlPort !== 0) {
+    replPort = replDataPort;
+  }
   function getPort(icon, title, value) {
     return (
       <i className={icon} title={title}>
