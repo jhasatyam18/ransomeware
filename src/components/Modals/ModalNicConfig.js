@@ -19,7 +19,6 @@ import { isEmpty, validateNicConfig, validateOptionalIPAddress } from '../../uti
 class ModalNicConfig extends Component {
   constructor() {
     super();
-    this.onClose = this.onClose.bind(this);
     this.onSave = this.onSave.bind(this);
   }
 
@@ -29,11 +28,6 @@ class ModalNicConfig extends Component {
     if (result) {
       dispatch(closeModal());
     }
-  }
-
-  onClose() {
-    const { dispatch } = this.props;
-    dispatch(closeModal());
   }
 
   renderAWSConfig() {
@@ -61,8 +55,7 @@ class ModalNicConfig extends Component {
             </CardBody>
           </Card>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={this.onSave}>Save</button>
-            <button type="button" className="btn btn-secondary" onClick={this.onClose}>Close</button>
+            <button type="button" className="btn btn-success" onClick={this.onSave}>Save</button>
           </div>
         </Container>
       </>
@@ -91,8 +84,7 @@ class ModalNicConfig extends Component {
             </CardBody>
           </Card>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={this.onSave}>Save</button>
-            <button type="button" className="btn btn-secondary" onClick={this.onClose}>Close</button>
+            <button type="button" className="btn btn-success" onClick={this.onSave}>Save</button>
           </div>
         </Container>
       </>

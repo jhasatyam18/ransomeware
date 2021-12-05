@@ -113,8 +113,10 @@ export function deleteSite(id) {
 export function onProtectSiteChange({ value }) {
   return (dispatch) => {
     const url = API_FETCH_SITE_VMS.replace('<id>', value);
+    dispatch(showApplicationLoader(url, 'Loading virtual machines'));
     return callAPI(url)
       .then((json) => {
+        dispatch(hideApplicationLoader(url));
         if (json && json.hasError) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
@@ -126,6 +128,7 @@ export function onProtectSiteChange({ value }) {
         }
       },
       (err) => {
+        dispatch(hideApplicationLoader(url));
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
   };
@@ -253,7 +256,9 @@ export function handleSelectAllRecoveryVMs(value) {
     let selectedVMs = {};
     if (value) {
       data.forEach((vm) => {
-        selectedVMs = { ...selectedVMs, [vm.moref]: vm };
+        if (!(typeof vm.isDisabled !== 'undefined' && vm.isDisabled === true)) {
+          selectedVMs = { ...selectedVMs, [vm.moref]: vm };
+        }
       });
       dispatch(valueChange('ui.site.seletedVMs', selectedVMs));
     } else {

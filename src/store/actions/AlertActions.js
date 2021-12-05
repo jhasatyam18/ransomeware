@@ -138,11 +138,11 @@ export function takeVMAction(alert, associatedEvent) {
   return (dispatch) => {
     if (VM_DISK_ACTION_EVENT.indexOf(associatedEvent.type) !== -1) {
       dispatch(takeActionOnVMAlert(alert, associatedEvent.id));
-      dispatch(acknowledgeAlert(alert));
+      dispatch(closeModal());
     }
     if (VM_CONFIG_ACTION_EVENT.indexOf(associatedEvent.type) !== -1) {
-      dispatch(acknowledgeAlert(alert));
       dispatch(closeModal());
+      dispatch(acknowledgeAlert(alert));
       dispatch(initEditPlanAction(associatedEvent));
     }
   };
@@ -179,9 +179,9 @@ export function takeActionOnVMAlert(alert) {
         if (json.hasError) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
-          dispatch(addMessage('Action initialed successfully', MESSAGE_TYPES.SUCCESS));
-          dispatch(closeModal());
+          dispatch(addMessage('Action initiated successfully', MESSAGE_TYPES.SUCCESS));
           dispatch(acknowledgeAlert(alert));
+          dispatch(closeModal());
         }
       },
       (err) => {

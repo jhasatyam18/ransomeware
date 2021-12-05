@@ -90,7 +90,7 @@ class DashBoardEvents extends Component {
             </p>
             <Row>
               {dataToDisplay.map((val) => (
-                <Col sm={12}>
+                <Col sm={12} key={`dashboard-event-${val.id}`}>
                   {this.checkStatus(val)}
                 </Col>
               ))}

@@ -293,11 +293,11 @@ export async function validateRecoveryVMs({ user, dispatch }) {
         if (response.failedVMs === null && response.warningVMs === null) {
           return true;
         }
-        if (response.failedVMs.length !== 0) {
+        if (response.failedVMs !== null && response.failedVMs.length !== 0) {
           dispatch(addMessage(`Following virtual machines [${response.failedVMs.join(', ')}] has not completed any replication iteration.`, MESSAGE_TYPES.ERROR, false));
         }
-        if (response.warningVMs.length !== 0) {
-          dispatch(addMessage(`Folloing virtual machines [${response.warningVMs.join(',')}] replciation running. Are you sure want to continue.`, MESSAGE_TYPES.ERROR, false));
+        if (response.warningVMs !== null && response.warningVMs.length !== 0) {
+          dispatch(addMessage(`Following virtual machines [${response.warningVMs.join(',')}] replication running. Recovery will last successful replicated state.`, MESSAGE_TYPES.WARNING, false));
           return true;
         }
         return false;

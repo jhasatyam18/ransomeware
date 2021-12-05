@@ -15,13 +15,14 @@ import { withTranslation } from 'react-i18next';
 import { logOutUser, initChangePassword } from '../../../store/actions';
 import { openModal } from '../../../store/actions/ModalActions';
 import { MODAL_ABOUT } from '../../../constants/Modalconstant';
+import { APPLICATION_API_USER } from '../../../constants/UserConstant';
+import { getCookie } from '../../../utils/CookieUtils';
 
 class ProfileMenu extends Component {
   constructor(props) {
     super(props);
     this.state = {
       menu: false,
-      name: 'Admin',
     };
     this.toggle = this.toggle.bind(this);
     this.logout = this.logout.bind(this);
@@ -51,8 +52,9 @@ class ProfileMenu extends Component {
   }
 
   render() {
-    const { menu, name } = this.state;
+    const { menu } = this.state;
     const { t } = this.props;
+    const name = getCookie(APPLICATION_API_USER) || '';
     return (
       <>
         <Dropdown

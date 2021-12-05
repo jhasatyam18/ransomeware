@@ -51,7 +51,13 @@ class DMTableRow extends Component {
   }
 
   renderCheckBox(index) {
-    const { isSelectable, selectedData, primaryKey, name } = this.props;
+    const { isSelectable, selectedData, primaryKey, name, data } = this.props;
+    // check row is mark as disabled
+    if (typeof data.isDisabled !== 'undefined' && data.isDisabled === true) {
+      return (
+        <Th />
+      );
+    }
     let rKey = '';
     const keyVal = (typeof index !== 'undefined' ? index : getAppKey());
     if (name) {

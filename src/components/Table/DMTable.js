@@ -40,8 +40,8 @@ class DMTable extends Component {
   renderHeaderLables(columns) {
     const { t } = this.props;
     return columns
-      .map((col) => (
-        <Th key={col.lable} width={`${col.width * 10}%`}>
+      .map((col, index) => (
+        <Th key={`${index + 1}-${col.lable}`} width={`${col.width * 10}%`}>
           {' '}
           {t(col.label)}
           {' '}
