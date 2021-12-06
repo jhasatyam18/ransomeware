@@ -46,7 +46,7 @@ class SidebarContent extends Component {
   renderItem(item) {
     const { t } = this.props;
     return (
-      <li>
+      <li key={`sidebar-item-${item.label}`}>
         <Link to={item.to} className="waves-effect" style={{ color: this.isActive(item.isActivePath.join(',')) }}>
           {this.renderIcon(item)}
           <span>{t(item.label)}</span>
@@ -57,10 +57,10 @@ class SidebarContent extends Component {
 
   renderMenu(menuItems) {
     const { t } = this.props;
-    const sidebarMenu = menuItems.map((menu) => {
+    const sidebarMenu = menuItems.map((menu, index) => {
       if (menu.hasSubMenu) {
         return (
-          <li>
+          <li key={`sidebarmenu-${menu.label}-${index + 1}`}>
             <Link to="/#" className="has-arrow waves-effect" style={{ color: this.isActive(menu.isActivePath.join(',')) }}>
               <i className={menu.icon} style={{ fontSize: 16, color: this.isActive(menu.isActivePath.join(',')) }} />
               <span>{t(menu.label)}</span>

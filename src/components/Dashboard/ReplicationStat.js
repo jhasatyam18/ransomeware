@@ -6,8 +6,8 @@ function ReplicationStat(props) {
   function renderData(steps) {
     return (
       <div className="dashboard_replicaiton_info">
-        {steps.map((task) => (
-          <div className="dashboard_item">
+        {steps.map((task, index) => (
+          <div className="dashboard_item" key={`replication-stat-${task.color}-${index + 1}`}>
             <Row>
               <Col sm={7}>
                 <i className={`${task.icon} ${task.color}`} />

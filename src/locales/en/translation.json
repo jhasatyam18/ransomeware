@@ -141,6 +141,7 @@
   "settings.license": "License",  
   "settings.email": "Email",
   "settings.tech": "Tech Support",
+  "report": "Report",
   "Type": "Type",
   "Platform":"Platform",
   "AllowRecovery":"Recoveries",

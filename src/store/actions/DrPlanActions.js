@@ -123,7 +123,9 @@ export function deletePlan(id) {
     const planID = (typeof id === 'undefined' ? ids[0] : id);
     const url = API_DELETE_DR_PLAN.replace('<id>', planID);
     const obj = createPayload(API_TYPES.DELETE, {});
+    dispatch(showApplicationLoader(url, 'Removing protection plan...'));
     return callAPI(url, obj).then((json) => {
+      dispatch(hideApplicationLoader(url));
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
@@ -134,6 +136,7 @@ export function deletePlan(id) {
       }
     },
     (err) => {
+      dispatch(hideApplicationLoader(url));
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
   };
@@ -205,6 +208,17 @@ export function onProtectionPlanChange({ value }) {
         if (json && json.hasError) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
+          const data = [];
+          const info = json.protectedEntities.virtualMachines || [];
+          info.forEach((vm) => {
+            if (typeof vm.recoveryStatus !== 'undefined' && (vm.recoveryStatus === 'Migrated' || vm.recoveryStatus === 'Recovered')) {
+              const v = vm;
+              v.isDisabled = true;
+              data.push(v);
+            } else {
+              data.push(vm);
+            }
+          });
           dispatch(valueChange('ui.recovery.vms', json.protectedEntities.virtualMachines));
         }
       },
@@ -379,12 +393,15 @@ export function openTestRecoveryWizard() {
 /**
  * reload data post any action
  */
-export function refreshPostActon() {
+export function refreshPostActon(isDelete = false) {
   return (dispatch) => {
     const { location } = window;
     const { pathname } = location;
     const parts = pathname.split('/');
     if (pathname && pathname.indexOf('protection/plan/details') !== -1) {
+      if (isDelete) {
+        return;
+      }
       dispatch(fetchDRPlanById(parts[parts.length - 1]));
     } else {
       dispatch(fetchDrPlans());

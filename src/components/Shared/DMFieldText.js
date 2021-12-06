@@ -28,7 +28,7 @@ class DMFieldText extends Component {
   }
 
   handleKeyPress = (e) => {
-    if (e.target.charCode === 13) {
+    if (e.target.charCode === 13 || e.charCode === 13) {
       e.preventDefault();
     }
   }
@@ -71,7 +71,7 @@ class DMFieldText extends Component {
     const icon = (state.type === FIELD_TYPE.PASSWORD ? 'hide' : 'show');
     const focused = state.isFocused;
     return (
-      <span className={(focused && field.description) ? 'field-icon-focused' : 'field-icon'}>
+      <span className={(focused && field.description) ? 'field-icon' : 'field-icon'}>
         <box-icon name={icon} color="white" onClick={this.typeToggle} style={{ height: 16, width: 16 }} />
       </span>
     );

@@ -2,7 +2,7 @@ import React from 'react';
 import CloudTags from '../components/Common/CloudTags';
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
 import { DATE_PICKER_COMP, FIELDS, MULTISELECT_ITEM_COMP, REPLICATION_INTERVAL_COMP, TIME_PICKER_COMP } from '../constants/FieldsConstant';
-import { ALERT_ACK_ITEM_RENDERER, DATE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, EMAIL_RECIPIENT_ACTION_ITEM_RENDER, THROTTLING_ACTION_ITEM_RENDER, EVENT_LEVEL_ITEM_RENDERER, NODE_ACTION_RENDERER, NODE_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDERER, RECOVERY_SITE_LINK_ITEM_RENDERER, RECOVERY_TYPE_ITEM_RENDERER, REPLICATION_INTERVAL_ITEM_RENDERER, SERVER_PORT_ITEM_RENDERER, SIZE_ITEM_RENDERER, SSH_RDP_ITEM_RENDERER, STATUS_ITEM_RENDERER, SUPPORT_BUNDLE_ACTION_ITEM_RENDERER, TIME_DURATION_RENDERER, TRANSFER_SIZE_ITEM_RENDERER, VIEW_ALERT_INFO_RENDERER, VM_SIZE_ITEM_RENDERER, VM_UPASSWORD_ITEM_RENDERER, VM_USERNAME_ITEM_RENDERER, VM_BOOT_ORDER_ITEM_RENDER, LICENSE_USAGE_ITEM_RENDERER, LICENSE_ACTION_ITEM_RENDERER, LICENSE_STATUS_ITEM_RENDER, THROTTLING_TIME_ITEM_RENDER } from '../constants/TableConstants';
+import { ALERT_ACK_ITEM_RENDERER, DATE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, EMAIL_RECIPIENT_ACTION_ITEM_RENDER, THROTTLING_ACTION_ITEM_RENDER, EVENT_LEVEL_ITEM_RENDERER, NODE_ACTION_RENDERER, NODE_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDERER, RECOVERY_SITE_LINK_ITEM_RENDERER, RECOVERY_TYPE_ITEM_RENDERER, REPLICATION_INTERVAL_ITEM_RENDERER, SERVER_PORT_ITEM_RENDERER, SIZE_ITEM_RENDERER, SSH_RDP_ITEM_RENDERER, STATUS_ITEM_RENDERER, SUPPORT_BUNDLE_ACTION_ITEM_RENDERER, TIME_DURATION_RENDERER, TRANSFER_SIZE_ITEM_RENDERER, VIEW_ALERT_INFO_RENDERER, VM_SIZE_ITEM_RENDERER, VM_UPASSWORD_ITEM_RENDERER, VM_USERNAME_ITEM_RENDERER, VM_BOOT_ORDER_ITEM_RENDER, LICENSE_USAGE_ITEM_RENDERER, LICENSE_ACTION_ITEM_RENDERER, LICENSE_STATUS_ITEM_RENDER, THROTTLING_TIME_ITEM_RENDER, RECOVERY_STATUS_ITEM_RENDERER } from '../constants/TableConstants';
 import ReplicationInterval from '../components/Forms/ReplicationInterval';
 import NetworkConfig from '../components/Common/NetworkConfig';
 import SecurityGroups from '../components/Common/SecurityGroups';
@@ -39,6 +39,7 @@ import VMSizeItemRenderer from '../components/Table/ItemRenderers/VMSizeItemRend
 import VMUsernameItemRenderer from '../components/Table/ItemRenderers/VMUsernameItemRenderer';
 import ThrottlingItemRenderer from '../components/Table/ItemRenderers/ThrottlingItemRenderer';
 import ThrottlingTimeRenderer from '../components/Table/ItemRenderers/ThrottlingTimeRenderer';
+import RecoveryStatusItemRenderer from '../components/Table/ItemRenderers/RecoveryStatusItemRenderer';
 
 export function getStackComponent(dispatch, user, children, conf, data) {
   const field = children[conf];
@@ -128,6 +129,8 @@ export function getItemRendererComponent(render, data, field, user, dispatch) {
       return <LicenseStatusItemRender data={data} field={field} />;
     case THROTTLING_TIME_ITEM_RENDER:
       return <ThrottlingTimeRenderer data={data} field={field} />;
+    case RECOVERY_STATUS_ITEM_RENDERER:
+      return <RecoveryStatusItemRenderer data={data} />;
     default:
       return (<div> 404 </div>);
   }

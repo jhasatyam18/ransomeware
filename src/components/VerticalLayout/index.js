@@ -3,7 +3,7 @@ import React, { Component, Suspense } from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
 import { ALERTS_PATH, DASHBOARD_PATH, EVENTS_PATH, JOBS_PATH, LOGIN_PATH, NODES_PATH, PROTECTION_PLANS_PATH, PROTECTION_PLAN_DETAILS_PATH, REPORTS_PATH, SETTINGS_PATH, SITES_PATH } from '../../constants/RouterConstants';
 import Login from '../../pages/AuthenticationInner/Login';
-import Pages404 from '../../pages/Page-404';
+// import Pages404 from '../../pages/Page-404';
 import DRPlans from '../data-recovery/DRPlans';
 import Node from '../Settings/node/Node';
 import Header from './Header';
@@ -106,7 +106,7 @@ class Layout extends Component {
                   <Route path={ALERTS_PATH} render={() => <Alerts />} />
                   <Route path={REPORTS_PATH} render={() => <Report />} />
                   <Route path={SETTINGS_PATH} render={() => <Settings />} />
-                  <Route component={Pages404} />
+                  <Route render={() => <Dashboard {...this.props} />} />
                 </Switch>
               </Suspense>
             </div>

@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import { Row, Col, Card, CardBody, Media } from 'reactstrap';
-import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { REPLICATION_JOB_TYPE, RECOVERY_JOB_TYPE, MAX_RECOVERY_TIME } from '../../constants/InputConstants';
-import { changeReplicationJobType, changeRecoveryJobType, fetchReplicationJobs, fetchRecoveryJobs, resetJobs } from '../../store/actions/JobActions';
+import { Card, CardBody, Col, Media, Row } from 'reactstrap';
 import * as appStatus from '../../constants/AppStatus';
+import { MAX_RECOVERY_TIME, RECOVERY_JOB_TYPE, REPLICATION_JOB_TYPE } from '../../constants/InputConstants';
+import { JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH } from '../../constants/RouterConstants';
+import { changeRecoveryJobType, changeReplicationJobType, fetchRecoveryJobs, fetchReplicationJobs, resetJobs } from '../../store/actions/JobActions';
 import { getMinutes } from '../../utils/AppUtils';
-import { JOBS_PATH } from '../../constants/RouterConstants';
 
 class DashBoardJob extends Component {
   componentDidMount() {
@@ -53,7 +53,7 @@ class DashBoardJob extends Component {
         </div>
         <Media body>
           <div>
-            <Link to={(data.recoveryType ? `${JOBS_PATH}?tab=recovery` : `${JOBS_PATH}?tab=replication`)} style={{ color: 'white' }}>
+            <Link to={(data.recoveryType ? `${JOBS_RECOVERY_PATH}` : `${JOBS_REPLICATION_PATH}`)} style={{ color: 'white' }}>
               {message.length > 65 ? `${message.substr(0, 65)}....` : message}
             </Link>
           </div>

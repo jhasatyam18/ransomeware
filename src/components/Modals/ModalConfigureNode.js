@@ -52,7 +52,7 @@ class ModalConfigureNode extends Component {
     fields.forEach((field) => {
       let shouldDisable = false;
       if (typeof isUpdate !== 'undefined') {
-        const allowedFields = ['username', 'password', 'managementPort', 'replicationPort', 'encryptionKey'];
+        const allowedFields = ['username', 'password', 'managementPort', 'replicationPort', 'encryptionKey', 'hostname'];
         const fName = field.split('.')[1];
         shouldDisable = isUpdate && !(allowedFields.indexOf(fName) !== -1);
       }

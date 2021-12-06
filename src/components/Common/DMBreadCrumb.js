@@ -5,8 +5,8 @@ import { Link } from 'react-router-dom';
 function DMBreadCrumb(props) {
   const { links, t } = props;
   function renderList() {
-    const items = links.map((item) => (
-      <li className="breadcrumb-item">
+    const items = links.map((item, index) => (
+      <li className="breadcrumb-item" key={`breadcrumb-${item.link}-${index + 1}`}>
         <Link to={item.link} className="text-secondary">
           {t(`${item.label}`)}
         </Link>

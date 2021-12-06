@@ -10,7 +10,7 @@ function RtoRpo(props) {
     return (
       <div className="dashboard_replicaiton_info stat_test_position">
         {steps.map((task) => (
-          <div className="dashboard_item dashboard_divider_top">
+          <div className="dashboard_item dashboard_divider_top" key={`rtorpo-${task.color}`}>
             &nbsp;
             <Row>
               <Col sm={7}>

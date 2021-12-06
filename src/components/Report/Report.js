@@ -153,7 +153,7 @@ class Report extends Component {
           <Container fluid>
             <Card>
               <CardBody>
-                <DMBreadCrumb links={[{ label: 'support', link: '#' }]} />
+                <DMBreadCrumb links={[{ label: 'report', link: '#' }]} />
                 <Button className="btn btn-outline-dark btn-sm margin-left-15" onClick={this.toggleCollapse}>
                   <i className={openCollapse === true ? 'fas fa-arrow-down' : 'fas fa-arrow-right'} title="Report Filter" style={{ fontSize: 16 }} />
                   <span className="padding-left-5">Filter</span>

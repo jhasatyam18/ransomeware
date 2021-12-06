@@ -120,7 +120,7 @@ class Login extends Component {
                             id="userName"
                             onChange={this.handleChange}
                             autoComplete="off"
-                            autofocus="autofocus"
+                            autoFocus="autoFocus"
                             required
                           />
                         </div>
