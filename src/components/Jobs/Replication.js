@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withTranslation } from 'react-i18next';
 import { Card, CardBody, Col, Container, Form, Label, Row } from 'reactstrap';
 import { REPLICATION_JOB_TYPE } from '../../constants/InputConstants';
 import { REPLICATION_JOBS, REPLICATION_VM_JOBS, TABLE_FILTER_TEXT } from '../../constants/TableConstants';
@@ -57,7 +58,7 @@ class Replication extends Component {
   }
 
   renderOptions() {
-    const { jobs } = this.props;
+    const { jobs, t } = this.props;
     const { replicationType } = jobs;
     return (
       <>
@@ -65,19 +66,19 @@ class Replication extends Component {
           <div className="form-check-inline">
             <Label className="form-check-label" for="plan-options">
               <input type="radio" className="form-check-input" id="plan-options" name="jobsType" value={replicationType === REPLICATION_JOB_TYPE.PLAN} checked={replicationType === REPLICATION_JOB_TYPE.PLAN} onChange={() => { this.changeJobType(REPLICATION_JOB_TYPE.PLAN); }} />
-              Protection Plan
+              {t('protection.plan')}
             </Label>
           </div>
           <div className="form-check-inline">
             <Label className="form-check-label" for="vms-options">
               <input type="radio" className="form-check-input" id="vms-options" name="jobsType" value={replicationType === REPLICATION_JOB_TYPE.VM} checked={replicationType === REPLICATION_JOB_TYPE.VM} onChange={() => { this.changeJobType(REPLICATION_JOB_TYPE.VM); }} />
-              Virtual Machines
+              {t('virtual.machines')}
             </Label>
           </div>
           <div className="form-check-inline">
             <Label className="form-check-label" for="disks-options">
               <input type="radio" className="form-check-input" id="disks-options" name="jobsType" value={replicationType === REPLICATION_JOB_TYPE.DISK} checked={replicationType === REPLICATION_JOB_TYPE.DISK} onChange={() => { this.changeJobType(REPLICATION_JOB_TYPE.DISK); }} />
-              Disks
+              {t('disks')}
             </Label>
           </div>
         </Form>
@@ -222,4 +223,4 @@ class Replication extends Component {
   }
 }
 
-export default Replication;
+export default (withTranslation()(Replication));

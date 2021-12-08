@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardTitle, Col, Row } from 'reactstrap';
-import { convertMinutesToDaysHourFormat } from '../../utils/AppUtils';
+import { convertMinutesToDaysHourFormat, getStorageWithUnit } from '../../utils/AppUtils';
 import { getValue } from '../../utils/InputUtils';
 
 class ProtectionPlanSummaryStep extends Component {
@@ -24,6 +24,7 @@ class ProtectionPlanSummaryStep extends Component {
         });
       }
     });
+    size = getStorageWithUnit(size);
     return (
       <>
         <Card className="padding-20">
@@ -57,7 +58,7 @@ class ProtectionPlanSummaryStep extends Component {
                   <Col sm={3} className="text-muted">Virtual Machines</Col>
                   <Col sm={3}>{Object.keys(selectedVMs).length}</Col>
                   <Col sm={3} className="text-muted">Total Storage</Col>
-                  <Col sm={3}>{`${size === 0 ? '-' : size} GB`}</Col>
+                  <Col sm={3}>{size}</Col>
                 </Row>
                 <hr className="mt-3 mb-3" />
               </Col>

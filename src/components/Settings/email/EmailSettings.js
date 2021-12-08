@@ -58,7 +58,7 @@ class EmailSettings extends Component {
           <Container fluid>
             <Card>
               <CardBody>
-                <DMBreadCrumb links={[{ label: 'support', link: '#' }]} />
+                <DMBreadCrumb links={[{ label: 'email.recipients', link: '#' }]} />
                 <div className="btn-toolbar padding-left-20">
                   <div className="btn-group" role="group" aria-label="First group">
                     <ActionButton label="New" onClick={this.onConfigureRecipient} icon="fa fa-plus" isDisabled={false} t={t} key="newRecipient" />

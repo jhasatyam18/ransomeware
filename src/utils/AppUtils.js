@@ -259,3 +259,18 @@ export function convertMinutesToDaysHourFormat(value = 0) {
   }
   return result;
 }
+
+/**
+ * Convert storage value in its respective unit
+ * example: 550 -> 550 GB, 10158 -> 9.92 TB
+ * @param {*} value in gb
+ * @returns string with converted value and unit
+ */
+export function getStorageWithUnit(value) {
+  if (typeof value === 'undefined' || value === 0) {
+    return '0 GB';
+  }
+  const units = ['GB', 'TB', 'PB', 'EB'];
+  const unitIndex = Math.floor(Math.log(value) / Math.log(1024));
+  return `${Number.parseFloat((value / (1024 ** unitIndex)).toFixed(2))} ${units[unitIndex]}`;
+}

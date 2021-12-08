@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withTranslation } from 'react-i18next';
 import { Container, Card, Row, Col, CardBody, Media } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import BandwidthChart from './BandwidthChart';
@@ -11,6 +12,7 @@ import { SITES_PATH, PROTECTION_PLANS_PATH } from '../../constants/RouterConstan
 import SiteConnection from './SiteConnection';
 import DashboardEvents from './DashboardEvents';
 import DashboardAlertOverview from './DashboardAlertOverview';
+import { getStorageWithUnit } from '../../utils/AppUtils';
 
 class Dashboard extends Component {
   componentDidMount() {
@@ -24,14 +26,14 @@ class Dashboard extends Component {
   }
 
   render() {
-    const { dashboard } = this.props;
+    const { dashboard, t } = this.props;
     const { titles } = dashboard;
     const { sites, protectionPlans, vms, storage } = titles;
     const reports = [
-      { title: 'Sites', icon: 'cloud', description: sites, link: SITES_PATH },
-      { title: 'Protection Plans', icon: 'layer', description: protectionPlans, link: PROTECTION_PLANS_PATH },
-      { title: 'Protected Machines', icon: 'desktop', description: vms },
-      { title: 'Protected Storage', icon: 'hdd', description: (storage > 1024 ? `${storage} TB` : `${storage} GB`) },
+      { title: t('sites'), icon: 'cloud', description: sites, link: SITES_PATH },
+      { title: t('protection.plans'), icon: 'layer', description: protectionPlans, link: PROTECTION_PLANS_PATH },
+      { title: t('protected.machines'), icon: 'desktop', description: vms },
+      { title: t('protected.storage'), icon: 'hdd', description: getStorageWithUnit(storage) },
     ];
     return (
       <>
@@ -97,4 +99,4 @@ class Dashboard extends Component {
   }
 }
 
-export default Dashboard;
+export default (withTranslation()(Dashboard));

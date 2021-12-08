@@ -57,7 +57,9 @@ class DMAccordion extends Component {
           <CardHeader>
             <Row>
               <Col sm={6}>
-                {title}
+                <a href="#" onClick={this.toggle}>
+                  {title}
+                </a>
               </Col>
               <Col sm={6} className="d-flex flex-row-reverse">
                 {this.renderIcon()}

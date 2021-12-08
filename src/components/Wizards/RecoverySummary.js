@@ -3,6 +3,7 @@ import { Card, CardBody, CardTitle, Col, Row } from 'reactstrap';
 import DMTable from '../Table/DMTable';
 import { TABLE_PROTECT_VM_VMWARE } from '../../constants/TableConstants';
 import { getValue } from '../../utils/InputUtils';
+import { getStorageWithUnit } from '../../utils/AppUtils';
 
 class RecoverySummary extends Component {
   getRecoveryType() {
@@ -33,6 +34,7 @@ class RecoverySummary extends Component {
         size += disk.size;
       });
     });
+    size = getStorageWithUnit(size);
     return (
       <>
         <Card className="padding-20">
@@ -55,7 +57,7 @@ class RecoverySummary extends Component {
                   <Col sm={3} className="text-muted">Virtual Machines</Col>
                   <Col sm={3}>{data.length}</Col>
                   <Col sm={3} className="text-muted">Total Size</Col>
-                  <Col sm={3}>{`${size} GB`}</Col>
+                  <Col sm={3}>{size}</Col>
                 </Row>
                 <hr className="mt-3 mb-3" />
               </Col>

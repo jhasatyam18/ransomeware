@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withTranslation } from 'react-i18next';
 import { Card, CardBody, Col, Container, Form, Label, Row } from 'reactstrap';
 import DMTable from '../Table/DMTable';
 import { PROTECTION_PLAN_RECOVERY_JOBS, RECOVERY_JOBS } from '../../constants/TableConstants';
@@ -59,7 +60,7 @@ class Recovery extends Component {
   }
 
   renderOptions() {
-    const { jobs } = this.props;
+    const { jobs, t } = this.props;
     const { recoveryType } = jobs;
     return (
       <>
@@ -67,13 +68,13 @@ class Recovery extends Component {
           <div className="form-check-inline">
             <Label className="form-check-label" for="rec-plan-options">
               <input type="radio" className="form-check-input" id="rec-plan-options" name="jobsType" value={recoveryType === RECOVERY_JOB_TYPE.PLAN} checked={recoveryType === RECOVERY_JOB_TYPE.PLAN} onChange={() => { this.changeJobType(RECOVERY_JOB_TYPE.PLAN); }} />
-              Protection Plan
+              {t('protection.plan')}
             </Label>
           </div>
           <div className="form-check-inline">
             <Label className="form-check-label" for="rec-vms-options">
               <input type="radio" className="form-check-input" id="rec-vms-options" name="jobsType" value={recoveryType === RECOVERY_JOB_TYPE.VM} checked={recoveryType === RECOVERY_JOB_TYPE.VM} onChange={() => { this.changeJobType(RECOVERY_JOB_TYPE.VM); }} />
-              Virtual Machines
+              {t('virtual.machines')}
             </Label>
           </div>
         </Form>
@@ -186,4 +187,4 @@ class Recovery extends Component {
   }
 }
 
-export default Recovery;
+export default (withTranslation()(Recovery));

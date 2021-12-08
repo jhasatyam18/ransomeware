@@ -1,6 +1,6 @@
 module.exports = app => {
   app.get("/api/v1/dashboard/titles", (req, res) => {
-    const response = { "siteCount": 2, "protectionPlans": 2, "siteConnections": [{ "sourceID": 1, "targetID": 2 }, { "sourceID": 1, "targetID": 3 }, { "sourceID": 2, "targetID": 5 }, { "sourceID": 3, "targetID": 4 }, { "sourceID": 6, "targetID": 4 }, { "sourceID": 6, "targetID": 7 }], "siteDetails": [{ "id": 1, "name": "VMware Site" }, { "id": 2, "name": "AWS Site" }, { "id": 3, "name": "GCP Site" }, { "id": 4, "name": "AWS_Mumbai" }, { "id": 5, "name": "GCP_US" }, { "id": 6, "name": "GCP_US" }, { "id": 7, "name": "VMWARE_2" }], "protectedVMs": 2, "protectedStorage": 155 }
+    const response = { "siteCount": 2, "protectionPlans": 2, "siteConnections": [{ "sourceID": 1, "targetID": 2 }, { "sourceID": 1, "targetID": 3 }, { "sourceID": 2, "targetID": 5 }, { "sourceID": 3, "targetID": 4 }, { "sourceID": 6, "targetID": 4 }, { "sourceID": 6, "targetID": 7 }], "siteDetails": [{ "id": 1, "name": "VMware Site" }, { "id": 2, "name": "AWS Site" }, { "id": 3, "name": "GCP Site" }, { "id": 4, "name": "AWS_Mumbai" }, { "id": 5, "name": "GCP_US" }, { "id": 6, "name": "GCP_US" }, { "id": 7, "name": "VMWARE_2" }], "protectedVMs": 2, "protectedStorage": 10158 }
     res.send(response);
   });
 
