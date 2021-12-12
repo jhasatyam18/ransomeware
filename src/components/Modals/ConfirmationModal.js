@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import { closeModal } from '../../store/actions/ModalActions';
 
 class ConfirmationModal extends Component {
@@ -14,10 +15,10 @@ class ConfirmationModal extends Component {
   }
 
   onConfirm() {
-    const { dispatch, modal } = this.props;
+    const { dispatch, modal, history } = this.props;
     const { options } = modal;
     const { confirmAction, id } = options;
-    dispatch(confirmAction(id));
+    dispatch(confirmAction(id, history));
   }
 
   renderFooter() {
@@ -55,4 +56,4 @@ class ConfirmationModal extends Component {
   }
 }
 
-export default ConfirmationModal;
+export default (withRouter(ConfirmationModal));

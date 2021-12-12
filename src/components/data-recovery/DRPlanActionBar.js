@@ -127,7 +127,7 @@ class DRPlanActionBar extends Component {
   renderGlobalActions() {
     const actions = [{ label: 'New', onClick: this.onCreate, icon: 'fa fa-plus', isDisabled: false },
       { label: 'Edit', onClick: this.onEdit, icon: 'fa fa-edit', isDisabled: this.showEdit() },
-      { label: 'remove', onClick: this.onDelete, icon: 'fa fa-trash', isDisabled: this.shouldShowAction(false) }];
+      { label: 'remove', onClick: this.onDelete, icon: 'fa fa-trash', isDisabled: this.shouldShowAction(true) }];
       // { label: 'start', onClick: () => { this.planAction(startPlan); }, icon: 'fa fa-play', isDisabled: this.shouldShowAction(false) },
       // { label: 'stop', onClick: () => { this.planAction(stopPlan); }, icon: 'fa fa-stop', isDisabled: this.shouldShowAction(false) }
     return (

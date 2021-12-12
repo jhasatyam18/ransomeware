@@ -10,10 +10,12 @@ import { fetchNetworks, fetchSites, onRecoverSiteChange } from './SiteActions';
 import { getCreateDRPlanPayload, getEditProtectionPlanPayload, getRecoveryPayload, getReversePlanPayload } from '../../utils/PayloadUtil';
 import { clearValues, fetchScript, hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
 import { closeWizard, openWizard } from './WizardActions';
-import { closeModal } from './ModalActions';
+import { closeModal, openModal } from './ModalActions';
 import { MIGRATION_WIZARDS, RECOVERY_WIZARDS, TEST_RECOVERY_WIZARDS, REVERSE_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS } from '../../constants/WizardConstants';
 import { getValue } from '../../utils/InputUtils';
 import { PLATFORM_TYPES } from '../../constants/InputConstants';
+import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
+import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
 
 export function fetchDrPlans(key) {
   return (dispatch) => {
@@ -115,7 +117,7 @@ export function stopPlan(id) {
   };
 }
 
-export function deletePlan(id) {
+export function deletePlan(id, history) {
   return (dispatch, getState) => {
     const { drPlans } = getState();
     const { selectedPlans } = drPlans;
@@ -132,13 +134,24 @@ export function deletePlan(id) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.SUCCESS));
         dispatch(closeModal());
         fetchByDelay(dispatch, fetchDrPlans, 1000);
+        dispatch(updateSelectedPlans({}));
         dispatch(refreshPostActon(true));
+        if (typeof history !== 'undefined') {
+          history.push(PROTECTION_PLANS_PATH);
+        }
       }
     },
     (err) => {
       dispatch(hideApplicationLoader(url));
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
+  };
+}
+
+export function deletePlanConfirmation(id) {
+  return (dispatch) => {
+    const options = { title: 'Confirmation', confirmAction: deletePlan, message: 'Are you sure want to delete  ?', id };
+    dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   };
 }
 
@@ -211,7 +224,7 @@ export function onProtectionPlanChange({ value }) {
           const data = [];
           const info = json.protectedEntities.virtualMachines || [];
           info.forEach((vm) => {
-            if (typeof vm.recoveryStatus !== 'undefined' && (vm.recoveryStatus === 'Migrated' || vm.recoveryStatus === 'Recovered')) {
+            if (typeof vm.recoveryStatus !== 'undefined' && (vm.recoveryStatus === 'Migrated' || vm.recoveryStatus === 'Recovered' || vm.isRemovedFromPlan === true)) {
               const v = vm;
               v.isDisabled = true;
               data.push(v);

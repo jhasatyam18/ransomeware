@@ -1,9 +1,21 @@
 import React from 'react';
 import { Badge } from 'reactstrap';
+import { withTranslation } from 'react-i18next';
 
-function RecoveryStatusItemRenderer({ data }) {
+function RecoveryStatusItemRenderer(props) {
+  const { t, data } = props;
   if (!data) {
     return '-';
+  }
+  if (data.isRemovedFromPlan === true) {
+    const msg = t('vm.remove.description');
+    return (
+      <div>
+        <Badge title={msg} className="font-size-13 badge-soft-info" color="info" pill>
+          {t('removing')}
+        </Badge>
+      </div>
+    );
   }
   function renderDeleted() {
     if (data.isDeleted === true) {
@@ -39,4 +51,4 @@ function RecoveryStatusItemRenderer({ data }) {
   );
 }
 
-export default RecoveryStatusItemRenderer;
+export default (withTranslation()(RecoveryStatusItemRenderer));

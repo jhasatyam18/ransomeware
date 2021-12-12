@@ -2,7 +2,7 @@ import React, { Component, Suspense } from 'react';
 import { Card, Container, CardBody, Row, Col, CardTitle, Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap';
 import classnames from 'classnames';
 import { withTranslation } from 'react-i18next';
-import { deletePlan, fetchDRPlanById, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
+import { deletePlanConfirmation, fetchDRPlanById, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
 import DMTable from '../Table/DMTable';
 import DMBreadCrumb from '../Common/DMBreadCrumb';
 import { TABLE_PROTECTION_PLAN_VMS } from '../../constants/TableConstants';
@@ -154,7 +154,7 @@ class DRPlanDetails extends Component {
       actions.push({ label: 'start', action: startPlan, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS.STARTED });
       actions.push({ label: 'stop', action: stopPlan, id: protectionPlan.id, disabled: protectionPlan.status === REPLICATION_STATUS.STOPPED });
       actions.push({ label: 'edit', action: openEditProtectionPlanWizard, id: protectionPlan, disabled: this.showEdit() });
-      actions.push({ label: 'remove', action: deletePlan, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS.STARTED, navigate: PROTECTION_PLANS_PATH });
+      actions.push({ label: 'remove', action: deletePlanConfirmation, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS.STARTED, navigate: PROTECTION_PLANS_PATH });
     } else if (localVMIP === recoverySite.node.hostname) {
       actions = [{ label: 'recover', action: openRecoveryWizard, icon: 'fa fa-plus', disabled: isServerActionDisabled },
         { label: 'Migrate', action: openMigrationWizard, icon: 'fa fa-clone', disabled: isServerActionDisabled },
