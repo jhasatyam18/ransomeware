@@ -168,6 +168,24 @@ class DRPlanDetails extends Component {
     );
   }
 
+  renderRecoveryJobs() {
+    const { drPlans, t, user } = this.props;
+    const { localVMIP } = user;
+    const { protectionPlan } = drPlans;
+    const { recoverySite } = protectionPlan;
+    const { activeTab } = this.state;
+    if (localVMIP === recoverySite.node.hostname) {
+      return (
+        <NavItem>
+          <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '4' })} onClick={() => { this.toggleTab('4'); }}>
+            <span className="d-none d-sm-block">{t('recovery.jobs')}</span>
+          </NavLink>
+        </NavItem>
+      );
+    }
+    return null;
+  }
+
   render() {
     const { drPlans, dispatch, t } = this.props;
     const { protectionPlan } = drPlans;
@@ -232,11 +250,7 @@ class DRPlanDetails extends Component {
                     <span className="d-none d-sm-block">{t('replication.jobs')}</span>
                   </NavLink>
                 </NavItem>
-                <NavItem>
-                  <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '4' })} onClick={() => { this.toggleTab('4'); }}>
-                    <span className="d-none d-sm-block">{t('recovery.jobs')}</span>
-                  </NavLink>
-                </NavItem>
+                {this.renderRecoveryJobs()}
               </Nav>
               <TabContent activeTab={activeTab}>
                 <TabPane tabId="1" className="p-3">

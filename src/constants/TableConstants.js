@@ -1,5 +1,6 @@
 export const OS_TYPE_ITEM_RENDERER = 'OS_TYPE_ITEM_RENDERER';
 export const VM_SIZE_ITEM_RENDERER = 'VM_SIZE_ITEM_RENDERER';
+export const VM_DISK_ITEM_RENDERER = 'VM_DISK_ITEM_RENDERER';
 export const DR_PLAN_NAME_ITEM_RENDERER = 'DR_PLAN_NAME_ITEM_RENDERER';
 export const DATE_ITEM_RENDERER = 'DateItemRenderer';
 export const STATUS_ITEM_RENDERER = 'STATUS_ITEM_RENDERER';
@@ -60,6 +61,7 @@ export const TABLE_BOOT_VM_VMWARE = [
 export const TABLE_PROTECTION_PLAN_VMS = [
   { label: 'name', field: 'name' },
   { label: 'size', field: 'virtualDisks', itemRenderer: VM_SIZE_ITEM_RENDERER },
+  { label: 'disks', field: 'virtualDisks', itemRenderer: VM_DISK_ITEM_RENDERER },
   { label: 'os', field: 'guestOS', itemRenderer: OS_TYPE_ITEM_RENDERER },
   { label: 'Last Run Time', field: 'lastRunTime', itemRenderer: DATE_ITEM_RENDERER },
   { label: 'Status', field: 'recoveryStatus', itemRenderer: RECOVERY_STATUS_ITEM_RENDERER },
@@ -83,7 +85,7 @@ export const RECOVERY_JOBS = [
 ];
 
 export const PROTECTION_PLAN_RECOVERY_JOBS = [
-  { label: 'Virtual Machine', field: 'vmNames' },
+  { label: 'Virtual Machine', field: 'vmName' },
   { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Recovery Type', field: 'recoveryType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER },
   { label: 'Job Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },

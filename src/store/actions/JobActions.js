@@ -1,6 +1,6 @@
-import { RECOVERY_JOB_TYPE, REPLICATION_JOB_TYPE } from '../../constants/InputConstants';
 import * as Types from '../../constants/actionTypes';
-import { API_PROTECTOIN_PLAN_REPLICATION_JOBS, API_RECOVERY_JOBS, API_PROTECTION_PLAN_RECOVERY_JOBS_STATUS, API_RECOVERY_PLAN_RECOVERY_JOBS, API_REPLICATION_JOBS, API_REPLICATION_VM_JOBS, API_PROTECTTION_PLAN_REPLICATION_VM_JOBS, API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS } from '../../constants/ApiConstants';
+import { API_PROTECTION_PLAN_RECOVERY_JOBS_STATUS, API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS, API_PROTECTOIN_PLAN_REPLICATION_JOBS, API_PROTECTTION_PLAN_REPLICATION_VM_JOBS, API_RECOVERY_JOBS, API_REPLICATION_JOBS, API_REPLICATION_VM_JOBS } from '../../constants/ApiConstants';
+import { RECOVERY_JOB_TYPE, REPLICATION_JOB_TYPE } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { callAPI } from '../../utils/ApiUtils';
 import { addMessage } from './MessageActions';
@@ -42,7 +42,7 @@ export function fetchReplicationJobs(id) {
       url = (id === 0 ? API_REPLICATION_VM_JOBS : API_PROTECTTION_PLAN_REPLICATION_VM_JOBS.replace('<id>', id));
     } else {
       type = 'protection plan replication';
-      url = API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS;
+      url = (id === 0 ? API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS : `${API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS}?protectionplanid=${id}`);
     }
     dispatch(showApplicationLoader('JOBS_DATA', `Loading ${type} jobs...`));
     return callAPI(url).then((json) => {
@@ -69,10 +69,10 @@ export function fetchRecoveryJobs(id) {
     let type = '';
     if (recoveryType === RECOVERY_JOB_TYPE.VM) {
       type = 'virtual machine recovery';
-      url = (id === 0 ? API_RECOVERY_JOBS : API_RECOVERY_PLAN_RECOVERY_JOBS.replace('<id>', id));
+      url = (id === 0 ? API_RECOVERY_JOBS : `${API_RECOVERY_JOBS}?protectionplanid=${id}`);
     } else {
       type = 'protection plan recovery';
-      url = API_PROTECTION_PLAN_RECOVERY_JOBS_STATUS;
+      url = (id === 0 ? API_PROTECTION_PLAN_RECOVERY_JOBS_STATUS : `${API_PROTECTION_PLAN_RECOVERY_JOBS_STATUS}?protectionplanid=${id}`);
     }
     dispatch(showApplicationLoader('JOBS_DATA', `Loading ${type} jobs...`));
     return callAPI(url).then((json) => {
