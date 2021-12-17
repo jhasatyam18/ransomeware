@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Popover, PopoverBody } from 'reactstrap';
-import { getStorageWithUnit } from '../../../utils/AppUtils';
+import { getAppKey, getStorageWithUnit } from '../../../utils/AppUtils';
 
 function VMDisksItemRenderer(props) {
   const { data, t } = props;
   const { virtualDisks = [] } = data;
   const [popoverOpen, setPopoverOpen] = useState(false);
-  const key = `key-${data.moref}`;
+  let name = data.name.replace(/\s/g, '');
+  name = name.replace(/[^a-zA-Z ]/g, '');
+  let key = '';
+  if (name) {
+    key = `disk-${name}`;
+  } else {
+    key = getAppKey();
+  }
 
   function renderDiskSize(disk, index) {
     return (
