@@ -62,12 +62,13 @@ class Header extends Component {
 
   renderAppType() {
     const { user } = this.props;
-    const { appType, platformType } = user;
+    const { appType, platformType, zone } = user;
     const type = appType === APP_TYPE.CLIENT ? `${platformType}-Client` : `${platformType}-Server`;
+    const appZone = (typeof zone !== 'undefined' ? `${zone}` : ''); 
     return (
       <div className="dropdown d-none d-lg-inline-block ml-1">
         <button type="button" className="btn header-item noti-icon waves-effect">
-          {` ${type}`}
+          {` ${type} ${appZone}`}
         </button>
       </div>
     );
