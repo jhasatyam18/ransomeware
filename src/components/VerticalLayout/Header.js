@@ -9,7 +9,6 @@ import dmlogo from '../../assets/images/dm_logo.png';
 
 // Redux Store
 import { changeLeftSidebarType, refresh } from '../../store/actions';
-import { APP_TYPE } from '../../constants/InputConstants';
 
 class Header extends Component {
   constructor(props) {
@@ -62,9 +61,9 @@ class Header extends Component {
 
   renderAppType() {
     const { user } = this.props;
-    const { appType, platformType, zone } = user;
-    const type = appType === APP_TYPE.CLIENT ? `${platformType}-Client` : `${platformType}-Server`;
-    const appZone = (typeof zone !== 'undefined' ? `${zone}` : ''); 
+    const { platformType, zone } = user;
+    const type = `${platformType}`;
+    const appZone = (typeof zone !== 'undefined' ? `${zone}` : '');
     return (
       <div className="dropdown d-none d-lg-inline-block ml-1">
         <button type="button" className="btn header-item noti-icon waves-effect">
