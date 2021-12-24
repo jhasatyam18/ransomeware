@@ -52,10 +52,17 @@ class placeHolderNumber extends Component {
   }
 
   renderError(hasError) {
-    const { fieldKey } = this.props;
+    const { fieldKey, field } = this.props;
+    const { errorMessage = '' } = field;
+    let msg = '';
+    if (FIELDS[fieldKey]) {
+      msg = FIELDS[fieldKey].errorMessage;
+    } else {
+      msg = errorMessage;
+    }
     if (hasError) {
       return (
-        <FormFeedback for={fieldKey}>{FIELDS[fieldKey].errorMessage}</FormFeedback>
+        <FormFeedback for={fieldKey}>{msg}</FormFeedback>
       );
     }
     return null;
@@ -91,8 +98,10 @@ class placeHolderNumber extends Component {
     const { errors } = user;
     const { value } = this.state;
     const hasErrors = !!(errors && errors[fieldKey] !== undefined);
-    const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
+    const fieldDisabled = (typeof field.disabled !== 'undefined' && typeof field.disabled === 'function' ? field.disabled(user, fieldKey) : null);
+    const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user, fieldKey) : shouldShow);
     const css = hideLabel ? '' : 'row mb-4 form-group';
+    const shouldDisabled = (fieldDisabled !== null ? fieldDisabled : disabled);
     if (!showField) return null;
     return (
       <>
@@ -112,7 +121,9 @@ class placeHolderNumber extends Component {
                   onChange={this.handleChange}
                   invalid={hasErrors}
                   autoComplete="off"
-                  disabled={disabled}
+                  step="1"
+                  disabled={shouldDisabled}
+                  pattern="[0-9]"
                 />
                 {this.renderError(hasErrors)}
               </Col>

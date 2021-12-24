@@ -3,6 +3,7 @@ import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
 import { PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS } from '../constants/InputConstants';
 import { NODE_STATUS_ONLINE } from '../constants/AppStatus';
 import { isEmpty } from './validationUtils';
+import { onAwsStorageTypeChange } from '../store/actions';
 
 export function getValue(key, values) {
   const ret = values[key];
@@ -294,8 +295,8 @@ export function getAwsVMConfig(vm) {
         title: 'General',
         children: {
           [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', fieldInfo: 'info.protectionplan.instance.type', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
-          [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.instance.volume.type.aws', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u) },
-          // [`${key}-vmConfig.general.bootOrder`]: { label: 'Boot Order', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select boot order.', shouldShow: true, options: (u) => geBootPriorityOptions(u) },
+          [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.instance.volume.type.aws', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u), onChange: (user, dispatch) => onAwsStorageTypeChange(user, dispatch) },
+          [`${key}-vmConfig.general.volumeIOPS`]: { label: 'Volume IOPS', fieldInfo: 'info.protectionplan.instance.volume.iops.aws', type: FIELD_TYPE.NUMBER, errorMessage: 'Provide volume IOPS.', disabled: (u, f) => shouldEnableAWSIOPS(u, f), min: 0 },
           [`${key}-vmConfig.general.tags`]: { label: 'Tags', fieldInfo: 'info.protectionplan.instance.tags.aws', type: STACK_COMPONENT_TAGS, validate: null, errorMessage: '', shouldShow: true },
         },
       },
@@ -444,6 +445,17 @@ export function shouldShowBandwidthConfig(user) {
   const { values } = user;
   const limit = getValue('throttling.bandwidthLimit', values);
   if (limit === true) {
+    return true;
+  }
+  return false;
+}
+
+export function shouldEnableAWSIOPS(user, fieldKey) {
+  const { values } = user;
+  const keys = fieldKey.split('.');
+  const iopsKey = `${keys.slice(0, keys.length - 1).join('.')}.volumeType`;
+  const storageType = getValue(iopsKey, values);
+  if (storageType === 'gp2') {
     return true;
   }
   return false;

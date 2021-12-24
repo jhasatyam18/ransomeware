@@ -69,7 +69,7 @@ class DMFieldSelect extends Component {
     });
     dispatch(valueChange(fieldKey, e.target.value));
     if (typeof onChange === 'function') {
-      dispatch(onChange({ value: e.target.value, dispatch, user }));
+      dispatch(onChange({ value: e.target.value, dispatch, user, fieldKey }));
     }
   }
 

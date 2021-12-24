@@ -355,3 +355,13 @@ export function removeNicConfig(networkKey, index) {
     }
   };
 }
+
+export function onAwsStorageTypeChange({ value, fieldKey }) {
+  return (dispatch) => {
+    if (value === 'gp2') {
+      const keys = fieldKey.split('.');
+      const iopsKey = `${keys.slice(0, keys.length - 1).join('.')}.volumeIOPS`;
+      dispatch(valueChange(iopsKey, '0'));
+    }
+  };
+}

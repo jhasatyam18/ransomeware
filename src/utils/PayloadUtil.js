@@ -97,6 +97,10 @@ export function getVMConfigPayload(user) {
     const id = getValue(`${key}-vmConfig.general.id`, values);
     const instanceType = getValue(`${key}-vmConfig.general.instanceType`, values);
     const volumeType = getValue(`${key}-vmConfig.general.volumeType`, values);
+    let volumeIOPS = getValue(`${key}-vmConfig.general.volumeIOPS`, values);
+    if (volumeType === 'gp2') {
+      volumeIOPS = 0;
+    }
     const tags = getValue(`${key}-vmConfig.general.tags`, values) || [];
     const bootPriority = parseInt(getValue(`${key}-vmConfig.general.bootOrder`, values), 10);
     // const isPublicIP = (getValue(`${key}-vmConfig.network.net1`, values) === 'public');
@@ -111,9 +115,9 @@ export function getVMConfigPayload(user) {
     const preScript = getValue(`${key}-vmConfig.scripts.preScript`, values);
     const postScript = getValue(`${key}-vmConfig.scripts.postScript`, values);
     if (typeof id !== 'undefined' && id !== '') {
-      instanceDetails.push({ id, instanceName, instanceType, volumeType, tags, bootPriority, networks, securityGroups, preScript, postScript });
+      instanceDetails.push({ id, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript });
     } else {
-      instanceDetails.push({ instanceName, instanceType, volumeType, tags, bootPriority, networks, securityGroups, preScript, postScript });
+      instanceDetails.push({ instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript });
     }
   });
   return instanceDetails;
