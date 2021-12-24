@@ -155,7 +155,6 @@
   "license.validity.30.days": "30 Days",
   "license.validated.readyto.install":"License file validated successfully, click install to apply license",
   "alerts": "Alerts",
-  "report": "Report",
   "license": "License",
   "tech.support": "Tech Support",
   "email": "Email",
@@ -253,5 +252,6 @@
   "info.recovery.install.cloud.packages": "For AWS. install AWS Cloud SDK and for GCP, install GCP Cloud SDK",
   "info.protectionplan.network.gcp.externalip": "An external IP address associated with this instance. Select an unused static IP address or choose 'Ephemeral' to use an IP from a shared ephemeral IP address pool.",
   "info.protectionplan.network.gcp.privateip": "Leave blank to assign an address from the network range or provide ip from the network range",
-  "info.protectionplan.network.gcp.subnet": "Subnetwork network which will use to allocate ip address to the instance."
+  "info.protectionplan.network.gcp.subnet": "Subnet used to allocate ip address to the instance.",
+  "info.protectionplan.network.aws.elasticip": "An Elastic IP address is a reserved public IP address that you can assign to any EC2 instance in a particular region."
 }

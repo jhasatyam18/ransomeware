@@ -24,6 +24,7 @@ class AwsNetworkConfig extends Component {
         dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, false));
         dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, ''));
         dispatch(valueChange(`${networkKey}-eth-${index}-securityGroup`, ''));
+        dispatch(valueChange(`${networkKey}-eth-${index}-network`, ''));
         eths.push({ key: `${networkKey}-eth-${index}`, isPublicIP: false, publicIP: '', privateIP: '', subnet: '', securityGroup: '' });
       }
       dispatch(valueChange(`${networkKey}`, eths));

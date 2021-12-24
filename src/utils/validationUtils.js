@@ -244,6 +244,7 @@ export function validateAWSNetworks(user, dispatch) {
   const { values } = user;
   const vms = getValue('ui.site.seletedVMs', values);
   const subnets = getValue(STATIC_KEYS.UI_SUBNETS, values);
+  const elasticIPs = [];
   let isClean = true;
   let message = '';
   Object.keys(vms).forEach((vm) => {
@@ -257,6 +258,9 @@ export function validateAWSNetworks(user, dispatch) {
       if (netConfigs[i].subnet === '') {
         isClean = false;
         message = `Subnet missing for ${vms[vm].name}`;
+      }
+      if (typeof netConfigs[i].network !== 'undefined' && netConfigs[i].network !== '') {
+        elasticIPs.push(netConfigs[i].network);
       }
       for (let j = 0; j < subnets.length; j += 1) {
         if (subnets[j].id === netConfigs[i].subnet) {
@@ -272,6 +276,15 @@ export function validateAWSNetworks(user, dispatch) {
       isClean = false;
     }
   });
+  // check if same elastic ip mapped with multiple networks or vms
+  const duplicates = elasticIPs
+    .filter((ip, index) => elasticIPs.indexOf(ip) !== index)
+    .filter((i) => i !== '-');
+  if (duplicates.length > 0) {
+    isClean = false;
+    message = 'Same elastic ip is mapped with multiple networks';
+  }
+
   if (!isClean) {
     dispatch(addMessage(message, MESSAGE_TYPES.ERROR));
   }

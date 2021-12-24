@@ -4,11 +4,11 @@ import DMAccordion from '../Shared/DMAccordion';
 import { createVMConfigStackObject, getValue } from '../../utils/InputUtils';
 
 class VMConfigurationStep extends Component {
-  renderVMConfig(vm) {
+  renderVMConfig(vm, index) {
     const { dispatch, user } = this.props;
     const config = createVMConfigStackObject(vm, user);
     return (
-      <DMAccordion title={vm.name} config={config} dispatch={dispatch} user={user} key={`accordion-vm-config-${vm.name}`} />
+      <DMAccordion title={vm.name} config={config} dispatch={dispatch} user={user} key={`accordion-vm-config-${vm.name}`} openByDefault={index === 0 ? 'true' : false} />
     );
   }
 
@@ -16,8 +16,8 @@ class VMConfigurationStep extends Component {
     const { user } = this.props;
     const { values } = user;
     const selectedVMs = getValue('ui.site.seletedVMs', values);
-    return Object.keys(selectedVMs).map((key) => (
-      this.renderVMConfig(selectedVMs[key])
+    return Object.keys(selectedVMs).map((key, index) => (
+      this.renderVMConfig(selectedVMs[key], index)
     ));
   }
 

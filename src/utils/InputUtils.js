@@ -198,6 +198,24 @@ export function getGCPExternalIPOptions(user) {
   return options;
 }
 
+export function getAWSElasticIPOptions(user, fieldKey) {
+  const { values } = user;
+  const options = [];
+  const ips = getValue(STATIC_KEYS.UI_RESERVE_IPS, values) || [];
+  ips.forEach((op) => {
+    options.push({ label: op.name, value: op.id });
+  });
+  const fieldValue = getValue(fieldKey, values);
+  if (typeof fieldValue !== 'undefined' && fieldValue !== null && fieldValue !== '' && fieldValue !== '-') {
+    // if field has a value and not in options then add it
+    const hasValue = options.filter((op) => op.value === fieldValue);
+    if (hasValue.length === 0) {
+      options.push({ label: fieldValue, value: fieldValue });
+    }
+  }
+  return options;
+}
+
 export function getGCPNetworkTierOptions() {
   const options = [];
   options.push({ label: 'Standard', value: 'Standard' });
@@ -459,4 +477,15 @@ export function shouldEnableAWSIOPS(user, fieldKey) {
     return true;
   }
   return false;
+}
+
+export function getAWSNetworkIDFromName(values, name) {
+  const ips = getValue(STATIC_KEYS.UI_RESERVE_IPS, values) || [];
+  let ipName = '';
+  ips.forEach((op) => {
+    if (op.id === name) {
+      ipName = op.name;
+    }
+  });
+  return ipName;
 }

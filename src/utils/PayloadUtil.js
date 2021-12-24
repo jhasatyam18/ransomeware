@@ -4,7 +4,8 @@ import { getValue,
   shouldShowNodePlatformType,
   shouldShowNodeManagementPort,
   shouldShowNodeReplicationPort,
-  shouldShowNodeEncryptionKey } from './InputUtils';
+  shouldShowNodeEncryptionKey,
+  getAWSNetworkIDFromName } from './InputUtils';
 
 export function getKeyStruct(filterKey, values) {
   const result = {};
@@ -134,16 +135,20 @@ export function getVMNetworkConfig(key, values) {
     const isPublicIP = getValue(`${networkKey}-eth-${index}-isPublic`, values) || false;
     const subnet = getValue(`${networkKey}-eth-${index}-subnet`, values);
     const privateIP = getValue(`${networkKey}-eth-${index}-privateIP`, values) || '';
-    const publicIP = getValue(`${networkKey}-eth-${index}-publicIP`, values) || '';
+    let publicIP = getValue(`${networkKey}-eth-${index}-publicIP`, values) || '';
     const sgs = getValue(`${networkKey}-eth-${index}-securityGroups`, values) || '';
     const networkTier = getValue(`${networkKey}-eth-${index}-networkTier`, values) || '';
+    const network = getValue(`${networkKey}-eth-${index}-network`, values) || '';
     if (isPublicIP) {
       hasPublicIP = true;
     }
+    if (network !== '' && recoveryPlatform === PLATFORM_TYPES.AWS) {
+      publicIP = getAWSNetworkIDFromName(values, network) || publicIP;
+    }
     if (typeof id !== 'undefined' && id !== '') {
-      networks.push({ id, isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier });
+      networks.push({ id, isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network });
     } else {
-      networks.push({ isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier });
+      networks.push({ isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network });
     }
   }
 

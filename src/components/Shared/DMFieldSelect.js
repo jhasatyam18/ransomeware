@@ -43,11 +43,11 @@ class DMFieldSelect extends Component {
   }
 
   getOptions() {
-    const { field, user } = this.props;
+    const { field, user, fieldKey } = this.props;
     const { options } = field;
     let optionValues;
     if (typeof options === 'function') {
-      optionValues = options(user);
+      optionValues = options(user, fieldKey);
       return optionValues;
     }
     optionValues = (options && options.length > 0 ? options : []);

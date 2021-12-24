@@ -10,6 +10,13 @@ class DMStackView extends Component {
     this.toggle = this.toggle.bind(this);
   }
 
+  componentDidMount() {
+    const { openByDefault } = this.props;
+    if (typeof openByDefault !== 'undefined' && openByDefault === 'true') {
+      this.toggle();
+    }
+  }
+
   toggle() {
     // const { isOpen } = this.state;
     const { onToggleStack, index } = this.props;

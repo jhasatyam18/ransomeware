@@ -365,3 +365,12 @@ export function onAwsStorageTypeChange({ value, fieldKey }) {
     }
   };
 }
+
+export function onAwsPublicIPChecked({ value, fieldKey }) {
+  return (dispatch) => {
+    if (value) {
+      const networkKey = fieldKey.replace('isPublic', 'network');
+      dispatch(valueChange(networkKey, ''));
+    }
+  };
+}

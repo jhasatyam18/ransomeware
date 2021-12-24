@@ -35,7 +35,7 @@ class DMFieldCheckbox extends Component {
     });
     dispatch(valueChange(fieldKey, e.target.checked));
     if (typeof onChange === 'function') {
-      dispatch(onChange({ value: e.target.checked }));
+      dispatch(onChange({ value: e.target.checked, fieldKey }));
     }
   }
 

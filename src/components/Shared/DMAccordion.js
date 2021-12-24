@@ -11,6 +11,13 @@ class DMAccordion extends Component {
     this.toggleStack = this.toggleStack.bind(this);
   }
 
+  componentDidMount() {
+    const { openByDefault } = this.props;
+    if (typeof openByDefault !== 'undefined' && openByDefault === 'true') {
+      this.setState({ isOpen: true });
+    }
+  }
+
   toggle() {
     const { isOpen } = this.state;
     this.setState({ isOpen: !isOpen });
@@ -31,7 +38,7 @@ class DMAccordion extends Component {
     const { data } = config;
     return data.map((conf, index) => (
       <>
-        <DMStackView dispatch={dispatch} index={index} user={user} configuration={conf} title={conf.title} hasChildren={conf.hasChildren} key={`stack-view-${index * 1}`} openStack={stackIndex === index} onToggleStack={this.toggleStack} />
+        <DMStackView dispatch={dispatch} index={index} user={user} configuration={conf} title={conf.title} hasChildren={conf.hasChildren} key={`stack-view-${index * 1}`} openStack={stackIndex === index} onToggleStack={this.toggleStack} openByDefault={index === 0 ? 'true' : 'false'} />
       </>
     ));
   }

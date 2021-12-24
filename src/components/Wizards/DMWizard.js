@@ -24,7 +24,7 @@ import DRPlanBootOrderStep from './DRPlanBootOrderStep';
 class DMWizard extends React.Component {
   constructor() {
     super();
-    this.state = { currentStep: 0, wizardSize: 'lg' };
+    this.state = { currentStep: 0, wizardSize: 'xl' };
     this.onClose = this.onClose.bind(this);
     this.onNext = this.onNext.bind(this);
     this.onBack = this.onBack.bind(this);
