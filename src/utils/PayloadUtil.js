@@ -98,7 +98,7 @@ export function getVMConfigPayload(user) {
     const id = getValue(`${key}-vmConfig.general.id`, values);
     const instanceType = getValue(`${key}-vmConfig.general.instanceType`, values);
     const volumeType = getValue(`${key}-vmConfig.general.volumeType`, values);
-    let volumeIOPS = getValue(`${key}-vmConfig.general.volumeIOPS`, values);
+    let volumeIOPS = getValue(`${key}-vmConfig.general.volumeIOPS`, values) || 0;
     if (volumeType === 'gp2') {
       volumeIOPS = 0;
     }
