@@ -142,13 +142,12 @@ export function takeVMAction(alert, associatedEvent) {
     }
     if (VM_CONFIG_ACTION_EVENT.indexOf(associatedEvent.type) !== -1) {
       dispatch(closeModal());
-      dispatch(acknowledgeAlert(alert));
-      dispatch(initEditPlanAction(associatedEvent));
+      dispatch(initEditPlanAction(associatedEvent, alert));
     }
   };
 }
 
-export function initEditPlanAction(event) {
+export function initEditPlanAction(event, alert) {
   return async (dispatch) => {
     function fetchProtection(id) {
       return callAPI(API_FETCH_DR_PLAN_BY_ID.replace('<id>', id)).then((json) => {
@@ -164,7 +163,7 @@ export function initEditPlanAction(event) {
     const urn = parts[0].split(':');
     if (urn.length > 1) {
       const pPlan = await fetchProtection(urn[2]);
-      dispatch(openEditProtectionPlanWizard(pPlan, true));
+      dispatch(openEditProtectionPlanWizard(pPlan, true, alert));
     }
   };
 }

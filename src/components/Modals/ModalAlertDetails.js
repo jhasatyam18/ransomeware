@@ -40,12 +40,14 @@ class ModalAlertDetails extends Component {
     const { associatedEvent, selected } = alerts;
     const { ackMessage } = this.state;
     const user = getCookie(APPLICATION_API_USER);
-    if (ackMessage.length === 0) {
-      this.setState({ error: 'Required acknowledge message' });
-      return;
+    if (VM_CONFIG_ACTION_EVENT.indexOf(associatedEvent.type) === -1) {
+      if (ackMessage.length === 0) {
+        this.setState({ error: 'Required acknowledge message' });
+        return;
+      }
+      selected.acknowledgeMessage = ackMessage;
+      selected.acknowledgeBy = user;
     }
-    selected.acknowledgeMessage = ackMessage;
-    selected.acknowledgeBy = user;
     dispatch(takeVMAction(selected, associatedEvent));
   }
 

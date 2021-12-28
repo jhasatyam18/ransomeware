@@ -8,7 +8,7 @@ import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { fetchNetworks, fetchSites, onRecoverSiteChange } from './SiteActions';
 import { getCreateDRPlanPayload, getEditProtectionPlanPayload, getRecoveryPayload, getReversePlanPayload } from '../../utils/PayloadUtil';
-import { clearValues, fetchScript, hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
+import { addAssociatedReverseIP, clearValues, fetchScript, hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
 import { closeWizard, openWizard } from './WizardActions';
 import { closeModal, openModal } from './ModalActions';
 import { MIGRATION_WIZARDS, RECOVERY_WIZARDS, TEST_RECOVERY_WIZARDS, REVERSE_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS } from '../../constants/WizardConstants';
@@ -443,7 +443,7 @@ function getSelectedPlanID(drPlans) {
   return null;
 }
 
-export function openEditProtectionPlanWizard(plan, isEventAction = false) {
+export function openEditProtectionPlanWizard(plan, isEventAction = false, alert = null) {
   return (dispatch, getState) => {
     const { drPlans } = getState();
     dispatch(clearValues());
@@ -451,6 +451,7 @@ export function openEditProtectionPlanWizard(plan, isEventAction = false) {
     const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(selectedPlan.recoverySite.id)), dispatch(fetchScript())];
     return Promise.all(apis).then(
       () => {
+        dispatch(valueChange('ui.editplan.alert.id', (alert !== null ? alert.id : alert)));
         dispatch(valueChange('ui.selected.protection.planID', selectedPlan.id));
         dispatch(valueChange('drplan.recoverySite', selectedPlan.recoverySite.id));
         dispatch(valueChange('ui.values.recoveryPlatform', selectedPlan.recoverySite.platformDetails.platformType));
@@ -496,7 +497,12 @@ export function onEditProtectionPlan() {
     const payload = getEditProtectionPlanPayload(user, sites.sites);
     const obj = createPayload(API_TYPES.PUT, { ...payload.drplan });
     const id = getValue('ui.selected.protection.planID', values);
-    const url = API_PROTECTION_PLAN_UPDATE.replace('<id>', id);
+    let url = API_PROTECTION_PLAN_UPDATE.replace('<id>', id);
+    // get alert
+    const alert = getValue('ui.editplan.alert.id', values);
+    if (alert !== null) {
+      url = `${url}?alert=${alert}`;
+    }
     dispatch(showApplicationLoader('update-dr-plan', 'Updating protection plan...'));
     return callAPI(url, obj).then((json) => {
       dispatch(hideApplicationLoader('update-dr-plan'));
@@ -635,6 +641,7 @@ function setAWSVMDetails(selectedVMS, protectionPlan, dispatch) {
             dispatch(valueChange(`${networkKey}-eth-${index}-network`, net.network));
             dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, net.publicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
+            dispatch(addAssociatedReverseIP({ ip: net.publicIP, id: net.network, fieldKey: `${networkKey}-eth-${index}` }));
             const sgs = (net.securityGroups ? net.securityGroups.split(',') : []);
             dispatch(valueChange(`${networkKey}-eth-${index}-securityGroups`, sgs));
             eths.push({ key: `${networkKey}-eth-${index}`, isPublicIP: net.isPublicIP, publicIP: '', privateIP: net.privateIP, subnet: net.Subnet, securityGroup: sgs, network: net.network });

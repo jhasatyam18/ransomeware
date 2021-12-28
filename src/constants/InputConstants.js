@@ -57,6 +57,7 @@ export const STATIC_KEYS = {
   UI_SUBNETS: 'ui.values.subnets',
   UI_SITE_NODES: 'ui.values.nodes',
   UI_RESERVE_IPS: 'ui.values.reserveips',
+  UI_ASSOCIATED_RESERVE_IPS: 'ui.values.associated.ips',
 };
 
 // Recovery time in minutes

@@ -374,3 +374,19 @@ export function onAwsPublicIPChecked({ value, fieldKey }) {
     }
   };
 }
+
+export function addAssociatedReverseIP({ fieldKey, ip, id }) {
+  return (dispatch, getState) => {
+    if (typeof ip === 'undefined' || ip === '' || typeof id === 'undefined') {
+      return;
+    }
+    const { user } = getState();
+    const { values } = user;
+    let ips = getValue(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, values) || {};
+    const hasKey = Object.keys(ips).filter((key) => ips[key].ip === ip);
+    if (hasKey.length === 0) {
+      ips = { ...ips, [ip]: { label: ip, value: id, fieldKey } };
+      dispatch(valueChange(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, ips));
+    }
+  };
+}

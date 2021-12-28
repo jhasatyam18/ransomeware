@@ -135,6 +135,7 @@ export const TABLE_EVENTS = [
   { label: 'Level', field: 'severity', itemRenderer: EVENT_LEVEL_ITEM_RENDERER, width: 1 },
   { label: 'Event Type', field: 'type', width: 1 },
   { label: 'Description', field: 'description', width: 4 },
+  { label: 'User', field: 'generator' },
 ];
 
 // Table fields for ALERTS

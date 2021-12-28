@@ -205,12 +205,18 @@ export function getAWSElasticIPOptions(user, fieldKey) {
   ips.forEach((op) => {
     options.push({ label: op.name, value: op.id });
   });
-  const fieldValue = getValue(fieldKey, values);
-  if (typeof fieldValue !== 'undefined' && fieldValue !== null && fieldValue !== '' && fieldValue !== '-') {
-    // if field has a value and not in options then add it
-    const hasValue = options.filter((op) => op.value === fieldValue);
-    if (hasValue.length === 0) {
-      options.push({ label: fieldValue, value: fieldValue });
+  // const fieldValue = getValue(fieldKey, values);
+  if (typeof fieldKey !== 'undefined' && fieldKey !== null && fieldKey !== '' && fieldKey !== '-') {
+    const networkKey = fieldKey.replace('-network', '');
+    const associatedIPs = getValue(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, values) || {};
+    const keys = Object.keys(associatedIPs);
+    if (keys.length > 0) {
+      const vmIps = keys.filter((k) => associatedIPs[k].fieldKey === networkKey);
+      if (vmIps.length > 0) {
+        vmIps.forEach((op) => {
+          options.push({ label: associatedIPs[op].label, value: associatedIPs[op].value });
+        });
+      }
     }
   }
   return options;
@@ -481,11 +487,20 @@ export function shouldEnableAWSIOPS(user, fieldKey) {
 
 export function getAWSNetworkIDFromName(values, name) {
   const ips = getValue(STATIC_KEYS.UI_RESERVE_IPS, values) || [];
+  const associatedIPs = getValue(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, values) || {};
   let ipName = '';
   ips.forEach((op) => {
     if (op.id === name) {
       ipName = op.name;
     }
   });
+  // check for the associated ips records if record not found in free ips
+  if (ipName === '') {
+    Object.keys(associatedIPs).forEach((op) => {
+      if (associatedIPs[op].value === name) {
+        ipName = associatedIPs[op].label;
+      }
+    });
+  }
   return ipName;
 }
