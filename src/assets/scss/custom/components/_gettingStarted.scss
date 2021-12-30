@@ -1,0 +1,79 @@
+//
+// gettingStarted.scss 
+//
+.getting_started {
+  margin-top: auto;
+  display: grid;
+  grid-template-columns: 1fr 0.1fr 1fr 0.1fr 1fr;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  .getting_started__item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+  }
+  .getting_started__item::before {
+    position: absolute;
+    border-bottom: 1px solid $gray-400;
+    width: 100%;
+    top: 20px;
+    left: -55%;
+    content: "";
+  }
+  
+  .getting_started__item::after {
+    position: absolute;
+    border-bottom: 1px  $gray-400;
+    width: 100%;
+    top: 20px;
+    left: 50%;
+    content: "";
+  }
+  .getting_started__item.completed::after {
+    top: 20px;
+    left: 50%;
+    z-index: 3;
+    position: absolute;
+    content: "";
+    border-bottom: 1px solid $success;
+    width: 100%;
+  }
+  .getting_started__item .step__icon {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-bottom: 6px;
+    z-index: 2;
+  }
+
+  .step__active {
+    background-color: $blue;
+    color: white;
+  }
+  
+  .step__disabled {
+    background: $gray-400;
+    color: white;
+  }
+  
+  .getting_started__item.active {
+    font-weight: bold;
+  }
+  
+  .getting_started__item.completed .step__icon {
+    background-color: $success;
+  }
+  
+  .getting_started__item:first-child::before {
+    content: none;
+  }
+  .getting_started__item:last-child::after {
+    content: none;
+  }
+}

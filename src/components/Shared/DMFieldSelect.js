@@ -42,6 +42,17 @@ class DMFieldSelect extends Component {
     }
   }
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { user, fieldKey } = nextProps;
+    const { values } = user;
+    const { value } = prevState;
+    const nextValue = getValue(fieldKey, values);
+    if (nextValue !== value) {
+      return ({ value: nextValue });
+    }
+    return null;
+  }
+
   getOptions() {
     const { field, user, fieldKey } = this.props;
     const { options } = field;

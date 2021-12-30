@@ -99,7 +99,7 @@ class DRPlanDetails extends Component {
       return null;
     }
     const keys = [{ label: 'Replication Interval', field: 'replicationInterval' }, { label: 'Subnet', field: 'subnet' }, { label: 'Encryption On Wire', field: 'isEncryptionOnWire' },
-      { label: 'Encryption On Rest', field: 'isEncryptionOnRest' }, { label: 'Compression', field: 'isCompression' }, { label: 'Dedupe', field: 'isDedupe' },
+      { label: 'Compression', field: 'isCompression' }, { label: 'Dedupe', field: 'isDedupe' },
       { label: 'Pre Script', field: 'preScript' }, { label: 'Post Script', field: 'postScript' }];
     const fields = keys.map((ele) => {
       const { field, label } = ele;

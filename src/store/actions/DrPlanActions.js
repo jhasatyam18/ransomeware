@@ -16,6 +16,8 @@ import { getValue } from '../../utils/InputUtils';
 import { PLATFORM_TYPES } from '../../constants/InputConstants';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
+import { setCookie } from '../../utils/CookieUtils';
+import { APPLICATION_GETTING_STARTED_COMPLETED } from '../../constants/UserConstant';
 
 export function fetchDrPlans(key) {
   return (dispatch) => {
@@ -176,6 +178,8 @@ export function onConfigureDRPlan() {
         dispatch(closeWizard());
         dispatch(clearValues());
         fetchByDelay(dispatch, fetchDrPlans, 2000);
+        // push getting started flag to local cache
+        setCookie(APPLICATION_GETTING_STARTED_COMPLETED, true);
       }
     },
     (err) => {

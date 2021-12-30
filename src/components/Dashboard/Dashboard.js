@@ -13,6 +13,7 @@ import SiteConnection from './SiteConnection';
 import DashboardEvents from './DashboardEvents';
 import DashboardAlertOverview from './DashboardAlertOverview';
 import { getStorageWithUnit } from '../../utils/AppUtils';
+import GettingStarted from './GettingStarted';
 
 class Dashboard extends Component {
   componentDidMount() {
@@ -38,6 +39,11 @@ class Dashboard extends Component {
     return (
       <>
         <Container fluid>
+          <Row>
+            <Col sm={12}>
+              <GettingStarted />
+            </Col>
+          </Row>
           <Row>
             <Col xl="12">
               <Row>
