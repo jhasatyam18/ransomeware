@@ -13,11 +13,11 @@ class BandwidthChart extends Component {
     this.state = {
       series: [
         {
-          name: 'Upload Speed',
+          name: 'Upload Speed (Mbps)',
           data: [],
         },
         {
-          name: 'Download Speed',
+          name: 'Download Speed (Mbps)',
           data: [],
         },
       ],
@@ -29,6 +29,9 @@ class BandwidthChart extends Component {
         markers: { size: 0, style: 'hollow' },
         xaxis: {
           type: 'datetime',
+          labels: {
+            datetimeUTC: false,
+          },
         },
         fill: {
           type: 'gradient',
@@ -37,7 +40,7 @@ class BandwidthChart extends Component {
             opacityTo: 0.8,
           },
         },
-        tooltip: { theme: 'dark', x: { format: 'dd MMM yyyy HH:ss' } },
+        tooltip: { theme: 'dark', x: { format: 'dd MMM yyyy hh:mm' } },
         grid: {
           xaxis: {
             lines: {
@@ -71,13 +74,12 @@ class BandwidthChart extends Component {
         if (json !== null) {
           json.forEach((item) => {
             uploadSpeed.push([item.timeStamp * 1000, item.uploadSpeed]);
-            downloadSpeed.push([item.timeStamp * 1000, item.uploadSpeed]);
+            downloadSpeed.push([item.timeStamp * 1000, item.downloadSpeed]);
           });
-
           this.setState({
             series: [
-              { name: 'Upload Speed', data: uploadSpeed },
-              { name: 'Download Speed', data: downloadSpeed }] });
+              { name: 'Upload Speed (Mbps)', data: uploadSpeed },
+              { name: 'Download Speed (Mbps)', data: downloadSpeed }] });
         }
       } catch (e) {
         dispatch(addMessage(e.message, MESSAGE_TYPES.ERROR));
@@ -95,7 +97,7 @@ class BandwidthChart extends Component {
         <Card>
           <CardBody>
             <p className="font-weight-medium color-white">
-              Bandwidth Usage
+              Bandwidth Usage ( Last 12 hours )
             </p>
             <div>
               <div id="overview-chart" className="apex-charts" dir="ltr">
