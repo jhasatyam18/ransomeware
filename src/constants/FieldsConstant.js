@@ -75,7 +75,7 @@ export const FIELDS = {
   },
 
   'drplan.name': {
-    label: 'name', description: 'Protection Plan name', type: FIELD_TYPE.TEXT, errorMessage: 'Required disaster recovery plan name', shouldShow: true, validate: (value, user) => isEmpty(value, user), fieldInfo: 'info.protection.plan',
+    label: 'name', description: 'Protection Plan name', type: FIELD_TYPE.TEXT, errorMessage: 'Required protection plan name', shouldShow: true, validate: (value, user) => isEmpty(value, user), fieldInfo: 'info.protection.plan',
   },
   'drplan.replicationInterval': {
     label: 'Interval', type: FIELD_TYPE.CUSTOM, COMPONENT: REPLICATION_INTERVAL_COMP, validate: (value, user) => validateReplicationInterval(value, user), fieldInfo: 'info.protection.replicationInterval',

@@ -108,7 +108,7 @@ export function setBandwidthFields(json) {
   return (dispatch) => {
     dispatch(valueChange('throttling.isLimitEnabled', json.isLimitEnabled));
     dispatch(valueChange('throttling.bandwidthLimit', json.bandwidthLimit));
-    dispatch(valueChange('throttling.isTimeEnabled', json.isLimitEnabled));
+    dispatch(valueChange('throttling.isTimeEnabled', json.isTimeEnabled));
     dispatch(valueChange('throttling.timeLimit', json.timeLimit));
     dispatch(valueChange('throttling.startTime', getDateFromTime(json.startTime)));
     dispatch(valueChange('throttling.endTime', getDateFromTime(json.endTime)));

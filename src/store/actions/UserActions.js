@@ -4,7 +4,7 @@ import * as Types from '../../constants/actionTypes';
 import { API_AUTHENTICATE, API_AWS_AVAILABILITY_ZONES, API_AWS_REGIONS, API_CHANGE_PASSWORD, API_GCP_AVAILABILITY_ZONES, API_GCP_REGIONS, API_INFO, API_SCRIPTS } from '../../constants/ApiConstants';
 import { APP_TYPE, PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { ALERTS_PATH, DASHBOARD_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH } from '../../constants/RouterConstants';
+import { ALERTS_PATH, DASHBOARD_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH } from '../../constants/RouterConstants';
 import { APPLICATION_API_TOKEN, APPLICATION_API_USER } from '../../constants/UserConstant';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { setCookie } from '../../utils/CookieUtils';
@@ -22,6 +22,7 @@ import { addMessage, clearMessages } from './MessageActions';
 import { fetchNodes } from './NodeActions';
 import { fetchSites } from './SiteActions';
 import { fetchSupportBundles } from './SupportActions';
+import { fetchBandwidthConfig, fetchBandwidthReplNodes } from './ThrottlingAction';
 
 export function login({ username, password, history }) {
   return (dispatch) => {
@@ -243,6 +244,10 @@ export function refresh() {
       case EMAIL_SETTINGS_PATH:
         dispatch(fetchEmailConfig());
         dispatch(fetchEmailRecipients());
+        break;
+      case THROTTLING_SETTINGS_PATH:
+        dispatch(fetchBandwidthConfig());
+        dispatch(fetchBandwidthReplNodes());
         break;
       default:
         dispatch(detailPathChecks(pathname));
