@@ -10,12 +10,11 @@ function GettingStarted(props) {
   const { dashboard, t } = props;
   const { nodes, titles = {} } = dashboard;
   const { sites = 0, protectionPlans = 0 } = titles;
-  const isNodesConfigured = nodes.length === 2;
-  const isSiteConfigured = sites === 2;
-  const isPlanConfigured = protectionPlans === 1;
+  const isNodesConfigured = nodes.length >= 2;
+  const isSiteConfigured = sites >= 2;
   const isGettingStartedCompleted = getCookie(APPLICATION_GETTING_STARTED_COMPLETED);
   // if getting started already completed or configuration is already done then hide the component
-  if (isGettingStartedCompleted || isPlanConfigured) {
+  if (isGettingStartedCompleted || protectionPlans >= 1) {
     return null;
   }
   function renderItem(stepName, icon, completed, path, isActive) {
@@ -52,7 +51,7 @@ function GettingStarted(props) {
           <i className={`fas fa-chevron-right padding-top-15 ${isNodesConfigured ? 'text-success' : 'text-secondary'}`} />
           {renderItem('create.sites', 'fa fa-cloud', isSiteConfigured, SITES_PATH, (!isSiteConfigured && isNodesConfigured))}
           <i className={`fas fa-chevron-right padding-top-15 ${isSiteConfigured ? 'text-success' : 'text-secondary'}`} />
-          {renderItem('protect.workloads', 'fas fa-layer-group', isPlanConfigured, PROTECTION_PLANS_PATH, (isSiteConfigured && !isPlanConfigured))}
+          {renderItem('protect.workloads', 'fas fa-layer-group', (protectionPlans >= 1), PROTECTION_PLANS_PATH, (isSiteConfigured && !(protectionPlans >= 1)))}
         </div>
       </div>
 

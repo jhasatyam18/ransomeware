@@ -95,7 +95,9 @@ export function deleteSite(id) {
   return (dispatch) => {
     const url = API_DELETE_SITES.replace('<id>', id);
     const obj = createPayload(API_TYPES.DELETE, {});
+    dispatch(showApplicationLoader(url, 'Deleting site...'));
     return callAPI(url, obj).then((json) => {
+      dispatch(hideApplicationLoader(url));
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
@@ -105,6 +107,7 @@ export function deleteSite(id) {
       }
     },
     (err) => {
+      dispatch(hideApplicationLoader(url));
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
   };
