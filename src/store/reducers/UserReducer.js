@@ -66,6 +66,11 @@ export default function user(state = INITIAL_STATE.user, action) {
       return {
         ...state, license: action.license,
       };
+    case Types.APP_USER_PRIVILEGES: {
+      return {
+        ...state, privileges: action.privileges,
+      };
+    }
     default:
       return state;
   }

@@ -6,11 +6,12 @@ import { deletePlanConfirmation, fetchDRPlanById, openEditProtectionPlanWizard, 
 import DMTable from '../Table/DMTable';
 import DMBreadCrumb from '../Common/DMBreadCrumb';
 import { TABLE_PROTECTION_PLAN_VMS } from '../../constants/TableConstants';
-import { RECOVERY_STATUS, REPLICATION_STATUS } from '../../constants/InputConstants';
+import { PLATFORM_TYPES, RECOVERY_STATUS, REPLICATION_STATUS } from '../../constants/InputConstants';
 import DropdownActions from '../Common/DropdownActions';
 import CheckBox from '../Common/CheckBox';
 import DisplayString from '../Common/DisplayString';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
+import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
 
 const Replication = React.lazy(() => import('../Jobs/Replication'));
 const Recovery = React.lazy(() => import('../Jobs/Recovery'));
@@ -45,12 +46,40 @@ class DRPlanDetails extends Component {
     if (!protectionPlan) {
       return true;
     }
-    const { protectedSite } = protectionPlan;
+    const { protectedSite, recoverySite } = protectionPlan;
     const { platformDetails } = protectedSite;
-    if (platformDetails.platformType === user.platformType) {
+    if (platformDetails.platformType === user.platformType && hasRequestedPrivileges(user, ['protectionplan.edit'])) {
+      return false;
+    }
+    // disable if recovery site is VMware
+    if (recoverySite.platformDetails.platformType === PLATFORM_TYPES.VMware) {
       return false;
     }
     return true;
+  }
+
+  disableStart(protectionPlan) {
+    const { user } = this.props;
+    return (protectionPlan.status.toUpperCase() === REPLICATION_STATUS.STARTED || !hasRequestedPrivileges(user, ['protectionplan.status']));
+  }
+
+  disableStop(protectionPlan) {
+    const { user } = this.props;
+    return (protectionPlan.status === REPLICATION_STATUS.STOPPED || !hasRequestedPrivileges(user, ['protectionplan.status']));
+  }
+
+  disableReverse(protectionPlan) {
+    const { user } = this.props;
+    const { protectedSite, recoverySite } = protectionPlan;
+    const protectedSitePlatform = protectedSite.platformDetails.platformType;
+    const recoverySitePlatform = recoverySite.platformDetails.platformType;
+    if (protectedSitePlatform === PLATFORM_TYPES.AWS || recoverySitePlatform === PLATFORM_TYPES.GCP) {
+      return true;
+    }
+    if (!(protectionPlan.recoveryStatus === RECOVERY_STATUS.RECOVERED || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED)) {
+      return true;
+    }
+    return !hasRequestedPrivileges(user, ['recovery.reverse']);
   }
 
   renderSite(site) {
@@ -148,18 +177,18 @@ class DRPlanDetails extends Component {
     const { protectedSite, recoverySite } = protectionPlan;
     const protectedSitePlatform = protectedSite.platformDetails.platformType;
     const isServerActionDisabled = (protectionPlan.recoveryStatus === RECOVERY_STATUS.RECOVERED || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED);
-    const isReverseActionDisabled = !(protectionPlan.recoveryStatus === RECOVERY_STATUS.RECOVERED || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED);
+    const isReverseActionDisabled = this.disableReverse(protectionPlan);
     let actions = [];
     if (platformType === protectedSitePlatform && localVMIP !== recoverySite.node.hostname) {
-      actions.push({ label: 'start', action: startPlan, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS.STARTED });
-      actions.push({ label: 'stop', action: stopPlan, id: protectionPlan.id, disabled: protectionPlan.status === REPLICATION_STATUS.STOPPED });
+      actions.push({ label: 'start', action: startPlan, id: protectionPlan.id, disabled: this.disableStart(protectionPlan) });
+      actions.push({ label: 'stop', action: stopPlan, id: protectionPlan.id, disabled: this.disableStop(protectionPlan) });
       actions.push({ label: 'edit', action: openEditProtectionPlanWizard, id: protectionPlan, disabled: this.showEdit() });
       actions.push({ label: 'remove', action: deletePlanConfirmation, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS.STARTED, navigate: PROTECTION_PLANS_PATH });
     } else if (localVMIP === recoverySite.node.hostname) {
-      actions = [{ label: 'recover', action: openRecoveryWizard, icon: 'fa fa-plus', disabled: isServerActionDisabled },
-        { label: 'Migrate', action: openMigrationWizard, icon: 'fa fa-clone', disabled: isServerActionDisabled },
+      actions = [{ label: 'recover', action: openRecoveryWizard, icon: 'fa fa-plus', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.full']) },
+        { label: 'Migrate', action: openMigrationWizard, icon: 'fa fa-clone', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.migration']) },
         { label: 'Reverse', action: openReverseWizard, icon: 'fa fa-backward', disabled: isReverseActionDisabled },
-        { label: 'Test Recovery', action: openTestRecoveryWizard, icon: 'fa fa-check', disabled: isServerActionDisabled }];
+        { label: 'Test Recovery', action: openTestRecoveryWizard, icon: 'fa fa-check', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.test']) }];
     } else {
       // no action to add
     }

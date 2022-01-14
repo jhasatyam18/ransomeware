@@ -67,7 +67,7 @@ class ProfileMenu extends Component {
             id="page-header-user-dropdown"
             tag="button"
           >
-            <span className="d-none d-xl-inline-block ml-2 mr-1">
+            <span className="d-none d-xl-inline-block ml-2 mr-1" style={{ textTransform: 'capitalize' }}>
               {name}
             </span>
             <i className="bx bx-chevron-down" />

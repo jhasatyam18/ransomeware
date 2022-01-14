@@ -23,8 +23,8 @@ class ModalAbout extends Component {
 
   render() {
     const { user } = this.props;
-    const { license } = user;
-    const { version, serviceType, nodeKey, activeLicenses } = license;
+    const { license, platformType } = user;
+    const { version, nodeKey, activeLicenses } = license;
     let key = '';
     for (let i = 0; i < nodeKey.length; i += 1) {
       if (i !== 0 && i % 4 === 0) {
@@ -35,7 +35,7 @@ class ModalAbout extends Component {
     }
     const info = [
       { label: 'Version', value: version },
-      { label: 'Service Type', value: serviceType },
+      { label: 'Platform Type', value: platformType },
       { label: 'Node Key ', value: key },
       { label: 'Actives Licenses', value: activeLicenses },
     ];

@@ -13,6 +13,7 @@ import DMBreadCrumb from '../../Common/DMBreadCrumb';
 import DMField from '../../Shared/DMField';
 import DMTable from '../../Table/DMTable';
 import DMToolTip from '../../Shared/DMToolTip';
+import { hasRequestedPrivileges } from '../../../utils/PrivilegeUtils';
 
 class Throttling extends Component {
   constructor() {
@@ -54,7 +55,7 @@ class Throttling extends Component {
   }
 
   renderReplNodes() {
-    const { settings, dispatch } = this.props;
+    const { settings, dispatch, user } = this.props;
     const { replNodes } = settings;
     return (
       <Card className="padding-top-10 margin-top-10">
@@ -66,6 +67,7 @@ class Throttling extends Component {
           data={replNodes}
           primaryKey="id"
           dispatch={dispatch}
+          user={user}
         />
       </Card>
     );
@@ -74,11 +76,11 @@ class Throttling extends Component {
   renderThrottlingForm() {
     const { dispatch, t, user } = this.props;
     const { values } = user;
+    const hasPrivilege = hasRequestedPrivileges(user, ['throttling.Config']);
     const limitDisabled = !getValue('throttling.isLimitEnabled', values);
     const timeDisabled = !getValue('throttling.isTimeEnabled', values);
     const applyDisabled = limitDisabled && timeDisabled;
     return (
-
       <div className="flex__form_horizontal">
         <div className="form__item">
           <div className="form__label">
@@ -87,10 +89,10 @@ class Throttling extends Component {
           <div className="form__input">
             <Row>
               <Col sm={2}>
-                <DMField dispatch={dispatch} user={user} fieldKey="throttling.isLimitEnabled" hideLabel="true" />
+                <DMField dispatch={dispatch} user={user} fieldKey="throttling.isLimitEnabled" hideLabel="true" disabled={!hasPrivilege} />
               </Col>
               <Col sm={8}>
-                <DMField dispatch={dispatch} user={user} fieldKey="throttling.bandwidthLimit" disabled={limitDisabled} hideLabel="true" />
+                <DMField dispatch={dispatch} user={user} fieldKey="throttling.bandwidthLimit" disabled={!hasPrivilege || limitDisabled} hideLabel="true" />
               </Col>
               <Col sm={2}>
                 <DMToolTip tooltip="info.throttling.limit.enabled" />
@@ -105,10 +107,10 @@ class Throttling extends Component {
           <div className="form__input">
             <Row>
               <Col sm={2}>
-                <DMField dispatch={dispatch} user={user} fieldKey="throttling.isTimeEnabled" hideLabel="true" />
+                <DMField dispatch={dispatch} user={user} fieldKey="throttling.isTimeEnabled" hideLabel="true" disabled={!hasPrivilege} />
               </Col>
               <Col sm={8}>
-                <DMField dispatch={dispatch} user={user} fieldKey="throttling.timeLimit" disabled={timeDisabled} hideLabel="true" />
+                <DMField dispatch={dispatch} user={user} fieldKey="throttling.timeLimit" disabled={!hasPrivilege || timeDisabled} hideLabel="true" />
               </Col>
               <Col sm={2}>
                 <DMToolTip tooltip="info.throttling.time.limit.enabled" />
@@ -126,7 +128,7 @@ class Throttling extends Component {
                 {' '}
               </Col>
               <Col sm={8} className="padding-left-20">
-                <DMField dispatch={dispatch} user={user} fieldKey="throttling.startTime" disabled={timeDisabled} hideLabel="true" />
+                <DMField dispatch={dispatch} user={user} fieldKey="throttling.startTime" disabled={!hasPrivilege || timeDisabled} hideLabel="true" />
               </Col>
               <Col sm={2}>
                 <DMToolTip tooltip="info.throttling.time.limit.start" />
@@ -144,7 +146,7 @@ class Throttling extends Component {
                 {' '}
               </Col>
               <Col sm={8} className="padding-left-20">
-                <DMField dispatch={dispatch} user={user} fieldKey="throttling.endTime" disabled={timeDisabled} hideLabel="true" />
+                <DMField dispatch={dispatch} user={user} fieldKey="throttling.endTime" disabled={!hasPrivilege || timeDisabled} hideLabel="true" />
               </Col>
               <Col sm={2}>
                 <DMToolTip tooltip="info.throttling.time.limit.end" />
@@ -162,7 +164,7 @@ class Throttling extends Component {
                 {' '}
               </Col>
               <Col sm={10} className="padding-left-20">
-                <DMField dispatch={dispatch} user={user} fieldKey="throttling.applyToAll" disabled={applyDisabled} hideLabel="true" />
+                <DMField dispatch={dispatch} user={user} fieldKey="throttling.applyToAll" disabled={!hasPrivilege || applyDisabled} hideLabel="true" />
               </Col>
             </Row>
           </div>
@@ -170,8 +172,8 @@ class Throttling extends Component {
         <br />
         <div className="form__item">
           <div>
-            <ActionButton label="Configure" onClick={this.onConfigureBandwidth} isDisabled={false} t={t} key="configureBandwidth" />
-            <ActionButton label="Reset" onClick={this.onReset} isDisabled={false} t={t} key="reset" />
+            <ActionButton label="Configure" onClick={this.onConfigureBandwidth} isDisabled={!hasPrivilege || false} t={t} key="configureBandwidth" />
+            <ActionButton label="Reset" onClick={this.onReset} isDisabled={!hasPrivilege || false} t={t} key="reset" />
           </div>
         </div>
       </div>

@@ -10,6 +10,7 @@ import { closeModal } from '../../store/actions/ModalActions';
 import { getCookie } from '../../utils/CookieUtils';
 import { VM_CONFIG_ACTION_EVENT, VM_DISK_ACTION_EVENT } from '../../constants/EventConstant';
 import { APPLICATION_API_USER } from '../../constants/UserConstant';
+import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
 
 /**
  * Component to render Alert details.
@@ -167,9 +168,12 @@ class ModalAlertDetails extends Component {
   }
 
   renderAckMessageInput() {
-    const { alerts } = this.props;
+    const { alerts, user } = this.props;
     const { selected } = alerts;
     const { ackMessage, error } = this.state;
+    if (!hasRequestedPrivileges(user, ['alerts.acknowledge'])) {
+      return null;
+    }
     if (selected.isAcknowledge === false && selected.severity !== 'INFO' && selected.severity !== 'WARNING') {
       return (
         <Form>
@@ -194,8 +198,11 @@ class ModalAlertDetails extends Component {
   }
 
   renderAcknowledge() {
-    const { alerts } = this.props;
+    const { alerts, user } = this.props;
     const { selected } = alerts;
+    if (!hasRequestedPrivileges(user, ['alerts.acknowledge'])) {
+      return null;
+    }
     if (selected.isAcknowledge === false && selected.severity !== 'INFO' && selected.severity !== 'WARNING') {
       return (
         <>
@@ -209,10 +216,10 @@ class ModalAlertDetails extends Component {
   }
 
   renderTakeAction() {
-    const { alerts, t } = this.props;
+    const { alerts, t, user } = this.props;
     const { associatedEvent, selected } = alerts;
     const { type } = associatedEvent;
-    if (selected.isAcknowledge) {
+    if (selected.isAcknowledge || !hasRequestedPrivileges(user, ['alerts.actions'])) {
       return null;
     }
     if (VM_DISK_ACTION_EVENT.indexOf(type) !== -1 || VM_CONFIG_ACTION_EVENT.indexOf(type) !== -1) {
@@ -268,7 +275,7 @@ class ModalAlertDetails extends Component {
 }
 
 function mapStateToProps(state) {
-  const { alerts } = state;
-  return { alerts };
+  const { alerts, user } = state;
+  return { alerts, user };
 }
 export default connect(mapStateToProps)(withTranslation()(ModalAlertDetails));

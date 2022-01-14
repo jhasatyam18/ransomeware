@@ -1,5 +1,5 @@
 export const API_AUTHENTICATE = 'api/v1/login';
-export const API_CHANGE_PASSWORD = 'api/v1/user/1';
+export const API_CHANGE_PASSWORD = 'api/v1/users/<id>';
 export const API_INFO = 'api/v1/info';
 export const API_FETCH_SITES = 'api/v1/sites';
 export const API_FETCH_SITE_VMS = 'api/v1/sites/<id>/vms';
@@ -90,3 +90,8 @@ export const API_THROTTLING_CONFIGURATION = 'api/v1/bandwidth/config';
 export const API_UPDATE_THROTTLING_CONFIGURATION = 'api/v1/bandwidth/config/replNode/<id>';
 export const API_THROTTLING_REPLNODES = 'api/v1/bandwidth/replnodes';
 export const API_THROTTLING_USAGE = 'api/v1/bandwidth/usage';
+
+// users
+export const API_USERS = 'api/v1/users';
+export const API_ROLES = 'api/v1/roles';
+export const API_USER_PRIVILEGES = 'api/v1/users/<id>/privileges';

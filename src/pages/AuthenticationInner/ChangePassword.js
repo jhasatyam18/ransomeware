@@ -11,6 +11,8 @@ import { FIELD_TYPE } from '../../constants/FieldsConstant';
 import { PASSWORD_REGEX } from '../../constants/ValidationConstants';
 import { validatePassword, isEmpty } from '../../utils/validationUtils';
 import { getValue } from '../../utils/InputUtils';
+import { getCookie } from '../../utils/CookieUtils';
+import { APPLICATION_API_USER } from '../../constants/UserConstant';
 
 class ChangePassword extends Component {
   constructor() {
@@ -83,7 +85,14 @@ class ChangePassword extends Component {
                       </Link>
                     </div>
                     <div className="p-2">
-                      { allowCancel ? null : <Label className="text-danger padding-left-20">Change the default password for &lsquo;admin&rsquo; user</Label>}
+                      { allowCancel ? null
+                        : (
+                          <Label className="text-danger padding-left-20">
+                            Change the default password for &lsquo;
+                            {getCookie(APPLICATION_API_USER)}
+                            &rsquo; user
+                          </Label>
+                        )}
                       <DMFieldText dispatch={dispatch} fieldKey="user.oldPassword" field={oldPassword} user={user} hideLabel="true" />
                       <DMFieldText dispatch={dispatch} fieldKey="user.newPassword" field={password} user={user} hideLabel="true" />
                       <DMFieldText dispatch={dispatch} fieldKey="user.confirmPassword" field={cnfPassword} user={user} hideLabel="true" />

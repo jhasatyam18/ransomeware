@@ -1,6 +1,8 @@
 import JsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { calculateChangedData, formatTime } from './AppUtils';
+import { getCookie } from './CookieUtils';
+import { APPLICATION_API_USER } from '../constants/UserConstant';
 
 /**
  * Create empty pdf document object
@@ -59,7 +61,7 @@ export function addHeaderPage(doc) {
   doc.setTextColor('#2c3e50');
   doc.text(350, 340, 'Audit report', 'left');
   // doc.text(350, 380, `${getDateFormat(startDate)} To ${getDateFormat(endDate)}`, 'left');
-  doc.text(350, 380, 'Owner: admin', 'left');
+  doc.text(350, 380, `Owner: ${getCookie(APPLICATION_API_USER)}`, 'left');
 }
 
 export function systemOverview(doc, data) {

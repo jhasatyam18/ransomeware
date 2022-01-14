@@ -11,6 +11,8 @@ import { fetchSites } from '../../store/actions/SiteActions';
 import { clearValues, fetchScript } from '../../store/actions';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
 import { CREATE_DR_PLAN_WIZARDS } from '../../constants/WizardConstants';
+import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
+import { PLATFORM_TYPES } from '../../constants/InputConstants';
 
 class DRPlanActionBar extends Component {
   constructor() {
@@ -105,8 +107,9 @@ class DRPlanActionBar extends Component {
     }
     if (keys.length === 1) {
       const plan = selectedPlans[keys[0]];
-      const { protectedSite } = plan;
-      if (protectedSite.platformDetails.platformType === platformType) {
+      const { protectedSite, recoverySite } = plan;
+      // disable if recovery site is VMware
+      if (protectedSite.platformDetails.platformType === platformType && recoverySite.platformDetails.platformType !== PLATFORM_TYPES.VMware) {
         return false;
       }
     }
@@ -114,9 +117,11 @@ class DRPlanActionBar extends Component {
   }
 
   renderServerOptions() {
-    const actions = [{ label: 'recover', onClick: this.onInitiateRecovery, icon: 'fa fa-recycle', isDisabled: false },
-      { label: 'Migrate', onClick: this.onMigrate, icon: 'fa fa-share-square', isDisabled: false },
-      { label: 'Reverse', onClick: this.onReverse, icon: 'fa fa-backward', isDisabled: false }];
+    const { user } = this.props;
+    const hasPrivilege = this.hasPrivilege(user, ['asd']);
+    const actions = [{ label: 'recover', onClick: this.onInitiateRecovery, icon: 'fa fa-recycle', isDisabled: !hasPrivilege },
+      { label: 'Migrate', onClick: this.onMigrate, icon: 'fa fa-share-square', isDisabled: !hasPrivilege },
+      { label: 'Reverse', onClick: this.onReverse, icon: 'fa fa-backward', isDisabled: !hasPrivilege }];
     return (
       <>
         {this.getActionButtons(actions)}
@@ -125,9 +130,10 @@ class DRPlanActionBar extends Component {
   }
 
   renderGlobalActions() {
-    const actions = [{ label: 'New', onClick: this.onCreate, icon: 'fa fa-plus', isDisabled: false },
-      { label: 'Edit', onClick: this.onEdit, icon: 'fa fa-edit', isDisabled: this.showEdit() },
-      { label: 'remove', onClick: this.onDelete, icon: 'fa fa-trash', isDisabled: this.shouldShowAction(true) }];
+    const { user } = this.props;
+    const actions = [{ label: 'New', onClick: this.onCreate, icon: 'fa fa-plus', isDisabled: !hasRequestedPrivileges(user, ['protectionplan.edit']) },
+      { label: 'Edit', onClick: this.onEdit, icon: 'fa fa-edit', isDisabled: (!hasRequestedPrivileges(user, ['protectionplan.create']) || this.showEdit()) },
+      { label: 'remove', onClick: this.onDelete, icon: 'fa fa-trash', isDisabled: (!hasRequestedPrivileges(user, ['protectionplan.delete']) || this.shouldShowAction(true)) }];
       // { label: 'start', onClick: () => { this.planAction(startPlan); }, icon: 'fa fa-play', isDisabled: this.shouldShowAction(false) },
       // { label: 'stop', onClick: () => { this.planAction(stopPlan); }, icon: 'fa fa-stop', isDisabled: this.shouldShowAction(false) }
     return (

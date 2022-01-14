@@ -27,6 +27,7 @@ class SitesTable extends Component {
           primaryKey="id"
           name="sites"
           onSelectAll={selectAllSites}
+          user={user}
         />
 
       </>

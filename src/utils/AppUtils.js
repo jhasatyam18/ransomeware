@@ -230,6 +230,8 @@ export function getSideBarContents() {
         { label: 'license', to: RPATH.LICENSE_SETTINGS_PATH, icon: 'fas fa-id-card', isActivePath: [RPATH.LICENSE_SETTINGS_PATH], hasChildren: false },
         { label: 'email', to: RPATH.EMAIL_SETTINGS_PATH, icon: 'far fa-envelope', isActivePath: [RPATH.EMAIL_SETTINGS_PATH], hasChildren: false },
         { label: 'throttling', to: RPATH.THROTTLING_SETTINGS_PATH, icon: 'fas fa-tachometer-alt', isActivePath: [RPATH.THROTTLING_SETTINGS_PATH], hasChildren: false },
+        { label: 'roles', to: RPATH.ROLES_SETTINGS_PATH, icon: 'fas fa-user-shield', isActivePath: [RPATH.ROLES_SETTINGS_PATH], hasChildren: false },
+        { label: 'users', to: RPATH.USER_SETTINGS_PATH, icon: 'fas fa-users', isActivePath: [RPATH.USER_SETTINGS_PATH], hasChildren: false },
         { label: 'tech.support', to: RPATH.SUPPORT_BUNDLE_PATH, icon: 'fas fa-headset', isActivePath: [RPATH.SUPPORT_BUNDLE_PATH], hasChildren: false },
       ],
     },
@@ -273,4 +275,16 @@ export function getStorageWithUnit(value) {
   const units = ['GB', 'TB', 'PB', 'EB'];
   const unitIndex = Math.floor(Math.log(value) / Math.log(1024));
   return `${Number.parseFloat((value / (1024 ** unitIndex)).toFixed(2))} ${units[unitIndex]}`;
+}
+
+export function getAllObjectKeys(obj, prefix = '') {
+  return Object.keys(obj).reduce((res, o) => {
+    if (Array.isArray(obj[o])) {
+      return res;
+    }
+    if (typeof obj[o] === 'object' && obj[o] !== null) {
+      return [...res, ...getAllObjectKeys(obj[o], `${prefix}${o}.`)];
+    }
+    return [...res, `${prefix}${o}`];
+  }, []);
 }

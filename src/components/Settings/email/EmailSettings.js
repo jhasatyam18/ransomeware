@@ -10,6 +10,7 @@ import { openModal } from '../../../store/actions/ModalActions';
 import ActionButton from '../../Common/ActionButton';
 import DMBreadCrumb from '../../Common/DMBreadCrumb';
 import DMTable from '../../Table/DMTable';
+import { hasRequestedPrivileges } from '../../../utils/PrivilegeUtils';
 
 class EmailSettings extends Component {
   constructor() {
@@ -50,7 +51,7 @@ class EmailSettings extends Component {
   }
 
   renderRecipients() {
-    const { settings, t, dispatch } = this.props;
+    const { settings, t, dispatch, user } = this.props;
     const { emailRecipients } = settings;
     return (
       <>
@@ -61,7 +62,7 @@ class EmailSettings extends Component {
                 <DMBreadCrumb links={[{ label: 'email.recipients', link: '#' }]} />
                 <div className="btn-toolbar padding-left-20">
                   <div className="btn-group" role="group" aria-label="First group">
-                    <ActionButton label="New" onClick={this.onConfigureRecipient} icon="fa fa-plus" isDisabled={false} t={t} key="newRecipient" />
+                    <ActionButton label="New" onClick={this.onConfigureRecipient} icon="fa fa-plus" isDisabled={!hasRequestedPrivileges(user, ['recipient.add'])} t={t} key="newRecipient" />
                   </div>
                 </div>
                 <DMTable
@@ -69,6 +70,7 @@ class EmailSettings extends Component {
                   data={emailRecipients}
                   primaryKey="id"
                   dispatch={dispatch}
+                  user={user}
                 />
 
               </CardBody>
@@ -80,7 +82,7 @@ class EmailSettings extends Component {
   }
 
   render() {
-    const { settings, t } = this.props;
+    const { settings, t, user } = this.props;
     const { email } = settings;
     if (email == null) {
       return (
@@ -93,7 +95,7 @@ class EmailSettings extends Component {
                   <Row>
                     <Col sm={6} className="text-danger"> Email settings not configured.</Col>
                     <Col sm={6}>
-                      <ActionButton label="Configure Now" onClick={this.onConfigureEmail} isDisabled={false} t={t} key="configureEmail" />
+                      <ActionButton label="Configure Now" onClick={this.onConfigureEmail} isDisabled={!hasRequestedPrivileges(user, ['email.config'])} t={t} key="configureEmail" />
                     </Col>
                   </Row>
                 </CardBody>
@@ -112,7 +114,7 @@ class EmailSettings extends Component {
               <DMBreadCrumb links={[{ label: 'email', link: '#' }]} />
               <Row className="padding-top-10 padding-bottom-10 margin-left-10">
                 <Col sm={12} className="margin-top-10">
-                  <ActionButton label="Reconfigure" onClick={this.onReconfigureEmail} isDisabled={false} t={t} key="reconfigureEmail" />
+                  <ActionButton label="Reconfigure" onClick={this.onReconfigureEmail} isDisabled={!hasRequestedPrivileges(user, ['email.config'])} t={t} key="reconfigureEmail" />
                 </Col>
                 <Col sm={4}>
                   {
@@ -135,7 +137,7 @@ class EmailSettings extends Component {
 }
 
 function mapStateToProps(state) {
-  const { settings } = state;
-  return { settings };
+  const { settings, user } = state;
+  return { settings, user };
 }
 export default connect(mapStateToProps)(withTranslation()(EmailSettings));

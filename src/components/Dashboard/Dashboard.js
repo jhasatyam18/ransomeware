@@ -29,7 +29,7 @@ class Dashboard extends Component {
   render() {
     const { dashboard, t } = this.props;
     const { titles } = dashboard;
-    const { sites, protectionPlans, vms, storage } = titles;
+    const { sites = 0, protectionPlans = 0, vms = 0, storage = 0 } = titles;
     const reports = [
       { title: t('sites'), icon: 'cloud', description: sites, link: SITES_PATH },
       { title: t('protection.plans'), icon: 'layer', description: protectionPlans, link: PROTECTION_PLANS_PATH },

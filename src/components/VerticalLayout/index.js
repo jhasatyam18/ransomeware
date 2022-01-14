@@ -15,12 +15,8 @@ const DRPlanDetails = React.lazy(() => import('../data-recovery/DRPlanDetails'))
 const Jobs = React.lazy(() => import('../Jobs/Jobs'));
 const Events = React.lazy(() => import('../Events/Events'));
 const Alerts = React.lazy(() => import('../Alerts/Alerts'));
-// const Settings = React.lazy(() => import('../Settings/Settings'));
 const Report = React.lazy(() => import('../Report/Report'));
 const Settings = React.lazy(() => import('../Settings/Settings'));
-
-// Settings
-// const EmailSettings = React.lazy(() => import('../Settings/email/EmailSettings'));
 class Layout extends Component {
   constructor(props) {
     super(props);
@@ -61,10 +57,34 @@ class Layout extends Component {
     return string.charAt(1).toUpperCase() + string.slice(2);
   }
 
+  renderRoutes() {
+    const { sites, dispatch, user, drPlans } = this.props;
+    const { privileges = [] } = user;
+    if (privileges.length === 0) {
+      return null;
+    }
+    return (
+      <Suspense fallback={<div>Loading...</div>}>
+        <Switch>
+          <Route path={LOGIN_PATH} render={() => <Login {...this.props} />} />
+          <Route path={NODES_PATH} render={() => <Node />} />
+          <Route path={DASHBOARD_PATH} render={() => <Dashboard {...this.props} />} />
+          <Route path={SITES_PATH} render={() => <Sites user={user} sites={sites} dispatch={dispatch} />} />
+          <Route path={PROTECTION_PLANS_PATH} render={() => <DRPlans user={user} sites={sites} dispatch={dispatch} drPlans={drPlans} />} />
+          <Route path={PROTECTION_PLAN_DETAILS_PATH} render={() => <DRPlanDetails {...this.props} />} />
+          <Route path={JOBS_PATH} render={() => <Jobs protectionplanID={0} {...this.props} />} />
+          <Route path={EVENTS_PATH} render={() => <Events />} />
+          <Route path={ALERTS_PATH} render={() => <Alerts />} />
+          <Route path={REPORTS_PATH} render={() => <Report />} />
+          <Route path={SETTINGS_PATH} render={() => <Settings />} />
+          <Route render={() => <Dashboard {...this.props} />} />
+        </Switch>
+      </Suspense>
+    );
+  }
+
   render() {
-    const {
-      layout, sites, dispatch, user, drPlans,
-    } = this.props;
+    const { layout } = this.props;
     const { isMobile } = this.state;
     const { leftSideBarTheme, leftSideBarType } = layout;
     return (
@@ -93,22 +113,7 @@ class Layout extends Component {
           />
           <div className="main-content">
             <div className="page-content">
-              <Suspense fallback={<div>Loading...</div>}>
-                <Switch>
-                  <Route path={LOGIN_PATH} render={() => <Login {...this.props} />} />
-                  <Route path={NODES_PATH} render={() => <Node />} />
-                  <Route path={DASHBOARD_PATH} render={() => <Dashboard {...this.props} />} />
-                  <Route path={SITES_PATH} render={() => <Sites user={user} sites={sites} dispatch={dispatch} />} />
-                  <Route path={PROTECTION_PLANS_PATH} render={() => <DRPlans user={user} sites={sites} dispatch={dispatch} drPlans={drPlans} />} />
-                  <Route path={PROTECTION_PLAN_DETAILS_PATH} render={() => <DRPlanDetails {...this.props} />} />
-                  <Route path={JOBS_PATH} render={() => <Jobs protectionplanID={0} {...this.props} />} />
-                  <Route path={EVENTS_PATH} render={() => <Events />} />
-                  <Route path={ALERTS_PATH} render={() => <Alerts />} />
-                  <Route path={REPORTS_PATH} render={() => <Report />} />
-                  <Route path={SETTINGS_PATH} render={() => <Settings />} />
-                  <Route render={() => <Dashboard {...this.props} />} />
-                </Switch>
-              </Suspense>
+              {this.renderRoutes()}
             </div>
           </div>
           {/* <Footer /> */}

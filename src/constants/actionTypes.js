@@ -17,6 +17,8 @@ export const APP_TYPE = 'APP_TYPE';
 export const APP_LICENSE_INFO = 'APP_LICENSE_INFO';
 export const APP_USER = 'APP_USER';
 export const APP_USER_CHANGE_PASSWORD = 'APP_USER_CHANGE_PASSWORD';
+export const APP_USER_PRIVILEGES = 'APP_USER_PRIVILEGES';
+export const APP_USERS = 'APP_USERS';
 
 // Messages
 export const ADD_MESSAGE = 'ADD_MESSAGE';

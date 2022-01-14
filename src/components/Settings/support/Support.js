@@ -9,6 +9,7 @@ import { fetchSupportBundles, supportBundleFetched } from '../../../store/action
 import { openModal } from '../../../store/actions/ModalActions';
 import { SUPPORT_BUNDLES } from '../../../constants/TableConstants';
 import { MODAL_GENERATE_SUPPORT_BUNDLE } from '../../../constants/Modalconstant';
+import { hasRequestedPrivileges } from '../../../utils/PrivilegeUtils';
 
 class Support extends Component {
   constructor() {
@@ -33,7 +34,7 @@ class Support extends Component {
   }
 
   render() {
-    const { dispatch, settings, t } = this.props;
+    const { dispatch, settings, t, user } = this.props;
     const { bundles } = settings;
     return (
       <>
@@ -43,7 +44,7 @@ class Support extends Component {
               <CardBody>
                 <DMBreadCrumb links={[{ label: 'tech.support', link: '#' }]} />
                 <Row className="padding-left-30">
-                  <ActionButton label="Generate" onClick={this.onGenerate} icon="fa fa-plus" isDisabled={false} t={t} key="newsupportbundle" />
+                  <ActionButton label="Generate" onClick={this.onGenerate} icon="fa fa-plus" isDisabled={!hasRequestedPrivileges(user, ['support.create'])} t={t} key="newsupportbundle" />
                 </Row>
                 <DMTable
                   dispatch={dispatch}
@@ -60,7 +61,7 @@ class Support extends Component {
 }
 
 function mapStateToProps(state) {
-  const { settings } = state;
-  return { settings };
+  const { settings, user } = state;
+  return { settings, user };
 }
 export default connect(mapStateToProps)(withTranslation()(Support));

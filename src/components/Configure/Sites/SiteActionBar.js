@@ -9,6 +9,7 @@ import { deleteSites } from '../../../store/actions/SiteActions';
 import { FIELDS } from '../../../constants/FieldsConstant';
 import ActionButton from '../../Common/ActionButton';
 import { STATIC_KEYS } from '../../../constants/InputConstants';
+import { hasRequestedPrivileges } from '../../../utils/PrivilegeUtils';
 
 class SiteActionBar extends Component {
   constructor() {
@@ -66,10 +67,10 @@ class SiteActionBar extends Component {
   }
 
   render() {
-    const { t } = this.props;
-    const actions = [{ label: 'New', onClick: this.createSite, icon: 'fa fa-plus', isDisabled: false },
-      { label: 'Edit', onClick: this.reconfigureSite, icon: 'fa fa-edit', isDisabled: this.shouldShowAction(true) },
-      { label: 'remove', onClick: this.deleteSelectedSites, icon: 'fa fa-trash', isDisabled: this.shouldShowAction(false) }];
+    const { t, user } = this.props;
+    const actions = [{ label: 'New', onClick: this.createSite, icon: 'fa fa-plus', isDisabled: !hasRequestedPrivileges(user, ['site.create']) },
+      { label: 'Edit', onClick: this.reconfigureSite, icon: 'fa fa-edit', isDisabled: ((!hasRequestedPrivileges(user, ['site.edit'])) || this.shouldShowAction(true)) },
+      { label: 'remove', onClick: this.deleteSelectedSites, icon: 'fa fa-trash', isDisabled: (!hasRequestedPrivileges(user, ['site.delete']) || this.shouldShowAction(false)) }];
     return (
       <div className="btn-toolbar padding-left-20">
         <div className="btn-group" role="group" aria-label="First group">

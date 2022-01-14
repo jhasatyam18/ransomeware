@@ -8,6 +8,8 @@ import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { addMessage } from '../../store/actions/MessageActions';
 import { closeModal } from '../../store/actions/ModalActions';
 import { createPayload, API_TYPES, callAPI } from '../../utils/ApiUtils';
+import { getCookie } from '../../utils/CookieUtils';
+import { APPLICATION_API_USER } from '../../constants/UserConstant';
 
 /**
  * Modal to authenticate and provide node
@@ -56,7 +58,7 @@ class ModalEncryptionKey extends Component {
       return;
     }
     const url = NODE_GET_ENCRYPTION_KEY.replace('<id>', data.id);
-    const obj = createPayload(API_TYPES.POST, { username: 'admin', password });
+    const obj = createPayload(API_TYPES.POST, { username: getCookie(APPLICATION_API_USER), password });
     dispatch(showApplicationLoader(url, `Fetching encryption key ${data.name}`));
     return callAPI(url, obj)
       .then((json) => {

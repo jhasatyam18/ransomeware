@@ -9,12 +9,12 @@ import { NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH } from '../../constants/R
 function GettingStarted(props) {
   const { dashboard, t } = props;
   const { nodes, titles = {} } = dashboard;
-  const { sites = 0, protectionPlans = 0 } = titles;
+  const { sites = 0, protectionPlans = -1 } = titles;
   const isNodesConfigured = nodes.length >= 2;
   const isSiteConfigured = sites >= 2;
   const isGettingStartedCompleted = getCookie(APPLICATION_GETTING_STARTED_COMPLETED);
   // if getting started already completed or configuration is already done then hide the component
-  if (isGettingStartedCompleted || protectionPlans >= 1) {
+  if (isGettingStartedCompleted || protectionPlans >= 1 || protectionPlans === -1) {
     return null;
   }
   function renderItem(stepName, icon, completed, path, isActive) {

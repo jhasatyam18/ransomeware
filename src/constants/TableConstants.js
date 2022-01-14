@@ -27,6 +27,7 @@ export const LICENSE_STATUS_ITEM_RENDER = 'LICENSE_STATUS_ITEM_RENDER';
 export const THROTTLING_ACTION_ITEM_RENDER = 'THROTTLING_ACTION_ITEM_RENDER';
 export const THROTTLING_TIME_ITEM_RENDER = 'THROTTLING_TIME_ITEM_RENDER';
 export const RECOVERY_STATUS_ITEM_RENDERER = 'RECOVERY_STATUS_ITEM_RENDERER';
+export const ROLE_ITEM_RENDERER = 'ROLE_ITEM_RENDERER';
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
@@ -207,6 +208,12 @@ export const TABLE_LICENSES = [
   { label: 'Migrations', field: 'completedMigrations', itemRenderer: LICENSE_USAGE_ITEM_RENDERER },
   { label: 'Valid Till', field: 'expiredTime', itemRenderer: DATE_ITEM_RENDERER },
   { label: 'Actions', field: 'isActive', itemRenderer: LICENSE_ACTION_ITEM_RENDERER },
+];
+
+export const TABLE_USERS = [
+  { label: 'Username', field: 'username' },
+  { label: 'Description', field: 'description' },
+  { label: 'Role', field: 'role', itemRenderer: ROLE_ITEM_RENDERER },
 ];
 
 // table filter help text

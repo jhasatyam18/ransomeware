@@ -1,13 +1,13 @@
 // import { addMessage, clearMessages } from './MessageActions';
 import jsCookie from 'js-cookie';
 import * as Types from '../../constants/actionTypes';
-import { API_AUTHENTICATE, API_AWS_AVAILABILITY_ZONES, API_AWS_REGIONS, API_CHANGE_PASSWORD, API_GCP_AVAILABILITY_ZONES, API_GCP_REGIONS, API_INFO, API_SCRIPTS } from '../../constants/ApiConstants';
+import { API_AUTHENTICATE, API_AWS_AVAILABILITY_ZONES, API_AWS_REGIONS, API_CHANGE_PASSWORD, API_GCP_AVAILABILITY_ZONES, API_GCP_REGIONS, API_INFO, API_SCRIPTS, API_USERS, API_USER_PRIVILEGES } from '../../constants/ApiConstants';
 import { APP_TYPE, PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { ALERTS_PATH, DASHBOARD_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH } from '../../constants/RouterConstants';
-import { APPLICATION_API_TOKEN, APPLICATION_API_USER } from '../../constants/UserConstant';
+import { APPLICATION_API_TOKEN, APPLICATION_API_USER, APPLICATION_API_USER_ID } from '../../constants/UserConstant';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
-import { setCookie } from '../../utils/CookieUtils';
+import { getCookie, setCookie } from '../../utils/CookieUtils';
 import { onInit } from '../../utils/HistoryUtil';
 import { getValue } from '../../utils/InputUtils';
 import { fetchByDelay } from '../../utils/SlowFetch';
@@ -33,12 +33,13 @@ export function login({ username, password, history }) {
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
-        if (username === 'admin' && password === 'admin') {
+        setSessionInfo(json.token, username);
+        dispatch(getUserInfo());
+        if (password === 'admin') {
           dispatch(saveApplicationToken(json.token));
           dispatch(initChangePassword(true, false));
           return;
         }
-        setSessionInfo(json.token, username);
         dispatch(loginSuccess(json.token, username));
         dispatch(getInfo());
         if (history) {
@@ -116,14 +117,14 @@ export function getInfo(history) {
       if (json.hasError) {
         setCookie(APPLICATION_API_TOKEN, json.token, '');
       } else {
-        dispatch(loginSuccess(json.token, 'admin'));
-        setCookie(APPLICATION_API_USER, 'admin');
+        dispatch(loginSuccess(json.token, getCookie(APPLICATION_API_USER)));
         const appType = json.serviceType === 'Client' ? APP_TYPE.CLIENT : APP_TYPE.SERVER;
         const { version, serviceType, nodeKey, licenses } = json;
         dispatch(changeAppType(appType, json.platformType, json.localVMIP, json.zone));
         fetchByDelay(dispatch, updateLicenseInfo, 2000, { nodeKey, version, serviceType, activeLicenses: licenses });
         // dispatch(validateLicense(licenseExpiredTime));
         dispatch(getUnreadAlerts());
+        dispatch(getUserInfo());
         if (history) {
           onInit(history);
         }
@@ -327,8 +328,9 @@ export function changeUserPassword(oldPass, newPass) {
     const { user } = getState();
     const { token } = user;
     dispatch(showApplicationLoader('CHANGE_PASSWORD', 'Changing password...'));
-    const obj = createPayload(API_TYPES.PUT, { username: 'admin', oldPassword: oldPass, newPassword: newPass, id: 1 });
-    return callAPI(API_CHANGE_PASSWORD, obj, token).then((json) => {
+    const uID = getCookie(APPLICATION_API_USER_ID);
+    const obj = createPayload(API_TYPES.PUT, { username: getCookie(APPLICATION_API_USER), oldPassword: oldPass, newPassword: newPass });
+    return callAPI(API_CHANGE_PASSWORD.replace('<id>', uID), obj, token).then((json) => {
       dispatch(hideApplicationLoader('CHANGE_PASSWORD'));
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
@@ -393,5 +395,61 @@ export function addAssociatedReverseIP({ fieldKey, ip, id }) {
       ips = { ...ips, [ip]: { label: ip, value: id, fieldKey } };
       dispatch(valueChange(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, ips));
     }
+  };
+}
+
+export function setPrivileges(privileges) {
+  return {
+    type: Types.APP_USER_PRIVILEGES,
+    privileges,
+  };
+}
+
+export function getUserInfo() {
+  return (dispatch) => {
+    const username = getCookie(APPLICATION_API_USER);
+    if (typeof username === 'undefined') {
+      dispatch(logOutUser());
+      return;
+    }
+    const url = `${API_USERS}?name=${username}`;
+    dispatch(showApplicationLoader(url, 'Loading user...'));
+    return callAPI(url).then((json) => {
+      dispatch(hideApplicationLoader(url));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        if (json && json.length >= 1) {
+          setCookie(APPLICATION_API_USER_ID, json[0].id);
+          dispatch(getUserPrivileges(json[0].id));
+          return;
+        }
+        dispatch(addMessage('Failed to fetch user details', MESSAGE_TYPES.ERROR));
+        dispatch(logOutUser());
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader(url));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+  };
+}
+
+export function getUserPrivileges(id) {
+  return (dispatch) => {
+    const url = API_USER_PRIVILEGES.replace('<id>', id);
+    dispatch(showApplicationLoader(API_USER_PRIVILEGES, 'Loading...'));
+    return callAPI(url).then((json) => {
+      dispatch(hideApplicationLoader(API_USER_PRIVILEGES));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        dispatch(setPrivileges(json));
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader(API_USER_PRIVILEGES));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
   };
 }

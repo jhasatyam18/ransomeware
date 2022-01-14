@@ -9,9 +9,10 @@ import { TABLE_LICENSES } from '../../../constants/TableConstants';
 import { fetchLicenses } from '../../../store/actions/LicenseActions';
 import { openModal } from '../../../store/actions/ModalActions';
 import { MODAL_INSTALL_NEW_LICENSE } from '../../../constants/Modalconstant';
+import { hasRequestedPrivileges } from '../../../utils/PrivilegeUtils';
 
 function License(props) {
-  const { dispatch, t, settings } = props;
+  const { dispatch, t, settings, user } = props;
   const { licenses = [] } = settings;
   useEffect(() => {
     dispatch(fetchLicenses());
@@ -30,7 +31,7 @@ function License(props) {
             <CardBody>
               <DMBreadCrumb links={[{ label: 'license', link: '#' }]} />
               <Row className="padding-left-30">
-                <ActionButton label="New" onClick={openInstallNewModal} icon="fa fa-plus" isDisabled={false} t={t} key="newLicense" />
+                <ActionButton label="New" onClick={openInstallNewModal} icon="fa fa-plus" isDisabled={!hasRequestedPrivileges(user, ['license.create'])} t={t} key="newLicense" />
               </Row>
               <DMTable
                 dispatch={dispatch}
@@ -38,6 +39,7 @@ function License(props) {
                 data={licenses}
                 primaryKey="ID"
                 name="licenses"
+                user={user}
               />
             </CardBody>
           </Card>

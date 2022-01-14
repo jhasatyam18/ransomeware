@@ -3,8 +3,14 @@ import { openModal } from '../../../store/actions/ModalActions';
 import { deleteRecipient } from '../../../store/actions/EmailActions';
 import { clearValues, valueChange } from '../../../store/actions';
 import { MODAL_CONFIRMATION_WARNING, MODAL_EMAIL_RECIPIENTS_CONFIGURATION } from '../../../constants/Modalconstant';
+import { hasRequestedPrivileges } from '../../../utils/PrivilegeUtils';
 
-function EmailRecipientItemRenderer({ data, dispatch }) {
+function EmailRecipientItemRenderer({ data, dispatch, user }) {
+  const hasPrivilege = hasRequestedPrivileges(user, ['recipient.edit']);
+  if (!hasPrivilege) {
+    return '';
+  }
+
   function onDelete() {
     const options = { title: 'Confirmation', confirmAction: deleteRecipient, message: `Are you sure want to delete email recipient - ${data.emailAddress} ?`, id: data.ID };
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
