@@ -22,7 +22,7 @@ export default function Architecture() {
       <p>Datamotive Prep Appliance – a Windows virtual appliance deployed in the public cloud environment (AWS or
         GCP).
         This appliance is only powered-on and used when recovering or migrating Windows VMs.</p>
-      <img src={architecture_dia} />
+      <img alt="" src={architecture_dia} />
     </div>
   )
 }

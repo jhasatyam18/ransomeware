@@ -28,7 +28,7 @@ export default function Alerts() {
         </tr>
       </table>
 
-      <img src={eve} />
+      <img alt="" src={eve} />
       <p>In Alerts, the following information is displayed – </p>
       <table>
         <tr>
@@ -66,7 +66,7 @@ export default function Alerts() {
         </tr>
       </table>
       The info tab consists of the following
-      <img src={info} />
+      <img alt="" src={info} />
       <table>
         <tr>
           <td>Severity </td>
@@ -98,7 +98,7 @@ export default function Alerts() {
         </tr>
       </table>
       The associated event consists of the following
-      <img src={event} />
+      <img alt="" src={event} />
       <table>
         <tr>
           <td>Event ID </td>

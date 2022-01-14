@@ -15,7 +15,7 @@ export default function Dashboard() {
     <div className="content">
       <h2>Create VMware Site</h2>
       <p>The Dashboard provides you with an at-a-glance overview of the data protection status of your environment.</p>
-      <img src={dashboardImg} />
+      <img alt="" src={dashboardImg} />
       <p>Dashboard has following components which provides you the overall details about the configured environment.</p>
       <ol>
         <li><a href="#title_windows">Title Windows </a></li>
@@ -32,7 +32,7 @@ export default function Dashboard() {
       <div id="title_windows">
         <h3>Title Window</h3>
         <p>Title windows will give overall status on your configured and protected environment. </p>
-        <img src={dashboardTitle} />
+        <img alt="" src={dashboardTitle} />
         <table style={{ width: '80%' }}>
           <thead>
             <th>Title</th>
@@ -62,13 +62,13 @@ export default function Dashboard() {
       <div id="alertStat">
         <h3>Alert Statistics</h3>
         <p>Active alter which needs a user action acknowledgement or action on it. </p>
-        <img src={dashboardAlert} style={{ width: "50%", height: "50%" }} />
+        <img alt="" src={dashboardAlert} style={{ width: "50%", height: "50%" }} />
       </div>
 
       <div id="rpoRto">
         <h3>RPO and RTO Statistics </h3>
         <p>Current recovery time objective and recovery point objective.  </p>
-        <img src={dashboardRpoRto} />
+        <img alt="" src={dashboardRpoRto} />
         <table style={{ width: '80%' }}>
           <thead>
             <th>Title</th>
@@ -102,7 +102,7 @@ export default function Dashboard() {
       <div id="replStat">
         <h3>Replication Statistics</h3>
         <p>Replication statistics provides a central snapshot overview of your protected environment replication jobs. </p>
-        <img src={dashboardReplStat} />
+        <img alt="" src={dashboardReplStat} />
         <table style={{ width: '80%' }}>
           <thead>
             <th>Title</th>
@@ -137,19 +137,19 @@ export default function Dashboard() {
       <div id="jobs">
         <h3>Jobs</h3>
         <p>Jobs shows the recently started or completed task in the system.  </p>
-        <img src={dashboardJobs} style={{ width: "50%", height: "50%" }} />
+        <img alt="" src={dashboardJobs} style={{ width: "50%", height: "50%" }} />
       </div>
 
       <div id="vmpa">
         <h3>Virtual Machine Protection Analysis </h3>
         <p>Virtual machine protection analysis shows the overall status of recovery site environment in terms of total discovered virtual machines with percentage of protected and unprotected virtual machines. In addition to protection analysis, this wizard also provides the details for replication statistics of virtual machines which are in-sync and not in-sync.  </p>
-        <img src={dashboardVMAnalysis} />
+        <img alt="" src={dashboardVMAnalysis} />
       </div>
 
       <div id="bandwidthUsage">
         <h3>Bandwidth Usage </h3>
         <p>Bandwidth usage provide the details network usage of the system for last 12 hours. The bandwidth usage chart shows data downloaded and uploaded for last 12 hours</p>
-        <img src={dashboardUsage} />
+        <img alt="" src={dashboardUsage} />
       </div>
 
       <div id="siteConnection">
@@ -157,7 +157,7 @@ export default function Dashboard() {
         <p>
           Provides connection details of configured sites in terms of data flow i.e., from which source site data replication is configured for target site.
         </p>
-        <img src={dashboardSiteConnection} style={{ width: "50%", height: "50%" }} />
+        <img alt="" src={dashboardSiteConnection} style={{ width: "50%", height: "50%" }} />
       </div>
 
       <div id="events">
@@ -165,7 +165,7 @@ export default function Dashboard() {
         <p>
           Events are records of user actions or system actions that got occurred in the Datamotive system. In dashboard event component will give you the most recent events generate in the system.
         </p>
-        <img src={dashboardEvents} style={{ width: "50%", height: "50%" }} />
+        <img alt="" src={dashboardEvents} style={{ width: "50%", height: "50%" }} />
       </div>
 
     </div>

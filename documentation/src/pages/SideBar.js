@@ -100,7 +100,7 @@ export default function SideBar() {
   return (
     <div className='stack__items'>
       <div className="logo">
-        <img src={logo} />
+        <img alt="" src={logo} />
       </div>
       {ROUTES.map((route) => {
         return renderRoutes(route);

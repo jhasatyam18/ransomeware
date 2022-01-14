@@ -10,11 +10,11 @@ export default function SupportBundle() {
         Location: Home --> Settings --> Tech Support <br />
       Support bundle is useful to triage the any issue occurred in the system.
 
-      <img src={sbl} />
+      <img alt="" src={sbl} />
       To collect new support bundle, follow below steps.
       <ul>
         <li>Click on the +Generate button, new popup will be shown to trigger bundle creation. </li>
-        <img src={sbG} />
+        <img alt="" src={sbG} />
         <li>Provide a proper description specifying why new support bundle generation is requested and click <b>Generate Bundle </b></li>
         <li>Post system accepts the generate bundle request it will collect all the required info from the node.  </li>
         <li>Note: This operation may take several minutes complete, you can check the status of bundle in the list. (Click Refresh to update the status) </li>

@@ -21,7 +21,7 @@ export default function Introduction() {
       <p>
         The Datamotive platform currently provides and supports Disaster Recovery and Migration use-cases. Very soon, Datamotive will also be providing and supporting Ransomware Recovery and Rapid Dev/Test Deployments (Cloud Cloning) use-cases.
       </p>
-      <img src={intro} width="80%"></img>
+      <img alt="" src={intro} width="80%"></img>
     </div>
   )
 }

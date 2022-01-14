@@ -15,10 +15,22 @@ export default function Authentication() {
         <li>On successful login, User will see the Datamotive Dashboard. </li>
       </od>
       <br />
-      <img src={auth} />
+      <img alt="" src={auth} />
       <br />
-      <p className="note">Note: If you are login first time then for security reasons password change is must.  </p>
-      <img src={cp} />
+      <p>
+        <ol>
+          Note:
+          <li class="item1">By default Datamotive will create following three users
+            <ol>
+              <li>Administrator</li>
+              <li>Backupadmin</li>
+              <li>guest</li>
+            </ol>
+            <li>Default password for all the user is 'admin'</li>
+          </li>
+          <li class="item1">If you are login first time then for security reasons password change is must</li>
+        </ol></p>
+      <img alt="" src={cp} />
       <br />
       <br />
       <od>

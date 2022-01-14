@@ -22,9 +22,9 @@ export default function FullRecovery() {
         Credentials are not stored anywhere and only been used for the workflow.
         <br /><b>NOTE:</b> For Windows recovery on AWS, Credentials are mandatory even if there are no pre or post scripts is configured.
       </p>
-      <img src={recoveryVMSelection} style={{ width: "75%", height: "75%" }} />
+      <img alt="" src={recoveryVMSelection} style={{ width: "75%", height: "75%" }} />
       <b>Recovery Configuration</b>
-      <img src={installCloudPackages} style={{ width: "75%", height: "75%" }} />
+      <img alt="" src={installCloudPackages} style={{ width: "75%", height: "75%" }} />
       <table>
         <tr>
           <td><b>Install System Agents </b></td>
@@ -37,11 +37,11 @@ export default function FullRecovery() {
         </tr>
       </table>
       <b>Summary </b>
-      <img src={recoverySummary} style={{ width: "75%", height: "75%" }} />
+      <img alt="" src={recoverySummary} style={{ width: "75%", height: "75%" }} />
       <p>Review the summary and click on finish to start the test recovery. This will start the test recovery jobs for the selected virtual machines and jobs can be monitored in the </p>
       <p>Home —> Jobs —> Recovery jobs</p>
       <p>NOTE: If the replication job is on-going at the time of Full Recovery, then the instance will be recovered from the last known good state. </p>
-      <img src={fullRecoveryJobs} />
+      <img alt="" src={fullRecoveryJobs} />
     </div>
   )
 }

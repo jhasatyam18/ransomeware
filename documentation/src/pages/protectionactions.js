@@ -14,7 +14,7 @@ export default function ProtectionActions() {
       </p>
 
       <p>Actions available through the protection plan data grid view. </p>
-      <img src={ppListAction} style={{ width: "50%", height: "50%" }} />
+      <img alt="" src={ppListAction} style={{ width: "50%", height: "50%" }} />
 
       <p>Actions available through the protection plan details </p>
       <div className="grid-key-value">
@@ -22,8 +22,8 @@ export default function ProtectionActions() {
         <div>Actions for target Site</div>
       </div>
       <div className="grid-key-value">
-        <div style={{ paddingRight: '20px' }}><img src={actionSource} /></div>
-        <div style={{ paddingLeft: '20px' }}><img src={actiontarget} /></div>
+        <div style={{ paddingRight: '20px' }}><img alt="" src={actionSource} /></div>
+        <div style={{ paddingLeft: '20px' }}><img alt="" src={actiontarget} /></div>
       </div>
       <p><b>New</b>: Click to configure new protection plan. </p>
       <p>

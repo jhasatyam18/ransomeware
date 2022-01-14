@@ -16,7 +16,7 @@ export default function ProtectionPlan() {
             <h2>Protection Plan</h2>
             <b>Navigation:</b> Home &gt; Configuration &gt; Protection Plans
             <p>Protection plan consists of a group of workloads which will be replicated from source to destination sites </p>
-            <img src={pList} />
+            <img alt="" src={pList} />
 
             <h4>Configure new protection plan</h4>
             <b>Prerequisite - VMware platform:</b>
@@ -38,15 +38,15 @@ export default function ProtectionPlan() {
                 <div className="value">Destination recovery site.</div>
             </div>
 
-            <img src={cpgeneral} style={{ width: "75%", height: "75%" }} />
+            <img alt="" src={cpgeneral} style={{ width: "75%", height: "75%" }} />
 
             <h4>Virtual Machines </h4>
             <p>Select the virtual machines to be protect and click next. Use search & pagination to find virtual machines. </p>
-            <img src={vmList} style={{ width: "75%", height: "75%" }} />
+            <img alt="" src={vmList} style={{ width: "75%", height: "75%" }} />
 
             <h4>Recovery Configuration </h4>
             <p>Provide the virtual machine specific recover configuration which will be used for creation of instance on recovery site.  </p>
-            <img src={cpRecovery} style={{ width: "75%", height: "75%" }} />
+            <img alt="" src={cpRecovery} style={{ width: "75%", height: "75%" }} />
             <h4>General</h4>
             <div className="grid-key-value">
                 <div className="key">Instance Type</div>
@@ -95,7 +95,7 @@ export default function ProtectionPlan() {
                 <div className="key">Security Groups</div>
                 <div className="value">Select the security groups all configure inbound and outbound traffic for the instance. </div>
             </div>
-            <img src={awsNet} style={{ width: "75%", height: "75%" }} />
+            <img alt="" src={awsNet} style={{ width: "75%", height: "75%" }} />
 
             <div className="grid-col-1">
                 <div className="key">For GCP platform provided the following details </div>
@@ -145,7 +145,7 @@ export default function ProtectionPlan() {
                     <ul>
                         <li>Pre-script: None</li>
                         <li>Post-script: JSON string with following format
-                            <img src={scriptInput} />
+                            <img alt="" src={scriptInput} />
                         </li>
                     </ul>
                 </div>
@@ -168,7 +168,7 @@ export default function ProtectionPlan() {
                 <div className="key">Boot Order</div>
                 <div className="value">Order in which virtual machines will get recovered or migrated. </div>
             </div>
-            <img src={ppBootOrder} style={{ width: "75%", height: "75%" }} />
+            <img alt="" src={ppBootOrder} style={{ width: "75%", height: "75%" }} />
 
             <h4>Replication Configuration</h4>
             <div className="grid-key-value">
@@ -196,7 +196,7 @@ export default function ProtectionPlan() {
                 <div className="key">Differential Reverse Replication</div>
                 <div className="value">nable this feature if you want to allow recovered machines from the 			recovery site to replicate back to its original source site.  </div>
             </div>
-            <img src={cpReplicationConfig} style={{ width: "75%", height: "75%" }} />
+            <img alt="" src={cpReplicationConfig} style={{ width: "75%", height: "75%" }} />
 
             <h4>Scripts </h4>
             <div className="grid-key-value">
@@ -209,11 +209,11 @@ export default function ProtectionPlan() {
                     For details, refer to Scripts section above
                 </div>
             </div>
-            <img src={cpScripts} style={{ width: "75%", height: "75%" }} />
+            <img alt="" src={cpScripts} style={{ width: "75%", height: "75%" }} />
 
             <h4>Summary  </h4>
             <p>Review the summary for the protection plan and click finish to configure the protection plan. On successful configuration, replication jobs will start for the virtual machines selected for this protection plan. </p>
-            <img src={cpSummary} style={{ width: "75%", height: "75%" }} />
+            <img alt="" src={cpSummary} style={{ width: "75%", height: "75%" }} />
         </div>
     )
 }

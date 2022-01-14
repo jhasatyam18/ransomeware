@@ -17,7 +17,7 @@ export default function SiteActions() {
       <p>Select site from list for reconfiguration .<br />
         To Edit a site, click on <b>Edit</b> button and then Edit windows will pop-up.<br />
         modify the input which need to be changed and click on configure to save the configuration.
-        <img src={vmwareCS} />
+        <img alt="" src={vmwareCS} />
       </p>
 
 
@@ -25,7 +25,7 @@ export default function SiteActions() {
       <p>Select site from list for removal .<br />
         To remove a site, click on <b>Remove</b> a confirmation modal will pop-up.<br />
         On click of confirm, the selected site will be deleted.
-        <img src={delSite} />
+        <img alt="" src={delSite} />
       </p>
     </div>
   )

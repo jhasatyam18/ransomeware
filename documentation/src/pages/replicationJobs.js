@@ -23,7 +23,7 @@ export default function ReplicationJobs() {
         <p>Navigation: Home --> Jobs --> Replication and Select Protection Plan.</p>
         <p>Protection plan replication details provide a list of protection plans. Each protection plan has its associated virtual machine replication information.</p>
         <p>click  icon '&gt;' or <b>title</b> to view protection plan level details. </p>
-        <img src={replicationJobsPP} />
+        <img alt="" src={replicationJobsPP} />
         <table>
           <tr>
             <td><b>Name </b></td>
@@ -72,7 +72,7 @@ export default function ReplicationJobs() {
       <div id="replicationVM">
         <h4>Virtual Machines</h4>
         Provides a list of replication details for each protected virtual machine.
-        <img src={replicationJobsVM} />
+        <img alt="" src={replicationJobsVM} />
         <table>
           <tr>
             <td><b>Virtual Machine </b></td>
@@ -108,7 +108,7 @@ export default function ReplicationJobs() {
       <div id="replicationDisk">
         <h4>Disks </h4>
         Provide a list of replication details for each protected virtual machine disk/volume.
-        <img src={replicationJobsDisk} />
+        <img alt="" src={replicationJobsDisk} />
         <table>
           <tr>
             <td><b> Virtual Machine </b></td>

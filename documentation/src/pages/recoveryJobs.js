@@ -20,7 +20,7 @@ export default function RecoveryJobs() {
         <p>Protection plan recovery details provide a list of protection plans. Each protection plan has its
           associated recovered (Full / Test) or migrated virtual machine information. </p>
         <p>click  icon '&gt;' or <b>title</b> to view protection plan level details. </p>
-        <img src={recoveryJobsPP} />
+        <img alt="" src={recoveryJobsPP} />
         <table>
           <tr>
             <td><b>Name </b></td>
@@ -44,7 +44,7 @@ export default function RecoveryJobs() {
       <div id="recoveryVM">
         <h4>Virtual Machines</h4>
         Provides a list of recovered (Test/Full) or migrated virtual machines.
-        <img src={recoveryJobsVM} />
+        <img alt="" src={recoveryJobsVM} />
         <table>
           <tr>
             <td><b>Virtual Machine </b></td>

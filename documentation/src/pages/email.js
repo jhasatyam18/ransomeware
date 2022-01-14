@@ -14,7 +14,7 @@ export default function Email() {
       <ul>
         <li>Click on the <b>Configure Now</b> to open email configuration window. </li>
         <li>Provide the required details and click Configure.  </li>
-        <img src={emailConfig} />
+        <img alt="" src={emailConfig} />
         <table>
           <tr>
             <td>Email Address </td>
@@ -44,9 +44,9 @@ export default function Email() {
           </tr>
         </table>
         <li>Post email Configuration you can view the configured details along with Email Recipients section get enabled. </li>
-        <img src={emailPostConfig} />
+        <img alt="" src={emailPostConfig} />
         <li>To add new recipient, click on +New button </li>
-        <img src={emailRecipient} />
+        <img alt="" src={emailRecipient} />
         <li>Provide email address of the recipient </li>
         <li>Select the events for which you want to send email to recipients. </li>
         <li>Click configure to add new recipient in the email list for subscribed events.  </li>

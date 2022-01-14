@@ -1,7 +1,6 @@
-import React from 'react'
-import gcpSite from '../assets/gcpSite.PNG';
+import React from 'react';
 import gcpCS from '../assets/gcpCS.PNG';
-import conf_site from '../assets/conf_site.PNG';
+import gcpSite from '../assets/gcpSite.PNG';
 import siteNavigation from '../assets/siteNavigation.PNG';
 export default function CreateGcpSite() {
   return (
@@ -9,7 +8,7 @@ export default function CreateGcpSite() {
       <h2>Create GCP Site</h2>
 
       <p>Sites are environment setup for Protection plan to configure. Site consists of platform type and platform details. In the Datamotive UI, go to Configure tab on the left-hand side panel and select Sites.</p>
-      <img src={siteNavigation} />
+      <img alt="" src={siteNavigation} />
       <p>
         Site can be of following types: <br />
         Protection - A protection site is the source of the protection plan workload replication.<br />
@@ -54,10 +53,10 @@ export default function CreateGcpSite() {
         </tr>
       </table>
 
-      <img src={gcpSite} />
+      <img alt="" src={gcpSite} />
 
       <p>Click on configure to create the site and on successful creation, site will be listed in the list view.
-        <img src={gcpCS} />
+        <img alt="" src={gcpCS} />
       </p>
     </div>
   );

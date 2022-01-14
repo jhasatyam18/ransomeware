@@ -14,7 +14,7 @@ export default function Roles() {
         <li>Read Only     : Read-only user can view the all available views but no operation allowed. </li>
       </ol>
 
-      <img src={roleList} />
+      <img alt="" src={roleList} />
 
       On Left side grid all roles are listed. Click on the role o load its associated privileges and users.
 

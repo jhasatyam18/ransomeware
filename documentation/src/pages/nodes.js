@@ -1,9 +1,8 @@
-import React from 'react'
-import nodeImg from '../assets/nodes.PNG';
+import React from 'react';
 import nodeConfigure from '../assets/configureNode.PNG';
-import nodeList from '../assets/nodeList.PNG';
 import newNode from '../assets/newNode.PNG';
 import nodeConfig from '../assets/nodeConfig.PNG';
+import nodeList from '../assets/nodeList.PNG';
 
 export default function Nodes() {
   return (
@@ -26,14 +25,14 @@ export default function Nodes() {
         <li><b>Dedup Node:</b> Deploy the Dedup node on Recovery Site. Once deployed, register the Dedup node with Management Node on the Recovery Site.</li>
         <li><b>Win Prep Node:</b> Deploy the Win Prep node on Recovery Site. Once deployed, register the Win Prep node with Management Node on the Recovery Site.</li>
       </ol>
-      {/* <img src={nodeImg} /> */}
+      {/* <img alt="" src={nodeImg} /> */}
       <p>
          To Access Node option, Go to Configure -> Nodes (Note- By default the Local node will be configured.)
         To add new node -
         Click On “+ New” option as shown below -
       </p>
 
-      <img src={nodeConfigure} />
+      <img alt="" src={nodeConfigure} />
 
       <p>It consists of the below options-</p>
 
@@ -67,7 +66,7 @@ export default function Nodes() {
           </td>
         </tr>
       </table>
-      <img src={newNode} />
+      <img alt="" src={newNode} />
       <p><b>(Note – Based on the selection of Type, further details need to be entered). Ex. In option, the management type is selected. It consists of the below options -</b> </p>
       <table>
         <tr>
@@ -92,8 +91,8 @@ export default function Nodes() {
         </tr>
       </table>
       <p>Click on configure to create <b>Node</b> and on successful creation, node will be listed in the below list view.
-        <img src={nodeConfig} />
-        <img src={nodeList} />
+        <img alt="" src={nodeConfig} />
+        <img alt="" src={nodeList} />
       </p>
 
     </div>

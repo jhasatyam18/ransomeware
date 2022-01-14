@@ -29,7 +29,7 @@ export default function Events() {
         </table>
       </div>
       <p>To see “Events”, go to “Monitor” option and click on “Events” </p>
-      <img src={eve} />
+      <img alt="" src={eve} />
       <p>In events, the following information is displayed – </p>
       <table>
         <tr>

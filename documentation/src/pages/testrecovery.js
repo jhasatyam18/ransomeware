@@ -20,9 +20,9 @@ export default function TestRecovery() {
         Credentials are not stored anywhere and only been used for the workflow.
         <br /><b>NOTE:</b> For Windows recovery on AWS, Credentials are mandatory even if there are no pre or post scripts is configured.
       </p>
-      <img src={testRecoveryVMSelection} style={{ width: "75%", height: "75%" }} />
+      <img alt="" src={testRecoveryVMSelection} style={{ width: "75%", height: "75%" }} />
       <b>Recovery Configuration</b>
-      <img src={installCloudPackages} style={{ width: "75%", height: "75%" }} />
+      <img alt="" src={installCloudPackages} style={{ width: "75%", height: "75%" }} />
       <table>
         <tr>
           <td><b>Install System Agents </b></td>
@@ -35,9 +35,9 @@ export default function TestRecovery() {
         </tr>
       </table>
       <b>Summary </b>
-      <img src={testRecoverySummary} style={{ width: "75%", height: "75%" }} />
+      <img alt="" src={testRecoverySummary} style={{ width: "75%", height: "75%" }} />
       <p>Review the summary and click on finish to start the test recovery. This will start the test recovery jobs for the selected virtual machines and jobs can be monitored in the <br /> Home —> Jobs —> Recovery jobs tab</p>
-      <img src={testRecoveryJobs} style={{ width: "75%", height: "75%" }} />
+      <img alt="" src={testRecoveryJobs} style={{ width: "75%", height: "75%" }} />
 
 
       <h2>Test Recovery validation</h2>
