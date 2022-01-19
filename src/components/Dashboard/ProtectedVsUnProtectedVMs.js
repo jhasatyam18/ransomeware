@@ -1,59 +1,76 @@
-import React, { Component } from 'react';
-import { Row, Col, Card, CardBody } from 'reactstrap';
+import React, { useEffect, useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
-import { connect } from 'react-redux';
-// i18n
 import { withTranslation } from 'react-i18next';
-import { STROKE, SUCCESS, WARNING, DANGER, LEGEND } from '../../constants/ProtectionPlanAnalysisConstant';
+import { connect, useSelector } from 'react-redux';
+import { Card, CardBody, Col, Row } from 'reactstrap';
+import { MESSAGE_TYPES } from '../../constants/MessageConstants';
+import { DANGER, LEGEND, STROKE, SUCCESS, WARNING } from '../../constants/ProtectionPlanAnalysisConstant';
+import { addMessage } from '../../store/actions/MessageActions';
+import { callAPI } from '../../utils/ApiUtils';
+import { API_DASHBOARD_VIRTUAL_MACHINE_PROTECTION_ANALYSIS_PROTECTED_VMS, API_DASHBOARD_REPLICATION_STATS } from '../../constants/ApiConstants';
+import Spinner from '../Common/Spinner';
 
-class ProtectedVsUnProtectedVMs extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      walletOptions: {
-        stroke: STROKE,
-        colors: [SUCCESS, DANGER],
-        labels: ['protected', 'unprotected'],
-        legend: LEGEND,
+function ProtectedVsUnProtectedVMs(props) {
+  const { t, dispatch } = props;
+  const refresh = useSelector((state) => state.user.context.refresh);
+  const [loading, setLoading] = useState(false);
+
+  const [protectedVMStats, setProtectedVMStats] = useState({ protectedVMs: 0, unprotectedVMs: 0 });
+  const [replicationStats, setReplicationStat] = useState({});
+  const { protectedVMs, unprotectedVMs } = protectedVMStats;
+  const { inSync = 0, notInsync = 0 } = replicationStats;
+  const protectedVMSeries = [protectedVMs, unprotectedVMs];
+  const replicationSeries = [inSync, notInsync];
+  const state = {
+    walletOptions: {
+      stroke: STROKE,
+      colors: [SUCCESS, DANGER],
+      labels: [t('protected'), t('unprotected')],
+      legend: LEGEND,
+    },
+
+    replicationOptions: {
+      stroke: STROKE,
+      colors: [SUCCESS, WARNING],
+      labels: [t('replication.in.sync'), t('replication.not.in.sync')],
+      legend: LEGEND,
+    },
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    callAPI(API_DASHBOARD_VIRTUAL_MACHINE_PROTECTION_ANALYSIS_PROTECTED_VMS)
+      .then((json) => {
+        setLoading(false);
+        setProtectedVMStats({ protectedVMs: json.protectedVMs, unprotectedVMs: json.unprotectedVMs });
       },
-
-      replicationOptions: {
-        stroke: STROKE,
-        colors: [SUCCESS, WARNING],
-        labels: ['replication.in.sync', 'replication.not.in.sync'],
-        legend: LEGEND,
+      (err) => {
+        setLoading(false);
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+    callAPI(API_DASHBOARD_REPLICATION_STATS)
+      .then((json) => {
+        setReplicationStat(json);
       },
-    };
-  }
+      (err) => {
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  }, [refresh]);
 
-  componentDidMount() {
-    const { t } = this.props;
-    const { walletOptions, replicationOptions } = this.state;
-    const walletLabels = [t(walletOptions.labels[0]), t(walletOptions.labels[1])];
-    const replicationLabels = [t(replicationOptions.labels[0]), t(replicationOptions.labels[1])];
-    this.setState({
-      walletOptions: { ...walletOptions, labels: walletLabels },
-      replicationOptions: { ...replicationOptions, labels: replicationLabels },
-    });
-  }
+  const renderNoDataToShow = () => (
+    <>
+      <Card>
+        <CardBody>
+          <p className="font-weight-medium color-white">
+            {loading === true ? <Spinner /> : t('no.data.to.display')}
+          </p>
+        </CardBody>
+      </Card>
+    </>
+  );
 
-  renderNoDataToShow() {
-    const { t } = this.props;
-    return (
-      <>
-        <Card>
-          <CardBody>
-            <p className="font-weight-medium color-white">
-              {t('no.data.to.display')}
-            </p>
-          </CardBody>
-        </Card>
-      </>
-    );
-  }
-
-  renderData(protectedVMSeries, replicationSeries) {
-    const { walletOptions, replicationOptions } = this.state;
+  const renderData = () => {
+    const { walletOptions, replicationOptions } = state;
     return (
       <>
         <Col>
@@ -117,34 +134,25 @@ class ProtectedVsUnProtectedVMs extends Component {
         </Col>
       </>
     );
-  }
-
-  render() {
-    const { t, dashboard } = this.props;
-    const { protectedVMStats, replicationStats } = dashboard;
-    const { protectedVMs, unprotectedVMs } = protectedVMStats;
-    const { inSync, notInsync } = replicationStats;
-    const protectedVMSeries = [protectedVMs, unprotectedVMs];
-    const replicationSeries = [inSync, notInsync];
-    return (
-      <>
-        <Card>
-          <CardBody>
-            <p className="font-weight-medium color-white">
-              {t('virtual.machine.protection.analysis')}
-            </p>
-            <Row>
-              {(protectedVMSeries.length > 0) && (replicationSeries.length > 0) ? this.renderData(protectedVMSeries, replicationSeries) : this.renderNoDataToShow()}
-            </Row>
-          </CardBody>
-        </Card>
-      </>
-    );
-  }
+  };
+  return (
+    <>
+      <Card>
+        <CardBody>
+          <p className="font-weight-medium color-white">
+            {t('virtual.machine.protection.analysis')}
+          </p>
+          <Row>
+            {(protectedVMSeries.length > 0) && (replicationSeries.length > 0) && (loading === false) ? renderData(protectedVMSeries, replicationSeries) : renderNoDataToShow()}
+          </Row>
+        </CardBody>
+      </Card>
+    </>
+  );
 }
 
 function mapStateToProps(state) {
-  const { dashboard } = state;
-  return { dashboard };
+  const { user } = state;
+  return { user };
 }
 export default connect(mapStateToProps)(withTranslation()(ProtectedVsUnProtectedVMs));

@@ -1,29 +1,43 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { connect, useSelector } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, Badge, Col, Row } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import { API_DASHBOARD_NODE_STATS } from '../../constants/ApiConstants';
+import { addMessage } from '../../store/actions/MessageActions';
+import { callAPI } from '../../utils/ApiUtils';
+import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 
 function NodeInfo(props) {
-  function renderNoDataToShow() {
-    const { t } = props;
-    return (
-      <>
-        <Card>
-          <CardBody>
-            <p className="font-weight-medium color-white">
-              {t('replication.nodes')}
-            </p>
-            {t('no.data.to.display')}
-          </CardBody>
-        </Card>
-      </>
-    );
-  }
+  const { dispatch, t } = props;
+  const refresh = useSelector((state) => state.user.context.refresh);
+  const [nodes, setNodes] = useState([]);
+  useEffect(() => {
+    setNodes([]);
+    callAPI(API_DASHBOARD_NODE_STATS)
+      .then((json) => {
+        setNodes(json);
+      },
+      (err) => {
+        setNodes([]);
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  }, [refresh]);
 
-  function renderOverallState() {
-    const { dashboard } = props;
-    const { nodes } = dashboard;
+  const renderNoDataToShow = () => (
+    <>
+      <Card>
+        <CardBody>
+          <p className="font-weight-medium color-white">
+            {t('replication.nodes')}
+          </p>
+          {t('no.data.to.display')}
+        </CardBody>
+      </Card>
+    </>
+  );
+
+  const renderOverallState = () => {
     let badgeColor = '';
     let OverallStatus = '';
 
@@ -45,11 +59,9 @@ function NodeInfo(props) {
         </Badge>
       </div>
     );
-  }
+  };
 
   function renderer() {
-    const { dashboard, t } = props;
-    const { nodes } = dashboard;
     if (!nodes) {
       return renderNoDataToShow();
     }

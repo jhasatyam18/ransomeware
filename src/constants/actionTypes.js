@@ -19,6 +19,7 @@ export const APP_USER = 'APP_USER';
 export const APP_USER_CHANGE_PASSWORD = 'APP_USER_CHANGE_PASSWORD';
 export const APP_USER_PRIVILEGES = 'APP_USER_PRIVILEGES';
 export const APP_USERS = 'APP_USERS';
+export const APP_REFRESH = 'APP_REFRESH';
 
 // Messages
 export const ADD_MESSAGE = 'ADD_MESSAGE';

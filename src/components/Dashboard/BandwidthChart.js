@@ -1,74 +1,81 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
+import { withTranslation } from 'react-i18next';
+import { connect, useSelector } from 'react-redux';
 import ReactApexChart from 'react-apexcharts';
 import { Card, CardBody } from 'reactstrap';
 import { API_DASHBOARD_BANDWIDTH_USAGE } from '../../constants/ApiConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { SUCCESS, DANGER } from '../../constants/ProtectionPlanAnalysisConstant';
+import { DANGER, SUCCESS } from '../../constants/ProtectionPlanAnalysisConstant';
 import { addMessage } from '../../store/actions/MessageActions';
 import { callAPI } from '../../utils/ApiUtils';
+import Spinner from '../Common/Spinner';
 
-class BandwidthChart extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      series: [
-        {
-          name: 'Upload Speed (Mbps)',
-          data: [],
+function BandwidthChart(props) {
+  const refresh = useSelector((state) => state.user.context.refresh);
+  const [loading, setLoading] = useState(false);
+  const { dispatch, t } = props;
+  const upLoadSpeedTitle = t('upload.speed.mbps');
+  const downloadSpeedTitle = t('download.speed.mbps');
+  const [state, setState] = useState({
+    series: [
+      {
+        name: upLoadSpeedTitle,
+        data: [],
+      },
+      {
+        name: downloadSpeedTitle,
+        data: [],
+      },
+    ],
+    options: {
+      chart: { toolbar: 'false', foreColor: 'white', stacked: true },
+      colors: [DANGER, SUCCESS],
+      dataLabels: { enabled: !1 },
+      stroke: { curve: 'smooth', width: 2 },
+      markers: { size: 0, style: 'hollow' },
+      xaxis: {
+        type: 'datetime',
+        labels: {
+          datetimeUTC: false,
         },
-        {
-          name: 'Download Speed (Mbps)',
-          data: [],
+      },
+      fill: {
+        type: 'gradient',
+        gradient: {
+          opacityFrom: 0.6,
+          opacityTo: 0.8,
         },
-      ],
-      options: {
-        chart: { toolbar: 'false', foreColor: 'white', stacked: true },
-        colors: [DANGER, SUCCESS],
-        dataLabels: { enabled: !1 },
-        stroke: { curve: 'smooth', width: 2 },
-        markers: { size: 0, style: 'hollow' },
+      },
+      tooltip: { theme: 'dark', x: { format: 'dd MMM yyyy hh:mm' } },
+      grid: {
         xaxis: {
-          type: 'datetime',
-          labels: {
-            datetimeUTC: false,
-          },
-        },
-        fill: {
-          type: 'gradient',
-          gradient: {
-            opacityFrom: 0.6,
-            opacityTo: 0.8,
-          },
-        },
-        tooltip: { theme: 'dark', x: { format: 'dd MMM yyyy hh:mm' } },
-        grid: {
-          xaxis: {
-            lines: {
-              show: false,
-            },
-          },
-          yaxis: {
+          lines: {
             show: false,
-            lines: {
-              show: false,
-            },
           },
         },
         yaxis: {
-          show: true,
-          showAlways: false,
-          labels: {
+          show: false,
+          lines: {
             show: false,
           },
         },
       },
-    };
-  }
+      yaxis: {
+        show: true,
+        showAlways: false,
+        labels: {
+          show: false,
+        },
+      },
+    },
+  });
 
-  componentDidMount() {
-    const { dispatch } = this.props;
+  useEffect(() => {
+    setLoading(true);
+    setState({ ...state, series: [{ name: upLoadSpeedTitle, data: [] }, { name: downloadSpeedTitle, data: [] }] });
     callAPI(API_DASHBOARD_BANDWIDTH_USAGE).then((json) => {
       try {
+        setLoading(false);
         const uploadSpeed = [];
         const downloadSpeed = [];
         if (json !== null) {
@@ -76,28 +83,44 @@ class BandwidthChart extends Component {
             uploadSpeed.push([item.timeStamp * 1000, item.uploadSpeed]);
             downloadSpeed.push([item.timeStamp * 1000, item.downloadSpeed]);
           });
-          this.setState({
-            series: [
-              { name: 'Upload Speed (Mbps)', data: uploadSpeed },
-              { name: 'Download Speed (Mbps)', data: downloadSpeed }] });
+          setState({ ...state, series: [{ name: upLoadSpeedTitle, data: uploadSpeed }, { name: downloadSpeedTitle, data: downloadSpeed }] });
         }
       } catch (e) {
+        setLoading(false);
         dispatch(addMessage(e.message, MESSAGE_TYPES.ERROR));
       }
     },
     (err) => {
+      setLoading(false);
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
-  }
+  }, [refresh]);
 
-  render() {
-    const { options, series } = this.state;
+  if (loading === true) {
     return (
       <>
         <Card>
           <CardBody>
             <p className="font-weight-medium color-white">
-              Bandwidth Usage ( Last 12 hours )
+              {t('dashboard.bandwidth.usage.title')}
+            </p>
+            <div>
+              <Spinner />
+            </div>
+          </CardBody>
+        </Card>
+      </>
+    );
+  }
+
+  const render = () => {
+    const { options, series } = state;
+    return (
+      <>
+        <Card>
+          <CardBody>
+            <p className="font-weight-medium color-white">
+              {t('dashboard.bandwidth.usage.title')}
             </p>
             <div>
               <div id="overview-chart" className="apex-charts" dir="ltr">
@@ -115,7 +138,13 @@ class BandwidthChart extends Component {
         </Card>
       </>
     );
-  }
+  };
+  return render();
 }
 
-export default BandwidthChart;
+const mapStateToProps = (state) => {
+  const { user } = state;
+  return { user };
+};
+
+export default connect(mapStateToProps)(withTranslation()(BandwidthChart));

@@ -1,8 +1,10 @@
 import React from 'react';
+import { withTranslation } from 'react-i18next';
 import { Card, CardBody, Col, Row } from 'reactstrap';
 import { calculateChangedData } from '../../utils/AppUtils';
 
 function ReplicationStat(props) {
+  const { t } = props;
   function renderData(steps) {
     return (
       <div className="dashboard_replicaiton_info">
@@ -33,18 +35,17 @@ function ReplicationStat(props) {
   }
 
   function renderer() {
-    const { dashboard } = props;
-    const { replicationStats } = dashboard;
-    const { completed, running, failures, dataReduction = 0, changedRate = 0 } = replicationStats;
+    const { replicationStats } = props;
+    const { completed, running, failed = 0, dataReduction = 0, changedRate = 0 } = replicationStats;
     const data = {
       statTasks: [
-        { label: 'Completed', value: completed, icon: 'fa fa-clipboard-check', color: 'app_success' },
-        { label: 'Running', value: running, icon: 'fa fa-spinner fa-spin', color: 'app_primary' },
-        { label: 'Failures', value: failures, icon: 'fa fa-exclamation-triangle', color: 'app_danger' },
+        { label: t('completed'), value: completed, icon: 'fa fa-clipboard-check', color: 'app_success' },
+        { label: t('running'), value: running, icon: 'fa fa-spinner fa-spin', color: 'app_primary' },
+        { label: t('failures'), value: failed, icon: 'fa fa-exclamation-triangle', color: 'app_danger' },
       ],
       statRep: [
-        { label: 'Change Rate', value: calculateChangedData(changedRate), icon: 'fa fa-copy', color: 'app_success' },
-        { label: 'Data Reduction', value: calculateDataReduction(dataReduction), icon: 'fa fa-file-archive', color: 'app_success' },
+        { label: t('change.rate'), value: calculateChangedData(changedRate), icon: 'fa fa-copy', color: 'app_success' },
+        { label: t('data.reduction'), value: calculateDataReduction(dataReduction), icon: 'fa fa-file-archive', color: 'app_success' },
       ],
     };
     const { statRep, statTasks } = data;
@@ -53,7 +54,7 @@ function ReplicationStat(props) {
         <Card>
           <CardBody style={{ minHeight: 188 }}>
             <p className="font-weight-medium color-white">
-              Replication Statistics
+              {t('replication.statistics')}
             </p>
             {renderData(statTasks)}
             {renderData(statRep)}
@@ -66,4 +67,4 @@ function ReplicationStat(props) {
   return renderer();
 }
 
-export default ReplicationStat;
+export default (withTranslation()(ReplicationStat));

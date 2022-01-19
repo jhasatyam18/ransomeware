@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Card, CardBody, Col, Row } from 'reactstrap';
 import { addMessage } from '../../store/actions/MessageActions';
@@ -8,22 +8,29 @@ import { API_DASHBOARD_UNACK_ALERTS } from '../../constants/ApiConstants';
 import { ALERTS_PATH } from '../../constants/RouterConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { callAPI } from '../../utils/ApiUtils';
+import Spinner from '../Common/Spinner';
 
 function DashboardAlertOverview(props) {
   const dispatch = useDispatch();
+  const refresh = useSelector((state) => state.user.context.refresh);
   const [alert, setAlerts] = useState({ criticalAlerts: 0, errorAlerts: 0, majorAlerts: 0, warningAlerts: 0 });
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
+    setLoading(true);
+    setAlerts([]);
     callAPI(API_DASHBOARD_UNACK_ALERTS).then((json) => {
       setAlerts(json);
+      setLoading(false);
     },
     (err) => {
+      setAlerts([]);
+      setLoading(false);
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
-    return () => {
-      setAlerts({ criticalAlerts: 0, errorAlerts: 0, majorAlerts: 0 });
-    };
-  }, []);
+  }, [refresh]);
   const { t } = props;
+
   return (
     <Card>
       <CardBody style={{ maxHeight: 250 }}>
@@ -33,19 +40,19 @@ function DashboardAlertOverview(props) {
           </p>
           <Row className="text-center" style={{ fontSize: '0.9rem' }}>
             <Col sm={4}>
-              <span className="text-danger-1">Critical</span>
+              <span className="text-danger-1">{t('Critical')}</span>
               <hr />
-              {alert.criticalAlerts}
+              {loading === true ? <Spinner /> : alert.criticalAlerts}
             </Col>
             <Col sm={4}>
-              <span className="text-danger-2">Error</span>
+              <span className="text-danger-2">{t('Error')}</span>
               <hr />
-              {alert.errorAlerts}
+              {loading === true ? '' : alert.errorAlerts}
             </Col>
             <Col sm={4}>
-              <span className="text-warning-1">Major</span>
+              <span className="text-warning-1">{t('Major')}</span>
               <hr />
-              {alert.majorAlerts}
+              {loading === true ? '' : alert.majorAlerts}
             </Col>
           </Row>
         </Link>

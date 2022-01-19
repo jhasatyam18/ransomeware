@@ -71,7 +71,7 @@ function SiteConnection(props) {
 }
 
 function mapStateToProps(state) {
-  const { dashboard } = state;
-  return { dashboard };
+  const { dashboard, user } = state;
+  return { dashboard, user };
 }
 export default connect(mapStateToProps)(withTranslation()(SiteConnection));

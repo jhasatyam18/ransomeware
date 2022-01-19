@@ -20,7 +20,7 @@ class DRPlanDetails extends Component {
   constructor() {
     super();
     this.state = { activeTab: '1' };
-    this.showEdit = this.showEdit.bind(this);
+    this.disableEdit = this.disableEdit.bind(this);
   }
 
   componentDidMount() {
@@ -40,7 +40,7 @@ class DRPlanDetails extends Component {
     }
   }
 
-  showEdit() {
+  disableEdit() {
     const { drPlans, user } = this.props;
     const { protectionPlan } = drPlans;
     if (!protectionPlan) {
@@ -48,11 +48,11 @@ class DRPlanDetails extends Component {
     }
     const { protectedSite, recoverySite } = protectionPlan;
     const { platformDetails } = protectedSite;
-    if (platformDetails.platformType === user.platformType && hasRequestedPrivileges(user, ['protectionplan.edit'])) {
-      return false;
-    }
     // disable if recovery site is VMware
     if (recoverySite.platformDetails.platformType === PLATFORM_TYPES.VMware) {
+      return true;
+    }
+    if (platformDetails.platformType === user.platformType && hasRequestedPrivileges(user, ['protectionplan.edit'])) {
       return false;
     }
     return true;
@@ -182,7 +182,7 @@ class DRPlanDetails extends Component {
     if (platformType === protectedSitePlatform && localVMIP !== recoverySite.node.hostname) {
       actions.push({ label: 'start', action: startPlan, id: protectionPlan.id, disabled: this.disableStart(protectionPlan) });
       actions.push({ label: 'stop', action: stopPlan, id: protectionPlan.id, disabled: this.disableStop(protectionPlan) });
-      actions.push({ label: 'edit', action: openEditProtectionPlanWizard, id: protectionPlan, disabled: this.showEdit() });
+      actions.push({ label: 'edit', action: openEditProtectionPlanWizard, id: protectionPlan, disabled: this.disableEdit() });
       actions.push({ label: 'remove', action: deletePlanConfirmation, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS.STARTED, navigate: PROTECTION_PLANS_PATH });
     } else if (localVMIP === recoverySite.node.hostname) {
       actions = [{ label: 'recover', action: openRecoveryWizard, icon: 'fa fa-plus', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.full']) },

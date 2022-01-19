@@ -80,7 +80,7 @@ class ProfileMenu extends Component {
             </DropdownItem>
             <div className="dropdown-divider" />
             <DropdownItem>
-              <a href="docs/index.html" target="_blank" style={{ color: '#BFC8E2' }}>
+              <a href={`${window.location.origin}/docs/index.html`} rel="noreferrer" target="_blank" style={{ color: '#BFC8E2' }}>
                 <i className="fa fa-book font-size-16 align-middle mr-1" />
                 &nbsp;&nbsp;
                 {t('Documentation')}

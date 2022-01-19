@@ -171,7 +171,7 @@ export function getAppDateFormat(date, includeTime = false) {
 export function calculateChangedData(val) {
   try {
     if (val === 0) {
-      return '';
+      return '-';
     }
     const units = ['MB', 'GB', 'TB', 'PB'];
     const factor = 1024;

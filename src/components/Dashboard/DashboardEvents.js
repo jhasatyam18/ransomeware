@@ -1,43 +1,53 @@
-import React, { Component } from 'react';
-import { Row, Col, Card, CardBody, Media } from 'reactstrap';
-import { connect } from 'react-redux';
+import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
+import { connect, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { fetchEvents, resetEvents } from '../../store/actions/EventActions';
+import { Card, CardBody, Col, Media, Row } from 'reactstrap';
+import { addMessage } from '../../store/actions/MessageActions';
 import { EVENT_LEVELS } from '../../constants/EventConstant';
 import { EVENTS_PATH } from '../../constants/RouterConstants';
+import { API_FETCH_EVENTS } from '../../constants/ApiConstants';
+import { MESSAGE_TYPES } from '../../constants/MessageConstants';
+import { callAPI } from '../../utils/ApiUtils';
+import Spinner from '../Common/Spinner';
 
-class DashBoardEvents extends Component {
-  componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch(fetchEvents());
-  }
+function DashBoardEvents(props) {
+  const { t, dispatch } = props;
+  const [data, setData] = useState([]);
+  const refresh = useSelector((state) => state.user.context.refresh);
+  const dataToDisplay = (data.length > 5 ? data.slice(0, 5) : data);
+  const [loading, setLoading] = useState(false);
 
-  componentWillUnmount() {
-    const { dispatch } = this.props;
-    dispatch(resetEvents());
-  }
+  useEffect(() => {
+    setLoading(true);
+    setData([]);
+    callAPI(API_FETCH_EVENTS)
+      .then((json) => {
+        setData(json);
+        setLoading(false);
+      },
+      (err) => {
+        setData([]);
+        setLoading(false);
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  }, [refresh]);
 
-  // checks the status and passes the css accordingly.
-  checkStatus(data) {
-    const { level } = data;
+  const renderNoDataToShow = () => (
+    <>
+      <Card>
+        <CardBody>
+          <p className="font-weight-medium color-white">
+            {t('events')}
+          </p>
+          {loading === true ? <Spinner /> : t('no.data.to.display')}
+        </CardBody>
+      </Card>
+    </>
+  );
 
-    switch (level) {
-      case EVENT_LEVELS.ALL:
-        return this.renderData(data, 'app_primary bxs-check-circle');
-      case EVENT_LEVELS.WARNING:
-        return this.renderData(data, 'app_warning bx bxs-error');
-      case EVENT_LEVELS.ERROR:
-        return this.renderData(data, 'app_danger bxs-x-circle');
-      case EVENT_LEVELS.CRITICAL:
-        return this.renderData(data, 'app_danger bxs-x-circle');
-      default:
-        return this.renderData(data, 'app_success bxs-check-circle');
-    }
-  }
-
-  // checks if the character length are more than 65 and render data accordingly.
-  renderData(data, css) {
+  const renderData = (obj, css) => {
+    const { description } = obj;
     return (
       <Media className="padding-10">
         <div className="mr-4">
@@ -48,58 +58,52 @@ class DashBoardEvents extends Component {
         <Media body>
           <div>
             <Link to={EVENTS_PATH} style={{ color: 'white' }}>
-              {data.description.length > 65 ? `${data.description.substr(0, 65)}....` : data.description}
+              {description.length > 65 ? `${description.substr(0, 65)}....` : description}
             </Link>
           </div>
         </Media>
       </Media>
     );
-  }
+  };
 
-  renderNoDataToShow() {
-    const { t } = this.props;
-    return (
-      <>
-        <Card>
-          <CardBody>
-            <p className="font-weight-medium color-white">
-              {t('events')}
-            </p>
-            {t('no.data.to.display')}
-          </CardBody>
-        </Card>
-      </>
-    );
-  }
-
-  render() {
-    const { events, t } = this.props;
-    const { data } = events;
-    const dataToDisplay = (data.length > 5 ? data.slice(0, 5) : data);
-
-    if (dataToDisplay.length === 0) {
-      return this.renderNoDataToShow();
+  const checkStatus = (d) => {
+    const { level } = d;
+    switch (level) {
+      case EVENT_LEVELS.ALL:
+        return renderData(d, 'app_primary bxs-check-circle');
+      case EVENT_LEVELS.WARNING:
+        return renderData(d, 'app_warning bx bxs-error');
+      case EVENT_LEVELS.ERROR:
+        return renderData(d, 'app_danger bxs-x-circle');
+      case EVENT_LEVELS.CRITICAL:
+        return renderData(d, 'app_danger bxs-x-circle');
+      default:
+        return renderData(d, 'app_success bxs-check-circle');
     }
+  };
 
-    return (
-      <>
-        <Card>
-          <CardBody style={{ minHeight: 365 }}>
-            <p className="font-weight-medium color-white">
-              {t('events')}
-            </p>
-            <Row>
-              {dataToDisplay.map((val) => (
-                <Col sm={12} key={`dashboard-event-${val.id}`}>
-                  {this.checkStatus(val)}
-                </Col>
-              ))}
-            </Row>
-          </CardBody>
-        </Card>
-      </>
-    );
+  if (dataToDisplay.length === 0) {
+    return renderNoDataToShow();
   }
+
+  return (
+    <>
+      <Card>
+        <CardBody style={{ minHeight: 365 }}>
+          <p className="font-weight-medium color-white">
+            {t('events')}
+          </p>
+          <Row>
+            {dataToDisplay.map((val) => (
+              <Col sm={12} key={`dashboard-event-${val.id}`}>
+                {checkStatus(val)}
+              </Col>
+            ))}
+          </Row>
+        </CardBody>
+      </Card>
+    </>
+  );
 }
 
 function mapStateToProps(state) {

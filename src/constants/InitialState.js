@@ -6,6 +6,7 @@ const INITIAL_STATE = {
   },
   messages: {},
   user: { id: 1,
+    context: { refresh: 0 },
     passwordChangeReq: false,
     allowCancel: false,
     isAuthenticated: false,

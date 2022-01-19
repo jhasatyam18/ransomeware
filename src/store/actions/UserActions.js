@@ -4,7 +4,7 @@ import * as Types from '../../constants/actionTypes';
 import { API_AUTHENTICATE, API_AWS_AVAILABILITY_ZONES, API_AWS_REGIONS, API_CHANGE_PASSWORD, API_GCP_AVAILABILITY_ZONES, API_GCP_REGIONS, API_INFO, API_SCRIPTS, API_USERS, API_USER_PRIVILEGES } from '../../constants/ApiConstants';
 import { APP_TYPE, PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { ALERTS_PATH, DASHBOARD_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH } from '../../constants/RouterConstants';
+import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH } from '../../constants/RouterConstants';
 import { APPLICATION_API_TOKEN, APPLICATION_API_USER, APPLICATION_API_USER_ID } from '../../constants/UserConstant';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { getCookie, setCookie } from '../../utils/CookieUtils';
@@ -12,7 +12,6 @@ import { onInit } from '../../utils/HistoryUtil';
 import { getValue } from '../../utils/InputUtils';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { fetchAlerts, getUnreadAlerts } from './AlertActions';
-import { fetchDashboardData } from './DashboardActions';
 import { fetchDRPlanById, fetchDrPlans } from './DrPlanActions';
 import { fetchEmailConfig, fetchEmailRecipients } from './EmailActions';
 import { fetchEvents } from './EventActions';
@@ -23,6 +22,12 @@ import { fetchNodes } from './NodeActions';
 import { fetchSites } from './SiteActions';
 import { fetchSupportBundles } from './SupportActions';
 import { fetchBandwidthConfig, fetchBandwidthReplNodes } from './ThrottlingAction';
+
+export function refreshApplication() {
+  return {
+    type: Types.APP_REFRESH,
+  };
+}
 
 export function login({ username, password, history }) {
   return (dispatch) => {
@@ -211,10 +216,9 @@ export function refresh() {
   return (dispatch) => {
     const { location } = window;
     const { pathname } = location;
+    // dispatch refreshAction to notify selector component
+    dispatch(refreshApplication());
     switch (pathname) {
-      case DASHBOARD_PATH:
-        dispatch(fetchDashboardData());
-        break;
       case PROTECTION_PLANS_PATH:
         dispatch(fetchDrPlans());
         break;
@@ -413,7 +417,7 @@ export function getUserInfo() {
       return;
     }
     const url = `${API_USERS}?name=${username}`;
-    dispatch(showApplicationLoader(url, 'Loading user...'));
+    dispatch(showApplicationLoader(url, 'Loading...'));
     return callAPI(url).then((json) => {
       dispatch(hideApplicationLoader(url));
       if (json.hasError) {

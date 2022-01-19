@@ -3,6 +3,10 @@ import INITIAL_STATE from '../../constants/InitialState';
 
 export default function user(state = INITIAL_STATE.user, action) {
   switch (action.type) {
+    case Types.APP_REFRESH:
+      return {
+        ...state, context: { refresh: state.context.refresh + 1 },
+      };
     case Types.AUTHENTICATE_USER_REQUEST:
       return {
         ...state, isValidating: false, isAuthenticated: false, token: '',
