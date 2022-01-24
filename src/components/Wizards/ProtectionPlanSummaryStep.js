@@ -1,10 +1,33 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardTitle, Col, Row } from 'reactstrap';
+import DMTable from '../Table/DMTable';
+import { TABLE_ALERTS } from '../../constants/TableConstants';
 import { convertMinutesToDaysHourFormat, getStorageWithUnit } from '../../utils/AppUtils';
 import { getValue } from '../../utils/InputUtils';
 
 class ProtectionPlanSummaryStep extends Component {
+  renderAlerts() {
+    const { user, t } = this.props;
+    const { values } = user;
+    const isEventAction = getValue('ui.isEventAction', values);
+    const alerts = getValue('ui.vm.alerts', values);
+    if (isEventAction === true) {
+      const fields = ['title', 'severity', 'updatedTime'];
+      const cols = TABLE_ALERTS.filter((c) => fields.indexOf(c.field) !== -1);
+      return (
+        <Col sm={12} className="text-warning padding-top-10">
+          <div>{t('vm.alerts.warning')}</div>
+          <DMTable
+            columns={cols}
+            data={alerts}
+            primaryKey="id"
+          />
+        </Col>
+      );
+    }
+  }
+
   render() {
     const { user, t } = this.props;
     const { values } = user;
@@ -62,6 +85,7 @@ class ProtectionPlanSummaryStep extends Component {
                 </Row>
                 <hr className="mt-3 mb-3" />
               </Col>
+              {this.renderAlerts()}
             </Row>
           </CardBody>
         </Card>

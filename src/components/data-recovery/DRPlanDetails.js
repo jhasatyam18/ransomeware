@@ -1,17 +1,17 @@
-import React, { Component, Suspense } from 'react';
-import { Card, Container, CardBody, Row, Col, CardTitle, Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap';
 import classnames from 'classnames';
+import React, { Component, Suspense } from 'react';
 import { withTranslation } from 'react-i18next';
-import { deletePlanConfirmation, fetchDRPlanById, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
-import DMTable from '../Table/DMTable';
-import DMBreadCrumb from '../Common/DMBreadCrumb';
-import { TABLE_PROTECTION_PLAN_VMS } from '../../constants/TableConstants';
+import { Card, CardBody, CardTitle, Col, Container, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
 import { PLATFORM_TYPES, RECOVERY_STATUS, REPLICATION_STATUS } from '../../constants/InputConstants';
-import DropdownActions from '../Common/DropdownActions';
+import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
+import { deletePlanConfirmation, fetchDRPlanById, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
+import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
 import CheckBox from '../Common/CheckBox';
 import DisplayString from '../Common/DisplayString';
-import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
-import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
+import DMBreadCrumb from '../Common/DMBreadCrumb';
+import DropdownActions from '../Common/DropdownActions';
+import ProtectionPlanVMConfig from './ProtectionPlanVMConfig';
+import { convertMinutesToDaysHourFormat } from '../../utils/AppUtils';
 
 const Replication = React.lazy(() => import('../Jobs/Replication'));
 const Recovery = React.lazy(() => import('../Jobs/Recovery'));
@@ -40,6 +40,14 @@ class DRPlanDetails extends Component {
     }
   }
 
+  isRecovered(protectionplan) {
+    const { recoveryStatus } = protectionplan;
+    if (recoveryStatus === 'Migrated' || recoveryStatus === 'Recovered') {
+      return true;
+    }
+    return false;
+  }
+
   disableEdit() {
     const { drPlans, user } = this.props;
     const { protectionPlan } = drPlans;
@@ -55,17 +63,17 @@ class DRPlanDetails extends Component {
     if (platformDetails.platformType === user.platformType && hasRequestedPrivileges(user, ['protectionplan.edit'])) {
       return false;
     }
-    return true;
+    return this.isRecovered(protectionPlan);
   }
 
   disableStart(protectionPlan) {
     const { user } = this.props;
-    return (protectionPlan.status.toUpperCase() === REPLICATION_STATUS.STARTED || !hasRequestedPrivileges(user, ['protectionplan.status']));
+    return (this.isRecovered(protectionPlan) || protectionPlan.status.toUpperCase() === REPLICATION_STATUS.STARTED || !hasRequestedPrivileges(user, ['protectionplan.status']));
   }
 
   disableStop(protectionPlan) {
     const { user } = this.props;
-    return (protectionPlan.status === REPLICATION_STATUS.STOPPED || !hasRequestedPrivileges(user, ['protectionplan.status']));
+    return (this.isRecovered(protectionPlan) || protectionPlan.status === REPLICATION_STATUS.STOPPED || !hasRequestedPrivileges(user, ['protectionplan.status']));
   }
 
   disableReverse(protectionPlan) {
@@ -91,11 +99,11 @@ class DRPlanDetails extends Component {
     const keys = [{ label: 'Name', field: name }, { label: 'Platform Type', field: platformDetails.platformType }, { label: 'Hostname', field: platformDetails.hostname },
       { label: 'Region', field: platformDetails.region }, { label: 'Zone', field: platformDetails.availZone }, { label: 'Project ID', field: platformDetails.projectId }, { label: 'Datamotive Node IP', field: node.hostname },
       { label: 'Datamotive Server Port', field: node.replicationDataPort }];
-    const fields = keys.map((ele) => {
+    const fields = keys.map((ele, index) => {
       const { field, label } = ele;
       if (field) {
         return (
-          <div className="stack__info">
+          <div className="stack__info" key={`${field}-${index + 1}`}>
             <div className="label">
               {label}
             </div>
@@ -111,7 +119,10 @@ class DRPlanDetails extends Component {
     return fields;
   }
 
-  renderField(label, field) {
+  renderField(label, field, value) {
+    if (typeof value !== 'undefined') {
+      return <DisplayString value={value} />;
+    }
     const type = (typeof field);
     switch (type) {
       case 'boolean':
@@ -121,33 +132,62 @@ class DRPlanDetails extends Component {
     }
   }
 
+  renderRecoverFields(keys) {
+    const { drPlans } = this.props;
+    const { protectionPlan } = drPlans;
+    if (!protectionPlan) {
+      return null;
+    }
+    const fields = keys.map((ele, index) => {
+      const { field, label, value } = ele;
+      if (typeof protectionPlan[field] !== 'undefined') {
+        return (
+          <div className="stack__info padding-right-20" key={`${field}-${index + 1}`}>
+            <div className="label">
+              {label}
+            </div>
+            <div className="value">
+              {this.renderField(label, protectionPlan[field], value)}
+            </div>
+          </div>
+        );
+      }
+      return null;
+    });
+    return fields;
+  }
+
   renderRecoveryConfig() {
     const { drPlans } = this.props;
     const { protectionPlan } = drPlans;
     if (!protectionPlan) {
       return null;
     }
-    const keys = [{ label: 'Replication Interval', field: 'replicationInterval' }, { label: 'Subnet', field: 'subnet' }, { label: 'Encryption On Wire', field: 'isEncryptionOnWire' },
-      { label: 'Compression', field: 'isCompression' }, { label: 'Dedupe', field: 'isDedupe' },
-      { label: 'Pre Script', field: 'preScript' }, { label: 'Post Script', field: 'postScript' }];
-    const fields = keys.map((ele) => {
-      const { field, label } = ele;
-      if (typeof protectionPlan[field] !== 'undefined') {
-        return (
-          <div className="stack__info">
-            <div className="label">
-              {label}
-            </div>
-            <div className="value">
-              {this.renderField(label, protectionPlan[field])}
-            </div>
-          </div>
+    const startTIme = protectionPlan.startTime * 1000;
+    const sd = new Date(startTIme);
+    const keys = [
+      { label: 'Replication Interval', field: 'replicationInterval', value: `Every ${convertMinutesToDaysHourFormat(protectionPlan.replicationInterval)}` },
+      { label: 'Encryption On Wire', field: 'isEncryptionOnWire' },
+      { label: 'Compression', field: 'isCompression' },
+      { label: 'Dedupe', field: 'isDeDupe' },
+      { label: 'Differential Reverse Replication', field: 'enableReverse' },
 
-        );
-      }
-      return null;
-    });
-    return fields;
+      { label: 'Start Time', field: 'startTime', value: `${sd.toLocaleDateString()}-${sd.toLocaleTimeString()}` },
+      { label: 'Pre Script', field: 'preScript' },
+      { label: 'Post Script', field: 'postScript' },
+      { label: 'Script Timeout (Seconds)', field: 'scriptTimeout' },
+      { label: 'Boot Delay (Seconds)', field: 'bootDelay' },
+    ];
+    return (
+      <Row>
+        <Col sm={4}>
+          {this.renderRecoverFields(keys.slice(0, 5))}
+        </Col>
+        <Col sm={4}>
+          {this.renderRecoverFields(keys.slice(5, 10))}
+        </Col>
+      </Row>
+    );
   }
 
   renderStatus() {
@@ -222,8 +262,7 @@ class DRPlanDetails extends Component {
     if (!protectionPlan || Object.keys(protectionPlan).length === 0) {
       return null;
     }
-    const { name, protectedSite, recoverySite, protectedEntities, id } = protectionPlan;
-    const { virtualMachines } = protectedEntities;
+    const { name, protectedSite, recoverySite, id } = protectionPlan;
     return (
       <>
         <Container fluid>
@@ -283,19 +322,11 @@ class DRPlanDetails extends Component {
               </Nav>
               <TabContent activeTab={activeTab}>
                 <TabPane tabId="1" className="p-3">
-                  <Row>
-                    <Col sm="12">
-                      <DMTable
-                        dispatch={dispatch}
-                        columns={TABLE_PROTECTION_PLAN_VMS}
-                        data={virtualMachines}
-                      />
-                    </Col>
-                  </Row>
+                  <ProtectionPlanVMConfig protectionPlan={protectionPlan} dispatch={dispatch} />
                 </TabPane>
                 <TabPane tabId="2" className="p-3">
                   <Row>
-                    <Col sm="4">
+                    <Col sm="12">
                       {this.renderRecoveryConfig()}
                     </Col>
                   </Row>

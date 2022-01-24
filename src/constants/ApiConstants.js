@@ -15,7 +15,7 @@ export const API_SCRIPTS = 'api/v1/scripts';
 export const API_SITE_NETWORKS = 'api/v1/sites/<id>/networks';
 export const API_PROTECTION_PLAN_VMS = 'api/v1/sites/<sid>/vms/?protectionplanid=<pid>';
 export const API_PROTECTION_PLAN_UPDATE = 'api/v1/protection/plans/<id>';
-export const API_PROTECTION_PLAN_PROTECTED_VMS = 'api/v1/protection/plans/<id>/vms';
+export const API_PROTECTION_PLAN_PROTECTED_VMS = 'api/v1/protection/plans/<pid>?vmmoref=<moref>';
 
 // jobs
 export const API_REPLICATION_JOBS = 'api/v1/jobs/replication/disks';
@@ -60,6 +60,7 @@ export const API_FETCH_UNREAD_ALERTS = 'api/v1/alert/unread';
 export const API_ACKNOWLEDGE_ALERT = 'api/v1/alert/acknowledge/<id>';
 export const API_MARK_ALERT_AS_READ = 'api/v1/alert/read/<id>';
 export const API_ALERT_TAKE_VM_ACTION = 'api/v1/alert/action/<id>/vm';
+export const API_VM_ALERTS = 'api/v1/alert?vmmoref=<moref>&ack=0&type=monitor.vmconfmodified,monitor.vmrenamed';
 
 // sb
 export const API_DELETE_SUPPORT_BUNDLE = 'api/v1/support/bundle/<id>';

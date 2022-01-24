@@ -163,7 +163,7 @@ export function initEditPlanAction(event, alert) {
     const urn = parts[0].split(':');
     if (urn.length > 1) {
       const pPlan = await fetchProtection(urn[2]);
-      dispatch(openEditProtectionPlanWizard(pPlan, true, alert));
+      dispatch(openEditProtectionPlanWizard(pPlan, true, alert, event));
     }
   };
 }

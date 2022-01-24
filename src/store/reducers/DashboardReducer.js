@@ -15,6 +15,8 @@ export default function dashboard(state = INITIAL_STATE.dashboard, action) {
       return { ...state, nodes: action.nodeInfoStat };
     case Types.RESET_DASHBOARD:
       return INITIAL_STATE.dashboard;
+    case Types.DASHBOARD_NODES_FETCHED:
+      return { ...state, nodes: action.nodes };
     default:
       return state;
   }

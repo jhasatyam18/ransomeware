@@ -28,6 +28,7 @@ export const THROTTLING_ACTION_ITEM_RENDER = 'THROTTLING_ACTION_ITEM_RENDER';
 export const THROTTLING_TIME_ITEM_RENDER = 'THROTTLING_TIME_ITEM_RENDER';
 export const RECOVERY_STATUS_ITEM_RENDERER = 'RECOVERY_STATUS_ITEM_RENDERER';
 export const ROLE_ITEM_RENDERER = 'ROLE_ITEM_RENDERER';
+export const VM_NETWORK_INFO_ITEM_RENDERER = 'VM_NETWORK_INFO_ITEM_RENDERER';
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
@@ -66,6 +67,14 @@ export const TABLE_PROTECTION_PLAN_VMS = [
   { label: 'os', field: 'guestOS', itemRenderer: OS_TYPE_ITEM_RENDERER },
   { label: 'Last Run Time', field: 'lastRunTime', itemRenderer: DATE_ITEM_RENDERER },
   { label: 'Status', field: 'recoveryStatus', itemRenderer: RECOVERY_STATUS_ITEM_RENDERER },
+];
+
+export const TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG = [
+  { label: 'name', field: 'instanceName' },
+  { label: 'Instance Type', field: 'instanceType' },
+  { label: 'Volume Type', field: 'volumeType' },
+  { label: 'Network', field: 'instanceDetails', itemRenderer: VM_NETWORK_INFO_ITEM_RENDERER },
+  { label: 'Boot Order', field: 'bootPriority' },
 ];
 
 export const REPLICATION_JOBS = [

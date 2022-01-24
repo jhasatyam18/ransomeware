@@ -3,7 +3,8 @@ import { withTranslation } from 'react-i18next';
 import { connect, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Card, CardBody, Col, Media, Row } from 'reactstrap';
-import { API_DASHBOARD_TITLE } from '../../constants/ApiConstants';
+import { API_DASHBOARD_TITLE, API_NODES } from '../../constants/ApiConstants';
+import * as Types from '../../constants/actionTypes';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { PROTECTION_PLANS_PATH, SITES_PATH } from '../../constants/RouterConstants';
 import { updateTitleInfo } from '../../store/actions/DashboardActions';
@@ -30,6 +31,13 @@ function DashboardTitles(props) {
       },
       (err) => {
         setLoading(false);
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+    callAPI(API_NODES)
+      .then((json) => {
+        dispatch({ type: Types.DASHBOARD_NODES_FETCHED, nodes: json });
+      },
+      (err) => {
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
   }, [refresh]);
