@@ -34,7 +34,7 @@ class CloudTags extends Component {
     const { tags } = this.state;
     const newTags = tags.filter((t) => t.key !== tag.key);
     this.setState({ tags: newTags });
-    dispatch(valueChange(vmKey, tags));
+    dispatch(valueChange(vmKey, newTags));
   }
 
   addTags() {

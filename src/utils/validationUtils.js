@@ -310,7 +310,7 @@ export async function validateRecoveryVMs({ user, dispatch }) {
           dispatch(addMessage(`Following virtual machines [${response.failedVMs.join(', ')}] has not completed any replication iteration.`, MESSAGE_TYPES.ERROR, false));
         }
         if (response.warningVMs !== null && response.warningVMs.length !== 0) {
-          dispatch(addMessage(`Following virtual machines [${response.warningVMs.join(',')}] replication running. Recovery will last successful replicated state.`, MESSAGE_TYPES.WARNING, false));
+          dispatch(addMessage(`Following virtual machines [${response.warningVMs.join(',')}] replication running. Recovery will use the last successful replicated state.`, MESSAGE_TYPES.WARNING, false));
           return true;
         }
         return false;

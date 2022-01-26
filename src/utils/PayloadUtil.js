@@ -95,6 +95,7 @@ export function getVMConfigPayload(user) {
   Object.keys(vms).forEach((key) => {
     const { name } = vms[key];
     const instanceName = name;
+    const sourceMoref = vms[key].moref;
     const id = getValue(`${key}-vmConfig.general.id`, values);
     const instanceType = getValue(`${key}-vmConfig.general.instanceType`, values);
     const volumeType = getValue(`${key}-vmConfig.general.volumeType`, values);
@@ -116,9 +117,9 @@ export function getVMConfigPayload(user) {
     const preScript = getValue(`${key}-vmConfig.scripts.preScript`, values);
     const postScript = getValue(`${key}-vmConfig.scripts.postScript`, values);
     if (typeof id !== 'undefined' && id !== '') {
-      instanceDetails.push({ id, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript });
+      instanceDetails.push({ sourceMoref, id, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript });
     } else {
-      instanceDetails.push({ instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript });
+      instanceDetails.push({ sourceMoref, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript });
     }
   });
   return instanceDetails;
