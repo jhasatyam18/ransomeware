@@ -184,6 +184,36 @@ export function getSubnetOptions(user) {
   return options;
 }
 
+export function getGCPSubnetOptions(user, fieldKey) {
+  const { values } = user;
+  const opts = getValue(STATIC_KEYS.UI_SUBNETS, values) || [];
+  const networkFieldKey = fieldKey.replace('-subnet', '-network');
+  const netID = getValue(networkFieldKey, values);
+  const options = [];
+  opts.forEach((op) => {
+    if (netID === op.vpcID) {
+      const name = getSubnetLabel(op);
+      options.push({ label: name, value: op.id });
+    }
+  });
+  return options;
+}
+
+export function getNetworkOptions(user) {
+  const { values } = user;
+  const opts = getValue(STATIC_KEYS.UI_SUBNETS, values) || [];
+  const options = [];
+  opts.forEach((op) => {
+    const network = op.vpcID;
+    const name = network.split(/[\s/]+/).pop();
+    const exist = options.find((item) => item.label === name);
+    if (!exist) {
+      options.push({ label: name, value: op.vpcID });
+    }
+  });
+  return options;
+}
+
 export function getGCPExternalIPOptions(user) {
   const { values } = user;
   const options = [];
@@ -462,7 +492,8 @@ export function getNetInfo(networkKey, index, values) {
   const subnet = getValue(`${networkKey}-eth-${index}-subnet`, values) || '';
   const privateIP = getValue(`${networkKey}-eth-${index}-privateIP`, values) || '-';
   const publicIP = getValue(`${networkKey}-eth-${index}-publicIP`, values) || '';
-  return { hasPublicIP: (isPublicIP ? 'Yes' : 'No'), subnet, privateIP, isPublicIP, publicIP };
+  const network = getValue(`${networkKey}-eth-${index}-network`, values) || '';
+  return { hasPublicIP: (isPublicIP ? 'Yes' : 'No'), subnet, privateIP, isPublicIP, publicIP, network };
 }
 
 export function shouldShowBandwidthConfig(user) {

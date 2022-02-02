@@ -402,6 +402,15 @@ export function addAssociatedReverseIP({ fieldKey, ip, id }) {
   };
 }
 
+export function onGCPNetworkChange({ fieldKey }) {
+  return (dispatch) => {
+    if (fieldKey) {
+      const subnetFieldKey = fieldKey.replace('-network', '-subnet');
+      dispatch(valueChange(subnetFieldKey, ''));
+    }
+  };
+}
+
 export function setPrivileges(privileges) {
   return {
     type: Types.APP_USER_PRIVILEGES,

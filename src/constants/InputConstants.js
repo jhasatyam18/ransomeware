@@ -55,6 +55,7 @@ export const STATIC_KEYS = {
   UI_SCRIPT_POST: 'ui.values.scripts.post',
   UI_SECURITY_GROUPS: 'ui.values.securityGroups',
   UI_SUBNETS: 'ui.values.subnets',
+  UI_NETWORK: 'ui.values.network',
   UI_SITE_NODES: 'ui.values.nodes',
   UI_RESERVE_IPS: 'ui.values.reserveips',
   UI_ASSOCIATED_RESERVE_IPS: 'ui.values.associated.ips',

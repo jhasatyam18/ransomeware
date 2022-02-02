@@ -53,7 +53,8 @@ class GCPNetworkConfig extends Component {
     return getNetworks.map((nic, index) => {
       const key = `${nic.key}-${index}`;
       const info = getNetInfo(networkKey, index, values);
-      const title = `Subnet: ${info.subnet}, Public IP : ${info.publicIP}, Private IP: ${info.privateIP}`;
+      const network = info.network || '';
+      const title = `Network: ${network.split(/[\s/]+/).pop()}, Subnet: ${info.subnet}, Public IP : ${info.publicIP}, Private IP: ${info.privateIP}`;
       return (
         <tr key={key}>
           <td>

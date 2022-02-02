@@ -10,8 +10,8 @@ import DMMultiSelect from '../Shared/DMMultiSelect';
 import { PLATFORM_TYPES } from '../../constants/InputConstants';
 import { FIELD_TYPE, MULTISELECT_ITEM_COMP } from '../../constants/FieldsConstant';
 import { closeModal } from '../../store/actions/ModalActions';
-import { onAwsPublicIPChecked } from '../../store/actions';
-import { getAWSElasticIPOptions, getGCPExternalIPOptions, getGCPNetworkTierOptions, getSecurityGroupOption, getSubnetOptions, getValue } from '../../utils/InputUtils';
+import { onAwsPublicIPChecked, onGCPNetworkChange } from '../../store/actions';
+import { getAWSElasticIPOptions, getGCPExternalIPOptions, getGCPNetworkTierOptions, getGCPSubnetOptions, getNetworkOptions, getSecurityGroupOption, getSubnetOptions, getValue } from '../../utils/InputUtils';
 import { isEmpty, validateNicConfig, validateOptionalIPAddress } from '../../utils/validationUtils';
 
 /**
@@ -70,7 +70,8 @@ class ModalNicConfig extends Component {
   renderGCPConfig() {
     const { dispatch, user, options } = this.props;
     const { networkKey } = options;
-    const subnetField = { fieldInfo: 'info.protectionplan.network.gcp.subnet', label: 'Subnet', description: '', type: FIELD_TYPE.SELECT, options: (u) => getSubnetOptions(u), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select subnet', shouldShow: true };
+    const networkField = { fieldInfo: 'info.protectionplan.network.gcp.network', label: 'Network', description: '', type: FIELD_TYPE.SELECT, options: (u) => getNetworkOptions(u), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select network', shouldShow: true, onChange: (v, f) => onGCPNetworkChange(v, f) };
+    const subnetField = { fieldInfo: 'info.protectionplan.network.gcp.subnet', label: 'Subnet', description: '', type: FIELD_TYPE.SELECT, options: (u, f) => getGCPSubnetOptions(u, f), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select subnet', shouldShow: true };
     const privateIPField = { fieldInfo: 'info.protectionplan.network.gcp.privateip', label: 'Private IP', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.TEXT, shouldShow: true, validate: (v, u) => validateOptionalIPAddress(v, u), errorMessage: 'Invalid ip address or ip is not in subnet cidr range' };
     const publicIP = { fieldInfo: 'info.protectionplan.network.gcp.externalip', label: 'External IP', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.SELECT, shouldShow: true, errorMessage: 'Select external', options: (u) => getGCPExternalIPOptions(u), validate: (v, u) => isEmpty(v, u) };
     const networkTier = { fieldInfo: 'info.protectionplan.network.gcp.tier', label: 'Network Tier', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.RADIO, shouldShow: true, errorMessage: 'Select network tire', options: (u) => getGCPNetworkTierOptions(u), defaultValue: 'Standard' };
@@ -81,6 +82,7 @@ class ModalNicConfig extends Component {
           <Card>
             <CardBody>
               <Form>
+                <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-network`} field={networkField} user={user} />
                 <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-subnet`} field={subnetField} user={user} />
                 <DMFieldText dispatch={dispatch} fieldKey={`${networkKey}-privateIP`} field={privateIPField} user={user} />
                 <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-publicIP`} field={publicIP} user={user} />

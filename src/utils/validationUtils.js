@@ -199,13 +199,14 @@ export function validateGCPNetworks(user, dispatch) {
   Object.keys(vms).forEach((vm) => {
     const netConfigs = getVMNetworkConfig(`${vm}`, values);
     const vpc = [];
+    const vmName = vms[vm].name;
     if (netConfigs.length === 0) {
-      message = `Network configuration required for ${vms[vm].name}`;
+      message = `${vmName}: Network configuration required`;
       isClean = false;
     } else {
       for (let i = 0; i < netConfigs.length; i += 1) {
         if (netConfigs[i].subnet === '') {
-          message = `Network configure missing for nic-${i}`;
+          message = `${vmName}: Network configure missing for nic-${i}`;
           isClean = false;
         }
         if (typeof netConfigs.privateIP !== 'undefined' && netConfigs.privateIP !== '') {
@@ -223,7 +224,7 @@ export function validateGCPNetworks(user, dispatch) {
       // unique network check
       const vpcSet = [...new Set(vpc)];
       if (vpcSet.length !== vpc.length && message === '') {
-        message = 'Network/subnet must be unique for each network interface';
+        message = `${vmName}: network must be unique for each interface`;
         isClean = false;
       }
     }
@@ -249,15 +250,16 @@ export function validateAWSNetworks(user, dispatch) {
   let message = '';
   Object.keys(vms).forEach((vm) => {
     const netConfigs = getVMNetworkConfig(`${vm}`, values);
+    const vmName = vms[vm].name;
     if (netConfigs.length === 0) {
-      message = `Network configuration required for ${vms[vm].name}`;
+      message = `${vmName}: Network configuration required`;
       isClean = false;
     }
     const vpc = [];
     for (let i = 0; i < netConfigs.length; i += 1) {
       if (netConfigs[i].subnet === '') {
         isClean = false;
-        message = `Subnet missing for ${vms[vm].name}`;
+        message = `${vmName}: Subnet missing for Nic-${i}`;
       }
       if (typeof netConfigs[i].network !== 'undefined' && netConfigs[i].network !== '') {
         elasticIPs.push(netConfigs[i].network);
@@ -272,7 +274,7 @@ export function validateAWSNetworks(user, dispatch) {
     const vpcSet = [...new Set(vpc)];
     // nics with different vpcid
     if (vpcSet.length > 1) {
-      message = 'Network interfaces and an instance-level security groups may not be specified on the same request';
+      message = `${vmName}: Network interfaces and an instance-level security groups may not be specified on the same request`;
       isClean = false;
     }
   });
@@ -379,7 +381,7 @@ export async function validateReversePlan({ user, dispatch }) {
         return true;
       }
       if (response.failedVMs.length !== 0) {
-        dispatch(addMessage(`Some virtual machines [${response.failedVMs.join(', ')}] do not have snapshot on the recovery site. Please select full incremental for replication type and click next.`, MESSAGE_TYPES.ERROR, true));
+        dispatch(addMessage(`[${response.failedVMs.join(', ')}] The last replication job has failed or snapshots across the sites are not in sync. Please select full incremental for replication type.`, MESSAGE_TYPES.ERROR, true));
       }
       return false;
     } catch (err) {

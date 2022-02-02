@@ -282,5 +282,6 @@
   "info.protectionplan.network.gcp.externalip": "An external IP address associated with this instance. Select an unused static IP address or choose 'Ephemeral' to use an IP from a shared ephemeral IP address pool.",
   "info.protectionplan.network.gcp.privateip": "Leave blank to assign an address from the network range or provide ip from the network range",
   "info.protectionplan.network.gcp.subnet": "Subnet used to allocate ip address to the instance.",
+  "info.protectionplan.network.gcp.network": "Network used to allocate ip address to the instance.",
   "info.protectionplan.network.aws.elasticip": "An Elastic IP address is a reserved public IP address that you can assign to any EC2 instance in a particular region."
 }
