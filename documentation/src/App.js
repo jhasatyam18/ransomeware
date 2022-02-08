@@ -23,6 +23,7 @@ import ReplicationJobs from './pages/replicationJobs';
 import Reports from './pages/reports';
 import Roles from './pages/roles';
 import SupportBundle from './pages/sb';
+import Scripts from './pages/scripts';
 import SideBar from './pages/SideBar';
 import SiteActions from './pages/siteactions';
 import SupportMatrix from './pages/supportmatrix';
@@ -73,6 +74,7 @@ function App() {
               <Route path="/users" element={<Users />} />
               <Route path="/users" element={<Users />} />
               <Route path="/roles" element={<Roles />} />
+              <Route path="/scripts" element={<Scripts />} />
             </Routes>
           </div>
         </div>

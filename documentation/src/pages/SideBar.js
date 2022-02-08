@@ -61,6 +61,7 @@ export default function SideBar() {
       children: [
         { path: 'license', label: 'License', hasChildren: false },
         { path: 'email', label: 'Email', hasChildren: false },
+        { path: 'scripts', label: 'Scripts', hasChildren: false },
         { path: 'throttling', label: 'Throttling', hasChildren: false },
         { path: 'users', label: 'Users', hasChildren: false },
         { path: 'roles', label: 'Roles', hasChildren: false },

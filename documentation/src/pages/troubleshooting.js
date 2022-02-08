@@ -31,6 +31,14 @@ export default function Troubleshooting() {
                 <li class="item3">Resolution: This error happens when a protected virtual machine is renamed. Datamotive detects this change and generates an alert but doesn’t update it’s records unless user takes specific action against that alert. Subsequent replication iterations of the VM keep failing. To resolve this issue. locate the Alert corresponding to given VM and “Take Action” on it. It will open up Edit Protection Plan wizard which should be completed. Once the protection plan is successfully edited, the VM’s replication should start again.</li>
               </ol>
             </li>
+            <li class="item3">
+              Replication failed in GCP
+              <ol type="i">
+                <li class="item1">Error: Replication failed. *** Quota 'SSD_TOTAL_GB' exceeded. ***</li>
+                <li class="item1">Impact: Replication fails for all disks of the VM</li>
+                <li class="item1">Resolution: Check your SSD quota configured for the project where the Recovery site is configured. The protected VMs are configured to use either Balanced or SSD type of disks and quota in the project is reached. Either free up the space or change the disk type of protected entities to “Standard”. </li>
+              </ol>
+            </li>
           </ol>
         </li>
         <li class="item4">Protection Plan Failures
