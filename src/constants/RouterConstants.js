@@ -22,6 +22,7 @@ export const THROTTLING_SETTINGS_PATH = '/settings/throttling';
 export const USER_SETTINGS_PATH = '/settings/users';
 export const ROLES_SETTINGS_PATH = '/settings/roles';
 export const SUPPORT_BUNDLE_PATH = '/settings/support';
+export const SCRIPTS_PATH = '/settings/scripts';
 export const JOBS_PATH = '/jobs/*';
 export const JOBS_REPLICATION_PATH = '/jobs/replication';
 export const JOBS_RECOVERY_PATH = '/jobs/recovery';

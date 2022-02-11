@@ -15,6 +15,7 @@ import ModalEncryptionKey from './ModalEncryptionKey';
 import ModalNicConfig from './ModalNicConfig';
 import ModalLicense from './ModalLicense';
 import ModalBandwidthConfig from './ModalBandwidthConfig';
+import ModalScripts from './ModalScripts';
 
 class DMModal extends Component {
   constructor() {
@@ -56,6 +57,8 @@ class DMModal extends Component {
           return <ModalNicConfig options={options} />;
         case MODALS.MODAL_INSTALL_NEW_LICENSE:
           return <ModalLicense options={options} />;
+        case MODALS.MODAL_USER_SCRIPT:
+          return <ModalScripts options={options} />;
         default:
           return (<div>404</div>);
       }

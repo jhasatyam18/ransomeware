@@ -40,7 +40,7 @@ class ConfirmationModal extends Component {
           <div className="container padding-20">
             <div className="row">
               <div className="col-sm-3 confirmation-icon">
-                <i className="mdi mdi-alert-circle-outline" />
+                <i className="fas fa-exclamation-triangle" />
               </div>
               <div className="col-sm-8" style={{ margin: 'auto' }}>
                 {message}

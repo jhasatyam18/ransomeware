@@ -1,7 +1,7 @@
 // import { addMessage, clearMessages } from './MessageActions';
 import jsCookie from 'js-cookie';
 import * as Types from '../../constants/actionTypes';
-import { API_AUTHENTICATE, API_AWS_AVAILABILITY_ZONES, API_AWS_REGIONS, API_CHANGE_PASSWORD, API_GCP_AVAILABILITY_ZONES, API_GCP_REGIONS, API_INFO, API_SCRIPTS, API_USERS, API_USER_PRIVILEGES } from '../../constants/ApiConstants';
+import { API_AUTHENTICATE, API_AWS_AVAILABILITY_ZONES, API_AWS_REGIONS, API_CHANGE_PASSWORD, API_GCP_AVAILABILITY_ZONES, API_GCP_REGIONS, API_INFO, API_SCRIPTS, API_USERS, API_USER_PRIVILEGES, API_USER_SCRIPT } from '../../constants/ApiConstants';
 import { APP_TYPE, PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH } from '../../constants/RouterConstants';
@@ -18,6 +18,7 @@ import { fetchEvents } from './EventActions';
 import { fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
 import { fetchLicenses } from './LicenseActions';
 import { addMessage, clearMessages } from './MessageActions';
+import { closeModal } from './ModalActions';
 import { fetchNodes } from './NodeActions';
 import { fetchSites } from './SiteActions';
 import { fetchSupportBundles } from './SupportActions';
@@ -464,5 +465,27 @@ export function getUserPrivileges(id) {
       dispatch(hideApplicationLoader(API_USER_PRIVILEGES));
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
+  };
+}
+
+export function deleteScript(id) {
+  return (dispatch) => {
+    dispatch(showApplicationLoader(API_USER_SCRIPT, 'Removing script...'));
+    const obj = createPayload(API_TYPES.DELETE, {});
+    return callAPI(`${API_USER_SCRIPT}/${id}`, obj)
+      .then((json) => {
+        dispatch(hideApplicationLoader(API_USER_SCRIPT));
+        if (json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          dispatch(addMessage('Script deleted successfully', MESSAGE_TYPES.INFO));
+          dispatch(refreshApplication());
+          dispatch(closeModal());
+        }
+      },
+      (err) => {
+        dispatch(hideApplicationLoader(API_USER_SCRIPT));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
   };
 }

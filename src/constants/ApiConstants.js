@@ -96,3 +96,6 @@ export const API_THROTTLING_USAGE = 'api/v1/bandwidth/usage';
 export const API_USERS = 'api/v1/users';
 export const API_ROLES = 'api/v1/roles';
 export const API_USER_PRIVILEGES = 'api/v1/users/<id>/privileges';
+
+// scripts
+export const API_USER_SCRIPT = 'api/v1/script';

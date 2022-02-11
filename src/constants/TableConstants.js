@@ -29,6 +29,7 @@ export const THROTTLING_TIME_ITEM_RENDER = 'THROTTLING_TIME_ITEM_RENDER';
 export const RECOVERY_STATUS_ITEM_RENDERER = 'RECOVERY_STATUS_ITEM_RENDERER';
 export const ROLE_ITEM_RENDERER = 'ROLE_ITEM_RENDERER';
 export const VM_NETWORK_INFO_ITEM_RENDERER = 'VM_NETWORK_INFO_ITEM_RENDERER';
+export const SCRIPT_ITEM_RENDERER = 'SCRIPT_ITEM_RENDERER';
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
@@ -223,6 +224,13 @@ export const TABLE_USERS = [
   { label: 'Username', field: 'username' },
   { label: 'Description', field: 'description' },
   { label: 'Role', field: 'role', itemRenderer: ROLE_ITEM_RENDERER },
+];
+
+export const TABLE_UPLOAD_SCRIPTS = [
+  { label: 'name', field: 'name' },
+  { label: 'description', field: 'description' },
+  { label: 'type', field: 'scriptType' },
+  { label: 'actions', field: 'name', itemRenderer: SCRIPT_ITEM_RENDERER },
 ];
 
 // table filter help text
