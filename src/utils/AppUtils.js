@@ -229,6 +229,7 @@ export function getSideBarContents() {
       subMenu: [
         { label: 'license', to: RPATH.LICENSE_SETTINGS_PATH, icon: 'fas fa-id-card', isActivePath: [RPATH.LICENSE_SETTINGS_PATH], hasChildren: false },
         { label: 'email', to: RPATH.EMAIL_SETTINGS_PATH, icon: 'far fa-envelope', isActivePath: [RPATH.EMAIL_SETTINGS_PATH], hasChildren: false },
+        { label: 'scripts', to: RPATH.SCRIPTS_PATH, icon: 'fa fa-scroll', isActivePath: [RPATH.SCRIPTS_PATH], hasChildren: false },
         { label: 'throttling', to: RPATH.THROTTLING_SETTINGS_PATH, icon: 'fas fa-tachometer-alt', isActivePath: [RPATH.THROTTLING_SETTINGS_PATH], hasChildren: false },
         { label: 'roles', to: RPATH.ROLES_SETTINGS_PATH, icon: 'fas fa-user-shield', isActivePath: [RPATH.ROLES_SETTINGS_PATH], hasChildren: false },
         { label: 'users', to: RPATH.USER_SETTINGS_PATH, icon: 'fas fa-users', isActivePath: [RPATH.USER_SETTINGS_PATH], hasChildren: false },

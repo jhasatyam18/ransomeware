@@ -11,7 +11,7 @@ export default function Scripts() {
 
         Location: Home --> Settings --> Scripts <br />
       <p>Datamotive supports executing custom scripts on recovery of individual virtual machine and complete protection plan as well. Datamotive supports both, Pre & Post scripts. The scripts are executed on the Datamotive management node.</p>
-      <img src={scriptsList} />
+      <img src={scriptsList} alt=""/>
 
       To configure new script, follow below steps.
       <ul>
@@ -54,7 +54,7 @@ export default function Scripts() {
         <li>Provide some short description about the script (optional)</li>
         <li>Enter logged in user password and click <b>Save button</b></li>
         <li>Post successful validation script will get uploaded and can be used in protection plan for pre or post script</li>
-        <img src={scriptsActions} />
+        <img src={scriptsActions} alt="" />
       </ul>
       <ul>
         Following actions are available for a uploaded script.

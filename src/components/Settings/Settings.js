@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
-import { EMAIL_SETTINGS_PATH, LICENSE_SETTINGS_PATH, ROLES_SETTINGS_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH, USER_SETTINGS_PATH } from '../../constants/RouterConstants';
+import { EMAIL_SETTINGS_PATH, LICENSE_SETTINGS_PATH, ROLES_SETTINGS_PATH, SCRIPTS_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH, USER_SETTINGS_PATH } from '../../constants/RouterConstants';
 import Pages404 from '../../pages/Page-404';
 import Roles from './Administration/Roles';
 import Users from './Administration/Users';
+import Scripts from './Scripts/Scripts';
 
 const Throttling = React.lazy(() => import('./throttling/Throttling'));
 const EmailSettings = React.lazy(() => import('./email/EmailSettings'));
@@ -19,6 +20,7 @@ class Settings extends Component {
         <Route path={THROTTLING_SETTINGS_PATH} render={() => <Throttling />} />
         <Route path={USER_SETTINGS_PATH} render={() => <Users />} />
         <Route path={ROLES_SETTINGS_PATH} render={() => <Roles />} />
+        <Route path={SCRIPTS_PATH} render={() => <Scripts />} />
         <Route component={Pages404} />
       </Switch>
 

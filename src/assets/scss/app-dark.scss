@@ -147,3 +147,20 @@
 .text-white {
  color: white;
 }
+
+// upload license
+.upload__script__form {
+  display: flex;
+  width: calc(100% - 20px);
+  min-height: 100px;
+  padding: 5px;
+  margin: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  .upload__icon {
+    padding-bottom: 5px;
+    text-align: center;
+    color: white;
+  }
+}
