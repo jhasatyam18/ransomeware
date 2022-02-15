@@ -115,6 +115,10 @@ export function deleteSite(id) {
 
 export function onProtectSiteChange({ value }) {
   return (dispatch) => {
+    if (value === '') {
+      dispatch(valueChange('ui.site.vms', []));
+      return;
+    }
     const url = API_FETCH_SITE_VMS.replace('<id>', value);
     dispatch(showApplicationLoader(url, 'Loading virtual machines'));
     return callAPI(url)
@@ -139,6 +143,10 @@ export function onProtectSiteChange({ value }) {
 
 export function onRecoverSiteChange({ value }) {
   return (dispatch, getState) => {
+    if (value === '') {
+      dispatch(valueChange('ui.values.instances', []));
+      return;
+    }
     const { user } = getState();
     const { values } = user;
     const platfromType = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${value}`)[0].platformDetails.platformType;
@@ -166,6 +174,10 @@ export function onRecoverSiteChange({ value }) {
 
 export function updateAvailabilityZones({ value }) {
   return (dispatch, getState) => {
+    if (value === '') {
+      dispatch(valueChange('ui.values.availabilityZones', []));
+      return;
+    }
     const { user } = getState();
     const { values } = user;
     const data = getValue('ui.values.regions', values);

@@ -28,7 +28,7 @@ class DMMultiSelect extends Component {
     const { selectedItems } = this.state;
     const { dispatch, fieldKey } = this.props;
     const isAlreadySelected = selectedItems.some((sg) => sg === e.target.value);
-    if (!isAlreadySelected) {
+    if (!isAlreadySelected && e.target.value !== '') {
       selectedItems.push(e.target.value);
       this.setState({ selectedItems, value: e.target.value });
       dispatch(valueChange(fieldKey, selectedItems));
@@ -121,7 +121,7 @@ class DMMultiSelect extends Component {
               <Col sm={11}>
                 <div>
                   <Input type="select" id={fieldKey} onSelect={this.handleChange} className="form-control form-control-sm custom-select" onChange={this.handleChange} value={value}>
-                    <option key={`${fieldKey}-default`} value="-">  </option>
+                    <option key={`${fieldKey}-default`} value="">  </option>
                     {this.renderOptions()}
                   </Input>
                 </div>

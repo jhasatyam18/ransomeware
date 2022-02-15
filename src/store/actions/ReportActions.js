@@ -329,7 +329,7 @@ export function exportReportToPDF() {
 }
 
 function isPlanSpecificData(id) {
-  return !(`${id}` === '0');
+  return !(`${id}` === '0' || `${id}` === '');
 }
 // function getPDFTableFormat(columns) {
 //   const pdfTableFormat = [];

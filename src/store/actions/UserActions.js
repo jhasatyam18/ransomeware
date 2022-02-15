@@ -161,6 +161,7 @@ export function hideApplicationLoader(key) {
 export function onPlatformTypeChange({ value }) {
   return (dispatch) => {
     dispatch(valueChange('configureSite.node', ''));
+    if (value === '') return;
     if (value === PLATFORM_TYPES.AWS) {
       dispatch(fetchRegions(PLATFORM_TYPES.AWS));
       dispatch(fetchAvailibilityZones(PLATFORM_TYPES.AWS));

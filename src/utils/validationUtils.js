@@ -515,3 +515,11 @@ export function validateReplicationInterval({ value, dispatch }) {
   }
   return false;
 }
+
+export function isPlanRecovered(protectionplan) {
+  const { recoveryStatus } = protectionplan;
+  if (recoveryStatus === 'Migrated' || recoveryStatus === 'Recovered') {
+    return true;
+  }
+  return false;
+}

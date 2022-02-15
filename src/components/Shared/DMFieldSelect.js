@@ -149,7 +149,7 @@ class DMFieldSelect extends Component {
             <Row>
               <Col sm={11}>
                 <Input type="select" id={fieldKey} onSelect={this.handleChange} className="form-control form-control-sm custom-select" onChange={this.handleChange} value={value} invalid={hasErrors} disabled={disabled}>
-                  <option key={`${fieldKey}-default`} value="-">  </option>
+                  <option key={`${fieldKey}-default`} value="">  </option>
                   {this.renderOptions()}
                 </Input>
               </Col>

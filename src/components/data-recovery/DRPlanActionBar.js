@@ -13,6 +13,7 @@ import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
 import { CREATE_DR_PLAN_WIZARDS } from '../../constants/WizardConstants';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
 import { PLATFORM_TYPES } from '../../constants/InputConstants';
+import { isPlanRecovered } from '../../utils/validationUtils';
 
 class DRPlanActionBar extends Component {
   constructor() {
@@ -108,6 +109,10 @@ class DRPlanActionBar extends Component {
     if (keys.length === 1) {
       const plan = selectedPlans[keys[0]];
       const { protectedSite, recoverySite } = plan;
+      // disable if status of plan is recovered or migrated
+      if (isPlanRecovered(plan)) {
+        return true;
+      }
       // disable if recovery site is VMware
       if (protectedSite.platformDetails.platformType === platformType && recoverySite.platformDetails.platformType !== PLATFORM_TYPES.VMware) {
         return false;

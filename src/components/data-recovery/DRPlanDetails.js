@@ -12,6 +12,7 @@ import DMBreadCrumb from '../Common/DMBreadCrumb';
 import DropdownActions from '../Common/DropdownActions';
 import ProtectionPlanVMConfig from './ProtectionPlanVMConfig';
 import { convertMinutesToDaysHourFormat } from '../../utils/AppUtils';
+import { isPlanRecovered } from '../../utils/validationUtils';
 
 const Replication = React.lazy(() => import('../Jobs/Replication'));
 const Recovery = React.lazy(() => import('../Jobs/Recovery'));
@@ -40,14 +41,6 @@ class DRPlanDetails extends Component {
     }
   }
 
-  isRecovered(protectionplan) {
-    const { recoveryStatus } = protectionplan;
-    if (recoveryStatus === 'Migrated' || recoveryStatus === 'Recovered') {
-      return true;
-    }
-    return false;
-  }
-
   disableEdit() {
     const { drPlans, user } = this.props;
     const { protectionPlan } = drPlans;
@@ -57,23 +50,23 @@ class DRPlanDetails extends Component {
     const { protectedSite, recoverySite } = protectionPlan;
     const { platformDetails } = protectedSite;
     // disable if recovery site is VMware
-    if (recoverySite.platformDetails.platformType === PLATFORM_TYPES.VMware) {
+    if (recoverySite.platformDetails.platformType === PLATFORM_TYPES.VMware || isPlanRecovered(protectionPlan)) {
       return true;
     }
     if (platformDetails.platformType === user.platformType && hasRequestedPrivileges(user, ['protectionplan.edit'])) {
       return false;
     }
-    return this.isRecovered(protectionPlan);
+    return true;
   }
 
   disableStart(protectionPlan) {
     const { user } = this.props;
-    return (this.isRecovered(protectionPlan) || protectionPlan.status.toUpperCase() === REPLICATION_STATUS.STARTED || !hasRequestedPrivileges(user, ['protectionplan.status']));
+    return (isPlanRecovered(protectionPlan) || protectionPlan.status.toUpperCase() === REPLICATION_STATUS.STARTED || !hasRequestedPrivileges(user, ['protectionplan.status']));
   }
 
   disableStop(protectionPlan) {
     const { user } = this.props;
-    return (this.isRecovered(protectionPlan) || protectionPlan.status === REPLICATION_STATUS.STOPPED || !hasRequestedPrivileges(user, ['protectionplan.status']));
+    return (isPlanRecovered(protectionPlan) || protectionPlan.status === REPLICATION_STATUS.STOPPED || !hasRequestedPrivileges(user, ['protectionplan.status']));
   }
 
   disableReverse(protectionPlan) {

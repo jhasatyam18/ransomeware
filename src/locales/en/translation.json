@@ -111,7 +111,7 @@
   "emailConfiguration.insecureSkipVerify": "SSL Certificate Verification",
   "emailConfiguration.replicateConfig": "Replicate Configuration on connected Sites",
   "emailRecipient.emailAddress":"Email Address",
-  "emailRecipient.subscribedEvents":"subscribed Events",
+  "emailRecipient.subscribedEvents":"Subscribed Events",
   "site.connection":"Site Connection",
   "replication.nodes":"Replication Nodes",
   "node":"Node",
