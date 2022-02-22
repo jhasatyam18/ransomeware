@@ -1,0 +1,63 @@
+
+@media screen and (max-width: 1100px) {
+  .dashboard_component_size_handle {
+    min-width: -webkit-fill-available; // css for Chrome, Edge.
+    min-width: -moz-available; // Fallback css for Firefox.
+  }
+}
+
+.dashboard_replication_header_state {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 100%;
+  padding-right: 40px;
+}
+  
+.dashboard_replicaiton_info {
+  display: flex;
+  flex-direction: row;
+  .dashboard_item {
+    display: flex;
+    flex-direction: column;
+    // border-bottom: 1px solid green;
+    width: 33%;
+    padding-bottom: 20px;
+  }
+  .dashboard_divider {
+    width: 95%;
+    border-bottom: 2px solid #485048;
+  }
+  .name {
+    padding-left: 15px;
+    padding-top: 10px;
+  }
+  .value {
+    padding-left: 15px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+  .dashboard_divider_top {
+    border-top: 2px solid #485048;
+  }
+}
+
+.stat_test_position{
+  margin-bottom: -30px;
+  margin-top: 10px;
+}
+
+.dashboard_divider_right {
+  border-right: 2px solid #485048;
+}
+
+.site_connection{
+  display: grid;
+  min-height: 365px;
+}
+
+.react-flow__controls-custom{
+  display: flex;
+  left:2px !important;
+  bottom:30px !important;
+}

@@ -1,0 +1,525 @@
+import { addErrorMessage, hideApplicationLoader, removeErrorMessage, showApplicationLoader, valueChange } from '../store/actions';
+import { addMessage } from '../store/actions/MessageActions';
+import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
+import { MESSAGE_TYPES } from '../constants/MessageConstants';
+import { API_TYPES, callAPI, createPayload } from './ApiUtils';
+import { API_VALIDATE_MIGRATION, API_VALIDATE_RECOVERY, API_VALIDATE_REVERSE_PLAN } from '../constants/ApiConstants';
+import { getRecoveryPayload, getReversePlanPayload, getVMNetworkConfig } from './PayloadUtil';
+import { IP_REGEX } from '../constants/ValidationConstants';
+import { PLATFORM_TYPES, STATIC_KEYS } from '../constants/InputConstants';
+import { createVMConfigStackObject, getValue } from './InputUtils';
+
+export function isRequired(value) {
+  if (!value) {
+    return 'Required';
+  }
+  return null;
+}
+
+export function validateField(field, fieldKey, value, dispatch, user) {
+  const { patterns, validate, errorMessage } = field;
+  // const field = FIELDS[fieldKey];
+  const { type } = field;
+  const { errors } = user;
+  if (patterns) {
+    let isValid = false;
+    patterns.forEach((pattern) => {
+      const re = new RegExp(pattern);
+      if (value) {
+        if (value.match(re) !== null) {
+          isValid = true;
+        }
+      }
+    });
+    if (!isValid) {
+      dispatch(addErrorMessage(fieldKey, errorMessage));
+      return false;
+    }
+  }
+  if (typeof validate === 'function') {
+    if (type === FIELD_TYPE.SELECT && value === '-') {
+      dispatch(addErrorMessage(fieldKey, errorMessage));
+      return false;
+    }
+    const hasError = validate({ value, dispatch, user, fieldKey });
+    if (hasError) {
+      dispatch(addErrorMessage(fieldKey, errorMessage));
+      return false;
+    }
+  }
+  if (errors[fieldKey]) {
+    dispatch(removeErrorMessage(fieldKey));
+  }
+  return true;
+}
+
+export function isEmpty({ value }) {
+  return (typeof value === 'undefined' || typeof value === 'string' && value.trim() === '' || value === null);
+}
+
+export function validateConfigureSite(user, dispatch) {
+  const { values } = user;
+  const fields = Object.keys(FIELDS).filter((key) => key.indexOf('configureSite') !== -1);
+  let isClean = true;
+  fields.map((fieldKey) => {
+    const field = FIELDS[fieldKey];
+    const { shouldShow } = field;
+    const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
+    if (showField) {
+      if (!validateField(field, fieldKey, getValue(fieldKey, values), dispatch, user)) {
+        isClean = false;
+      }
+    } else {
+      dispatch(valueChange(field, fieldKey, getValue(fieldKey, values)));
+    }
+  });
+  return isClean;
+}
+
+export function validateSteps(user, dispatch, fields, staticFields) {
+  const { values } = user;
+  let isClean = true;
+  fields.map((fieldKey) => {
+    const field = staticFields ? staticFields[fieldKey] : FIELDS[fieldKey];
+    const { shouldShow } = field;
+    const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
+    if (showField) {
+      if (!validateField(field, fieldKey, getValue(fieldKey, values), dispatch, user)) {
+        isClean = false;
+      }
+    }
+  });
+  return isClean;
+}
+
+export function validateDrSiteSelection({ user, fieldKey }) {
+  const { values } = user;
+  const fieldValue = getValue(fieldKey, values);
+  const otherField = (fieldKey === 'drplan.protectedSite' ? 'drplan.recoverySite' : 'drplan.protectedSite');
+  const otherFieldValue = getValue(otherField, values);
+  if (!fieldValue) {
+    return true;
+  }
+  if (fieldValue === otherFieldValue) {
+    return true;
+  }
+  return false;
+}
+
+export function validateDRPlanProtectData({ user, dispatch }) {
+  const { values } = user;
+  const vms = getValue('ui.site.seletedVMs', values);
+  if (!vms || Object.keys(vms).length === 0) {
+    dispatch(addMessage('Select virtual machine.', MESSAGE_TYPES.ERROR));
+    return false;
+  }
+  return true;
+}
+
+export function noValidate() {
+  return true;
+}
+
+export async function validateMigrationVMs({ user, dispatch }) {
+  const initialCheckPass = validateDRPlanProtectData({ user, dispatch });
+  if (initialCheckPass) {
+    try {
+      const { values } = user;
+      const vms = getValue('ui.site.seletedVMs', values);
+      if (vms) {
+        const payload = getRecoveryPayload(user, true);
+        const obj = createPayload(API_TYPES.POST, { ...payload.recovery });
+        dispatch(showApplicationLoader('VALIDATING_MIGRATION_MACHINBES', 'Validating virtual machines.'));
+        const response = await callAPI(API_VALIDATE_MIGRATION, obj);
+        dispatch(hideApplicationLoader('VALIDATING_MIGRATION_MACHINBES'));
+        if (response.failedVMs === null) {
+          return true;
+        }
+        if (response.failedVMs.length !== 0) {
+          dispatch(addMessage('Make sure all selected virtual machines were powered off and have zero changed data.', MESSAGE_TYPES.ERROR, false));
+        }
+        return false;
+      }
+    } catch (err) {
+      dispatch(hideApplicationLoader('VALIDATING_MIGRATION_MACHINBES'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      return false;
+    }
+  } else {
+    return false;
+  }
+  return true;
+}
+
+export function validateVMConfiguration({ user, dispatch }) {
+  const { values } = user;
+  const vms = getValue('ui.site.seletedVMs', values);
+  let fields = {};
+  Object.keys(vms).forEach((vm) => {
+    const vmConfig = createVMConfigStackObject(vm, user);
+    const { data } = vmConfig;
+    data.forEach((item) => {
+      const { children } = item;
+      Object.keys(children).forEach((key) => {
+        fields = { ...fields, [key]: children[key] };
+      });
+    });
+  });
+  const response = validateSteps(user, dispatch, Object.keys(fields), fields);
+  if (!response) {
+    dispatch(addMessage('Check node configuration. One or more required field data is not provided.', MESSAGE_TYPES.ERROR));
+    return false;
+  }
+  // validate Network
+
+  return validateNetworkConfig(user, dispatch);
+}
+
+export function validateNetworkConfig(user, dispatch) {
+  const { values } = user;
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+  switch (recoveryPlatform) {
+    case PLATFORM_TYPES.AWS:
+      return validateAWSNetworks(user, dispatch);
+    case PLATFORM_TYPES.GCP:
+      return validateGCPNetworks(user, dispatch);
+    default:
+      return true;
+  }
+}
+
+export function validateGCPNetworks(user, dispatch) {
+  const { values } = user;
+  const vms = getValue('ui.site.seletedVMs', values);
+  const subnets = getValue(STATIC_KEYS.UI_SUBNETS, values);
+  let isClean = true;
+  let message = '';
+  // empty config
+  const ips = [];
+  Object.keys(vms).forEach((vm) => {
+    const netConfigs = getVMNetworkConfig(`${vm}`, values);
+    const vpc = [];
+    const vmName = vms[vm].name;
+    if (netConfigs.length === 0) {
+      message = `${vmName}: Network configuration required`;
+      isClean = false;
+    } else {
+      for (let i = 0; i < netConfigs.length; i += 1) {
+        if (netConfigs[i].subnet === '') {
+          message = `${vmName}: Network configure missing for nic-${i}`;
+          isClean = false;
+        }
+        if (typeof netConfigs.privateIP !== 'undefined' && netConfigs.privateIP !== '') {
+          ips.push(netConfigs.privateIP);
+        }
+        if (typeof netConfigs.publicIP !== 'undefined' && netConfigs.publicIP !== '') {
+          ips.push(netConfigs.publicIP);
+        }
+        for (let j = 0; j < subnets.length; j += 1) {
+          if (subnets[j].id === netConfigs[i].subnet) {
+            vpc.push(subnets[j].vpcID);
+          }
+        }
+      }
+      // unique network check
+      const vpcSet = [...new Set(vpc)];
+      if (vpcSet.length !== vpc.length && message === '') {
+        message = `${vmName}: network must be unique for each interface`;
+        isClean = false;
+      }
+    }
+  });
+  // duplicate ip check
+  const ipSet = [...new Set(ips)];
+  if (ipSet.length !== ips.length && message === '') {
+    message = 'Duplicate ip address not allowed';
+    isClean = false;
+  }
+  if (!isClean) {
+    dispatch(addMessage(message, MESSAGE_TYPES.ERROR));
+  }
+  return isClean;
+}
+
+export function validateAWSNetworks(user, dispatch) {
+  const { values } = user;
+  const vms = getValue('ui.site.seletedVMs', values);
+  const subnets = getValue(STATIC_KEYS.UI_SUBNETS, values);
+  const elasticIPs = [];
+  let isClean = true;
+  let message = '';
+  Object.keys(vms).forEach((vm) => {
+    const netConfigs = getVMNetworkConfig(`${vm}`, values);
+    const vmName = vms[vm].name;
+    if (netConfigs.length === 0) {
+      message = `${vmName}: Network configuration required`;
+      isClean = false;
+    }
+    const vpc = [];
+    for (let i = 0; i < netConfigs.length; i += 1) {
+      if (netConfigs[i].subnet === '') {
+        isClean = false;
+        message = `${vmName}: Subnet missing for Nic-${i}`;
+      }
+      if (typeof netConfigs[i].network !== 'undefined' && netConfigs[i].network !== '') {
+        elasticIPs.push(netConfigs[i].network);
+      }
+      for (let j = 0; j < subnets.length; j += 1) {
+        if (subnets[j].id === netConfigs[i].subnet) {
+          vpc.push(subnets[j].vpcID);
+        }
+      }
+    }
+
+    const vpcSet = [...new Set(vpc)];
+    // nics with different vpcid
+    if (vpcSet.length > 1) {
+      message = `${vmName}: Network interfaces and an instance-level security groups may not be specified on the same request`;
+      isClean = false;
+    }
+  });
+  // check if same elastic ip mapped with multiple networks or vms
+  const duplicates = elasticIPs
+    .filter((ip, index) => elasticIPs.indexOf(ip) !== index)
+    .filter((i) => i !== '-');
+  if (duplicates.length > 0) {
+    isClean = false;
+    message = 'Same elastic ip is mapped with multiple networks';
+  }
+
+  if (!isClean) {
+    dispatch(addMessage(message, MESSAGE_TYPES.ERROR));
+  }
+  return isClean;
+}
+
+export async function validateRecoveryVMs({ user, dispatch }) {
+  const initialCheckPass = validateDRPlanProtectData({ user, dispatch });
+  if (initialCheckPass) {
+    try {
+      const { values } = user;
+      const vms = getValue('ui.site.seletedVMs', values);
+      if (vms) {
+        const payload = getRecoveryPayload(user);
+        const obj = createPayload(API_TYPES.POST, { ...payload.recovery });
+        dispatch(showApplicationLoader('VALIDATING_RECOVERY_MACHINES', 'Validating virtual machines.'));
+        const response = await callAPI(API_VALIDATE_RECOVERY, obj);
+        dispatch(hideApplicationLoader('VALIDATING_RECOVERY_MACHINES'));
+        if (response.failedVMs === null && response.warningVMs === null) {
+          return true;
+        }
+        if (response.failedVMs !== null && response.failedVMs.length !== 0) {
+          dispatch(addMessage(`Following virtual machines [${response.failedVMs.join(', ')}] has not completed any replication iteration.`, MESSAGE_TYPES.ERROR, false));
+        }
+        if (response.warningVMs !== null && response.warningVMs.length !== 0) {
+          dispatch(addMessage(`Following virtual machines [${response.warningVMs.join(',')}] replication running. Recovery will use the last successful replicated state.`, MESSAGE_TYPES.WARNING, false));
+          return true;
+        }
+        return false;
+      }
+    } catch (err) {
+      dispatch(hideApplicationLoader('VALIDATING_RECOVERY_MACHINES'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      return false;
+    }
+  } else {
+    return false;
+  }
+  return true;
+}
+
+export function validateForm(formKey, user, dispatch) {
+  const { values } = user;
+  const fields = Object.keys(FIELDS).filter((key) => key.indexOf(formKey) !== -1);
+  let isClean = true;
+  fields.map((fieldKey) => {
+    const field = FIELDS[fieldKey];
+    const { shouldShow, validate, patterns } = field;
+    const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
+    if (showField && (typeof validate !== 'undefined' || typeof patterns !== 'undefined')) {
+      if (!validateField(field, fieldKey, getValue(fieldKey, values), dispatch, user)) {
+        isClean = false;
+      }
+    }
+  });
+  return isClean;
+}
+
+export function validatePassword({ value, user }) {
+  const { values } = user;
+  const password = getValue('user.newPassword', values);
+  return value !== password;
+}
+
+export function validateReplicationValue({ user }) {
+  const { values = {} } = user;
+  const d = getValue('ui.values.replication.interval.days', values);
+  const h = getValue('ui.values.replication.interval.hours', values);
+  const m = getValue('ui.values.replication.interval.min', values);
+  const z = '0';
+  if (d !== z || h !== z && m !== z) {
+    return true;
+  }
+  return false;
+}
+
+export async function validateReversePlan({ user, dispatch }) {
+  const initialCheckPass = validateReverseData({ user, dispatch });
+  if (initialCheckPass) {
+    try {
+      const drplan = getReversePlanPayload(user);
+      const obj = createPayload(API_TYPES.POST, { ...drplan });
+      const url = API_VALIDATE_REVERSE_PLAN.replace('<id>', drplan.id);
+      dispatch(showApplicationLoader('VALIDATING_REVERSE_PLAN', 'Validating reverse plan.'));
+      const response = await callAPI(url, obj);
+      dispatch(hideApplicationLoader('VALIDATING_REVERSE_PLAN'));
+      if (!response.isRecoverySiteOnline) {
+        dispatch(addMessage('Recovery site is not reachable. Please select a different recovery site.', MESSAGE_TYPES.ERROR, true));
+        return false;
+      }
+      if (response.failedVMs === null) {
+        return true;
+      }
+      if (response.failedVMs.length !== 0) {
+        dispatch(addMessage(`[${response.failedVMs.join(', ')}] The last replication job has failed or snapshots across the sites are not in sync. Please select full incremental for replication type.`, MESSAGE_TYPES.ERROR, true));
+      }
+      return false;
+    } catch (err) {
+      dispatch(hideApplicationLoader('VALIDATING_REVERSE_PLAN'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      return false;
+    }
+  } else {
+    return false;
+  }
+}
+
+export function validateReverseData({ user, dispatch }) {
+  const { values } = user;
+  const field = FIELDS['reverse.suffix'];
+  if (!validateField(field, 'reverse.suffix', getValue('reverse.suffix', values), dispatch, user)) {
+    return false;
+  }
+  return true;
+}
+
+export function validateOptionalIPAddress({ value }) {
+  if (value !== '') {
+    const re = new RegExp(IP_REGEX);
+    if (value.match(re) === null) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export function validateNicConfig(dispatch, user, options) {
+  const { values } = user;
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+  switch (recoveryPlatform) {
+    case PLATFORM_TYPES.AWS:
+      return validateAWSNic(dispatch, user, options);
+    case PLATFORM_TYPES.GCP:
+      return validateGCPNicConfig(dispatch, user, options);
+    default:
+      return true;
+  }
+}
+
+function validateGCPNicConfig(dispatch, user, options) {
+  const { values, errors } = user;
+  const { networkKey } = options;
+  const subnet = getValue(`${networkKey}-subnet`, values) || '';
+  const pvtIP = getValue(`${networkKey}-privateIP`, values) || '';
+  const pubIP = getValue(`${networkKey}-publicIP`, values) || '';
+  if (subnet === '' || subnet === '-') {
+    dispatch(addMessage('Select network subnet', MESSAGE_TYPES.ERROR));
+    return false;
+  }
+  if (pvtIP !== '') {
+    if (errors && errors[`${networkKey}-privateIP`]) {
+      return false;
+    }
+  }
+  if (pubIP === '') {
+    dispatch(addMessage('Select external ip config', MESSAGE_TYPES.ERROR));
+    return false;
+  }
+  return true;
+}
+function validateAWSNic(dispatch, user, options) {
+  const { networkKey } = options;
+  const { values, errors } = user;
+  const subnet = getValue(`${networkKey}-subnet`, values);
+  const pvtIP = getValue(`${networkKey}-privateIP`, values) || '';
+  const sg = getValue(`${networkKey}-securityGroups`, values) || [];
+  if (subnet === '' || subnet === '-') {
+    dispatch(addMessage('Select network subnet', MESSAGE_TYPES.ERROR));
+    return false;
+  }
+  if (pvtIP !== '') {
+    if (errors && errors[`${networkKey}-privateIP`]) {
+      return false;
+    }
+  }
+  if (sg.length === 0) {
+    dispatch(addMessage('Select security group', MESSAGE_TYPES.ERROR));
+    return false;
+  }
+  const sgs = getValue(STATIC_KEYS.UI_SECURITY_GROUPS, values) || [];
+  const subnets = getValue(STATIC_KEYS.UI_SUBNETS, values);
+  let subnetVPCID = 0;
+  subnets.forEach((sub) => {
+    if (sub.id === subnet) {
+      subnetVPCID = sub.vpcID;
+    }
+  });
+  const vpcIDs = [];
+  sgs.forEach((g) => {
+    sg.forEach((s) => {
+      if (g.id === s) {
+        vpcIDs.push(g.vpcID);
+      }
+    });
+  });
+  const vpcSet = [...new Set(vpcIDs)];
+  if (vpcSet.length > 1) {
+    dispatch(addMessage('Security group must be from same VPC.'));
+    return false;
+  }
+  // check subnet and sgs from same vpc
+  if (vpcSet[0] !== subnetVPCID) {
+    dispatch(addMessage('Security group and subnet must be from same VPC.'));
+    return false;
+  }
+  return true;
+}
+
+export function validateReplicationInterval({ value, dispatch }) {
+  try {
+    if (Number.isNaN(value, 2)) {
+      dispatch(addMessage('Select replication interval', MESSAGE_TYPES.ERROR));
+      return true;
+    }
+    if (value <= 0) {
+      dispatch(addMessage('Select replication interval', MESSAGE_TYPES.ERROR));
+      return true;
+    }
+    if (value < 10) {
+      dispatch(addMessage('Minimum replication interval is 10 minutes', MESSAGE_TYPES.ERROR));
+      return true;
+    }
+  } catch (err) {
+    dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    return true;
+  }
+  return false;
+}
+
+export function isPlanRecovered(protectionplan) {
+  const { recoveryStatus } = protectionplan;
+  if (recoveryStatus === 'Migrated' || recoveryStatus === 'Recovered') {
+    return true;
+  }
+  return false;
+}

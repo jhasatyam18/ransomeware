@@ -1,0 +1,294 @@
+[
+  {
+    "label": "asia-east1-a",
+    "value": "asia-east1-a"
+  },
+  {
+    "label": "asia-east1-b",
+    "value": "asia-east1-b"
+  },
+  {
+    "label": "asia-east1-c",
+    "value": "asia-east1-c"
+  },
+  {
+    "label": "asia-east2-a",
+    "value": "asia-east2-a"
+  },
+  {
+    "label": "asia-east2-b",
+    "value": "asia-east2-b"
+  },
+  {
+    "label": "asia-east2-c",
+    "value": "asia-east2-c"
+  },
+  {
+    "label": "asia-northeast1-a",
+    "value": "asia-northeast1-a"
+  },
+  {
+    "label": "asia-northeast1-b",
+    "value": "asia-northeast1-b"
+  },
+  {
+    "label": "asia-northeast1-c",
+    "value": "asia-northeast1-c"
+  },
+  {
+    "label": "asia-northeast2-a",
+    "value": "asia-northeast2-a"
+  },
+  {
+    "label": "asia-northeast2-b",
+    "value": "asia-northeast2-b"
+  },
+  {
+    "label": "asia-northeast2-c",
+    "value": "asia-northeast2-c"
+  },
+  {
+    "label": "asia-northeast3-a",
+    "value": "asia-northeast3-a"
+  },
+  {
+    "label": "asia-northeast3-b",
+    "value": "asia-northeast3-b"
+  },
+  {
+    "label": "asia-northeast3-c",
+    "value": "asia-northeast3-c"
+  },
+  {
+    "label": "asia-south1-a",
+    "value": "asia-south1-a"
+  },
+  {
+    "label": "asia-south1-b",
+    "value": "asia-south1-b"
+  },
+  {
+    "label": "asia-south1-c",
+    "value": "asia-south1-c"
+  },
+  {
+    "label": "asia-southeast1-a",
+    "value": "asia-southeast1-a"
+  },
+  {
+    "label": "asia-southeast1-b",
+    "value": "asia-southeast1-b"
+  },
+  {
+    "label": "asia-southeast1-c",
+    "value": "asia-southeast1-c"
+  },
+  {
+    "label": "asia-southeast2-a",
+    "value": "asia-southeast2-a"
+  },
+  {
+    "label": "asia-southeast2-b",
+    "value": "asia-southeast2-b"
+  },
+  {
+    "label": "asia-southeast2-c",
+    "value": "asia-southeast2-c"
+  },
+  {
+    "label": "australia-southeast1-a",
+    "value": "australia-southeast1-a"
+  },
+  {
+    "label": "australia-southeast1-b",
+    "value": "australia-southeast1-b"
+  },
+  {
+    "label": "australia-southeast1-c",
+    "value": "australia-southeast1-c"
+  },
+  {
+    "label": "europe-north1-a",
+    "value": "europe-north1-a"
+  },
+  {
+    "label": "europe-north1-b",
+    "value": "europe-north1-b"
+  },
+  {
+    "label": "europe-north1-c",
+    "value": "europe-north1-c"
+  },
+  {
+    "label": "europe-west1-b",
+    "value": "europe-west1-b"
+  },
+  {
+    "label": "europe-west1-c",
+    "value": "europe-west1-c"
+  },
+  {
+    "label": "europe-west1-d",
+    "value": "europe-west1-d"
+  },
+  {
+    "label": "europe-west2-a",
+    "value": "europe-west2-a"
+  },
+  {
+    "label": "europe-west2-b",
+    "value": "europe-west2-b"
+  },
+  {
+    "label": "europe-west2-c",
+    "value": "europe-west2-c"
+  },
+  {
+    "label": "europe-west3-a",
+    "value": "europe-west3-a"
+  },
+  {
+    "label": "europe-west3-b",
+    "value": "europe-west3-b"
+  },
+  {
+    "label": "europe-west3-c",
+    "value": "europe-west3-c"
+  },
+  {
+    "label": "europe-west4-a",
+    "value": "europe-west4-a"
+  },
+  {
+    "label": "europe-west4-b",
+    "value": "europe-west4-b"
+  },
+  {
+    "label": "europe-west4-c",
+    "value": "europe-west4-c"
+  },
+  {
+    "label": "europe-west6-a",
+    "value": "europe-west6-a"
+  },
+  {
+    "label": "europe-west6-b",
+    "value": "europe-west6-b"
+  },
+  {
+    "label": "europe-west6-c",
+    "value": "europe-west6-c"
+  },
+  {
+    "label": "northamerica-northeast1-a",
+    "value": "northamerica-northeast1-a"
+  },
+  {
+    "label": "northamerica-northeast1-b",
+    "value": "northamerica-northeast1-b"
+  },
+  {
+    "label": "northamerica-northeast1-c",
+    "value": "northamerica-northeast1-c"
+  },
+  {
+    "label": "southamerica-east1-a",
+    "value": "southamerica-east1-a"
+  },
+  {
+    "label": "southamerica-east1-b",
+    "value": "southamerica-east1-b"
+  },
+  {
+    "label": "southamerica-east1-c",
+    "value": "southamerica-east1-c"
+  },
+  {
+    "label": "us-central1-a",
+    "value": "us-central1-a"
+  },
+  {
+    "label": "us-central1-b",
+    "value": "us-central1-b"
+  },
+  {
+    "label": "us-central1-c",
+    "value": "us-central1-c"
+  },
+  {
+    "label": "us-central1-f",
+    "value": "us-central1-f"
+  },
+  {
+    "label": "us-east1-b",
+    "value": "us-east1-b"
+  },
+  {
+    "label": "us-east1-c",
+    "value": "us-east1-c"
+  },
+  {
+    "label": "us-east1-d",
+    "value": "us-east1-d"
+  },
+  {
+    "label": "us-east4-a",
+    "value": "us-east4-a"
+  },
+  {
+    "label": "us-east4-b",
+    "value": "us-east4-b"
+  },
+  {
+    "label": "us-east4-c",
+    "value": "us-east4-c"
+  },
+  {
+    "label": "us-west1-a",
+    "value": "us-west1-a"
+  },
+  {
+    "label": "us-west1-b",
+    "value": "us-west1-b"
+  },
+  {
+    "label": "us-west1-c",
+    "value": "us-west1-c"
+  },
+  {
+    "label": "us-west2-a",
+    "value": "us-west2-a"
+  },
+  {
+    "label": "us-west2-b",
+    "value": "us-west2-b"
+  },
+  {
+    "label": "us-west2-c",
+    "value": "us-west2-c"
+  },
+  {
+    "label": "us-west3-a",
+    "value": "us-west3-a"
+  },
+  {
+    "label": "us-west3-b",
+    "value": "us-west3-b"
+  },
+  {
+    "label": "us-west3-c",
+    "value": "us-west3-c"
+  },
+  {
+    "label": "us-west4-a",
+    "value": "us-west4-a"
+  },
+  {
+    "label": "us-west4-b",
+    "value": "us-west4-b"
+  },
+  {
+    "label": "us-west4-c",
+    "value": "us-west4-c"
+  }
+]

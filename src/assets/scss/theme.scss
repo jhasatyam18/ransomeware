@@ -1,0 +1,479 @@
+@import "./icons.scss";
+@import "./bootstrap-dark.scss";
+@import "./app-dark.scss";
+@import "react-datepicker/dist/react-datepicker.css";
+// @import "./bootstrap.scss";
+// @import "./app.scss";
+
+#sidebar-menu {
+  ul {
+    li {
+      a {
+        i {
+          min-width: 2rem;
+        }
+      }
+    }
+  }
+}
+.noti-icon .badge {
+  left: 23px;
+}
+.dataTables_filter,
+.dataTables_paginate {
+  float: right;
+}
+.rdw-editor-main {
+  border: 1px solid $gray-300;
+  height: 239px;
+}
+.dz-message {
+  text-align: center;
+  padding: 30px;
+}
+// kanban board
+.fcYNFc,
+.sc-AxmLO.gmtmqV {
+  background-color: $card-bg !important;
+  margin: 0 20px 0 0 !important;
+}
+.task-box {
+  border: 1px solid $border-color;
+}
+.react-datepicker-wrapper {
+  width: 100% !important;
+}
+.ReactModal__Overlay {
+  z-index: 1001 !important;
+}
+.chat-conversation .right .conversation-list {
+  margin-right: 15px;
+}
+.external-event {
+  &:hover {
+    cursor: pointer;
+  }
+}
+a:hover {
+  cursor: pointer;
+}
+.rating-container {
+  background-color: transparent !important;
+}
+.input-group-append {
+  z-index: 0;
+}
+.input-color {
+  color: $input-color !important;
+}
+.sketch-picker {
+  position: absolute;
+  z-index: 1;
+}
+.rangeslider__fill {
+  background-color: $primary !important;
+}
+
+// .custom-control-input {
+//   position: absolute !important;
+//   left: 0 !important;
+//   z-index: -1 !important;
+//   width: 1rem !important;
+//   height: 1.10938rem !important;
+//   opacity: 0 !important;
+// }
+
+.flatpickr-months .flatpickr-month {
+  background: $primary !important;
+}
+.flatpickr-weekdays {
+  background: $primary !important;
+}
+span.flatpickr-weekday {
+  background: $primary !important;
+}
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+  background: $primary !important;
+}
+span.flatpickr-weekday {
+  color: $white !important;
+}
+.flatpickr-day.selected {
+  background: $primary !important;
+}
+
+.bs-select select {
+  width: auto !important;
+}
+
+.message__notification__container {
+  position: fixed;
+  top: 10px;
+  width: 100%;
+  transform-style: preserve-3d;
+  z-index: 10010;
+  transition: transform 0.6s ease-in-out;
+  animation: toast-in-top 0.7s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dm__message {
+  min-width: 600px;
+  max-width: 600px;
+}
+
+@keyframes toast-in-left {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.dmtable-checkbox {
+  width: 50px;
+}
+.padding-20 {
+  padding: 20px;
+}
+.noPadding {
+  padding: 0px;
+}
+.padding-left-10 {
+  padding-left: 10px;
+}
+.padding-left-20 {
+  padding-left: 20px;
+}
+
+.modal-footer {
+  padding: 0.25rem;
+}
+.modal-header {
+  padding: 0.55rem;
+}
+.modal-card-body {
+  padding-bottom: 0.25px;
+}
+
+.confirmation-icon {
+  font-size: xxx-large;
+}
+
+// Ripple
+.ripple__container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  padding-top: 18%;
+  justify-content: flex-start;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 10000;
+}
+.ripple__box {
+  padding: 10px;
+  background-color:#222736;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.login__soft__bg {
+  background-color: #222736;
+}
+
+.step-wizard {
+  padding-top: 5px;
+  padding-bottom: 10px;
+  font-weight: 200;
+  color: white;
+  font-size: 14px;
+}
+
+.step-ul {
+  padding-top: 15px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.step-active {
+  background-color: #2b5480;
+}
+
+.wizard-header-options {
+  display: flex;
+  flex-direction: row;
+  .wizard-header-div {
+    padding-right: 10px;
+  }
+}
+
+.table tbody th {
+  font-weight: 400;
+}
+
+.table tbody tr:hover {background-color:#545a6d;}
+
+.stack__info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 5px;
+  .lable {
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .value {
+    font-size: 14px;
+    font-weight: 200;
+  }
+
+  .line {
+    height: 200px;
+    margin-left: 50%;
+    border: 1px solid #222736;
+  }
+}
+
+.fa-s-sm {
+  font-size: 14px;
+}
+.fa-s-lg {
+  font-size: 20px;
+}
+.fa-s-xlg {
+  font-size: 25px;
+}
+.dmtable-body {
+  max-width: 400px;
+  width: 100%;
+}
+.logo-name-size{
+  width: 180px;
+}
+
+.logo-size{
+  width: 30px;
+}
+
+.title-color {
+  color: #FFF;
+  font-weight: 400;
+}
+
+.dataMove {
+  width: 10px;
+  height: 10px;
+  position: relative;
+  animation: mymove 3s infinite;
+  margin-left: 2px;
+}
+
+@keyframes mymove {
+  from {left: 0px;}
+  to {left: calc(100%)}
+}
+
+.display__flex__reverse {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  flex-flow: row-reverse;
+}
+
+.login{
+  .logo{
+  margin-top: -50%;
+  }
+
+  .sign-up{
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    padding-left: 10px;
+    margin-bottom: -30px;
+  }
+
+  .logo__name{
+    margin-top: -40px;
+  }
+
+  .dmname{
+      margin-left: 80px;
+      margin-top: -90px;  
+  }
+}
+
+// global variable for padding
+@for $i from 0 through 30 {
+  .padding-#{$i} {
+    padding: $i + px
+  }
+  .padding-left-#{$i} {
+   padding-left: $i + px;
+  }
+  .padding-right-#{$i} {
+    padding-right: $i + px;
+   }
+   .padding-top-#{$i} {
+    padding-top: $i + px;
+   }
+   .padding-bottom-#{$i} {
+    padding-bottom: $i + px;
+   }
+}
+// global variable for margin
+@for $i from 0 through 30 {
+  .margin-#{$i} {
+    margin: $i + px
+  } 
+  .margin-left-#{$i} {
+    margin-left: $i + px;
+  }
+  .margin-right-#{$i} {
+    margin-right: $i + px;
+   }
+   .margin-top-#{$i} {
+    margin-top: $i + px;
+   }
+   .margin-bottom-#{$i} {
+    margin-bottom: $i + px;
+   }
+}
+
+.logo-name-size{
+  width: 180px;
+}
+
+.logo-size{
+  width: 30px;
+}
+
+.loginshowpass{
+  position: absolute;
+  right: 6%;
+  top: 64%;
+}
+
+.field-icon{
+  position: absolute;
+  bottom: 5px;
+  right: 20px;
+}
+
+// applicable for textfields, when focused.
+.field-icon-focused{
+  position: absolute;
+  bottom: 25px;
+  right: 20px;
+}
+
+.login-icon{
+  position: absolute;
+  bottom: 110px;
+  right: 40px;
+}
+
+.app_critical{
+  color: $orange;
+}
+
+.search__icon:hover {
+  cursor: pointer;
+}
+
+.react-datepicker-popper {
+  z-index: 9999 !important;
+}
+
+.report__content {
+  width: 100%;
+  min-height: calc(100% - 30);
+  .no__data {
+    top: 50%;
+    left: 40%;
+    font-size: larger;
+    position: absolute;
+    text-align: center;
+  }
+  .data {
+    background-color: white;
+  }
+}
+
+.rpt__system__overview {
+  width: 100%;
+  text-align: center;
+  margin: 10px;
+  border: 1px solid #222736;
+  padding: 10px;
+  .title__cards {
+    padding-top: 10px;
+    text-align: left;
+    padding-left: 25px;
+  }
+  .title__values {
+    text-align: left;
+    padding-left: 25px;
+    padding-top: 20px;
+  }
+}
+
+@media print {
+  body {
+    margin: 0;
+    color: #000;
+    background-color: #fff;
+  }
+  header, footer, aside, nav, form, iframe, .menu, .hero, .adslot {
+    display: none;
+  }
+}
+
+.disabled {
+  color: gray;
+  pointer-events: none;
+}
+
+.progress span {
+  position:absolute;
+  width:100%;
+  text-align:center;
+  z-index:2;
+  color:white;
+  margin-top: 5px;
+}
+
+.itemRendererContainer {
+  height: 100%;
+  padding: 0.5rem;
+}
+
+.info__container {
+  position: relative;
+  min-height: 15px;
+  height: 100%;
+  .info__icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+  }
+}
+
+.dm__progress__bar {
+  min-height: 12px;
+}
+
+.selected_role {
+  background-color: #545a6d;
+}

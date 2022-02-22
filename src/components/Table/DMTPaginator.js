@@ -1,0 +1,177 @@
+import React, { Component } from 'react';
+import ReactHtmlParser from 'react-html-parser';
+import { Button, ButtonGroup, Col, Row, Popover, PopoverBody } from 'reactstrap';
+
+class DMTPaginator extends Component {
+  constructor() {
+    super();
+    this.state = { popoverOpen: false, totalRows: 0, disablePrevious: false, disableNext: false, index: 0, maxRowPerPage: 100, searchStr: '' };
+    this.onNext = this.onNext.bind(this);
+    this.onBack = this.onBack.bind(this);
+    this.onFilter = this.onFilter.bind(this);
+    this.onFilterBlur = this.onFilterBlur.bind(this);
+    this.onFilterFocus = this.onFilterFocus.bind(this);
+    this.onFilterKeyPress = this.onFilterKeyPress.bind(this);
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.data.length !== prevState.totalRows) {
+      const { data, setData } = nextProps;
+      const { maxRowPerPage } = prevState;
+      const dataToShow = data.slice(0, 0 + maxRowPerPage);
+      setData(dataToShow);
+      return ({ index: 0 + maxRowPerPage, totalRows: data.length, maxRowPerPage: 100, disablePrevious: true, disableNext: !(data.length > maxRowPerPage) });
+    }
+    return null;
+  }
+
+  onFilterFocus(e) {
+    const { onFilterFocus } = this.props;
+    if (onFilterFocus) {
+      onFilterFocus(e);
+    }
+  }
+
+  onSearchChange = (e) => {
+    this.setState({
+      searchStr: e.target.value,
+    });
+  }
+
+  onFilterKeyPress(e) {
+    if (e.key === 'Enter') {
+      this.onFilter(e);
+    }
+  }
+
+  onFilterBlur(e) {
+    const { onFilterBlur } = this.props;
+    if (onFilterBlur) {
+      onFilterBlur(e);
+    }
+  }
+
+  onFilter(e = null) {
+    const { onFilter } = this.props;
+    const { searchStr } = this.state;
+    this.setState({ popoverOpen: false });
+    const criteria = (e !== null && typeof e.target.value !== 'undefined' ? e.target.value : searchStr);
+    if (onFilter) {
+      onFilter(criteria);
+    }
+  }
+
+  onNext() {
+    const { index, maxRowPerPage } = this.state;
+    const { setData, data } = this.props;
+    if (index < data.length) {
+      const dataToShow = data.slice(index, index + maxRowPerPage);
+      this.setState({ index: index + maxRowPerPage, disableNext: !(data.length > index + maxRowPerPage), disablePrevious: !(index + maxRowPerPage > maxRowPerPage) });
+      setData(dataToShow);
+    }
+  }
+
+  onBack() {
+    const { index, maxRowPerPage } = this.state;
+    const { setData, data } = this.props;
+    const start = index - (maxRowPerPage * 2);
+    const dataToShow = data.slice(start, index - maxRowPerPage);
+    this.setState({ index: index - maxRowPerPage, disableNext: !(data.length > index - maxRowPerPage), disablePrevious: !(index - maxRowPerPage > maxRowPerPage) });
+    setData(dataToShow);
+  }
+
+  setPopoverOpen = (show) => {
+    this.setState({
+      popoverOpen: show,
+    });
+  }
+
+  getHelpText(html) {
+    return (
+      <div>
+        {ReactHtmlParser(html)}
+      </div>
+    );
+  }
+
+  renderFilter() {
+    const { showFilter, filterHelpText } = this.props;
+    const { popoverOpen } = this.state;
+    if (showFilter && showFilter === 'true') {
+      return (
+        <div className="input-group">
+          <input
+            type="text"
+            className="form-control"
+            id="datableSearch"
+            placeholder="Search"
+            onFocus={this.onFilterFocus}
+            onBlur={this.onFilterBlur}
+            onKeyPress={this.onFilterKeyPress}
+            onChange={this.onSearchChange}
+            onMouseEnter={() => this.setPopoverOpen(true)}
+            onMouseLeave={() => this.setPopoverOpen(false)}
+            autoComplete="off"
+          />
+          <span className="input-group-append">
+            <div className="input-group-text bg-transparent">
+              <box-icon name="search" className="search__icon" size="15px" color="#FFF" onClick={this.onFilter} />
+            </div>
+          </span>
+          <Popover placement="bottom" isOpen={popoverOpen} target="datableSearch" style={{ backgroundColor: '#222736' }}>
+            <PopoverBody>
+              {this.getHelpText(filterHelpText)}
+            </PopoverBody>
+          </Popover>
+        </div>
+      );
+    }
+    return null;
+  }
+
+  renderData() {
+    const { disablePrevious, disableNext, maxRowPerPage } = this.state;
+    const { totalRows, index } = this.state;
+    const tPages = Math.ceil(totalRows / maxRowPerPage);
+    const cP = (index > 0 ? Math.ceil(index / maxRowPerPage) : 0);
+    return (
+      <Row>
+        <Col className="padding-0 margin-0 display__flex__reverse" style={{ minWidth: 200 }}>
+          {this.renderFilter()}
+        </Col>
+        <Col className="padding-0 margin-0 display__flex__reverse">
+          <ButtonGroup style={{ paddingRight: 20 }} className="btn-group-sm">
+            <Button disabled={disablePrevious} onClick={this.onBack}>
+              <box-icon type="solid" name="chevron-left" size="xs" />
+            </Button>
+            <Button>
+              {cP}
+              &nbsp;
+              /
+              &nbsp;
+              {tPages}
+            </Button>
+            <Button disabled={disableNext} onClick={this.onNext}>
+              <box-icon type="solid" name="chevron-right" size="xs" />
+            </Button>
+
+          </ButtonGroup>
+        </Col>
+      </Row>
+    );
+  }
+
+  render() {
+    const { defaultLayout } = this.props;
+    if (defaultLayout) {
+      return (this.renderData());
+    }
+    return (
+      <Row className="float-right">
+        {this.renderData()}
+      </Row>
+    );
+  }
+}
+
+export default DMTPaginator;

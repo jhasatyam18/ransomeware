@@ -1,0 +1,306 @@
+[
+  {
+    "label": "us-east-1",
+    "value": "us-east-1",
+    "zones": [
+      {
+        "label": "US East (N. Virginia) us-east-1a",
+        "value": "us-east-1a"
+      },
+      {
+        "label": "US East (N. Virginia) us-east-1b",
+        "value": "us-east-1b"
+      },
+      {
+        "label": "US East (N. Virginia) us-east-1c",
+        "value": "us-east-1c"
+      },
+      {
+        "label": "US East (N. Virginia) us-east-1d",
+        "value": "us-east-1d"
+      },
+      {
+        "label": "US East (N. Virginia) us-east-1e",
+        "value": "us-east-1e"
+      },
+      {
+        "label": "US East (N. Virginia) us-east-1f",
+        "value": "us-east-1f"
+      }
+    ]
+  },
+  {
+    "label": "us-east-2",
+    "value": "us-east-2",
+    "zones": [
+      {
+        "label": "US East (Ohio) us-east-2a",
+        "value": "us-east-2a"
+      },
+      {
+        "label": "US East (Ohio) us-east-2b",
+        "value": "us-east-2b"
+      },
+      {
+        "label": "US East (Ohio) us-east-2c",
+        "value": "us-east-2c"
+      }
+    ]
+  },
+  {
+    "label": "us-west-1",
+    "value": "us-west-1",
+    "zones": [
+      {
+        "label": "US West (N. California) us-west-1b",
+        "value": "us-west-1b"
+      },
+      {
+        "label": "US West (N. California) us-west-1c",
+        "value": "us-west-1c"
+      }
+    ]
+  },
+  {
+    "label": "us-west-2",
+    "value": "us-west-2",
+    "zones": [
+      {
+        "label": "US West (Oregon) us-west-2a",
+        "value": "us-west-2a"
+      },
+      {
+        "label": "US West (Oregon) us-west-2b",
+        "value": "us-west-2b"
+      },
+      {
+        "label": "US West (Oregon) us-west-2c",
+        "value": "us-west-2c"
+      },
+      {
+        "label": "US West (Oregon) us-west-2d",
+        "value": "us-west-2d"
+      }
+    ]
+  },
+  {
+    "label": "ap-south-1",
+    "value": "ap-south-1",
+    "zones": [
+      {
+        "label": "Asia Pacific (Mumbai) ap-south-1a",
+        "value": "ap-south-1a"
+      },
+      {
+        "label": "Asia Pacific (Mumbai) ap-south-1b",
+        "value": "ap-south-1b"
+      },
+      {
+        "label": "Asia Pacific (Mumbai) ap-south-1c",
+        "value": "ap-south-1c"
+      }
+    ]
+  },
+  {
+    "label": "ap-northeast-2",
+    "value": "ap-northeast-2",
+    "zones": [
+      {
+        "label": "Asia Pacific (Seoul) ap-northeast-2a",
+        "value": "ap-northeast-2a"
+      },
+      {
+        "label": "Asia Pacific (Seoul) ap-northeast-2b",
+        "value": "ap-northeast-2b"
+      },
+      {
+        "label": "Asia Pacific (Seoul) ap-northeast-2c",
+        "value": "ap-northeast-2c"
+      },
+      {
+        "label": "Asia Pacific (Seoul) ap-northeast-2d",
+        "value": "ap-northeast-2d"
+      }
+    ]
+  },
+  {
+    "label": "ap-southeast-1",
+    "value": "ap-southeast-1",
+    "zones": [
+      {
+        "label": "Asia Pacific (Singapore) ap-southeast-1a",
+        "value": "ap-southeast-1a"
+      },
+      {
+        "label": "Asia Pacific (Singapore) ap-southeast-1b",
+        "value": "ap-southeast-1b"
+      },
+      {
+        "label": "Asia Pacific (Singapore) ap-southeast-1c",
+        "value": "ap-southeast-1c"
+      }
+    ]
+  },
+  {
+    "label": "ap-southeast-2",
+    "value": "ap-southeast-2",
+    "zones": [
+      {
+        "label": "Asia Pacific (Sydney) ap-southeast-2a",
+        "value": "ap-southeast-2a"
+      },
+      {
+        "label": "Asia Pacific (Sydney) ap-southeast-2b",
+        "value": "ap-southeast-2b"
+      },
+      {
+        "label": "Asia Pacific (Sydney) ap-southeast-2c",
+        "value": "ap-southeast-2c"
+      }
+    ]
+  },
+  {
+    "label": "ap-northeast-1",
+    "value": "ap-northeast-1",
+    "zones": [
+      {
+        "label": "Asia Pacific (Tokyo) ap-northeast-1a",
+        "value": "ap-northeast-1a"
+      },
+      {
+        "label": "Asia Pacific (Tokyo) ap-northeast-1c",
+        "value": "ap-northeast-1c"
+      },
+      {
+        "label": "Asia Pacific (Tokyo) ap-northeast-1d",
+        "value": "ap-northeast-1d"
+      }
+    ]
+  },
+  {
+    "label": "ca-central-1",
+    "value": "ca-central-1",
+    "zones": [
+      {
+        "label": "Canada (Central) ca-central-1a",
+        "value": "ca-central-1a"
+      },
+      {
+        "label": "Canada (Central) ca-central-1b",
+        "value": "ca-central-1b"
+      },
+      {
+        "label": "Canada (Central) ca-central-1d",
+        "value": "ca-central-1d"
+      }
+    ]
+  },
+  {
+    "label": "eu-central-1",
+    "value": "eu-central-1",
+    "zones": [
+      {
+        "label": "Europe (Frankfurt) eu-central-1a",
+        "value": "eu-central-1a"
+      },
+      {
+        "label": "Europe (Frankfurt) eu-central-1b",
+        "value": "eu-central-1b"
+      },
+      {
+        "label": "Europe (Frankfurt) eu-central-1c",
+        "value": "eu-central-1c"
+      }
+    ]
+  },
+  {
+    "label": "eu-west-1",
+    "value": "eu-west-1",
+    "zones": [
+      {
+        "label": "Europe (Ireland) eu-west-1a",
+        "value": "eu-west-1a"
+      },
+      {
+        "label": "Europe (Ireland) eu-west-1b",
+        "value": "eu-west-1b"
+      },
+      {
+        "label": "Europe (Ireland) eu-west-1c",
+        "value": "eu-west-1c"
+      }
+    ]
+  },
+  {
+    "label": "eu-west-2",
+    "value": "eu-west-2",
+    "zones": [
+      {
+        "label": "Europe (London) eu-west-2a",
+        "value": "eu-west-2a"
+      },
+      {
+        "label": "Europe (London) eu-west-2b",
+        "value": "eu-west-2b"
+      },
+      {
+        "label": "Europe (London) eu-west-2c",
+        "value": "eu-west-2c"
+      }
+    ]
+  },
+  {
+    "label": "eu-west-3",
+    "value": "eu-west-3",
+    "zones": [
+      {
+        "label": "Europe (Paris) eu-west-3a",
+        "value": "eu-west-3a"
+      },
+      {
+        "label": "Europe (Paris) eu-west-3b",
+        "value": "eu-west-3b"
+      },
+      {
+        "label": "Europe (Paris) eu-west-3c",
+        "value": "eu-west-3c"
+      }
+    ]
+  },
+  {
+    "label": "eu-north-1",
+    "value": "eu-north-1",
+    "zones": [
+      {
+        "label": "Europe (Stockholm) eu-north-1a",
+        "value": "eu-north-1a"
+      },
+      {
+        "label": "Europe (Stockholm) eu-north-1b",
+        "value": "eu-north-1b"
+      },
+      {
+        "label": "Europe (Stockholm) eu-north-1c",
+        "value": "eu-north-1c"
+      }
+    ]
+  },
+  {
+    "label": "sa-east-1",
+    "value": "sa-east-1",
+    "zones": [
+      {
+        "label": "South America (São Paulo) sa-east-1a",
+        "value": "sa-east-1a"
+      },
+      {
+        "label": "South America (São Paulo) sa-east-1b",
+        "value": "sa-east-1b"
+      },
+      {
+        "label": "South America (São Paulo) sa-east-1c",
+        "value": "sa-east-1c"
+      }
+    ]
+  }
+]

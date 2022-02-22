@@ -1,0 +1,23 @@
+import React, { Component } from 'react';
+import { CardBody, Form } from 'reactstrap';
+import DMField from '../Shared/DMField';
+
+class DRPlanRecoveryConfigStep extends Component {
+  render() {
+    const { dispatch, user } = this.props;
+    const fields = []; // DRPLAN_RECOVERY_CONFIG_AWS_STEP_FIELDS;
+    return (
+      <>
+        <CardBody className="modal-card-body">
+          <Form>
+            {
+              fields.map((field) => (<DMField dispatch={dispatch} user={user} fieldKey={field} />))
+            }
+          </Form>
+        </CardBody>
+      </>
+    );
+  }
+}
+
+export default DRPlanRecoveryConfigStep;

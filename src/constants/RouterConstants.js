@@ -1,0 +1,28 @@
+/**
+ * Router constant for application
+ */
+export const DASHBOARD_PATH = '/dashboard';
+export const SITES_PATH = '/sites';
+export const PROTECTION_PLANS_PATH = '/protection/plans';
+export const PROTECTION_PLAN_DETAILS_PATH = '/protection/plan/details/:id';
+export const LOGOUT_PATH = '/logout';
+export const LOGIN_PATH = '/login';
+export const NODES_PATH = '/nodes';
+export const ACTIVITY_PATH = '/Activity';
+export const LOGS_PAT = '/Logs';
+export const REPORTS_PATH = '/Reports';
+export const ANALYTICS_PATH = '/Analytics';
+export const MONITOR_PATH = '/monitor/*';
+export const EVENTS_PATH = '/monitor/events';
+export const ALERTS_PATH = '/monitor/alerts';
+export const SETTINGS_PATH = '/settings/*';
+export const LICENSE_SETTINGS_PATH = '/settings/license';
+export const EMAIL_SETTINGS_PATH = '/settings/email';
+export const THROTTLING_SETTINGS_PATH = '/settings/throttling';
+export const USER_SETTINGS_PATH = '/settings/users';
+export const ROLES_SETTINGS_PATH = '/settings/roles';
+export const SUPPORT_BUNDLE_PATH = '/settings/support';
+export const SCRIPTS_PATH = '/settings/scripts';
+export const JOBS_PATH = '/jobs/*';
+export const JOBS_REPLICATION_PATH = '/jobs/replication';
+export const JOBS_RECOVERY_PATH = '/jobs/recovery';
