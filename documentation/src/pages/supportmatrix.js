@@ -18,8 +18,8 @@ export default function SupportMatrix() {
     { name: 'Suse Linux 12', kernel: '', supported: false },
     { name: 'Suse Linux 15', kernel: '', supported: false },
     { name: 'Microsoft Windows 10 Professional', kernel: '', supported: true },
-    { name: 'MS Windows Server 2012 (Standard, Datacenter)', kernel: '', supported: true },
-    { name: 'MS Windows Server 2012 R2 (Standard, Datacenter)', kernel: '', supported: true },
+    { name: 'MS Windows Server 2012 (Standard, Datacenter)', kernel: ['Reverse recovery for Win2k12 is currently not supported to VMWare (specifically for VMWare to AWS)'], supported: true },
+    { name: 'MS Windows Server 2012 R2 (Standard, Datacenter)', kernel: ['Reverse recovery for Win2k12-R2 is currently not supported to VMWare (specifically for VMWare to AWS) '], supported: true },
     { name: 'MS Windows Server 2016 (Standard, Datacenter)', kernel: '', supported: true },
     { name: 'MS Windows Server 2019 (Standard, Datacenter) ', kernel: '', supported: true },
   ];

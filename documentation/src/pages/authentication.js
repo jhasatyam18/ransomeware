@@ -23,8 +23,8 @@ export default function Authentication() {
           <li class="item1">By default Datamotive will create following three users
             <ol>
               <li>Administrator</li>
-              <li>Backupadmin</li>
-              <li>guest</li>
+              <li>DRadmin</li>
+              <li>Guest</li>
             </ol>
             <li>Default password for all the user is 'admin'</li>
           </li>

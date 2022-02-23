@@ -9,7 +9,6 @@ export default function Users() {
         Location: Home --> Settings --> Users <br />
         Users list  provide all registered users with their assign roles.
         <img alt="" src={userList} />
-        
     </div>
   )
 }
