@@ -5,10 +5,7 @@ describe("apiUtils.test.js : ApiUtils test ", () => {
     expect(createPayload().body).toBe(undefined)
   })
   it("Should return method name as post and body in stringfy format", () => {
-    const payload = {
-      username: "datamotive",
-      password: "test",
-    }
+    const payload = {username: "datamotive",password: "test",}
     expect(createPayload("POST", payload).method).toBe("POST")
     expect(createPayload("POST", payload).body).toBe(JSON.stringify(payload))
   })
