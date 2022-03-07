@@ -94,7 +94,7 @@ const server = new setupServer(...handlers)
 
 // Tests
 
-describe("Dashboard Events Tests", () => {
+describe("dashboardEvents.test.js : Dashboard Events Tests", () => {
   beforeAll(() => server.listen())
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())
