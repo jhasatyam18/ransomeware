@@ -36,7 +36,7 @@ describe("dashboardEvents.test.js : Dashboard Events Tests", () => {
     expect(text).toBeInTheDocument()
     expect(div.length).toBe(1)
   })
-  xit("should render error components when server throws an error", async () => {
+  it("should render error components when server throws an error", async () => {
     server.use(eventAPIErrorResponse)
     renderWitRedux(<DashboardEvents />)
     let para = await screen.findByText("Events")
