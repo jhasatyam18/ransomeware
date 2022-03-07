@@ -24,13 +24,11 @@ describe("dashboardEvents.test.js : Dashboard Events Tests", () => {
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())
   afterEach(cleanup)
-
   it("DashboardEvent should render", async () => {
     renderWitRedux(<DashboardEvents />)
     const text = await screen.findByText("Migrated")
     expect(text).toBeInTheDocument()
   })
-
   it("DashboardEvent: there must be a div with different classname when response.level is diffrent", async () => {
     renderWitRedux(<DashboardEvents />)
     let div = document.getElementsByClassName("bx app_warning bx bxs-error font-size-14")
@@ -38,14 +36,12 @@ describe("dashboardEvents.test.js : Dashboard Events Tests", () => {
     expect(text).toBeInTheDocument()
     expect(div.length).toBe(1)
   })
-
   it("should render erroe components when server throws an error", async () => {
     server.use(eventAPIErrorResponse)
     renderWitRedux(<DashboardEvents />)
     let para = await screen.findByText("Events")
     expect(para).toBeInTheDocument()
   })
-
   it("Should render div with classname as danger when response.level is ERROR", async () => {
     server.use(eventResponsewithLevelError)
     renderWitRedux(<DashboardEvents />)
@@ -54,7 +50,6 @@ describe("dashboardEvents.test.js : Dashboard Events Tests", () => {
     expect(text).toBeInTheDocument()
     expect(div.length).toBe(1)
   })
-
   it("should render a div with clasname as danger when response.level is CRITICAL", async () => {
     server.use(eventResponsewithLevelCritical)
     renderWitRedux(<DashboardEvents />)
@@ -63,7 +58,6 @@ describe("dashboardEvents.test.js : Dashboard Events Tests", () => {
     expect(text).toBeInTheDocument()
     expect(div.length).toBe(1)
   })
-
   it("should render a div with clasname as primary when response.level is ALL", async () => {
     server.use(eventResponsewithLevelAll)
     renderWitRedux(<DashboardEvents />)
@@ -72,7 +66,6 @@ describe("dashboardEvents.test.js : Dashboard Events Tests", () => {
     expect(text).toBeInTheDocument()
     expect(div.length).toBe(1)
   })
-
   it("should render a div with clasname as success when response.level is not known", async () => {
     server.use(eventResponsewithLevelNotKnown)
     renderWitRedux(<DashboardEvents />)
