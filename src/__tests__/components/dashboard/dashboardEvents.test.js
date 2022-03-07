@@ -1,94 +1,28 @@
 import React from "react"
-import { render, cleanup, screen, act } from "@testing-library/react"
+import {  cleanup, screen } from "@testing-library/react"
 import DashboardEvents from "../../../components/Dashboard/DashboardEvents"
 import { setupServer } from "msw/node"
 import { API_FETCH_EVENTS } from "../../../constants/ApiConstants"
-import renderWitRedux from "../../tetsUtils/reduxRender"
-import { withoutErrorResponse, withErrorResponse } from "../../tetsUtils/server"
+import renderWitRedux from "../../tetsUtils/RenderWithRedux"
+import { withoutErrorResponse, withErrorResponse } from "../../tetsUtils/Server"
 
 // server setups
-let resp1 = [
-  {
-    id: 1,
-    topic: "Migration",
-    description: "Migrated",
-    level: "WARNING",
-    affectedObjectID: 1,
-    type: "migration.completed",
-    timeStamp: 1622527277,
-    generator: "System",
-  },
-]
+let responsewithLevelWarning = [{id:1,topic:"Migration",description:"Migrated",level:"WARNING"}]
+let responsewithLevelError = [{id:1,topic:"Migration",description:"Migrated",level:"ERROR"}]
+let responsewithLevelCritical = [{id:1,topic:"Migration",description:"Migrated",level:"CRITICAL"}]
+let responsewithLevelAll = [{id:1,topic:"Migration",description:"Migrated",level:"ALL"}]
+let responsewithLevelNotKnown = [{id:1,topic:"Migration",description:"Migrated",level:"NOT"}]
 
-let resp2 = [
-  {
-    id: 1,
-    topic: "Migration",
-    description: "Migrated",
-    level: "ERROR",
-    affectedObjectID: 1,
-    type: "migration.completed",
-    timeStamp: 1622527277,
-    generator: "System",
-  },
-]
 
-let resp3 = [
-  {
-    id: 1,
-    topic: "Migration",
-    description: "Migrated",
-    level: "CRITICAL",
-    affectedObjectID: 1,
-    type: "migration.completed",
-    timeStamp: 1622527277,
-    generator: "System",
-  },
-]
 
-let resp4 = [
-  {
-    id: 1,
-    topic: "Migration",
-    description: "Migrated",
-    level: "ALL",
-    affectedObjectID: 1,
-    type: "migration.completed",
-    timeStamp: 1622527277,
-    generator: "System",
-  },
-]
-
-let resp5 = [
-  {
-    id: 1,
-    topic: "Migration",
-    description: "Migrated",
-    level: "SS",
-    affectedObjectID: 1,
-    type: "migration.completed",
-    timeStamp: 1622527277,
-    generator: "System",
-  },
-]
-
-const eventAPIResponse1 = withoutErrorResponse(API_FETCH_EVENTS, resp1)
-
-const eventAPIResponse2 = withoutErrorResponse(API_FETCH_EVENTS, resp2)
-const eventAPIResponse3 = withoutErrorResponse(API_FETCH_EVENTS, resp3)
-const eventAPIResponse4 = withoutErrorResponse(API_FETCH_EVENTS, resp4)
-const eventAPIResponse5 = withoutErrorResponse(API_FETCH_EVENTS, resp5)
-
+const eventResponsewithLevelWarning = withoutErrorResponse(API_FETCH_EVENTS, responsewithLevelWarning)
+const eventResponsewithLevelError = withoutErrorResponse(API_FETCH_EVENTS, responsewithLevelError)
+const eventResponsewithLevelAll = withoutErrorResponse(API_FETCH_EVENTS, responsewithLevelAll)
+const eventResponsewithLevelNotKnown = withoutErrorResponse(API_FETCH_EVENTS, responsewithLevelNotKnown)
+const eventResponsewithLevelCritical = withoutErrorResponse(API_FETCH_EVENTS, responsewithLevelCritical)
 const eventAPIErrorResponse = withErrorResponse(API_FETCH_EVENTS)
 
-const handlers = [
-  eventAPIResponse1,
-  eventAPIResponse2,
-  eventAPIResponse3,
-  eventAPIResponse4,
-  eventAPIResponse5,
-  eventAPIErrorResponse,
-]
+const handlers = [eventResponsewithLevelWarning,eventResponsewithLevelError,eventResponsewithLevelNotKnown, eventResponsewithLevelAll, eventAPIErrorResponse]
 
 const server = new setupServer(...handlers)
 
@@ -122,12 +56,12 @@ describe("dashboardEvents.test.js : Dashboard Events Tests", () => {
   xit("should render erroe components when server throws an error", async () => {
     server.use(eventAPIErrorResponse)
     renderWitRedux(<DashboardEvents />)
-    let para = await screen.findByText("events")
+    let para = await screen.findByText("Events")
     expect(para).toBeInTheDocument()
   })
 
   it("Should render div with classname as danger when response.level is ERROR", async () => {
-    server.use(eventAPIResponse2)
+    server.use(eventResponsewithLevelError)
     renderWitRedux(<DashboardEvents />)
 
     const text = await screen.findByText("Migrated")
@@ -139,7 +73,7 @@ describe("dashboardEvents.test.js : Dashboard Events Tests", () => {
   })
 
   it("should render a div with clasname as danger when response.level is CRITICAL", async () => {
-    server.use(eventAPIResponse3)
+    server.use(eventResponsewithLevelCritical)
     renderWitRedux(<DashboardEvents />)
 
     const text = await screen.findByText("Migrated")
@@ -151,7 +85,7 @@ describe("dashboardEvents.test.js : Dashboard Events Tests", () => {
   })
 
   it("should render a div with clasname as primary when response.level is ALL", async () => {
-    server.use(eventAPIResponse4)
+    server.use(eventResponsewithLevelAll)
     renderWitRedux(<DashboardEvents />)
 
     const text = await screen.findByText("Migrated")
@@ -163,7 +97,7 @@ describe("dashboardEvents.test.js : Dashboard Events Tests", () => {
   })
 
   it("should render a div with clasname as success when response.level is not known", async () => {
-    server.use(eventAPIResponse5)
+    server.use(eventResponsewithLevelNotKnown)
     renderWitRedux(<DashboardEvents />)
 
     const text = await screen.findByText("Migrated")
