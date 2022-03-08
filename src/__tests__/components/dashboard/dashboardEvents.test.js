@@ -39,7 +39,7 @@ describe("dashboardEvents.test.js : Dashboard Events Tests", () => {
   it("should render error components when server throws an error", async () => {
     server.use(eventAPIErrorResponse)
     renderWitRedux(<DashboardEvents />)
-    let para = await screen.findByText("Events")
+    let para = await screen.findByText("No Data To Display")
     expect(para).toBeInTheDocument()
   })
   it("Should render div with classname as danger when response.level is ERROR", async () => {
