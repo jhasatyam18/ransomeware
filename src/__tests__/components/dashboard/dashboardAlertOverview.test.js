@@ -17,8 +17,8 @@ describe('DashboardAlertOverview : Dashboard alrts tests',()=>{
     afterEach(cleanup)
     it('should render without error',async()=>{
         renderWitRedux(<DashboardAlertOverview />)
-        let text= await screen.findByText("Alerts")
-        expect(text).toBeInTheDocument()
+        let text= await screen.findAllByText("Alerts")
+        expect(text.length).toBe(2)
     })
     it('should display response messages on the screen',async()=>{
         renderWitRedux(<DashboardAlertOverview />)
@@ -30,7 +30,7 @@ describe('DashboardAlertOverview : Dashboard alrts tests',()=>{
     it('should render Error components',async()=>{
         server.use(alertApiMockErrorResponse)
         renderWitRedux(<DashboardAlertOverview />)
-        let text= await screen.findByText("Alerts")
-        expect(text).toBeInTheDocument()
+        let text= await screen.findAllByText("Alerts")
+        expect(text.length).toBe(2)
     })
 })
