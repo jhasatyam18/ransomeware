@@ -37,7 +37,7 @@
       "^.+\\.module\\.(css|sass|scss)$"
     ],
     "modulePaths": [
-      "C:\\Users\\SHIKHA TIWARI\\Desktop\\datamotive_ui\\src"
+      "<rootDir>/src"
     ],
     "moduleNameMapper": {
       "^react-native$": "react-native-web",

@@ -47,9 +47,5 @@ describe('DashboardJob : Dashboard Job tests',()=>{
         let div= await screen.findByText("Recovery for prod-ubuntu-16-04 is .")
         expect(text).toBeInTheDocument()
         expect(div).toBeInTheDocument()
-    })
-
-   
-
-   
+    })   
 })
