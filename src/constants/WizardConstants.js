@@ -1,5 +1,5 @@
-import { onConfigureDRPlan, startMigration, startRecovery, startReversePlan } from '../store/actions/DrPlanActions';
-import { noValidate, validateDRPlanProtectData, validateSteps, validateMigrationVMs, validateVMConfiguration, validateRecoveryVMs, validateReversePlan } from '../utils/validationUtils';
+import { onConfigureDRPlan, startMigration, startRecovery, startReversePlan, updateVMConfig } from '../store/actions/DrPlanActions';
+import { noValidate, validateDRPlanProtectData, validateMigrationVMs, validateRecoveryVMs, validateReversePlan, validateSteps, validateVMConfiguration } from '../utils/validationUtils';
 
 export const WIZARD_STEP = 'WIZARD_STEP';
 export const DRPLAN_GENERAL_SETTINGS_STEP = 'DRPLAN_GENERAL_SETTINGS_STEP';
@@ -20,6 +20,8 @@ export const MIGRATION_GENERAL_STEP = 'MIGRATION_GENERAL_STEP';
 export const RECOVERY_CONFIG = 'RECOEVRY_CONFIG';
 export const REVERSE_CONFIG_STEP = 'REVERSE_CONFIG_STEP';
 export const REVERSE_SUMMARY = 'REVERSE_SUMMARY';
+export const VM_ALERTS_STEP = 'VM_ALERTS_STEP';
+export const VM_CONFIGURATION_STEP = 'VM_CONFIGURATION_STEP';
 
 export const RECOVERY_GENERAL_STEP_FIELDS = ['recovery.protectionplanID', 'recovery.dryrun'];
 export const MIGRATION_GENERAL_STEP_FIELDS = ['recovery.protectionplanID'];
@@ -82,4 +84,12 @@ export const UPDATE_PROTECTION_PLAN_WIZARDS = {
     { label: 'Replication Configuration', title: '', component: WIZARD_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: DRPLAN_PROTECTION_CONFIG_STEP_FIELDS },
     { label: 'Scripts', title: '', component: WIZARD_STEP, validate: (user, dispatch) => noValidate(user, dispatch), fields: DRPLAN_SCRIPTS_CONFIG_STEP_FIELDS },
     { label: 'Summary', title: '', component: PROTECTION_PLAN_SUMMARY_STEP, validate: (user, dispatch) => noValidate(user, dispatch) }],
+};
+
+// Wizard edit protected VM and take action on vm
+export const PROTECTED_VM_RECONFIGURATION_WIZARD = {
+  options: { title: 'Configure', onFinish: updateVMConfig },
+  steps: [
+    { label: 'Alerts', title: '', component: VM_ALERTS_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
+    { label: 'Recovery Configuration', title: '', component: VM_CONFIGURATION_STEP, validate: (user, dispatch) => validateVMConfiguration({ user, dispatch }) }],
 };

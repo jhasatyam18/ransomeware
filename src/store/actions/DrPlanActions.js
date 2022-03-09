@@ -2,17 +2,17 @@ import { fetchByDelay } from '../../utils/SlowFetch';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import * as Types from '../../constants/actionTypes';
 import {
-  API_FETCH_DR_PLANS, API_START_DR_PLAN, API_STOP_DR_PLAN, API_DELETE_DR_PLAN, API_FETCH_DR_PLAN_BY_ID, API_FETCH_REVERSE_DR_PLAN_BY_ID, API_RECOVER, API_MIGRATE, API_REVERSE, API_PROTECTION_PLAN_VMS, API_PROTECTION_PLAN_UPDATE, API_PROTECTION_PLAN_PROTECTED_VMS, API_VM_ALERTS,
+  API_FETCH_DR_PLANS, API_START_DR_PLAN, API_STOP_DR_PLAN, API_DELETE_DR_PLAN, API_FETCH_DR_PLAN_BY_ID, API_FETCH_REVERSE_DR_PLAN_BY_ID, API_RECOVER, API_MIGRATE, API_REVERSE, API_PROTECTION_PLAN_VMS, API_PROTECTION_PLAN_UPDATE, API_PROTECTION_PLAN_PROTECTED_VMS, API_VM_ALERTS, API_EDIT_PROTECTED_VM,
 } from '../../constants/ApiConstants';
 import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { fetchNetworks, fetchSites, onRecoverSiteChange } from './SiteActions';
-import { getCreateDRPlanPayload, getEditProtectionPlanPayload, getRecoveryPayload, getReversePlanPayload } from '../../utils/PayloadUtil';
+import { getCreateDRPlanPayload, getEditProtectionPlanPayload, getRecoveryPayload, getReversePlanPayload, getVMConfigPayload } from '../../utils/PayloadUtil';
 import { addAssociatedReverseIP, clearValues, fetchScript, hideApplicationLoader, refresh, showApplicationLoader, valueChange } from './UserActions';
 import { closeWizard, openWizard } from './WizardActions';
 import { closeModal, openModal } from './ModalActions';
-import { MIGRATION_WIZARDS, RECOVERY_WIZARDS, TEST_RECOVERY_WIZARDS, REVERSE_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS } from '../../constants/WizardConstants';
-import { getValue } from '../../utils/InputUtils';
+import { MIGRATION_WIZARDS, RECOVERY_WIZARDS, TEST_RECOVERY_WIZARDS, REVERSE_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS, PROTECTED_VM_RECONFIGURATION_WIZARD } from '../../constants/WizardConstants';
+import { getValue, getVMMorefFromEvent } from '../../utils/InputUtils';
 import { PLATFORM_TYPES } from '../../constants/InputConstants';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
@@ -757,6 +757,162 @@ export function getVirtualMachineAlerts(moref) {
         }
       },
       (err) => {
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  };
+}
+
+export function initReconfigureProtectedVM(protectionPlanID, vmMoref = null, event = null) {
+  return async (dispatch) => {
+    dispatch(showApplicationLoader('RECONFIGURE_VM', 'Loading...'));
+    // get protection plan details
+    function fetchProtection(id) {
+      return callAPI(API_FETCH_DR_PLAN_BY_ID.replace('<id>', id)).then((json) => {
+        dispatch(drPlanDetailsFetched(json));
+        return json;
+      },
+      (err) => {
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+        return false;
+      });
+    }
+    // get virtual machine details
+    function getVMDetails(moref, plan, eve) {
+      let url = (eve !== null ? API_PROTECTION_PLAN_PROTECTED_VMS.replace('<moref>', moref) : API_PROTECTION_PLAN_VMS.replace('<sid>', plan.protectedSite.id));
+      url = url.replace('<pid>', plan.id);
+      return callAPI(url).then((json) => {
+        let selectedVMS = {};
+        const vms = (eve !== null ? json.protectedEntities.virtualMachines : json);
+        selectedVMS = {};
+        vms.forEach((vm) => {
+          if (vm.moref === moref) {
+            selectedVMS = { ...selectedVMS, [vm.moref]: { ...vm } };
+          }
+        });
+        return selectedVMS;
+      },
+      (err) => {
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+        return false;
+      });
+    }
+    // get associated alerts for vm
+    function getAssociatedAlerts(moref) {
+      const url = API_VM_ALERTS.replace('<moref>', moref);
+      return callAPI(url).then((json) => {
+        dispatch(valueChange('ui.vm.alerts', json));
+        return json;
+      },
+      (err) => {
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+        return false;
+      });
+    }
+    // if event is passed then extract the protectionPlan ID
+    let pid = protectionPlanID;
+    let moref = vmMoref;
+    if (event !== null) {
+      const parts = event.impactedObjectURNs.split(',');
+      const urn = parts[0].split(':');
+      if (urn.length > 1) {
+        const [p] = urn[2];
+        pid = p;
+      } else {
+        dispatch(addMessage('Protection plan details not identified in the event.', MESSAGE_TYPES.ERROR));
+        dispatch(hideApplicationLoader('RECONFIGURE_VM'));
+        return;
+      }
+      if (vmMoref === null) {
+        moref = getVMMorefFromEvent(event);
+        if (moref === '') {
+          dispatch(addMessage('Virtual Machine info not available in the event.', MESSAGE_TYPES.ERROR));
+          dispatch(hideApplicationLoader('RECONFIGURE_VM'));
+          return;
+        }
+      }
+    }
+    // get protectection Plan details
+    const pPlan = await fetchProtection(pid);
+    const vms = await getVMDetails(moref, pPlan, event);
+    let alerts = null;
+    if (event !== null) {
+      alerts = await getAssociatedAlerts(moref);
+    }
+    if (pPlan === false || vms === false || alerts === false) {
+      dispatch(addMessage('Failed to retrieve associate data for alert', MESSAGE_TYPES.ERROR));
+      dispatch(hideApplicationLoader('RECONFIGURE_VM'));
+      return;
+    }
+    dispatch(hideApplicationLoader('RECONFIGURE_VM'));
+    dispatch(openVMReconfigWizard(moref, pPlan, vms, alerts, event));
+    // dispatch(openEditProtectionPlanWizard(pPlan, true, alert, event));
+  };
+}
+
+export function openVMReconfigWizard(vmMoref, pPlan, selectedVMS, alerts) {
+  return (dispatch) => {
+    // set vm alerts for view
+    dispatch(valueChange('ui.vm.alerts', alerts));
+    dispatch(valueChange('ui.vm.reconfigure.vm.plan.id', pPlan.id));
+    dispatch(valueChange('ui.vm.reconfigure.vm.moref', vmMoref));
+    dispatch(valueChange('ui.site.seletedVMs', selectedVMS));
+    let { steps } = PROTECTED_VM_RECONFIGURATION_WIZARD;
+    if (alerts === null || alerts.length === 0) {
+      steps = [steps[1]];
+    } else {
+      dispatch(valueChange('ui.vm.isVMAlertAction', true));
+    }
+    const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchScript())];
+    return Promise.all(apis).then(
+      () => {
+        dispatch(valueChange('ui.editplan.alert.id', (alert !== null ? alert.id : alert)));
+        dispatch(valueChange('ui.selected.protection.planID', pPlan.id));
+        dispatch(valueChange('drplan.recoverySite', pPlan.recoverySite.id));
+        dispatch(valueChange('ui.values.recoveryPlatform', pPlan.recoverySite.platformDetails.platformType));
+        dispatch(setProtectionPlanVMConfig(selectedVMS, pPlan));
+        dispatch(onRecoverSiteChange({ value: pPlan.recoverySite.id }));
+        const ops = PROTECTED_VM_RECONFIGURATION_WIZARD.options;
+        ops.title = `Reconfigure ${selectedVMS[vmMoref].name}`;
+        dispatch(openWizard(ops, steps));
+        return new Promise((resolve) => resolve());
+      },
+      (err) => {
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+        return new Promise((resolve) => resolve());
+      },
+    );
+  };
+}
+
+export function updateVMConfig() {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const id = getValue('ui.vm.reconfigure.vm.plan.id', values);
+    const moref = getValue('ui.vm.reconfigure.vm.moref', values);
+    const vmData = getVMConfigPayload(user);
+    const payload = createPayload(API_TYPES.PATCH, { ...vmData[0] });
+    let url = API_EDIT_PROTECTED_VM.replace('<pid>', id);
+    url = `${url}?vmmoref=${moref}`;
+    const alerts = getValue('ui.vm.alerts', values);
+    if (alerts && alerts.length > 0) {
+      const alertIDs = alerts.map((a) => a.id).join(',');
+      url = `${url}&alert=${alertIDs}`;
+    }
+    dispatch(showApplicationLoader('RECONFIGURE_VM', 'Reconfiguring instance details...'));
+    return callAPI(url, payload)
+      .then((json) => {
+        dispatch(hideApplicationLoader('RECONFIGURE_VM'));
+        if (json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          dispatch(closeWizard());
+          dispatch(addMessage('Virtual machine reconfigured', MESSAGE_TYPES.SUCCESS));
+          dispatch(clearValues());
+        }
+      },
+      (err) => {
+        dispatch(hideApplicationLoader('RECONFIGURE_VM'));
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
   };

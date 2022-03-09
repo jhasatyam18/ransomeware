@@ -314,7 +314,7 @@ export function getGCPVMConfig(vm) {
         title: 'General',
         children: {
           [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', fieldInfo: 'info.protectionplan.instance.type', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
-          [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.instance.type.gcp', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u) },
+          [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.instance.type.gcp', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u), disabled: (u, f) => shouldDisableStorageType(u, f) },
           // [`${key}-vmConfig.general.bootOrder`]: { label: 'Boot Order', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select boot order.', shouldShow: true, options: (u) => geBootPriorityOptions(u) },
           [`${key}-vmConfig.general.tags`]: { label: 'Tags', fieldInfo: 'info.protectionplan.instance.tags.gcp', type: STACK_COMPONENT_TAGS, validate: null, errorMessage: '', shouldShow: true },
         },
@@ -349,7 +349,7 @@ export function getAwsVMConfig(vm) {
         title: 'General',
         children: {
           [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', fieldInfo: 'info.protectionplan.instance.type', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
-          [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.instance.volume.type.aws', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u), onChange: (user, dispatch) => onAwsStorageTypeChange(user, dispatch) },
+          [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.instance.volume.type.aws', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u), onChange: (user, dispatch) => onAwsStorageTypeChange(user, dispatch), disabled: (u, f) => shouldDisableStorageType(u, f) },
           [`${key}-vmConfig.general.volumeIOPS`]: { label: 'Volume IOPS', fieldInfo: 'info.protectionplan.instance.volume.iops.aws', type: FIELD_TYPE.NUMBER, errorMessage: 'Provide volume IOPS.', disabled: (u, f) => shouldEnableAWSIOPS(u, f), min: 0 },
           [`${key}-vmConfig.general.tags`]: { label: 'Tags', fieldInfo: 'info.protectionplan.instance.tags.aws', type: STACK_COMPONENT_TAGS, validate: null, errorMessage: '', shouldShow: true },
         },
@@ -513,6 +513,9 @@ export function shouldEnableAWSIOPS(user, fieldKey) {
   if (storageType === 'gp2') {
     return true;
   }
+  if (isVMAlertAction(user)) {
+    return true;
+  }
   return false;
 }
 
@@ -534,4 +537,31 @@ export function getAWSNetworkIDFromName(values, name) {
     });
   }
   return ipName;
+}
+
+export function getVMMorefFromEvent(event) {
+  let vmMoref = '';
+  if (event !== null && event.impactedObjectURNs !== '') {
+    const parts = event.impactedObjectURNs.split(',');
+    if (parts.length > 1) {
+      const urn = parts[parts.length - 1].split(':');
+      if (urn.length >= 2) {
+        vmMoref = `${urn[urn.length - 2]}:${urn[urn.length - 1]}`;
+      }
+    }
+  }
+  return vmMoref;
+}
+
+export function isVMAlertAction(user) {
+  const { values } = user;
+  const isAlertAction = getValue('ui.vm.isVMAlertAction', values);
+  if (typeof isAlertAction !== 'undefined' && isAlertAction === true) {
+    return true;
+  }
+  return false;
+}
+
+export function shouldDisableStorageType(user) {
+  return isVMAlertAction(user);
 }

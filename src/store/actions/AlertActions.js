@@ -3,7 +3,7 @@ import { API_ACKNOWLEDGE_ALERT, API_ALERT_TAKE_VM_ACTION, API_FETCH_ALERTS, API_
 import { EVENT_LEVELS, VM_CONFIG_ACTION_EVENT, VM_DISK_ACTION_EVENT } from '../../constants/EventConstant';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
-import { drPlanDetailsFetched, openEditProtectionPlanWizard } from './DrPlanActions';
+import { drPlanDetailsFetched, initReconfigureProtectedVM, openEditProtectionPlanWizard } from './DrPlanActions';
 import { addMessage } from './MessageActions';
 import { closeModal } from './ModalActions';
 import { hideApplicationLoader, showApplicationLoader } from './UserActions';
@@ -142,7 +142,7 @@ export function takeVMAction(alert, associatedEvent) {
     }
     if (VM_CONFIG_ACTION_EVENT.indexOf(associatedEvent.type) !== -1) {
       dispatch(closeModal());
-      dispatch(initEditPlanAction(associatedEvent, alert));
+      dispatch(initReconfigureProtectedVM(null, null, associatedEvent));
     }
   };
 }

@@ -523,3 +523,11 @@ export function isPlanRecovered(protectionplan) {
   }
   return false;
 }
+
+export function isVMRecovered(vm) {
+  const { recoveryStatus } = vm;
+  if (recoveryStatus === 'Migrated' || recoveryStatus === 'Recovered') {
+    return true;
+  }
+  return false;
+}

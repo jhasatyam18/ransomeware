@@ -383,7 +383,9 @@ export function onAwsPublicIPChecked({ value, fieldKey }) {
   return (dispatch) => {
     if (value) {
       const networkKey = fieldKey.replace('isPublic', 'network');
+      const publicIPKey = fieldKey.replace('isPublic', 'publicIP');
       dispatch(valueChange(networkKey, ''));
+      dispatch(valueChange(publicIPKey, ''));
     }
   };
 }

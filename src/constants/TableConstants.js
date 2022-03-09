@@ -30,6 +30,7 @@ export const RECOVERY_STATUS_ITEM_RENDERER = 'RECOVERY_STATUS_ITEM_RENDERER';
 export const ROLE_ITEM_RENDERER = 'ROLE_ITEM_RENDERER';
 export const VM_NETWORK_INFO_ITEM_RENDERER = 'VM_NETWORK_INFO_ITEM_RENDERER';
 export const SCRIPT_ITEM_RENDERER = 'SCRIPT_ITEM_RENDERER';
+export const PROTECTED_VM_ACTIONS_ITEM_ITEM_RENDERER = 'PROTECTED_VM_ACTIONS_ITEM_ITEM_RENDERER';
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
@@ -68,6 +69,7 @@ export const TABLE_PROTECTION_PLAN_VMS = [
   { label: 'os', field: 'guestOS', itemRenderer: OS_TYPE_ITEM_RENDERER },
   { label: 'Last Run Time', field: 'lastRunTime', itemRenderer: DATE_ITEM_RENDERER },
   { label: 'Status', field: 'recoveryStatus', itemRenderer: RECOVERY_STATUS_ITEM_RENDERER },
+  { label: 'Actions', field: 'name', itemRenderer: PROTECTED_VM_ACTIONS_ITEM_ITEM_RENDERER },
 ];
 
 export const TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG = [
