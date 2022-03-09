@@ -17,17 +17,24 @@ function DashboardAlertOverview(props) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    let isUnmounting = false;
     setLoading(true);
     setAlerts([]);
     callAPI(API_DASHBOARD_UNACK_ALERTS).then((json) => {
+      if (isUnmounting) return;
       setAlerts(json);
       setLoading(false);
     },
     (err) => {
+      if (isUnmounting) return;
       setAlerts([]);
       setLoading(false);
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
+
+    return () => {
+      isUnmounting = true;
+    };
   }, [refresh]);
   const { t } = props;
 

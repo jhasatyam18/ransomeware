@@ -19,10 +19,12 @@ function DashboardTitles(props) {
   const [loading, setLoading] = useState(false);
   const [titles, setTitles] = useState({ siteCount: 0, protectionPlans: 0, protectedVMs: 0, protectedStorage: 0 });
   useEffect(() => {
+    let isUnmounting = false;
     setLoading(true);
     setTitles({ siteCount: 0, protectionPlans: 0, protectedVMs: 0, protectedStorage: 0 });
     callAPI(API_DASHBOARD_TITLE)
       .then((json) => {
+        if (isUnmounting) return;
         setLoading(false);
         const { siteCount, protectionPlans, protectedVMs, protectedStorage, siteConnections, siteDetails } = json;
         const info = { siteCount, protectionPlans, protectedVMs, protectedStorage };
@@ -30,16 +32,23 @@ function DashboardTitles(props) {
         dispatch(updateTitleInfo({ sites: siteCount, protectionPlans, vms: protectedVMs, storage: protectedStorage, siteConnections, siteDetails }));
       },
       (err) => {
+        if (isUnmounting) return;
         setLoading(false);
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
     callAPI(API_NODES)
       .then((json) => {
+        if (isUnmounting) return;
         dispatch({ type: Types.DASHBOARD_NODES_FETCHED, nodes: json });
       },
       (err) => {
+        if (isUnmounting) return;
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
+
+    return () => {
+      isUnmounting = true;
+    };
   }, [refresh]);
 
   const reports = [

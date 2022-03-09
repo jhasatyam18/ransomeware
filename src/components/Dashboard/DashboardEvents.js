@@ -19,18 +19,25 @@ function DashBoardEvents(props) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    let isUnmounting = false;
     setLoading(true);
     setData([]);
     callAPI(API_FETCH_EVENTS)
       .then((json) => {
+        if (isUnmounting) return;
         setData(json);
         setLoading(false);
       },
       (err) => {
+        if (isUnmounting) return;
         setData([]);
         setLoading(false);
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
+
+    return () => {
+      isUnmounting = true;
+    };
   }, [refresh]);
 
   const renderNoDataToShow = () => (

@@ -24,26 +24,32 @@ function DashBoardJob(props) {
   const dataToDisplay = (combinedData.length > 2 ? combinedData.slice(0, 2) : combinedData);
 
   useEffect(() => {
+    let isUnmounting = false;
     setRecoveryJobs([]);
     setLoading(true);
     setReplicationJobs([]);
     callAPI(API_REPLICATION_JOBS)
       .then((json) => {
+        if (isUnmounting) return;
         setLoading(false);
         setReplicationJobs(json);
       },
       (err) => {
+        if (isUnmounting) return;
         setLoading(false);
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
 
     callAPI(API_RECOVERY_JOBS)
       .then((json) => {
+        if (isUnmounting) return;
         setRecoveryJobs(json);
       },
       (err) => {
+        if (isUnmounting) return;
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
+    return () => { isUnmounting = true; };
   }, [refresh]);
 
   const renderNoDataToShow = () => (
