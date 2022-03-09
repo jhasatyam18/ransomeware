@@ -329,6 +329,14 @@ export function getGCPVMConfig(vm) {
       },
       {
         hasChildren: true,
+        title: 'Replication Scripts',
+        children: {
+          [`${key}-protection.scripts.preScript`]: { label: 'Pre', fieldInfo: 'info.protectionplan.protection.prescript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPreScriptsOptions(u) },
+          [`${key}-protection.scripts.postScript`]: { label: 'Post', fieldInfo: 'info.protectionplan.protection.postscript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPostScriptsOptions(u) },
+        },
+      },
+      {
+        hasChildren: true,
         title: 'Scripts',
         children: {
           [`${key}-vmConfig.scripts.preScript`]: { label: 'Pre', fieldInfo: 'info.protectionplan.instance.prescript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPreScriptsOptions(u) },
@@ -364,7 +372,15 @@ export function getAwsVMConfig(vm) {
       },
       {
         hasChildren: true,
-        title: 'Scripts',
+        title: 'Replication Scripts',
+        children: {
+          [`${key}-protection.scripts.preScript`]: { label: 'Pre', fieldInfo: 'info.protectionplan.protection.prescript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPreScriptsOptions(u) },
+          [`${key}-protection.scripts.postScript`]: { label: 'Post', fieldInfo: 'info.protectionplan.protection.postscript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPostScriptsOptions(u) },
+        },
+      },
+      {
+        hasChildren: true,
+        title: 'Recovery Scripts',
         children: {
           [`${key}-vmConfig.scripts.preScript`]: { label: 'Pre', fieldInfo: 'info.protectionplan.instance.prescript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPreScriptsOptions(u) },
           [`${key}-vmConfig.scripts.postScript`]: { label: 'Post', fieldInfo: 'info.protectionplan.instance.postscript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPostScriptsOptions(u) },
@@ -534,4 +550,14 @@ export function getAWSNetworkIDFromName(values, name) {
     });
   }
   return ipName;
+}
+
+export function getSourceVMTags(vmKeyTag, values) {
+  const vms = getValue('ui.site.seletedVMs', values);
+  const vmKey = vmKeyTag.replace('-vmConfig.general.tags', '');
+  const vmObj = vms[vmKey];
+  if (vmObj && vmObj.tags) {
+    return vmObj.tags;
+  }
+  return [];
 }

@@ -60,6 +60,10 @@ export function getCreateDRPlanPayload(user, sites) {
   Object.keys(vms).forEach((key) => {
     const vm = vms[key];
     vm.id = 0;
+    const preScript = getValue(`${key}-protection.scripts.preScript`, values);
+    const postScript = getValue(`${key}-protection.scripts.postScript`, values);
+    vm.preScript = preScript;
+    vm.postScript = postScript;
     result.drplan.protectedEntities.VirtualMachines.push(vm);
   });
   result.drplan.protectedEntities.Name = 'dummy';
@@ -281,6 +285,10 @@ export function getEditProtectionPlanPayload(user, sites) {
   result.drplan.protectedEntities.VirtualMachines = [];
   Object.keys(vms).forEach((key) => {
     const vm = vms[key];
+    const preScript = getValue(`${key}-protection.scripts.preScript`, values) || '';
+    const postScript = getValue(`${key}-protection.scripts.postScript`, values) || '';
+    vm.preScript = preScript;
+    vm.postScript = postScript;
     result.drplan.protectedEntities.VirtualMachines.push(vm);
   });
   result.drplan.protectedEntities.Name = 'dummy';

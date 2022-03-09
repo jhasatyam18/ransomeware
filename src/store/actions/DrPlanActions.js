@@ -628,10 +628,17 @@ export function setProtectionPlanVMConfig(selectedVMS, protectionPlan) {
 
 function setAWSVMDetails(selectedVMS, protectionPlan, dispatch) {
   const vms = Object.values(selectedVMS);
-  const { recoveryEntities } = protectionPlan;
+  const { recoveryEntities, protectedEntities } = protectionPlan;
   const { instanceDetails } = recoveryEntities;
+  const { virtualMachines = [] } = protectedEntities;
   vms.forEach((vm) => {
     const key = vm.moref;
+    virtualMachines.forEach((pvm) => {
+      if (vm.moref === pvm.moref) {
+        dispatch(valueChange(`${key}-protection.scripts.preScript`, pvm.preScript));
+        dispatch(valueChange(`${key}-protection.scripts.postScript`, pvm.postScript));
+      }
+    });
     instanceDetails.forEach((ins) => {
       if (ins.sourceMoref === vm.moref) {
         dispatch(valueChange(`${key}-vmConfig.general.id`, ins.id));
@@ -687,10 +694,17 @@ function setAWSVMDetails(selectedVMS, protectionPlan, dispatch) {
 
 function setGCPVMDetails(selectedVMS, protectionPlan, dispatch) {
   const vms = Object.values(selectedVMS);
-  const { recoveryEntities } = protectionPlan;
+  const { recoveryEntities, protectedEntities } = protectionPlan;
   const { instanceDetails } = recoveryEntities;
+  const { virtualMachines = [] } = protectedEntities;
   vms.forEach((vm) => {
     const key = vm.moref;
+    virtualMachines.forEach((pvm) => {
+      if (vm.moref === pvm.moref) {
+        dispatch(valueChange(`${key}-protection.scripts.preScript`, pvm.preScript));
+        dispatch(valueChange(`${key}-protection.scripts.postScript`, pvm.postScript));
+      }
+    });
     instanceDetails.forEach((ins) => {
       if (ins.sourceMoref === vm.moref) {
         dispatch(valueChange(`${key}-vmConfig.general.id`, ins.id));

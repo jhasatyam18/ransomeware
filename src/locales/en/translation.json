@@ -287,5 +287,6 @@
   "info.protectionplan.network.gcp.privateip": "Leave blank to assign an address from the network range or provide ip from the network range",
   "info.protectionplan.network.gcp.subnet": "Subnet used to allocate ip address to the instance.",
   "info.protectionplan.network.gcp.network": "Network used to allocate ip address to the instance.",
-  "info.protectionplan.network.aws.elasticip": "An Elastic IP address is a reserved public IP address that you can assign to any EC2 instance in a particular region."
+  "info.protectionplan.network.aws.elasticip": "An Elastic IP address is a reserved public IP address that you can assign to any EC2 instance in a particular region.",
+  "info.protectionplan.tags.aws.tags.copy": "Add all source system tags in the protected instance"
 }
