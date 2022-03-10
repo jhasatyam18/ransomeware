@@ -11,11 +11,9 @@ import { getCookie, setCookie } from '../../utils/CookieUtils';
 import { onInit } from '../../utils/HistoryUtil';
 import { getValue } from '../../utils/InputUtils';
 import { fetchByDelay } from '../../utils/SlowFetch';
-import { fetchAlerts, getUnreadAlerts } from './AlertActions';
+import { getUnreadAlerts } from './AlertActions';
 import { fetchDRPlanById, fetchDrPlans } from './DrPlanActions';
 import { fetchEmailConfig, fetchEmailRecipients } from './EmailActions';
-import { fetchEvents } from './EventActions';
-import { fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
 import { fetchLicenses } from './LicenseActions';
 import { addMessage, clearMessages } from './MessageActions';
 import { closeModal, openModal } from './ModalActions';
@@ -229,16 +227,16 @@ export function refresh() {
         dispatch(fetchSites());
         break;
       case JOBS_REPLICATION_PATH:
-        dispatch(fetchReplicationJobs(0));
+        // dispatch(fetchReplicationJobs(0));
         break;
       case JOBS_RECOVERY_PATH:
-        dispatch(fetchRecoveryJobs(0));
+        // dispatch(fetchRecoveryJobs(0));
         break;
       case ALERTS_PATH:
-        dispatch(fetchAlerts());
+        // dispatch(fetchAlerts());
         break;
       case EVENTS_PATH:
-        dispatch(fetchEvents());
+        // dispatch(fetchEvents());
         break;
       case LICENSE_SETTINGS_PATH:
         dispatch(fetchLicenses());

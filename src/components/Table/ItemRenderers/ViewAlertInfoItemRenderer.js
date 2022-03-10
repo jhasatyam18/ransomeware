@@ -1,8 +1,8 @@
 import React from 'react';
 import { Badge } from 'reactstrap';
-import { openModal } from '../../../store/actions/ModalActions';
-import { alertSelected, getAlertEvent, markAsRead } from '../../../store/actions/AlertActions';
 import { MODAL_ALERT_DETAILS } from '../../../constants/Modalconstant';
+import { alertSelected, getAlertEvent } from '../../../store/actions/AlertActions';
+import { openModal } from '../../../store/actions/ModalActions';
 
 function ViewAlertInfoItemRenderer({ data, field, dispatch }) {
   if (!data) {
@@ -15,9 +15,6 @@ function ViewAlertInfoItemRenderer({ data, field, dispatch }) {
   function onViewDetails() {
     dispatch(alertSelected(data));
     dispatch(getAlertEvent(data.eventID));
-    if (data.isRead === false) {
-      dispatch(markAsRead(data.id));
-    }
     dispatch(openModal(MODAL_ALERT_DETAILS, { title }));
   }
   return (

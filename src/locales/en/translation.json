@@ -211,6 +211,7 @@
   "private.ip.address": "Private IP",
   "subnet": "Subnet",
   "networkTier": "NetworkTier",
+  "apply.filter": "Apply",
   "scripts": "Scripts",
   "pre.script": "Pre Script",
   "post.script": "Post Script",
