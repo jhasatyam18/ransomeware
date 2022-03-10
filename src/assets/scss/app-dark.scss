@@ -164,3 +164,63 @@
     color: white;
   }
 }
+
+.max-w-170 {
+  max-width: 170px;
+}
+
+.renderIPField-table {
+  text-align: center;
+ vertical-align: middle;
+}
+
+@mixin min-Height($val) {
+    min-height: $val;
+}
+
+@mixin max-Height($val) {
+  max-height: $val;
+}
+
+.min-h-100 {
+ @include min-Height(100px);
+}
+
+.max-h-230 {
+ @include max-Height(230px);
+}
+
+.max-h-250 {
+  @include max-Height(250px);
+}
+
+.min-h-365 {
+  @include min-Height(365px);
+}
+
+.min-h-190 {
+  @include min-Height(190px);
+}
+
+.min-h-188 {
+  @include min-Height(188px);
+}
+
+.text-transformation-C {
+  text-transform: capital;
+}
+
+.drop-down-menu-color {
+  color: $gray-500;
+  &:hover {
+    color: $gray-600;
+  }
+}
+
+.color-white {
+  color: $white;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}

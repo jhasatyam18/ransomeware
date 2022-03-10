@@ -57,7 +57,7 @@ function DashBoardEvents(props) {
         </div>
         <Media body>
           <div>
-            <Link to={EVENTS_PATH} style={{ color: 'white' }}>
+            <Link to={EVENTS_PATH} className="color-white">
               {description.length > 65 ? `${description.substr(0, 65)}....` : description}
             </Link>
           </div>
@@ -89,7 +89,7 @@ function DashBoardEvents(props) {
   return (
     <>
       <Card>
-        <CardBody style={{ minHeight: 365 }}>
+        <CardBody className="min-h-365">
           <p className="font-weight-medium color-white">
             {t('events')}
           </p>

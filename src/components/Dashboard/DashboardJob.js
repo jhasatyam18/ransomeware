@@ -75,7 +75,7 @@ function DashBoardJob(props) {
         </div>
         <Media body>
           <div>
-            <Link to={(data.recoveryType ? `${JOBS_RECOVERY_PATH}` : `${JOBS_REPLICATION_PATH}`)} style={{ color: 'white' }}>
+            <Link to={(data.recoveryType ? `${JOBS_RECOVERY_PATH}` : `${JOBS_REPLICATION_PATH}`)} className="color-white">
               {message.length > 65 ? `${message.substr(0, 65)}....` : message}
             </Link>
           </div>
@@ -104,7 +104,7 @@ function DashBoardJob(props) {
   return (
     <>
       <Card>
-        <CardBody style={{ minHeight: 190 }}>
+        <CardBody className="min-h-190">
           <p className="font-weight-medium color-white">
             {t('jobs')}
           </p>

@@ -54,7 +54,7 @@ function NodeInfo(props) {
     return (
       <div className="dashboard_replication_header_state">
         Overall State &nbsp;&nbsp;
-        <Badge className={`font-size-12 badge-soft-${badgeColor}`} color={badgeColor} pill>
+        <Badge className={`font-size-12 badge-soft-${badgeColor}`} pill>
           {OverallStatus}
         </Badge>
       </div>

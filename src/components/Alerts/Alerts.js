@@ -86,7 +86,7 @@ class Alerts extends Component {
                 <DMBreadCrumb links={[{ label: 'alerts', link: '#' }]} />
                 <Row className="padding-left-20">
                   <Col sm={5}>
-                    <div style={{ maxWidth: '170px' }}>
+                    <div className="max-w-170">
                       <EventFilter data={data} action="alert" dispatch={dispatch} />
                     </div>
                   </Col>

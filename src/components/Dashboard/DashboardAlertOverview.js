@@ -33,12 +33,12 @@ function DashboardAlertOverview(props) {
 
   return (
     <Card>
-      <CardBody style={{ maxHeight: 250 }}>
+      <CardBody className="max-h-250">
         <Link to={ALERTS_PATH} className="font-weight-medium text-white">
           <p className="font-weight-medium text-muted">
             {t('Alerts')}
           </p>
-          <Row className="text-center" style={{ fontSize: '0.9rem' }}>
+          <Row className="text-center font-size-point-9rem">
             <Col sm={4}>
               <span className="text-danger-1">{t('Critical')}</span>
               <hr />

@@ -93,7 +93,7 @@ class GCPNetworkConfig extends Component {
   renderIPField() {
     return (
       <div>
-        <table style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+        <table className="renderIPField-table">
           <tbody>
             {this.renderRows()}
           </tbody>

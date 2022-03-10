@@ -52,7 +52,7 @@ function ReplicationStat(props) {
     return (
       <>
         <Card>
-          <CardBody style={{ minHeight: 188 }}>
+          <CardBody className="min-h-188">
             <p className="font-weight-medium color-white">
               {t('replication.statistics')}
             </p>
