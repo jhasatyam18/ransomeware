@@ -215,6 +215,7 @@
   "pre.script": "Pre Script",
   "post.script": "Post Script",
   "select.file.for.upload": "Select script file to upload",
+  "login.password": "Login Password",
 
   "info.site.type": "Select the site type. Supported site types are AWS, GCP and VMware.",
   "info.encryption.wire": "Wire encryption protects data as it moves into, through, and out of any network",

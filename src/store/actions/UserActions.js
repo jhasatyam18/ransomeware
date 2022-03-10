@@ -18,11 +18,12 @@ import { fetchEvents } from './EventActions';
 import { fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
 import { fetchLicenses } from './LicenseActions';
 import { addMessage, clearMessages } from './MessageActions';
-import { closeModal } from './ModalActions';
+import { closeModal, openModal } from './ModalActions';
 import { fetchNodes } from './NodeActions';
 import { fetchSites } from './SiteActions';
 import { fetchSupportBundles } from './SupportActions';
 import { fetchBandwidthConfig, fetchBandwidthReplNodes } from './ThrottlingAction';
+import { MODAL_USER_SCRIPT } from '../../constants/Modalconstant';
 
 export function refreshApplication() {
   return {
@@ -271,7 +272,8 @@ export function detailPathChecks(pathname) {
     return null;
   };
 }
-export function fetchScript() {
+
+export function fetchScript(fieldKey, name) {
   return (dispatch) => {
     const url = API_SCRIPTS;
     return callAPI(url)
@@ -282,6 +284,9 @@ export function fetchScript() {
           const data = json;
           dispatch(valueChange(STATIC_KEYS.UI_SCRIPT_PRE, data.preScripts));
           dispatch(valueChange(STATIC_KEYS.UI_SCRIPT_POST, data.postScripts));
+          if (fieldKey && name) {
+            dispatch(valueChange(fieldKey, name));
+          }
         }
       },
       (err) => {
@@ -488,5 +493,14 @@ export function deleteScript(id) {
         dispatch(hideApplicationLoader(API_USER_SCRIPT));
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
+  };
+}
+
+export function onScriptChange({ value, fieldKey }) {
+  return (dispatch) => {
+    if (value === '+NEW_SCRIPT') {
+      dispatch(valueChange(fieldKey, ''));
+      dispatch(openModal(MODAL_USER_SCRIPT, { title: 'Script', data: { fieldKey } }));
+    }
   };
 }
