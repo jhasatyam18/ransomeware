@@ -164,9 +164,14 @@ export function optionsBuilder(user, key) {
   return options;
 }
 
-export function getSecurityGroupOption(user) {
+export function getSecurityGroupOption(user, fieldKey) {
   const { values } = user;
-  const opts = getValue(STATIC_KEYS.UI_SECURITY_GROUPS, values) || [];
+  let isCopyConfiguration = false;
+  if (fieldKey && isPlanWithSamePlatform(user)) {
+    isCopyConfiguration = isAWSCopyNic(fieldKey, '-securityGroups', user);
+  }
+  const dataSourceKey = (isCopyConfiguration === true ? STATIC_KEYS.UI_SECURITY_GROUPS_SOURCE : STATIC_KEYS.UI_SECURITY_GROUPS);
+  const opts = getValue(dataSourceKey, values) || [];
   const options = [];
   opts.forEach((op) => {
     const name = (op.name && op.name !== '' ? op.name : op.id);
@@ -175,9 +180,14 @@ export function getSecurityGroupOption(user) {
   return options || [];
 }
 
-export function getSubnetOptions(user) {
+export function getSubnetOptions(user, fieldKey) {
   const { values } = user;
-  const opts = getValue(STATIC_KEYS.UI_SUBNETS, values) || [];
+  let isCopyConfiguration = false;
+  if (fieldKey && isPlanWithSamePlatform(user)) {
+    isCopyConfiguration = isAWSCopyNic(fieldKey, '-subnet', user);
+  }
+  const dataSourceKey = (isCopyConfiguration === true ? STATIC_KEYS.UI_SUBNETS__SOURCE : STATIC_KEYS.UI_SUBNETS);
+  const opts = getValue(dataSourceKey, values) || [];
   const options = [];
   opts.forEach((op) => {
     const name = getSubnetLabel(op);
@@ -339,7 +349,7 @@ export function getGCPVMConfig(vm) {
       },
       {
         hasChildren: true,
-        title: 'Scripts',
+        title: 'Recovery Scripts',
         children: {
           [`${key}-vmConfig.scripts.preScript`]: { label: 'Pre', fieldInfo: 'info.protectionplan.instance.prescript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPreScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
           [`${key}-vmConfig.scripts.postScript`]: { label: 'Post', fieldInfo: 'info.protectionplan.instance.postscript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPostScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
@@ -562,4 +572,24 @@ export function getSourceVMTags(vmKeyTag, values) {
     return vmObj.tags;
   }
   return [];
+}
+
+export function isPlanWithSamePlatform(user) {
+  const { values } = user;
+  const protectionPlatform = getValue('ui.values.protectionPlatform', values);
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+  return recoveryPlatform === protectionPlatform;
+}
+
+export function isAWSCopyNic(fieldKey, replaceKey, user) {
+  const { values } = user;
+  let isCopyConfiguration = false;
+  if (fieldKey && isPlanWithSamePlatform(user)) {
+    const cpyKey = fieldKey.replace(replaceKey, '-isFromSource');
+    isCopyConfiguration = getValue(cpyKey, values);
+  }
+  if (typeof isCopyConfiguration !== 'boolean') {
+    isCopyConfiguration = false;
+  }
+  return isCopyConfiguration;
 }

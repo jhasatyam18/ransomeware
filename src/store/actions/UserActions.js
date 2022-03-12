@@ -502,3 +502,46 @@ export function onScriptChange({ value, fieldKey }) {
     }
   };
 }
+
+export function onAwsCopyNetConfigChange({ value, fieldKey }) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    if (!fieldKey) {
+      return;
+    }
+    const networkKey = fieldKey.replace('-isFromSource', '');
+    if (!value) {
+      // reset all the values
+      dispatch(valueChange(`${networkKey}-subnet`, ''));
+      dispatch(valueChange(`${networkKey}-isPublic`, false));
+      dispatch(valueChange(`${networkKey}-securityGroups`, ''));
+      dispatch(valueChange(`${networkKey}-network`, ''));
+      dispatch(valueChange(`${networkKey}-privateIP`, ''));
+    } else {
+      // set the source VM values
+      const keys = fieldKey.split('-');
+      if (keys.length > 3) {
+        // nic index
+        const index = keys[keys.length - 2];
+        const vmKey = `${keys[0]}-${keys[1]}`;
+        const selectedVMS = getValue('ui.site.seletedVMs', values);
+        Object.keys(selectedVMS).forEach((key) => {
+          if (vmKey === key) {
+            const nics = selectedVMS[key].virtualNics;
+            if (nics && nics.length >= index) {
+              const nic = nics[index];
+              dispatch(valueChange(`${networkKey}-subnet`, nic.Subnet));
+              dispatch(valueChange(`${networkKey}-isPublic`, nic.isPublicIP));
+              dispatch(valueChange(`${networkKey}-privateIP`, nic.privateIP));
+              if (nic.securityGroups) {
+                const sgp = nic.securityGroups.split(',');
+                dispatch(valueChange(`${networkKey}-securityGroups`, sgp));
+              }
+            }
+          }
+        });
+      }
+    }
+  };
+}

@@ -184,7 +184,7 @@ class DRPlanDetails extends Component {
   }
 
   renderStatus() {
-    const { drPlans } = this.props;
+    const { drPlans, t } = this.props;
     const { protectionPlan } = drPlans;
     const { status, recoveryStatus } = protectionPlan;
     if (recoveryStatus !== '') {
@@ -195,11 +195,16 @@ class DRPlanDetails extends Component {
 
     if (status === REPLICATION_STATUS.STOPPED) {
       return (
-        <span className="badge badge-danger">STOPPED</span>
+        <span className="badge badge-danger">{t('status.stopped')}</span>
+      );
+    }
+    if (status === REPLICATION_STATUS.INIT_FAILED) {
+      return (
+        <span className="badge badge-danger">{t('status.init.failed')}</span>
       );
     }
     return (
-      <span className="badge badge-info">RUNNING</span>
+      <span className="badge badge-info">{t('status.running')}</span>
     );
   }
 

@@ -456,6 +456,7 @@ export function openEditProtectionPlanWizard(plan, isEventAction = false, alert 
     return Promise.all(apis).then(
       () => {
         dispatch(valueChange('ui.editplan.alert.id', (alert !== null ? alert.id : alert)));
+        dispatch(valueChange('ui.alert.invoking.action', alert));
         dispatch(valueChange('ui.selected.protection.planID', selectedPlan.id));
         dispatch(valueChange('drplan.recoverySite', selectedPlan.recoverySite.id));
         dispatch(valueChange('ui.values.recoveryPlatform', selectedPlan.recoverySite.platformDetails.platformType));
@@ -586,7 +587,14 @@ export function setProtectionPlanVMConfig(selectedVMS, protectionPlan) {
   return (dispatch, getState) => {
     const { user } = getState();
     const { values } = user;
-    const { protectedEntities, recoveryEntities } = protectionPlan;
+    const { protectedEntities, recoveryEntities, protectedSite, recoverySite } = protectionPlan;
+    const protectedSitePlatform = protectedSite.platformDetails.platformType;
+    const recoverySitePlatform = recoverySite.platformDetails.platformType;
+    dispatch(valueChange('ui.values.protectionPlatform', protectedSitePlatform));
+    dispatch(valueChange('ui.values.recoveryPlatform', recoverySitePlatform));
+    if (recoverySitePlatform === protectedSitePlatform) {
+      dispatch(fetchNetworks(protectedSite.id, 'source_network'));
+    }
     dispatch(valueChange('drplan.id', protectionPlan.id));
     dispatch(valueChange('ui.edit.plan.remoteProtectionPlanId', protectionPlan.remoteProtectionPlanId));
     dispatch(valueChange('drplan.name', protectionPlan.name));
@@ -759,7 +767,16 @@ function setGCPVMDetails(selectedVMS, protectionPlan, dispatch) {
 }
 
 export function getVirtualMachineAlerts(moref) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    if (moref === '') {
+      const { user } = getState();
+      const isAlertAvailable = getValue('ui.alert.invoking.action', user.values);
+      if (typeof isAlertAvailable !== 'undefined' && isAlertAvailable !== '') {
+        dispatch(valueChange('ui.isEventAction', true));
+        dispatch(valueChange('ui.vm.alerts', [isAlertAvailable]));
+        return;
+      }
+    }
     const url = API_VM_ALERTS.replace('<moref>', moref);
     return callAPI(url)
       .then((json) => {

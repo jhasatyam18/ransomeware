@@ -3,7 +3,7 @@ export const PLATFORM_TYPES = {
 };
 
 export const REPLICATION_STATUS = {
-  STOPPED: 'Stopped', STARTED: 'STARTED',
+  STOPPED: 'Stopped', STARTED: 'STARTED', INIT_FAILED: 'Init-Failed',
 };
 
 export const RECOVERY_STATUS = {
@@ -59,6 +59,9 @@ export const STATIC_KEYS = {
   UI_SITE_NODES: 'ui.values.nodes',
   UI_RESERVE_IPS: 'ui.values.reserveips',
   UI_ASSOCIATED_RESERVE_IPS: 'ui.values.associated.ips',
+  // source site network details
+  UI_SECURITY_GROUPS_SOURCE: 'ui.values.securityGroups.source',
+  UI_SUBNETS__SOURCE: 'ui.values.subnets.source',
 };
 
 // Recovery time in minutes

@@ -9,30 +9,18 @@ import { getValue } from '../../utils/InputUtils';
 import { valueChange } from '../../store/actions';
 
 class DMFieldCheckbox extends Component {
-  constructor() {
-    super();
-    this.state = { value: false };
-  }
-
   componentDidMount() {
-    const { user, fieldKey, defaultValue, dispatch } = this.props;
-    const { values } = user;
-    let v = getValue(fieldKey, values);
-    if (v === true || v === false) {
-      this.setState({ value: v });
-    } else {
+    const { fieldKey, defaultValue, dispatch } = this.props;
+    let v = this.getCheckboxValue();
+    if (typeof v !== 'boolean') {
       v = (typeof defaultValue !== 'undefined' ? defaultValue : false);
       dispatch(valueChange(fieldKey, v));
-      this.setState({ value: v });
     }
   }
 
   handleChange = (e) => {
     const { dispatch, fieldKey, field } = this.props;
     const { onChange } = field;
-    this.setState({
-      value: e.target.checked,
-    });
     dispatch(valueChange(fieldKey, e.target.checked));
     if (typeof onChange === 'function') {
       dispatch(onChange({ value: e.target.checked, fieldKey }));
@@ -40,12 +28,11 @@ class DMFieldCheckbox extends Component {
   }
 
   getCheckboxValue() {
-    const { value } = this.state;
     const { fieldKey, user } = this.props;
     const { values } = user;
     const fieldValue = getValue(fieldKey, values);
-    if (value !== fieldValue) {
-      this.setState({ value: fieldValue });
+    if (typeof fieldValue !== 'boolean') {
+      return false;
     }
     return fieldValue;
   }

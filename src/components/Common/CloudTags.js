@@ -98,7 +98,7 @@ class CloudTags extends Component {
 
   renderCopyTags() {
     const { chkCopyTgs } = this.state;
-    const { vmKey } = this.state;
+    const { vmKey } = this.props;
     return (
       <Row className="padding-left-15">
         <Col sm={6}>
@@ -106,7 +106,7 @@ class CloudTags extends Component {
         </Col>
         <Col sm={6}>
           <div className="custom-control custom-checkbox">
-            <input type="checkbox" className="custom-control-input" id={`${vmKey}-tags-copy`} name={`${vmKey}-tags-copy`} checked={chkCopyTgs} onChange={this.copyTags} />
+            <input key={`${vmKey}-cpyTag`} type="checkbox" className="custom-control-input" id={`${vmKey}-tags-copy`} name={`${vmKey}-tags-copy`} checked={chkCopyTgs} onChange={this.copyTags} />
             <label className="custom-control-label" htmlFor={`${vmKey}-tags-copy`} />
           </div>
         </Col>
