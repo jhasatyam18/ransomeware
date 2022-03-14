@@ -290,5 +290,24 @@
   "info.protectionplan.network.gcp.subnet": "Subnet used to allocate ip address to the instance.",
   "info.protectionplan.network.gcp.network": "Network used to allocate ip address to the instance.",
   "info.protectionplan.network.aws.elasticip": "An Elastic IP address is a reserved public IP address that you can assign to any EC2 instance in a particular region.",
-  "info.protectionplan.tags.aws.tags.copy": "Add all source system tags in the protected instance"
+  "info.protectionplan.tags.aws.tags.copy": "Add all source system tags in the protected instance",
+  
+  "title.dashboard": "Dashboard",
+  "title.nodes": "Nodes",
+  "title.sites": "Sites",
+  "title.protection.plans": "Protection Plans",
+  "title.jobs.replication": "Replication",
+  "title.jobs.recovery": "Recovery",
+  "title.monitor.events": "Events",
+  "title.monitor.alerts": "Alerts",
+  "title.Reports": "Report",
+  "title.settings.license": "License",
+  "title.settings.email": "Email",
+  "title.settings.scripts": "Scripts",
+  "title.settings.users": "Users",
+  "title.settings.throttling": "Throttling",
+  "title.settings.roles": "Roles",
+  "title.settings.support": "Support",
+  "title.logout": "Logout",
+  "title.login": "Login"
 }

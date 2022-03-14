@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { Component, Suspense } from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
+import { withTranslation } from 'react-i18next';
+import { changePageTitle } from '../../utils/AppUtils';
 import { ALERTS_PATH, DASHBOARD_PATH, EVENTS_PATH, JOBS_PATH, LOGIN_PATH, NODES_PATH, PROTECTION_PLANS_PATH, PROTECTION_PLAN_DETAILS_PATH, REPORTS_PATH, SETTINGS_PATH, SITES_PATH } from '../../constants/RouterConstants';
 import Login from '../../pages/AuthenticationInner/Login';
 // import Pages404 from '../../pages/Page-404';
@@ -58,8 +60,9 @@ class Layout extends Component {
   }
 
   renderRoutes() {
-    const { sites, dispatch, user, drPlans } = this.props;
+    const { sites, dispatch, user, drPlans, t } = this.props;
     const { privileges = [] } = user;
+    changePageTitle(t);
     if (privileges.length === 0) {
       return null;
     }
@@ -137,4 +140,4 @@ Layout.propTypes = {
   user: PropTypes.object.isRequired,
 };
 
-export default (withRouter(Layout));
+export default (withTranslation()(withRouter(Layout)));
