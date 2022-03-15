@@ -17,7 +17,7 @@ function ReplicationStat(props) {
                 {`${task.label}`}
               </Col>
               <Col sm={5}>
-                <p style={{ color: 'white' }}>{task.value}</p>
+                <p className="color-white">{task.value}</p>
               </Col>
             </Row>
             <div className="dashboard_divider" />
