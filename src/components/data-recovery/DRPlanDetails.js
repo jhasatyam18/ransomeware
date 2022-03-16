@@ -71,10 +71,9 @@ class DRPlanDetails extends Component {
 
   disableReverse(protectionPlan) {
     const { user } = this.props;
-    const { protectedSite, recoverySite } = protectionPlan;
-    const protectedSitePlatform = protectedSite.platformDetails.platformType;
+    const { recoverySite } = protectionPlan;
     const recoverySitePlatform = recoverySite.platformDetails.platformType;
-    if (protectedSitePlatform === PLATFORM_TYPES.AWS || recoverySitePlatform === PLATFORM_TYPES.GCP) {
+    if (recoverySitePlatform === PLATFORM_TYPES.GCP) {
       return true;
     }
     if (!(protectionPlan.recoveryStatus === RECOVERY_STATUS.RECOVERED || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED)) {
