@@ -55,7 +55,7 @@ class SecurityGroups extends Component {
   renderOptions() {
     const { vmKey } = this.props;
     const { user } = this.props;
-    const options = getSecurityGroupOption(user);
+    const options = getSecurityGroupOption(user, vmKey);
     return options.map((op) => {
       const { value, label } = op;
       return (

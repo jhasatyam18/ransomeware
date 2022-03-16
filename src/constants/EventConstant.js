@@ -3,4 +3,4 @@ export const EVENT_LEVELS = {
 };
 
 export const VM_DISK_ACTION_EVENT = ['monitor.vmnotfound', 'monitor.vmrenamed', 'monitor.vmdiskadded', 'monitor.vmdiskremoved', 'monitor.vmdisksizemodified'];
-export const VM_CONFIG_ACTION_EVENT = ['monitor.vmconfmodified'];
+export const VM_CONFIG_ACTION_EVENT = ['monitor.vmconfmodified', 'protectionplan.initfailed', 'protectionplan.updatefailed'];

@@ -7,7 +7,7 @@ import { API_VALIDATE_MIGRATION, API_VALIDATE_RECOVERY, API_VALIDATE_REVERSE_PLA
 import { getRecoveryPayload, getReversePlanPayload, getVMNetworkConfig } from './PayloadUtil';
 import { IP_REGEX } from '../constants/ValidationConstants';
 import { PLATFORM_TYPES, STATIC_KEYS } from '../constants/InputConstants';
-import { createVMConfigStackObject, getValue } from './InputUtils';
+import { createVMConfigStackObject, getValue, isAWSCopyNic } from './InputUtils';
 
 export function isRequired(value) {
   if (!value) {
@@ -453,6 +453,7 @@ function validateAWSNic(dispatch, user, options) {
   const subnet = getValue(`${networkKey}-subnet`, values);
   const pvtIP = getValue(`${networkKey}-privateIP`, values) || '';
   const sg = getValue(`${networkKey}-securityGroups`, values) || [];
+  const isCopyConfiguration = isAWSCopyNic(`${networkKey}-subnet`, '-subnet', user);
   if (subnet === '' || subnet === '-') {
     dispatch(addMessage('Select network subnet', MESSAGE_TYPES.ERROR));
     return false;
@@ -466,8 +467,10 @@ function validateAWSNic(dispatch, user, options) {
     dispatch(addMessage('Select security group', MESSAGE_TYPES.ERROR));
     return false;
   }
-  const sgs = getValue(STATIC_KEYS.UI_SECURITY_GROUPS, values) || [];
-  const subnets = getValue(STATIC_KEYS.UI_SUBNETS, values);
+  const sgsKey = (isCopyConfiguration === true ? STATIC_KEYS.UI_SECURITY_GROUPS_SOURCE : STATIC_KEYS.UI_SECURITY_GROUPS);
+  const subnetKey = (isCopyConfiguration === true ? STATIC_KEYS.UI_SUBNETS__SOURCE : STATIC_KEYS.UI_SUBNETS);
+  const sgs = getValue(sgsKey, values) || [];
+  const subnets = getValue(subnetKey, values);
   let subnetVPCID = 0;
   subnets.forEach((sub) => {
     if (sub.id === subnet) {

@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Card, CardBody, Container, Form } from 'reactstrap';
-import DMFieldRadio from '../Shared/DMFieldRadio';
-import DMFieldText from '../Shared/DMFieldText';
+import { Card, CardBody, Col, Container, Form, Label, Row } from 'reactstrap';
+import SimpleBar from 'simplebar-react';
 import DMFieldCheckbox from '../Shared/DMFieldCheckbox';
+import DMFieldRadio from '../Shared/DMFieldRadio';
 import DMFieldSelect from '../Shared/DMFieldSelect';
+import DMFieldText from '../Shared/DMFieldText';
 import DMMultiSelect from '../Shared/DMMultiSelect';
-import { PLATFORM_TYPES } from '../../constants/InputConstants';
 import { FIELD_TYPE, MULTISELECT_ITEM_COMP } from '../../constants/FieldsConstant';
+import { PLATFORM_TYPES } from '../../constants/InputConstants';
+import { onAwsCopyNetConfigChange, onAwsPublicIPChecked, onGCPNetworkChange, valueChange } from '../../store/actions';
 import { closeModal } from '../../store/actions/ModalActions';
-import { onAwsPublicIPChecked, onGCPNetworkChange } from '../../store/actions';
-import { getAWSElasticIPOptions, getGCPExternalIPOptions, getGCPNetworkTierOptions, getGCPSubnetOptions, getNetworkOptions, getSecurityGroupOption, getSubnetOptions, getValue } from '../../utils/InputUtils';
+import { getAWSElasticIPOptions, getGCPExternalIPOptions, getGCPNetworkTierOptions, getGCPSubnetOptions, getNetworkOptions, getSecurityGroupOption, getSubnetOptions, getValue, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { isEmpty, validateNicConfig, validateOptionalIPAddress } from '../../utils/validationUtils';
 
 /**
@@ -20,7 +21,13 @@ import { isEmpty, validateNicConfig, validateOptionalIPAddress } from '../../uti
 class ModalNicConfig extends Component {
   constructor() {
     super();
+    this.state = { oldConfig: {} };
     this.onSave = this.onSave.bind(this);
+    this.onCancel = this.onCancel.bind(this);
+  }
+
+  componentDidMount() {
+    this.storeInitialData();
   }
 
   onSave() {
@@ -31,35 +38,114 @@ class ModalNicConfig extends Component {
     }
   }
 
+  onCancel() {
+    const { dispatch } = this.props;
+    this.resetInitialData();
+    dispatch(closeModal());
+  }
+
+  storeInitialData() {
+    const { user, options } = this.props;
+    const { values } = user;
+    const { networkKey } = options;
+    const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+    if (recoveryPlatform === PLATFORM_TYPES.AWS) {
+      const subnet = getValue(`${networkKey}-subnet`, values);
+      const sg = getValue(`${networkKey}-securityGroups`, values) || [];
+      const isCopyConfiguration = isAWSCopyNic(`${networkKey}-subnet`, '-subnet', user);
+      const pvtIP = getValue(`${networkKey}-privateIP`, values) || '';
+      const network = getValue(`${networkKey}-network`, values);
+      this.setState({ oldConfig: { subnet, sg, isCopyConfiguration, pvtIP, network } });
+    }
+    if (recoveryPlatform === PLATFORM_TYPES.GCP) {
+      const network = getValue(`${networkKey}-network`, values);
+      const subnet = getValue(`${networkKey}-subnet`, values);
+      const privateIP = getValue(`${networkKey}-privateIP`, values);
+      const publicIP = getValue(`${networkKey}-publicIP`, values);
+      const networkTier = getValue(`${networkKey}-networkTier`, values);
+      this.setState({ oldConfig: { network, subnet, privateIP, publicIP, networkTier } });
+    }
+  }
+
+  resetInitialData() {
+    const { dispatch, options, user } = this.props;
+    const { values } = user;
+    const { networkKey } = options;
+    const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+    const { oldConfig } = this.state;
+    if (recoveryPlatform === PLATFORM_TYPES.AWS) {
+      const { subnet, sg, isCopyConfiguration, pvtIP, network } = oldConfig;
+      dispatch(valueChange(`${networkKey}-subnet`, subnet));
+      dispatch(valueChange(`${networkKey}-securityGroups`, sg));
+      dispatch(valueChange(`${networkKey}-isFromSource`, isCopyConfiguration));
+      dispatch(valueChange(`${networkKey}-privateIP`, pvtIP));
+      dispatch(valueChange(`${networkKey}-network`, network));
+    }
+    if (recoveryPlatform === PLATFORM_TYPES.GCP) {
+      const { network, subnet, privateIP, publicIP, networkTier } = oldConfig;
+      dispatch(valueChange(`${networkKey}-network`, network));
+      dispatch(valueChange(`${networkKey}-subnet`, subnet));
+      dispatch(valueChange(`${networkKey}-privateIP`, privateIP));
+      dispatch(valueChange(`${networkKey}-publicIP`, publicIP));
+      dispatch(valueChange(`${networkKey}-networkTier`, networkTier));
+    }
+  }
+
+  renderCopyConfigCheckbox() {
+    const { dispatch, user, options } = this.props;
+    const { networkKey } = options;
+    const isAwsToAws = isPlanWithSamePlatform(user);
+    const chkField = { label: 'Create From Source', description: '', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: false, onChange: (v, f) => onAwsCopyNetConfigChange(v, f), fieldInfo: 'info.aws.create.network.from.source' };
+    if (isAwsToAws) {
+      return (
+        <DMFieldCheckbox dispatch={dispatch} fieldKey={`${networkKey}-isFromSource`} field={chkField} user={user} />
+      );
+    }
+    return (
+      <Row>
+        <Col sm={7}>
+          <Label>Create From Source Configuration</Label>
+        </Col>
+        <Col sm={5}>
+          <DMFieldCheckbox dispatch={dispatch} fieldKey={`${networkKey}-isFromSource`} field={chkField} user={user} />
+        </Col>
+      </Row>
+    );
+  }
+
   renderAWSConfig() {
     const { dispatch, user, options } = this.props;
     const { values } = user;
     const { networkKey, index } = options;
     const showPublicChk = index === 0;
-    const subnetField = { label: 'Subnet', description: '', type: FIELD_TYPE.SELECT, options: (u) => getSubnetOptions(u), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select subnet', shouldShow: true, fieldInfo: 'info.protectionplan.network.aws.subnet' };
+    const subnetField = { label: 'Subnet', description: '', type: FIELD_TYPE.SELECT, options: (u, f) => getSubnetOptions(u, f), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select subnet', shouldShow: true, fieldInfo: 'info.protectionplan.network.aws.subnet' };
     const chkField = { label: 'Auto Public IP', description: '', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: false, fieldInfo: 'info.protectionplan.network.aws.public', onChange: (v, f) => onAwsPublicIPChecked(v, f) };
     const privateIPField = { label: 'Private IP', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.TEXT, shouldShow: true, validate: (v, u) => validateOptionalIPAddress(v, u), errorMessage: 'Invalid ip address or ip is not in subnet cidr range', fieldInfo: 'info.protectionplan.network.aws.privateip' };
-    const securityGroup = { label: 'Security  Groups', placeHolderText: 'Security group', description: '', type: FIELD_TYPE.CUSTOM, shouldShow: true, validate: (v, u) => isEmpty(v, u), errorMessage: 'Select security group', COMPONENT: MULTISELECT_ITEM_COMP, options: (u) => getSecurityGroupOption(u), fieldInfo: 'info.protectionplan.network.aws.security.group' };
+    const securityGroup = { label: 'Security  Groups', placeHolderText: 'Security group', description: '', type: FIELD_TYPE.CUSTOM, shouldShow: true, validate: (v, u) => isEmpty(v, u), errorMessage: 'Select security group', COMPONENT: MULTISELECT_ITEM_COMP, options: (u, k) => getSecurityGroupOption(u, k), fieldInfo: 'info.protectionplan.network.aws.security.group' };
     const network = { fieldInfo: 'info.protectionplan.network.aws.elasticip', label: 'Elastic IP for instance', placeHolderText: 'Elastic IP', description: '', type: FIELD_TYPE.SELECT, shouldShow: true, errorMessage: 'Select external', options: (u, f) => getAWSElasticIPOptions(u, f), validate: (v, u) => isEmpty(v, u) };
     const isPublic = getValue(`${networkKey}-isPublic`, values);
     return (
       <>
         <Container>
           <Card>
-            <CardBody>
-              <Form>
-                <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-subnet`} field={subnetField} user={user} />
-                {showPublicChk ? (
-                  <DMFieldCheckbox dispatch={dispatch} fieldKey={`${networkKey}-isPublic`} field={chkField} user={user} />
-                )
-                  : null}
-                <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-network`} field={network} user={user} disabled={isPublic} />
-                <DMFieldText dispatch={dispatch} fieldKey={`${networkKey}-privateIP`} field={privateIPField} user={user} />
-                <DMMultiSelect dispatch={dispatch} fieldKey={`${networkKey}-securityGroups`} field={securityGroup} user={user} />
-              </Form>
-            </CardBody>
+            <SimpleBar style={{ maxHeight: '400px' }}>
+              <CardBody>
+                <Form>
+                  {this.renderCopyConfigCheckbox()}
+                  <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-subnet`} field={subnetField} user={user} />
+                  {showPublicChk ? (
+                    <DMFieldCheckbox dispatch={dispatch} fieldKey={`${networkKey}-isPublic`} field={chkField} user={user} />
+                  )
+                    : null}
+                  <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-network`} field={network} user={user} disabled={isPublic} />
+                  <DMFieldText dispatch={dispatch} fieldKey={`${networkKey}-privateIP`} field={privateIPField} user={user} />
+                  <DMMultiSelect dispatch={dispatch} fieldKey={`${networkKey}-securityGroups`} field={securityGroup} user={user} />
+                </Form>
+              </CardBody>
+            </SimpleBar>
           </Card>
           <div className="modal-footer">
+            <button type="button" className="btn btn-secondary" onClick={this.onCancel}>Cancel</button>
             <button type="button" className="btn btn-success" onClick={this.onSave}>Save</button>
           </div>
         </Container>
@@ -91,6 +177,7 @@ class ModalNicConfig extends Component {
             </CardBody>
           </Card>
           <div className="modal-footer">
+            <button type="button" className="btn btn-secondary" onClick={this.onCancel}>Cancel</button>
             <button type="button" className="btn btn-success" onClick={this.onSave}>Save</button>
           </div>
         </Container>

@@ -1,5 +1,6 @@
 import { onConfigureDRPlan, startMigration, startRecovery, startReversePlan } from '../store/actions/DrPlanActions';
 import { noValidate, validateDRPlanProtectData, validateSteps, validateMigrationVMs, validateVMConfiguration, validateRecoveryVMs, validateReversePlan } from '../utils/validationUtils';
+import { postPlanSitesSelected } from '../store/actions/SiteActions';
 
 export const WIZARD_STEP = 'WIZARD_STEP';
 export const DRPLAN_GENERAL_SETTINGS_STEP = 'DRPLAN_GENERAL_SETTINGS_STEP';
@@ -27,7 +28,7 @@ export const MIGRATION_GENERAL_STEP_FIELDS = ['recovery.protectionplanID'];
 // Protection Plan
 export const CREATE_DR_PLAN_WIZARDS = {
   options: { title: 'Create Protection Plan', onFinish: onConfigureDRPlan },
-  steps: [{ label: 'General', title: '', component: WIZARD_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: DRPLAN_GENERAL_SETTINGS_STEP_FIELDS },
+  steps: [{ label: 'General', title: '', component: WIZARD_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: DRPLAN_GENERAL_SETTINGS_STEP_FIELDS, postAction: () => postPlanSitesSelected() },
     { label: 'Virtual Machines', title: '', component: DRPLAN_PROTECT_STEP, validate: (user, dispatch) => validateDRPlanProtectData({ user, dispatch }) },
     { label: 'Recovery Configuration', title: '', component: DRPLAN_VM_CONFIG_STEP, validate: (user, dispatch) => validateVMConfiguration({ user, dispatch }) },
     { label: 'Boot Order', title: '', component: DRPLAN_BOOT_ORDER_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },

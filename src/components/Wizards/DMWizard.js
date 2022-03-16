@@ -37,16 +37,22 @@ class DMWizard extends React.Component {
     const { steps } = wizard;
     const { currentStep } = this.state;
     if (!(currentStep >= steps.length - 1)) {
-      const { validate, isAync } = steps[currentStep];
+      const { validate, isAync, postAction } = steps[currentStep];
       const isValidated = validate(user, dispatch, steps[currentStep].fields);
       if (isAync) {
         isValidated.then((response) => {
           if (response) {
+            if (typeof postAction !== 'undefined') {
+              dispatch(postAction());
+            }
             this.setNextStep();
           }
         });
       }
       if (isValidated && typeof isAync === 'undefined') {
+        if (typeof postAction !== 'undefined') {
+          dispatch(postAction());
+        }
         this.setNextStep();
       }
     }

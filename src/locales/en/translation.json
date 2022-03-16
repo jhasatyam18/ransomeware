@@ -217,6 +217,9 @@
   "post.script": "Post Script",
   "select.file.for.upload": "Select script file to upload",
   "login.password": "Login Password",
+  "status.stopped": "Stopped",
+  "status.running": "Running",
+  "status.init.failed": "Init Failed",
 
   "info.site.type": "Select the site type. Supported site types are AWS, GCP and VMware.",
   "info.encryption.wire": "Wire encryption protects data as it moves into, through, and out of any network",
@@ -309,5 +312,8 @@
   "title.settings.roles": "Roles",
   "title.settings.support": "Support",
   "title.logout": "Logout",
-  "title.login": "Login"
+  "title.login": "Login",
+  "info.aws.create.network.from.source" : "Creates new subnet and security group on recovery site based on protected entity's configuration",
+  "info.protectionplan.protection.prescript": "Script will execute before every replication iteration.",
+  "info.protectionplan.protection.postscript": "Script will execute after successful completion of every replication iteration."
 }

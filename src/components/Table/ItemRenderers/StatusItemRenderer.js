@@ -104,9 +104,12 @@ function StatusItemRenderer({ data, field }) {
       </div>
     );
   }
+  const { failureMessage, errorMessage } = data;
+  const errMsg = (typeof failureMessage !== 'undefined' ? failureMessage : errorMessage);
+  const msg = (typeof errMsg !== 'undefined' ? errMsg : '');
   return (
     <div>
-      <Badge className="font-size-13 badge-soft-info" color="info" pill>
+      <Badge title={msg} className="font-size-13 badge-soft-info" color="info" pill>
         &nbsp;&nbsp;
         {resp}
       </Badge>
