@@ -11,6 +11,7 @@ import { getCookie } from '../../utils/CookieUtils';
 import { VM_CONFIG_ACTION_EVENT, VM_DISK_ACTION_EVENT } from '../../constants/EventConstant';
 import { APPLICATION_API_USER } from '../../constants/UserConstant';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
+import { refresh } from '../../store/actions/UserActions';
 
 /**
  * Component to render Alert details.
@@ -65,6 +66,7 @@ class ModalAlertDetails extends Component {
     selected.acknowledgeBy = user;
     dispatch(acknowledgeAlert(selected));
     dispatch(closeModal());
+    dispatch(refresh());
   }
 
   toggleTab(tab) {

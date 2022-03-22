@@ -81,8 +81,6 @@ export function acknowledgeAlert(alert) {
     return callAPI(URL, obj)
       .then(() => {
         dispatch(hideApplicationLoader('ACKNOWLEDGING_ALERT'));
-        dispatch(alertsFetched([]));
-        dispatch(fetchAlerts());
       },
       (err) => {
         dispatch(hideApplicationLoader('ACKNOWLEDGING_ALERT'));
