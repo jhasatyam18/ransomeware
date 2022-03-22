@@ -172,10 +172,13 @@ export function getSecurityGroupOption(user, fieldKey) {
   }
   const dataSourceKey = (isCopyConfiguration === true ? STATIC_KEYS.UI_SECURITY_GROUPS_SOURCE : STATIC_KEYS.UI_SECURITY_GROUPS);
   const opts = getValue(dataSourceKey, values) || [];
+  const networkID = getValue(fieldKey.replace('-securityGroups', '-vpcId'), values);
   const options = [];
   opts.forEach((op) => {
     const name = (op.name && op.name !== '' ? op.name : op.id);
-    options.push({ label: name, value: op.id });
+    if (op.vpcID === networkID) {
+      options.push({ label: name, value: op.id });
+    }
   });
   return options || [];
 }
@@ -188,10 +191,13 @@ export function getSubnetOptions(user, fieldKey) {
   }
   const dataSourceKey = (isCopyConfiguration === true ? STATIC_KEYS.UI_SUBNETS__SOURCE : STATIC_KEYS.UI_SUBNETS);
   const opts = getValue(dataSourceKey, values) || [];
+  const networkID = getValue(fieldKey.replace('-subnet', '-vpcId'), values);
   const options = [];
   opts.forEach((op) => {
     const name = getSubnetLabel(op);
-    options.push({ label: name, value: op.id });
+    if (op.vpcID === networkID || isCopyConfiguration) {
+      options.push({ label: name, value: op.id });
+    }
   });
   return options;
 }
@@ -199,7 +205,7 @@ export function getSubnetOptions(user, fieldKey) {
 export function getGCPSubnetOptions(user, fieldKey) {
   const { values } = user;
   const opts = getValue(STATIC_KEYS.UI_SUBNETS, values) || [];
-  const networkFieldKey = fieldKey.replace('-subnet', '-network');
+  const networkFieldKey = fieldKey.replace('-subnet', '-vpcId');
   const netID = getValue(networkFieldKey, values);
   const options = [];
   opts.forEach((op) => {
@@ -592,4 +598,14 @@ export function isAWSCopyNic(fieldKey, replaceKey, user) {
     isCopyConfiguration = false;
   }
   return isCopyConfiguration;
+}
+
+export function getVPCOptions(user) {
+  const { values } = user;
+  const opts = getValue(STATIC_KEYS.UI_VPC_TARGET, values) || [];
+  const options = [];
+  opts.forEach((op) => {
+    options.push({ label: op.cidr, value: op.id });
+  });
+  return options;
 }

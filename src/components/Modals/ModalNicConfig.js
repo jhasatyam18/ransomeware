@@ -12,7 +12,7 @@ import { FIELD_TYPE, MULTISELECT_ITEM_COMP } from '../../constants/FieldsConstan
 import { PLATFORM_TYPES } from '../../constants/InputConstants';
 import { onAwsCopyNetConfigChange, onAwsPublicIPChecked, onGCPNetworkChange, valueChange } from '../../store/actions';
 import { closeModal } from '../../store/actions/ModalActions';
-import { getAWSElasticIPOptions, getGCPExternalIPOptions, getGCPNetworkTierOptions, getGCPSubnetOptions, getNetworkOptions, getSecurityGroupOption, getSubnetOptions, getValue, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
+import { getAWSElasticIPOptions, getGCPExternalIPOptions, getGCPNetworkTierOptions, getGCPSubnetOptions, getNetworkOptions, getSecurityGroupOption, getSubnetOptions, getValue, getVPCOptions, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { isEmpty, validateNicConfig, validateOptionalIPAddress } from '../../utils/validationUtils';
 
 /**
@@ -51,11 +51,12 @@ class ModalNicConfig extends Component {
     const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
     if (recoveryPlatform === PLATFORM_TYPES.AWS) {
       const subnet = getValue(`${networkKey}-subnet`, values);
+      const vpc = getValue(`${networkKey}-vpcId`, values);
       const sg = getValue(`${networkKey}-securityGroups`, values) || [];
       const isCopyConfiguration = isAWSCopyNic(`${networkKey}-subnet`, '-subnet', user);
       const pvtIP = getValue(`${networkKey}-privateIP`, values) || '';
       const network = getValue(`${networkKey}-network`, values);
-      this.setState({ oldConfig: { subnet, sg, isCopyConfiguration, pvtIP, network } });
+      this.setState({ oldConfig: { subnet, sg, isCopyConfiguration, pvtIP, network, vpc } });
     }
     if (recoveryPlatform === PLATFORM_TYPES.GCP) {
       const network = getValue(`${networkKey}-network`, values);
@@ -74,7 +75,8 @@ class ModalNicConfig extends Component {
     const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
     const { oldConfig } = this.state;
     if (recoveryPlatform === PLATFORM_TYPES.AWS) {
-      const { subnet, sg, isCopyConfiguration, pvtIP, network } = oldConfig;
+      const { subnet, sg, isCopyConfiguration, pvtIP, network, vpc } = oldConfig;
+      dispatch(valueChange(`${networkKey}-vpcId`, vpc));
       dispatch(valueChange(`${networkKey}-subnet`, subnet));
       dispatch(valueChange(`${networkKey}-securityGroups`, sg));
       dispatch(valueChange(`${networkKey}-isFromSource`, isCopyConfiguration));
@@ -118,6 +120,7 @@ class ModalNicConfig extends Component {
     const { values } = user;
     const { networkKey, index } = options;
     const showPublicChk = index === 0;
+    const vpc = { label: 'VPC', description: '', type: FIELD_TYPE.SELECT, options: (u, f) => getVPCOptions(u, f), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select VPC', shouldShow: true, fieldInfo: 'info.protectionplan.network.aws.vpc' };
     const subnetField = { label: 'Subnet', description: '', type: FIELD_TYPE.SELECT, options: (u, f) => getSubnetOptions(u, f), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select subnet', shouldShow: true, fieldInfo: 'info.protectionplan.network.aws.subnet' };
     const chkField = { label: 'Auto Public IP', description: '', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: false, fieldInfo: 'info.protectionplan.network.aws.public', onChange: (v, f) => onAwsPublicIPChecked(v, f) };
     const privateIPField = { label: 'Private IP', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.TEXT, shouldShow: true, validate: (v, u) => validateOptionalIPAddress(v, u), errorMessage: 'Invalid ip address or ip is not in subnet cidr range', fieldInfo: 'info.protectionplan.network.aws.privateip' };
@@ -131,6 +134,7 @@ class ModalNicConfig extends Component {
             <SimpleBar style={{ maxHeight: '400px' }}>
               <CardBody>
                 <Form>
+                  <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-vpcId`} field={vpc} user={user} />
                   {this.renderCopyConfigCheckbox()}
                   <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-subnet`} field={subnetField} user={user} />
                   {showPublicChk ? (

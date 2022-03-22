@@ -1,3 +1,4 @@
+import ip from 'ip';
 import { addErrorMessage, hideApplicationLoader, removeErrorMessage, showApplicationLoader, valueChange } from '../store/actions';
 import { addMessage } from '../store/actions/MessageActions';
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
@@ -244,7 +245,7 @@ export function validateGCPNetworks(user, dispatch) {
 export function validateAWSNetworks(user, dispatch) {
   const { values } = user;
   const vms = getValue('ui.site.seletedVMs', values);
-  const subnets = getValue(STATIC_KEYS.UI_SUBNETS, values);
+  // const subnets = getValue(STATIC_KEYS.UI_SUBNETS, values);
   const elasticIPs = [];
   let isClean = true;
   let message = '';
@@ -264,23 +265,24 @@ export function validateAWSNetworks(user, dispatch) {
       if (typeof netConfigs[i].network !== 'undefined' && netConfigs[i].network !== '') {
         elasticIPs.push(netConfigs[i].network);
       }
-      for (let j = 0; j < subnets.length; j += 1) {
-        if (subnets[j].id === netConfigs[i].subnet) {
-          vpc.push(subnets[j].vpcID);
-        }
-      }
+      vpc.push(netConfigs[i].vpcId);
+      // for (let j = 0; j < subnets.length; j += 1) {
+      //   if (subnets[j].id === netConfigs[i].subnet) {
+      //     vpc.push(subnets[j].vpcID);
+      //   }
+      // }
     }
 
     const vpcSet = [...new Set(vpc)];
     // nics with different vpcid
     if (vpcSet.length > 1) {
-      message = `${vmName}: Network interfaces and an instance-level security groups may not be specified on the same request`;
+      message = `${vmName}: All nics of an instance must belong to same VPC.`;
       isClean = false;
     }
   });
   // check if same elastic ip mapped with multiple networks or vms
   const duplicates = elasticIPs
-    .filter((ip, index) => elasticIPs.indexOf(ip) !== index)
+    .filter((ipAddr, index) => elasticIPs.indexOf(ipAddr) !== index)
     .filter((i) => i !== '-');
   if (duplicates.length > 0) {
     isClean = false;
@@ -406,9 +408,14 @@ export function validateReverseData({ user, dispatch }) {
 export function validateOptionalIPAddress({ value }) {
   if (value !== '') {
     const re = new RegExp(IP_REGEX);
-    if (value.match(re) === null) {
-      return true;
-    }
+    const ips = value.split(',');
+    let hasError = false;
+    ips.forEach((v) => {
+      if (v.match(re) === null) {
+        hasError = true;
+      }
+    });
+    return hasError;
   }
   return false;
 }
@@ -451,9 +458,14 @@ function validateAWSNic(dispatch, user, options) {
   const { networkKey } = options;
   const { values, errors } = user;
   const subnet = getValue(`${networkKey}-subnet`, values);
+  const vpc = getValue(`${networkKey}-vpcId`, values);
   const pvtIP = getValue(`${networkKey}-privateIP`, values) || '';
   const sg = getValue(`${networkKey}-securityGroups`, values) || [];
   const isCopyConfiguration = isAWSCopyNic(`${networkKey}-subnet`, '-subnet', user);
+  if (vpc === '' || vpc === '-') {
+    dispatch(addMessage('Select VPC', MESSAGE_TYPES.ERROR));
+    return false;
+  }
   if (subnet === '' || subnet === '-') {
     dispatch(addMessage('Select network subnet', MESSAGE_TYPES.ERROR));
     return false;
@@ -469,12 +481,18 @@ function validateAWSNic(dispatch, user, options) {
   }
   const sgsKey = (isCopyConfiguration === true ? STATIC_KEYS.UI_SECURITY_GROUPS_SOURCE : STATIC_KEYS.UI_SECURITY_GROUPS);
   const subnetKey = (isCopyConfiguration === true ? STATIC_KEYS.UI_SUBNETS__SOURCE : STATIC_KEYS.UI_SUBNETS);
+  const vpcs = getValue(STATIC_KEYS.UI_VPC_TARGET, values);
   const sgs = getValue(sgsKey, values) || [];
   const subnets = getValue(subnetKey, values);
   let subnetVPCID = 0;
+  let subnetCidr = '';
   subnets.forEach((sub) => {
     if (sub.id === subnet) {
+      subnetCidr = sub.cidr;
       subnetVPCID = sub.vpcID;
+    }
+    if (sub.id === subnet && sub.vpcID !== vpc && !isCopyConfiguration) {
+      dispatch('Subnet must be part of the provided VPC');
     }
   });
   const vpcIDs = [];
@@ -494,6 +512,14 @@ function validateAWSNic(dispatch, user, options) {
   if (vpcSet[0] !== subnetVPCID) {
     dispatch(addMessage('Security group and subnet must be from same VPC.'));
     return false;
+  }
+  // vpc to subnet cidr
+  const vpcCidr = vpcs.filter((v) => v.id === vpc);
+  if (vpcCidr.length > 0) {
+    if (!vpcSubnetMatch(vpcCidr[0].cidr, subnetCidr)) {
+      dispatch(addMessage('Subnet CIDR does not fall under selected VPC range. Please select another subnet.'));
+      return false;
+    }
   }
   return true;
 }
@@ -523,6 +549,20 @@ export function isPlanRecovered(protectionplan) {
   const { recoveryStatus } = protectionplan;
   if (recoveryStatus === 'Migrated' || recoveryStatus === 'Recovered') {
     return true;
+  }
+  return false;
+}
+
+export function vpcSubnetMatch(vpcCidr, subnetCidr) {
+  if (vpcCidr === '' || subnetCidr === '') {
+    return false;
+  }
+  const vpc = ip.cidrSubnet(vpcCidr);
+  const sub = ip.cidrSubnet(subnetCidr);
+  if (vpc && sub) {
+    const firstIPMatch = ip.cidrSubnet(vpcCidr).contains(sub.firstAddress);
+    const lastIPMatch = ip.cidrSubnet(vpcCidr).contains(sub.lastAddress);
+    return firstIPMatch && lastIPMatch;
   }
   return false;
 }

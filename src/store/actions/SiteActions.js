@@ -306,6 +306,7 @@ export function fetchNetworks(id, keyOnly = undefined) {
           dispatch(valueChange(STATIC_KEYS.UI_SECURITY_GROUPS, (data.securityGroups ? data.securityGroups : [])));
           dispatch(valueChange(STATIC_KEYS.UI_SUBNETS, (data.subnets ? data.subnets : [])));
           dispatch(valueChange(STATIC_KEYS.UI_RESERVE_IPS, (data.ipAddress ? data.ipAddress : [])));
+          dispatch(valueChange(STATIC_KEYS.UI_VPC_TARGET, (data.networks ? data.networks : [])));
         }
       },
       (err) => {

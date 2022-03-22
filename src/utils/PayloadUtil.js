@@ -137,6 +137,7 @@ export function getVMNetworkConfig(key, values) {
   let hasPublicIP = false;
   for (let index = 0; index < eths.length; index += 1) {
     const id = getValue(`${networkKey}-eth-${index}-id`, values);
+    const vpcId = getValue(`${networkKey}-eth-${index}-vpcId`, values);
     const isPublicIP = getValue(`${networkKey}-eth-${index}-isPublic`, values) || false;
     let isFromSource = getValue(`${networkKey}-eth-${index}-isFromSource`, values);
     const subnet = getValue(`${networkKey}-eth-${index}-subnet`, values);
@@ -155,9 +156,9 @@ export function getVMNetworkConfig(key, values) {
       publicIP = getAWSNetworkIDFromName(values, network) || publicIP;
     }
     if (typeof id !== 'undefined' && id !== '') {
-      networks.push({ id, isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource });
+      networks.push({ id, isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId });
     } else {
-      networks.push({ isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource });
+      networks.push({ isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId });
     }
   }
 

@@ -62,6 +62,8 @@ export const STATIC_KEYS = {
   // source site network details
   UI_SECURITY_GROUPS_SOURCE: 'ui.values.securityGroups.source',
   UI_SUBNETS__SOURCE: 'ui.values.subnets.source',
+  UI_VPC_SOURCE: 'ui.values.vpc.source',
+  UI_VPC_TARGET: 'ui.values.vpc.target',
 };
 
 // Recovery time in minutes

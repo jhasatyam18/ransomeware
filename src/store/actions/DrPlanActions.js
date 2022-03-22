@@ -671,6 +671,7 @@ function setAWSVMDetails(selectedVMS, protectionPlan, dispatch) {
         if (ins.networks && ins.networks.length > 0) {
           ins.networks.forEach((net, index) => {
             dispatch(valueChange(`${networkKey}-eth-${index}-id`, net.id));
+            dispatch(valueChange(`${networkKey}-eth-${index}-vpcId`, net.vpcId));
             dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, net.Subnet));
             dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, net.isPublicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-network`, net.network));
