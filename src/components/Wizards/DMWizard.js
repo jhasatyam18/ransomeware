@@ -4,7 +4,7 @@ import { Modal, Row, Col } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
 import { closeWizard } from '../../store/actions/WizardActions';
 import { clearValues } from '../../store/actions';
-import { DRPLAN_PROTECT_STEP, DRPLAN_RECOVERY_STEP, PROTECTION_PLAN_SUMMARY_STEP, RECOVERY_PROTECT_VM_STEP, RECOVERY_SUMMARY, MIGRATION_GENERAL_STEP, DRPLAN_VM_CONFIG_STEP, WIZARD_STEP, RECOVERY_GENERAL_STEP, REVERSE_CONFIG_STEP, REVERSE_SUMMARY, RECOVERY_CONFIG, DRPLAN_BOOT_ORDER_STEP } from '../../constants/WizardConstants';
+import { DRPLAN_PROTECT_STEP, DRPLAN_RECOVERY_STEP, PROTECTION_PLAN_SUMMARY_STEP, RECOVERY_PROTECT_VM_STEP, RECOVERY_SUMMARY, MIGRATION_GENERAL_STEP, DRPLAN_VM_CONFIG_STEP, WIZARD_STEP, RECOVERY_GENERAL_STEP, REVERSE_CONFIG_STEP, REVERSE_SUMMARY, RECOVERY_CONFIG, DRPLAN_BOOT_ORDER_STEP, DRPLAN_SCRIPT_STEP } from '../../constants/WizardConstants';
 import Pages404 from '../../pages/Page-404';
 import DRPlanRecoveryConfigStep from './DRPlanRecoveryConfigStep';
 import DRPlanProtectVMStep from './DRPlanProtectVMStep';
@@ -20,6 +20,7 @@ import ReversePlanConfigStep from './ReversePlanConfigStep';
 import ReversePlanSummary from './ReversePlanSummary';
 import RecoveryConfig from './RecoveryConfig';
 import DRPlanBootOrderStep from './DRPlanBootOrderStep';
+import DRPlanScriptStep from './DRPlanScriptStep';
 
 class DMWizard extends React.Component {
   constructor() {
@@ -123,6 +124,8 @@ class DMWizard extends React.Component {
         return <RecoveryConfig {...this.props} />;
       case DRPLAN_BOOT_ORDER_STEP:
         return <DRPlanBootOrderStep {...this.props} />;
+      case DRPLAN_SCRIPT_STEP:
+        return <DRPlanScriptStep {...this.props} />;
       default:
         return <Pages404 />;
     }

@@ -8,10 +8,11 @@ export const DRPLAN_PROTECTION_CONFIG_STEP = 'DRPLAN_PROTECTION_CONFIG_STEP';
 export const DRPLAN_RECOVERY_STEP = 'DRPLAN_RECOVERY_STEP';
 export const DRPLAN_PROTECT_STEP = 'DRPLAN_PROTECT_STEP';
 export const DRPLAN_BOOT_ORDER_STEP = 'DRPLAN_BOOT_ORDER_STEP';
+export const DRPLAN_SCRIPT_STEP = 'DRPLAN_SCRIPT_STEP';
 export const DRPLAN_VM_CONFIG_STEP = 'DRPLAN_VM_CONFIG_STEP';
 export const DRPLAN_GENERAL_SETTINGS_STEP_FIELDS = ['drplan.name', 'drplan.protectedSite', 'drplan.recoverySite'];
 export const DRPLAN_PROTECTION_CONFIG_STEP_FIELDS = ['drplan.startTime', 'drplan.replicationInterval', 'drplan.isEncryptionOnWire', 'drplan.isCompression', 'drplan.isDedupe', 'drplan.enableReverse'];
-export const DRPLAN_SCRIPTS_CONFIG_STEP_FIELDS = ['drplan.preScript', 'drplan.postScript', 'drplan.scriptTimeout'];
+export const DRPLAN_SCRIPTS_CONFIG_STEP_FIELDS = ['drplan.replPreScript', 'drplan.replPostScript', 'drplan.preScript', 'drplan.postScript', 'drplan.scriptTimeout'];
 // export const DRPLAN_RECOVERY_CONFIG_AWS_STEP_FIELDS = ['drplan.recoveryEntities.instanceDetails.amiID', 'drplan.recoveryEntities.instanceDetails.instanceType', 'drplan.recoveryEntities.instanceDetails.availabilityZone', 'drplan.recoveryEntities.instanceDetails.volumeType'];
 export const RECOVERY_SUMMARY = 'RECOVERY_SUMMARY';
 export const PROTECTION_PLAN_SUMMARY_STEP = 'PROTECTION_PLAN_SUMMARY_STEP';
@@ -34,7 +35,7 @@ export const CREATE_DR_PLAN_WIZARDS = {
     { label: 'Boot Order', title: '', component: DRPLAN_BOOT_ORDER_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
     // { label: 'Recovery Configuration', title: '', component: DRPLAN_RECOVERY_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: DRPLAN_RECOVERY_CONFIG_AWS_STEP_FIELDS },
     { label: 'Replication Configuration', title: '', component: WIZARD_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: DRPLAN_PROTECTION_CONFIG_STEP_FIELDS },
-    { label: 'Scripts', title: '', component: WIZARD_STEP, validate: (user, dispatch) => noValidate(user, dispatch), fields: DRPLAN_SCRIPTS_CONFIG_STEP_FIELDS },
+    { label: 'Scripts', title: '', component: DRPLAN_SCRIPT_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
     { label: 'Summary', title: '', component: PROTECTION_PLAN_SUMMARY_STEP, validate: (user, dispatch) => noValidate(user, dispatch) }],
 };
 
@@ -81,6 +82,6 @@ export const UPDATE_PROTECTION_PLAN_WIZARDS = {
     { label: 'Recovery Configuration', title: '', component: DRPLAN_VM_CONFIG_STEP, validate: (user, dispatch) => validateVMConfiguration({ user, dispatch }) },
     { label: 'Boot Order', title: '', component: DRPLAN_BOOT_ORDER_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
     { label: 'Replication Configuration', title: '', component: WIZARD_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: DRPLAN_PROTECTION_CONFIG_STEP_FIELDS },
-    { label: 'Scripts', title: '', component: WIZARD_STEP, validate: (user, dispatch) => noValidate(user, dispatch), fields: DRPLAN_SCRIPTS_CONFIG_STEP_FIELDS },
+    { label: 'Scripts', title: '', component: DRPLAN_SCRIPT_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
     { label: 'Summary', title: '', component: PROTECTION_PLAN_SUMMARY_STEP, validate: (user, dispatch) => noValidate(user, dispatch) }],
 };

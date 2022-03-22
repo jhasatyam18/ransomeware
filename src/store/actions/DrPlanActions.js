@@ -617,8 +617,8 @@ export function setProtectionPlanVMConfig(selectedVMS, protectionPlan) {
     dispatch(valueChange('drplan.isCompression', protectionPlan.isCompression));
     dispatch(valueChange('drplan.isDeDupe', protectionPlan.isDeDupe));
     dispatch(valueChange('drplan.enableReverse', protectionPlan.enableReverse));
-    dispatch(valueChange('drplan.postScript', protectionPlan.postScript));
-    dispatch(valueChange('drplan.preScript', protectionPlan.preScript));
+    dispatch(valueChange('drplan.replPostScript', protectionPlan.replPostScript));
+    dispatch(valueChange('drplan.replPreScript', protectionPlan.replPreScript));
     const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
     switch (recoveryPlatform) {
       case PLATFORM_TYPES.AWS:

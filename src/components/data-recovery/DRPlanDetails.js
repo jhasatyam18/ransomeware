@@ -165,8 +165,11 @@ class DRPlanDetails extends Component {
       { label: 'Differential Reverse Replication', field: 'enableReverse' },
 
       { label: 'Start Time', field: 'startTime', value: `${sd.toLocaleDateString()}-${sd.toLocaleTimeString()}` },
-      { label: 'Pre Script', field: 'preScript' },
-      { label: 'Post Script', field: 'postScript' },
+      { label: 'Replication Pre Script', field: 'replPreScript' },
+      { label: 'Replication Post Script', field: 'replPostScript' },
+      { label: 'Recovery Pre Script', field: 'preScript' },
+      { label: 'Recovery Post Script', field: 'postScript' },
+
       { label: 'Script Timeout (Seconds)', field: 'scriptTimeout' },
       { label: 'Boot Delay (Seconds)', field: 'bootDelay' },
     ];
@@ -177,6 +180,9 @@ class DRPlanDetails extends Component {
         </Col>
         <Col sm={4}>
           {this.renderRecoverFields(keys.slice(5, 10))}
+        </Col>
+        <Col sm={4}>
+          {this.renderRecoverFields(keys.slice(10, 15))}
         </Col>
       </Row>
     );
