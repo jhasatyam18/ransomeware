@@ -3,7 +3,7 @@ export const PLATFORM_TYPES = {
 };
 
 export const REPLICATION_STATUS = {
-  STOPPED: 'Stopped', STARTED: 'STARTED', INIT_FAILED: 'Init-Failed',
+  STOPPED: 'Stopped', STARTED: 'STARTED', INIT_FAILED: 'Init-Failed', INITIALIZING: 'Initializing',
 };
 
 export const RECOVERY_STATUS = {
