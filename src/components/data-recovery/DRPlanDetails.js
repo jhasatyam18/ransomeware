@@ -66,7 +66,7 @@ class DRPlanDetails extends Component {
 
   disableStop(protectionPlan) {
     const { user } = this.props;
-    return (isPlanRecovered(protectionPlan) || protectionPlan.status === REPLICATION_STATUS.INIT_FAILED || protectionPlan.status === REPLICATION_STATUS.STOPPED || !hasRequestedPrivileges(user, ['protectionplan.status']));
+    return (isPlanRecovered(protectionPlan) || protectionPlan.status === REPLICATION_STATUS.INIT_FAILED || protectionPlan.status === REPLICATION_STATUS.INITIALIZING || protectionPlan.status === REPLICATION_STATUS.STOPPED || !hasRequestedPrivileges(user, ['protectionplan.status']));
   }
 
   disableReverse(protectionPlan) {
