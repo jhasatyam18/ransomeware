@@ -1,6 +1,6 @@
 import React from 'react';
 import { Badge } from 'reactstrap';
-import { NODE_STATUS_ONLINE, NODE_STATUS_OFFLINE, JOB_COMPLETION_STATUS, JOB_RUNNING_STATUS, JOB_IN_PROGRESS, JOB_FAILED, JOB_INIT_FAILED, JOB_IN_SYNC, JOB_COMPLETED_WITH_ERRORS, JOB_ONGOING, JOB_STOPPED, JOB_INIT_SUCCESS, JOB_INIT_PROGRESS, JOB_SYNC_FAILED, JOB_INIT_SYNC_PROGRESS, JOB_RESYNC_FAILED, JOB_RESYNC_IN_PROGRESS, JOB_RESYNC_SUCCESS, JOB_SYNC_IN_PROGRESS } from '../../../constants/AppStatus';
+import { NODE_STATUS_ONLINE, NODE_STATUS_OFFLINE, JOB_RECOVERED, JOB_COMPLETION_STATUS, JOB_RUNNING_STATUS, JOB_IN_PROGRESS, JOB_FAILED, JOB_INIT_FAILED, JOB_IN_SYNC, JOB_COMPLETED_WITH_ERRORS, JOB_ONGOING, JOB_STOPPED, JOB_INIT_SUCCESS, JOB_INIT_PROGRESS, JOB_SYNC_FAILED, JOB_INIT_SYNC_PROGRESS, JOB_RESYNC_FAILED, JOB_RESYNC_IN_PROGRESS, JOB_RESYNC_SUCCESS, JOB_SYNC_IN_PROGRESS } from '../../../constants/AppStatus';
 import 'boxicons';
 
 function StatusItemRenderer({ data, field }) {
@@ -77,6 +77,16 @@ function StatusItemRenderer({ data, field }) {
         </Badge>
       </div>
 
+    );
+  }
+  if (status === JOB_RECOVERED) {
+    return (
+      <div>
+        <Badge className="font-size-13 badge badge-success" pill>
+          &nbsp;&nbsp;
+          {resp}
+        </Badge>
+      </div>
     );
   }
   if (status === JOB_COMPLETED_WITH_ERRORS) {

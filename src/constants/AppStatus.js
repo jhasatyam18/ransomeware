@@ -5,6 +5,7 @@ export const JOB_FAILED = 'failed';
 export const JOB_STOPPED = 'stopped';
 export const JOB_IN_SYNC = 'in-sync';
 export const JOB_ONGOING = 'exceeded-interval';
+export const JOB_RECOVERED = 'recovered';
 export const JOB_COMPLETED_WITH_ERRORS = 'completed with errors';
 export const JOB_INIT_FAILED = 'init-failed';
 export const JOB_INIT_SUCCESS = 'init-success';

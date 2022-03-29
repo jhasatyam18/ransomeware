@@ -3,7 +3,11 @@ export const PLATFORM_TYPES = {
 };
 
 export const REPLICATION_STATUS = {
-  STOPPED: 'Stopped', STARTED: 'STARTED', INIT_FAILED: 'Init-Failed', INITIALIZING: 'Initializing',
+  STOPPED: 'Stopped', STARTED: 'STARTED', INIT_FAILED: 'Init-Failed',
+};
+
+export const PROTECTION_PLANS_STATUS = {
+  CREATED: 'Created', STOPPED: 'Stopped', STARTED: 'Started', INIT_FAILED: 'Init-Failed', INITIALIZING: 'Initializing',
 };
 
 export const RECOVERY_STATUS = {

@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import React, { Component, Suspense } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardTitle, Col, Container, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
-import { PLATFORM_TYPES, RECOVERY_STATUS, REPLICATION_STATUS } from '../../constants/InputConstants';
+import { PLATFORM_TYPES, RECOVERY_STATUS, REPLICATION_STATUS, PROTECTION_PLANS_STATUS } from '../../constants/InputConstants';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { deletePlanConfirmation, fetchDRPlanById, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
@@ -188,24 +188,40 @@ class DRPlanDetails extends Component {
     );
   }
 
+  renderRecoveryStatus() {
+    const { drPlans } = this.props;
+    const { protectionPlan } = drPlans;
+    const { recoveryStatus } = protectionPlan;
+    if (recoveryStatus) {
+      return (
+        <span className="badge badge-success margin-right-5">{recoveryStatus.toUpperCase()}</span>
+      );
+    }
+  }
+
   renderStatus() {
     const { drPlans, t } = this.props;
     const { protectionPlan } = drPlans;
-    const { status, recoveryStatus } = protectionPlan;
-    if (recoveryStatus !== '') {
-      return (
-        <span className="badge badge-success">{recoveryStatus.toUpperCase()}</span>
-      );
-    }
+    const { status } = protectionPlan;
 
-    if (status === REPLICATION_STATUS.STOPPED) {
+    if (status === PROTECTION_PLANS_STATUS.STOPPED) {
       return (
         <span className="badge badge-danger">{t('status.stopped')}</span>
       );
     }
-    if (status === REPLICATION_STATUS.INIT_FAILED) {
+    if (status === PROTECTION_PLANS_STATUS.INIT_FAILED) {
       return (
         <span className="badge badge-danger">{t('status.init.failed')}</span>
+      );
+    }
+    if (status === PROTECTION_PLANS_STATUS.INITIALIZING) {
+      return (
+        <span className="badge badge-info">{t('status.initializing')}</span>
+      );
+    }
+    if (status === PROTECTION_PLANS_STATUS.CREATED || status === PROTECTION_PLANS_STATUS.STARTED) {
+      return (
+        <span className="badge badge-info">{t('status.running')}</span>
       );
     }
     return (
@@ -226,7 +242,7 @@ class DRPlanDetails extends Component {
       actions.push({ label: 'start', action: startPlan, id: protectionPlan.id, disabled: this.disableStart(protectionPlan) });
       actions.push({ label: 'stop', action: stopPlan, id: protectionPlan.id, disabled: this.disableStop(protectionPlan) });
       actions.push({ label: 'edit', action: openEditProtectionPlanWizard, id: protectionPlan, disabled: this.disableEdit() });
-      actions.push({ label: 'remove', action: deletePlanConfirmation, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS.STARTED, navigate: PROTECTION_PLANS_PATH });
+      actions.push({ label: 'remove', action: deletePlanConfirmation, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS, navigate: PROTECTION_PLANS_PATH });
     } else if (localVMIP === recoverySite.node.hostname) {
       actions = [{ label: 'recover', action: openRecoveryWizard, icon: 'fa fa-plus', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.full']) },
         { label: 'Migrate', action: openMigrationWizard, icon: 'fa fa-clone', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.migration']) },
@@ -277,6 +293,7 @@ class DRPlanDetails extends Component {
                   <CardTitle className="mb-4 title-color">
                     {t('Status')}
                     &nbsp;&nbsp;
+                    {this.renderRecoveryStatus()}
                     {this.renderStatus()}
                   </CardTitle>
                 </Col>
