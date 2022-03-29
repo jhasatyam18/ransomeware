@@ -193,9 +193,13 @@ export function getSubnetOptions(user, fieldKey) {
   const opts = getValue(dataSourceKey, values) || [];
   const networkID = getValue(fieldKey.replace('-subnet', '-vpcId'), values);
   const options = [];
+  const sourceSubnet = getValue(fieldKey, values);
   opts.forEach((op) => {
     const name = getSubnetLabel(op);
-    if (op.vpcID === networkID || isCopyConfiguration) {
+    if (isCopyConfiguration && op.id === sourceSubnet) {
+      options.push({ label: name, value: op.id });
+    }
+    if (op.vpcID === networkID && !isCopyConfiguration) {
       options.push({ label: name, value: op.id });
     }
   });
@@ -205,7 +209,7 @@ export function getSubnetOptions(user, fieldKey) {
 export function getGCPSubnetOptions(user, fieldKey) {
   const { values } = user;
   const opts = getValue(STATIC_KEYS.UI_SUBNETS, values) || [];
-  const networkFieldKey = fieldKey.replace('-subnet', '-vpcId');
+  const networkFieldKey = fieldKey.replace('-subnet', '-network');
   const netID = getValue(networkFieldKey, values);
   const options = [];
   opts.forEach((op) => {
@@ -267,7 +271,14 @@ export function getAWSElasticIPOptions(user, fieldKey) {
       }
     }
   }
-  return options;
+  const filteredOptions = [];
+  options.forEach((op) => {
+    const ops = filteredOptions.filter((o) => o.value === op.value);
+    if (ops.length === 0) {
+      filteredOptions.push(op);
+    }
+  });
+  return filteredOptions;
 }
 
 export function getGCPNetworkTierOptions() {

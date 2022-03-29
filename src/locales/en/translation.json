@@ -298,6 +298,7 @@
   "info.protectionplan.network.gcp.network": "Network used to allocate ip address to the instance.",
   "info.protectionplan.network.aws.elasticip": "An Elastic IP address is a reserved public IP address that you can assign to any EC2 instance in a particular region.",
   "info.protectionplan.tags.aws.tags.copy": "Add all source system tags in the protected instance",
+  "info.protectionplan.network.aws.vpc": "Launch recovery instance into the Amazon Virtual Private Cloud (VPC).",
   
   "title.dashboard": "Dashboard",
   "title.nodes": "Nodes",

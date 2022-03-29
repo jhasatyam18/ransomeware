@@ -447,6 +447,18 @@ function validateGCPNicConfig(dispatch, user, options) {
     if (errors && errors[`${networkKey}-privateIP`]) {
       return false;
     }
+    // get subnet CIDR
+    const subnets = getValue(STATIC_KEYS.UI_SUBNETS, values);
+    let subnetCidr = '';
+    subnets.forEach((sub) => {
+      if (sub.id === subnet) {
+        subnetCidr = sub.name;
+      }
+    });
+    if (pvtIP !== '' && !isIPsPartOfCidr(subnetCidr, pvtIP)) {
+      dispatch(addMessage(`Private ip address ${pvtIP} not fall in the ${subnetCidr} range.`, MESSAGE_TYPES.ERROR));
+      return false;
+    }
   }
   if (pubIP === '') {
     dispatch(addMessage('Select external ip config', MESSAGE_TYPES.ERROR));
@@ -493,8 +505,14 @@ function validateAWSNic(dispatch, user, options) {
     }
     if (sub.id === subnet && sub.vpcID !== vpc && !isCopyConfiguration) {
       dispatch('Subnet must be part of the provided VPC');
+      return false;
     }
   });
+  // check private ips fall in the subnet
+  if (pvtIP !== '' && !isIPsPartOfCidr(subnetCidr, pvtIP)) {
+    dispatch(addMessage(`Private IP address ${pvtIP} does not fall in the ${subnetCidr} range.`, MESSAGE_TYPES.ERROR));
+    return false;
+  }
   const vpcIDs = [];
   sgs.forEach((g) => {
     sg.forEach((s) => {
@@ -565,4 +583,22 @@ export function vpcSubnetMatch(vpcCidr, subnetCidr) {
     return firstIPMatch && lastIPMatch;
   }
   return false;
+}
+
+export function isIPsPartOfCidr(cidr, ipAddr) {
+  if (cidr === '' || typeof cidr === 'undefined') {
+    return false;
+  }
+  // get subnet details
+  const cidrInfo = ip.cidrSubnet(cidr);
+  if (cidrInfo) {
+    const ips = ipAddr.split(',');
+    for (let i = 0; i < ips.length; i += 1) {
+      const hasNonRangeIP = cidrInfo.contains(ips[i]);
+      if (!hasNonRangeIP) {
+        return false;
+      }
+    }
+  }
+  return true;
 }

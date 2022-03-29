@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Card, CardBody, Col, Container, Form, Label, Row } from 'reactstrap';
+import { Card, CardBody, Container, Form } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
 import DMFieldCheckbox from '../Shared/DMFieldCheckbox';
 import DMFieldRadio from '../Shared/DMFieldRadio';
@@ -97,22 +97,13 @@ class ModalNicConfig extends Component {
     const { dispatch, user, options } = this.props;
     const { networkKey } = options;
     const isAwsToAws = isPlanWithSamePlatform(user);
-    const chkField = { label: 'Create From Source', description: '', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: false, onChange: (v, f) => onAwsCopyNetConfigChange(v, f), fieldInfo: 'info.aws.create.network.from.source' };
     if (isAwsToAws) {
+      const chkField = { label: 'Create From Source', description: '', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: false, onChange: (v, f) => onAwsCopyNetConfigChange(v, f), fieldInfo: 'info.aws.create.network.from.source' };
       return (
         <DMFieldCheckbox dispatch={dispatch} fieldKey={`${networkKey}-isFromSource`} field={chkField} user={user} />
       );
     }
-    return (
-      <Row>
-        <Col sm={7}>
-          <Label>Create From Source Configuration</Label>
-        </Col>
-        <Col sm={5}>
-          <DMFieldCheckbox dispatch={dispatch} fieldKey={`${networkKey}-isFromSource`} field={chkField} user={user} />
-        </Col>
-      </Row>
-    );
+    return null;
   }
 
   renderAWSConfig() {
