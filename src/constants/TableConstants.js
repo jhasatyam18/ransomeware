@@ -7,6 +7,7 @@ export const STATUS_ITEM_RENDERER = 'STATUS_ITEM_RENDERER';
 export const TRANSFER_SIZE_ITEM_RENDERER = 'TRANSFER_SIZE_ITEM_RENDERER';
 export const RECOVERY_TYPE_ITEM_RENDERER = 'RECOVERY_TYPE_ITEM_RENDERER';
 export const RECOVERY_SITE_LINK_ITEM_RENDERER = 'RECOVERY_SITE_LINK_ITEM_RENDERER';
+export const PROTECTION_SITE_LINK_ITEM_RENDERER = 'PROTECTION_SITE_LINK_ITEM_RENDERER';
 export const SSH_RDP_ITEM_RENDERER = 'SSH_RDP_ITEM_RENDERER';
 export const VM_USERNAME_ITEM_RENDERER = 'VM_USERNAME_ITEM_RENDERER';
 export const VM_UPASSWORD_ITEM_RENDERER = 'VM_UPASSWORD_ITEM_RENDERER';
@@ -44,7 +45,7 @@ export const TABLE_HEADER_SITES = [
 
 export const TABLE_HEADER_DR_PLANS = [
   { label: 'name', field: 'name', itemRenderer: DR_PLAN_NAME_ITEM_RENDERER },
-  { label: 'protected.name', field: 'protectedSite.name' },
+  { label: 'protected.name', field: 'protectedSite.name', itemRenderer: PROTECTION_SITE_LINK_ITEM_RENDERER },
   { label: 'recovery.site', field: 'recoverySite.name', itemRenderer: RECOVERY_SITE_LINK_ITEM_RENDERER },
   { label: 'replication.interval', field: 'replicationInterval', itemRenderer: REPLICATION_INTERVAL_ITEM_RENDERER },
   { label: 'status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
