@@ -398,8 +398,10 @@ export async function validateReversePlan({ user, dispatch }) {
 
 export function validateReverseData({ user, dispatch }) {
   const { values } = user;
-  const field = FIELDS['reverse.suffix'];
-  if (!validateField(field, 'reverse.suffix', getValue('reverse.suffix', values), dispatch, user)) {
+  const sufixField = FIELDS['reverse.suffix'];
+  const repltypeField = FIELDS['reverse.replType'];
+  const recoverySiteField = FIELDS['reverse.recoverySite'];
+  if (!validateField(recoverySiteField, 'reverse.recoverySite', getValue('reverse.recoverySite', values), dispatch, user) || !validateField(repltypeField, 'reverse.replType', getValue('reverse.replType', values), dispatch, user) || !validateField(sufixField, 'reverse.suffix', getValue('reverse.suffix', values), dispatch, user)) {
     return false;
   }
   return true;
