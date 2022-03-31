@@ -20,6 +20,8 @@ export const RECOVERY_GENERAL_STEP = 'RECOVERY_GENERAL_STEP';
 export const RECOVERY_PROTECT_VM_STEP = 'RECOVERY_PROTECT_VM_STEP';
 export const MIGRATION_GENERAL_STEP = 'MIGRATION_GENERAL_STEP';
 export const RECOVERY_CONFIG = 'RECOEVRY_CONFIG';
+export const TEST_RECOVERY_CONFIG_STEP = 'TEST_RECOVERY_CONFIG_STEP';
+export const TEST_RECOVERY_CONFIG_SCRIPTS = 'TEST_RECOVERY_CONFIG_SCRIPTS';
 export const REVERSE_CONFIG_STEP = 'REVERSE_CONFIG_STEP';
 export const REVERSE_SUMMARY = 'REVERSE_SUMMARY';
 
@@ -62,8 +64,9 @@ export const MIGRATION_WIZARDS = {
 export const TEST_RECOVERY_WIZARDS = {
   options: { title: 'Test Recovery', onFinish: startRecovery },
   steps: [
-    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), isAync: true },
-    { label: 'Recovery Configuration', title: '', component: RECOVERY_CONFIG, validate: (user, dispatch) => noValidate(user, dispatch) },
+    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
+    { label: 'Test Recovery Configuration', title: '', component: TEST_RECOVERY_CONFIG_STEP, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), isAync: true },
+    { label: 'Tools and Scripts', title: '', component: TEST_RECOVERY_CONFIG_SCRIPTS, validate: (user, dispatch) => noValidate(user, dispatch) },
     { label: 'Summary', title: '', component: RECOVERY_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch) }],
 };
 

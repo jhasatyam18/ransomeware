@@ -133,13 +133,10 @@ export async function validateMigrationVMs({ user, dispatch }) {
         dispatch(showApplicationLoader('VALIDATING_MIGRATION_MACHINBES', 'Validating virtual machines.'));
         const response = await callAPI(API_VALIDATE_MIGRATION, obj);
         dispatch(hideApplicationLoader('VALIDATING_MIGRATION_MACHINBES'));
-        if (response.failedVMs === null) {
-          return true;
+        if (response.length > 0) {
+          return showValidationInfo(response, dispatch);
         }
-        if (response.failedVMs.length !== 0) {
-          dispatch(addMessage('Make sure all selected virtual machines were powered off and have zero changed data.', MESSAGE_TYPES.ERROR, false));
-        }
-        return false;
+        return true;
       }
     } catch (err) {
       dispatch(hideApplicationLoader('VALIDATING_MIGRATION_MACHINBES'));
@@ -307,17 +304,10 @@ export async function validateRecoveryVMs({ user, dispatch }) {
         dispatch(showApplicationLoader('VALIDATING_RECOVERY_MACHINES', 'Validating virtual machines.'));
         const response = await callAPI(API_VALIDATE_RECOVERY, obj);
         dispatch(hideApplicationLoader('VALIDATING_RECOVERY_MACHINES'));
-        if (response.failedVMs === null && response.warningVMs === null) {
-          return true;
+        if (response.length > 0) {
+          return showValidationInfo(response, dispatch);
         }
-        if (response.failedVMs !== null && response.failedVMs.length !== 0) {
-          dispatch(addMessage(`Following virtual machines [${response.failedVMs.join(', ')}] has not completed any replication iteration.`, MESSAGE_TYPES.ERROR, false));
-        }
-        if (response.warningVMs !== null && response.warningVMs.length !== 0) {
-          dispatch(addMessage(`Following virtual machines [${response.warningVMs.join(',')}] replication running. Recovery will use the last successful replicated state.`, MESSAGE_TYPES.WARNING, false));
-          return true;
-        }
-        return false;
+        return true;
       }
     } catch (err) {
       dispatch(hideApplicationLoader('VALIDATING_RECOVERY_MACHINES'));
@@ -601,6 +591,23 @@ export function isIPsPartOfCidr(cidr, ipAddr) {
         return false;
       }
     }
+  }
+  return true;
+}
+
+function showValidationInfo(response = [], dispatch) {
+  const errors = response.filter((res) => (res && res.isWarning === false));
+  const warnings = response.filter((res) => (res && res.isWarning === true));
+  if (errors.length > 0) {
+    errors.forEach((e) => {
+      dispatch(addMessage(e.message, MESSAGE_TYPES.ERROR));
+    });
+    return false;
+  }
+  if (warnings.length > 0) {
+    warnings.forEach((w) => {
+      dispatch(addMessage(w.message, MESSAGE_TYPES.WARNING));
+    });
   }
   return true;
 }

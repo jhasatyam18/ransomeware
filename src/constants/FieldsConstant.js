@@ -207,4 +207,7 @@ export const FIELDS = {
   'throttling.endTime': { label: 'throttling.endTime', description: 'Bandwidth Throttling End Time', COMPONENT: TIME_PICKER_COMP, type: FIELD_TYPE.CUSTOM, shouldShow: true, validate: (value, user) => isEmpty(value, user) },
   'throttling.isTimeEnabled': { label: 'throttling.isTimeEnabled', description: 'Enable Bandwidth Time Limit', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: false, onChange: (user, dispatch) => onTimeLimitChange(user, dispatch) },
   'throttling.timeLimit': { label: 'throttling.timeLimit', description: 'Bandwidth in Mbps', defaultValue: 0, min: 0, max: 1000, type: FIELD_TYPE.RANGE, errorMessage: 'Bandwidth is required', shouldShow: true, validate: (value, user) => isEmpty(value, user) },
+  // test recovery flags
+  'recovery.runPPlanScripts': { label: 'run.protection.plan.scripts', description: 'Run Protection Plan Scripts', type: FIELD_TYPE.CHECKBOX, shouldShow: true, fieldInfo: 'info.test.recovery.runPPlanScripts', defaultValue: false },
+  'recovery.cleanupTestRecoveries': { label: 'cleanup.test.recoveries', description: 'Cleanup Test Recovery', type: FIELD_TYPE.CHECKBOX, shouldShow: true, fieldInfo: 'info.test.recovery.cleanupTestRecoveries', defaultValue: false },
 };
