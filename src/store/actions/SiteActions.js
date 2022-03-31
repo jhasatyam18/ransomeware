@@ -159,6 +159,9 @@ export function onRecoverSiteChange({ value }) {
     dispatch(fetchAvailibilityZones({ value }));
     dispatch(fetchNetworks(value));
     dispatch(valueChange('ui.values.recoveryPlatform', platfromType));
+    if (PLATFORM_TYPES.AWS === platfromType) {
+      return;
+    }
     return callAPI(url)
       .then((json) => {
         if (json && json.hasError) {
@@ -298,6 +301,13 @@ export function fetchNetworks(id, keyOnly = undefined) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
           const data = json;
+          if (data.instanceTypes) {
+            const insTypes = [];
+            data.instanceTypes.forEach((t) => {
+              insTypes.push({ value: t, label: t });
+            });
+            dispatch(valueChange('ui.values.instances', insTypes));
+          }
           if (typeof keyOnly !== 'undefined') {
             dispatch(valueChange(STATIC_KEYS.UI_SECURITY_GROUPS_SOURCE, (data.securityGroups ? data.securityGroups : [])));
             dispatch(valueChange(STATIC_KEYS.UI_SUBNETS__SOURCE, (data.subnets ? data.subnets : [])));
