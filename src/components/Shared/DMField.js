@@ -35,7 +35,7 @@ class DMField extends Component {
       case FIELD_TYPE.CUSTOM:
         return getFieldComponents(dispatch, fieldKey, user, COMPONENT, hideLabel);
       default:
-        return <DMFieldText dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} />;
+        return <DMFieldText dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} hideLabel={hideLabel} disabled={disabled} />;
     }
   }
 

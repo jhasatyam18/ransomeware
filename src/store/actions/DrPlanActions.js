@@ -601,6 +601,8 @@ export function setProtectionPlanVMConfig(selectedVMS, protectionPlan) {
     dispatch(valueChange('drplan.bootDelay', protectionPlan.bootDelay));
     dispatch(valueChange('drplan.preScript', protectionPlan.preScript));
     dispatch(valueChange('drplan.postScript', protectionPlan.postScript));
+    dispatch(valueChange('drplan.preInputs', protectionPlan.preInputs));
+    dispatch(valueChange('drplan.postInputs', protectionPlan.postInputs));
     dispatch(valueChange('drplan.protectedSite', protectionPlan.protectedSite.id));
     dispatch(valueChange('drplan.recoverySite', protectionPlan.recoverySite.id));
     dispatch(valueChange('drplan.replicationInterval', protectionPlan.replicationInterval));

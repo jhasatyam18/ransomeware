@@ -275,6 +275,7 @@
   "info.protectionplan.scriptTimeout": "Timeout in seconds for pre-script and post-script",
   "info.protectionplan.instance.prescript": "Virtual machine pre script will get execute before the virtual machine recovery",
   "info.protectionplan.instance.postscript": "Virtual machine post script will get execute after the virtual machine recovery",
+  "info.protectionplan.scriptInput": "Script input parameters",
   "info.replication.interval": "Frequency of replication.",
 
   "info.email.address": "Email address, this email address will be used to send the email notifications",

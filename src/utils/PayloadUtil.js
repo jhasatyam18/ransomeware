@@ -190,7 +190,7 @@ function getRecoveryConfigVMDetails(user) {
     const { name, moref } = vm;
     const userName = getValue(`${moref}-username`, values);
     const password = getValue(`${moref}-password`, values);
-    machineDetails.push({ vmName: name, winUser: (userName && userName !== '' ? userName : ''), winPassword: (password && password !== '' ? password : '') });
+    machineDetails.push({ vmName: name, username: (userName && userName !== '' ? userName : ''), password: (password && password !== '' ? password : '') });
   });
   return machineDetails;
 }
