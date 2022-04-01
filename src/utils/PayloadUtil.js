@@ -101,7 +101,13 @@ export function getVMConfigPayload(user) {
     const instanceName = name;
     const sourceMoref = vms[key].moref;
     const id = getValue(`${key}-vmConfig.general.id`, values);
-    const instanceType = getValue(`${key}-vmConfig.general.instanceType`, values);
+    let instanceType = '';
+    const insType = getValue(`${key}-vmConfig.general.instanceType`, values);
+    if (typeof insType === 'object' && insType.value) {
+      instanceType = insType.value;
+    } else {
+      instanceType = insType;
+    }
     const volumeType = getValue(`${key}-vmConfig.general.volumeType`, values);
     let volumeIOPS = getValue(`${key}-vmConfig.general.volumeIOPS`, values) || 0;
     if (volumeType === 'gp2') {
