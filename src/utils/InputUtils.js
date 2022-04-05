@@ -174,9 +174,10 @@ export function getSecurityGroupOption(user, fieldKey) {
   const opts = getValue(dataSourceKey, values) || [];
   const networkID = getValue(fieldKey.replace('-securityGroups', '-vpcId'), values);
   const options = [];
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
   opts.forEach((op) => {
     const name = (op.name && op.name !== '' ? op.name : op.id);
-    if (op.vpcID === networkID) {
+    if (op.vpcID === networkID || recoveryPlatform === PLATFORM_TYPES.GCP) {
       options.push({ label: name, value: op.id });
     }
   });

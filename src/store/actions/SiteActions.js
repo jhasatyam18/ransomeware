@@ -10,6 +10,7 @@ import { hideApplicationLoader, showApplicationLoader, valueChange } from './Use
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { getValue, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
+import { setRecoveryVMDetails } from './DrPlanActions';
 
 export function fetchSites(key) {
   return (dispatch) => {
@@ -262,6 +263,7 @@ export function handleProtectVMSeletion(data, isSelected, primaryKey) {
       if (!selectedVMs || selectedVMs.length === 0 || !selectedVMs[data[primaryKey]]) {
         const newVMs = { ...selectedVMs, [data[primaryKey]]: data };
         dispatch(valueChange('ui.site.seletedVMs', newVMs));
+        dispatch(setRecoveryVMDetails(data[primaryKey]));
       }
     } else if (selectedVMs[data[primaryKey]]) {
       const newVMs = selectedVMs;

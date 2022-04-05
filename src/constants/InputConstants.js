@@ -68,6 +68,7 @@ export const STATIC_KEYS = {
   UI_SUBNETS__SOURCE: 'ui.values.subnets.source',
   UI_VPC_SOURCE: 'ui.values.vpc.source',
   UI_VPC_TARGET: 'ui.values.vpc.target',
+  UI_WORKFLOW_TEST_RECOVERY: 'ui.workflow.test.recovery',
 };
 
 // Recovery time in minutes

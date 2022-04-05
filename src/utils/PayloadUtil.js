@@ -191,12 +191,19 @@ function getRecoveryConfigVMDetails(user) {
   const { values } = user;
   const vms = getValue('ui.site.seletedVMs', values);
   const machineDetails = [];
+  const instanceConfig = getVMConfigPayload(user);
   Object.keys(vms).forEach((key) => {
     const vm = vms[key];
     const { name, moref } = vm;
     const userName = getValue(`${moref}-username`, values);
     const password = getValue(`${moref}-password`, values);
-    machineDetails.push({ vmName: name, username: (userName && userName !== '' ? userName : ''), password: (password && password !== '' ? password : '') });
+    let instanceDetails = {};
+    instanceConfig.forEach((ins) => {
+      if (ins.sourceMoref === moref) {
+        instanceDetails = ins;
+      }
+    });
+    machineDetails.push({ instanceDetails, vmName: name, username: (userName && userName !== '' ? userName : ''), password: (password && password !== '' ? password : '') });
   });
   return machineDetails;
 }

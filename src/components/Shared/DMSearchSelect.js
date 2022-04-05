@@ -32,11 +32,11 @@ class DMSearchSelect extends Component {
     }
   }
 
-  getStyles() {
+  getStyles(hasError) {
     const hoverColor = '#2a3042';
     const bckClr = '#2e3548';
     const fontClr = '#bfc8e2';
-    const borderClr = '#32394e';
+    const borderClr = hasError ? '#f46a6a' : '#32394e';
     return {
       control: (base, state) => ({
         ...base,
@@ -163,7 +163,7 @@ class DMSearchSelect extends Component {
               <Col sm={11}>
                 <Select
                   id={fieldKey}
-                  styles={this.getStyles()}
+                  styles={this.getStyles(hasErrors)}
                   isDisabled={disabled}
                   isSearchable={isSearch}
                   options={this.getOptions()}
