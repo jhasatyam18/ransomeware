@@ -37,7 +37,7 @@ class ModalAbout extends Component {
       { label: 'Version', value: version },
       { label: 'Platform Type', value: platformType },
       { label: 'Node Key ', value: key },
-      { label: 'Actives Licenses', value: activeLicenses },
+      { label: 'Active Licenses', value: activeLicenses },
     ];
     return (
       <>
