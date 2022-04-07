@@ -283,6 +283,7 @@ export function handleSelectAllRecoveryVMs(value) {
       data.forEach((vm) => {
         if (!(typeof vm.isDisabled !== 'undefined' && vm.isDisabled === true)) {
           selectedVMs = { ...selectedVMs, [vm.moref]: vm };
+          dispatch(setRecoveryVMDetails(vm.moref));
         }
       });
       dispatch(valueChange('ui.site.seletedVMs', selectedVMs));
