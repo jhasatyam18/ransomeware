@@ -172,7 +172,7 @@ export const FIELDS = {
   'emailConfiguration.smtpHost': {
     label: 'emailConfiguration.smtpHost', description: 'SMTP host name', placeHolderText: 'SMTP host name', type: FIELD_TYPE.TEXT, errorMessage: 'Enter valid smtp host or ip address', shouldShow: true, validate: (value, user) => isEmpty(value, user), fieldInfo: 'info.email.smtp.host' },
   'emailConfiguration.smtpPort': {
-    label: 'emailConfiguration.smtpPort', description: 'SMTP port', placeHolderText: 'SMTP port', type: FIELD_TYPE.NUMBER, errorMessage: 'Enter valid smtp port', shouldShow: true, validate: (value, user) => isEmpty(value, user), fieldInfo: 'info.email.smpt.port' },
+    label: 'emailConfiguration.smtpPort', description: 'SMTP port', placeHolderText: 'SMTP port', type: FIELD_TYPE.NUMBER, errorMessage: 'Enter valid smtp port', shouldShow: true, validate: (value, user) => isEmpty(value, user), fieldInfo: 'info.email.smtp.port' },
   'emailConfiguration.insecureSkipVerify': {
     label: 'emailConfiguration.insecureSkipVerify', description: 'Skip SSL certificate', placeHolderText: '', type: FIELD_TYPE.CHECKBOX, shouldShow: true, fieldInfo: 'info.email.skip.ssl' },
   'emailConfiguration.replicateConfig': {

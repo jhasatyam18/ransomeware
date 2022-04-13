@@ -9,7 +9,7 @@ import { createVMTestRecoveryConfig } from '../../../utils/RecoveryUtils';
 function TestRecoveryVMConfiguration(props) {
   const renderVMConfig = (vm, index) => {
     const { dispatch, user } = props;
-    const config = createVMTestRecoveryConfig(vm, user);
+    const config = createVMTestRecoveryConfig(vm, user, dispatch);
     return (
       <DMAccordion title={vm.name} config={config} dispatch={dispatch} user={user} key={`accordion-vm-config-${vm.name}`} openByDefault={index === 0 ? 'true' : false} />
     );

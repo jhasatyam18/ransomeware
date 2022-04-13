@@ -22,6 +22,7 @@ import { fetchSites } from './SiteActions';
 import { fetchSupportBundles } from './SupportActions';
 import { fetchBandwidthConfig, fetchBandwidthReplNodes } from './ThrottlingAction';
 import { MODAL_USER_SCRIPT } from '../../constants/Modalconstant';
+import { fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
 
 export function refreshApplication() {
   return {
@@ -227,10 +228,10 @@ export function refresh() {
         dispatch(fetchSites());
         break;
       case JOBS_REPLICATION_PATH:
-        // dispatch(fetchReplicationJobs(0));
+        dispatch(fetchReplicationJobs(0));
         break;
       case JOBS_RECOVERY_PATH:
-        // dispatch(fetchRecoveryJobs(0));
+        dispatch(fetchRecoveryJobs(0));
         break;
       case ALERTS_PATH:
         // dispatch(fetchAlerts());
