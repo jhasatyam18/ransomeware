@@ -254,6 +254,7 @@ export function validateAWSNetworks(user, dispatch) {
       isClean = false;
     }
     const vpc = [];
+    const zones = [];
     for (let i = 0; i < netConfigs.length; i += 1) {
       if (netConfigs[i].subnet === '') {
         isClean = false;
@@ -263,6 +264,7 @@ export function validateAWSNetworks(user, dispatch) {
         elasticIPs.push(netConfigs[i].network);
       }
       vpc.push(netConfigs[i].vpcId);
+      zones.push(netConfigs[i].availZone);
       // for (let j = 0; j < subnets.length; j += 1) {
       //   if (subnets[j].id === netConfigs[i].subnet) {
       //     vpc.push(subnets[j].vpcID);
@@ -274,6 +276,13 @@ export function validateAWSNetworks(user, dispatch) {
     // nics with different vpcid
     if (vpcSet.length > 1) {
       message = `${vmName}: All nics of an instance must belong to same VPC.`;
+      isClean = false;
+    }
+
+    const zoneSet = [...new Set(zones)];
+    // nics with different vpcid
+    if (zoneSet.length > 1) {
+      message = `${vmName}: All nics of an instance must belong to same Availability Zone.`;
       isClean = false;
     }
   });
@@ -462,6 +471,7 @@ function validateAWSNic(dispatch, user, options) {
   const { networkKey } = options;
   const { values, errors } = user;
   const subnet = getValue(`${networkKey}-subnet`, values);
+  const availZone = getValue(`${networkKey}-availZone`, values);
   const vpc = getValue(`${networkKey}-vpcId`, values);
   const pvtIP = getValue(`${networkKey}-privateIP`, values) || '';
   const sg = getValue(`${networkKey}-securityGroups`, values) || [];
@@ -472,6 +482,10 @@ function validateAWSNic(dispatch, user, options) {
   }
   if (subnet === '' || subnet === '-') {
     dispatch(addMessage('Select network subnet', MESSAGE_TYPES.ERROR));
+    return false;
+  }
+  if (availZone === '' || availZone === '-') {
+    dispatch(addMessage('Select availability zone', MESSAGE_TYPES.ERROR));
     return false;
   }
   if (pvtIP !== '') {

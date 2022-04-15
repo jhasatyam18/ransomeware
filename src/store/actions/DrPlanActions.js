@@ -403,13 +403,15 @@ export function openTestRecoveryWizard() {
   return (dispatch, getState) => {
     const { drPlans } = getState();
     const { protectionPlan } = drPlans;
-    const { id, recoverySite } = protectionPlan;
+    const { id, protectedSite, recoverySite } = protectionPlan;
     const { platformDetails } = recoverySite;
+    const protectedSitePlatform = protectedSite.platformDetails.platformType;
     dispatch(clearValues());
     setTimeout(() => {
       dispatch(valueChange('recovery.protectionplanID', id));
       dispatch(valueChange('ui.recovery.plan', protectionPlan));
       dispatch(valueChange('ui.isMigration.workflow', false));
+      dispatch(valueChange('ui.values.protectionPlatform', protectedSitePlatform));
       dispatch(valueChange('ui.values.recoveryPlatform', platformDetails.platformType));
       dispatch(valueChange('recovery.dryrun', true));
       const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id)), dispatch(fetchScript()), dispatch(fetchDrPlans('ui.values.drplan'))];
@@ -701,6 +703,7 @@ function setAWSVMDetails(selectedVMS, protectionPlan, dispatch) {
             dispatch(valueChange(`${networkKey}-eth-${index}-id`, net.id));
             dispatch(valueChange(`${networkKey}-eth-${index}-vpcId`, net.vpcId));
             dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, net.Subnet));
+            dispatch(valueChange(`${networkKey}-eth-${index}-availZone`, ins.availZone));
             dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, net.isPublicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-network`, net.network));
             dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, net.publicIP));
@@ -877,10 +880,12 @@ export function setAWSVMRecoveryData(vmMoref) {
             dispatch(valueChange(`${networkKey}-eth-${index}-id`, net.id));
             dispatch(valueChange(`${networkKey}-eth-${index}-vpcId`, net.vpcId));
             dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, net.Subnet));
+            dispatch(valueChange(`${networkKey}-eth-${index}-availZone`, ins.availZone));
             dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, net.isPublicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-network`, net.network));
             dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, net.publicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
+            dispatch(valueChange(`${networkKey}-eth-${index}-networkTier`, net.networkTier));
             dispatch(addAssociatedReverseIP({ ip: net.publicIP, id: net.network, fieldKey: `${networkKey}-eth-${index}` }));
             const sgs = (net.securityGroups ? net.securityGroups.split(',') : []);
             dispatch(valueChange(`${networkKey}-eth-${index}-securityGroups`, sgs));

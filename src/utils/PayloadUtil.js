@@ -118,6 +118,10 @@ export function getVMConfigPayload(user) {
     // const isPublicIP = (getValue(`${key}-vmConfig.network.net1`, values) === 'public');
     // const privateIP = (isPublicIP ? '' : getValue(`${key}-vmConfig.network.net1-manual-ip`, values));
     const networks = getVMNetworkConfig(key, values);
+    let availZone = '';
+    if (networks.length > 0) {
+      availZone = networks[0].availZone;
+    }
     const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
     let sgs = getValue(`${key}-vmConfig.network.securityGroup`, values);
     if (recoveryPlatform === PLATFORM_TYPES.AWS) {
@@ -127,9 +131,9 @@ export function getVMConfigPayload(user) {
     const preScript = getValue(`${key}-vmConfig.scripts.preScript`, values);
     const postScript = getValue(`${key}-vmConfig.scripts.postScript`, values);
     if (typeof id !== 'undefined' && id !== '') {
-      instanceDetails.push({ sourceMoref, id, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript });
+      instanceDetails.push({ sourceMoref, id, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone });
     } else {
-      instanceDetails.push({ sourceMoref, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript });
+      instanceDetails.push({ sourceMoref, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone });
     }
   });
   return instanceDetails;
@@ -147,6 +151,7 @@ export function getVMNetworkConfig(key, values) {
     const isPublicIP = getValue(`${networkKey}-eth-${index}-isPublic`, values) || false;
     let isFromSource = getValue(`${networkKey}-eth-${index}-isFromSource`, values);
     const subnet = getValue(`${networkKey}-eth-${index}-subnet`, values);
+    const availZone = getValue(`${networkKey}-eth-${index}-availZone`, values);
     const privateIP = getValue(`${networkKey}-eth-${index}-privateIP`, values) || '';
     let publicIP = getValue(`${networkKey}-eth-${index}-publicIP`, values) || '';
     const sgs = getValue(`${networkKey}-eth-${index}-securityGroups`, values) || '';
@@ -162,9 +167,9 @@ export function getVMNetworkConfig(key, values) {
       publicIP = getAWSNetworkIDFromName(values, network) || publicIP;
     }
     if (typeof id !== 'undefined' && id !== '') {
-      networks.push({ id, isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId });
+      networks.push({ id, isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone });
     } else {
-      networks.push({ isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId });
+      networks.push({ isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone });
     }
   }
 

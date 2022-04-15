@@ -9,7 +9,7 @@ import { APPLICATION_API_TOKEN, APPLICATION_API_USER, APPLICATION_API_USER_ID } 
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { getCookie, setCookie } from '../../utils/CookieUtils';
 import { onInit } from '../../utils/HistoryUtil';
-import { getValue } from '../../utils/InputUtils';
+import { getValue, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { getUnreadAlerts } from './AlertActions';
 import { fetchDRPlanById, fetchDrPlans } from './DrPlanActions';
@@ -515,6 +515,7 @@ export function onAwsCopyNetConfigChange({ value, fieldKey }) {
     if (!value) {
       // reset all the values
       dispatch(valueChange(`${networkKey}-subnet`, ''));
+      dispatch(valueChange(`${networkKey}-availZone`, ''));
       dispatch(valueChange(`${networkKey}-isPublic`, false));
       dispatch(valueChange(`${networkKey}-securityGroups`, ''));
       dispatch(valueChange(`${networkKey}-network`, ''));
@@ -543,6 +544,55 @@ export function onAwsCopyNetConfigChange({ value, fieldKey }) {
           }
         });
       }
+    }
+  };
+}
+
+/**
+ * AWS Network subnet change
+ * Set the subnet zone value
+ * @param value value of the subnet
+ * @param fieldKey field key for which value is changed
+ */
+export function onAwsSubnetChange({ value, fieldKey }) {
+  return (dispatch, getState) => {
+    if (value) {
+      const { user } = getState();
+      const { values } = user;
+      let isCopyConfiguration = false;
+      if (fieldKey && isPlanWithSamePlatform(user)) {
+        isCopyConfiguration = isAWSCopyNic(fieldKey, '-subnet', user);
+      }
+      const dataSourceKey = (isCopyConfiguration === true ? STATIC_KEYS.UI_SUBNETS__SOURCE : STATIC_KEYS.UI_SUBNETS);
+      const subnets = getValue(dataSourceKey, values) || [];
+      for (let s = 0; s < subnets.length; s += 1) {
+        if (subnets[s].id === value) {
+          const availZoneKey = fieldKey.replace('-subnet', '-availZone');
+          dispatch(valueChange(availZoneKey, subnets[s].zone));
+        }
+      }
+    }
+  };
+}
+
+/**
+ * AWS Network VPC change
+ * Set the subnet zone and sg value
+ * @param value value of the subnet
+ * @param fieldKey field key for which value is changed
+ */
+export function onAwsVPCChange({ value, fieldKey }) {
+  return (dispatch) => {
+    if (value) {
+      const key = fieldKey.split('-');
+      const networkKey = key.slice(0, key.length - 1).join('-');
+      dispatch(valueChange(`${networkKey}-isFromSource`, false));
+      dispatch(valueChange(`${networkKey}-subnet`, ''));
+      dispatch(valueChange(`${networkKey}-availZone`, ''));
+      dispatch(valueChange(`${networkKey}-isPublic`, false));
+      dispatch(valueChange(`${networkKey}-privateIP`, ''));
+      dispatch(valueChange(`${networkKey}-securityGroups`, ''));
+      dispatch(valueChange(`${networkKey}-network`, ''));
     }
   };
 }
