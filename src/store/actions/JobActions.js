@@ -1,5 +1,5 @@
 import * as Types from '../../constants/actionTypes';
-import { API_PROTECTION_PLAN_RECOVERY_JOBS_STATUS, API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS, API_PROTECTOIN_PLAN_REPLICATION_JOBS, API_PROTECTTION_PLAN_REPLICATION_VM_JOBS, API_RECOVERY_JOBS, API_REPLICATION_JOBS, API_REPLICATION_VM_JOBS } from '../../constants/ApiConstants';
+import { API_PROTECTION_PLAN_RECOVERY_JOBS_STATUS, API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS } from '../../constants/ApiConstants';
 import { RECOVERY_JOB_TYPE, REPLICATION_JOB_TYPE } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { callAPI } from '../../utils/ApiUtils';
@@ -34,16 +34,11 @@ export function fetchReplicationJobs(id) {
     const { replicationType } = jobs;
     let url = '';
     let type = '';
-    if (replicationType === REPLICATION_JOB_TYPE.DISK) {
-      type = 'disk replication';
-      url = (id === 0 ? API_REPLICATION_JOBS : API_PROTECTOIN_PLAN_REPLICATION_JOBS.replace('<id>', id));
-    } else if (replicationType === REPLICATION_JOB_TYPE.VM) {
-      type = 'virtual machine replication';
-      url = (id === 0 ? API_REPLICATION_VM_JOBS : API_PROTECTTION_PLAN_REPLICATION_VM_JOBS.replace('<id>', id));
-    } else {
-      type = 'protection plan replication';
-      url = (id === 0 ? API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS : `${API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS}?protectionplanid=${id}`);
+    if (replicationType === REPLICATION_JOB_TYPE.DISK || replicationType === REPLICATION_JOB_TYPE.VM) {
+      return;
     }
+    type = 'protection plan replication';
+    url = (id === 0 ? API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS : `${API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS}?protectionplanid=${id}`);
     dispatch(showApplicationLoader('JOBS_DATA', `Loading ${type} jobs...`));
     return callAPI(url).then((json) => {
       dispatch(hideApplicationLoader('JOBS_DATA'));
@@ -68,12 +63,10 @@ export function fetchRecoveryJobs(id) {
     let url = '';
     let type = '';
     if (recoveryType === RECOVERY_JOB_TYPE.VM) {
-      type = 'virtual machine recovery';
-      url = (id === 0 ? API_RECOVERY_JOBS : `${API_RECOVERY_JOBS}?protectionplanid=${id}`);
-    } else {
-      type = 'protection plan recovery';
-      url = (id === 0 ? API_PROTECTION_PLAN_RECOVERY_JOBS_STATUS : `${API_PROTECTION_PLAN_RECOVERY_JOBS_STATUS}?protectionplanid=${id}`);
+      return;
     }
+    type = 'protection plan recovery';
+    url = (id === 0 ? API_PROTECTION_PLAN_RECOVERY_JOBS_STATUS : `${API_PROTECTION_PLAN_RECOVERY_JOBS_STATUS}?protectionplanid=${id}`);
     dispatch(showApplicationLoader('JOBS_DATA', `Loading ${type} jobs...`));
     return callAPI(url).then((json) => {
       dispatch(hideApplicationLoader('JOBS_DATA'));

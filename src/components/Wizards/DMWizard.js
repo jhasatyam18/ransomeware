@@ -4,7 +4,7 @@ import { Modal, Row, Col } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
 import { closeWizard } from '../../store/actions/WizardActions';
 import { clearValues } from '../../store/actions';
-import { DRPLAN_PROTECT_STEP, DRPLAN_RECOVERY_STEP, PROTECTION_PLAN_SUMMARY_STEP, RECOVERY_PROTECT_VM_STEP, RECOVERY_SUMMARY, MIGRATION_GENERAL_STEP, DRPLAN_VM_CONFIG_STEP, WIZARD_STEP, RECOVERY_GENERAL_STEP, REVERSE_CONFIG_STEP, REVERSE_SUMMARY, RECOVERY_CONFIG, DRPLAN_BOOT_ORDER_STEP, VM_ALERTS_STEP, VM_CONFIGURATION_STEP } from '../../constants/WizardConstants';
+import { DRPLAN_PROTECT_STEP, DRPLAN_RECOVERY_STEP, PROTECTION_PLAN_SUMMARY_STEP, RECOVERY_PROTECT_VM_STEP, RECOVERY_SUMMARY, MIGRATION_GENERAL_STEP, DRPLAN_VM_CONFIG_STEP, WIZARD_STEP, RECOVERY_GENERAL_STEP, REVERSE_CONFIG_STEP, REVERSE_SUMMARY, RECOVERY_CONFIG, DRPLAN_BOOT_ORDER_STEP, VM_ALERTS_STEP, VM_CONFIGURATION_STEP, DRPLAN_SCRIPT_STEP, TEST_RECOVERY_CONFIG_STEP, TEST_RECOVERY_CONFIG_SCRIPTS } from '../../constants/WizardConstants';
 import Pages404 from '../../pages/Page-404';
 import DRPlanRecoveryConfigStep from './DRPlanRecoveryConfigStep';
 import DRPlanProtectVMStep from './DRPlanProtectVMStep';
@@ -22,6 +22,9 @@ import RecoveryConfig from './RecoveryConfig';
 import DRPlanBootOrderStep from './DRPlanBootOrderStep';
 import VMAlerts from './VMEdit/VMAlerts';
 import VMConfigure from './VMEdit/VMConfigure';
+import DRPlanScriptStep from './DRPlanScriptStep';
+import TestRecoveryVMConfiguration from './Step/TestRecoveryVMConfiguration';
+import TestRecoveryScriptStep from './Step/TestRecoveryScriptStep';
 
 class DMWizard extends React.Component {
   constructor() {
@@ -39,16 +42,22 @@ class DMWizard extends React.Component {
     const { steps } = wizard;
     const { currentStep } = this.state;
     if (!(currentStep >= steps.length - 1)) {
-      const { validate, isAync } = steps[currentStep];
+      const { validate, isAync, postAction } = steps[currentStep];
       const isValidated = validate(user, dispatch, steps[currentStep].fields);
       if (isAync) {
         isValidated.then((response) => {
           if (response) {
+            if (typeof postAction !== 'undefined') {
+              dispatch(postAction());
+            }
             this.setNextStep();
           }
         });
       }
       if (isValidated && typeof isAync === 'undefined') {
+        if (typeof postAction !== 'undefined') {
+          dispatch(postAction());
+        }
         this.setNextStep();
       }
     }
@@ -123,6 +132,12 @@ class DMWizard extends React.Component {
         return <VMAlerts {...this.props} />;
       case VM_CONFIGURATION_STEP:
         return <VMConfigure {...this.props} />;
+      case DRPLAN_SCRIPT_STEP:
+        return <DRPlanScriptStep {...this.props} />;
+      case TEST_RECOVERY_CONFIG_STEP:
+        return <TestRecoveryVMConfiguration />;
+      case TEST_RECOVERY_CONFIG_SCRIPTS:
+        return <TestRecoveryScriptStep />;
       default:
         return <Pages404 />;
     }

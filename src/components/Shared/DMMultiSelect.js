@@ -8,7 +8,7 @@ import { valueChange } from '../../store/actions';
 class DMMultiSelect extends Component {
   constructor() {
     super();
-    this.state = { selectedItems: [], value: '-' };
+    this.state = { value: '-' };
     this.handleChange = this.handleChange.bind(this);
   }
 
@@ -19,39 +19,65 @@ class DMMultiSelect extends Component {
     if (typeof msValues === 'string' && msValues.length > 0) {
       msValues = msValues.split(',');
     }
-    if (msValues) {
-      this.setState({ selectedItems: msValues });
+    // if (msValues) {
+    //   this.setState({ selectedItems: msValues });
+    // }
+  }
+
+  getSelectedValues() {
+    const { user, fieldKey } = this.props;
+    const { values } = user;
+    const msValues = getValue(fieldKey, values);
+    if (typeof msValues === 'string' && msValues.length > 0) {
+      return msValues.split(',');
     }
+    if (msValues && msValues.length > 0) {
+      return msValues;
+    }
+    return [];
   }
 
   handleChange = (e) => {
-    const { selectedItems } = this.state;
     const { dispatch, fieldKey } = this.props;
+    const selectedItems = this.getSelectedValues();
     const isAlreadySelected = selectedItems.some((sg) => sg === e.target.value);
     if (!isAlreadySelected && e.target.value !== '') {
       selectedItems.push(e.target.value);
-      this.setState({ selectedItems, value: e.target.value });
+      this.setState({ value: e.target.value });
       dispatch(valueChange(fieldKey, selectedItems));
     }
   }
 
   getOptions() {
-    const { field, user } = this.props;
+    const { field, user, fieldKey } = this.props;
     const { options } = field;
     let optionValues;
     if (typeof options === 'function') {
-      optionValues = options(user);
+      optionValues = options(user, fieldKey);
       return optionValues;
     }
     optionValues = (options && options.length > 0 ? options : []);
     return optionValues;
   }
 
+  getLabelByID(item) {
+    const options = this.getOptions();
+    let label = '';
+    options.map((op) => {
+      if (op.value === item) {
+        label = op.label;
+      }
+    });
+    if (label !== '') {
+      return label;
+    }
+    return item;
+  }
+
   removeItem(item) {
     const { dispatch, fieldKey } = this.props;
-    const { selectedItems } = this.state;
+    const selectedItems = this.getSelectedValues();
     const newData = selectedItems.filter((t) => t !== item);
-    this.setState({ selectedItems: newData });
     dispatch(valueChange(fieldKey, newData));
   }
 
@@ -69,12 +95,12 @@ class DMMultiSelect extends Component {
   }
 
   renderItems() {
-    const { selectedItems } = this.state;
     const { fieldKey } = this.props;
+    const selectedItems = this.getSelectedValues();
     return selectedItems.map((item, index) => (
       <div className="margin-left-10 padding-top-10 padding-bottom-10" key={`dm-sg-${fieldKey}${index * 1}`}>
         <Badge className="font-size-13 badge-soft-info" color="info" pill onClick={() => this.removeItem(item)}>
-          {item}
+          {this.getLabelByID(item)}
           &nbsp;&nbsp;
           <i className="fa fa-minus-circle" />
         </Badge>

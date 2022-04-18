@@ -1,10 +1,10 @@
 import 'boxicons';
 import React from 'react';
 
-function RecoverySiteLinkRenderer({ data, user }) {
+function ProtectedSiteLinkRenderer({ data, user }) {
   const { localVMIP } = user;
-  const { recoverySite } = data;
-  const { name, node } = recoverySite;
+  const { protectedSite } = data;
+  const { name, node } = protectedSite;
   const { hostname, managementPort } = node;
   if (localVMIP === hostname) {
     return name;
@@ -16,4 +16,4 @@ function RecoverySiteLinkRenderer({ data, user }) {
   );
 }
 
-export default RecoverySiteLinkRenderer;
+export default ProtectedSiteLinkRenderer;

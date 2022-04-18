@@ -98,19 +98,19 @@ class DRPlanActionBar extends Component {
 
   showEdit() {
     const { selectedPlans, user } = this.props;
-    const { platformType } = user;
+    const { platformType, localVMIP } = user;
     if (!selectedPlans) {
       return true;
     }
     const keys = Object.keys(selectedPlans);
-    if (keys.length > 1) {
+    if (keys.length > 1 || keys.length === 0) {
       return true;
     }
     if (keys.length === 1) {
       const plan = selectedPlans[keys[0]];
       const { protectedSite, recoverySite } = plan;
       // disable if status of plan is recovered or migrated
-      if (isPlanRecovered(plan)) {
+      if (isPlanRecovered(plan) || localVMIP === recoverySite.node.hostname) {
         return true;
       }
       // disable if recovery site is VMware

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Col, Form, FormGroup, Input, Label, Row } from 'reactstrap';
 import { addMessage } from '../../store/actions/MessageActions';
 import { closeModal } from '../../store/actions/ModalActions';
-import { hideApplicationLoader, refreshApplication, showApplicationLoader } from '../../store/actions';
+import { fetchScript, hideApplicationLoader, refreshApplication, showApplicationLoader } from '../../store/actions';
 import { API_USER_SCRIPT } from '../../constants/ApiConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { getUrlPath } from '../../utils/ApiUtils';
@@ -19,13 +19,23 @@ function ModalScripts(props) {
   const [description, setDescription] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState([]);
+  const [isPreOnly, setPreOnly] = useState(false);
+  const [isPostOnly, setPostOnly] = useState(false);
 
   useEffect(() => {
-    if (typeof data !== 'undefined') {
+    if (typeof data !== 'undefined' && typeof data.scriptType !== 'undefined' && typeof data.description !== 'undefined') {
       setDescription(data.description);
       setType(data.scriptType);
     }
+    if (data && typeof data.fieldKey !== 'undefined') {
+      const isPre = data.fieldKey.indexOf('preScript') !== -1;
+      setPreOnly(isPre);
+      setPostOnly(!isPre);
+      setType((isPre ? 'preScript' : 'postScript'));
+    }
   }, []);
+
+  const isWizardUpload = () => isPostOnly || isPreOnly;
 
   const isValidForm = () => {
     if (name === '') {
@@ -36,7 +46,7 @@ function ModalScripts(props) {
       setErrors(['Password required']);
       return false;
     }
-    if (typeof data !== 'undefined' && data.name !== name) {
+    if (typeof data !== 'undefined' && data.name !== name && !isWizardUpload()) {
       dispatch(addMessage(`File name must be same while updating script. Initial filename was ${data.name}`, MESSAGE_TYPES.ERROR));
       return false;
     }
@@ -53,18 +63,22 @@ function ModalScripts(props) {
       formData.append('scriptType', type);
       formData.append('password', password);
       let url = getUrlPath(API_USER_SCRIPT);
-      if (typeof data !== 'undefined') {
+      if (typeof data !== 'undefined' && !isWizardUpload()) {
         url = `${url}/${data.ID}`;
       }
       fetch(url, {
-        method: (typeof data !== 'undefined' ? 'PUT' : 'POST'),
+        method: ((typeof data !== 'undefined' && !isWizardUpload()) ? 'PUT' : 'POST'),
         headers: { Authorization: getApplicationToken() },
         body: formData,
       }).then((response) => {
         if (response.ok) {
           dispatch(hideApplicationLoader('USER_SCRIPT'));
           dispatch(closeModal());
-          dispatch(refreshApplication());
+          if (data && data.fieldKey !== 'undefined') {
+            dispatch(fetchScript(data.fieldKey, name));
+          } else {
+            dispatch(refreshApplication());
+          }
         } else {
           dispatch(hideApplicationLoader('USER_SCRIPT'));
           response.text().then((text) => {
@@ -115,13 +129,13 @@ function ModalScripts(props) {
             <Col sm={8}>
               <div className="form-check-inline">
                 <Label className="form-check-label" for="preScript-option">
-                  <input type="radio" className="form-check-input" id="preScript-option" name="scriptOptions" value={type === 'preScript'} checked={type === 'preScript'} onChange={() => { setType('preScript'); }} />
+                  <input type="radio" className="form-check-input" id="preScript-option" name="scriptOptions" value={type === 'preScript'} checked={type === 'preScript'} onChange={() => { setType('preScript'); }} disabled={isPostOnly} />
                   {t('pre.script')}
                 </Label>
               </div>
               <div className="form-check-inline">
                 <Label className="form-check-label" for="postScript-option">
-                  <input type="radio" className="form-check-input" id="postScript-option" name="scriptOptions" value={type === 'postScript'} checked={type === 'postScript'} onChange={() => { setType('postScript'); }} />
+                  <input type="radio" className="form-check-input" id="postScript-option" name="scriptOptions" value={type === 'postScript'} checked={type === 'postScript'} onChange={() => { setType('postScript'); }} disabled={isPreOnly} />
                   {t('post.script')}
                 </Label>
               </div>
@@ -141,7 +155,7 @@ function ModalScripts(props) {
         </FormGroup>
         <FormGroup className="row mb-4 form-group">
           <label htmlFor="horizontal-Input margin-top-10 padding-top=10" className="col-sm-4 col-form-Label">
-            {t('password')}
+            {t('login.password')}
           </label>
           <Col sm={8}>
             <div>

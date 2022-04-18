@@ -289,3 +289,18 @@ export function getAllObjectKeys(obj, prefix = '') {
     return [...res, `${prefix}${o}`];
   }, []);
 }
+
+/**
+ * @param t : requried t is function of react18-next,
+ * @returns document title
+ */
+
+export const changePageTitle = (t) => {
+  const location = window.location.pathname.slice(1).replace('/', '.');
+  const path = t(`title.${location}`);
+  if (path.indexOf('protection.plan/details') !== -1) {
+    document.title = 'Protection Plans | Datamotive';
+    return;
+  }
+  document.title = `${path} | Datamotive`;
+};

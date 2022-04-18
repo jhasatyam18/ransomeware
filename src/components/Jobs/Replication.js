@@ -1,60 +1,47 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, Col, Container, Form, Label, Row } from 'reactstrap';
+import { API_PROTECTOIN_PLAN_REPLICATION_JOBS, API_REPLICATION_JOBS, API_REPLICATION_VM_JOBS, API_PROTECTTION_PLAN_REPLICATION_VM_JOBS, API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS } from '../../constants/ApiConstants';
 import { REPLICATION_JOB_TYPE } from '../../constants/InputConstants';
 import { REPLICATION_JOBS, REPLICATION_VM_JOBS, TABLE_FILTER_TEXT } from '../../constants/TableConstants';
-import { changeReplicationJobType, fetchReplicationJobs } from '../../store/actions/JobActions';
-import { filterData } from '../../utils/AppUtils';
+import { changeReplicationJobType, setReplicationJobs } from '../../store/actions/JobActions';
 import DMBreadCrumb from '../Common/DMBreadCrumb';
+import DMAPIPaginator from '../Table/DMAPIPaginator';
 import DMTable from '../Table/DMTable';
-import DMTPaginator from '../Table/DMTPaginator';
+import { callAPI } from '../../utils/ApiUtils';
 import ProtectionPlanReplications from './ProtectionPlanReplications';
+import { addMessage } from '../../store/actions/MessageActions';
+import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 
 class Replication extends Component {
   constructor() {
     super();
-    this.state = { dataToDisplay: [], hasFilterString: false, searchData: [] };
-    this.setDataForDisplay = this.setDataForDisplay.bind(this);
+    this.state = { plansData: [] };
     this.changeJobType = this.changeJobType.bind(this);
-    this.onFilter = this.onFilter.bind(this);
   }
 
   componentDidMount() {
-    this.fethData();
+    const { protectionplanID, dispatch } = this.props;
+    const url = (protectionplanID === 0 ? API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS : `${API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS}?protectionplanid=${protectionplanID}`);
+    callAPI(url).then((json) => {
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        this.setState({ plansData: json });
+      }
+    },
+    (err) => {
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
   }
 
   componentWillUnmount() {
     this.state = null;
   }
 
-  onFilter(criteria) {
-    const { jobs } = this.props;
-    const { replication, replicationType } = jobs;
-    const cols = (replicationType === REPLICATION_JOB_TYPE.DISK ? REPLICATION_JOBS : REPLICATION_VM_JOBS);
-    if (criteria === '') {
-      this.setState({ hasFilterString: false, searchData: [] });
-    } else {
-      const newData = filterData(replication, criteria, cols);
-      this.setState({ hasFilterString: true, searchData: newData });
-    }
-  }
-
-  setDataForDisplay(data) {
-    this.setState({ dataToDisplay: data });
-  }
-
-  fethData() {
-    const { dispatch, protectionplanID } = this.props;
-    dispatch(fetchReplicationJobs(protectionplanID));
-  }
-
   changeJobType(type) {
-    const { dispatch, protectionplanID } = this.props;
-    this.setState({ hasFilterString: false });
+    const { dispatch } = this.props;
     dispatch(changeReplicationJobType(type));
-    setTimeout(() => {
-      dispatch(fetchReplicationJobs(protectionplanID));
-    }, 100);
   }
 
   renderOptions() {
@@ -87,27 +74,25 @@ class Replication extends Component {
   }
 
   renderDiskJobs() {
-    const { jobs } = this.props;
+    const { jobs, protectionplanID, dispatch } = this.props;
     const { replication } = jobs;
-    const { dataToDisplay, searchData, hasFilterString } = this.state;
-    const { dispatch } = this.props;
-    const data = (hasFilterString ? searchData : replication);
+    const url = (protectionplanID === 0 ? API_REPLICATION_JOBS : API_PROTECTOIN_PLAN_REPLICATION_JOBS.replace('<id>', protectionplanID));
     return (
       <>
-
         <Row className="padding-left-20">
           <Col sm={5}>
             {this.renderOptions()}
           </Col>
           <Col sm={7}>
-            <div className="padding-right-30">
-              <DMTPaginator
-                data={data}
-                setData={this.setDataForDisplay}
+            <div className="padding-right-30 padding-left-10">
+              <DMAPIPaginator
                 showFilter="true"
                 columns={REPLICATION_JOBS}
-                onFilter={this.onFilter}
                 filterHelpText={TABLE_FILTER_TEXT.REPLICATION_JOBS}
+                apiUrl={url}
+                isParameterizedUrl={protectionplanID === 0 ? 'false' : 'true'}
+                storeFn={setReplicationJobs}
+                name="replicationDisks"
               />
             </div>
           </Col>
@@ -115,7 +100,7 @@ class Replication extends Component {
         <DMTable
           dispatch={dispatch}
           columns={REPLICATION_JOBS}
-          data={dataToDisplay}
+          data={replication}
         />
 
       </>
@@ -123,27 +108,25 @@ class Replication extends Component {
   }
 
   renderVMJobs() {
-    const { jobs } = this.props;
+    const { jobs, protectionplanID, dispatch } = this.props;
     const { replication } = jobs;
-    const { dataToDisplay, searchData, hasFilterString } = this.state;
-    const { dispatch } = this.props;
-    const data = (hasFilterString ? searchData : replication);
+    const url = (protectionplanID === 0 ? API_REPLICATION_VM_JOBS : API_PROTECTTION_PLAN_REPLICATION_VM_JOBS.replace('<id>', protectionplanID));
     return (
       <>
-
         <Row className="padding-left-20">
           <Col sm={5}>
             {this.renderOptions()}
           </Col>
           <Col sm={7}>
-            <div className="padding-right-30">
-              <DMTPaginator
-                data={data}
-                setData={this.setDataForDisplay}
+            <div className="padding-right-30 padding-left-10">
+              <DMAPIPaginator
                 showFilter="true"
-                onFilter={this.onFilter}
                 columns={REPLICATION_VM_JOBS}
                 filterHelpText={TABLE_FILTER_TEXT.REPLICATION_VM_JOBS}
+                apiUrl={url}
+                isParameterizedUrl={protectionplanID === 0 ? 'false' : 'true'}
+                storeFn={setReplicationJobs}
+                name="replicationVMs"
               />
             </div>
           </Col>
@@ -151,7 +134,7 @@ class Replication extends Component {
         <DMTable
           dispatch={dispatch}
           columns={REPLICATION_VM_JOBS}
-          data={dataToDisplay}
+          data={replication}
         />
 
       </>
@@ -160,11 +143,12 @@ class Replication extends Component {
 
   renderDrReplications() {
     const { jobs, protectionplanID } = this.props;
-    const { replication, replicationType } = jobs;
-    if (replicationType !== REPLICATION_JOB_TYPE.PLAN || replication.length <= 0) {
+    const { replicationType } = jobs;
+    const { plansData } = this.state;
+    if (replicationType !== REPLICATION_JOB_TYPE.PLAN || plansData.length <= 0) {
       return null;
     }
-    const data = replication[0];
+    const data = plansData[0];
     const { name } = data;
     if (typeof name === 'undefined') {
       return null;
@@ -172,7 +156,7 @@ class Replication extends Component {
     return (
       <Row className="padding-top-20">
         <Col sm={12}>
-          {replication.map((plan) => {
+          {plansData.map((plan) => {
             if (protectionplanID === null || protectionplanID === 0) {
               return <ProtectionPlanReplications title={plan.name} vms={plan.vms} />;
             }

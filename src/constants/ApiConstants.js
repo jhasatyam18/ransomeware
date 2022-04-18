@@ -57,9 +57,9 @@ export const API_FETCH_EVENT_BY_ID = 'api/v1/event/<id>';
 
 // alerts
 export const API_FETCH_ALERTS = 'api/v1/alert';
+export const API_MARK_READ_ALL = 'api/v1/alert/read';
 export const API_FETCH_UNREAD_ALERTS = 'api/v1/alert/unread';
 export const API_ACKNOWLEDGE_ALERT = 'api/v1/alert/acknowledge/<id>';
-export const API_MARK_ALERT_AS_READ = 'api/v1/alert/read/<id>';
 export const API_ALERT_TAKE_VM_ACTION = 'api/v1/alert/action/<id>/vm';
 export const API_VM_ALERTS = 'api/v1/alert?vmmoref=<moref>&ack=0&type=monitor.vmconfmodified,monitor.vmrenamed';
 

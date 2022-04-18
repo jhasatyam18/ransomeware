@@ -8,6 +8,7 @@ import { addHeaderPage, addTableFromHtml, createPDFDoc, exportDoc, systemOvervie
 import { fetchDashboardTitles, fetchRecoveryStats, fetchReplicationStats } from './DashboardActions';
 import { addMessage } from './MessageActions';
 import { hideApplicationLoader, showApplicationLoader } from './UserActions';
+import { API_MAX_RECORD_LIMIT } from '../../constants/UserConstant';
 
 export function generateAuditReport() {
   return (dispatch, getState) => {
@@ -102,14 +103,15 @@ export function reportFetchPlans(id) {
 /**
  * @returns Fetch and set events info for report
  */
-export function reportFetchEvents() {
+export function reportFetchEvents(data = [], offSet = 0) {
+  const url = `${API_FETCH_EVENTS}?offset=${offSet}&limit=${API_MAX_RECORD_LIMIT}`;
   return (dispatch) => (
-    callAPI(API_FETCH_EVENTS)
+    callAPI(url)
       .then((json) => {
-        if (json.hasError) {
-          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        if (json.hasNext === true) {
+          dispatch(reportFetchEvents([...data, ...json.records], json.nextOffset));
         } else {
-          dispatch(setReportObject('events', json));
+          dispatch(setReportObject('events', [...data, ...json.records]));
         }
       },
       (err) => {
@@ -121,14 +123,15 @@ export function reportFetchEvents() {
 /**
  * @returns Fetch and set alerts info for report
  */
-export function reportFetchAlerts() {
+export function reportFetchAlerts(data = [], offSet = 0) {
+  const url = `${API_FETCH_ALERTS}?offset=${offSet}&limit=${API_MAX_RECORD_LIMIT}`;
   return (dispatch) => (
-    callAPI(API_FETCH_ALERTS)
+    callAPI(url)
       .then((json) => {
-        if (json.hasError) {
-          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        if (json.hasNext === true) {
+          dispatch(reportFetchAlerts([...data, ...json.records], json.nextOffset));
         } else {
-          dispatch(setReportObject('alerts', json));
+          dispatch(setReportObject('alerts', [...data, ...json.records]));
         }
       },
       (err) => {
@@ -140,15 +143,15 @@ export function reportFetchAlerts() {
 /**
  * @returns Fetch and set replication job info for report
  */
-export function reportFetchReplicationJobs(id) {
+export function reportFetchReplicationJobs(id, data = [], offset = 0) {
   return (dispatch) => {
-    const url = (isPlanSpecificData(id) ? API_PROTECTTION_PLAN_REPLICATION_VM_JOBS.replace('<id>', id) : API_REPLICATION_VM_JOBS);
+    const url = (isPlanSpecificData(id) ? `${API_PROTECTTION_PLAN_REPLICATION_VM_JOBS.replace('<id>', id)}&limit=${API_MAX_RECORD_LIMIT}&offset=${offset}` : `${API_REPLICATION_VM_JOBS}?limit=${API_MAX_RECORD_LIMIT}&offset=${offset}`);
     callAPI(url)
       .then((json) => {
-        if (json.hasError) {
-          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        if (json.hasNext === true) {
+          dispatch(reportFetchReplicationJobs(id, [...data, ...json.records], json.nextOffset));
         } else {
-          dispatch(setReportObject('replication', json));
+          dispatch(setReportObject('replication', [...data, ...json.records]));
         }
       },
       (err) => {
@@ -160,15 +163,15 @@ export function reportFetchReplicationJobs(id) {
 /**
  * @returns Fetch and set recovery job info for report
  */
-export function reportFetchRecoveryJobs(id) {
+export function reportFetchRecoveryJobs(id, data = [], offset = 0) {
   return (dispatch) => {
-    const url = (isPlanSpecificData(id) ? API_RECOVERY_PLAN_RECOVERY_JOBS.replace('<id>', id) : API_RECOVERY_JOBS);
+    const url = (isPlanSpecificData(id) ? `${API_RECOVERY_PLAN_RECOVERY_JOBS.replace('<id>', id)}&limit=${API_MAX_RECORD_LIMIT}&offset=${offset}` : `${API_RECOVERY_JOBS}?limit=${API_MAX_RECORD_LIMIT}&offset=${offset}`);
     callAPI(url)
       .then((json) => {
-        if (json.hasError) {
-          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        if (json.hasNext === true) {
+          dispatch(reportFetchRecoveryJobs(id, [...data, ...json.records], json.nextOffset));
         } else {
-          dispatch(setReportObject('recovery', json));
+          dispatch(setReportObject('recovery', [...data, ...json.records]));
         }
       },
       (err) => {
@@ -258,16 +261,16 @@ function getRequiredReportObjects(criteria, dispatch) {
     apis.push(dispatch(reportFetchNodes()));
   }
   if (criteria.includeEvents) {
-    apis.push(dispatch(reportFetchEvents()));
+    apis.push(dispatch(reportFetchEvents([], 0)));
   }
   if (criteria.includeAlerts) {
-    apis.push(dispatch(reportFetchAlerts()));
+    apis.push(dispatch(reportFetchAlerts([], 0)));
   }
   if (criteria.includeReplicationJobs) {
-    apis.push(dispatch(reportFetchReplicationJobs(criteria.protectionPlanID)));
+    apis.push(dispatch(reportFetchReplicationJobs(criteria.protectionPlanID, [], 0)));
   }
   if (criteria.includeRecoveryJobs) {
-    apis.push(dispatch(reportFetchRecoveryJobs(criteria.protectionPlanID)));
+    apis.push(dispatch(reportFetchRecoveryJobs(criteria.protectionPlanID, [], 0)));
   }
   return apis;
 }
