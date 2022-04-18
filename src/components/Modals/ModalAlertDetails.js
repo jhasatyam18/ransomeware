@@ -2,6 +2,7 @@ import classnames from 'classnames';
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import SimpleBar from 'simplebar-react';
 import { Card, CardBody, Col, Container, Form, Input, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
 import DateItemRenderer from '../Table/ItemRenderers/DateItemRenderer';
 import EventLevelItemRenderer from '../Table/ItemRenderers/EventLevelItemRenderer';
@@ -11,6 +12,7 @@ import { getCookie } from '../../utils/CookieUtils';
 import { VM_CONFIG_ACTION_EVENT, VM_DISK_ACTION_EVENT } from '../../constants/EventConstant';
 import { APPLICATION_API_USER } from '../../constants/UserConstant';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
+import { refresh } from '../../store/actions/UserActions';
 
 /**
  * Component to render Alert details.
@@ -65,6 +67,7 @@ class ModalAlertDetails extends Component {
     selected.acknowledgeBy = user;
     dispatch(acknowledgeAlert(selected));
     dispatch(closeModal());
+    dispatch(refresh());
   }
 
   toggleTab(tab) {
@@ -239,28 +242,30 @@ class ModalAlertDetails extends Component {
       <>
         <Container>
           <Card>
-            <CardBody>
-              {this.renderNav()}
-              <TabContent activeTab={activeTab}>
-                <TabPane tabId="1" className="p-3">
-                  <Row>
-                    <Col sm="12">
-                      {this.renderAlertInfo()}
-                    </Col>
-                  </Row>
-                  <Row className="padding-top-15">
-                    {this.renderAckInfo()}
-                  </Row>
-                </TabPane>
-                <TabPane tabId="2" className="p-3">
-                  <Row>
-                    <Col sm="12">
-                      {this.renderEventInfo()}
-                    </Col>
-                  </Row>
-                </TabPane>
-              </TabContent>
-            </CardBody>
+            <SimpleBar style={{ maxHeight: '350px' }}>
+              <CardBody>
+                {this.renderNav()}
+                <TabContent activeTab={activeTab}>
+                  <TabPane tabId="1" className="p-3">
+                    <Row>
+                      <Col sm="12">
+                        {this.renderAlertInfo()}
+                      </Col>
+                    </Row>
+                    <Row className="padding-top-15">
+                      {this.renderAckInfo()}
+                    </Row>
+                  </TabPane>
+                  <TabPane tabId="2" className="p-3">
+                    <Row>
+                      <Col sm="12">
+                        {this.renderEventInfo()}
+                      </Col>
+                    </Row>
+                  </TabPane>
+                </TabContent>
+              </CardBody>
+            </SimpleBar>
           </Card>
           {this.renderAckMessageInput()}
           <div className="modal-footer">
