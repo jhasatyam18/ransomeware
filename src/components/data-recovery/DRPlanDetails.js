@@ -49,8 +49,8 @@ class DRPlanDetails extends Component {
     }
     const { protectedSite, recoverySite } = protectionPlan;
     const { platformDetails } = protectedSite;
-    // disable if recovery site is VMware
-    if (recoverySite.platformDetails.platformType === PLATFORM_TYPES.VMware || isPlanRecovered(protectionPlan)) {
+    // disable if recovery site is VMware disable if status is Initializing
+    if (recoverySite.platformDetails.platformType === PLATFORM_TYPES.VMware || isPlanRecovered(protectionPlan) || protectionPlan.status === PROTECTION_PLANS_STATUS.INITIALIZING) {
       return true;
     }
     if (platformDetails.platformType === user.platformType && hasRequestedPrivileges(user, ['protectionplan.edit'])) {

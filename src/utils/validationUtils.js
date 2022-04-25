@@ -260,6 +260,10 @@ export function validateAWSNetworks(user, dispatch) {
         isClean = false;
         message = `${vmName}: Subnet missing for Nic-${i}`;
       }
+      if (netConfigs[i].securityGroups === '' || typeof netConfigs[i].securityGroups === 'undefined') {
+        isClean = false;
+        message = `${vmName}: SecurityGroup missing for Nic-${i}`;
+      }
       if (typeof netConfigs[i].network !== 'undefined' && netConfigs[i].network !== '') {
         elasticIPs.push(netConfigs[i].network);
       }
