@@ -417,11 +417,17 @@ export function openTestRecoveryWizard() {
       const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id)), dispatch(fetchScript()), dispatch(fetchDrPlans('ui.values.drplan'))];
       return Promise.all(apis).then(
         () => {
-          const url = (platformDetails.platformType === PLATFORM_TYPES.AWS ? API_AWS_INSTANCES : API_GCP_INSTANCES);
-          dispatch(fetchAvailibilityZones({ value: recoverySite.id }));
-          dispatch(fetchNetworks(recoverySite.id));
-          dispatch(setInstances(url));
-          dispatch(openWizard(TEST_RECOVERY_WIZARDS.options, TEST_RECOVERY_WIZARDS.steps));
+          if (platformDetails.platformType === PLATFORM_TYPES.VMware) {
+            const { options, steps } = RECOVERY_WIZARDS;
+            options.title = 'Test Recovery';
+            dispatch(openWizard(options, steps));
+          } else {
+            const url = (platformDetails.platformType === PLATFORM_TYPES.AWS ? API_AWS_INSTANCES : API_GCP_INSTANCES);
+            dispatch(fetchAvailibilityZones({ value: recoverySite.id }));
+            dispatch(fetchNetworks(recoverySite.id));
+            dispatch(setInstances(url));
+            dispatch(openWizard(TEST_RECOVERY_WIZARDS.options, TEST_RECOVERY_WIZARDS.steps));
+          }
           dispatch(onProtectionPlanChange({ value: protectionPlan.id }));
           dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW_TEST_RECOVERY, true));
           return new Promise((resolve) => resolve());
@@ -992,6 +998,9 @@ export function setRecoveryVMDetails(vmMoref) {
         return;
       case PLATFORM_TYPES.GCP:
         dispatch(setGCPVMRecoveryData(vmMoref));
+        return;
+      case PLATFORM_TYPES.VMware:
+        // TODO: NEED TO SET DATA POST VMWARE AS TARGET SUPPORTED
         return;
       default:
         dispatch(addMessage('Invalid recovery platform', MESSAGE_TYPES.ERROR));

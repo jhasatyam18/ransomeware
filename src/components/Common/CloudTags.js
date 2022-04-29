@@ -3,7 +3,7 @@ import { Badge, Col, FormGroup, Input, Label, Row } from 'reactstrap';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { valueChange } from '../../store/actions';
 import { addMessage } from '../../store/actions/MessageActions';
-import { getSourceVMTags, getValue } from '../../utils/InputUtils';
+import { getSourceVMTags, getValue, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import DMToolTip from '../Shared/DMToolTip';
 
 class CloudTags extends Component {
@@ -98,7 +98,10 @@ class CloudTags extends Component {
 
   renderCopyTags() {
     const { chkCopyTgs } = this.state;
-    const { vmKey } = this.props;
+    const { vmKey, user } = this.props;
+    if (!(isPlanWithSamePlatform(user))) {
+      return null;
+    }
     return (
       <Row className="padding-left-15">
         <Col sm={6}>

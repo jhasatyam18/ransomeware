@@ -322,14 +322,16 @@ export function fetchNetworks(id, keyOnly = undefined) {
           dispatch(valueChange(STATIC_KEYS.UI_VPC_TARGET, (data.networks ? data.networks : [])));
           // for aws push zone names
           const zones = [];
-          data.subnets.forEach((sub) => {
-            if (sub.zone !== '' && typeof sub.zone !== 'undefined') {
-              const hasElement = zones.some((z) => z.value === sub.zone);
-              if (!hasElement) {
-                zones.push({ label: sub.zone, value: sub.zone });
+          if (data.subnets) {
+            data.subnets.forEach((sub) => {
+              if (sub.zone !== '' && typeof sub.zone !== 'undefined') {
+                const hasElement = zones.some((z) => z.value === sub.zone);
+                if (!hasElement) {
+                  zones.push({ label: sub.zone, value: sub.zone });
+                }
               }
-            }
-          });
+            });
+          }
           dispatch(valueChange(STATIC_KEYS.UI_AVAILABILITY_ZONES, zones));
         }
       },
