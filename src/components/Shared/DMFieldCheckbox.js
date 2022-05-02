@@ -76,7 +76,7 @@ class DMFieldCheckbox extends Component {
 
   render() {
     const { field, fieldKey, user, disabled, hideLabel } = this.props;
-    const { label, shouldShow } = field;
+    const { shouldShow } = field;
     const value = this.getCheckboxValue();
     const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
     const css = hideLabel ? '' : 'row mb-4 form-group';
