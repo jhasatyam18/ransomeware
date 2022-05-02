@@ -42,9 +42,11 @@ function DashBoardJob(props) {
 
     callAPI(API_RECOVERY_JOBS)
       .then((json) => {
+        if (isUnmounting) return;
         setRecoveryJobs(json);
       },
       (err) => {
+        if (isUnmounting) return;
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
     return () => {

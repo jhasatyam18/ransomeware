@@ -8,4 +8,4 @@ export function withoutErrorResponse(URL, RESP) {
   ));
 }
 
-export const withErrorResponse = (URL) => rest.get(URL, (req, res, ctx) => res(ctx.status(403), ctx.json({ message: 'ssh' })));
+export const withErrorResponse = (URL) => rest.get(URL, (req, res, ctx) => res(ctx.status(503), ctx.json({ message: 'server error' })));
