@@ -625,13 +625,13 @@ function showValidationInfo(response = [], dispatch) {
   const warnings = response.filter((res) => (res && res.isWarning === true));
   if (errors.length > 0) {
     errors.forEach((e) => {
-      dispatch(addMessage(e.message, MESSAGE_TYPES.ERROR));
+      dispatch(addMessage(`${e.vmName} - ${e.message}`, MESSAGE_TYPES.ERROR));
     });
     return false;
   }
   if (warnings.length > 0) {
     warnings.forEach((w) => {
-      dispatch(addMessage(w.message, MESSAGE_TYPES.WARNING));
+      dispatch(addMessage(`${w.vmName} - ${w.message}`, MESSAGE_TYPES.WARNING));
     });
   }
   return true;

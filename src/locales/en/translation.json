@@ -328,5 +328,6 @@
   "title.login": "Login",
   "info.aws.create.network.from.source" : "Creates new subnet and security group on recovery site based on protected entity's configuration",
   "info.protectionplan.protection.prescript": "Script will execute before every replication iteration.",
-  "info.protectionplan.protection.postscript": "Script will execute after successful completion of every replication iteration."
+  "info.protectionplan.protection.postscript": "Script will execute after successful completion of every replication iteration.",
+  "info.protectionplan.instance.type.gcp": "Instance types comprise varying combinations of CPU, memory, storage, and networking capacity."
 }
