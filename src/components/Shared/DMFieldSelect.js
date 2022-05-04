@@ -141,6 +141,8 @@ class DMFieldSelect extends Component {
     const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
     if (!showField) return null;
     const css = hideLabel ? '' : 'row mb-4 form-group';
+    const fieldDisabled = (typeof field.disabled !== 'undefined' && typeof field.disabled === 'function' ? field.disabled(user, fieldKey) : null);
+    const shouldDisabled = (fieldDisabled !== null ? fieldDisabled : disabled);
     return (
       <>
         <FormGroup className={css}>
@@ -148,7 +150,7 @@ class DMFieldSelect extends Component {
           <Col sm={hideLabel ? 12 : 8}>
             <Row>
               <Col sm={11}>
-                <Input type="select" id={fieldKey} onSelect={this.handleChange} className="form-control form-control-sm custom-select" onChange={this.handleChange} value={value} invalid={hasErrors} disabled={disabled}>
+                <Input type="select" id={fieldKey} onSelect={this.handleChange} className="form-control form-control-sm custom-select" onChange={this.handleChange} value={value} invalid={hasErrors} disabled={shouldDisabled}>
                   <option key={`${fieldKey}-default`} value="">  </option>
                   {this.renderOptions()}
                 </Input>

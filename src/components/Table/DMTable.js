@@ -114,6 +114,7 @@ class DMTable extends Component {
         primaryKey={primaryKey}
         user={user}
         name={name}
+        key={`dmtable-row-${index + 1}`}
       />
     ));
   }

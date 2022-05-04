@@ -8,8 +8,9 @@ import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { closeModal } from './ModalActions';
 import { hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
 import { fetchByDelay } from '../../utils/SlowFetch';
-import { getValue } from '../../utils/InputUtils';
+import { getValue, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
+import { setRecoveryVMDetails } from './DrPlanActions';
 
 export function fetchSites(key) {
   return (dispatch) => {
@@ -114,11 +115,16 @@ export function deleteSite(id) {
 }
 
 export function onProtectSiteChange({ value }) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     if (value === '') {
       dispatch(valueChange('ui.site.vms', []));
       return;
     }
+    const { user } = getState();
+    const { values } = user;
+    const platfromType = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${value}`)[0].platformDetails.platformType;
+    dispatch(valueChange('ui.values.protectionPlatform', platfromType));
+    dispatch(valueChange('ui.values.protectionSiteID', value));
     const url = API_FETCH_SITE_VMS.replace('<id>', value);
     dispatch(showApplicationLoader(url, 'Loading virtual machines'));
     return callAPI(url)
@@ -154,6 +160,9 @@ export function onRecoverSiteChange({ value }) {
     dispatch(fetchAvailibilityZones({ value }));
     dispatch(fetchNetworks(value));
     dispatch(valueChange('ui.values.recoveryPlatform', platfromType));
+    if (PLATFORM_TYPES.AWS === platfromType) {
+      return;
+    }
     return callAPI(url)
       .then((json) => {
         if (json && json.hasError) {
@@ -254,6 +263,7 @@ export function handleProtectVMSeletion(data, isSelected, primaryKey) {
       if (!selectedVMs || selectedVMs.length === 0 || !selectedVMs[data[primaryKey]]) {
         const newVMs = { ...selectedVMs, [data[primaryKey]]: data };
         dispatch(valueChange('ui.site.seletedVMs', newVMs));
+        dispatch(setRecoveryVMDetails(data[primaryKey]));
       }
     } else if (selectedVMs[data[primaryKey]]) {
       const newVMs = selectedVMs;
@@ -273,6 +283,7 @@ export function handleSelectAllRecoveryVMs(value) {
       data.forEach((vm) => {
         if (!(typeof vm.isDisabled !== 'undefined' && vm.isDisabled === true)) {
           selectedVMs = { ...selectedVMs, [vm.moref]: vm };
+          dispatch(setRecoveryVMDetails(vm.moref));
         }
       });
       dispatch(valueChange('ui.site.seletedVMs', selectedVMs));
@@ -282,7 +293,7 @@ export function handleSelectAllRecoveryVMs(value) {
   };
 }
 
-export function fetchNetworks(id) {
+export function fetchNetworks(id, keyOnly = undefined) {
   return (dispatch) => {
     dispatch(showApplicationLoader('FETCHING_SITE_NETWORK', 'Loading network info...'));
     const url = API_SITE_NETWORKS.replace('<id>', id);
@@ -293,14 +304,50 @@ export function fetchNetworks(id) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
           const data = json;
+          if (data.instanceTypes) {
+            const insTypes = [];
+            data.instanceTypes.forEach((t) => {
+              insTypes.push({ value: t, label: t });
+            });
+            dispatch(valueChange('ui.values.instances', insTypes));
+          }
+          if (typeof keyOnly !== 'undefined') {
+            dispatch(valueChange(STATIC_KEYS.UI_SECURITY_GROUPS_SOURCE, (data.securityGroups ? data.securityGroups : [])));
+            dispatch(valueChange(STATIC_KEYS.UI_SUBNETS__SOURCE, (data.subnets ? data.subnets : [])));
+            return;
+          }
           dispatch(valueChange(STATIC_KEYS.UI_SECURITY_GROUPS, (data.securityGroups ? data.securityGroups : [])));
           dispatch(valueChange(STATIC_KEYS.UI_SUBNETS, (data.subnets ? data.subnets : [])));
           dispatch(valueChange(STATIC_KEYS.UI_RESERVE_IPS, (data.ipAddress ? data.ipAddress : [])));
+          dispatch(valueChange(STATIC_KEYS.UI_VPC_TARGET, (data.networks ? data.networks : [])));
+          // for aws push zone names
+          const zones = [];
+          if (data.subnets) {
+            data.subnets.forEach((sub) => {
+              if (sub.zone !== '' && typeof sub.zone !== 'undefined') {
+                const hasElement = zones.some((z) => z.value === sub.zone);
+                if (!hasElement) {
+                  zones.push({ label: sub.zone, value: sub.zone });
+                }
+              }
+            });
+          }
+          dispatch(valueChange(STATIC_KEYS.UI_AVAILABILITY_ZONES, zones));
         }
       },
       (err) => {
         dispatch(hideApplicationLoader('FETCHING_SITE_NETWORK'));
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
+  };
+}
+
+export function postPlanSitesSelected() {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    if (isPlanWithSamePlatform(user)) {
+      const id = getValue('ui.values.protectionSiteID', user.values);
+      dispatch(fetchNetworks(id, 'source_network'));
+    }
   };
 }

@@ -1,62 +1,47 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, Col, Container, Form, Label, Row } from 'reactstrap';
-import DMTable from '../Table/DMTable';
-import { PROTECTION_PLAN_RECOVERY_JOBS, RECOVERY_JOBS } from '../../constants/TableConstants';
-import DMTPaginator from '../Table/DMTPaginator';
-import DMBreadCrumb from '../Common/DMBreadCrumb';
-import { fetchRecoveryJobs, changeRecoveryJobType } from '../../store/actions/JobActions';
-import { fetchDrPlans } from '../../store/actions/DrPlanActions';
+import { API_PROTECTION_PLAN_RECOVERY_JOBS_STATUS, API_RECOVERY_JOBS } from '../../constants/ApiConstants';
 import { RECOVERY_JOB_TYPE } from '../../constants/InputConstants';
+import { MESSAGE_TYPES } from '../../constants/MessageConstants';
+import { PROTECTION_PLAN_RECOVERY_JOBS, RECOVERY_JOBS } from '../../constants/TableConstants';
+import { changeRecoveryJobType, setRecoveryJobs } from '../../store/actions/JobActions';
+import { addMessage } from '../../store/actions/MessageActions';
+import { callAPI } from '../../utils/ApiUtils';
+import DMBreadCrumb from '../Common/DMBreadCrumb';
+import DMAPIPaginator from '../Table/DMAPIPaginator';
+import DMTable from '../Table/DMTable';
 import ProtectionPlanRecovery from './ProtectionPlanRecovery';
-import { filterData } from '../../utils/AppUtils';
 
 class Recovery extends Component {
   constructor() {
     super();
-    this.state = { dataToDisplay: [], hasFilterString: false, searchData: [] };
-    this.setDataForDisplay = this.setDataForDisplay.bind(this);
+    this.state = { plansData: [] };
     this.changeJobType = this.changeJobType.bind(this);
-    this.onFilter = this.onFilter.bind(this);
   }
 
   componentDidMount() {
-    this.fethData();
+    const { protectionplanID, dispatch } = this.props;
+    const url = (protectionplanID === 0 ? API_PROTECTION_PLAN_RECOVERY_JOBS_STATUS : `${API_PROTECTION_PLAN_RECOVERY_JOBS_STATUS}?protectionplanid=${protectionplanID}`);
+    callAPI(url).then((json) => {
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        this.setState({ plansData: json });
+      }
+    },
+    (err) => {
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
   }
 
   componentWillUnmount() {
     this.state = null;
   }
 
-  onFilter(criteria) {
-    const { jobs, protectionplanID } = this.props;
-    const { recovery } = jobs;
-    const cols = (protectionplanID === null || protectionplanID === 0 ? RECOVERY_JOBS : PROTECTION_PLAN_RECOVERY_JOBS);
-    if (criteria === '') {
-      this.setState({ hasFilterString: false, searchData: [] });
-    } else {
-      const newData = filterData(recovery, criteria, cols);
-      this.setState({ hasFilterString: true, searchData: newData });
-    }
-  }
-
-  setDataForDisplay(data) {
-    this.setState({ dataToDisplay: data });
-  }
-
-  fethData() {
-    const { dispatch, protectionplanID } = this.props;
-    dispatch(fetchDrPlans('ui.values.drplan'));
-    dispatch(fetchRecoveryJobs(protectionplanID));
-  }
-
   changeJobType(type) {
-    const { dispatch, protectionplanID } = this.props;
-    this.setState({ hasFilterString: false });
+    const { dispatch } = this.props;
     dispatch(changeRecoveryJobType(type));
-    setTimeout(() => {
-      dispatch(fetchRecoveryJobs(protectionplanID));
-    }, 1000);
   }
 
   renderOptions() {
@@ -83,12 +68,10 @@ class Recovery extends Component {
   }
 
   renderVMJobs() {
-    const { jobs, user } = this.props;
+    const { dispatch, protectionplanID, jobs, user } = this.props;
     const { recovery } = jobs;
-    const { dataToDisplay, searchData, hasFilterString } = this.state;
-    const { dispatch, protectionplanID } = this.props;
     const cols = (protectionplanID === null || protectionplanID === 0 ? RECOVERY_JOBS : PROTECTION_PLAN_RECOVERY_JOBS);
-    const data = (hasFilterString ? searchData : recovery);
+    const url = (protectionplanID === 0 ? API_RECOVERY_JOBS : `${API_RECOVERY_JOBS}?protectionplanid=${protectionplanID}`);
     return (
       <>
 
@@ -98,12 +81,13 @@ class Recovery extends Component {
           </Col>
           <Col sm={7}>
             <div className="padding-right-30">
-              <DMTPaginator
-                data={data}
-                setData={this.setDataForDisplay}
+              <DMAPIPaginator
                 showFilter="true"
                 columns={cols}
-                onFilter={this.onFilter}
+                apiUrl={url}
+                isParameterizedUrl={protectionplanID === 0 ? 'false' : 'true'}
+                storeFn={setRecoveryJobs}
+                name="recoveryVMs"
               />
             </div>
           </Col>
@@ -111,7 +95,7 @@ class Recovery extends Component {
         <DMTable
           dispatch={dispatch}
           columns={cols}
-          data={dataToDisplay}
+          data={recovery}
           user={user}
         />
 
@@ -121,11 +105,12 @@ class Recovery extends Component {
 
   renderDrRecovery() {
     const { jobs, protectionplanID } = this.props;
-    const { recovery, recoveryType } = jobs;
-    if (recoveryType !== RECOVERY_JOB_TYPE.PLAN || recovery.length <= 0) {
+    const { recoveryType } = jobs;
+    const { plansData } = this.state;
+    if (recoveryType !== RECOVERY_JOB_TYPE.PLAN || plansData.length <= 0) {
       return null;
     }
-    const data = recovery[0];
+    const data = plansData[0];
     const { name } = data;
     if (typeof name === 'undefined') {
       return null;
@@ -133,7 +118,7 @@ class Recovery extends Component {
     return (
       <Row className="padding-top-20">
         <Col sm={12}>
-          {recovery.map((plan) => {
+          {plansData.map((plan) => {
             if (protectionplanID === null || protectionplanID === 0) {
               return <ProtectionPlanRecovery title={plan.name} vms={plan.protectionPlanJobs} />;
             }

@@ -1,0 +1,3855 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.5">
+    
+    
+      
+        <title>Datamotive</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.2d9f7617.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.e6a45f82.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#546d78">
+        
+      
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL(".",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="blue-grey" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="Datamotive" class="md-header__button md-logo" aria-label="Datamotive" data-md-component="logo">
+      
+  <img src="assets/favicon.ico" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Datamotive
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Datamotive
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="Datamotive" class="md-nav__button md-logo" aria-label="Datamotive" data-md-component="logo">
+      
+  <img src="assets/favicon.ico" alt="logo">
+
+    </a>
+    Datamotive
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          User Guide
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        User Guide
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    Introduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#datamotive-component-architecture" class="md-nav__link">
+    Datamotive Component Architecture
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#support-matrix" class="md-nav__link">
+    Support Matrix
+  </a>
+  
+    <nav class="md-nav" aria-label="Support Matrix">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vmware" class="md-nav__link">
+    VMware
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cloud-providers" class="md-nav__link">
+    Cloud Providers
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#guest-os" class="md-nav__link">
+    Guest OS
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supported-browser-versions" class="md-nav__link">
+    Supported Browser Versions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authentication" class="md-nav__link">
+    Authentication
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dashboard" class="md-nav__link">
+    Dashboard
+  </a>
+  
+    <nav class="md-nav" aria-label="Dashboard">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#title-windows" class="md-nav__link">
+    Title Windows
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alert-statistics" class="md-nav__link">
+    Alert Statistics
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rpo-and-rto-statistics" class="md-nav__link">
+    RPO and RTO Statistics
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#replication-statistics" class="md-nav__link">
+    Replication Statistics
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jobs" class="md-nav__link">
+    Jobs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtual-machine-protection-analysis" class="md-nav__link">
+    Virtual Machine Protection Analysis
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bandwidth-usage" class="md-nav__link">
+    Bandwidth Usage
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#site-connections" class="md-nav__link">
+    Site Connections
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#events" class="md-nav__link">
+    Events
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nodes-configuration" class="md-nav__link">
+    Nodes Configuration
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sites-configuration" class="md-nav__link">
+    Sites configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="Sites configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-site" class="md-nav__link">
+    Create Site
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#edit-site" class="md-nav__link">
+    Edit Site
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-site" class="md-nav__link">
+    Remove Site
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#protection-plan" class="md-nav__link">
+    Protection plan
+  </a>
+  
+    <nav class="md-nav" aria-label="Protection plan">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-protection-plan" class="md-nav__link">
+    Create Protection Plan
+  </a>
+  
+    <nav class="md-nav" aria-label="Create Protection Plan">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisite" class="md-nav__link">
+    Prerequisite
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#general" class="md-nav__link">
+    General
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtual-machines" class="md-nav__link">
+    Virtual Machines
+  </a>
+  
+    <nav class="md-nav" aria-label="Virtual Machines">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#general_1" class="md-nav__link">
+    General
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#boot-order" class="md-nav__link">
+    Boot Order
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#replication-configuration" class="md-nav__link">
+    Replication Configuration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#protection-plan-actions" class="md-nav__link">
+    Protection Plan Actions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recovery" class="md-nav__link">
+    Recovery
+  </a>
+  
+    <nav class="md-nav" aria-label="Recovery">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-recovery" class="md-nav__link">
+    Test Recovery
+  </a>
+  
+    <nav class="md-nav" aria-label="Test Recovery">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisite_1" class="md-nav__link">
+    Prerequisite
+  </a>
+  
+    <nav class="md-nav" aria-label="Prerequisite">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#summary_1" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#full-recovery" class="md-nav__link">
+    Full Recovery
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration" class="md-nav__link">
+    Migration
+  </a>
+  
+    <nav class="md-nav" aria-label="Migration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#summary_2" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#jobs_1" class="md-nav__link">
+    Jobs
+  </a>
+  
+    <nav class="md-nav" aria-label="Jobs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#replication" class="md-nav__link">
+    Replication
+  </a>
+  
+    <nav class="md-nav" aria-label="Replication">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#protection-plan_1" class="md-nav__link">
+    Protection Plan
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtual-machines_1" class="md-nav__link">
+    Virtual Machines
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#disks" class="md-nav__link">
+    Disks
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recovery-jobs" class="md-nav__link">
+    Recovery Jobs
+  </a>
+  
+    <nav class="md-nav" aria-label="Recovery Jobs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#protection-plan_2" class="md-nav__link">
+    Protection Plan
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtual-machines_2" class="md-nav__link">
+    Virtual Machines
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitor" class="md-nav__link">
+    Monitor
+  </a>
+  
+    <nav class="md-nav" aria-label="Monitor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#events_1" class="md-nav__link">
+    Events
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alerts" class="md-nav__link">
+    Alerts
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reports" class="md-nav__link">
+    Reports
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#settings" class="md-nav__link">
+    Settings
+  </a>
+  
+    <nav class="md-nav" aria-label="Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    License
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#license-installation" class="md-nav__link">
+    License installation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scripts" class="md-nav__link">
+    Scripts
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#email" class="md-nav__link">
+    Email
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tech-support" class="md-nav__link">
+    Tech Support
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#throttling" class="md-nav__link">
+    Throttling
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    Troubleshooting
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upgrade" class="md-nav__link">
+    Upgrade
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    Introduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#datamotive-component-architecture" class="md-nav__link">
+    Datamotive Component Architecture
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#support-matrix" class="md-nav__link">
+    Support Matrix
+  </a>
+  
+    <nav class="md-nav" aria-label="Support Matrix">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vmware" class="md-nav__link">
+    VMware
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cloud-providers" class="md-nav__link">
+    Cloud Providers
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#guest-os" class="md-nav__link">
+    Guest OS
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supported-browser-versions" class="md-nav__link">
+    Supported Browser Versions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authentication" class="md-nav__link">
+    Authentication
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dashboard" class="md-nav__link">
+    Dashboard
+  </a>
+  
+    <nav class="md-nav" aria-label="Dashboard">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#title-windows" class="md-nav__link">
+    Title Windows
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alert-statistics" class="md-nav__link">
+    Alert Statistics
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rpo-and-rto-statistics" class="md-nav__link">
+    RPO and RTO Statistics
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#replication-statistics" class="md-nav__link">
+    Replication Statistics
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jobs" class="md-nav__link">
+    Jobs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtual-machine-protection-analysis" class="md-nav__link">
+    Virtual Machine Protection Analysis
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bandwidth-usage" class="md-nav__link">
+    Bandwidth Usage
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#site-connections" class="md-nav__link">
+    Site Connections
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#events" class="md-nav__link">
+    Events
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nodes-configuration" class="md-nav__link">
+    Nodes Configuration
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sites-configuration" class="md-nav__link">
+    Sites configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="Sites configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-site" class="md-nav__link">
+    Create Site
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#edit-site" class="md-nav__link">
+    Edit Site
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-site" class="md-nav__link">
+    Remove Site
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#protection-plan" class="md-nav__link">
+    Protection plan
+  </a>
+  
+    <nav class="md-nav" aria-label="Protection plan">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-protection-plan" class="md-nav__link">
+    Create Protection Plan
+  </a>
+  
+    <nav class="md-nav" aria-label="Create Protection Plan">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisite" class="md-nav__link">
+    Prerequisite
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#general" class="md-nav__link">
+    General
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtual-machines" class="md-nav__link">
+    Virtual Machines
+  </a>
+  
+    <nav class="md-nav" aria-label="Virtual Machines">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#general_1" class="md-nav__link">
+    General
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#boot-order" class="md-nav__link">
+    Boot Order
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#replication-configuration" class="md-nav__link">
+    Replication Configuration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#protection-plan-actions" class="md-nav__link">
+    Protection Plan Actions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recovery" class="md-nav__link">
+    Recovery
+  </a>
+  
+    <nav class="md-nav" aria-label="Recovery">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-recovery" class="md-nav__link">
+    Test Recovery
+  </a>
+  
+    <nav class="md-nav" aria-label="Test Recovery">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisite_1" class="md-nav__link">
+    Prerequisite
+  </a>
+  
+    <nav class="md-nav" aria-label="Prerequisite">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#summary_1" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#full-recovery" class="md-nav__link">
+    Full Recovery
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration" class="md-nav__link">
+    Migration
+  </a>
+  
+    <nav class="md-nav" aria-label="Migration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#summary_2" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#jobs_1" class="md-nav__link">
+    Jobs
+  </a>
+  
+    <nav class="md-nav" aria-label="Jobs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#replication" class="md-nav__link">
+    Replication
+  </a>
+  
+    <nav class="md-nav" aria-label="Replication">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#protection-plan_1" class="md-nav__link">
+    Protection Plan
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtual-machines_1" class="md-nav__link">
+    Virtual Machines
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#disks" class="md-nav__link">
+    Disks
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recovery-jobs" class="md-nav__link">
+    Recovery Jobs
+  </a>
+  
+    <nav class="md-nav" aria-label="Recovery Jobs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#protection-plan_2" class="md-nav__link">
+    Protection Plan
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtual-machines_2" class="md-nav__link">
+    Virtual Machines
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitor" class="md-nav__link">
+    Monitor
+  </a>
+  
+    <nav class="md-nav" aria-label="Monitor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#events_1" class="md-nav__link">
+    Events
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alerts" class="md-nav__link">
+    Alerts
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reports" class="md-nav__link">
+    Reports
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#settings" class="md-nav__link">
+    Settings
+  </a>
+  
+    <nav class="md-nav" aria-label="Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    License
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#license-installation" class="md-nav__link">
+    License installation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scripts" class="md-nav__link">
+    Scripts
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#email" class="md-nav__link">
+    Email
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tech-support" class="md-nav__link">
+    Tech Support
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#throttling" class="md-nav__link">
+    Throttling
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    Troubleshooting
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upgrade" class="md-nav__link">
+    Upgrade
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+
+
+<h2 id="_1"></h2>
+<h1 id="introduction">Introduction</h1>
+<p>Datamotive Workload Mobility product suite delivers a disaster recovery
+and workload migration service and offers cloud economics to help keep
+your disaster recovery and migration costs under control.</p>
+<p>Datamotive Workload Mobility can be used to protect your vSphere virtual
+machines by replicating them periodically to the cloud and recovering
+them as needed to a target public cloud platform as a native cloud
+instance (E.g., protected virtual machine is recovered as a native AWS
+EC2 instance or a GCP Compute instance).</p>
+<p>The Datamotive Replication Engine replicates the entire protected VM
+over to the target platform. This includes the OS, the OS configuration,
+the registry entries, application and application data, everything
+inside the VM is replicated. The first replication iteration is a full
+copy of the VM from the source environment to the target cloud platform.
+Following iterations, only replicate the changed data from the
+previously successfully completed replication iterations. Datamotive
+does not require or need any agents to be deployed or installed on the
+protected VMs. Each VM is completely treated as a black box by
+Datamotive. As a result, the enterprises workloads (VMs) require no
+operational management, nor require any special security configurations.
+There is also minimal performance impact on the business applications.</p>
+<p>The Datamotive Replication Engine also enables near instantaneous
+recovery of the workloads in the target cloud platforms. When the
+workloads are recovered or migrated in the cloud, they are already in
+the native cloud platform (AWS EC2 instance or GCP Compute instance
+formats). No additional conversion or rehydration or seeding is
+required. Datamotive provides an unprecedented Recovery Time Objective
+(RTO) of 10 minutes per protected virtual machine. Similarly provided,
+in the case of Migration, is a Cutover Time Objective (CTO) of 10
+minutes per VM with zero data loss.</p>
+<p>The Datamotive platform currently provides and supports Disaster
+Recovery and Migration use-cases. Very soon, Datamotive will also be
+providing and supporting Ransomware Recovery and Rapid Dev/Test
+Deployments (Cloud Cloning) use-cases. a</p>
+<p><img src="./media/image2.png" style="width:4.375in;height:2.29167in" /></p>
+<h1 id="_2"></h1>
+<h1 id="datamotive-component-architecture">Datamotive Component Architecture</h1>
+<p>Datamotive Replication Service – a virtual appliance installed in the
+VMware vSphere environment where the virtual machines to be protected
+are running under normal circumstances. This appliance also presents a
+user interface (UI), a CLI and REST APIs for the IT administrators to
+use under normal circumstances.</p>
+<p>Datamotive Cloud Service – a virtual appliance deployed in the public
+cloud environment (AWS or GCP) where the protected virtual machines will
+be recovered in the event of a disaster or when VMs are migrated to the
+target public cloud. This appliance also presents a user interface (UI),
+a CLI and REST APIs for the IT administrators to use in the event of a
+disaster and the on-premises Datamotive Replication Service is
+un-available. Migration and Recovery jobs can be triggered using this
+interface.</p>
+<p>Datamotive Prep Appliance – a Windows virtual appliance deployed in the
+public cloud environment (AWS or GCP). This appliance is only powered-on
+and used when recovering or migrating Windows VMs.</p>
+<p><img src="./media/image3.png"
+style="width:6.48125in;height:2.73611in" /></p>
+<p><span id="_Toc330630241" class="anchor"></span>Capabilities and Benefits</p>
+<p>Datamotive Workload Mobility provides the following key capabilities:</p>
+<p>Hybrid, Multi Cloud Simplicity – Provides comprehensive SaaS simplicity
+across on-demand Disaster Recovery, Migration and Ransomware Recovery</p>
+<p>Agentless Model – Datamotive requires no agents on the protected VMs,
+leading to significantly simpler management of VMs under normal
+circumstances. Minimal performance impact on the protected VMs as
+compared to agent-based solutions and most importantly, no need to open
+additional (or per protected VM) ports in your firewall. Follow your
+Zero Trust Security policies completely.</p>
+<p>Industry Best SLAs – Datamotive provides 10 minutes or less RTO or CTO
+regardless of the size of the workload. If your VMs/workloads are 100 GB
+or 2 TB, Datamotive will always take 10 minutes or less to completely
+recover them in the cloud.</p>
+<p>Cost Optimized – Reduce your capex and opex significantly by leveraging
+the economics and pay-per-use model of public clouds. Only pay for cloud
+storage costs. Pay for compute and network only when a disaster strikes,
+and your workloads are recovered in the cloud.</p>
+<p>Unlimited Test Recovery – Execute Test Recovery workflows in a network
+fenced environment to test your replication consistency safely and
+securely.</p>
+<p>Ransomware Recovery – Protect your workloads from cybercrime attacks by
+keeping point-in-time copies in air-gapped, low-cost public cloud
+storage. In the event of an attack, choose the latest copy and recover
+your workloads in the cloud in minutes.</p>
+<h1 id="support-matrix">Support Matrix</h1>
+<h2 id="vmware">VMware</h2>
+<table>
+<colgroup>
+<col style="width: 44%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>vCenter Server 5.5</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>vCenter Server 6.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>vCenter Server 6.5 (U1, U2)</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>vCenter Server 6.5 (U3)</td>
+<td><ul>
+<li></li>
+</ul></td>
+</tr>
+<tr class="even">
+<td>vCenter Server 6.7</td>
+<td><ul>
+<li></li>
+</ul></td>
+</tr>
+<tr class="odd">
+<td>vCenter Server 6.7 (U1, U2, U3)</td>
+<td><ul>
+<li></li>
+</ul></td>
+</tr>
+<tr class="even">
+<td>vCenter Server 7.0</td>
+<td><ol type="1">
+<li></li>
+</ol></td>
+</tr>
+<tr class="odd">
+<td>ESXi 5.5</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>ESXi 6.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>ESXi 6.5 (GA, U1, U2)</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>ESXi 6.5 (U3)</td>
+<td><ul>
+<li></li>
+</ul></td>
+</tr>
+<tr class="odd">
+<td>ESXi 6.7 (GA, U1, U2)</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>ESXi 7.0 (GA)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="cloud-providers">Cloud Providers</h2>
+<p>Following are the supported public cloud providers.</p>
+<table>
+<colgroup>
+<col style="width: 45%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>AWS (Amazon Web Services)</th>
+<th><ul>
+<li></li>
+</ul></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Google Cloud</td>
+<td><ul>
+<li></li>
+</ul></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="guest-os">Guest OS</h2>
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 53%" />
+<col style="width: 18%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>OS</th>
+<th>Kernel Version</th>
+<th>Support</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CentOS 6</td>
+<td></td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td>CentOS 7.9</td>
+<td>3.10.0-1160.el7.x86_64</td>
+<td><ul>
+<li></li>
+</ul></td>
+</tr>
+<tr class="odd">
+<td>CentOS 8</td>
+<td></td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td>Red Hat Enterprise Linux 6</td>
+<td></td>
+<td>-</td>
+</tr>
+<tr class="odd">
+<td>Red Hat Enterprise Linux 7.9</td>
+<td>3.10.0-1160.el7.x86_64</td>
+<td><ul>
+<li></li>
+</ul></td>
+</tr>
+<tr class="even">
+<td>Red Hat Enterprise Linux 8</td>
+<td></td>
+<td>-</td>
+</tr>
+<tr class="odd">
+<td>Ubuntu 14</td>
+<td>4.4.0-148-generic</td>
+<td><ul>
+<li></li>
+</ul></td>
+</tr>
+<tr class="even">
+<td>Ubuntu 16</td>
+<td><p>4.15.0-45-generic</p>
+<p>4.15.0-142-generic</p>
+<p>4.10.0-28-generic</p></td>
+<td><ul>
+<li></li>
+</ul></td>
+</tr>
+<tr class="odd">
+<td>Ubuntu 18</td>
+<td><p>5.4.0-42-generic,</p>
+<p>5.4.0-72-generic</p>
+<p>5.4.0-91-generic</p></td>
+<td><ul>
+<li></li>
+</ul></td>
+</tr>
+<tr class="even">
+<td>Ubuntu 20</td>
+<td>5.11.0-27-generic</td>
+<td><ul>
+<li></li>
+</ul></td>
+</tr>
+<tr class="odd">
+<td>Oracle Linux 6</td>
+<td></td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td>Oracle Linux 7</td>
+<td></td>
+<td>-</td>
+</tr>
+<tr class="odd">
+<td>Oracle Linux 8</td>
+<td></td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td>Debian 9</td>
+<td></td>
+<td>-</td>
+</tr>
+<tr class="odd">
+<td>Debian 10</td>
+<td></td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td>Suse Linux 12</td>
+<td></td>
+<td>-</td>
+</tr>
+<tr class="odd">
+<td>Suse Linux 15</td>
+<td></td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td>Microsoft Windows 10 Professional</td>
+<td></td>
+<td><ul>
+<li></li>
+</ul></td>
+</tr>
+<tr class="odd">
+<td>MS Windows Server 2012 (Standard, Datacenter)</td>
+<td>Reverse recovery for Win2k12 is currently not supported to VMWare
+(specifically for VMWare to AWS)</td>
+<td><ul>
+<li></li>
+</ul></td>
+</tr>
+<tr class="even">
+<td>MS Windows Server 2012-R2 (Standard, Datacenter)</td>
+<td>Reverse recovery for Win2k12-R2 is currently not supported to VMWare
+(specifically for VMWare to AWS)</td>
+<td><ul>
+<li></li>
+</ul></td>
+</tr>
+<tr class="odd">
+<td>MS Windows Server 2016 (Standard, Datacenter)</td>
+<td></td>
+<td><ul>
+<li></li>
+</ul></td>
+</tr>
+<tr class="even">
+<td>MS Windows Server 2019 (Standard, Datacenter)</td>
+<td></td>
+<td><ul>
+<li></li>
+</ul></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="supported-browser-versions">Supported Browser Versions</h2>
+<table>
+<thead>
+<tr>
+<th>Browser Names</th>
+<th>Versions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mozilla Firefox</td>
+<td>98.0.2 (64-bit)</td>
+</tr>
+<tr>
+<td>Google Chrome</td>
+<td>Version 99.0.4844.82 (Official Build) (64-bit)</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h1 id="_3"></h1>
+<h1 id="_4"></h1>
+<h1 id="_5"></h1>
+<h1 id="authentication">Authentication</h1>
+<p><img src="./media/image4.png" style="width:6.48125in;height:2.99722in"
+alt="Graphical user interface, application Description automatically generated" /></p>
+<blockquote>
+<p>Open the Datamotive UI through URL: \&lt; Datamotive_Service_IP >:5000</p>
+</blockquote>
+<ol>
+<li>
+<p>Provide the username and password and press Login</p>
+</li>
+<li>
+<p>On successful login, User will see the Datamotive Dashboard.</p>
+</li>
+<li>
+<p>By default Datamotive will create following three users</p>
+<ol>
+<li>
+<p>Administrator</p>
+</li>
+<li>
+<p>DRadmin</p>
+</li>
+<li>
+<p>Guest</p>
+</li>
+</ol>
+</li>
+<li>
+<p>Default password for all the users is ‘admin’</p>
+</li>
+</ol>
+<p><strong>Note: If you are login first time then for security reasons password
+change is must.</strong></p>
+<ol>
+<li>
+<p>Provide the current password and new password.</p>
+</li>
+<li>
+<p>Click on change password button to set new password for the system.</p>
+</li>
+</ol>
+<p><img src="./media/image5.png" style="width:5in;height:4.10417in" /></p>
+<p><strong><br />
+</strong></p>
+<h1 id="dashboard">Dashboard</h1>
+<p>The Dashboard provides you with an at-a-glance overview of the data
+protection status of your environment. The Dashboard contains the
+following features.</p>
+<p><img src="./media/image6.png" style="width:6.48125in;height:3.01875in"
+alt="Graphical user interface, application, Teams Description automatically generated" /></p>
+<h2 id="title-windows">Title Windows</h2>
+<p>Title windows will give overall status on your configured and protected
+environment.</p>
+<p><img src="./media/image7.png" style="width:6.48125in;height:0.6625in" /></p>
+<table>
+<thead>
+<tr>
+<th>Title</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sites</td>
+<td>Sites configured on the node.</td>
+</tr>
+<tr>
+<td>Protection Plans</td>
+<td>Protection plans configured.</td>
+</tr>
+<tr>
+<td>Protected Machines</td>
+<td>Total number of protected virtual machines</td>
+</tr>
+<tr>
+<td>Storage</td>
+<td>Overall protected storage size.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="alert-statistics">Alert Statistics</h2>
+<p>Active alter which needs a user action acknowledgement or action on it.</p>
+<p><img src="./media/image8.png" style="width:5.34308in;height:2.31221in"
+alt="Graphical user interface, application Description automatically generated" /></p>
+<h2 id="_6"></h2>
+<h2 id="rpo-and-rto-statistics">RPO and RTO Statistics</h2>
+<p>Current recovery time objective and recovery point objective.</p>
+<p><img src="./media/image9.png" style="width:6.27083in;height:1.0582in" /></p>
+<table>
+<thead>
+<tr>
+<th>Title</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RPO</td>
+<td>Average recovery point objective value</td>
+</tr>
+<tr>
+<td>RTO</td>
+<td>Average of recovery time object value</td>
+</tr>
+<tr>
+<td>Test Executions</td>
+<td>Test executions completed successfully.</td>
+</tr>
+<tr>
+<td>Full Recovery</td>
+<td>Virtual machines recovered successfully.</td>
+</tr>
+<tr>
+<td>Migrations</td>
+<td>Virtual machines migrated successfully.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_7"></h2>
+<h2 id="replication-statistics">Replication Statistics</h2>
+<p>Replication statistics provides a central snapshot overview of your
+protected environment replication jobs.</p>
+<p><img src="./media/image10.png"
+style="width:6.32292in;height:1.28125in" /></p>
+<table>
+<thead>
+<tr>
+<th>Label</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Completed</td>
+<td>Successfully completed replication iterations.</td>
+</tr>
+<tr>
+<td>Running</td>
+<td>Replication iterations are in-progress.</td>
+</tr>
+<tr>
+<td>Failed</td>
+<td>Failed replication iterations.</td>
+</tr>
+<tr>
+<td>Change Rate</td>
+<td>Average data change rate for all protected virtual machines</td>
+</tr>
+<tr>
+<td>Data Reduction</td>
+<td>Average percentage of data reduction for all the completed replications.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="jobs">Jobs</h2>
+<p>Jobs shows the recently started or completed task in the system.</p>
+<p><img src="./media/image11.png" style="width:5in;height:1.98958in" /></p>
+<h2 id="_8"></h2>
+<h2 id="virtual-machine-protection-analysis">Virtual Machine Protection Analysis</h2>
+<p>Virtual machine protection analysis shows the overall status of recovery
+site environment in terms of total discovered virtual machines with
+percentage of protected and unprotected virtual machines. In addition to
+protection analysis, this wizard also provides the details for
+replication statistics of virtual machines which are in-sync and not
+in-sync.</p>
+<p><img src="./media/image12.png"
+style="width:6.08333in;height:2.3066in" /></p>
+<h2 id="_9"></h2>
+<h2 id="bandwidth-usage">Bandwidth Usage</h2>
+<p>Bandwidth usage provide the details network usage of the system for last
+12 hours.</p>
+<p>The bandwidth usage chart shows data downloaded and uploaded for last 12
+hours.</p>
+<p><img src="./media/image13.png" style="width:5in;height:2.75in" /></p>
+<h2 id="_10"></h2>
+<h2 id="site-connections">Site Connections</h2>
+<p>Provides connection details of configured sites in terms of data flow
+i.e., from which source site data replication is configured for target
+site.</p>
+<p><img src="./media/image14.png" style="width:6.06383in;height:2.375in" /></p>
+<h2 id="events">Events</h2>
+<p>Events are records of user actions or system actions that occurred in
+the Datamotive system. The Events widget provides most recent 5 events
+generated in the system.</p>
+<p><img src="./media/image15.png"
+style="width:5.05764in;height:3.65625in" /></p>
+<h1 id="nodes-configuration">Nodes Configuration</h1>
+<p>Nodes are entities where the Datamotive server is installed (Ex. AWS,
+GCP, VMWare, etc.). Datamotive Nodes are of different types wiz
+Management, Replication, Dedup &amp; Win Prep. Each node has specific
+functionality.</p>
+<ol>
+<li>
+<p>Management: Node for performing Datamotive management operations.
+    There must be one and only Management node for each site.</p>
+</li>
+<li>
+<p>Replication: Nodes responsible for performing replication
+    activities. These can be added based on number of Virtual Machine
+    disks to be replicated in parallel. Any number of nodes can be added
+    to meet the requirement.</p>
+</li>
+<li>
+<p>Dedup: This is a special type of node required to support
+    deduplication. This node is required only on the Recovery site.</p>
+</li>
+<li>
+<p>Win Prep: This is also a special type of node required only on
+    Recovery site to perform Windows workloads recovery.</p>
+</li>
+</ol>
+<p>For all the nodes, Datamotive provides separate OVAs &amp; cloud specific
+machine images. Once Node of given type is deployed in the
+infrastructure, it needs to be added in the Datamotive Management
+server. Nodes must be deployed and configured in following manner.</p>
+<ol>
+<li>
+<p>Management Node: Deploy 1 management node per protected site. Local
+    node representing the management node automatically gets registered.</p>
+</li>
+<li>
+<p>Remote Management Node: Deploy 1 management node per recovery site.
+    Register the management nodes from Recovery Sites in Management Node
+    of Protected Site.</p>
+</li>
+<li>
+<p>Replication Nodes: Deploy replication node based on load. Once
+    deployed register replication node in the local management server.
+    Replication nodes are always added to local management node only.</p>
+</li>
+<li>
+<p>Dedup Node: Deploy the Dedup node on Recovery Site. Once deployed,
+    register the Dedup node with Management Node on the Recovery Site.</p>
+</li>
+<li>
+<p>Win Prep Node: Deploy the Win Prep node on Recovery Site. Once
+    deployed, register the Win Prep node with Management Node on the
+    Recovery Site.</p>
+</li>
+</ol>
+<p>To Access Node option, Go to Configure -> Nodes (Note- By default the
+Local node will be configured.)</p>
+<p>To add new node -</p>
+<p>Click On <strong>“+ New</strong>” option as shown below -</p>
+<p><img src="./media/image16.png"
+style="width:6.46875in;height:2.80208in" /></p>
+<p>It consists of the below options-</p>
+<table>
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 83%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>The desired name to identification</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Hostname</td>
+<td>This is FQDN or IP address of the server</td>
+</tr>
+<tr class="even">
+<td>Username</td>
+<td>This is the username of the Datamotive Engine</td>
+</tr>
+<tr class="odd">
+<td>Password</td>
+<td>This is the password of the Datamotive Engine</td>
+</tr>
+<tr class="even">
+<td>Type</td>
+<td><p>The type of Datamotive server which is being added.</p>
+<p>Type consists of 4 options - Management, Replication, Prep Node and
+Dedupe Server</p></td>
+</tr>
+</tbody>
+</table>
+
+<p>In Type select the appropriate option from the drop down -</p>
+<table>
+<thead>
+<tr>
+<th><strong>Type</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Management</td>
+<td>Used when you would want to manage the servers (Edit, remove, and modify, etc)</td>
+</tr>
+<tr>
+<td>Replication</td>
+<td>Used when you would want to replicate the servers to the target site</td>
+</tr>
+<tr>
+<td>Prep Node</td>
+<td>Prep Node is used when you would want to recover the Windows server</td>
+</tr>
+<tr>
+<td>Dedupe Server</td>
+<td>Used for de-duplication of data</td>
+</tr>
+</tbody>
+</table>
+<p><img src="./media/image17.png"
+style="width:6.41667in;height:4.01042in" /></p>
+<p><strong>(Note – Based on the selection of Type, further details need to be
+entered). Ex. In option, the management type is selected. It consists of
+the below options -</strong></p>
+<table>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 76%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Platform Type</th>
+<th>Platform where the node is deployed</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Management port</td>
+<td>Port on which the management service runs (By default, it 5000)</td>
+</tr>
+<tr class="even">
+<td>Replication Data Port</td>
+<td>Port on which the replication data service runs (By default, it
+5001)</td>
+</tr>
+<tr class="odd">
+<td>Replication Controller Port</td>
+<td>Port on which the replication controller service runs (By default,
+it 5003)</td>
+</tr>
+<tr class="even">
+<td>Encryption Key</td>
+<td><p>Data will be encrypted using this key while transferring from one
+node to another node.</p>
+<p><img src="./media/image18.png"
+style="width:4.90208in;height:1.70417in" /></p>
+<p>The key for the node can be accessed in the remote management node,
+under the node configuration section.</p></td>
+</tr>
+</tbody>
+</table>
+
+<p><img src="./media/image19.png" style="width:6.53125in;height:4.625in" /></p>
+<p>Once the details are entered click on Configure option.</p>
+<h1 id="sites-configuration">Sites configuration</h1>
+<p>Sites are environment setup for Protection plan to configure. Site
+consists of platform type and platform details. In the Datamotive UI, go
+to Configure tab on the left-hand side panel and select Sites.</p>
+<p>To do</p>
+<p><img src="./media/image20.png"
+style="width:6.45833in;height:1.61068in" /></p>
+<p>Site can be of following types:</p>
+<p><span id="_Toc478185646" class="anchor"></span>Protection - A protection
+site is the source of the protection plan workload replication.</p>
+<p><span id="_Toc1600991344" class="anchor"></span>Recover - A Recover site
+is the destination for the protection plan workload replication.</p>
+<h2 id="create-site">Create Site</h2>
+<p>To create site, click the <strong>“+ New”</strong> button and Create site windows
+will pop-up.</p>
+<p>The common inputs are-</p>
+<p><strong>Name</strong> <strong>:</strong> Enter a desired name to identify the site</p>
+<p><strong>Description</strong> <strong>:</strong> Short information about the site</p>
+<p><strong>Site Type</strong> : (Protect/Recover) - Select the site type based on source
+or destination.</p>
+<p><strong>Platform Type</strong> : Select the Platform type - VMware/AWS/GCP.</p>
+<p><strong>Node</strong> : Select the node based on the Platform type where the
+workloads are hosted</p>
+<p>(Note: Based on the platform type and node the options change)</p>
+<p><img src="./media/image21.png"
+style="width:6.45833in;height:3.9375in" /></p>
+<p>Platform Type:</p>
+<p><strong>VMWare: -</strong></p>
+<p><strong>vCenter Server IP:</strong> Enter the vCenter Server IP address where the
+workloads are hosted</p>
+<p><strong>Port</strong> <strong>:</strong> By default, 443</p>
+<p><strong>Username</strong> <strong>:</strong> Enter the vCenter Server username</p>
+<p><strong>Password</strong> <strong>:</strong> Enter the password for vCenter user</p>
+<p><strong>AWS: -</strong></p>
+<p><strong>Region</strong> <strong>:</strong> Select the desired region where the workloads will be
+replicated/recovered</p>
+<p><strong>Zone</strong> <strong>:</strong> Select the desired zone in the region where the workloads
+will be replicated/recovered</p>
+<p><strong>Access Key :</strong> AWS User Access Key</p>
+<p><strong>Secret Key</strong> <strong>:</strong> AWS User Secret Key</p>
+<p><strong>GCP: -</strong></p>
+<p><strong>Region</strong> <strong>:</strong> Select the desired region where the workloads will be
+replicated/recovered</p>
+<p><strong>Zone</strong> <strong>:</strong> Select the desired zone in the region where the workloads
+will be replicated/recovered</p>
+<p><strong>Project ID</strong> <strong>:</strong> Enter the project id from the GCP console</p>
+<p>Click on configure to create the site and on successful creation, site
+will be listed in the list view.</p>
+<p><img src="./media/image22.png"
+style="width:6.33013in;height:2.23775in" /></p>
+<p>V Center Server IP</p>
+<h2 id="edit-site">Edit Site</h2>
+<p><img src="./media/image23.png"
+style="width:6.39423in;height:4.41106in" /></p>
+<p>To Edit a site, click on Edit button and then Edit windows will pop-up.</p>
+<p>Edit the input which need to be changed and click on configure to save
+the configuration.</p>
+<h2 id="remove-site">Remove Site</h2>
+<p><img src="./media/image24.png" style="width:6.5in;height:1.71452in" /></p>
+<p>Click on Remove button to delete one or more sites. On click of confirm,
+the sites will be deleted.</p>
+<h1 id="protection-plan">Protection plan</h1>
+<p>Navigation: Home —> Configuration —> Protection Pl</p>
+<p>Protection plan consists of a group of workloads which will be
+replicated from source to destination sites</p>
+<p><img src=".//media/image5c.png"
+style="width:6.33333in;height:1.80208in" /></p>
+<h2 id="create-protection-plan">Create Protection Plan</h2>
+<h3 id="prerequisite">Prerequisite</h3>
+<p><strong>VMware platform</strong>:</p>
+<ul>
+<li>
+<p>VMware tools must be installed in all the Virtual Machines which
+    needs to be protected.</p>
+</li>
+<li>
+<p>CBT (Change block tracking) must be enabled for all the Virtual
+    Machines and their disks.</p>
+</li>
+</ul>
+<p>To create a new protection plan, click on <strong>+ New</strong> button in protection
+plan list, create protection plan wizard is shown. Follow the guided
+steps to configure protection plan.</p>
+<h3 id="general">General</h3>
+<p><strong>Name</strong> <strong>:</strong> Desired name of the protection plan.</p>
+<p><strong>Protect Site</strong> <strong>:</strong> Source protection site.</p>
+<p><strong>Recovery Site</strong> <strong>:</strong> Destination recovery site.</p>
+<blockquote>
+<p><img src="./media/image26.png" style="width:6.5in;height:3.57087in" /></p>
+</blockquote>
+<h3 id="virtual-machines">Virtual Machines</h3>
+<p>Select the virtual machines to be protected and click next. Use search &amp;
+pagination to find virtual machines.</p>
+<blockquote>
+<p><img src="./media/image27.png"
+style="width:5.98958in;height:3.73101in" /></p>
+</blockquote>
+<p><span id="_Toc644911497" class="anchor"></span>Recovery Configuration</p>
+<p>Provide the virtual machine specific recover configuration which will be
+used for creation of instance on recovery site.</p>
+<h4 id="general_1">General</h4>
+<p><strong>Instance Type</strong> <strong>:</strong> Instance type on cloud site - Example t2.micro
+on AWS or n1-standard-1 on GCP.</p>
+<p><strong>Volume Type</strong> <strong>:</strong> Instance volume type on cloud site - Example GP-2
+on AWS or standard on GCP.</p>
+<p><strong>Volume IOPS :</strong> IOPs value for supported Volume Types. Please note
+that the IOPs values are submitted for volume creation without
+validations. Make sure that all the rules specific to selected volume
+type are followed while specifying the IOPs value</p>
+<p><strong>Tags</strong> : Instance tags. Example – Tag Key – Name Tag value –
+dm-repl-node</p>
+<p><img src="./media/image28.png"
+style="width:6.20968in;height:3.20833in" /></p>
+<p><span id="_Toc1395844907" class="anchor"></span><em>Network</em>:</p>
+<p>For instance, network configuration click on config button, will open a
+network configuration popup window.</p>
+<p><strong>For AWS platform as recovery site, the following configuration options
+are provided-</strong></p>
+<p><strong>VPC</strong> <strong>:</strong> Virtual Private Cloud (Amazon VPC) enables you to launch
+AWS resources into a virtual network that you've defined.</p>
+<p><strong>Create from Source:</strong> This option is used when you need to copy the
+network configuration from the source instance. All the options like
+subnets, IP address and security groups get auto-filled as the source
+instance</p>
+<p><strong>Subnet</strong> <strong>:</strong> subnet ID which will assigned to the instances in this
+protection plan.</p>
+<p><strong>Auto Public IP</strong> <strong>:</strong> Click on the checkbox if you want to auto
+assign a public Ip to instance.</p>
+<p><strong>Note -</strong> only one network card can be configured if public Ip is
+enabled.</p>
+<p><strong>Elastic IP for instance</strong> : Select from allocated elastic IP address
+pool if any.</p>
+<p><strong>Private IP</strong> : Provide the internal IP address for the instance or
+leave blank for auto assignment. (Please ensure to specify Private IP in
+the same range as that of given Subnet and is unique too)</p>
+<p><strong>Security Groups</strong> : Select the security groups all configure inbound
+and outbound traffic for the instance.</p>
+<p><img src="./media/image29.png"
+style="width:4.26042in;height:4.46875in" /></p>
+<p><strong>For GCP platform provided the following details</strong></p>
+<p><img src="./media/image30.png" style="width:5in;height:4.59375in" /></p>
+<p><strong>Network</strong> : Network which will be assigned to the instances in the
+Protection Plan</p>
+<p><strong>Subnet</strong> <strong>:</strong> subnet ID which will assigned to the instances in this
+protection plan.</p>
+<p><strong>Private IP</strong> : Provide the internal IP address for the instance or
+leave blank for auto assignment.</p>
+<p><strong>External IP</strong> <strong>: Select one of the following options if external Ip
+address is required for the selected</strong> <strong>network card else select
+none.</strong></p>
+<p>1. Auto: gcp will assign a Ip address from its public Ip pool.</p>
+<p>2. None: select if external not required.</p>
+<p>3. Reserved IP address, GCP project reserved Ip address, will be listed
+along with above two options. You can select any reserved Ip address
+from the list.</p>
+<p><strong>Network Tier</strong> : Network Service Tiers lets you optimize connectivity
+between systems on the internet and your Google Cloud instances. Premium
+Tier delivers traffic on Google's premium backbone, while Standard Tier
+uses regular ISP networks</p>
+<p><strong>Firewall Tags:</strong> The target tag defines the Google Cloud VMs to which
+the rule applies.</p>
+<p><span id="_Toc1011509363" class="anchor"></span><em>Replication Scripts</em>:</p>
+<p>Datamotive supports executing custom scripts for individual VM and
+complete protection plan as well.IT supports both, pre and post scripts.
+To use pre or post scripts, first upload the pre &amp; post scripts to
+Datamotive management node on recovery and protection site using scripts
+section in settings. Once the scripts are uploaded, they will be visible
+in the pre and post replication scripts option -</p>
+<p><img src="./media/image31.png" style="width:6.75in;height:3.14583in" /></p>
+<p>Pre – The pre script will be executed before every iteration when the
+replication starts. For example, you need to stop the service of a
+particular server before the replication starts</p>
+<p>Post - The post script will be executed after every iteration when the
+replication is completed. For example, you need to export the replicated
+data size to a particular file.</p>
+<p><span id="_Toc1861228247" class="anchor"></span><em>Recovery Scripts</em>:</p>
+<p>Datamotive supports executing custom scripts on recovery of individual
+virtual machine and complete protection plan as well. Datamotive
+supports both, Pre &amp; Post scripts. The scripts are executed on the
+Datamotive management node. To use pre or post scripts, first upload the
+pre &amp; post scripts to Datamotive management node on recovery and
+protection site using scripts section in settings. Once these scripts
+are uploaded, they will start showing up in drop down menu of scripts in
+create &amp; update protection plan wizard. Once configured, the scripts
+will get invoked as below.</p>
+<p><strong>Pre:</strong> Script will run before Datamotive executes recovery workflow
+for a VM when configured as a VM pre-script and before recovery of
+protection plan when configured as Protection Plan pre-script.
+Typically, this script should take care of infrastructure configurations
+required for the virtual machine to come up. For example, configuring
+firewall rules for this VM, creating domains for authentication etc.</p>
+<p><strong>Post:</strong> Script will run after the entity is recovered when configured
+as VM post-script and after Protection Plan recovery when configured as
+Protection Plan post-script. Typically, this script should take care of
+recovered entity specific configurations. For example. Configuring
+application properties with new internal IPs etc.</p>
+<p><strong>Scripts Input:</strong> Currently, Datamotive supports only shell scripts for
+execution. In future, binding for different languages will be provided.
+On invocation the script is provided with following parameters in the
+order.</p>
+<ol>
+<li>
+<p>Pre-script: \&lt;None></p>
+</li>
+<li>
+<p>Post-script: JSON string with following format</p>
+</li>
+</ol>
+<p>{</p>
+<p>[</p>
+<blockquote>
+<p>{</p>
+<p>“Name”: \&lt;VM Name>,</p>
+<p>“IP”: \&lt;Newly assigned IP address of recovered VM>,</p>
+<p>“Username”: \&lt;Login username of the recovered VM>,</p>
+<p>“Password”: \&lt;Login password of the recovered VM></p>
+<p>}</p>
+</blockquote>
+<p>]</p>
+<p>}</p>
+<p><strong>Scripts Output:</strong> The scripts are checked for it’s completion and the
+process exit status is captured. If there are no errors in executing the
+script, Datamotive considers it to be successfully executed. If there
+are errors, the recovery is marked as Partially Completed.</p>
+<p><img src="./media/image32.png"
+style="width:6.61085in;height:3.44792in" /></p>
+<h3 id="boot-order">Boot Order</h3>
+<p>Using boot order configuration defines the boot delay and virtual
+machine boot order.</p>
+<p><strong>Boot Delay</strong> : Delay in seconds between virtual machines specified in
+the boot order</p>
+<p><strong>Boot Order</strong> : Order in which virtual machines will get recovered or
+migrated.</p>
+<p><img src="./media/image33.png"
+style="width:6.56146in;height:4.11458in" /></p>
+<h3 id="replication-configuration">Replication Configuration</h3>
+<p><strong>Start Time</strong> <strong>:</strong> Time from when protection plan replication will
+start.</p>
+<p><strong>Replication interval</strong> <strong>:</strong> Time interval in which the virtual
+machine’s changed data will be replicated.</p>
+<p><strong>Encryption On Wire</strong> <strong>:</strong> Data encryption while transferring from
+source to destination.</p>
+<p><strong>Compression</strong> <strong>:</strong> Data compression while transferring from source to
+destination.</p>
+<p><strong>Dedupe</strong> <strong>:</strong> Enables the data deduplication.</p>
+<p>Note: Deduplication node should be pre-configured on recovery site
+before using this feature.</p>
+<p><strong>Differential Reverse Replication:</strong> Enable this feature if you want to
+allow recovered machines from the recovery site to replicate back to its
+original source site.</p>
+<p><img src="./media/image34.png"
+style="width:6.38333in;height:3.98958in" /></p>
+<p><span id="_Toc2097133919" class="anchor"></span>Scripts</p>
+<p><strong>Replication Scripts:</strong> These are scripts which would run before or
+after every replication iteration.</p>
+<ul>
+<li>
+<p><strong>Pre Script:</strong> The pre script will be executed before every
+    iteration when the replication starts for this protection plan.</p>
+</li>
+<li>
+<p><strong>Post Script-</strong> The post script will be executed after every
+    iteration when the replication is completed for this protection
+    plan.</p>
+</li>
+</ul>
+<p><strong>Recovery Scripts:</strong> This are scripts which would run before or after
+the recovery of the VM/instance</p>
+<ul>
+<li>
+<p><strong>Pre Script:</strong> Pre scripts which will run before recovery workflow
+    for this protection plan.</p>
+</li>
+<li>
+<p><strong>Post Script:</strong> Post scripts which will run after all the instances
+    are recovered on recovery site.</p>
+</li>
+</ul>
+<p><img src="./media/image35.png" style="width:5in;height:2.48958in" /></p>
+<h3 id="summary">Summary</h3>
+<p>Review the summary for the protection plan and click finish to configure
+the protection plan. On successful configuration, replication jobs will
+start for the virtual machines selected for this protection plan.</p>
+<p><img src="./media/image36.png"
+style="width:6.30435in;height:3.92708in" /></p>
+<h2 id="protection-plan-actions">Protection Plan Actions</h2>
+<p>Action on protection plan is available through the protection plan list
+and through the protection plan details page. Action will get enable
+depending upon the context and state of the protection plan.</p>
+<p>Actions available through the protection plan data grid view.</p>
+<p><img src="./media/image37.png"
+style="width:6.26042in;height:0.83333in" /></p>
+<p>Actions available through the protection plan details</p>
+<p><strong>Actions for source site</strong> <strong>Actions for recovery site</strong></p>
+<p><img src="./media/image38.png"
+style="width:2.28125in;height:2.28125in" />
+<img src="./media/image39.png"
+style="width:2.17975in;height:2.30208in" /></p>
+<p><strong>New:</strong> Click to configure new protection plan.</p>
+<p><strong>Edit:</strong> Select protection plan from the list and click edit. Edit
+protection plan wizard will get open.</p>
+<p>In edit protection following operations were allowed</p>
+<ul>
+<li>
+<p>Add new virtual machine to plan.</p>
+</li>
+<li>
+<p>Remove protected virtual machine from the plan. This action gets
+    completed on next successful iteration of the protection plan. The
+    VM shows as “Removing” till that time.</p>
+</li>
+<li>
+<p>Recovery configuration modification.</p>
+</li>
+<li>
+<p>Boot order configuration &amp; modification.</p>
+</li>
+<li>
+<p>Replication configuration</p>
+</li>
+<li>
+<p>Scripts modification.</p>
+</li>
+</ul>
+<p><strong>Start</strong>: Start Replication for the selected protection plan.</p>
+<p><strong>Stop:</strong> Stop the protection plan replication.</p>
+<p><strong>Remove:</strong> To remove the protection plan, click on the Remove button
+and it will ask for the confirmation. On confirm, the protection plan
+will get deleted. Note protection plan should be in stopped state with
+no running jobs.</p>
+<h1 id="recovery">Recovery</h1>
+<p>To initiate recovery or migration go to</p>
+<p>Home —> Configuration —> Protection Plan -> Click on the protection
+plan on which recovery or migration operation need to perform.</p>
+<p>Click on the Actions button. All available operation will get listed.</p>
+<h2 id="_11"></h2>
+<h2 id="test-recovery">Test Recovery</h2>
+<h3 id="prerequisite_1"><strong>Prerequisite</strong></h3>
+<p>At least one replication job has been completed successfully for the
+virtual machine and the sync status for that job should be In-synch.</p>
+<p><strong>Virtual Machines</strong></p>
+<p>Select the virtual machines for the test recovery. Provide the
+credentials to execute the pre and post scripts. If there are no scripts
+for the virtual machine, then credentials are not mandatory.</p>
+<p><img src="./media/image40.png" style="width:6.48125in;height:4.05069in"
+alt="A screenshot of a computer Description automatically generated with medium confidence" /></p>
+<p>Credentials are not stored anywhere and only been used for the workflow.</p>
+<p>NOTE: For Windows recovery on AWS, Credentials are mandatory even if
+there are no scripts.</p>
+<p><strong>Recovery Configuration</strong></p>
+<p><strong>Install System Agents:</strong> For AWS, install OS agents like EC2Launch and
+SSMAgents. For GCP, install</p>
+<p>google os-config and compute-engine agents.</p>
+<p><strong>Install Cloud Packages</strong>: For AWS. install AWS Cloud SDK and for GCP,
+install GCP Cloud SDK.</p>
+<p><img src="./media/image41.png" style="width:6.48125in;height:4.03611in"
+alt="Graphical user interface, application Description automatically generated" /></p>
+<h4 id="_12"></h4>
+<h4 id="summary_1">Summary</h4>
+<p><img src="./media/image42.png" style="width:6.5in;height:1.05739in"
+alt="Graphical user interface, application Description automatically generated" /></p>
+<p>Review the summary and click on finish to start the test recovery. This
+will start the test recovery jobs for the selected virtual machines and
+jobs can be monitored in the Home —> Jobs —> Recovery.</p>
+<p><img src="./media/image43.png" style="width:6.48125in;height:4.03611in"
+alt="A screenshot of a computer Description automatically generated with medium confidence" /></p>
+<p><strong>Test Recovery validation</strong></p>
+<p>Check the status of the virtual machine's recovery jobs in the Home —>
+Jobs —> Recovery.</p>
+<p>Check the Cloud Console (AWS and GCP) for the instances with the virtual
+machines name and their running status. AWS also has status checks.</p>
+<p>On successful completion of recovery jobs, IP Address can be found for
+the new running instances.</p>
+<p>For Windows machines, download the RDP file by click the download button
+right next to the IP address and check the windows machine through RDP.</p>
+<p>For Linux machines, copy the IP address and check the linux machine
+through ssh.</p>
+<p>Note: Once the validations are completed, Datamotive recommends to
+remove the Test Recovered instance.</p>
+<h2 id="_13"></h2>
+<h2 id="full-recovery">Full Recovery</h2>
+<p>To perform full recovery after disaster in the source site, open
+Management Application on Recovery Site and go to Home —> Configuration
+—> Protection Plan –> Click on the Protection plan.</p>
+<p>Click on Action button and select <strong>Recovery</strong></p>
+<p><strong>Prerequisite:</strong></p>
+<p>At least one replication job has been completed successfully for the
+virtual machine and the sync status for that job should be init-success.</p>
+<p><strong>Virtual Machines</strong></p>
+<p>Select the virtual machines for the test recovery. Provide the
+credentials to execute the pre and postscripts. If there are no scripts
+for the virtual machine, then credentials are not mandatory.</p>
+<p>Credentials are not stored anywhere and only been used for the workflow.</p>
+<p>NOTE: For Windows recovery on AWS, Credentials are mandatory even if
+there are no scripts.</p>
+<p><img src="./media/image44.png" style="width:6.48125in;height:4.03264in"
+alt="A screenshot of a computer Description automatically generated with medium confidence" /></p>
+<p><strong>Recovery Configuration</strong></p>
+<p><strong>Install System Agents:</strong> For AWS, install OS agents like EC2Launch and
+SSMAgents. For GCP, install</p>
+<p>google os-config and compute-engine agents.</p>
+<p><strong>Install Cloud Packages</strong>: For AWS. install AWS Cloud SDK and for GCP,
+install GCP Cloud SDK.</p>
+<p><img src="./media/image41.png" style="width:6.48125in;height:4.03611in"
+alt="Graphical user interface, application Description automatically generated" /></p>
+<p><strong>Recovery Summary</strong></p>
+<p><img src="./media/image45.png" style="width:6.5in;height:4.46528in" /></p>
+<p>Review the summary and click on finish to start the test recovery. This
+will start the test recovery jobs for the selected virtual machines and
+jobs can be monitored in the Home —> Jobs —> Recovery jobs.</p>
+<p>NOTE: If the replication job is on-going at the time of Full Recovery,
+then the instance will be recovered from the last known good state.</p>
+<p><img src="./media/image46.png" style="width:6.5in;height:0.4005in" /><img src="./media/image47.png" style="width:6.5in;height:1.83264in" /></p>
+<h2 id="migration">Migration</h2>
+<p>To migrate the workloads, go to Home —> Configuration —> Protection
+Plan à Click on the protection on which migration need to perform, on
+the Recovery site.</p>
+<p>Click on actions buttons and select <strong>Migrate</strong></p>
+<p><strong>Prerequisite:</strong></p>
+<p>In case of migration, to make sure there is no loss of data, the virtual
+machine(s) should be in power off state and the last replication jobs
+should be successfully completed with zero changed data.</p>
+<p><img src="./media/image48.png" style="width:6.5in;height:1.2842in" /></p>
+<p><strong>Virtual Machines</strong></p>
+<p><img src="./media/image49.png" style="width:6.48125in;height:4.04792in"
+alt="A screenshot of a computer Description automatically generated with medium confidence" /></p>
+<p>Select the virtual machines and provide the credentials if there are
+pre- or post-configured for these virtual machines.</p>
+<p>Note: For Windows machine in AWS, credentials are mandatory.</p>
+<p><strong>Recovery Configuration</strong></p>
+<p><strong>Install System Agents:</strong> For AWS, install OS agents like EC2Launch and
+SSMAgents. For GCP, install google os-config and compute-engine agents.</p>
+<p><strong>Install Cloud Packages</strong>: For AWS. install AWS Cloud SDK and for GCP,
+install GCP Cloud SDK.</p>
+<h3 id="_14"></h3>
+<h3 id="summary_2"><strong>Summary</strong></h3>
+<p>Review the summary and click on finish to start the <strong>Migration</strong>. This
+will start the test migration jobs for the selected virtual machines and
+jobs can be monitored in the Home —> Jobs —> Recovery jobs.</p>
+<p><img src="./media/image50.png" style="width:6.48125in;height:4.03958in"
+alt="A screenshot of a computer Description automatically generated" /></p>
+<p><img src="./media/image51.png" style="width:6.5in;height:0.85072in" />Job's
+view after migration completed</p>
+<h1 id="jobs_1">Jobs</h1>
+<p>Navigation: Home --> Jobs</p>
+<p>You can use the Jobs page to monitor the overall status of replication
+and recovery jobs.</p>
+<h2 id="replication">Replication</h2>
+<p>The Replication Jobs tab provides details about all the running,
+completed, and failed replication iterations. The Replication job
+section has the following sub-section to show replication jobs base on
+the grouping criteria.</p>
+<h3 id="protection-plan_1">Protection Plan</h3>
+<p>Navigation: Home --> Jobs --> Select Protection Plan.</p>
+<p>Protection plan replication details provide a list of protection plans.
+Each protection plan has its associated virtual machine replication
+information.
+<img src="./media/image52.png" style="width:6.84218in;height:2.475in"
+alt="Graphical user interface, application Description automatically generated" /></p>
+<p>click <img src="./media/image53.png"
+style="width:0.35756in;height:0.37544in" /> icon or title to view
+protection plan level details.</p>
+<p><img src="./media/image54.png" style="width:6.48125in;height:1.51111in"
+alt="Graphical user interface, application Description automatically generated" /></p>
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 72%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Column Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Name</td>
+<td>Name of virtual machine associated with the protection plan.</td>
+</tr>
+<tr class="even">
+<td>Iteration</td>
+<td>The total number of replication iterations completed.</td>
+</tr>
+<tr class="odd">
+<td>Total Changed</td>
+<td>Total data changed.</td>
+</tr>
+<tr class="even">
+<td>Total Transferred</td>
+<td>Total data transferred to the replication server.</td>
+</tr>
+<tr class="odd">
+<td>Data Reduction (%)</td>
+<td>Overall data reduction.</td>
+</tr>
+<tr class="even">
+<td>Job Status</td>
+<td><p>Status of latest replication iteration.</p>
+<ol type="1">
+<li><p><strong>Completed</strong>: Replication was completed
+successfully.</p></li>
+<li><p><strong>Started</strong>: Replication is running.</p></li>
+<li><p><strong>Partially Completed</strong>: Replication completed with
+errors.</p></li>
+<li><p><strong>Failed</strong>: Replication failed.</p></li>
+</ol></td>
+</tr>
+<tr class="odd">
+<td>Sync Status</td>
+<td><p>Virtual machine sync status.</p>
+<ul>
+<li><p><strong>Init-success</strong>: The first iteration completed
+successfully.</p></li>
+<li><p><strong>Init-in-progress</strong>: The first iteration is
+running.</p></li>
+<li><p><strong>Init-failed</strong>: The first iteration
+failed.</p></li>
+<li><p><strong>In-sync</strong>: Iteration is completed within
+configured replication interval time.</p></li>
+<li><p><strong>Exceeded interval</strong>: Iteration is completed but
+took more time than configured replication interval time.</p></li>
+<li><p><strong>Sync-failed</strong>: Replication iteration
+failed.</p></li>
+</ul></td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="virtual-machines_1">Virtual Machines</h3>
+<p>Provides a list of replication details for each protected virtual
+machine.</p>
+<p><img src="./media/image55.png" style="width:6.48125in;height:1.81667in"
+alt="A screenshot of a computer Description automatically generated with medium confidence" />Note:
+For failed jobs, hover on the Sync Status column to get details of the
+status. Hover on the Replication Duration column to get Replication
+start &amp; end time.</p>
+<table>
+<thead>
+<tr>
+<th>Column Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Virtual Machine</td>
+<td>Name of the protected virtual machine.</td>
+</tr>
+<tr>
+<td>Iteration</td>
+<td>Total number of replication iterations completed.</td>
+</tr>
+<tr>
+<td>Changed</td>
+<td>Total changed data discovered.</td>
+</tr>
+<tr>
+<td>Transferred</td>
+<td>Total data transferred to the replication server.</td>
+</tr>
+<tr>
+<td>Replication Duration</td>
+<td>Time took to complete iteration.</td>
+</tr>
+<tr>
+<td>Job Status</td>
+<td>Status of replication iteration.</td>
+</tr>
+<tr>
+<td>Sync Status</td>
+<td>Virtual machine sync status.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="disks">Disks</h3>
+<p>Provide a list of replication details for each protected virtual machine
+disk/volume.</p>
+<p><img src="./media/image56.png" style="width:6.7903in;height:2.12653in"
+alt="Graphical user interface, text, application Description automatically generated" /></p>
+<table>
+<thead>
+<tr>
+<th>Column Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Virtual Machine</td>
+<td>Name of the protected virtual machine.</td>
+</tr>
+<tr>
+<td>Disk Id</td>
+<td>Disk id of virtual machine.</td>
+</tr>
+<tr>
+<td>Data Changed</td>
+<td>Total changed data discovered for the disk.</td>
+</tr>
+<tr>
+<td>Data Transferred</td>
+<td>Total data transferred to the replication server.</td>
+</tr>
+<tr>
+<td>Replication Duration</td>
+<td>Time took to complete iteration.</td>
+</tr>
+<tr>
+<td>Job Status</td>
+<td>Status of replication iteration.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="recovery-jobs">Recovery Jobs</h2>
+<p>The Recovery jobs tab provides details about all the running, completed
+and failed recovery operations.</p>
+<h3 id="protection-plan_2">Protection Plan</h3>
+<p>Protection plan recovery details provide a list of protection plans.
+Each protection plan has its</p>
+<p>associated recovered (Full / Test) or migrated virtual machine
+information.</p>
+<p><img src="./media/image57.png" style="width:6.48125in;height:0.95486in"
+alt="Background pattern Description automatically generated" /></p>
+<p>click
+<img src="./media/image53.png" style="width:0.35756in;height:0.37544in"
+alt="A picture containing graphical user interface Description automatically generated" />
+icon or title to view protection plan level details.</p>
+<p><img src="./media/image58.png"
+style="width:6.97361in;height:2.22153in" /></p>
+<table>
+<thead>
+<tr>
+<th>Column Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Name</td>
+<td>Name of virtual machine associated with the protection plan.</td>
+</tr>
+<tr>
+<td>Duration</td>
+<td>The time required to complete the recovery.</td>
+</tr>
+<tr>
+<td>Recovery Type</td>
+<td>Recovery Type (Full Recovery, Test Recovery or Migration)</td>
+</tr>
+<tr>
+<td>Status</td>
+<td>Recovery/Migration status.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtual-machines_2">Virtual Machines</h3>
+<p>Provides a list of recovered (Test/Full) or migrated virtual machines.</p>
+<p><img src="./media/image59.png" style="width:6.48125in;height:0.95972in"
+alt="Graphical user interface, application Description automatically generated" /></p>
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 72%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Column Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Virtual Machine</td>
+<td>Name of virtual machine.</td>
+</tr>
+<tr class="even">
+<td>Duration</td>
+<td>The time required to complete the recovery/migration.</td>
+</tr>
+<tr class="odd">
+<td>Recovery Type</td>
+<td>Recovery Type (Full Recovery, Test Recovery or Migration)</td>
+</tr>
+<tr class="even">
+<td>Job Status</td>
+<td><p>Recovery job status.</p>
+<ul>
+<li><p><strong>Completed</strong>: Recovery completed
+successfully.</p></li>
+<li><p><strong>Started</strong>: Recovery job is running.</p></li>
+<li><p><strong>Partially Completed</strong>: Recovery completed with
+errors.</p></li>
+<li><p><strong>Failed</strong>: Recovery failed.</p></li>
+</ul></td>
+</tr>
+<tr class="odd">
+<td>IP Address</td>
+<td>Recovered virtual machine IP address.</td>
+</tr>
+</tbody>
+</table>
+
+<h1 id="monitor">Monitor</h1>
+<p>Monitor Option is used to see the events, alerts and customized reports
+as they are generated. </p>
+<p>In Monitor, there are 3 options-  </p>
+<ul>
+<li>
+<p>Events </p>
+</li>
+<li>
+<p>Alerts </p>
+</li>
+<li>
+<p>Reports  </p>
+</li>
+</ul>
+<h3 id="events_1">Events</h3>
+<p>Navigation – Monitor -> Events</p>
+<p>Events are Datamotive server or user generated incidents which are
+generated automatically when they occur. </p>
+<p>There are 4 types of Events - </p>
+<table>
+<thead>
+<tr>
+<th>Information   </th>
+<th>This are events occurred just for the information </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Warning  </td>
+<td>This are events occurred to take precautionary action </td>
+</tr>
+<tr>
+<td>Error  </td>
+<td>This are events occurred when there is an issue and needs to be addressed</td>
+</tr>
+<tr>
+<td>Critical  </td>
+<td>This are events occurred when there is an issue and that needs to be addressed at the earliest </td>
+</tr>
+</tbody>
+</table>
+<p>To see <strong>“Events”</strong>, go to <strong>“Monitor”</strong> option and click on
+<strong>“Events”</strong> <img src="./media/image60.png"
+style="width:6.47917in;height:1.83971in" /></p>
+<p>In events, the following information is displayed –</p>
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>The date and time when the event has occurred</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Topic</td>
+<td>The topic of the event</td>
+</tr>
+<tr>
+<td>Level</td>
+<td>The level of the event occurred (Ex. Information, warning, Error, Critical)</td>
+</tr>
+<tr>
+<td>Event type</td>
+<td>the type of the event occurred</td>
+</tr>
+<tr>
+<td>Description</td>
+<td>A short description about the event occurred</td>
+</tr>
+<tr>
+<td>User</td>
+<td>User who initiated the event</td>
+</tr>
+</tbody>
+</table>
+<h3 id="alerts">Alerts</h3>
+<p>Navigation – Monitor -> Alerts</p>
+<p>Alerts are Datamotive server generated warning messages based on the
+events and are tagged with the severity level they occur.</p>
+<p>The severity of the alerts is of 4 types - </p>
+<table>
+<thead>
+<tr>
+<th>Information   </th>
+<th>These are events for the information </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Warning  </td>
+<td>These are events which require taking precautionary measures </td>
+</tr>
+<tr>
+<td>Error  </td>
+<td>These are events which require user attention to address the issue</td>
+</tr>
+<tr>
+<td>Critical  </td>
+<td>These are events which require immediate user attention to address the issue</td>
+</tr>
+</tbody>
+</table>
+<p><img src="./media/image61.png"
+style="width:6.57292in;height:1.89206in" /></p>
+<p>In Alerts, the following information is displayed –</p>
+<table>
+<thead>
+<tr>
+<th>Title</th>
+<th>The headline/short description for the alert generated</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Severity</td>
+<td>The condition at which the alerts are generated</td>
+</tr>
+<tr>
+<td>Created</td>
+<td>The date and time at which the alerts are generated</td>
+</tr>
+<tr>
+<td>Last updated</td>
+<td>The date and time at which the alert was checked by the Datamotive server</td>
+</tr>
+<tr>
+<td>Status</td>
+<td>The symbol representing the severity of the alert</td>
+</tr>
+</tbody>
+</table>
+<p>When we click on the <strong>Title or Status</strong> of a particular alert a window
+will pop-up with a description regarding that particular alert.</p>
+<p>It consists of the 2 tabs –</p>
+<table>
+<thead>
+<tr>
+<th>Info</th>
+<th>Information about the alert generated</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Associated Event</td>
+<td>Event associated with the generated alert</td>
+</tr>
+</tbody>
+</table>
+<p><img src="./media/image62.png"
+style="width:6.69904in;height:3.12819in" /></p>
+<p>The info tab consists of the following –</p>
+<table>
+<thead>
+<tr>
+<th>Severity</th>
+<th>The condition at which the alerts are generated</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Event Type</td>
+<td>The type of event that is associated with the alert</td>
+</tr>
+<tr>
+<td>Description</td>
+<td>A short description about the event occurred</td>
+</tr>
+<tr>
+<td>Created</td>
+<td>The date and time at which the alerts are generated</td>
+</tr>
+<tr>
+<td>Updated</td>
+<td>The date and time at which the alert was checked by the Datamotive server</td>
+</tr>
+<tr>
+<td>Occurrence</td>
+<td>The frequency at which the alerts is occurred</td>
+</tr>
+<tr>
+<td>Acknowledge Message</td>
+<td>User inputs when the alert is addressed</td>
+</tr>
+</tbody>
+</table>
+<p>The associated event consists of the following –</p>
+<table>
+<thead>
+<tr>
+<th>Event ID</th>
+<th>The ID of the event associated with the alerts</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Level</td>
+<td>The level of the event occurred (Ex. Information, warning, Error, Critical)</td>
+</tr>
+<tr>
+<td>Topic</td>
+<td>The topic of the event</td>
+</tr>
+<tr>
+<td>Date</td>
+<td>The date and time when the event has occurred</td>
+</tr>
+<tr>
+<td>Event Type</td>
+<td>The type of the event occurred</td>
+</tr>
+<tr>
+<td>Description</td>
+<td>A short description about the event occurred</td>
+</tr>
+<tr>
+<td>Acknowledge Message</td>
+<td>User inputs when that event is addressed</td>
+</tr>
+</tbody>
+</table>
+<p>User can perform specific action (system generated) or just acknowledge
+the alert without taking any action. Certain Alerts, mandate user action
+to resolve the issue. Once the alert is acknowledged or action is taken
+by the system, the status of the Alert changes.</p>
+<h3 id="reports">Reports</h3>
+<p>Navigation – Monitor -> Report</p>
+<p>Datamotive provides mechanism to generate Reports listing Nodes, Events,
+Alerts or Jobs in the system. To generate reports, go to <strong>“Monitor”</strong>
+Tab and click on <strong>“Reports”</strong> option-</p>
+<p><img src="./media/image63.png"
+style="width:6.83333in;height:2.18993in" /></p>
+<p>To generate a Report, click on <strong>“Filter”</strong> option.</p>
+<p>Reports can be gene<br />
+Script will run before Datamotive executes recovery workflow for a VM
+when configured as a VM pre-script and before recovery of protection
+plan when configured as Protection Plan pre-script. Typically, this
+script should take care of infrastructure configurations required for
+the virtual machine to come up. E.g. configuring firewall rules for this
+VM, creating domains for authentication etc. rated for 2 types –</p>
+<p>Overall System data, all the system data is included in the report</p>
+<p>Protected Plans, selected protection plan data is included in the
+report.</p>
+<p><img src="./media/image64.png"
+style="width:7.11458in;height:3.21638in" /></p>
+<ul>
+<li>
+<p>Click on the components which you want to include in the report.</p>
+</li>
+<li>
+<p>For Protection plan dropdown select if you want to include all
+    protection plan details in the report. Or select a specific plan
+    whose report is required.</p>
+</li>
+</ul>
+<p>Once the options are selected, click on <strong>“Generate Report”</strong> for the
+report to be generated.</p>
+<p><img src="./media/image65.png"
+style="width:6.80163in;height:2.56512in" /></p>
+<ol>
+<li>Click on export button to export data to .PDF format.</li>
+</ol>
+<h1 id="settings">Settings</h1>
+<p>To configure your environment, you can use settings section. Settings
+section will allow you to configure email, Bandwidth throttling,
+license, and tech support.</p>
+<h2 id="_15"></h2>
+<h2 id="license">License</h2>
+<p>Location: Home —> Settings —> License</p>
+<p>License is required to perform the recovery and migrations operations.
+By default, system will provide a trial license which has a fixed number
+of migrations and recoveries allowed. Once you perform any migration or
+recovery operation the respective consumption will reflect in its
+associated consumption bar.</p>
+<p><img src="./media/image66.png" style="width:2.42678in;height:0.95821in"
+alt="Graphical user interface, text, application Description automatically generated" />
+<img src="./media/image67.png" style="width:2.18196in;height:0.97717in"
+alt="Graphical user interface, text, application Description automatically generated" /></p>
+<p><img src="./media/image68.png" style="width:7.00486in;height:1.73471in"
+alt="Graphical user interface, application, Teams Description automatically generated" /></p>
+<h2 id="license-installation">License installation</h2>
+<ul>
+<li>
+<p>For new license installation, contact the <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#115;&#117;&#112;&#112;&#111;&#114;&#116;&#64;&#100;&#97;&#116;&#97;&#109;&#111;&#116;&#105;&#118;&#101;&#46;&#105;&#111;">&#115;&#117;&#112;&#112;&#111;&#114;&#116;&#64;&#100;&#97;&#116;&#97;&#109;&#111;&#116;&#105;&#118;&#101;&#46;&#105;&#111;</a>
+    with following information.</p>
+</li>
+<li>
+<p>Node Key: You can get node key through the about section of the
+    application.</p>
+</li>
+</ul>
+<p><img src=".//media/image5d.png" style="width:5.32225in;height:3.02046in"
+alt="A screenshot of a computer Description automatically generated with medium confidence" /></p>
+<ul>
+<li>
+<p>Along with node key provide the details requested by the support
+    team.</p>
+</li>
+<li>
+<p>On successful credential validation Datamotive team will provide you
+    a license file.</p>
+</li>
+<li>
+<p>Once you receive the license form the Datamotive team, navigate to
+    the settings à license</p>
+</li>
+<li>
+<p>Click on +New button to install the received license. A new modal
+    window will popup.</p>
+</li>
+</ul>
+<p><img src=".//media/image5e.png" style="width:6.22917in;height:2.91535in"
+alt="Graphical user interface, application Description automatically generated" /></p>
+<ul>
+<li>
+<p>Click on the upload icon to select the license file.</p>
+</li>
+<li>
+<p>Post successful validation the detail of the license is shown.</p>
+</li>
+</ul>
+<p><img src=".//media/image5f.png" style="width:6.22917in;height:2.90201in"
+alt="Graphical user interface, application Description automatically generated" /></p>
+<ul>
+<li>
+<p>If all the license details look good, then click install.</p>
+</li>
+<li>
+<p>New license will get install in the system.</p>
+</li>
+</ul>
+<p><img src=".//media/image60.png" style="width:6.22917in;height:1.52566in"
+alt="Graphical user interface, application Description automatically generated" /></p>
+<ul>
+<li>If multiple license available in the system, click on the action
+    button to active or deactivate the license.</li>
+</ul>
+<h2 id="scripts">Scripts</h2>
+<p>Location: Home —>Settings —>Scripts</p>
+<p>Datamotive supports executing custom scripts on recovery of individual
+virtual machine and complete protection plan as well. Datamotive
+supports both, Pre &amp; Post scripts. The scripts are executed on the
+Datamotive management node.</p>
+<p><img src="./media/image73.png" style="width:6.375in;height:2.36406in" /></p>
+<p>To configure new script, follow below steps.</p>
+<ul>
+<li>
+<p>Click on the +New button, new popup will be shown to configure
+    script.</p>
+</li>
+<li>
+<p>Select the script file for the upload</p>
+</li>
+<li>
+<p>Select Pre or Post script type</p>
+</li>
+</ul>
+<blockquote>
+<p><strong>Pre</strong>: Script will run before Datamotive executes recovery workflow
+for a VM when configured as a VM pre-script and before recovery of
+protection plan when configured as Protection Plan pre-script.
+Typically, this script should take care of infrastructure
+configurations required for the virtual machine to come up. For
+example, configuring firewall rules for this VM, creating domains for
+authentication etc.</p>
+<p><strong>Post</strong>: Script will run after the entity is recovered when
+configured as VM post-script and after Protection Plan recovery when
+configured as Protection Plan post-script. Typically, this script
+should take care of recovered entity specific configurations. For
+example. Configuring application properties with new internal IPs etc.</p>
+<p>Scripts Input: Currently, Datamotive supports only shell scripts for
+execution. In future, binding for different languages will be
+provided. On invocation the script is provided with following
+parameters in the order.</p>
+<p>Pre-script: \&lt;None></p>
+<p>Post-script: JSON string with following format</p>
+<p>{</p>
+<p>[</p>
+<p>{</p>
+<p>“Name”: \&lt;VM Name>,</p>
+<p>“IP”: \&lt;Newly assigned IP address of recovered VM>,</p>
+<p>“Username”: \&lt;Login username of the recovered VM>,</p>
+<p>“Password”: \&lt;Login password of the recovered VM></p>
+<p>}</p>
+<p>]</p>
+<p>}</p>
+<p><strong>Scripts Output</strong>: The scripts are checked for it’s completion and
+the process exit status is captured. If there are no errors in
+executing the script, Datamotive considers it to be successfully
+executed. If there are errors, the recovery is marked as Partially
+Completed.</p>
+</blockquote>
+<ul>
+<li>Provide some short description about the script (optional)</li>
+</ul>
+<pre><code>&lt;!-- --&gt;
+</code></pre>
+<ul>
+<li>
+<p>Enter logged in user password and click <strong>Save button</strong></p>
+</li>
+<li>
+<p>Post successful validation script will get uploaded and can be used
+    in protection plan for pre or post script</p>
+</li>
+</ul>
+<blockquote>
+<p><img src="./media/image74.png"
+style="width:6.82292in;height:2.53016in" /></p>
+</blockquote>
+<p>Following actions are available for a uploaded script.</p>
+<ul>
+<li>
+<p><strong>Edit:</strong> Click on edit icon to edit script.</p>
+</li>
+<li>
+<p><strong>Remove:</strong> Click on remove icon to remove script.</p>
+</li>
+</ul>
+<h2 id="email">Email</h2>
+<p>Location: Home —>Settings —> Email</p>
+<p>Email setting allow you to configure the email and recipients details so
+that Datamotive can send you the critical alerts details over the email.</p>
+<p>Configuration.</p>
+<ul>
+<li>
+<p>Click on the Configure now to open email configuration window.</p>
+</li>
+<li>
+<p>Provide the required details and click <strong>Configure.</strong></p>
+</li>
+</ul>
+<p><img src=".//media/image61.png" style="width:5.31184in;height:5.30142in"
+alt="Graphical user interface, application Description automatically generated" /></p>
+<table>
+<colgroup>
+<col style="width: 28%" />
+<col style="width: 71%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Email Address</th>
+<th>Email address used to send the communication alerts.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Email Password</td>
+<td><p>Email Password for the authentication.</p>
+<p>Note: System will encrypt these details before saving them in the
+database.</p></td>
+</tr>
+<tr class="even">
+<td>SMTP Host</td>
+<td>SMTP hostname or SMTP server IP address</td>
+</tr>
+<tr class="odd">
+<td>SMTP Port</td>
+<td>SMTP port number</td>
+</tr>
+<tr class="even">
+<td>SSL Certificate Verification</td>
+<td>Click if your smtp server is secure and SSL certificate is installed
+on it.</td>
+</tr>
+<tr class="odd">
+<td>Replicate Configuration</td>
+<td>If multiple sites were already connected to the node from where you
+are configuring the email and you want same settings should get
+replicate on all the connected sites, then enable this option.</td>
+</tr>
+</tbody>
+</table>
+
+<ul>
+<li>Post email Configuration you can view the configured details along
+    with <strong>Email Recipients</strong> section get enabled.</li>
+</ul>
+<p><img src=".//media/image62.png" style="width:5.72917in;height:2.04784in"
+alt="Graphical user interface, application Description automatically generated" /></p>
+<ul>
+<li>To add new recipient, click on +New icon</li>
+</ul>
+<p><img src=".//media/image63.png" style="width:5.30142in;height:2.60384in"
+alt="Graphical user interface, application, Teams Description automatically generated" /></p>
+<ul>
+<li>
+<p>Provide email address of the recipient</p>
+</li>
+<li>
+<p>Select the events for which you want to send email to recipients.</p>
+</li>
+<li>
+<p>Click configure to add new recipient in the email list for
+    subscribed events.</p>
+</li>
+</ul>
+<p><img src=".//media/image64.png" style="width:5.72917in;height:1.07303in"
+alt="Graphical user interface, application Description automatically generated" /></p>
+<ul>
+<li>Using action options, you can reconfigure the recipient's details or
+    can delete them from the list.</li>
+</ul>
+<p><span id="_Toc1427927342" class="anchor"></span>Roles</p>
+<p>Location: Home —>Settings —>Roles</p>
+<p>Privileges define rights to perform action on an entity of Datamotive.
+Whereas the role is a set of privileges. Roles are assigned to the user.
+By default, Datamotive generate following three roles.</p>
+<ol>
+<li>
+<p>administrator: With <strong>Super Admin</strong> role, user can view and perform
+    all the available operations in the system</p>
+</li>
+<li>
+<p>DRadmin: With <strong>DR Admin</strong> role, user can perform operations related
+    to protection plan and recovery/migration</p>
+</li>
+<li>
+<p>Guest: <strong>Read-only</strong> user can view all available views but can’t
+    perform any operation.</p>
+</li>
+</ol>
+<p><img src="./media/image79.png"
+style="width:6.93925in;height:3.09375in" /></p>
+<p>On Left side grid all roles are listed. Click on the role o load its
+associated privileges and users.</p>
+<p><span id="_Toc1763777754" class="anchor"></span>Users</p>
+<p>Location: Home —>Settings —>Users</p>
+<p>Users lists provide all registered users with their assign roles.</p>
+<p><img src="./media/image80.png"
+style="width:7.05208in;height:2.60046in" /></p>
+<h2 id="tech-support">Tech Support</h2>
+<p>Location: Home —>Settings —>Tech Support</p>
+<p>Support bundle is useful to triage the any issue occurred in the system.</p>
+<p><img src="./media/image81.png" style="width:7.11958in;height:1.72537in"
+alt="Graphical user interface, text, application Description automatically generated" /></p>
+<p>To collect new support bundle, follow below steps.</p>
+<ol>
+<li>
+<p>Click on the +Generate button, new popup will be shown to trigger
+    bundle creation.</p>
+</li>
+<li>
+<p>Provide a proper description specifying why new support bundle
+    generation is requested and click <strong>Generate Bundle</strong></p>
+</li>
+</ol>
+<p><img src=".//media/image65.png" style="width:5.27017in;height:2.53093in"
+alt="Graphical user interface, application Description automatically generated" /></p>
+<ol>
+<li>
+<p>Post system accepts the generate bundle request it will collect all
+    the required info from the node.</p>
+</li>
+<li>
+<p>Note: This operation may take several minutes complete, you can
+    check the status of bundle in the list. (Click Refresh to update the
+    status)</p>
+</li>
+<li>
+<p>Once support bundle generation completed, in the action section you
+    will get a download icon.</p>
+<ol>
+<li>
+<p>Use Download icon to download the support
+    bundle<img src=".//media/image66.png" style="width:1.91643in;height:1.16652in"
+    alt="Graphical user interface, application Description automatically generated" /></p>
+</li>
+<li>
+<p>Use delete icon to remove the support bundle from the system</p>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="throttling">Throttling</h2>
+<p>Location: Home —>Settings —> Throttling</p>
+<p>Throttling allows you the configure the network usage as per
+requirement. By default, system will use networks full capacity to
+download or upload the replication data across the sites. If you want to
+restrict the bandwidth, use then bandwidth throttling configuration is
+required.</p>
+<p><img src=".//media/image67.png"
+style="width:6.22917in;height:2.3125in" /></p>
+<ul>
+<li>Provide the below details and click configure to apply bandwidth
+    throttling.</li>
+</ul>
+<table>
+<colgroup>
+<col style="width: 28%" />
+<col style="width: 71%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Enable Limit</th>
+<th><p>Enable the option if bandwidth throttling is required.</p>
+<p>Once enable you can provide the bandwidth usage details by
+scrolling</p>
+<p><img src=".//media/image68.png"
+style="width:4.36404in;height:0.99988in" /></p>
+<p>the usage bar or by entering the values in the usage field.</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Enable Time Limit</td>
+<td><p>If time limit base usage configuration required, then enable the
+option.</p>
+<p><img src=".//media/image69.png"
+style="width:3.94742in;height:0.86448in" /></p>
+<p>Once enable you can provide the bandwidth limits along with its
+<strong>start and end time</strong> specification over which time base
+limits will be applicable.</p></td>
+</tr>
+<tr class="even">
+<td>Apply To All Replication Nodes</td>
+<td>If you want to apply same setting on all the replication nodes, then
+enable this option.</td>
+</tr>
+</tbody>
+</table>
+
+<p><img src=".//media/image6a.png" style="width:6.22917in;height:0.79558in"
+alt="Graphical user interface, application Description automatically generated" /></p>
+<ul>
+<li>If you want to configure each replication node bandwidth throttling,
+    then click on</li>
+</ul>
+<p><img src=".//media/image6b.png" style="width:1.47898in;height:1.44774in"
+alt="Graphical user interface, application Description automatically generated" /></p>
+<ul>
+<li>
+<p>icon to configure the node specific usage limits.</p>
+</li>
+<li>
+<p>New popup window will be shown to configure the node specific
+    configuration.</p>
+</li>
+</ul>
+<blockquote>
+<p><img src=".//media/image6c.png" style="width:5.30142in;height:3.89535in"
+alt="Graphical user interface, application Description automatically generated" /></p>
+</blockquote>
+<ul>
+<li>Provide the details and click configure. Provided configuration will
+    get applied on the node.</li>
+</ul>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<ul>
+<li>
+<p>Replication Failures</p>
+<ul>
+<li>
+<p>Snapshot Creation Failed</p>
+<ul>
+<li>
+<p>Error: Snapshot Creation Failed</p>
+</li>
+<li>
+<p>Impact: Replication fails for all disks of the VM</p>
+</li>
+<li>
+<p>Resolution: Locate the VM in protected infrastructure using
+    the console (AWS Console, GCP Console, vCenter Server) &amp;
+    Delete all snapshots named “DM_REPL_SNAP”.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Error while attaching Volume</p>
+<ul>
+<li>
+<p>Error: Error while attaching volume</p>
+</li>
+<li>
+<p>Impact: Replication fails for all disks of the VM</p>
+</li>
+<li>
+<p>Resolution: In case the recovery site is AWS or GCP and
+    during protection of VM IOPs are specified, then based on
+    the conditions specified by the cloud provider, the IOPs
+    value may need to be altered.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>VM not found</p>
+<ul>
+<li>
+<p>Error: VM not found</p>
+</li>
+<li>
+<p>Impact: Replication fails for all disks of the VM</p>
+</li>
+<li>
+<p>Resolution: This error happens when a protected virtual
+    machine is renamed. Datamotive detects this change and
+    generates an alert but doesn’t update it’s records unless
+    user takes specific action against that alert. Subsequent
+    replication iterations of the VM keep failing. To resolve
+    this issue. locate the Alert corresponding to given VM and
+    “Take Action” on it. It will open up Edit Protection Plan
+    wizard which should be completed. Once the protection plan
+    is successfully edited, the VM’s replication should start
+    again.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Replication failed in GCP</p>
+<ul>
+<li>
+<p>Error: Replication failed. *** Quota 'SSD_TOTAL_GB'
+    exceeded. ***</p>
+</li>
+<li>
+<p>Impact: Replication fails for all disks of the VM</p>
+</li>
+<li>
+<p>Resolution: Check your SSD quota configured for the project
+    where the Recovery site is configured. The protected VMs are
+    configured to use either Balanced or SSD type of disks and
+    quota in the project is reached. Either free up the space or
+    change the disk type of protected entities to “Standard”.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>AWS: Instance |Unable to connect to server</p>
+<ul>
+<li>
+<p>Error: Unable to connect to server</p>
+</li>
+<li>
+<p>Impact: Instance replication will not start</p>
+</li>
+<li>
+<p>Resolution: This happens when there is communication problem
+    between the source VM and the Management servers. Please
+    allow the required ports on the management servers and the
+    nodes as mentioned in the deployment Guide.</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>Deployment Guide reference - <a href="https://onedrive.live.com/edit.aspx?resid=BB29B53B6F17DF23!17173&amp;ithint=file%2cdocx&amp;authkey=!ACPXV0NIq2fOgBs"><strong>Deployment
+Guide</strong></a></p>
+</blockquote>
+<ul>
+<li>
+<p>Protection Plan Failures</p>
+<ul>
+<li>
+<p>Edit Protection Plan Failed</p>
+<ul>
+<li>
+<p>Error: VM not found</p>
+</li>
+<li>
+<p>Impact: Protection Plan cannot be edited</p>
+</li>
+<li>
+<p>Resolution: This error can occur when one or more VMs in the
+    protection plan have configuration changes for which user
+    has not taken any action on. To resolve this issue, close
+    the edit protection plan wizard. Go to Alerts section and
+    make sure that you take action on all alerts for VMs within
+    that protection plan. Each action will take ensure the VM’s
+    data is synced with Datamotive. Once all the VMs are
+    updated, then edit protection plan should work as expected.</p>
+</li>
+<li>
+<p>AWS Instance | Failure during the pplan creation</p>
+</li>
+<li>
+<p>Impact : Not able to create pplan</p>
+</li>
+<li>
+<p>Error : Fetch Network details failed:UnauthorizedOperation:
+    You are not authorized to perform this
+    operation.\n\tstatus code:403,request id*****</p>
+</li>
+<li>
+<p>Resolution: Please check the permissions for the IAM user as
+    mentioned in the Deployment Guide Deployment Guide
+    reference - <a href="https://onedrive.live.com/edit.aspx?resid=BB29B53B6F17DF23!17173&amp;ithint=file%2cdocx&amp;authkey=!ACPXV0NIq2fOgBs"><strong>Deployment
+    Guide</strong></a></p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Recovery Failures</p>
+<ul>
+<li>
+<p>AWS: Instance not reachable | Check Instance timed out</p>
+<ul>
+<li>
+<p>Error: Instance timed out</p>
+</li>
+<li>
+<p>Impact: Instance is not recovered. ½ checks pass for AWS</p>
+</li>
+<li>
+<p>Resolution: This error occurs when protected VM doesn’t meet
+    the supported OS criteria. For details, please refer to
+    section Support Matrix in this document.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Windows disks are offline</p>
+<ul>
+<li>
+<p>Error: After successful recovery of Windows VMs, disks other
+    than the boot disk are found offline</p>
+</li>
+<li>
+<p>Impact: Applications/data if deployed/present on disks other
+    than the boot disks are not accessible.</p>
+</li>
+<li>
+<p>Resolution: This error occurs in case of Windows VMs with
+    multiple disks having disk policy configured as Offline.
+    Edit the disk policy in recovered VMs and configure it to
+    "OnlineALL".</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Reference URL to check the Disk Policy-
+<a href="https://support.purestorage.com/Solutions/Microsoft_Platform_Guide/Multipath-IO_and_Storage_Settings/Disk_Policy_Configuration_-_SAN_Policy">https://support.purestorage.com/Solutions/Microsoft_Platform_Guide/Multipath-IO_and_Storage_Settings/Disk_Policy_Configuration_-_SAN_Policy</a></p>
+<h2 id="upgrade">Upgrade</h2>
+<p>The upgrade feature is used to upgrade the Datamotive services, features
+and the Datamotive UI files.</p>
+<p><strong>Note - Below steps</strong></p>
+<p><strong>needs to be done from the Management server only for server as well as
+nodes.</strong></p>
+<p>Steps to upgrade the Datamotive Server and the node:</p>
+<p>Copy the “<strong>DM_UPGRADE_ \&lt;version>.tar.gz</strong>” bundle/package to the
+Management server via Win-scp tool /scp command or any other tool</p>
+<p>Make sure you give the read permissions to other groups for this
+uploaded tar bundle</p>
+<p>Command for changing file permission:</p>
+<p>Chmod 755 {UPGRADE_PACKAGE_LOCATION}</p>
+<p>Once the package is uploaded to the server, go to <strong>/bin</strong> directory
+using the below command -</p>
+<p><strong>cd /opt/dmservice/bin</strong></p>
+<p>We will use the dmcli to upgrade the Datamotive Management server and
+the node.</p>
+<p>In /bin directory, enter command the below command –</p>
+<p><strong>./dmcli --help</strong></p>
+<p>(The above command will show you the available commands in the <strong>dmcli</strong>
+option as per the below snip)</p>
+<p><img src="./media/image90.png"
+style="width:6.67708in;height:3.69792in" /></p>
+<p>Command to upgrade the Datamotive Server and nodes –</p>
+<p><strong>./dmcli upgrade --username Administrator --path \&lt;path of the upgrade
+package></strong></p>
+<p><img src="./media/image91.png" style="width:5in;height:0.46875in" /></p>
+<p>Command details –</p>
+<ul>
+<li>
+<p><strong>--upgrade:</strong> this parameter is used to upgrade the
+    services/features and the UI files</p>
+</li>
+<li>
+<p><strong>--username</strong>: Username to login to management server. By default
+    its Administrator</p>
+</li>
+<li>
+<p><strong>--path</strong>: Path is absolute path where you have uploaded .tar.gz
+    (<strong>DM_UPGRADE_\&lt;version>.tar.gz</strong>) bundle on current management
+    server</p>
+</li>
+</ul>
+<p>Eg. If the Datamotive Upgrade file (<strong>DM_UPGRADE_\&lt;version>.tar.gz</strong>)
+is uploaded to <strong>/home/centos</strong> location, then the command would be –</p>
+<p><strong>./dmcli upgrade –path /home/centos/DM_UPGRADE_1-0.tar.gz –username
+Administrator</strong></p>
+<p>After the successful upgrade of the server and the node, success message
+would be displayed as per the below snip-</p>
+<p><img src="./media/image92.png"
+style="width:6.46875in;height:3.61009in" /></p>
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": ".", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "assets/javascripts/workers/search.bd0b6b67.min.js"}</script>
+    
+    
+      <script src="assets/javascripts/bundle.467223ff.min.js"></script>
+      
+    
+  </body>
+</html>

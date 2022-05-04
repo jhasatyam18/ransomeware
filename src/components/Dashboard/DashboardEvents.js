@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
-import { connect, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Card, CardBody, Col, Media, Row } from 'reactstrap';
 import { addMessage } from '../../store/actions/MessageActions';
@@ -22,10 +22,9 @@ function DashBoardEvents(props) {
     let isUnmounting = false;
     setLoading(true);
     setData([]);
-    callAPI(API_FETCH_EVENTS).then(
-      (json) => {
-        if (isUnmounting) return;
-        setData(json);
+    callAPI(API_FETCH_EVENTS)
+      .then((json) => {
+        setData(json.records);
         setLoading(false);
       },
       (err) => {
@@ -33,8 +32,7 @@ function DashBoardEvents(props) {
         setData([]);
         setLoading(false);
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-      },
-    );
+      });
     return () => {
       isUnmounting = true;
     };
@@ -111,8 +109,4 @@ function DashBoardEvents(props) {
   );
 }
 
-function mapStateToProps(state) {
-  const { events } = state;
-  return { events };
-}
-export default connect(mapStateToProps)(withTranslation()(DashBoardEvents));
+export default (withTranslation()(DashBoardEvents));

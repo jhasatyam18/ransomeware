@@ -1,25 +1,33 @@
 import React, { useState } from 'react';
-import { Col, Form, Label, Row } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { Col, Form, Label, Row } from 'reactstrap';
 import { TABLE_PROTECTION_PLAN_VMS, TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG } from '../../constants/TableConstants';
 import DMTable from '../Table/DMTable';
 
 function ProtectionPlanVMConfig(props) {
   const [viewProtection, setViewProtection] = useState(true);
-  const { protectionPlan, dispatch, t } = props;
-  const { protectedEntities, recoveryEntities } = protectionPlan;
+  const { protectionPlan, dispatch, t, user } = props;
+  const { protectedEntities, recoveryEntities, protectedSite } = protectionPlan;
   const { virtualMachines } = protectedEntities;
   const { instanceDetails } = recoveryEntities;
 
-  const renderProtectedEntities = () => (
-    <Col sm="12">
-      <DMTable
-        dispatch={dispatch}
-        columns={TABLE_PROTECTION_PLAN_VMS}
-        data={virtualMachines}
-      />
-    </Col>
-  );
+  const renderProtectedEntities = () => {
+    const { platformType } = user;
+    let cols = TABLE_PROTECTION_PLAN_VMS;
+    if (protectedSite.platformDetails.platformType !== platformType) {
+      cols = TABLE_PROTECTION_PLAN_VMS.slice(0, TABLE_PROTECTION_PLAN_VMS.length - 2);
+    }
+    return (
+      <Col sm="12">
+        <DMTable
+          dispatch={dispatch}
+          columns={cols}
+          data={virtualMachines}
+        />
+      </Col>
+    );
+  };
 
   const renderRecoveryEntities = () => (
     <Col sm="12">
@@ -58,4 +66,8 @@ function ProtectionPlanVMConfig(props) {
   return render();
 }
 
-export default (withTranslation()(ProtectionPlanVMConfig));
+function mapStateToProps(state) {
+  const { user } = state;
+  return { user };
+}
+export default connect(mapStateToProps)(withTranslation()(ProtectionPlanVMConfig));

@@ -32,7 +32,7 @@ function DashBoardJob(props) {
       .then((json) => {
         if (isUnmounting) return;
         setLoading(false);
-        setReplicationJobs(json);
+        setReplicationJobs(json.records);
       },
       (err) => {
         if (isUnmounting) return;
@@ -42,8 +42,7 @@ function DashBoardJob(props) {
 
     callAPI(API_RECOVERY_JOBS)
       .then((json) => {
-        if (isUnmounting) return;
-        setRecoveryJobs(json);
+        setRecoveryJobs(json.records);
       },
       (err) => {
         if (isUnmounting) return;

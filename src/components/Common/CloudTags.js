@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
-import { Badge, Col, FormGroup, Input, Row } from 'reactstrap';
-import DMToolTip from '../Shared/DMToolTip';
+import { Badge, Col, FormGroup, Input, Label, Row } from 'reactstrap';
+import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { valueChange } from '../../store/actions';
 import { addMessage } from '../../store/actions/MessageActions';
-import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { getValue } from '../../utils/InputUtils';
+import { getSourceVMTags, getValue, isPlanWithSamePlatform } from '../../utils/InputUtils';
+import DMToolTip from '../Shared/DMToolTip';
 
 class CloudTags extends Component {
   constructor() {
     super();
-    this.state = { tagKey: '', tagValue: '', tags: [] };
+    this.state = { tagKey: '', tagValue: '', tags: [], sourceTags: [], chkCopyTgs: false };
     this.handleChange = this.handleChange.bind(this);
+    this.copyTags = this.copyTags.bind(this);
     this.addTags = this.addTags.bind(this);
   }
 
@@ -18,15 +19,41 @@ class CloudTags extends Component {
     const { user, vmKey } = this.props;
     const { values } = user;
     const tagData = getValue(vmKey, values);
-    if (tagData) {
-      this.setState({ tags: tagData });
+    const srTags = getSourceVMTags(vmKey, values);
+    this.setState({ tags: this.getInitialTagData(tagData), sourceTags: srTags });
+  }
+
+  getInitialTagData(data) {
+    if (data === '' || typeof data === 'undefined') {
+      return [];
     }
+    return data;
   }
 
   handleChange = (e) => {
     this.setState({
       [e.target.id]: e.target.value,
     });
+  }
+
+  copyTags = (e) => {
+    const { tags, sourceTags } = this.state;
+    const { vmKey, dispatch } = this.props;
+    let newTags = [...tags];
+    if (e.target.checked === true) {
+      sourceTags.forEach((st) => {
+        const filteredTags = tags.filter((t) => t.key === st.key);
+        if (filteredTags && filteredTags.length === 0) {
+          newTags.push(st);
+        }
+      });
+    } else {
+      sourceTags.forEach((st) => {
+        newTags = newTags.filter((t) => t.key !== st.key);
+      });
+    }
+    this.setState({ tagKey: '', tagValue: '', tags: newTags, chkCopyTgs: e.target.checked });
+    dispatch(valueChange(vmKey, newTags));
   }
 
   removeTag(tag) {
@@ -69,12 +96,34 @@ class CloudTags extends Component {
     ));
   }
 
+  renderCopyTags() {
+    const { chkCopyTgs } = this.state;
+    const { vmKey, user } = this.props;
+    if (!(isPlanWithSamePlatform(user))) {
+      return null;
+    }
+    return (
+      <Row className="padding-left-15">
+        <Col sm={6}>
+          <Label>Copy Source System Tags</Label>
+        </Col>
+        <Col sm={6}>
+          <div className="custom-control custom-checkbox">
+            <input key={`${vmKey}-cpyTag`} type="checkbox" className="custom-control-input" id={`${vmKey}-tags-copy`} name={`${vmKey}-tags-copy`} checked={chkCopyTgs} onChange={this.copyTags} />
+            <label className="custom-control-label" htmlFor={`${vmKey}-tags-copy`} />
+          </div>
+        </Col>
+      </Row>
+    );
+  }
+
   render() {
     const { tagKey, tagValue } = this.state;
     const { field = {} } = this.props;
     const { fieldInfo } = field;
     return (
       <>
+        {this.renderCopyTags()}
         <Row className="padding-left-10">
           <Col sm={5}>
             <FormGroup className="row mb-4 form-group">

@@ -9,20 +9,20 @@ import { APPLICATION_API_TOKEN, APPLICATION_API_USER, APPLICATION_API_USER_ID } 
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { getCookie, setCookie } from '../../utils/CookieUtils';
 import { onInit } from '../../utils/HistoryUtil';
-import { getValue } from '../../utils/InputUtils';
+import { getValue, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { fetchByDelay } from '../../utils/SlowFetch';
-import { fetchAlerts, getUnreadAlerts } from './AlertActions';
+import { getUnreadAlerts } from './AlertActions';
 import { fetchDRPlanById, fetchDrPlans } from './DrPlanActions';
 import { fetchEmailConfig, fetchEmailRecipients } from './EmailActions';
-import { fetchEvents } from './EventActions';
-import { fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
 import { fetchLicenses } from './LicenseActions';
 import { addMessage, clearMessages } from './MessageActions';
-import { closeModal } from './ModalActions';
+import { closeModal, openModal } from './ModalActions';
 import { fetchNodes } from './NodeActions';
 import { fetchSites } from './SiteActions';
 import { fetchSupportBundles } from './SupportActions';
 import { fetchBandwidthConfig, fetchBandwidthReplNodes } from './ThrottlingAction';
+import { MODAL_USER_SCRIPT } from '../../constants/Modalconstant';
+import { fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
 
 export function refreshApplication() {
   return {
@@ -234,10 +234,10 @@ export function refresh() {
         dispatch(fetchRecoveryJobs(0));
         break;
       case ALERTS_PATH:
-        dispatch(fetchAlerts());
+        // dispatch(fetchAlerts());
         break;
       case EVENTS_PATH:
-        dispatch(fetchEvents());
+        // dispatch(fetchEvents());
         break;
       case LICENSE_SETTINGS_PATH:
         dispatch(fetchLicenses());
@@ -271,7 +271,8 @@ export function detailPathChecks(pathname) {
     return null;
   };
 }
-export function fetchScript() {
+
+export function fetchScript(fieldKey, name) {
   return (dispatch) => {
     const url = API_SCRIPTS;
     return callAPI(url)
@@ -282,6 +283,9 @@ export function fetchScript() {
           const data = json;
           dispatch(valueChange(STATIC_KEYS.UI_SCRIPT_PRE, data.preScripts));
           dispatch(valueChange(STATIC_KEYS.UI_SCRIPT_POST, data.postScripts));
+          if (fieldKey && name) {
+            dispatch(valueChange(fieldKey, name));
+          }
         }
       },
       (err) => {
@@ -383,7 +387,9 @@ export function onAwsPublicIPChecked({ value, fieldKey }) {
   return (dispatch) => {
     if (value) {
       const networkKey = fieldKey.replace('isPublic', 'network');
+      const publicIPKey = fieldKey.replace('isPublic', 'publicIP');
       dispatch(valueChange(networkKey, ''));
+      dispatch(valueChange(publicIPKey, ''));
     }
   };
 }
@@ -488,5 +494,107 @@ export function deleteScript(id) {
         dispatch(hideApplicationLoader(API_USER_SCRIPT));
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
+  };
+}
+
+export function onScriptChange({ value, fieldKey }) {
+  return (dispatch) => {
+    if (value === '+NEW_SCRIPT') {
+      dispatch(valueChange(fieldKey, ''));
+      dispatch(openModal(MODAL_USER_SCRIPT, { title: 'Script', data: { fieldKey } }));
+    }
+  };
+}
+
+export function onAwsCopyNetConfigChange({ value, fieldKey }) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    if (!fieldKey) {
+      return;
+    }
+    const networkKey = fieldKey.replace('-isFromSource', '');
+    if (!value) {
+      // reset all the values
+      dispatch(valueChange(`${networkKey}-subnet`, ''));
+      dispatch(valueChange(`${networkKey}-availZone`, ''));
+      dispatch(valueChange(`${networkKey}-isPublic`, false));
+      dispatch(valueChange(`${networkKey}-securityGroups`, ''));
+      dispatch(valueChange(`${networkKey}-network`, ''));
+      dispatch(valueChange(`${networkKey}-privateIP`, ''));
+    } else {
+      // set the source VM values
+      const keys = fieldKey.split('-');
+      if (keys.length > 3) {
+        // nic index
+        const index = keys[keys.length - 2];
+        const vmKey = `${keys[0]}-${keys[1]}`;
+        const selectedVMS = getValue('ui.site.seletedVMs', values);
+        Object.keys(selectedVMS).forEach((key) => {
+          if (vmKey === key) {
+            const nics = selectedVMS[key].virtualNics;
+            if (nics && nics.length >= index) {
+              const nic = nics[index];
+              dispatch(valueChange(`${networkKey}-subnet`, nic.Subnet));
+              dispatch(valueChange(`${networkKey}-isPublic`, nic.isPublicIP));
+              dispatch(valueChange(`${networkKey}-privateIP`, nic.privateIP));
+              if (nic.securityGroups) {
+                const sgp = nic.securityGroups.split(',');
+                dispatch(valueChange(`${networkKey}-securityGroups`, sgp));
+              }
+            }
+          }
+        });
+      }
+    }
+  };
+}
+
+/**
+ * AWS Network subnet change
+ * Set the subnet zone value
+ * @param value value of the subnet
+ * @param fieldKey field key for which value is changed
+ */
+export function onAwsSubnetChange({ value, fieldKey }) {
+  return (dispatch, getState) => {
+    if (value) {
+      const { user } = getState();
+      const { values } = user;
+      let isCopyConfiguration = false;
+      if (fieldKey && isPlanWithSamePlatform(user)) {
+        isCopyConfiguration = isAWSCopyNic(fieldKey, '-subnet', user);
+      }
+      const dataSourceKey = (isCopyConfiguration === true ? STATIC_KEYS.UI_SUBNETS__SOURCE : STATIC_KEYS.UI_SUBNETS);
+      const subnets = getValue(dataSourceKey, values) || [];
+      for (let s = 0; s < subnets.length; s += 1) {
+        if (subnets[s].id === value) {
+          const availZoneKey = fieldKey.replace('-subnet', '-availZone');
+          dispatch(valueChange(availZoneKey, subnets[s].zone));
+        }
+      }
+    }
+  };
+}
+
+/**
+ * AWS Network VPC change
+ * Set the subnet zone and sg value
+ * @param value value of the subnet
+ * @param fieldKey field key for which value is changed
+ */
+export function onAwsVPCChange({ value, fieldKey }) {
+  return (dispatch) => {
+    if (value) {
+      const key = fieldKey.split('-');
+      const networkKey = key.slice(0, key.length - 1).join('-');
+      dispatch(valueChange(`${networkKey}-isFromSource`, false));
+      dispatch(valueChange(`${networkKey}-subnet`, ''));
+      dispatch(valueChange(`${networkKey}-availZone`, ''));
+      dispatch(valueChange(`${networkKey}-isPublic`, false));
+      dispatch(valueChange(`${networkKey}-privateIP`, ''));
+      dispatch(valueChange(`${networkKey}-securityGroups`, ''));
+      dispatch(valueChange(`${networkKey}-network`, ''));
+    }
   };
 }
