@@ -13,6 +13,7 @@ export const API_STOP_DR_PLAN = 'api/v1/protection/plans/<id>/stop';
 export const API_DELETE_DR_PLAN = 'api/v1/protection/plans/<id>';
 export const API_SCRIPTS = 'api/v1/scripts';
 export const API_SITE_NETWORKS = 'api/v1/sites/<id>/networks';
+export const API_SITE_NETWORKS_ZONE = '?zone=<zone>';
 export const API_PROTECTION_PLAN_VMS = 'api/v1/sites/<sid>/vms/?protectionplanid=<pid>';
 export const API_PROTECTION_PLAN_UPDATE = 'api/v1/protection/plans/<id>';
 export const API_PROTECTION_PLAN_PROTECTED_VMS = 'api/v1/protection/plans/<pid>?vmmoref=<moref>';

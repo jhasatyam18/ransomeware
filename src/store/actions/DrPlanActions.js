@@ -6,13 +6,13 @@ import {
 } from '../../constants/ApiConstants';
 import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
-import { fetchAvailibilityZones, fetchNetworks, fetchSites, onRecoverSiteChange } from './SiteActions';
+import { fetchNetworks, fetchSites, onRecoverSiteChange } from './SiteActions';
 import { getCreateDRPlanPayload, getEditProtectionPlanPayload, getRecoveryPayload, getReversePlanPayload, getVMConfigPayload } from '../../utils/PayloadUtil';
 import { addAssociatedReverseIP, clearValues, fetchScript, hideApplicationLoader, refresh, showApplicationLoader, valueChange } from './UserActions';
 import { closeWizard, openWizard } from './WizardActions';
 import { closeModal, openModal } from './ModalActions';
 import { MIGRATION_WIZARDS, RECOVERY_WIZARDS, TEST_RECOVERY_WIZARDS, REVERSE_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS, PROTECTED_VM_RECONFIGURATION_WIZARD } from '../../constants/WizardConstants';
-import { getValue, getVMMorefFromEvent } from '../../utils/InputUtils';
+import { getValue, getVMMorefFromEvent, isSamePlatformPlan } from '../../utils/InputUtils';
 import { PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
@@ -414,7 +414,11 @@ export function openTestRecoveryWizard() {
       dispatch(valueChange('ui.values.protectionPlatform', protectedSitePlatform));
       dispatch(valueChange('ui.values.recoveryPlatform', platformDetails.platformType));
       dispatch(valueChange('recovery.dryrun', true));
-      const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id)), dispatch(fetchScript()), dispatch(fetchDrPlans('ui.values.drplan'))];
+      let availZone = '';
+      if (!isSamePlatformPlan(protectionPlan)) {
+        availZone = recoverySite.platformDetails.availZone;
+      }
+      const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined, availZone)), dispatch(fetchScript()), dispatch(fetchDrPlans('ui.values.drplan'))];
       return Promise.all(apis).then(
         () => {
           if (platformDetails.platformType === PLATFORM_TYPES.VMware) {
@@ -423,8 +427,7 @@ export function openTestRecoveryWizard() {
             dispatch(openWizard(options, steps));
           } else {
             const url = (platformDetails.platformType === PLATFORM_TYPES.AWS ? API_AWS_INSTANCES : API_GCP_INSTANCES);
-            dispatch(fetchAvailibilityZones({ value: recoverySite.id }));
-            dispatch(fetchNetworks(recoverySite.id));
+            dispatch(fetchNetworks(recoverySite.id, undefined, availZone));
             dispatch(setInstances(url));
             dispatch(openWizard(TEST_RECOVERY_WIZARDS.options, TEST_RECOVERY_WIZARDS.steps));
           }
@@ -486,7 +489,12 @@ export function openEditProtectionPlanWizard(plan, isEventAction = false, alert 
     const { drPlans } = getState();
     dispatch(clearValues());
     const selectedPlan = (typeof plan === 'undefined' ? getSelectedPlanID(drPlans) : plan);
-    const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(selectedPlan.recoverySite.id)), dispatch(fetchScript())];
+    const { recoverySite } = selectedPlan;
+    let availZone = '';
+    if (!isSamePlatformPlan(selectedPlan)) {
+      availZone = recoverySite.platformDetails.availZone;
+    }
+    const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined, availZone)), dispatch(fetchScript())];
     return Promise.all(apis).then(
       () => {
         dispatch(valueChange('ui.editplan.alert.id', (alert !== null ? alert.id : alert)));
@@ -516,7 +524,11 @@ export function setProtectionPlanDataForUpdate(selectedPlan, isEventAction = fal
       .then(
         () => {
           dispatch(hideApplicationLoader('UPDATE_PROTECTION_PLAN'));
-          dispatch(onRecoverSiteChange({ value: selectedPlan.recoverySite.id }));
+          let availZone = '';
+          if (!isSamePlatformPlan(selectedPlan)) {
+            availZone = selectedPlan.recoverySite.platformDetails.availZone;
+          }
+          dispatch(onRecoverSiteChange({ value: selectedPlan.recoverySite.id, availZone }));
           dispatch(openWizard(wiz.options, UPDATE_PROTECTION_PLAN_WIZARDS.steps));
           return new Promise((resolve) => resolve());
         },
@@ -626,8 +638,10 @@ export function setProtectionPlanVMConfig(selectedVMS, protectionPlan) {
     const recoverySitePlatform = recoverySite.platformDetails.platformType;
     dispatch(valueChange('ui.values.protectionPlatform', protectedSitePlatform));
     dispatch(valueChange('ui.values.recoveryPlatform', recoverySitePlatform));
-    if (recoverySitePlatform === protectedSitePlatform) {
+    if (isSamePlatformPlan(protectionPlan)) {
       dispatch(fetchNetworks(protectedSite.id, 'source_network'));
+    } else {
+      dispatch(fetchNetworks(recoverySite.id, undefined, recoverySite.platformDetails.availZone));
     }
     dispatch(valueChange('drplan.id', protectionPlan.id));
     dispatch(valueChange('ui.edit.plan.remoteProtectionPlanId', protectionPlan.remoteProtectionPlanId));
@@ -939,7 +953,11 @@ export function openVMReconfigWizard(vmMoref, pPlan, selectedVMS, alerts) {
         dispatch(valueChange('drplan.recoverySite', pPlan.recoverySite.id));
         dispatch(valueChange('ui.values.recoveryPlatform', pPlan.recoverySite.platformDetails.platformType));
         dispatch(setProtectionPlanVMConfig(selectedVMS, pPlan));
-        dispatch(onRecoverSiteChange({ value: pPlan.recoverySite.id }));
+        if (isSamePlatformPlan(pPlan)) {
+          dispatch(onRecoverSiteChange({ value: pPlan.recoverySite.id, availZone: '' }));
+        } else {
+          dispatch(onRecoverSiteChange({ value: pPlan.recoverySite.id, availZone: pPlan.recoverySite.platformDetails.availZone }));
+        }
         const ops = PROTECTED_VM_RECONFIGURATION_WIZARD.options;
         ops.title = `Reconfigure ${selectedVMS[vmMoref].name}`;
         dispatch(openWizard(ops, steps));

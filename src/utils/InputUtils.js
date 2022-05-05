@@ -629,6 +629,10 @@ export function isPlanWithSamePlatform(user) {
   return recoveryPlatform === protectionPlatform;
 }
 
+export function isSamePlatformPlan(selectedPlan) {
+  return selectedPlan.protectedSite.platformDetails.platformType === selectedPlan.recoverySite.platformDetails.platformType;
+}
+
 export function isAWSCopyNic(fieldKey, replaceKey, user) {
   const { values } = user;
   let isCopyConfiguration = false;

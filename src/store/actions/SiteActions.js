@@ -2,7 +2,7 @@
 
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import * as Types from '../../constants/actionTypes';
-import { API_AWS_AVAILABILITY_ZONES, API_AWS_INSTANCES, API_CREATE_SITES, API_DELETE_SITES, API_FETCH_SITES, API_FETCH_SITE_VMS, API_GCP_AVAILABILITY_ZONES, API_GCP_INSTANCES, API_SITE_NETWORKS } from '../../constants/ApiConstants';
+import { API_AWS_AVAILABILITY_ZONES, API_AWS_INSTANCES, API_CREATE_SITES, API_DELETE_SITES, API_FETCH_SITES, API_FETCH_SITE_VMS, API_GCP_AVAILABILITY_ZONES, API_GCP_INSTANCES, API_SITE_NETWORKS, API_SITE_NETWORKS_ZONE } from '../../constants/ApiConstants';
 import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { closeModal } from './ModalActions';
@@ -147,7 +147,7 @@ export function onProtectSiteChange({ value }) {
   };
 }
 
-export function onRecoverSiteChange({ value }) {
+export function onRecoverSiteChange({ value, availZone }) {
   return (dispatch, getState) => {
     if (value === '') {
       dispatch(valueChange('ui.values.instances', []));
@@ -155,12 +155,14 @@ export function onRecoverSiteChange({ value }) {
     }
     const { user } = getState();
     const { values } = user;
-    const platfromType = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${value}`)[0].platformDetails.platformType;
-    const url = (platfromType === PLATFORM_TYPES.AWS ? API_AWS_INSTANCES : API_GCP_INSTANCES);
-    dispatch(fetchAvailibilityZones({ value }));
-    dispatch(fetchNetworks(value));
-    dispatch(valueChange('ui.values.recoveryPlatform', platfromType));
-    if (PLATFORM_TYPES.AWS === platfromType) {
+    const recoverySite = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${value}`)[0];
+    const { platformType } = { ...recoverySite.platformDetails };
+    const url = (platformType === PLATFORM_TYPES.AWS ? API_AWS_INSTANCES : API_GCP_INSTANCES);
+    // dispatch(fetchAvailibilityZones({ value }));
+    dispatch(fetchNetworks(value, undefined, availZone));
+    dispatch(valueChange('ui.values.recoveryPlatform', platformType));
+    dispatch(valueChange('ui.values.recoverySiteID', value));
+    if (PLATFORM_TYPES.AWS === platformType) {
       return;
     }
     return callAPI(url)
@@ -293,10 +295,13 @@ export function handleSelectAllRecoveryVMs(value) {
   };
 }
 
-export function fetchNetworks(id, keyOnly = undefined) {
+export function fetchNetworks(id, sourceNet = undefined, availZone) {
   return (dispatch) => {
     dispatch(showApplicationLoader('FETCHING_SITE_NETWORK', 'Loading network info...'));
-    const url = API_SITE_NETWORKS.replace('<id>', id);
+    let url = API_SITE_NETWORKS.replace('<id>', id);
+    if (typeof availZone !== 'undefined' && availZone !== '') {
+      url += API_SITE_NETWORKS_ZONE.replace('<zone>', availZone);
+    }
     return callAPI(url)
       .then((json) => {
         dispatch(hideApplicationLoader('FETCHING_SITE_NETWORK'));
@@ -311,7 +316,7 @@ export function fetchNetworks(id, keyOnly = undefined) {
             });
             dispatch(valueChange('ui.values.instances', insTypes));
           }
-          if (typeof keyOnly !== 'undefined') {
+          if (typeof sourceNet !== 'undefined') {
             dispatch(valueChange(STATIC_KEYS.UI_SECURITY_GROUPS_SOURCE, (data.securityGroups ? data.securityGroups : [])));
             dispatch(valueChange(STATIC_KEYS.UI_SUBNETS__SOURCE, (data.subnets ? data.subnets : [])));
             return;
@@ -346,8 +351,12 @@ export function postPlanSitesSelected() {
   return (dispatch, getState) => {
     const { user } = getState();
     if (isPlanWithSamePlatform(user)) {
-      const id = getValue('ui.values.protectionSiteID', user.values);
-      dispatch(fetchNetworks(id, 'source_network'));
+      const protectionID = getValue('ui.values.protectionSiteID', user.values);
+      dispatch(fetchNetworks(protectionID, 'source_network'));
+    } else {
+      const recoveryID = getValue('ui.values.recoverySiteID', user.values);
+      const zone = getValue('ui.values.sites', user.values).filter((site) => `${site.id}` === `${recoveryID}`)[0].platformDetails.availZone;
+      dispatch(fetchNetworks(recoveryID, undefined, zone));
     }
   };
 }
