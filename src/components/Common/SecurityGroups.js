@@ -23,7 +23,7 @@ class SecurityGroups extends Component {
     const { selectedSG } = this.state;
     const { dispatch, vmKey } = this.props;
     const isAlreadySelected = selectedSG.some((sg) => sg === e.target.value);
-    if (!isAlreadySelected) {
+    if (!isAlreadySelected && e.target.value !== '') {
       selectedSG.push(e.target.value);
       this.setState({ selectedSG, value: e.target.value });
       dispatch(valueChange(vmKey, selectedSG));
@@ -77,7 +77,7 @@ class SecurityGroups extends Component {
           <Col sm={12}>
             <FormGroup className="row mb-4 form-group">
               <Input type="select" id={vmKey} onSelect={this.handleChange} className="form-control form-control-sm custom-select" onChange={this.handleChange} value={value}>
-                <option key={`${vmKey}-default`} value="-">  </option>
+                <option key={`${vmKey}-default`} value="">  </option>
                 {this.renderOptions()}
               </Input>
             </FormGroup>

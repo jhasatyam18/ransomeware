@@ -329,5 +329,7 @@
   "info.aws.create.network.from.source" : "Creates new subnet and security group on recovery site based on protected entity's configuration",
   "info.protectionplan.protection.prescript": "Script will execute before every replication iteration.",
   "info.protectionplan.protection.postscript": "Script will execute after successful completion of every replication iteration.",
-  "info.protectionplan.instance.type.gcp": "Instance types comprise varying combinations of CPU, memory, storage, and networking capacity."
+  "info.protectionplan.volume.type.gcp": "Storage space is much less expensive for a standard persistent disk. An SSD persistent disk is better for random IOPS or streaming throughput with low latency.",
+  "info.protectionplan.network.aws.availZone": "Instance cloud availability zone in which subnet is located",
+  "info.protectionplan.instance.tags.gcp": "You can set custom metadata for an instance or project outside of the server-defined metadata. This is useful for passing in arbitrary values to your project or instance that can be queried by your code on the instance."
 }

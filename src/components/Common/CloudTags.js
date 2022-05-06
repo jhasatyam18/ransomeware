@@ -134,7 +134,7 @@ class CloudTags extends Component {
                   id="tagKey"
                   value={tagKey}
                   onChange={this.handleChange}
-                  placeholder="Tag Key"
+                  placeholder="Key"
                   autoComplete="off"
                 />
               </Col>
@@ -149,7 +149,7 @@ class CloudTags extends Component {
                   id="tagValue"
                   value={tagValue}
                   onChange={this.handleChange}
-                  placeholder="Tag Value"
+                  placeholder="Value"
                   autoComplete="off"
                 />
               </Col>
