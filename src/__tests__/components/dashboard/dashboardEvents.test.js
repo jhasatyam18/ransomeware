@@ -1,4 +1,5 @@
 import React from 'react';
+import * as reactRedux from 'react-redux';
 import { cleanup, screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import DashboardEvents from '../../../components/Dashboard/DashboardEvents';
@@ -6,72 +7,32 @@ import { API_FETCH_EVENTS } from '../../../constants/ApiConstants';
 import renderWitRedux from '../../tetsUtils/RenderWithRedux';
 import { withoutErrorResponse, withErrorResponse } from '../../tetsUtils/server';
 // server setups
-const responsewithLevelWarning = [{ id: 1, topic: 'Migration', description: 'Migrated', level: 'WARNING' }];
-const responsewithLevelError = [{ id: 1, topic: 'Migration', description: 'Migrated', level: 'ERROR' }];
-const responsewithLevelCritical = [{ id: 1, topic: 'Migration', description: 'Migrated', level: 'CRITICAL' }];
-const responsewithLevelAll = [{ id: 1, topic: 'Migration', description: 'Migrated', level: 'ALL' }];
-const responsewithLevelNotKnown = [{ id: 1, topic: 'Migration', description: 'Migrated', level: 'NOT' }];
-const eventResponsewithLevelWarning = withoutErrorResponse(API_FETCH_EVENTS, responsewithLevelWarning);
-const eventResponsewithLevelError = withoutErrorResponse(API_FETCH_EVENTS, responsewithLevelError);
-const eventResponsewithLevelAll = withoutErrorResponse(API_FETCH_EVENTS, responsewithLevelAll);
-const eventResponsewithLevelNotKnown = withoutErrorResponse(API_FETCH_EVENTS, responsewithLevelNotKnown);
-const eventResponsewithLevelCritical = withoutErrorResponse(API_FETCH_EVENTS, responsewithLevelCritical);
+const respWithoutError = { records: [{ affectedObject: 'ProtectionPlan', description: 'Protection Plan stopped successfully', generator: 'Administrator', id: 36, severity: 'INFO', topic: 'ProtectionPlan' }], totalPages: 1, totalRecords: 36 };
+const respWithError = { recor: [{ affectedObject: 'ProtectionPlan', description: 'Protection Plan stopped successfully', generator: 'Administrator', id: 36, severity: 'INFO', topic: 'ProtectionPlan' }], totalPages: 1, totalRecords: 36 };
+const eventResponsewithLevelWarning = withoutErrorResponse(API_FETCH_EVENTS, respWithoutError);
+const eventResponsewitherror = withoutErrorResponse(API_FETCH_EVENTS, respWithError);
 const eventAPIErrorResponse = withErrorResponse(API_FETCH_EVENTS);
-const handlers = [eventResponsewithLevelWarning, eventResponsewithLevelError, eventResponsewithLevelNotKnown, eventResponsewithLevelAll, eventAPIErrorResponse];
+const handlers = [eventResponsewithLevelWarning, eventAPIErrorResponse, eventResponsewitherror];
 const server = new setupServer(...handlers);
+
 describe('dashboardEvents.test.js : Dashboard Events Tests', () => {
   beforeAll(() => server.listen());
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
   afterEach(cleanup);
-  it('DashboardEvent should render', () => {
+  it('DashboardEvent: there must be a div with different classname when response.level is their', async () => {
     renderWitRedux(<DashboardEvents />);
-    const text = document.getElementsByClassName('font-weight-medium color-white');
-    expect(text.length).toBe(1);
-  });
-  it('DashboardEvent: there must be a div with different classname when response.level is diffrent', async () => {
-    renderWitRedux(<DashboardEvents />);
-    const divs = document.getElementsByClassName('bx app_warning bx bxs-error font-size-14');
-    const text = await screen.findByText('Migrated');
+    const divs = await document.getElementsByClassName('bx app_success bxs-check-circle font-size-14');
+    const text = await screen.findByText('Protection Plan stopped successfully');
+    expect(text).toBeInTheDocument();
     expect(divs.length).toBe(1);
-    expect(text).toBeInTheDocument();
   });
-  it('Should render div with classname as danger when response.level is ERROR', async () => {
-    server.use(eventResponsewithLevelError);
+  it('Should show renderNoDataToShow component when their is error from the server', async () => {
+    server.use(eventResponsewitherror);
     renderWitRedux(<DashboardEvents />);
-    const div = document.getElementsByClassName('bx app_danger bxs-x-circle font-size-14');
-    const text = await screen.findByText('Migrated');
+    const div = await document.getElementsByClassName('font-weight-medium color-white');
+    const text = await screen.findByText('No Data To Display');
     expect(div.length).toBe(1);
     expect(text).toBeInTheDocument();
-  });
-  it('should render a div with clasname as danger when response.level is CRITICAL', async () => {
-    server.use(eventResponsewithLevelCritical);
-    renderWitRedux(<DashboardEvents />);
-    const div = document.getElementsByClassName('bx app_danger bxs-x-circle font-size-14');
-    const text = await screen.findByText('Migrated');
-    expect(div.length).toBe(1);
-    expect(text).toBeInTheDocument();
-  });
-  it('should render a div with clasname as primary when response.level is ALL', async () => {
-    server.use(eventResponsewithLevelAll);
-    renderWitRedux(<DashboardEvents />);
-    const div = document.getElementsByClassName('bx app_primary bxs-check-circle font-size-14');
-    const text = await screen.findByText('Migrated');
-    expect(div.length).toBe(1);
-    expect(text).toBeInTheDocument();
-  });
-  it('should render a div with clasname as success when response.level is not known', async () => {
-    server.use(eventResponsewithLevelNotKnown);
-    renderWitRedux(<DashboardEvents />);
-    const div = document.getElementsByClassName('bx app_success bxs-check-circle font-size-14');
-    const text = await screen.findByText('Migrated');
-    expect(div.length).toBe(1);
-    expect(text).toBeInTheDocument();
-  });
-  it('should render error components when server throws an error', async () => {
-    server.use(eventAPIErrorResponse);
-    renderWitRedux(<DashboardEvents />);
-    const para = await screen.findByText('No Data To Display');
-    expect(para).toBeInTheDocument();
   });
 });

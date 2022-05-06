@@ -13,10 +13,13 @@ import Spinner from '../Common/Spinner';
 
 function DashBoardEvents(props) {
   const { t, dispatch } = props;
-  const [data, setData] = useState([]);
+  const [data, setData] = React.useState([]);
   const refresh = useSelector((state) => state.user.context.refresh);
-  const dataToDisplay = data.length > 5 ? data.slice(0, 5) : data;
   const [loading, setLoading] = useState(false);
+  let dataToDisplay = [];
+  if (typeof data !== 'undefined' && data.length > 0) {
+    dataToDisplay = data.length > 5 ? data.slice(0, 5) : data;
+  }
 
   useEffect(() => {
     let isUnmounting = false;
@@ -24,6 +27,7 @@ function DashBoardEvents(props) {
     setData([]);
     callAPI(API_FETCH_EVENTS)
       .then((json) => {
+        if (isUnmounting) return;
         setData(json.records);
         setLoading(false);
       },

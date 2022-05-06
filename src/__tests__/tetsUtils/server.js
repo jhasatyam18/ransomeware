@@ -8,4 +8,4 @@ export function withoutErrorResponse(URL, RESP) {
   ));
 }
 
-export const withErrorResponse = (URL) => rest.get(URL, (req, res, ctx) => res(ctx.status(503), ctx.json({ message: 'server error' })));
+export const withErrorResponse = (URL) => rest.get(URL, (req, res, ctx) => res(ctx.status(500), ctx.json({ message: 'server error' })));
