@@ -38,23 +38,31 @@ function ProtectedVsUnProtectedVMs(props) {
   };
 
   useEffect(() => {
+    let isUnmounting = false;
     setLoading(true);
     callAPI(API_DASHBOARD_VIRTUAL_MACHINE_PROTECTION_ANALYSIS_PROTECTED_VMS)
       .then((json) => {
+        if (isUnmounting) return;
         setLoading(false);
         setProtectedVMStats({ protectedVMs: json.protectedVMs, unprotectedVMs: json.unprotectedVMs });
       },
       (err) => {
+        if (isUnmounting) return;
         setLoading(false);
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
     callAPI(API_DASHBOARD_REPLICATION_STATS)
       .then((json) => {
+        if (isUnmounting) return;
         setReplicationStat(json);
       },
       (err) => {
+        if (isUnmounting) return;
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
+    return () => {
+      isUnmounting = true;
+    };
   }, [refresh]);
 
   const renderNoDataToShow = () => (
