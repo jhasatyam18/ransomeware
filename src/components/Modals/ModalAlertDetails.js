@@ -242,7 +242,7 @@ class ModalAlertDetails extends Component {
       <>
         <Container>
           <Card>
-            <SimpleBar style={{ maxHeight: '350px' }}>
+            <SimpleBar style={{ maxHeight: '280px' }}>
               <CardBody>
                 {this.renderNav()}
                 <TabContent activeTab={activeTab}>

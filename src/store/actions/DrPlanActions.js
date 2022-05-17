@@ -12,8 +12,8 @@ import { addAssociatedReverseIP, clearValues, fetchScript, hideApplicationLoader
 import { closeWizard, openWizard } from './WizardActions';
 import { closeModal, openModal } from './ModalActions';
 import { MIGRATION_WIZARDS, RECOVERY_WIZARDS, TEST_RECOVERY_WIZARDS, REVERSE_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS, PROTECTED_VM_RECONFIGURATION_WIZARD } from '../../constants/WizardConstants';
-import { getValue, getVMMorefFromEvent, isSamePlatformPlan } from '../../utils/InputUtils';
 import { PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
+import { getValue, getVMInstancefFromEvent, getVMMorefFromEvent, isSamePlatformPlan } from '../../utils/InputUtils';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
 import { setCookie } from '../../utils/CookieUtils';
@@ -846,7 +846,7 @@ export function getVirtualMachineAlerts(moref) {
   };
 }
 
-export function initReconfigureProtectedVM(protectionPlanID, vmMoref = null, event = null) {
+export function initReconfigureProtectedVM(protectionPlanID, vmMoref = null, event = null, alert) {
   return async (dispatch) => {
     dispatch(showApplicationLoader('RECONFIGURE_VM', 'Loading...'));
     // get protection plan details
@@ -864,6 +864,11 @@ export function initReconfigureProtectedVM(protectionPlanID, vmMoref = null, eve
     function getVMDetails(moref, plan, eve) {
       let url = (eve !== null ? API_PROTECTION_PLAN_PROTECTED_VMS.replace('<moref>', moref) : API_PROTECTION_PLAN_VMS.replace('<sid>', plan.protectedSite.id));
       url = url.replace('<pid>', plan.id);
+      if (eve) {
+        if (eve.type === 'monitor.vmdisktypemodified' || eve.type === 'monitor.vmdiskiopsmodified') {
+          url = `${url}&diskchange=true`;
+        }
+      }
       return callAPI(url).then((json) => {
         let selectedVMS = {};
         const vms = (eve !== null ? json.protectedEntities.virtualMachines : json);
@@ -881,8 +886,11 @@ export function initReconfigureProtectedVM(protectionPlanID, vmMoref = null, eve
       });
     }
     // get associated alerts for vm
-    function getAssociatedAlerts(moref) {
-      const url = API_VM_ALERTS.replace('<moref>', moref);
+    function getAssociatedAlerts(moref, alertID) {
+      let url = API_VM_ALERTS.replace('<moref>', moref);
+      if (typeof alertID !== 'undefined') {
+        url = `${url}&alertID=${alertID}`;
+      }
       return callAPI(url).then((json) => {
         dispatch(valueChange('ui.vm.alerts', json));
         return json;
@@ -895,6 +903,7 @@ export function initReconfigureProtectedVM(protectionPlanID, vmMoref = null, eve
     // if event is passed then extract the protectionPlan ID
     let pid = protectionPlanID;
     let moref = vmMoref;
+    let pPlan = '';
     if (event !== null) {
       const parts = event.impactedObjectURNs.split(',');
       const urn = parts[0].split(':');
@@ -906,8 +915,15 @@ export function initReconfigureProtectedVM(protectionPlanID, vmMoref = null, eve
         dispatch(hideApplicationLoader('RECONFIGURE_VM'));
         return;
       }
+      // get protectection Plan details
       if (vmMoref === null) {
-        moref = getVMMorefFromEvent(event);
+        pPlan = await fetchProtection(pid);
+        const { protectedSite } = pPlan;
+        if (protectedSite.platformDetails.platformType === PLATFORM_TYPES.AWS) {
+          moref = getVMInstancefFromEvent(event);// getVMInstancefFromEvent
+        } else {
+          moref = getVMMorefFromEvent(event);// getVMInstancefFromEvent
+        }
         if (moref === '') {
           dispatch(addMessage('Virtual Machine info not available in the event.', MESSAGE_TYPES.ERROR));
           dispatch(hideApplicationLoader('RECONFIGURE_VM'));
@@ -915,12 +931,10 @@ export function initReconfigureProtectedVM(protectionPlanID, vmMoref = null, eve
         }
       }
     }
-    // get protectection Plan details
-    const pPlan = await fetchProtection(pid);
     const vms = await getVMDetails(moref, pPlan, event);
     let alerts = null;
     if (event !== null) {
-      alerts = await getAssociatedAlerts(moref);
+      alerts = await getAssociatedAlerts(moref, alert.id);
     }
     if (pPlan === false || vms === false || alerts === false) {
       dispatch(addMessage('Failed to retrieve associate data for alert', MESSAGE_TYPES.ERROR));
