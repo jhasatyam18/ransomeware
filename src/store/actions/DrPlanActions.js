@@ -575,7 +575,9 @@ export function onEditProtectionPlan() {
 }
 
 export function setProtectionPlanVMsForUpdate(protectionPlan, isEventAction = false, event = null) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
     const { protectedSite, protectedEntities, id } = protectionPlan;
     const { virtualMachines } = protectedEntities;
     // extract the event impacted objects
@@ -602,9 +604,10 @@ export function setProtectionPlanVMsForUpdate(protectionPlan, isEventAction = fa
             data = [];
           }
           if (isEventAction) {
+            const alertID = getValue('ui.alertID', values);
             dispatch(valueChange('ui.site.vms', data.protectedEntities.virtualMachines));
             // if alert base edit then fetch all the alerts associated with the vmMoref
-            dispatch(getVirtualMachineAlerts(vmMoref));
+            dispatch(getVirtualMachineAlerts(vmMoref, alertID));
             data.protectedEntities.virtualMachines.forEach((vm) => {
               selectedVMS = { ...selectedVMS, [vm.moref]: { id: vm.id, ...vm } };
             });
@@ -819,7 +822,7 @@ function setGCPVMDetails(selectedVMS, protectionPlan, dispatch) {
   });
 }
 
-export function getVirtualMachineAlerts(moref) {
+export function getVirtualMachineAlerts(moref, alertID) {
   return (dispatch, getState) => {
     if (moref === '') {
       const { user } = getState();
@@ -830,7 +833,10 @@ export function getVirtualMachineAlerts(moref) {
         return;
       }
     }
-    const url = API_VM_ALERTS.replace('<moref>', moref);
+    let url = API_VM_ALERTS.replace('<moref>', moref);
+    if (typeof alertID !== 'undefined' && alertID !== '') {
+      url = `${url}&alertID=${alertID}`;
+    }
     return callAPI(url)
       .then((json) => {
         if (json.hasError) {
