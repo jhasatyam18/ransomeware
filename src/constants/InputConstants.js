@@ -1,3 +1,7 @@
+export const UI_WORKFLOW = {
+  TEST_RECOVERY: 'TEST_RECOVERY',
+};
+
 export const PLATFORM_TYPES = {
   VMware: 'VMware', GCP: 'GCP', AWS: 'AWS',
 };

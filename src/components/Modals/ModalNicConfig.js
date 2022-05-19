@@ -9,7 +9,7 @@ import DMFieldSelect from '../Shared/DMFieldSelect';
 import DMFieldText from '../Shared/DMFieldText';
 import DMMultiSelect from '../Shared/DMMultiSelect';
 import { FIELD_TYPE, MULTISELECT_ITEM_COMP } from '../../constants/FieldsConstant';
-import { PLATFORM_TYPES } from '../../constants/InputConstants';
+import { PLATFORM_TYPES, UI_WORKFLOW } from '../../constants/InputConstants';
 import { onAwsCopyNetConfigChange, onAwsPublicIPChecked, onAwsSubnetChange, onAwsVPCChange, onGCPNetworkChange, valueChange } from '../../store/actions';
 import { closeModal } from '../../store/actions/ModalActions';
 import { getAvailibilityZoneOptions, getAWSElasticIPOptions, getGCPExternalIPOptions, getGCPNetworkTierOptions, getGCPSubnetOptions, getNetworkOptions, getSecurityGroupOption, getSubnetOptions, getValue, getVPCOptions, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
@@ -101,7 +101,8 @@ class ModalNicConfig extends Component {
     const { dispatch, user, options } = this.props;
     const { networkKey } = options;
     const isAwsToAws = isPlanWithSamePlatform(user);
-    if (isAwsToAws) {
+    const uiWorkflow = getValue('ui.workflow', user.values);
+    if (isAwsToAws && uiWorkflow !== UI_WORKFLOW.TEST_RECOVERY) {
       const chkField = { label: 'Create From Source', description: '', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: false, onChange: (v, f) => onAwsCopyNetConfigChange(v, f), fieldInfo: 'info.aws.create.network.from.source' };
       return (
         <DMFieldCheckbox dispatch={dispatch} fieldKey={`${networkKey}-isFromSource`} field={chkField} user={user} />

@@ -13,7 +13,7 @@ import { closeWizard, openWizard } from './WizardActions';
 import { closeModal, openModal } from './ModalActions';
 import { MIGRATION_WIZARDS, RECOVERY_WIZARDS, TEST_RECOVERY_WIZARDS, REVERSE_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS, PROTECTED_VM_RECONFIGURATION_WIZARD } from '../../constants/WizardConstants';
 import { getValue, getVMMorefFromEvent, isSamePlatformPlan } from '../../utils/InputUtils';
-import { PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
+import { PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
 import { setCookie } from '../../utils/CookieUtils';
@@ -414,6 +414,7 @@ export function openTestRecoveryWizard() {
       dispatch(valueChange('ui.values.protectionPlatform', protectedSitePlatform));
       dispatch(valueChange('ui.values.recoveryPlatform', platformDetails.platformType));
       dispatch(valueChange('recovery.dryrun', true));
+      dispatch(valueChange('ui.workflow', UI_WORKFLOW.TEST_RECOVERY));
       let availZone = '';
       if (!isSamePlatformPlan(protectionPlan)) {
         availZone = recoverySite.platformDetails.availZone;
