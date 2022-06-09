@@ -16,7 +16,9 @@ class RecoveryMachines extends Component {
   }
 
   onFilter(criteria) {
-    const { vms } = this.state;
+    const { user } = this.props;
+    const { values } = user;
+    const vms = getValue('ui.recovery.vms', values);
     if (criteria === '') {
       this.setState({ hasFilterString: false, searchData: [] });
     } else {
@@ -47,6 +49,7 @@ class RecoveryMachines extends Component {
         <Row>
           <Col className="margin-left-30 padding-right-30 margin-right-10">
             <DMTPaginator
+              defaultLayout="true"
               data={data}
               setData={this.setDataForDisplay}
               showFilter="true"
