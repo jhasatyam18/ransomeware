@@ -218,7 +218,7 @@ function getRecoveryConfigVMDetails(user) {
         instanceDetails = ins;
       }
     });
-    machineDetails.push({ instanceDetails, vmName: name, username: (userName && userName !== '' ? userName : ''), password: (password && password !== '' ? password : '') });
+    machineDetails.push({ instanceDetails, vmMoref: moref, vmName: name, username: (userName && userName !== '' ? userName : ''), password: (password && password !== '' ? password : '') });
   });
   return machineDetails;
 }
