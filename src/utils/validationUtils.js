@@ -122,10 +122,11 @@ export function noValidate() {
 }
 
 export async function validateMigrationVMs({ user, dispatch }) {
-  const initialCheckPass = validateDRPlanProtectData({ user, dispatch });
+  const { values } = user;
+
+  const initialCheckPass = validateVMConfiguration({ user, dispatch });
   if (initialCheckPass) {
     try {
-      const { values } = user;
       const vms = getValue('ui.site.seletedVMs', values);
       if (vms) {
         const payload = getRecoveryPayload(user, true);
@@ -306,10 +307,12 @@ export function validateAWSNetworks(user, dispatch) {
 }
 
 export async function validateRecoveryVMs({ user, dispatch }) {
-  const initialCheckPass = validateDRPlanProtectData({ user, dispatch });
+  const { values } = user;
+
+  const initialCheckPass = validateVMConfiguration({ user, dispatch });
+
   if (initialCheckPass) {
     try {
-      const { values } = user;
       const vms = getValue('ui.site.seletedVMs', values);
       if (vms) {
         const payload = getRecoveryPayload(user);
