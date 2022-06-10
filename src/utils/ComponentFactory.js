@@ -57,7 +57,7 @@ export function getStackComponent(dispatch, user, children, conf, data) {
     case STACK_COMPONENT_TAGS:
       return <CloudTags dispatch={dispatch} vmKey={conf} user={user} field={field} />;
     case STACK_COMPONENT_SECURITY_GROUP:
-      return <SecurityGroups dispatch={dispatch} vmKey={conf} user={user} />;
+      return <SecurityGroups dispatch={dispatch} vmKey={conf} user={user} field={field} />;
     case FIELD_TYPE.NUMBER:
       return <DMFieldNumber dispatch={dispatch} fieldKey={conf} field={children[conf]} user={user} hideLabel="true" />;
     case FIELD_TYPE.SELECT_SEARCH:

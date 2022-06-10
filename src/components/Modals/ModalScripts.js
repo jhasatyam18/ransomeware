@@ -28,7 +28,9 @@ function ModalScripts(props) {
       setType(data.scriptType);
     }
     if (data && typeof data.fieldKey !== 'undefined') {
-      const isPre = data.fieldKey.indexOf('preScript') !== -1;
+      // handle case insensitive text
+      const key = data.fieldKey.toLowerCase();
+      const isPre = key.indexOf('prescript') !== -1;
       setPreOnly(isPre);
       setPostOnly(!isPre);
       setType((isPre ? 'preScript' : 'postScript'));

@@ -1,3 +1,5 @@
+import { getRecoveryVMName } from '../utils/TableUtils';
+
 export const OS_TYPE_ITEM_RENDERER = 'OS_TYPE_ITEM_RENDERER';
 export const VM_SIZE_ITEM_RENDERER = 'VM_SIZE_ITEM_RENDERER';
 export const VM_DISK_ITEM_RENDERER = 'VM_DISK_ITEM_RENDERER';
@@ -95,7 +97,7 @@ export const RECOVERY_JOBS = [
   { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Recovery Type', field: 'recoveryType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER, allowFilter: true, checked: true },
   { label: 'Job Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER, allowFilter: true, checked: true },
-  { label: 'IP Address', field: 'failureMessage', itemRenderer: SSH_RDP_ITEM_RENDERER },
+  { label: 'IP Address', field: 'publicIP' },
 ];
 
 export const PROTECTION_PLAN_RECOVERY_JOBS = [
@@ -136,7 +138,7 @@ export const TABLE_PROTECTION_PLAN_REPLICATIONS = [
 
 // Table fields for protection plan
 export const TABLE_PROTECTION_PLAN_RECOVERY = [
-  { label: 'Virtual Machines', field: 'vmNames' },
+  { label: 'Virtual Machines', field: 'vms', filterText: (text) => getRecoveryVMName(text) },
   { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Recovery Type', field: 'recoveryType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER },
   { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
