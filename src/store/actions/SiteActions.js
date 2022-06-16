@@ -2,7 +2,7 @@
 
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import * as Types from '../../constants/actionTypes';
-import { API_AWS_AVAILABILITY_ZONES, API_AWS_INSTANCES, API_CREATE_SITES, API_DELETE_SITES, API_FETCH_SITES, API_FETCH_SITE_VMS, API_GCP_AVAILABILITY_ZONES, API_GCP_INSTANCES, API_SITE_NETWORKS, API_SITE_NETWORKS_ZONE } from '../../constants/ApiConstants';
+import { API_AWS_INSTANCES, API_CREATE_SITES, API_DELETE_SITES, API_FETCH_SITES, API_FETCH_SITE_VMS, API_GCP_INSTANCES, API_SITE_NETWORKS, API_SITE_NETWORKS_ZONE } from '../../constants/ApiConstants';
 import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { closeModal } from './ModalActions';
@@ -175,44 +175,6 @@ export function onRecoverSiteChange({ value, availZone }) {
             data = [];
           }
           dispatch(valueChange('ui.values.instances', data));
-        }
-      },
-      (err) => {
-        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-      });
-  };
-}
-
-export function updateAvailabilityZones({ value }) {
-  return (dispatch, getState) => {
-    if (value === '') {
-      dispatch(valueChange('ui.values.availabilityZones', []));
-      return;
-    }
-    const { user } = getState();
-    const { values } = user;
-    const data = getValue('ui.values.regions', values);
-    const zones = data.filter((item) => item.value === value);
-    dispatch(valueChange('ui.values.availabilityZones', (zones[0] ? zones[0].zones : [])));
-  };
-}
-
-export function fetchAvailibilityZones({ value }) {
-  return (dispatch, getState) => {
-    const { user } = getState();
-    const { values } = user;
-    const platfromType = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${value}`)[0].platformDetails.platformType;
-    const url = (platfromType === PLATFORM_TYPES.AWS ? API_AWS_AVAILABILITY_ZONES : API_GCP_AVAILABILITY_ZONES);
-    return callAPI(url)
-      .then((json) => {
-        if (json && json.hasError) {
-          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
-        } else {
-          let data = json;
-          if (data === null) {
-            data = [];
-          }
-          dispatch(valueChange('ui.values.availabilityZones', data));
         }
       },
       (err) => {

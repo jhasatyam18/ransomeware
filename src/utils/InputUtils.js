@@ -3,7 +3,8 @@ import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
 import { PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS } from '../constants/InputConstants';
 import { NODE_STATUS_ONLINE } from '../constants/AppStatus';
 import { isEmpty } from './validationUtils';
-import { onAwsStorageTypeChange, onScriptChange } from '../store/actions';
+import { onScriptChange } from '../store/actions';
+import { onAwsStorageTypeChange } from '../store/actions/AwsActions';
 
 export function getValue(key, values) {
   const ret = values[key];
