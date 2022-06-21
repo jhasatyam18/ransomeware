@@ -330,8 +330,10 @@ export function createVMConfigStackObject(vm, user) {
   switch (recoveryPlatform) {
     case PLATFORM_TYPES.GCP:
       return getGCPVMConfig(vm);
-    default:
+    case PLATFORM_TYPES.AWS:
       return getAwsVMConfig(vm);
+    default:
+      return { data: [] };
   }
 }
 
