@@ -1,5 +1,3 @@
-import { addMessage } from '../store/actions/MessageActions';
-import { MESSAGE_TYPES } from '../constants/MessageConstants';
 import { PLATFORM_TYPES, STATIC_KEYS } from '../constants/InputConstants';
 import { FIELDS } from '../constants/FieldsConstant';
 import { getValue,
@@ -132,77 +130,6 @@ export function getVMConfigPayload(user) {
     const securityGroups = joinArray(sgs, ',');
     const preScript = getValue(`${key}-vmConfig.scripts.preScript`, values);
     const postScript = getValue(`${key}-vmConfig.scripts.postScript`, values);
-    if (typeof id !== 'undefined' && id !== '') {
-      instanceDetails.push({ sourceMoref, id, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone });
-    } else {
-      instanceDetails.push({ sourceMoref, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone });
-    }
-  });
-  return instanceDetails;
-}
-
-export function getEditVMConfigPayload(user, dispatch) {
-  const { values } = user;
-  const vms = getValue('ui.site.seletedVMs', values);
-  const recoverVms = getValue('ui.site.recoveryEntities', values);
-  const instanceDetails = [];
-  Object.keys(vms).forEach((key) => {
-    const { name } = vms[key];
-    const instanceName = name;
-    const sourceMoref = vms[key].moref;
-    const id = getValue(`${key}-vmConfig.general.id`, values);
-    let instanceType = '';
-    const insType = getValue(`${key}-vmConfig.general.instanceType`, values);
-    if (typeof insType === 'object' && insType.value) {
-      instanceType = insType.value;
-    } else {
-      instanceType = insType;
-    }
-    const volumeType = getValue(`${key}-vmConfig.general.volumeType`, values);
-    let volumeIOPS = getValue(`${key}-vmConfig.general.volumeIOPS`, values) || 0;
-    if (volumeType === 'gp2') {
-      volumeIOPS = 0;
-    }
-    const tags = getValue(`${key}-vmConfig.general.tags`, values) || [];
-    const bootPriority = parseInt(getValue(`${key}-vmConfig.general.bootOrder`, values), 10);
-    // const isPublicIP = (getValue(`${key}-vmConfig.network.net1`, values) === 'public');
-    // const privateIP = (isPublicIP ? '' : getValue(`${key}-vmConfig.network.net1-manual-ip`, values));
-    const networks = getVMNetworkConfig(key, values);
-    let availZone = '';
-    if (networks.length > 0) {
-      availZone = networks[0].availZone;
-    }
-    const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
-    let sgs = getValue(`${key}-vmConfig.network.securityGroup`, values);
-    if (recoveryPlatform === PLATFORM_TYPES.AWS) {
-      sgs = [];
-    }
-    const securityGroups = joinArray(sgs, ',');
-    const preScript = getValue(`${key}-vmConfig.scripts.preScript`, values);
-    const postScript = getValue(`${key}-vmConfig.scripts.postScript`, values);
-
-    if (typeof recoverVms !== 'undefined') {
-      let found = false;
-      recoverVms.forEach(((ob) => {
-        if (ob.sourceMoref === key) {
-          if (ob.instanceType !== instanceType || ob.volumeIOPS !== volumeIOPS || ob.volumeType !== volumeType || ob.securityGroups !== securityGroups || ob.availZone !== availZone) {
-            found = true;
-          }
-        }
-        networks.forEach((nets) => {
-          ob.networks.forEach((net1) => {
-            if (nets.id === net1.id) {
-              if (net1.securityGroups !== nets.securityGroups || net1.Subnet !== nets.subnet || net1.vpcId !== nets.vpcId) {
-                found = true;
-              }
-            }
-          });
-        });
-      }));
-      if (found) {
-        dispatch(addMessage('Changes will be applied after one Iteration', MESSAGE_TYPES.WARNING));
-      }
-    }
     if (typeof id !== 'undefined' && id !== '') {
       instanceDetails.push({ sourceMoref, id, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone });
     } else {
@@ -398,7 +325,7 @@ export function getEditProtectionPlanPayload(user, sites, dispatch) {
     result.drplan.protectedEntities.VirtualMachines.push(vm);
   });
   result.drplan.protectedEntities.Name = 'dummy';
-  result.drplan.recoveryEntities.instanceDetails = getEditVMConfigPayload(user, dispatch);
+  result.drplan.recoveryEntities.instanceDetails = getVMConfigPayload(user, dispatch);
   result.drplan.replicationInterval = getReplicationInterval(getValue(STATIC_KEYS.REPLICATION_INTERVAL_TYPE, values), getValue('drplan.replicationInterval', values));
   result.drplan.startTime = getUnixTimeFromDate(result.drplan.startTime);
   return result;

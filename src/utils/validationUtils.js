@@ -646,3 +646,56 @@ function showValidationInfo(response = [], dispatch) {
   }
   return true;
 }
+
+export function changedVMRecoveryConfigurations(payload, user, dispatch) {
+  const { values } = user;
+  const { instanceDetails } = payload.drplan.recoveryEntities;
+  const recoverVms = getValue('ui.site.recoveryEntities', values);
+  let foundChanged = false;
+  recoverVms.forEach((rvm) => {
+    instanceDetails.forEach((ins) => {
+      if (rvm.sourceMoref === ins.sourceMoref) {
+        Object.keys(rvm).forEach((k) => {
+          if (k === 'networks') {
+            const res = checkChangesForArrayInObject(rvm[k], ins[k]);
+            if (!res) {
+              foundChanged = true;
+            }
+          } else if (rvm[k] === 'tags') {
+            if (rvm[k].length !== ins[k].length) {
+              foundChanged = true;
+            }
+          } else if (rvm[k] !== '' && k !== 'deleteInstance' && k !== 'isResetRequired' && rvm[k] !== ins[k] && k !== 'tags' && k !== 'networks') {
+            foundChanged = true;
+          }
+        });
+      }
+    });
+  });
+  if (foundChanged) {
+    dispatch(addMessage('Changes will be applied after one iteration', MESSAGE_TYPES.WARNING));
+  }
+}
+
+export function checkChangesForArrayInObject(arr1, arr2) {
+  let clear = true;
+  arr1.forEach((a1) => {
+    arr2.forEach((a2) => {
+      if (a1.id === a2.id) {
+        Object.keys(a1).forEach((k) => {
+          if (a1[k] !== '' && a1[k] !== a2[k]) {
+            clear = false;
+            if (k === 'Subnet') {
+              if (a1.Subnet !== a2.subnet) {
+                clear = false;
+              } else {
+                clear = true;
+              }
+            }
+          }
+        });
+      }
+    });
+  });
+  return clear;
+}
