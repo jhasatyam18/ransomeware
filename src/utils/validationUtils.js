@@ -639,3 +639,13 @@ function showValidationInfo(response = [], dispatch) {
   }
   return true;
 }
+
+export function validateVMSelection(user, dispatch) {
+  const { values } = user;
+  const vms = getValue('ui.site.seletedVMs', values);
+  if (typeof vms === 'undefined' || Object.keys(vms).length === 0) {
+    dispatch(addMessage('Select virtual machines', MESSAGE_TYPES.ERROR));
+    return false;
+  }
+  return true;
+}
