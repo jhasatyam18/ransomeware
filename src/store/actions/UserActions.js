@@ -1,7 +1,7 @@
 // import { addMessage, clearMessages } from './MessageActions';
 import jsCookie from 'js-cookie';
 import * as Types from '../../constants/actionTypes';
-import { API_AUTHENTICATE, API_CHANGE_PASSWORD, API_INFO, API_SCRIPTS, API_USERS, API_USER_PRIVILEGES, API_USER_SCRIPT } from '../../constants/ApiConstants';
+import { API_AUTHENTICATE, API_AWS_REGIONS, API_CHANGE_PASSWORD, API_GCP_REGIONS, API_INFO, API_SCRIPTS, API_USERS, API_USER_PRIVILEGES, API_USER_SCRIPT } from '../../constants/ApiConstants';
 import { APP_TYPE, PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH } from '../../constants/RouterConstants';
@@ -18,12 +18,11 @@ import { fetchLicenses } from './LicenseActions';
 import { addMessage, clearMessages } from './MessageActions';
 import { closeModal, openModal } from './ModalActions';
 import { fetchNodes } from './NodeActions';
-import { fetchSites } from './SiteActions';
+import { fetchSites, fetchAvailibilityZones } from './SiteActions';
 import { fetchSupportBundles } from './SupportActions';
 import { fetchBandwidthConfig, fetchBandwidthReplNodes } from './ThrottlingAction';
 import { MODAL_USER_SCRIPT } from '../../constants/Modalconstant';
 import { fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
-import { fetchAvailibilityZones, fetchRegions } from './AwsActions';
 
 export function refreshApplication() {
   return {
@@ -156,6 +155,27 @@ export function showApplicationLoader(key, value) {
 export function hideApplicationLoader(key) {
   return {
     type: Types.REMOVE_KEY_FROM_APPLICATION_LOADER, key,
+  };
+}
+
+export function fetchRegions(TYPE) {
+  return (dispatch) => {
+    const url = (PLATFORM_TYPES.AWS === TYPE ? API_AWS_REGIONS : API_GCP_REGIONS);
+    return callAPI(url)
+      .then((json) => {
+        if (json && json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          let data = json;
+          if (data === null) {
+            data = [];
+          }
+          dispatch(valueChange('ui.values.regions', data));
+        }
+      },
+      (err) => {
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
   };
 }
 

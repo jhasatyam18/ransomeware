@@ -1,10 +1,6 @@
-import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { API_AWS_AVAILABILITY_ZONES, API_AWS_REGIONS, API_GCP_AVAILABILITY_ZONES, API_GCP_REGIONS } from '../../constants/ApiConstants';
-import { callAPI } from '../../utils/ApiUtils';
 import { getValue, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
-import { PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
+import { STATIC_KEYS } from '../../constants/InputConstants';
 import { valueChange } from './UserActions';
-import { addMessage } from './MessageActions';
 
 export function onAwsStorageTypeChange({ value, fieldKey }) {
   return (dispatch) => {
@@ -117,65 +113,6 @@ export function onAwsVPCChange({ value, fieldKey }) {
       dispatch(valueChange(`${networkKey}-securityGroups`, ''));
       dispatch(valueChange(`${networkKey}-network`, ''));
     }
-  };
-}
-
-export function updateAvailabilityZones({ value }) {
-  return (dispatch, getState) => {
-    if (value === '') {
-      dispatch(valueChange('ui.values.availabilityZones', []));
-      return;
-    }
-    const { user } = getState();
-    const { values } = user;
-    const data = getValue('ui.values.regions', values);
-    const zones = data.filter((item) => item.value === value);
-    dispatch(valueChange('ui.values.availabilityZones', (zones[0] ? zones[0].zones : [])));
-  };
-}
-
-export function fetchAvailibilityZones({ value }) {
-  return (dispatch, getState) => {
-    const { user } = getState();
-    const { values } = user;
-    const platfromType = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${value}`)[0].platformDetails.platformType;
-    const url = (platfromType === PLATFORM_TYPES.AWS ? API_AWS_AVAILABILITY_ZONES : API_GCP_AVAILABILITY_ZONES);
-    return callAPI(url)
-      .then((json) => {
-        if (json && json.hasError) {
-          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
-        } else {
-          let data = json;
-          if (data === null) {
-            data = [];
-          }
-          dispatch(valueChange('ui.values.availabilityZones', data));
-        }
-      },
-      (err) => {
-        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-      });
-  };
-}
-
-export function fetchRegions(TYPE) {
-  return (dispatch) => {
-    const url = (PLATFORM_TYPES.AWS === TYPE ? API_AWS_REGIONS : API_GCP_REGIONS);
-    return callAPI(url)
-      .then((json) => {
-        if (json && json.hasError) {
-          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
-        } else {
-          let data = json;
-          if (data === null) {
-            data = [];
-          }
-          dispatch(valueChange('ui.values.regions', data));
-        }
-      },
-      (err) => {
-        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-      });
   };
 }
 

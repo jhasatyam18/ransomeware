@@ -1,7 +1,7 @@
 import { onPlatformTypeChange } from '../store/actions';
 import { onProtectionPlanChange } from '../store/actions/DrPlanActions';
-import { onProtectSiteChange, onRecoverSiteChange } from '../store/actions/SiteActions';
-import { updateAvailabilityZones } from '../store/actions/AwsActions';
+import { onProtectSiteChange, onRecoverSiteChange, updateAvailabilityZones } from '../store/actions/SiteActions';
+
 import { onLimitChange, onTimeLimitChange } from '../store/actions/ThrottlingAction';
 import { getAvailibilityZoneOptions, getDefaultRecoverySite, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getReportProtectionPlans, getSiteNodeOptions, getSitesOptions, getSubnetOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware, shouldShowNodeEncryptionKey, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort } from '../utils/InputUtils';
 import { isEmpty, validateDrSiteSelection, validateReplicationInterval, validateReplicationValue } from '../utils/validationUtils';

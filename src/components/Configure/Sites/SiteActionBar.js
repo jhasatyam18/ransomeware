@@ -5,8 +5,9 @@ import { openModal } from '../../../store/actions/ModalActions';
 import { MODAL_CONFIGURE_NEW_SITE, MODAL_CONFIRMATION_WARNING } from '../../../constants/Modalconstant';
 import { clearValues, valueChange } from '../../../store/actions';
 import { fetchNodes } from '../../../store/actions/NodeActions';
-import { deleteSites } from '../../../store/actions/SiteActions';
-import { fetchRegions, fetchAvailibilityZones } from '../../../store/actions/AwsActions';
+import { deleteSites, fetchAvailibilityZones } from '../../../store/actions/SiteActions';
+import { fetchRegions } from '../../../store/actions/UserActions';
+
 import { FIELDS } from '../../../constants/FieldsConstant';
 import ActionButton from '../../Common/ActionButton';
 import { STATIC_KEYS } from '../../../constants/InputConstants';
