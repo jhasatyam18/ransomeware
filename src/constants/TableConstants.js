@@ -97,7 +97,7 @@ export const RECOVERY_JOBS = [
   { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Recovery Type', field: 'recoveryType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER, allowFilter: true, checked: true },
   { label: 'Job Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER, allowFilter: true, checked: true },
-  { label: 'IP Address', field: 'publicIP' },
+  { label: 'IP Address', field: 'publicIP', itemRenderer: SSH_RDP_ITEM_RENDERER },
 ];
 
 export const PROTECTION_PLAN_RECOVERY_JOBS = [
@@ -105,6 +105,7 @@ export const PROTECTION_PLAN_RECOVERY_JOBS = [
   { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Recovery Type', field: 'recoveryType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER, allowFilter: true, checked: true },
   { label: 'Job Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER, allowFilter: true, checked: true },
+  { label: 'IP Address', field: 'publicIP', itemRenderer: SSH_RDP_ITEM_RENDERER },
 ];
 
 export const REPLICATION_VM_JOBS = [
