@@ -158,6 +158,20 @@ export function hideApplicationLoader(key) {
   };
 }
 
+export function onPlatformTypeChange({ value }) {
+  return (dispatch) => {
+    dispatch(valueChange('configureSite.node', ''));
+    if (value === '') return;
+    if (value === PLATFORM_TYPES.AWS) {
+      dispatch(fetchRegions(PLATFORM_TYPES.AWS));
+      dispatch(fetchAvailibilityZones(PLATFORM_TYPES.AWS));
+    } else {
+      dispatch(fetchRegions(PLATFORM_TYPES.GCP));
+      dispatch(fetchAvailibilityZones(PLATFORM_TYPES.GCP));
+    }
+  };
+}
+
 export function fetchRegions(TYPE) {
   return (dispatch) => {
     const url = (PLATFORM_TYPES.AWS === TYPE ? API_AWS_REGIONS : API_GCP_REGIONS);
@@ -176,20 +190,6 @@ export function fetchRegions(TYPE) {
       (err) => {
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
-  };
-}
-
-export function onPlatformTypeChange({ value }) {
-  return (dispatch) => {
-    dispatch(valueChange('configureSite.node', ''));
-    if (value === '') return;
-    if (value === PLATFORM_TYPES.AWS) {
-      dispatch(fetchRegions(PLATFORM_TYPES.AWS));
-      dispatch(fetchAvailibilityZones(PLATFORM_TYPES.AWS));
-    } else {
-      dispatch(fetchRegions(PLATFORM_TYPES.GCP));
-      dispatch(fetchAvailibilityZones(PLATFORM_TYPES.GCP));
-    }
   };
 }
 
