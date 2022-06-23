@@ -3,10 +3,9 @@ import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { openModal } from '../../../store/actions/ModalActions';
 import { MODAL_CONFIGURE_NEW_SITE, MODAL_CONFIRMATION_WARNING } from '../../../constants/Modalconstant';
-import { clearValues, valueChange } from '../../../store/actions';
+import { clearValues, valueChange, fetchRegions } from '../../../store/actions';
 import { fetchNodes } from '../../../store/actions/NodeActions';
 import { deleteSites, fetchAvailibilityZones } from '../../../store/actions/SiteActions';
-import { fetchRegions } from '../../../store/actions/UserActions';
 
 import { FIELDS } from '../../../constants/FieldsConstant';
 import ActionButton from '../../Common/ActionButton';
