@@ -142,17 +142,15 @@ export function geBootPriorityOptions() {
 
 export function getStorageTypeOptions(user) {
   const { values } = user;
-  const res = getValue(STATIC_KEYS.UI_VOLUMETYPES, values);
-  return res;
-  // const recoverySite = getValue('drplan.recoverySite', values);
-  // const sites = getValue(STATIC_KEYS.UI_SITES, values);
-  // const site = sites.filter((s) => `${s.id}` === `${recoverySite}`)[0];
-  // const { platformDetails } = site;
-  // const isGCP = (platformDetails.platformType === PLATFORM_TYPES.GCP);
-  // if (isGCP) {
-  //   return [{ label: 'Standard', value: 'pd-standard' }, { label: 'Balanced', value: 'pd-balanced' }, { label: 'SSD', value: 'pd-ssd' }];
-  // }
-  // return [{ label: 'GP-2', value: 'gp2' }, { label: 'GP-3', value: 'gp3' }, { label: 'IO-1', value: 'io1' }, { label: 'IO-2', value: 'io2' }];
+  const recoverySite = getValue('drplan.recoverySite', values);
+  const sites = getValue(STATIC_KEYS.UI_SITES, values);
+  const site = sites.filter((s) => `${s.id}` === `${recoverySite}`)[0];
+  const { platformDetails } = site;
+  const isGCP = (platformDetails.platformType === PLATFORM_TYPES.GCP);
+  if (isGCP) {
+    return [{ label: 'Standard', value: 'pd-standard' }, { label: 'Balanced', value: 'pd-balanced' }, { label: 'SSD', value: 'pd-ssd' }];
+  }
+  return [{ label: 'GP-2', value: 'gp2' }, { label: 'GP-3', value: 'gp3' }, { label: 'IO-1', value: 'io1' }, { label: 'IO-2', value: 'io2' }];
 }
 
 // generate options from plain array ["d1","d2"]

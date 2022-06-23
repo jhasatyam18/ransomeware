@@ -312,7 +312,7 @@ export function fetchNetworks(id, sourceNet = undefined, availZone) {
           if (data.instanceTypes) {
             const insTypes = [];
             data.instanceTypes.forEach((t) => {
-              insTypes.push({ value: t.value, label: t.name });
+              insTypes.push({ value: t, label: t });
             });
             dispatch(valueChange('ui.values.instances', insTypes));
           }
@@ -325,13 +325,6 @@ export function fetchNetworks(id, sourceNet = undefined, availZone) {
           dispatch(valueChange(STATIC_KEYS.UI_SUBNETS, (data.subnets ? data.subnets : [])));
           dispatch(valueChange(STATIC_KEYS.UI_RESERVE_IPS, (data.ipAddress ? data.ipAddress : [])));
           dispatch(valueChange(STATIC_KEYS.UI_VPC_TARGET, (data.networks ? data.networks : [])));
-          if (data.volumeTypes) {
-            const volumetype = [];
-            data.volumeTypes.forEach((d) => {
-              volumetype.push({ label: d.name, value: d.value });
-            });
-            dispatch(valueChange(STATIC_KEYS.UI_VOLUMETYPES, volumetype));
-          }
           // for aws push zone names
           const zones = [];
           if (data.subnets) {
