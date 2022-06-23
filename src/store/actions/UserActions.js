@@ -1,7 +1,7 @@
 // import { addMessage, clearMessages } from './MessageActions';
 import jsCookie from 'js-cookie';
 import * as Types from '../../constants/actionTypes';
-import { API_AUTHENTICATE, API_AWS_REGIONS, API_CHANGE_PASSWORD, API_GCP_REGIONS, API_INFO, API_SCRIPTS, API_USERS, API_USER_PRIVILEGES, API_USER_SCRIPT } from '../../constants/ApiConstants';
+import { API_AUTHENTICATE, API_AWS_AVAILABILITY_ZONES, API_AWS_REGIONS, API_CHANGE_PASSWORD, API_GCP_AVAILABILITY_ZONES, API_GCP_REGIONS, API_INFO, API_SCRIPTS, API_USERS, API_USER_PRIVILEGES, API_USER_SCRIPT } from '../../constants/ApiConstants';
 import { APP_TYPE, PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH } from '../../constants/RouterConstants';
@@ -193,7 +193,7 @@ export function fetchRegions(TYPE) {
   };
 }
 
-export functio({ value }) {
+export function fetchAvailibilityZones({ value }) {
   return (dispatch, getState) => {
     const { user } = getState();
     const { values } = user;
