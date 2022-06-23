@@ -1,6 +1,6 @@
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
-import { PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS } from '../constants/InputConstants';
+import { EXCLUDE_KEYS, PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS } from '../constants/InputConstants';
 import { NODE_STATUS_ONLINE } from '../constants/AppStatus';
 import { isEmpty } from './validationUtils';
 import { onAwsStorageTypeChange, onScriptChange } from '../store/actions';
@@ -142,15 +142,17 @@ export function geBootPriorityOptions() {
 
 export function getStorageTypeOptions(user) {
   const { values } = user;
-  const recoverySite = getValue('drplan.recoverySite', values);
-  const sites = getValue(STATIC_KEYS.UI_SITES, values);
-  const site = sites.filter((s) => `${s.id}` === `${recoverySite}`)[0];
-  const { platformDetails } = site;
-  const isGCP = (platformDetails.platformType === PLATFORM_TYPES.GCP);
-  if (isGCP) {
-    return [{ label: 'Standard', value: 'pd-standard' }, { label: 'Balanced', value: 'pd-balanced' }, { label: 'SSD', value: 'pd-ssd' }];
-  }
-  return [{ label: 'GP-2', value: 'gp2' }, { label: 'GP-3', value: 'gp3' }, { label: 'IO-1', value: 'io1' }, { label: 'IO-2', value: 'io2' }];
+  const res = getValue(STATIC_KEYS.UI_VOLUMETYPES, values);
+  return res;
+  // const recoverySite = getValue('drplan.recoverySite', values);
+  // const sites = getValue(STATIC_KEYS.UI_SITES, values);
+  // const site = sites.filter((s) => `${s.id}` === `${recoverySite}`)[0];
+  // const { platformDetails } = site;
+  // const isGCP = (platformDetails.platformType === PLATFORM_TYPES.GCP);
+  // if (isGCP) {
+  //   return [{ label: 'Standard', value: 'pd-standard' }, { label: 'Balanced', value: 'pd-balanced' }, { label: 'SSD', value: 'pd-ssd' }];
+  // }
+  // return [{ label: 'GP-2', value: 'gp2' }, { label: 'GP-3', value: 'gp3' }, { label: 'IO-1', value: 'io1' }, { label: 'IO-2', value: 'io2' }];
 }
 
 // generate options from plain array ["d1","d2"]
@@ -654,4 +656,17 @@ export function getVPCOptions(user) {
     options.push({ label: op.cidr, value: op.id });
   });
   return options;
+}
+
+export function excludeKeys(key, recoveryPlatform) {
+  if (recoveryPlatform === PLATFORM_TYPES.GCP && key === 'availZone') {
+    return false;
+  }
+  const keys = Object.keys(EXCLUDE_KEYS);
+  for (let i = 0; i < keys.length; i += 1) {
+    if (EXCLUDE_KEYS[keys[i]] === key) {
+      return false;
+    }
+  }
+  return true;
 }

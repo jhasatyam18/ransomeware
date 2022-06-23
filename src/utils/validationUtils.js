@@ -8,7 +8,7 @@ import { API_VALIDATE_MIGRATION, API_VALIDATE_RECOVERY, API_VALIDATE_REVERSE_PLA
 import { getRecoveryPayload, getReversePlanPayload, getVMNetworkConfig } from './PayloadUtil';
 import { IP_REGEX } from '../constants/ValidationConstants';
 import { PLATFORM_TYPES, STATIC_KEYS } from '../constants/InputConstants';
-import { createVMConfigStackObject, getValue, isAWSCopyNic } from './InputUtils';
+import { createVMConfigStackObject, excludeKeys, getValue, isAWSCopyNic } from './InputUtils';
 
 export function isRequired(value) {
   if (!value) {
@@ -651,51 +651,44 @@ export function changedVMRecoveryConfigurations(payload, user, dispatch) {
   const { values } = user;
   const { instanceDetails } = payload.drplan.recoveryEntities;
   const recoverVms = getValue('ui.site.recoveryEntities', values);
-  let foundChanged = false;
-  recoverVms.forEach((rvm) => {
-    instanceDetails.forEach((ins) => {
-      if (rvm.sourceMoref === ins.sourceMoref) {
-        Object.keys(rvm).forEach((k) => {
-          if (k === 'networks') {
-            const res = checkChangesForArrayInObject(rvm[k], ins[k]);
-            if (!res) {
-              foundChanged = true;
-            }
-          } else if (rvm[k] === 'tags') {
-            if (rvm[k].length !== ins[k].length) {
-              foundChanged = true;
-            }
-          } else if (rvm[k] !== '' && k !== 'deleteInstance' && k !== 'isResetRequired' && rvm[k] !== ins[k] && k !== 'tags' && k !== 'networks') {
-            foundChanged = true;
-          }
-        });
-      }
-    });
-  });
-  if (foundChanged) {
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+  let res = false;
+  res = checkChangesForArrayInObject(recoverVms, instanceDetails, recoveryPlatform, 'sourceMoref');
+  if (res) {
     dispatch(addMessage('Changes will be applied after one iteration', MESSAGE_TYPES.WARNING));
   }
 }
 
-export function checkChangesForArrayInObject(arr1, arr2) {
-  let clear = true;
-  arr1.forEach((a1) => {
-    arr2.forEach((a2) => {
-      if (a1.id === a2.id) {
-        Object.keys(a1).forEach((k) => {
-          if (a1[k] !== '' && a1[k] !== a2[k]) {
-            clear = false;
-            if (k === 'Subnet') {
-              if (a1.Subnet !== a2.subnet) {
-                clear = false;
-              } else {
-                clear = true;
-              }
-            }
+export function checkChangesForArrayInObject(arr1, arr2, recoveryPlatform, condition) {
+  // let clear = true;
+  let clear = false;
+
+  for (let i = 0; i < arr1.length; i += 1) {
+    const keys = Object.keys(arr1[i]);
+    const rvm = arr1[i];
+    const ins = arr2[i];
+    if (rvm[condition] === ins[condition]) {
+      for (let k = 0; k < keys.length; k += 1) {
+        if (keys[k] === 'networks') {
+          clear = checkChangesForArrayInObject(rvm[keys[k]], ins[keys[k]], 'id');
+          if (clear) {
+            return clear;
           }
-        });
+        } else if (rvm[keys[k]] !== '' && excludeKeys(keys[k], recoveryPlatform) && rvm[keys[k]] !== ins[keys[k]] && keys[k] !== 'tags') {
+          if (keys[k] === 'Subnet') {
+            if (rvm[keys[k]] !== ins.subnet) {
+              return true;
+            }
+          } else {
+            return true;
+          }
+        } else if (keys[k] === 'tags') {
+          if (rvm[keys[k]].length !== ins[keys[k]].length) {
+            return true;
+          }
+        }
       }
-    });
-  });
+    }
+  }
   return clear;
 }
