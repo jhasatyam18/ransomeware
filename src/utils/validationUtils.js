@@ -659,14 +659,13 @@ export function changedVMRecoveryConfigurations(payload, user, dispatch) {
   }
 }
 
-export function checkChangesForArrayInObject(arr1, arr2, recoveryPlatform, condition) {
-  // let clear = true;
+export function checkChangesForArrayInObject(recoveryArr, payloadArr, recoveryPlatform, condition) {
   let clear = false;
 
-  for (let i = 0; i < arr1.length; i += 1) {
-    const keys = Object.keys(arr1[i]);
-    const rvm = arr1[i];
-    const ins = arr2[i];
+  for (let i = 0; i < recoveryArr.length; i += 1) {
+    const keys = Object.keys(recoveryArr[i]);
+    const rvm = recoveryArr[i];
+    const ins = payloadArr[i];
     if (rvm[condition] === ins[condition]) {
       for (let k = 0; k < keys.length; k += 1) {
         if (keys[k] === 'networks') {
