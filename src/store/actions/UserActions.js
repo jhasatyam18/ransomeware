@@ -193,12 +193,9 @@ export function fetchRegions(TYPE) {
   };
 }
 
-export function fetchAvailibilityZones({ value }) {
-  return (dispatch, getState) => {
-    const { user } = getState();
-    const { values } = user;
-    const platfromType = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${value}`)[0].platformDetails.platformType;
-    const url = (platfromType === PLATFORM_TYPES.AWS ? API_AWS_AVAILABILITY_ZONES : API_GCP_AVAILABILITY_ZONES);
+export function fetchAvailibilityZones(type) {
+  return (dispatch) => {
+    const url = (type === PLATFORM_TYPES.AWS ? API_AWS_AVAILABILITY_ZONES : API_GCP_AVAILABILITY_ZONES);
     return callAPI(url)
       .then((json) => {
         if (json && json.hasError) {
