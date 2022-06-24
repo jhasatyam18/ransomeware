@@ -73,6 +73,7 @@ export const STATIC_KEYS = {
   UI_VPC_SOURCE: 'ui.values.vpc.source',
   UI_VPC_TARGET: 'ui.values.vpc.target',
   UI_WORKFLOW_TEST_RECOVERY: 'ui.workflow.test.recovery',
+  UI_VOLUMETYPES: 'ui.volumes.type',
 };
 
 // Recovery time in minutes
