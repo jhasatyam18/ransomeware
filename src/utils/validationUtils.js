@@ -655,7 +655,7 @@ export function changedVMRecoveryConfigurations(payload, user, dispatch) {
   let res = false;
   res = checkChangesForArrayInObject(recoverVms, instanceDetails, recoveryPlatform, 'sourceMoref');
   if (res) {
-    dispatch(addMessage('Changes will be applied after one iteration', MESSAGE_TYPES.WARNING));
+    dispatch(addMessage('Changes on recovery machine will be applied after one iteration', MESSAGE_TYPES.WARNING));
   }
 }
 

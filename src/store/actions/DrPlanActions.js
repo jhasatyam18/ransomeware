@@ -9,7 +9,7 @@ import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { fetchNetworks, fetchSites, onRecoverSiteChange } from './SiteActions';
 import { getCreateDRPlanPayload, getEditProtectionPlanPayload, getRecoveryPayload, getReversePlanPayload, getVMConfigPayload } from '../../utils/PayloadUtil';
-import { addAssociatedReverseIP, clearValues, fetchScript, hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
+import { addAssociatedReverseIP, clearValues, fetchScript, hideApplicationLoader, refresh, showApplicationLoader, valueChange } from './UserActions';
 import { closeWizard, openWizard } from './WizardActions';
 import { closeModal, openModal } from './ModalActions';
 import { MIGRATION_WIZARDS, RECOVERY_WIZARDS, TEST_RECOVERY_WIZARDS, REVERSE_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS, PROTECTED_VM_RECONFIGURATION_WIZARD } from '../../constants/WizardConstants';
@@ -557,24 +557,22 @@ export function onEditProtectionPlan() {
       const alertIDs = alerts.map((a) => a.id).join(',');
       url = `${url}?alert=${alertIDs}`;
     }
-    //  dispatch(showApplicationLoader('update-dr-plan', 'Updating protection plan...'));
-
-    dispatch(valueChange(obj, url));
-    // return callAPI(url, obj).then((json) => {
-    //   dispatch(hideApplicationLoader('update-dr-plan'));
-    //   if (json.hasError) {
-    //     dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
-    //   } else {
-    //     dispatch(addMessage('Protection plan configured successfully.', MESSAGE_TYPES.SUCCESS));
-    //     dispatch(closeWizard());
-    //     dispatch(clearValues());
-    //     fetchByDelay(dispatch, refresh, 2000);
-    //   }
-    // },
-    // (err) => {
-    //   dispatch(hideApplicationLoader('update-dr-plan'));
-    //   dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-    // });
+    dispatch(showApplicationLoader('update-dr-plan', 'Updating protection plan...'));
+    return callAPI(url, obj).then((json) => {
+      dispatch(hideApplicationLoader('update-dr-plan'));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        dispatch(addMessage('Protection plan configured successfully.', MESSAGE_TYPES.SUCCESS));
+        dispatch(closeWizard());
+        dispatch(clearValues());
+        fetchByDelay(dispatch, refresh, 2000);
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('update-dr-plan'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
   };
 }
 
