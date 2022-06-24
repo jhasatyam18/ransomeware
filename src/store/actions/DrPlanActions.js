@@ -547,7 +547,7 @@ export function onEditProtectionPlan() {
   return (dispatch, getState) => {
     const { user, sites } = getState();
     const { values } = user;
-    const payload = getEditProtectionPlanPayload(user, sites.sites, dispatch);
+    const payload = getEditProtectionPlanPayload(user, sites.sites);
     changedVMRecoveryConfigurations(payload, user, dispatch);
     const obj = createPayload(API_TYPES.PUT, { ...payload.drplan });
     const id = getValue('ui.selected.protection.planID', values);

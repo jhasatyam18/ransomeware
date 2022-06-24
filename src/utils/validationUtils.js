@@ -90,13 +90,6 @@ export function validateSteps(user, dispatch, fields, staticFields) {
       }
     }
   });
-  // let key = fields[0].split('-');
-  // key = `${key[0]}-${key[1]}`;
-  // const selectedVms = getValue('ui.site.seletedVMs', values);
-  // selectedVms.forEach((svms) => {
-
-  // });
-  // if (!selectedVms) return key;
   return isClean;
 }
 

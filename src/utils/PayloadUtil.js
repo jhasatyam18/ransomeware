@@ -301,7 +301,7 @@ function getTimeFromDate(value) {
   return `${date.getHours()}:${date.getMinutes()}`;
 }
 
-export function getEditProtectionPlanPayload(user, sites, dispatch) {
+export function getEditProtectionPlanPayload(user, sites) {
   const { values } = user;
   const vms = getValue('ui.site.seletedVMs', values);
   const result = getKeyStruct('drplan.', values);
@@ -325,7 +325,7 @@ export function getEditProtectionPlanPayload(user, sites, dispatch) {
     result.drplan.protectedEntities.VirtualMachines.push(vm);
   });
   result.drplan.protectedEntities.Name = 'dummy';
-  result.drplan.recoveryEntities.instanceDetails = getVMConfigPayload(user, dispatch);
+  result.drplan.recoveryEntities.instanceDetails = getVMConfigPayload(user);
   result.drplan.replicationInterval = getReplicationInterval(getValue(STATIC_KEYS.REPLICATION_INTERVAL_TYPE, values), getValue('drplan.replicationInterval', values));
   result.drplan.startTime = getUnixTimeFromDate(result.drplan.startTime);
   return result;
