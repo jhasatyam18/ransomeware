@@ -89,7 +89,7 @@ export const SETTINGS_TABS = [
   { title: 'Email', activeTab: 4 },
 ];
 
-export const EXCLUDE_KEYS = {
+export const EXCLUDE_KEYS_RECOVERY_CONFIGURATION = {
   DELETE_INSTANCE: 'deleteInstance',
   IS_REQUIRED: 'isResetRequired',
 };
