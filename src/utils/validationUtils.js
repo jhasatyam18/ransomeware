@@ -640,7 +640,6 @@ function showValidationInfo(response = [], dispatch) {
   return true;
 }
 
-<<<<<<< HEAD
 export function changedVMRecoveryConfigurations(payload, user, dispatch) {
   const { values } = user;
   const { instanceDetails } = payload.drplan.recoveryEntities;
@@ -684,14 +683,4 @@ export function checkChangesForArrayInObject(recoveryArr, payloadArr, recoveryPl
     }
   }
   return clear;
-=======
-export function validateVMSelection(user, dispatch) {
-  const { values } = user;
-  const vms = getValue('ui.site.seletedVMs', values);
-  if (typeof vms === 'undefined' || Object.keys(vms).length === 0) {
-    dispatch(addMessage('Select virtual machines', MESSAGE_TYPES.ERROR));
-    return false;
-  }
-  return true;
->>>>>>> 6b55867fbaf30be75e1350f80ccc3cf72f3f7c22
 }
