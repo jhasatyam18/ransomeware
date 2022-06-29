@@ -227,16 +227,20 @@ export function onProtectionPlanChange({ value }) {
         } else {
           const data = [];
           const info = json.protectedEntities.virtualMachines || [];
+          const rEntities = json.recoveryEntities.instanceDetails || [];
           info.forEach((vm) => {
-            if (typeof vm.recoveryStatus !== 'undefined' && (vm.recoveryStatus === 'Migrated' || vm.recoveryStatus === 'Recovered' || vm.isRemovedFromPlan === true)) {
-              const v = vm;
-              v.isDisabled = true;
-              data.push(v);
-            } else {
-              data.push(vm);
-            }
+            rEntities.forEach((rE) => {
+              if (vm.moref === rE.sourceMoref) {
+                const machine = vm;
+                machine.name = rE.instanceName;
+                if (typeof vm.recoveryStatus !== 'undefined' && (vm.recoveryStatus === 'Migrated' || vm.recoveryStatus === 'Recovered' || vm.isRemovedFromPlan === true)) {
+                  machine.isDisabled = true;
+                }
+                data.push(vm);
+              }
+            });
           });
-          dispatch(valueChange('ui.recovery.vms', json.protectedEntities.virtualMachines));
+          dispatch(valueChange('ui.recovery.vms', data));
         }
       },
       (err) => {
