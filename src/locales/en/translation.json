@@ -354,6 +354,5 @@
   "title.select":"Select",
   "title.unit":"Unit",
   "info.protectionplan.instance.network.tags": "Network tags enables to make firewall rules and routes applicable to instance.",
-  "info.protectionplan.instance.network.tags": "Network tags enables to make firewall rules and routes applicable to instance.",
-  "info.test.recovery.cleanup" : "For following selected instances all the test recovered copies will be deleted."
+  "info.test.recovery.cleanup" : "For following virtual machines all the test recovered copies will be deleted."
 }
