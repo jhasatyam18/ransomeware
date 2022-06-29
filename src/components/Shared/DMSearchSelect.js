@@ -5,6 +5,7 @@ import {
   Col, FormFeedback, FormGroup, Label, Row,
 } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
+import { PLATFORM_TYPES } from '../../constants/InputConstants';
 import DMToolTip from './DMToolTip';
 import { getValue } from '../../utils/InputUtils';
 import { valueChange } from '../../store/actions/UserActions';
@@ -15,6 +16,7 @@ class DMSearchSelect extends Component {
     const { fieldKey, user, field, dispatch } = this.props;
     const { defaultValue } = field;
     const { values } = user;
+    const { options } = field;
     const fieldValue = getValue(fieldKey, values);
 
     if (!fieldValue && typeof fieldValue !== 'undefined') {
@@ -29,6 +31,18 @@ class DMSearchSelect extends Component {
         defaultVal = defaultValue;
       }
       dispatch(valueChange(fieldKey, defaultVal));
+    }
+    // for edit pplan for vmware-vmware to get the options and label
+    const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+    if (recoveryPlatform === PLATFORM_TYPES.VMware && fieldValue) {
+      if (typeof options === 'function') {
+        const optionValues = options(user, fieldKey);
+        optionValues.map((val) => {
+          if (val.value === fieldValue.value) {
+            dispatch(valueChange(fieldKey, val));
+          }
+        });
+      }
     }
   }
 
@@ -99,8 +113,12 @@ class DMSearchSelect extends Component {
   }
 
   handleChange = (selectedOption) => {
-    const { dispatch, fieldKey } = this.props;
+    const { dispatch, fieldKey, field, user } = this.props;
+    const { onChange } = field;
     dispatch(valueChange(fieldKey, selectedOption));
+    if (typeof onChange === 'function') {
+      dispatch(onChange({ value: selectedOption.value, dispatch, user, fieldKey }));
+    }
   }
 
   getFieldValue() {

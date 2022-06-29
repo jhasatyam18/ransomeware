@@ -1,12 +1,10 @@
-// import { addMessage, clearMessages } from './MessageActions';
-
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import * as Types from '../../constants/actionTypes';
-import { API_AWS_AVAILABILITY_ZONES, API_CREATE_SITES, API_DELETE_SITES, API_FETCH_SITES, API_FETCH_SITE_VMS, API_GCP_AVAILABILITY_ZONES, API_SITE_NETWORKS, API_SITE_NETWORKS_ZONE } from '../../constants/ApiConstants';
+import { API_AWS_AVAILABILITY_ZONES, API_AWS_INSTANCES, API_FETCH_VMWARE_INVENTORY, API_CREATE_SITES, API_DELETE_SITES, API_FETCH_SITES, API_FETCH_SITE_VMS, API_GCP_AVAILABILITY_ZONES, API_GCP_INSTANCES, API_SITE_NETWORKS, API_SITE_NETWORKS_ZONE } from '../../constants/ApiConstants';
 import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { closeModal } from './ModalActions';
-import { hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
+import { hideApplicationLoader, loadRecoveryLocationData, showApplicationLoader, valueChange } from './UserActions';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { getValue, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
@@ -125,7 +123,7 @@ export function onProtectSiteChange({ value }) {
     const platfromType = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${value}`)[0].platformDetails.platformType;
     dispatch(valueChange('ui.values.protectionPlatform', platfromType));
     dispatch(valueChange('ui.values.protectionSiteID', value));
-    const url = API_FETCH_SITE_VMS.replace('<id>', value);
+    const url = (platfromType === PLATFORM_TYPES.VMware) ? API_FETCH_VMWARE_INVENTORY.replace('<id>', value) : API_FETCH_SITE_VMS.replace('<id>', value);
     dispatch(showApplicationLoader(url, 'Loading virtual machines'));
     return callAPI(url)
       .then((json) => {
@@ -136,6 +134,23 @@ export function onProtectSiteChange({ value }) {
           let data = json;
           if (data === null) {
             data = [];
+          }
+          if (platfromType === PLATFORM_TYPES.VMware && data !== null) {
+            const convertedData = [];
+            // TODO
+            data.forEach((d) => {
+              const node = {};
+              node.doneChildrenLoading = false;
+              node.key = d.id;
+              node.type = d.type;
+              node.value = d.id;
+              node.children = [];
+              node.title = d.name;
+              convertedData.push(node);
+            });
+            dispatch(valueChange('ui.drplan.vms.location', convertedData));
+            dispatch(valueChange('ui.site.vms.data', convertedData));
+            return;
           }
           dispatch(valueChange('ui.site.vms', data));
         }
@@ -157,9 +172,31 @@ export function onRecoverSiteChange({ value, availZone }) {
     const { values } = user;
     const recoverySite = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${value}`)[0];
     const { platformType } = { ...recoverySite.platformDetails };
+    const url = (platformType === PLATFORM_TYPES.AWS ? API_AWS_INSTANCES : API_GCP_INSTANCES);
     dispatch(fetchNetworks(value, undefined, availZone));
     dispatch(valueChange('ui.values.recoveryPlatform', platformType));
     dispatch(valueChange('ui.values.recoverySiteID', value));
+    if (PLATFORM_TYPES.AWS === platformType) {
+      return;
+    }
+    if (PLATFORM_TYPES.VMware === platformType) {
+      dispatch(loadRecoveryLocationData(value));
+    }
+    return callAPI(url)
+      .then((json) => {
+        if (json && json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          let data = json;
+          if (data === null) {
+            data = [];
+          }
+          dispatch(valueChange('ui.values.instances', data));
+        }
+      },
+      (err) => {
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
   };
 }
 

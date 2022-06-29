@@ -1,3 +1,5 @@
+import VMInstanceItemRenderer from '../components/Table/ItemRenderers/VMInstanceItemRenderer';
+import VMVolumeTypeItemRenderer from '../components/Table/ItemRenderers/VMVmwarePlacementInfoItemRenderer';
 import { getRecoveryVMName } from '../utils/TableUtils';
 
 export const OS_TYPE_ITEM_RENDERER = 'OS_TYPE_ITEM_RENDERER';
@@ -77,8 +79,9 @@ export const TABLE_PROTECTION_PLAN_VMS = [
 
 export const TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG = [
   { label: 'name', field: 'instanceName' },
-  { label: 'Instance Type', field: 'instanceType' },
+  { label: 'Instance Type', field: 'instanceType', itemRenderer: VMInstanceItemRenderer },
   { label: 'Volume Type', field: 'volumeType' },
+  { label: 'Placement Info', field: '', itemRenderer: VMVolumeTypeItemRenderer },
   { label: 'Network', field: 'instanceDetails', itemRenderer: VM_NETWORK_INFO_ITEM_RENDERER },
   { label: 'Boot Order', field: 'bootPriority' },
 ];

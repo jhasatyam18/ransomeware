@@ -1,9 +1,10 @@
-import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
+import { API_FETCH_VMWARE_LOCATION } from '../constants/ApiConstants';
+import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMORY, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
 import { PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS } from '../constants/InputConstants';
 import { NODE_STATUS_ONLINE } from '../constants/AppStatus';
-import { isEmpty } from './validationUtils';
-import { onAwsStorageTypeChange, onScriptChange } from '../store/actions';
+import { isEmpty, isMemoryEmpty } from './validationUtils';
+import { getStorageForVMware, onAwsStorageTypeChange, onScriptChange } from '../store/actions';
 
 export function getValue(key, values) {
   const ret = values[key];
@@ -323,6 +324,8 @@ export function createVMConfigStackObject(vm, user) {
   switch (recoveryPlatform) {
     case PLATFORM_TYPES.GCP:
       return getGCPVMConfig(vm);
+    case PLATFORM_TYPES.VMware:
+      return getVMwareVMConfig(vm);
     case PLATFORM_TYPES.AWS:
       return getAwsVMConfig(vm);
     default:
@@ -392,7 +395,49 @@ export function getAwsVMConfig(vm) {
         title: 'Network',
         children: {
           [`${key}-vmConfig.network.net1`]: { label: 'IP Address', fieldInfo: 'info.protectionplan.instance.network.aws', type: STACK_COMPONENT_NETWORK, validate: null, errorMessage: '', shouldShow: true, options: (u) => getInstanceTypeOptions(u), data: vm },
-          // [`${key}-vmConfig.network.securityGroup`]: { label: 'Security Groups', type: STACK_COMPONENT_SECURITY_GROUP, validate: null, errorMessage: '', shouldShow: true },
+        },
+      },
+      {
+        hasChildren: true,
+        title: 'Replication Scripts',
+        children: {
+          [`${key}-protection.scripts.preScript`]: { label: 'Pre', fieldInfo: 'info.protectionplan.protection.prescript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPreScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
+          [`${key}-protection.scripts.postScript`]: { label: 'Post', fieldInfo: 'info.protectionplan.protection.postscript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPostScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
+        },
+      },
+      {
+        hasChildren: true,
+        title: 'Recovery Scripts',
+        children: {
+          [`${key}-vmConfig.scripts.preScript`]: { label: 'Pre', fieldInfo: 'info.protectionplan.instance.prescript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPreScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
+          [`${key}-vmConfig.scripts.postScript`]: { label: 'Post', fieldInfo: 'info.protectionplan.instance.postscript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPostScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
+        },
+      },
+    ],
+  };
+  return config;
+}
+
+export function getVMwareVMConfig(vm) {
+  const key = (typeof vm === 'string' ? vm : vm.moref);
+  const config = {
+    data: [
+      {
+        hasChildren: true,
+        title: 'Configurtion',
+        children: {
+          [`${key}-vmConfig.general.folderPath`]: { label: 'Location', description: '', type: STACK_COMPONENT_LOCATION, dataKey: 'ui.drplan.vms.location', isMultiSelect: false, errorMessage: 'Required virtual machine path', shouldShow: true, validate: (value, user) => isEmpty(value, user), fieldInfo: 'info.vmware.folder.location', getTreeData: ({ values, dataKey }) => getReacoveryLocationData({ values, dataKey }), baseURL: API_FETCH_VMWARE_LOCATION, baseURLIDReplace: '<id>:ui.values.recoverySiteID', urlParms: ['type', 'entity'], urlParmKey: ['static:Folder', 'object:value'], enableSelection: (node) => enableNodeDatastore(node) },
+          [`${key}-vmConfig.general.hostMoref`]: { label: 'Compute', fieldInfo: 'info.vmware.compute', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select compute resourced.', shouldShow: true, options: (u, fieldKey) => getComputeResourceOptions(u, fieldKey), onChange: (user, dispatch) => getStorageForVMware(user, dispatch) },
+          [`${key}-vmConfig.general.dataStoreMoref`]: { label: 'Storage', fieldInfo: 'info.vmware.storage', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select storage', shouldShow: true, options: (u, fieldKey) => getDatastoreOptions(u, fieldKey) },
+          [`${key}-vmConfig.general.numcpu`]: { label: 'CPU', description: '', type: FIELD_TYPE.NUMBER, errorMessage: 'Required Memory', shouldShow: true, validate: (value, user) => isEmpty(value, user), fieldInfo: 'info.vmware.cpu', min: 1, max: 12, defaultValue: 2 },
+          [`${key}-vmConfig.general`]: { label: 'Memory', description: '', validate: (value, user, fieldKey) => isMemoryEmpty(value, user, fieldKey), type: STACK_COMPONENT_MEMORY, errorMessage: 'Required Memory Units', shouldShow: true, fieldInfo: 'info.vmware.memory.unit', min: 1, max: 12 },
+        },
+      },
+      {
+        hasChildren: true,
+        title: 'Network',
+        children: {
+          [`${key}-vmConfig.network.net1`]: { label: '', type: STACK_COMPONENT_NETWORK, validate: null, errorMessage: '', shouldShow: true, options: (u) => getInstanceTypeOptions(u), data: vm },
         },
       },
       {
@@ -651,6 +696,124 @@ export function getVPCOptions(user) {
   return options;
 }
 
+export function getReacoveryLocationData({ values, dataKey }) {
+  return values[dataKey];
+}
+
+export function enableNodeTypeVM(node) {
+  if (node && node.type) {
+    return (node.type.indexOf('VirtualMachine') !== -1);
+  }
+  return false;
+}
+
+export function enableNodeDatastore(node) {
+  if (node && node.type) {
+    return node.type.indexOf('Datacenter') !== -1 || node.type.indexOf('Folder') !== -1;
+  }
+
+  return false;
+}
+
+export function getVMwareVMSelectionData({ dataKey, values }) {
+  return getValue(dataKey, values);
+}
+
+export function getVMFolderPaths(fieldKey, values) {
+  return values[fieldKey];
+}
+
+export function getComputeResourceOptions(u, fieldKey) {
+  const { values } = u;
+  const dataKey = fieldKey.replace('hostMoref', 'COMPUTERESOURCEDATA');
+  const res = values[dataKey] || [];
+  return res;
+}
+
+export function getDatastoreOptions(u, fieldKey) {
+  const { values } = u;
+  const dataKey = fieldKey.replace('dataStoreMoref', 'DATASTORE');
+  const res = values[dataKey] || [];
+  return res;
+}
+
+export function getWMwareNetworkOptions(u, f) {
+  const { values } = u;
+  let key = f.split('.');
+  key = key.splice(0, [key.length - 2]);
+  const str = key.join('');
+  const str2 = `${str}.general.network`;
+  const res = values[str2];
+  return res;
+}
+
+export function getMinMaxVal(user) {
+  const { values } = user;
+  const min = getValue('ui.memory.min', values);
+  const max = getValue('ui.memory.max', values);
+  return { min, max };
+}
+
+export function getVMwareAdpaterOption(u) {
+  const { values } = u;
+  const res = values['ui.drplan.adapterType'] || [];
+  return res;
+}
+
+export function convertMemoryToMb(memory, unit) {
+  if (unit === 'MB') {
+    return memory;
+  }
+  if (unit === 'TB') {
+    const res = memory * 1048576;
+    return res;
+  }
+  if (unit === 'GB') {
+    const res = memory * 1024;
+    return res;
+  }
+}
+
+export function validateMacAddressForVMwareNetwork(macAddress) {
+  const regex = /^([0-9a-fA-F]{2}[:-]){5}([0-9a-fA-F]{2})$/;
+
+  const val = regex.test(macAddress);
+  return val;
+}
+
+export function findObj(obj, fieldVal) {
+  const objKeys = Object.keys(obj);
+  for (let i = 0; i < objKeys.length; i += 1) {
+    if (obj[objKeys[i]] === fieldVal) {
+      return true;
+    } if (typeof obj[objKeys[i]] === 'object' && obj[objKeys[i]].length > 0) {
+      const a = getVMwareLocationPath(obj[objKeys[i]], fieldVal);
+      if (a) {
+        return true;
+      }
+    }
+  }
+}
+
+export function getVMwareLocationPath(data, fieldVal) {
+  const res = data;
+  for (let i = 0; i < res.length; i += 1) {
+    const keys = findObj(res[i], fieldVal);
+    if (keys) {
+      return res[i];
+    }
+  }
+}
+
+export const diableVMwareMemory = (user, fieldKey) => {
+  const { values } = user;
+  const fieldKeyUnit = fieldKey.replace('memory', 'unit');
+  const memoryUnit = getValue(fieldKeyUnit, values);
+  if (!memoryUnit && memoryUnit.length === 0) {
+    return true;
+  }
+  return false;
+};
 export function getMatchingInsType(values, ins) {
   const savedInsType = getValue('ui.values.instances', values);
   const insType = {};

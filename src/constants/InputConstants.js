@@ -73,6 +73,7 @@ export const STATIC_KEYS = {
   UI_VPC_SOURCE: 'ui.values.vpc.source',
   UI_VPC_TARGET: 'ui.values.vpc.target',
   UI_WORKFLOW_TEST_RECOVERY: 'ui.workflow.test.recovery',
+  UI_VMWARE_CONFIG_RESPONSES: 'ui.vmware.config.responses',
   UI_VOLUMETYPES: 'ui.values.volume.type',
 };
 
@@ -88,3 +89,12 @@ export const SETTINGS_TABS = [
   { title: 'Tech Support', activeTab: 3 },
   { title: 'Email', activeTab: 4 },
 ];
+
+export const VMWARE_OBJECT = {
+  Datacenter: 'Datacenter',
+  Folder: 'Folder',
+  Network: 'Network',
+  Datastore: 'Datastore',
+  ComputeResource: 'ComputeResource',
+  VirtualMachine: 'VirtualMachine',
+};
