@@ -2,7 +2,7 @@
 
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import * as Types from '../../constants/actionTypes';
-import { API_AWS_AVAILABILITY_ZONES, API_AWS_INSTANCES, API_CREATE_SITES, API_DELETE_SITES, API_FETCH_SITES, API_FETCH_SITE_VMS, API_GCP_AVAILABILITY_ZONES, API_GCP_INSTANCES, API_SITE_NETWORKS, API_SITE_NETWORKS_ZONE } from '../../constants/ApiConstants';
+import { API_AWS_AVAILABILITY_ZONES, API_CREATE_SITES, API_DELETE_SITES, API_FETCH_SITES, API_FETCH_SITE_VMS, API_GCP_AVAILABILITY_ZONES, API_SITE_NETWORKS, API_SITE_NETWORKS_ZONE } from '../../constants/ApiConstants';
 import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { closeModal } from './ModalActions';
@@ -157,29 +157,9 @@ export function onRecoverSiteChange({ value, availZone }) {
     const { values } = user;
     const recoverySite = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${value}`)[0];
     const { platformType } = { ...recoverySite.platformDetails };
-    const url = (platformType === PLATFORM_TYPES.AWS ? API_AWS_INSTANCES : API_GCP_INSTANCES);
-    // dispatch(fetchAvailibilityZones({ value }));
     dispatch(fetchNetworks(value, undefined, availZone));
     dispatch(valueChange('ui.values.recoveryPlatform', platformType));
     dispatch(valueChange('ui.values.recoverySiteID', value));
-    if (PLATFORM_TYPES.AWS === platformType) {
-      return;
-    }
-    return callAPI(url)
-      .then((json) => {
-        if (json && json.hasError) {
-          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
-        } else {
-          let data = json;
-          if (data === null) {
-            data = [];
-          }
-          dispatch(valueChange('ui.values.instances', data));
-        }
-      },
-      (err) => {
-        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-      });
   };
 }
 
@@ -312,7 +292,7 @@ export function fetchNetworks(id, sourceNet = undefined, availZone) {
           if (data.instanceTypes) {
             const insTypes = [];
             data.instanceTypes.forEach((t) => {
-              insTypes.push({ value: t, label: t });
+              insTypes.push({ value: t.value, label: t.name });
             });
             dispatch(valueChange('ui.values.instances', insTypes));
           }
@@ -325,6 +305,13 @@ export function fetchNetworks(id, sourceNet = undefined, availZone) {
           dispatch(valueChange(STATIC_KEYS.UI_SUBNETS, (data.subnets ? data.subnets : [])));
           dispatch(valueChange(STATIC_KEYS.UI_RESERVE_IPS, (data.ipAddress ? data.ipAddress : [])));
           dispatch(valueChange(STATIC_KEYS.UI_VPC_TARGET, (data.networks ? data.networks : [])));
+          if (data.volumeTypes) {
+            const volumetype = [];
+            data.volumeTypes.forEach((d) => {
+              volumetype.push({ label: d.name, value: d.value });
+            });
+            dispatch(valueChange(STATIC_KEYS.UI_VOLUMETYPES, volumetype));
+          }
           // for aws push zone names
           const zones = [];
           if (data.subnets) {

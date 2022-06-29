@@ -142,15 +142,8 @@ export function geBootPriorityOptions() {
 
 export function getStorageTypeOptions(user) {
   const { values } = user;
-  const recoverySite = getValue('drplan.recoverySite', values);
-  const sites = getValue(STATIC_KEYS.UI_SITES, values);
-  const site = sites.filter((s) => `${s.id}` === `${recoverySite}`)[0];
-  const { platformDetails } = site;
-  const isGCP = (platformDetails.platformType === PLATFORM_TYPES.GCP);
-  if (isGCP) {
-    return [{ label: 'Standard', value: 'pd-standard' }, { label: 'Balanced', value: 'pd-balanced' }, { label: 'SSD', value: 'pd-ssd' }];
-  }
-  return [{ label: 'GP-2', value: 'gp2' }, { label: 'GP-3', value: 'gp3' }, { label: 'IO-1', value: 'io1' }, { label: 'IO-2', value: 'io2' }];
+  const data = getValue(STATIC_KEYS.UI_VOLUMETYPES, values);
+  return data;
 }
 
 // generate options from plain array ["d1","d2"]
@@ -345,7 +338,7 @@ export function getGCPVMConfig(vm) {
         hasChildren: true,
         title: 'General',
         children: {
-          [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', fieldInfo: 'info.protectionplan.instance.type', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
+          [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', fieldInfo: 'info.protectionplan.instance.type', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
           [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.volume.type.gcp', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u), disabled: (u, f) => shouldDisableStorageType(u, f) },
           // [`${key}-vmConfig.general.bootOrder`]: { label: 'Boot Order', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select boot order.', shouldShow: true, options: (u) => geBootPriorityOptions(u) },
           [`${key}-vmConfig.general.tags`]: { label: 'Metadata', fieldInfo: 'info.protectionplan.instance.tags.gcp', type: STACK_COMPONENT_TAGS, validate: null, errorMessage: '', shouldShow: true },
@@ -656,4 +649,16 @@ export function getVPCOptions(user) {
     options.push({ label: op.cidr, value: op.id });
   });
   return options;
+}
+
+export function getMatchingInsType(values, ins) {
+  const savedInsType = getValue('ui.values.instances', values);
+  const insType = {};
+  savedInsType.forEach((inst) => {
+    if (inst.value === ins.instanceType) {
+      insType.label = inst.label;
+      insType.value = inst.value;
+    }
+  });
+  return insType;
 }
