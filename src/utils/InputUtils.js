@@ -825,3 +825,11 @@ export function getMatchingInsType(values, ins) {
   });
   return insType;
 }
+
+export function convertKBtoUnit(data) {
+  const sizes = ['KB', 'MB', 'GB', 'TB'];
+  if (data === 0) return '-';
+  const i = parseInt(Math.floor(Math.log(data) / Math.log(1024)), 10);
+  if (i >= sizes.length) return '-';
+  return `${Math.round(data / 1024 ** i, 2)} ${sizes[i]}`;
+}
