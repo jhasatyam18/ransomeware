@@ -270,6 +270,7 @@ class ModalAlertDetails extends Component {
             {this.renderTakeAction()}
             {this.renderAcknowledge()}
             <button type="button" className="btn btn-secondary" onClick={this.onClose}>Close </button>
+
           </div>
         </Container>
       </>

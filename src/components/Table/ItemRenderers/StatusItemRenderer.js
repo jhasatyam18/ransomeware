@@ -82,7 +82,7 @@ function StatusItemRenderer({ data, field }) {
   if (status === JOB_RECOVERED) {
     return (
       <div>
-        <Badge className="font-size-13 badge badge-success" pill>
+        <Badge className="font-size-13 badge-soft-success" color="success" pill>
           &nbsp;&nbsp;
           {resp}
         </Badge>

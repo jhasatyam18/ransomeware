@@ -173,12 +173,15 @@ export function calculateChangedData(val) {
     if (val === 0) {
       return '-';
     }
-    const units = ['MB', 'GB', 'TB', 'PB'];
+    const units = ['KB', 'MB', 'GB', 'TB', 'PB'];
     const factor = 1024;
     let index = parseInt(Math.floor(Math.log(val) / Math.log(factor)), 10);
     const result = Math.round(val / (factor ** index), 2);
     if (index > 3) {
       index = 3;
+    }
+    if (index < 0) {
+      return `${result} BYTES`;
     }
     return `${result} ${units[index]}`;
   } catch (error) {
@@ -271,9 +274,9 @@ export function convertMinutesToDaysHourFormat(value = 0) {
  */
 export function getStorageWithUnit(value) {
   if (typeof value === 'undefined' || value === 0) {
-    return '0 GB';
+    return '0 KB';
   }
-  const units = ['GB', 'TB', 'PB', 'EB'];
+  const units = ['KB', 'MB', 'GB', 'TB', 'PB', 'EB'];
   const unitIndex = Math.floor(Math.log(value) / Math.log(1024));
   return `${Number.parseFloat((value / (1024 ** unitIndex)).toFixed(2))} ${units[unitIndex]}`;
 }

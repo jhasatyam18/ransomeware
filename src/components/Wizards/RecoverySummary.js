@@ -62,12 +62,12 @@ class RecoverySummary extends Component {
                 <hr className="mt-3 mb-3" />
               </Col>
             </Row>
-            <DMTable
-              dispatch={dispatch}
-              columns={TABLE_PROTECT_VM_VMWARE}
-              data={data}
-            />
           </CardBody>
+          <DMTable
+            dispatch={dispatch}
+            columns={TABLE_PROTECT_VM_VMWARE}
+            data={data}
+          />
         </Card>
       </>
     );

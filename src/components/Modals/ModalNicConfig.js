@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Card, CardBody, Container, Form } from 'reactstrap';
+import { Card, CardBody, Col, Container, Form, Row } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
+import DMSearchSelect from '../Shared/DMSearchSelect';
 import DMFieldCheckbox from '../Shared/DMFieldCheckbox';
 import DMFieldRadio from '../Shared/DMFieldRadio';
 import DMFieldSelect from '../Shared/DMFieldSelect';
@@ -12,9 +13,8 @@ import { FIELD_TYPE, MULTISELECT_ITEM_COMP } from '../../constants/FieldsConstan
 import { PLATFORM_TYPES, UI_WORKFLOW } from '../../constants/InputConstants';
 import { onAwsCopyNetConfigChange, onAwsPublicIPChecked, onAwsSubnetChange, onAwsVPCChange, onGCPNetworkChange, valueChange } from '../../store/actions';
 import { closeModal } from '../../store/actions/ModalActions';
-import { getAvailibilityZoneOptions, getAWSElasticIPOptions, getGCPExternalIPOptions, getGCPNetworkTierOptions, getGCPSubnetOptions, getNetworkOptions, getSecurityGroupOption, getSubnetOptions, getValue, getVPCOptions, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
+import { getAvailibilityZoneOptions, getAWSElasticIPOptions, getGCPExternalIPOptions, getGCPNetworkTierOptions, getGCPSubnetOptions, getNetworkOptions, getSecurityGroupOption, getSubnetOptions, getValue, getVMwareAdpaterOption, getVPCOptions, getWMwareNetworkOptions, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { isEmpty, validateNicConfig, validateOptionalIPAddress } from '../../utils/validationUtils';
-
 /**
  * Component for network adapter config
  */
@@ -68,6 +68,12 @@ class ModalNicConfig extends Component {
       const networkTier = getValue(`${networkKey}-networkTier`, values);
       this.setState({ oldConfig: { network, subnet, privateIP, publicIP, networkTier } });
     }
+    if (recoveryPlatform === PLATFORM_TYPES.VMware) {
+      const network = getValue(`${networkKey}-network`, values);
+      const adapterType = getValue(`${networkKey}-adapterType`, values);
+      const macAddress = getValue(`${networkKey}-macAddress`, values);
+      this.setState({ oldConfig: { network, adapterType, macAddress } });
+    }
   }
 
   resetInitialData() {
@@ -94,6 +100,12 @@ class ModalNicConfig extends Component {
       dispatch(valueChange(`${networkKey}-privateIP`, privateIP));
       dispatch(valueChange(`${networkKey}-publicIP`, publicIP));
       dispatch(valueChange(`${networkKey}-networkTier`, networkTier));
+    }
+    if (recoveryPlatform === PLATFORM_TYPES.VMware) {
+      const { network, adapterType, macAddress } = oldConfig;
+      dispatch(valueChange(`${networkKey}-network`, network));
+      dispatch(valueChange(`${networkKey}-adapterType`, adapterType));
+      dispatch(valueChange(`${networkKey}-macAddress`, macAddress));
     }
   }
 
@@ -188,6 +200,53 @@ class ModalNicConfig extends Component {
     );
   }
 
+  renderVMwareConfig() {
+    const { user, dispatch, options, t } = this.props;
+    const { networkKey } = options;
+    const networkField = { label: '', description: '', type: FIELD_TYPE.SELECT_SEARCH, shouldShow: true, defaultValue: false, options: (u, f) => getWMwareNetworkOptions(u, f), fieldInfo: 'info.vmware.network' };
+    const AdapterField = { label: '', description: '', type: FIELD_TYPE.SELECT, options: (u, f) => getVMwareAdpaterOption(u, f), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select Adapter Type', shouldShow: true, fieldInfo: 'info.vmware.adapter.type' };
+    const MacAddressField = { label: '', description: '', type: FIELD_TYPE.TEXT, options: (u, f) => getVPCOptions(u, f), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select Mac address', shouldShow: true, fieldInfo: 'info.vmware.mac.address' };
+
+    return (
+      <Container>
+        <Card>
+          <CardBody>
+            <Form>
+              <Row>
+                <Col sm={3}>
+                  {t('title.network.name')}
+                </Col>
+                <Col sm={9}>
+                  <DMSearchSelect hideLabel user={user} dispatch={dispatch} fieldKey={`${networkKey}-network`} field={networkField} />
+                </Col>
+              </Row>
+              <Row>
+                <Col sm={3}>
+                  {t('title.adapter.type')}
+                </Col>
+                <Col sm={9}>
+                  <DMFieldSelect hideLabel dispatch={dispatch} fieldKey={`${networkKey}-adapterType`} field={AdapterField} user={user} />
+                </Col>
+              </Row>
+              <Row>
+                <Col sm={3}>
+                  {t('title.mac.address')}
+                </Col>
+                <Col sm={9}>
+                  <DMFieldText hideLabel dispatch={dispatch} fieldKey={`${networkKey}-macAddress-value`} field={MacAddressField} user={user} />
+                </Col>
+              </Row>
+            </Form>
+          </CardBody>
+        </Card>
+        <div className="modal-footer">
+          <button type="button" className="btn btn-secondary" onClick={this.onCancel}>Cancel</button>
+          <button type="button" className="btn btn-success" onClick={this.onSave}>Save</button>
+        </div>
+      </Container>
+    );
+  }
+
   render() {
     const { user } = this.props;
     const { values } = user;
@@ -195,6 +254,8 @@ class ModalNicConfig extends Component {
     switch (recoveryPlatform) {
       case PLATFORM_TYPES.GCP:
         return this.renderGCPConfig();
+      case PLATFORM_TYPES.VMware:
+        return this.renderVMwareConfig();
       default:
         return this.renderAWSConfig();
     }

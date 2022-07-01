@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Col, Form, Label, Row } from 'reactstrap';
+import { PLATFORM_TYPES } from '../../constants/InputConstants';
 import { TABLE_PROTECTION_PLAN_VMS, TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG } from '../../constants/TableConstants';
 import DMTable from '../Table/DMTable';
 
 function ProtectionPlanVMConfig(props) {
   const [viewProtection, setViewProtection] = useState(true);
   const { protectionPlan, dispatch, t, user } = props;
-  const { protectedEntities, recoveryEntities, protectedSite } = protectionPlan;
+  const { protectedEntities, recoveryEntities, protectedSite, recoverySite } = protectionPlan;
   const { virtualMachines } = protectedEntities;
   const { instanceDetails } = recoveryEntities;
 
@@ -29,15 +30,23 @@ function ProtectionPlanVMConfig(props) {
     );
   };
 
-  const renderRecoveryEntities = () => (
-    <Col sm="12">
-      <DMTable
-        dispatch={dispatch}
-        columns={TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG}
-        data={instanceDetails}
-      />
-    </Col>
-  );
+  const renderRecoveryEntities = () => {
+    let cols = TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG;
+    if (recoverySite.platformDetails.platformType === PLATFORM_TYPES.VMware) {
+      const part1 = TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG.slice(0, TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG.length - 4);
+      const part2 = TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG.slice(TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG.length - 3);
+      cols = [...part1, ...part2];
+    }
+    return (
+      <Col sm="12">
+        <DMTable
+          dispatch={dispatch}
+          columns={cols}
+          data={instanceDetails}
+        />
+      </Col>
+    );
+  };
 
   const renderOptions = () => (
     <Form className="padding-left-25">

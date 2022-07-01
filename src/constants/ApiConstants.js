@@ -3,6 +3,9 @@ export const API_CHANGE_PASSWORD = 'api/v1/users/<id>';
 export const API_INFO = 'api/v1/info';
 export const API_FETCH_SITES = 'api/v1/sites';
 export const API_FETCH_SITE_VMS = 'api/v1/sites/<id>/vms';
+export const API_FETCH_VMWARE_INVENTORY = 'api/v1/sites/<id>/resources?type=Datacenter';
+export const API_FETCH_VMWARE_LOCATION = 'api/v1/sites/<id>/resources';
+export const API_FETCH_VMWARE_ADAPTER_TYPE = 'api/v1/sites/<id>/networks';
 export const API_CREATE_SITES = 'api/v1/sites';
 export const API_DELETE_SITES = 'api/v1/sites/<id>';
 // dr plan
@@ -14,7 +17,7 @@ export const API_DELETE_DR_PLAN = 'api/v1/protection/plans/<id>';
 export const API_SCRIPTS = 'api/v1/scripts';
 export const API_SITE_NETWORKS = 'api/v1/sites/<id>/networks';
 export const API_SITE_NETWORKS_ZONE = '?zone=<zone>';
-export const API_PROTECTION_PLAN_VMS = 'api/v1/sites/<sid>/vms/?protectionplanid=<pid>';
+export const API_PROTECTION_PLAN_VMS = 'api/v1/sites/<sid>/vms?protectionplan=<pid>';
 export const API_PROTECTION_PLAN_UPDATE = 'api/v1/protection/plans/<id>';
 export const API_PROTECTION_PLAN_PROTECTED_VMS = 'api/v1/protection/plans/<pid>?vmmoref=<moref>';
 export const API_EDIT_PROTECTED_VM = 'api/v1/protection/plans/<pid>/vm';

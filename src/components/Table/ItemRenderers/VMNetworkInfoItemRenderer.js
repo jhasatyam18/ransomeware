@@ -34,6 +34,8 @@ function VMNetworkInfoItemRenderer(props) {
         { label: 'private.ip.address', field: 'privateIP' },
         { label: 'subnet', field: 'Subnet' },
         { label: 'networkTier', field: 'networkTier' },
+        { label: 'vmware.network', field: 'network' },
+        { label: 'vmware.adapterType', field: 'adapterType' },
       ];
       return (
         <div key={`nic-${index + 1}`}>
@@ -49,7 +51,7 @@ function VMNetworkInfoItemRenderer(props) {
   };
 
   const renderPopOver = () => (
-    <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: 'black', width: '250px' }}>
+    <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: 'black', width: '260px' }}>
       <PopoverBody>
         {renderNetworkDetails()}
       </PopoverBody>

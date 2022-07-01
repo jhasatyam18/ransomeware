@@ -1,5 +1,5 @@
 import { onConfigureDRPlan, startMigration, startRecovery, startReversePlan, updateVMConfig } from '../store/actions/DrPlanActions';
-import { noValidate, validateDRPlanProtectData, validateSteps, validateMigrationVMs, validateVMConfiguration, validateRecoveryVMs, validateReversePlan } from '../utils/validationUtils';
+import { noValidate, validateDRPlanProtectData, validateSteps, validateMigrationVMs, validateVMConfiguration, validateRecoveryVMs, validateReversePlan, validateVMSelection } from '../utils/validationUtils';
 import { postPlanSitesSelected } from '../store/actions/SiteActions';
 
 export const WIZARD_STEP = 'WIZARD_STEP';
@@ -48,8 +48,8 @@ export const RECOVERY_WIZARDS = {
   // { label: 'General', title: '', component: RECOVERY_GENERAL_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: RECOVERY_GENERAL_STEP_FIELDS },
   options: { title: 'Recovery', onFinish: startRecovery },
   steps: [
-    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), isAync: true },
-    { label: 'Recovery Configuration', title: '', component: RECOVERY_CONFIG, validate: (user, dispatch) => noValidate(user, dispatch) },
+    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateVMSelection(user, dispatch) },
+    { label: 'Recovery Configuration', title: '', component: RECOVERY_CONFIG, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), isAync: true },
     { label: 'Summary', title: '', component: RECOVERY_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch) }],
 };
 
@@ -57,8 +57,8 @@ export const RECOVERY_WIZARDS = {
 export const MIGRATION_WIZARDS = {
   options: { title: 'Migrate', onFinish: startMigration },
   steps: [
-    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateMigrationVMs({ user, dispatch }), isAync: true },
-    { label: 'Recovery Configuration', title: '', component: RECOVERY_CONFIG, validate: (user, dispatch) => noValidate(user, dispatch) },
+    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateVMSelection(user, dispatch) },
+    { label: 'Recovery Configuration', title: '', component: RECOVERY_CONFIG, validate: (user, dispatch) => validateMigrationVMs({ user, dispatch }), isAync: true },
     { label: 'Summary', title: '', component: RECOVERY_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch) }],
 };
 
@@ -66,7 +66,7 @@ export const MIGRATION_WIZARDS = {
 export const TEST_RECOVERY_WIZARDS = {
   options: { title: 'Test Recovery', onFinish: startRecovery },
   steps: [
-    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
+    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateDRPlanProtectData({ user, dispatch }) },
     { label: 'Test Recovery Configuration', title: '', component: TEST_RECOVERY_CONFIG_STEP, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), isAync: true },
     { label: 'Tools and Scripts', title: '', component: TEST_RECOVERY_CONFIG_SCRIPTS, validate: (user, dispatch) => noValidate(user, dispatch) },
     { label: 'Summary', title: '', component: RECOVERY_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch) }],
