@@ -833,3 +833,12 @@ export function convertKBtoUnit(data) {
   if (i >= sizes.length) return '-';
   return `${Math.round(data / 1024 ** i, 2)} ${sizes[i]}`;
 }
+
+export function showInstallCloudPackageOption(user) {
+  const { values } = user;
+  const recoveryType = getValue('ui.values.recoveryPlatform', values);
+  if (recoveryType === PLATFORM_TYPES.VMware) {
+    return false;
+  }
+  return true;
+}
