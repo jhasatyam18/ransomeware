@@ -1038,8 +1038,7 @@ export function initReconfigureProtectedVM(protectionPlanID, vmMoref = null, eve
       return;
     }
     dispatch(hideApplicationLoader('RECONFIGURE_VM'));
-    dispatch(openVMReconfigWizard(moref, pPlan, vms, alerts, event));
-    // dispatch(openEditProtectionPlanWizard(pPlan, true, alert, event));
+    dispatch(openVMReconfigWizard(moref, pPlan, vms, alerts));
   };
 }
 
@@ -1051,12 +1050,12 @@ export function openVMReconfigWizard(vmMoref, pPlan, selectedVMS, alerts) {
     dispatch(valueChange('ui.vm.reconfigure.vm.moref', vmMoref));
     dispatch(valueChange('ui.site.seletedVMs', selectedVMS));
     let { steps } = PROTECTED_VM_RECONFIGURATION_WIZARD;
-    if (alerts === null || alerts.length === 0) {
+    if (typeof alerts === 'undefined' || alerts.length === 0) {
       steps = [steps[1]];
     } else {
       dispatch(valueChange('ui.vm.isVMAlertAction', true));
     }
-    const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchScript())];
+    const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchScript()), dispatch(fetchNetworks(pPlan.recoverySite.id, undefined, pPlan.recoverySite.platformDetails.availZone))];
     return Promise.all(apis).then(
       () => {
         dispatch(valueChange('ui.editplan.alert.id', (alert !== null ? alert.id : alert)));
@@ -1107,6 +1106,7 @@ export function updateVMConfig() {
           dispatch(closeWizard());
           dispatch(addMessage('Virtual machine reconfigured', MESSAGE_TYPES.SUCCESS));
           dispatch(clearValues());
+          dispatch(refresh());
         }
       },
       (err) => {
