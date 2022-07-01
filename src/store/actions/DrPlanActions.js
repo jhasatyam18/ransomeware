@@ -13,7 +13,7 @@ import { closeWizard, openWizard } from './WizardActions';
 import { closeModal, openModal } from './ModalActions';
 import { MIGRATION_WIZARDS, RECOVERY_WIZARDS, TEST_RECOVERY_WIZARDS, REVERSE_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS, PROTECTED_VM_RECONFIGURATION_WIZARD } from '../../constants/WizardConstants';
 import { PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
-import { getValue, getVMInstancefFromEvent, getVMMorefFromEvent, isSamePlatformPlan } from '../../utils/InputUtils';
+import { getMatchingInsType, getValue, getVMInstancefFromEvent, getVMMorefFromEvent, isSamePlatformPlan } from '../../utils/InputUtils';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
 import { setVmwareDataInitialData, setVMwareTargetData } from './VMwareActions';
@@ -836,9 +836,6 @@ function setGCPVMDetails(selectedVMS, protectionPlan, dispatch, user) {
   });
 }
 
-<<<<<<< HEAD
-export function getVirtualMachineAlerts(moref, alertID) {
-=======
 function setVMWAREVMDetails(selectedVMS, protectionPlan, dispatch) {
   const vms = Object.values(selectedVMS);
   const { recoveryEntities, protectedEntities } = protectionPlan;
@@ -915,8 +912,7 @@ function setVMWAREVMDetails(selectedVMS, protectionPlan, dispatch) {
   });
 }
 
-export function getVirtualMachineAlerts(moref) {
->>>>>>> size
+export function getVirtualMachineAlerts(moref, alertID) {
   return (dispatch, getState) => {
     if (moref === '') {
       const { user } = getState();
