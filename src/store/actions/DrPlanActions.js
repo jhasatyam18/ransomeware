@@ -1310,7 +1310,7 @@ export function cleanupTestRecoveries() {
     const { user } = getState();
     const values = user;
     const payload = getRecoveryPayload(values);
-    const obj = createPayload(API_TYPES.POST, { ...payload.recovery });
+    const obj = createPayload(API_TYPES.DELETE, { ...payload.recovery });
     dispatch(showApplicationLoader('RECOVERY-API-EXECUTION', 'Initiating Test recovery cleanup'));
     return callAPI(API_TEST_RECOVERY_CLEANUP, obj).then((json) => {
       dispatch(hideApplicationLoader('RECOVERY-API-EXECUTION'));
