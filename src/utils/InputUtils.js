@@ -657,3 +657,12 @@ export function getVPCOptions(user) {
   });
   return options;
 }
+
+export function showInstallCloudPackageOption(user) {
+  const { values } = user;
+  const recoveryType = getValue('ui.values.recoveryPlatform', values);
+  if (recoveryType === PLATFORM_TYPES.VMware) {
+    return false;
+  }
+  return true;
+}
