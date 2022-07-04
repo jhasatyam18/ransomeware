@@ -20,8 +20,8 @@ class ProtectionPlanReplications extends Component {
     return (
       <div className="wizard-header-options">
         <div className="wizard-header-div">
-          {isOpen ? <box-icon name="chevron-down" color="white" onClick={this.toggle} style={{ height: 20 }} />
-            : <box-icon name="chevron-right" color="white" onClick={this.toggle} style={{ height: 20 }} /> }
+          {isOpen ? <box-icon name="chevron-down" color="white" onClick={this.toggle} />
+            : <box-icon name="chevron-right" color="white" onClick={this.toggle} /> }
         </div>
       </div>
     );
@@ -38,7 +38,7 @@ class ProtectionPlanReplications extends Component {
     const { title, vms } = this.props;
     return (
       <div key={`dm-accordion-${title}`}>
-        <Card style={{ marginBottom: 10 }}>
+        <Card className="margin-bottom-10">
           <CardHeader>
             <Row>
               <Col sm={6}>

@@ -324,17 +324,17 @@ class DRPlanDetails extends Component {
             <CardBody>
               <Nav tabs className="nav-tabs-custom nav-justified">
                 <NavItem>
-                  <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '1' })} onClick={() => { this.toggleTab('1'); }}>
+                  <NavLink className={classnames({ active: activeTab === '1 cursor-pointer' })} onClick={() => { this.toggleTab('1'); }}>
                     <span className="d-none d-sm-block">{t('Virtual Machines')}</span>
                   </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '2' })} onClick={() => { this.toggleTab('2'); }}>
+                  <NavLink className={classnames({ active: activeTab === '2 cursor-pointer' })} onClick={() => { this.toggleTab('2'); }}>
                     <span className="d-none d-sm-block">{t('Configuration')}</span>
                   </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '3' })} onClick={() => { this.toggleTab('3'); }}>
+                  <NavLink className={classnames({ active: activeTab === '3 cursor-pointer' })} onClick={() => { this.toggleTab('3'); }}>
                     <span className="d-none d-sm-block">{t('replication.jobs')}</span>
                   </NavLink>
                 </NavItem>

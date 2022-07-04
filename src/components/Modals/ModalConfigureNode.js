@@ -73,7 +73,7 @@ class ModalConfigureNode extends Component {
     return (
       <>
         <div className="modal-body noPadding">
-          <SimpleBar style={{ maxHeight: '400px' }}>
+          <SimpleBar className="max-h-400">
             {this.renderForm()}
           </SimpleBar>
         </div>
