@@ -1,0 +1,145 @@
+import React from 'react';
+import { connect } from 'react-redux';
+import { withTranslation } from 'react-i18next';
+import { Container, Col, Row, Label } from 'reactstrap';
+import { FIELDS, FIELD_TYPE } from '../../constants/FieldsConstant';
+import DMFieldText from '../Shared/DMFieldText';
+import DMFieldSelect from '../Shared/DMFieldSelect';
+import DMFieldNumber from '../Shared/DMFieldNumber';
+import DMToolTip from '../Shared/DMToolTip';
+
+function DRPlanScriptStep(props) {
+  const { dispatch, user, t } = props;
+  function renderLabel(FieldKey) {
+    const { label, hideLabel } = FIELDS[FieldKey];
+    if (hideLabel) {
+      return null;
+    }
+    return (
+      <Label for="horizontal-firstname-Input" className="col-sm-4 col-form-Label">
+        {t(label)}
+      </Label>
+    );
+  }
+
+  function renderTooltip(fieldInfo) {
+    return (
+      <DMToolTip tooltip={fieldInfo} />
+    );
+  }
+
+  function renderFields(fieldKey) {
+    const field = FIELDS[fieldKey];
+    const { type } = field;
+    switch (type) {
+      case FIELD_TYPE.SELECT:
+        return <DMFieldSelect dispatch={dispatch} hideLabel="true" fieldKey={fieldKey} field={field} user={user} />;
+      case FIELD_TYPE.TEXT:
+        return <DMFieldText dispatch={dispatch} hideLabel="true" fieldKey={fieldKey} field={field} user={user} />;
+      default:
+        return <DMFieldNumber dispatch={dispatch} hideLabel="true" fieldKey={fieldKey} field={field} user={user} />;
+    }
+  }
+
+  return (
+    <Container fluid className="padding-10">
+      <Label>{t('replication.script.message')}</Label>
+      <Row>
+        <Col sm={5}>
+          {renderLabel('drplan.replPreScript')}
+        </Col>
+        <Col sm={7}>
+          <Row>
+            <Col sm={12}>
+              {renderFields('drplan.replPreScript')}
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+      <Row>
+        <Col sm={5} className="padding-top-10">
+          {renderLabel('drplan.replPostScript')}
+        </Col>
+        <Col sm={7}>
+          <Row>
+            <Col sm={12} className="padding-top-10">
+              {renderFields('drplan.replPostScript')}
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+      <hr />
+      <Label>{t('recovery.script.message')}</Label>
+      <Row>
+        <Col sm={5}>
+          {renderLabel('drplan.preScript')}
+        </Col>
+        <Col sm={7}>
+          <Row>
+            <Col sm={6}>
+              <Row>
+                <Col sm={11}>
+                  {renderFields('drplan.preScript')}
+                </Col>
+                {renderTooltip('info.protectionplan.preScript')}
+              </Row>
+            </Col>
+            <Col sm={6}>
+              <Row>
+                <Col sm={11}>
+                  {renderFields('drplan.preInputs')}
+                </Col>
+                {renderTooltip('info.protectionplan.scriptInput')}
+              </Row>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+      <Row>
+        <Col sm={5} className="padding-top-10">
+          {renderLabel('drplan.postScript')}
+        </Col>
+        <Col sm={7}>
+          <Row>
+            <Col sm={6} className="padding-top-10">
+              <Row>
+                <Col sm={11}>
+                  {renderFields('drplan.postScript')}
+                </Col>
+                {renderTooltip('info.protectionplan.postScript')}
+              </Row>
+            </Col>
+            <Col sm={6} className="padding-top-10">
+              <Row>
+                <Col sm={11}>
+                  {renderFields('drplan.postInputs')}
+                </Col>
+                {renderTooltip('info.protectionplan.scriptInput')}
+              </Row>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+      <hr />
+      <Row>
+        <Col sm={5}>
+          {renderLabel('drplan.scriptTimeout')}
+        </Col>
+        <Col sm={7} className="padding-top-10">
+          <Row>
+            <Col sm={12}>
+              {renderFields('drplan.scriptTimeout')}
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+    </Container>
+  );
+}
+
+function mapStateToProps(state) {
+  const { user } = state;
+  return { user };
+}
+
+export default connect(mapStateToProps)(withTranslation()(DRPlanScriptStep));

@@ -1,4 +1,5 @@
 @import "./icons.scss";
+@import "./tool-tip.scss";
 @import "./bootstrap-dark.scss";
 @import "./app-dark.scss";
 @import "react-datepicker/dist/react-datepicker.css";
@@ -476,4 +477,11 @@ span.flatpickr-weekday {
 
 .selected_role {
   background-color: #545a6d;
+}
+
+.dropdown__col__filter {
+  max-height: 37px;
+  border-top: 1px solid $gray-300;
+  border-right: 1px solid $gray-300;
+  border-bottom: 1px solid $gray-300;
 }

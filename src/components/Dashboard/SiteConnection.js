@@ -45,9 +45,9 @@ function SiteConnection(props) {
 
     // draw connections
     if (siteConnections) {
-      siteConnections.forEach((connection) => {
+      siteConnections.forEach((connection, i) => {
         elements.push(
-          { id: `${connection.sourceID}-${connection.targetID}`, source: `${connection.sourceID}`, target: `${connection.targetID}`, animated: true },
+          { id: `${connection.sourceID}-${connection.targetID}-${i}`, source: `${connection.sourceID}`, target: `${connection.targetID}`, animated: true },
         );
       });
     }

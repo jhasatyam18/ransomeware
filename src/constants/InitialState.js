@@ -20,6 +20,7 @@ const INITIAL_STATE = {
     localVMIP: '',
     privileges: [],
     license: { applicationKey: '', version: '-' },
+    tree: { treeKey: '' },
   },
   sites: { sites: [], selectedSites: [] },
   drPlans: { plans: [], selectedPlans: [], recoveryPlan: {} },

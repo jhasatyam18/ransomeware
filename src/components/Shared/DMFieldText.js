@@ -14,17 +14,17 @@ import DMToolTip from './DMToolTip';
 class DMFieldText extends Component {
   constructor() {
     super();
-    this.state = { value: '', type: 'text', isFocused: false };
+    this.state = { type: 'text', isFocused: false };
     this.typeToggle = this.typeToggle.bind(this);
     this.showPasswordToggle = this.showPasswordToggle.bind(this);
   }
 
   componentDidMount() {
-    const { user, fieldKey, field } = this.props;
-    const { values } = user;
+    const { field } = this.props;
+    // const { values } = user;
     const { type } = field;
-    const value = getValue(fieldKey, values);
-    this.setState({ value, type });
+    // const value = getValue(fieldKey, values);
+    this.setState({ type });
   }
 
   handleKeyPress = (e) => {
@@ -34,9 +34,11 @@ class DMFieldText extends Component {
   }
 
   handleChange = (e) => {
-    this.setState({
-      value: e.target.value,
-    });
+    const { dispatch, fieldKey } = this.props;
+    dispatch(valueChange(fieldKey, e.target.value));
+    // this.setState({
+    //   value: e.target.value,
+    // });
   }
 
   handleFocus(val) {
@@ -45,11 +47,20 @@ class DMFieldText extends Component {
     });
   }
 
+  getFieldValue() {
+    const { user, fieldKey } = this.props;
+    const { values } = user;
+    if (values) {
+      return getValue(fieldKey, values);
+    }
+    return '';
+  }
+
   onBlur = () => {
     const { fieldKey, dispatch, user, field } = this.props;
-    const { value } = this.state;
+    const value = this.getFieldValue();
     this.setState({ isFocused: false });
-    dispatch(valueChange(fieldKey, value));
+    // dispatch(valueChange(fieldKey, value));
     validateField(field, fieldKey, value, dispatch, user);
   }
 
@@ -115,7 +126,8 @@ class DMFieldText extends Component {
     const { field, fieldKey, user, hideLabel, disabled } = this.props;
     const { shouldShow, placeHolderText } = field;
     const { errors } = user;
-    const { value, type } = this.state;
+    const { type } = this.state;
+    const value = this.getFieldValue();
     const hasErrors = !!(errors && errors[fieldKey] !== undefined);
     const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
     const css = hideLabel ? '' : 'row mb-4 form-group';

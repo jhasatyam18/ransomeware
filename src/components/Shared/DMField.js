@@ -9,6 +9,8 @@ import DMFieldSelect from './DMFieldSelect';
 import DMFieldText from './DMFieldText';
 import DMFieldLabel from './DMFieldLabel';
 import DMFieldRange from './DMFieldRange';
+import DMTree from './DMTree';
+import DMSearchSelect from './DMSearchSelect';
 // Import Images
 
 class DMField extends Component {
@@ -29,10 +31,14 @@ class DMField extends Component {
         return <DMFieldLabel dispatch={dispatch} fieldKey={fieldKey} field={field} text={text} user={user} />;
       case FIELD_TYPE.RANGE:
         return <DMFieldRange dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} hideLabel={hideLabel} />;
+      case FIELD_TYPE.SELECT_SEARCH:
+        return <DMSearchSelect dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} hideLabel={hideLabel} />;
+      case FIELD_TYPE.TREE:
+        return <DMTree dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} hideLabel={hideLabel} />;
       case FIELD_TYPE.CUSTOM:
         return getFieldComponents(dispatch, fieldKey, user, COMPONENT, hideLabel);
       default:
-        return <DMFieldText dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} />;
+        return <DMFieldText dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} hideLabel={hideLabel} disabled={disabled} />;
     }
   }
 
