@@ -5,7 +5,7 @@ import { getApplicationToken } from './CookieUtils';
 import { closeModal } from '../store/actions/ModalActions';
 import { closeWizard } from '../store/actions/WizardActions';
 
-export const API_TYPES = { POST: 'POST', PUT: 'PUT', DELETE: 'DELETE' };
+export const API_TYPES = { POST: 'POST', PUT: 'PUT', DELETE: 'DELETE', PATCH: 'PATCH' };
 
 export function createPayload(type, data) {
   if (type === API_TYPES.POST) {
@@ -18,6 +18,8 @@ export function createPayload(type, data) {
       return { method: 'PUT', body: JSON.stringify(data) };
     case API_TYPES.DELETE:
       return { method: 'DELETE' };
+    case API_TYPES.PATCH:
+      return { method: 'PATCH', body: JSON.stringify(data) };
     default:
       return { method: 'GET' };
   }

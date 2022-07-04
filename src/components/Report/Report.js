@@ -154,13 +154,13 @@ class Report extends Component {
             <Card>
               <CardBody>
                 <DMBreadCrumb links={[{ label: 'report', link: '#' }]} />
-                <Button className="btn btn-outline-dark btn-sm margin-left-15" onClick={this.toggleCollapse}>
+                <Button className="btn btn-outline-dark btn-sm margin-bottom-15 " onClick={this.toggleCollapse}>
                   <i className={openCollapse === true ? 'fas fa-arrow-down' : 'fas fa-arrow-right'} title="Report Filter" style={{ fontSize: 16 }} />
                   <span className="padding-left-5">Filter</span>
                 </Button>
                 {hasData
                   ? (
-                    <Button className="btn btn-outline-dark btn-sm" onClick={this.exportToPDF}>
+                    <Button className="btn btn-outline-dark btn-sm margin-left-10 margin-bottom-15" onClick={this.exportToPDF}>
                       <i className="far fa-file-pdf text-danger" style={{ fontSize: 16 }} title="Export to PDF" />
                       <span className="padding-left-5">Export</span>
                     </Button>

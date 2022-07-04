@@ -21,9 +21,10 @@ class AwsNetworkConfig extends Component {
       }
       for (let index = 0; index < virtualNics.length; index += 1) {
         dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, ''));
+        dispatch(valueChange(`${networkKey}-eth-${index}-availZone`, ''));
         dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, false));
         dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, ''));
-        dispatch(valueChange(`${networkKey}-eth-${index}-securityGroup`, ''));
+        dispatch(valueChange(`${networkKey}-eth-${index}-securityGroups`, ''));
         dispatch(valueChange(`${networkKey}-eth-${index}-network`, ''));
         eths.push({ key: `${networkKey}-eth-${index}`, isPublicIP: false, publicIP: '', privateIP: '', subnet: '', securityGroup: '' });
       }
@@ -50,6 +51,16 @@ class AwsNetworkConfig extends Component {
     dispatch(openModal(MODAL_NETWORK_CONFIG, options));
   }
 
+  isFirstNicSubnetSet() {
+    const { user, networkKey } = this.props;
+    const { values } = user;
+    const firstNicSubnet = getValue(`${networkKey}-eth-0-subnet`, values);
+    if (typeof firstNicSubnet !== 'undefined' && firstNicSubnet !== '') {
+      return true;
+    }
+    return false;
+  }
+
   renderRows() {
     const { user, networkKey } = this.props;
     const { values } = user;
@@ -68,7 +79,7 @@ class AwsNetworkConfig extends Component {
           </td>
           <td>
             <Label className="padding-left-20" disabled={isFirstPublic && index > 0}>
-              {isFirstPublic && index > 0 ? (
+              {((isFirstPublic || !this.isFirstNicSubnetSet()) && index > 0) ? (
                 <Label className="disabled padding-top-5">
                   Config
                 </Label>

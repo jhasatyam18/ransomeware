@@ -43,11 +43,15 @@ class DMTableRow extends Component {
   }
 
   renderCellContent(tableHeader, data) {
-    const { field, itemRenderer } = tableHeader;
+    const { field, itemRenderer, filterText } = tableHeader;
     if (itemRenderer) {
       return this.getItemRenderer(itemRenderer, data, field);
     }
-    return this.getObjectValue(data, field);
+    const value = this.getObjectValue(data, field);
+    if (typeof filterText !== 'undefined') {
+      return filterText(value);
+    }
+    return value;
   }
 
   renderCheckBox(index) {

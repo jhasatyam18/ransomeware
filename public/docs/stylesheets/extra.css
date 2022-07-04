@@ -1,0 +1,4 @@
+.md-nav__link[data-md-state=blur]{
+    color: rgb(184, 145, 145) !important;
+}
+

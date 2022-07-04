@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Badge, Col, FormGroup, Input, Row } from 'reactstrap';
+import DMToolTip from '../Shared/DMToolTip';
 import { valueChange } from '../../store/actions';
 import { getSecurityGroupOption, getValue } from '../../utils/InputUtils';
 
@@ -23,7 +24,7 @@ class SecurityGroups extends Component {
     const { selectedSG } = this.state;
     const { dispatch, vmKey } = this.props;
     const isAlreadySelected = selectedSG.some((sg) => sg === e.target.value);
-    if (!isAlreadySelected) {
+    if (!isAlreadySelected && e.target.value !== '') {
       selectedSG.push(e.target.value);
       this.setState({ selectedSG, value: e.target.value });
       dispatch(valueChange(vmKey, selectedSG));
@@ -36,6 +37,18 @@ class SecurityGroups extends Component {
     const newData = selectedSG.filter((t) => t !== sg);
     this.setState({ selectedSG: newData });
     dispatch(valueChange(vmKey, newData));
+  }
+
+  renderTooltip() {
+    const { field } = this.props;
+    if (typeof field === 'undefined' && field.fieldInfo !== 'undefined') {
+      return null;
+    }
+    return (
+      <div className="info__icon__network-tags">
+        <DMToolTip tooltip={field.fieldInfo} />
+      </div>
+    );
   }
 
   renderSGs() {
@@ -55,13 +68,13 @@ class SecurityGroups extends Component {
   renderOptions() {
     const { vmKey } = this.props;
     const { user } = this.props;
-    const options = getSecurityGroupOption(user);
+    const options = getSecurityGroupOption(user, vmKey);
     return options.map((op) => {
       const { value, label } = op;
       return (
         <option key={`sg-${vmKey}-${value}`} value={value}>
           {' '}
-          { label}
+          {label}
           {' '}
         </option>
       );
@@ -75,12 +88,19 @@ class SecurityGroups extends Component {
       <>
         <Row className="padding-left-10 padding-right-10">
           <Col sm={12}>
-            <FormGroup className="row mb-4 form-group">
-              <Input type="select" id={vmKey} onSelect={this.handleChange} className="form-control form-control-sm custom-select" onChange={this.handleChange} value={value}>
-                <option key={`${vmKey}-default`} value="-">  </option>
-                {this.renderOptions()}
-              </Input>
-            </FormGroup>
+            <Row>
+              <Col sm={11}>
+                <FormGroup className="row mb-4 form-group">
+                  <Input type="select" id={vmKey} onSelect={this.handleChange} className="form-control form-control-sm custom-select" onChange={this.handleChange} value={value}>
+                    <option key={`${vmKey}-default`} value="">  </option>
+                    {this.renderOptions()}
+                  </Input>
+                </FormGroup>
+              </Col>
+              <Col sm={1}>
+                {this.renderTooltip()}
+              </Col>
+            </Row>
           </Col>
         </Row>
         <Row className="padding-left-5">

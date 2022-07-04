@@ -20,6 +20,9 @@ class placeHolderNumber extends Component {
     const { values } = user;
     const { defaultValue } = field;
     const value = getValue(fieldKey, values);
+    if (typeof defaultValue === 'function') {
+      dispatch(defaultValue({ fieldKey, user }));
+    }
     if (value && isNumber(value)) {
       this.setState({ value });
     } else {
@@ -30,9 +33,15 @@ class placeHolderNumber extends Component {
   }
 
   handleChange = (e) => {
-    const { field } = this.props;
-    const { min, max } = field;
+    const { field, fieldKey, dispatch, user } = this.props;
+    let { min, max } = field;
+    const { onChange, getMinMax } = field;
     const targetValue = parseInt(`${e.target.value}`, 10);
+    if (getMinMax && typeof getMinMax === 'function') {
+      const val = getMinMax(user);
+      min = val.min;
+      max = val.max;
+    }
     if (targetValue < min) {
       this.setState({ value: min });
     } else if (targetValue > max) {
@@ -41,6 +50,10 @@ class placeHolderNumber extends Component {
       this.setState({ value: min });
     } else {
       this.setState({ value: targetValue });
+    }
+    dispatch(valueChange(fieldKey, targetValue));
+    if (typeof onChange === 'function') {
+      dispatch(onChange({ dispatch, user, fieldKey, value: targetValue }));
     }
   }
 

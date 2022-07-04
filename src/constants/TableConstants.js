@@ -1,3 +1,7 @@
+import VMInstanceItemRenderer from '../components/Table/ItemRenderers/VMInstanceItemRenderer';
+import VMVolumeTypeItemRenderer from '../components/Table/ItemRenderers/VMVmwarePlacementInfoItemRenderer';
+import { getRecoveryVMName } from '../utils/TableUtils';
+
 export const OS_TYPE_ITEM_RENDERER = 'OS_TYPE_ITEM_RENDERER';
 export const VM_SIZE_ITEM_RENDERER = 'VM_SIZE_ITEM_RENDERER';
 export const VM_DISK_ITEM_RENDERER = 'VM_DISK_ITEM_RENDERER';
@@ -7,6 +11,7 @@ export const STATUS_ITEM_RENDERER = 'STATUS_ITEM_RENDERER';
 export const TRANSFER_SIZE_ITEM_RENDERER = 'TRANSFER_SIZE_ITEM_RENDERER';
 export const RECOVERY_TYPE_ITEM_RENDERER = 'RECOVERY_TYPE_ITEM_RENDERER';
 export const RECOVERY_SITE_LINK_ITEM_RENDERER = 'RECOVERY_SITE_LINK_ITEM_RENDERER';
+export const PROTECTION_SITE_LINK_ITEM_RENDERER = 'PROTECTION_SITE_LINK_ITEM_RENDERER';
 export const SSH_RDP_ITEM_RENDERER = 'SSH_RDP_ITEM_RENDERER';
 export const VM_USERNAME_ITEM_RENDERER = 'VM_USERNAME_ITEM_RENDERER';
 export const VM_UPASSWORD_ITEM_RENDERER = 'VM_UPASSWORD_ITEM_RENDERER';
@@ -30,6 +35,7 @@ export const RECOVERY_STATUS_ITEM_RENDERER = 'RECOVERY_STATUS_ITEM_RENDERER';
 export const ROLE_ITEM_RENDERER = 'ROLE_ITEM_RENDERER';
 export const VM_NETWORK_INFO_ITEM_RENDERER = 'VM_NETWORK_INFO_ITEM_RENDERER';
 export const SCRIPT_ITEM_RENDERER = 'SCRIPT_ITEM_RENDERER';
+export const PROTECTED_VM_ACTIONS_ITEM_ITEM_RENDERER = 'PROTECTED_VM_ACTIONS_ITEM_ITEM_RENDERER';
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
@@ -44,7 +50,7 @@ export const TABLE_HEADER_SITES = [
 
 export const TABLE_HEADER_DR_PLANS = [
   { label: 'name', field: 'name', itemRenderer: DR_PLAN_NAME_ITEM_RENDERER },
-  { label: 'protected.name', field: 'protectedSite.name' },
+  { label: 'protected.name', field: 'protectedSite.name', itemRenderer: PROTECTION_SITE_LINK_ITEM_RENDERER },
   { label: 'recovery.site', field: 'recoverySite.name', itemRenderer: RECOVERY_SITE_LINK_ITEM_RENDERER },
   { label: 'replication.interval', field: 'replicationInterval', itemRenderer: REPLICATION_INTERVAL_ITEM_RENDERER },
   { label: 'status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
@@ -68,48 +74,51 @@ export const TABLE_PROTECTION_PLAN_VMS = [
   { label: 'os', field: 'guestOS', itemRenderer: OS_TYPE_ITEM_RENDERER },
   { label: 'Last Run Time', field: 'lastRunTime', itemRenderer: DATE_ITEM_RENDERER },
   { label: 'Status', field: 'recoveryStatus', itemRenderer: RECOVERY_STATUS_ITEM_RENDERER },
+  { label: 'Actions', field: 'name', itemRenderer: PROTECTED_VM_ACTIONS_ITEM_ITEM_RENDERER },
 ];
 
 export const TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG = [
   { label: 'name', field: 'instanceName' },
-  { label: 'Instance Type', field: 'instanceType' },
+  { label: 'Instance Type', field: 'instanceType', itemRenderer: VMInstanceItemRenderer },
   { label: 'Volume Type', field: 'volumeType' },
+  { label: 'Placement Info', field: '', itemRenderer: VMVolumeTypeItemRenderer },
   { label: 'Network', field: 'instanceDetails', itemRenderer: VM_NETWORK_INFO_ITEM_RENDERER },
   { label: 'Boot Order', field: 'bootPriority' },
 ];
 
 export const REPLICATION_JOBS = [
-  { label: 'Virtual Machine', field: 'vmName' },
+  { label: 'Virtual Machine', field: 'vmName', allowFilter: true, checked: true },
   { label: 'Disk Id', field: 'diskId' },
   { label: 'Data Changed', field: 'changedSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Data Transferred', field: 'transferSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Replication Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
-  { label: 'Job Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
+  { label: 'Job Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER, allowFilter: true, checked: true },
 ];
 
 export const RECOVERY_JOBS = [
-  { label: 'Virtual Machine', field: 'vmName' },
+  { label: 'Virtual Machine', field: 'vmName', allowFilter: true, checked: true },
   { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
-  { label: 'Recovery Type', field: 'recoveryType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER },
-  { label: 'Job Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
-  { label: 'IP Address', field: 'failureMessage', itemRenderer: SSH_RDP_ITEM_RENDERER },
+  { label: 'Recovery Type', field: 'recoveryType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER, allowFilter: true, checked: true },
+  { label: 'Job Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER, allowFilter: true, checked: true },
+  { label: 'IP Address', field: 'publicIP', itemRenderer: SSH_RDP_ITEM_RENDERER },
 ];
 
 export const PROTECTION_PLAN_RECOVERY_JOBS = [
-  { label: 'Virtual Machine', field: 'vmName' },
+  { label: 'Virtual Machine', field: 'vmName', allowFilter: true, checked: true },
   { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
-  { label: 'Recovery Type', field: 'recoveryType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER },
-  { label: 'Job Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
+  { label: 'Recovery Type', field: 'recoveryType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER, allowFilter: true, checked: true },
+  { label: 'Job Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER, allowFilter: true, checked: true },
+  { label: 'IP Address', field: 'publicIP', itemRenderer: SSH_RDP_ITEM_RENDERER },
 ];
 
 export const REPLICATION_VM_JOBS = [
-  { label: 'Virtual Machine', field: 'vmName' },
+  { label: 'Virtual Machine', field: 'vmName', allowFilter: true, checked: true },
   { label: 'Iterations', field: 'iterationNumber' },
   { label: 'Changed', field: 'changedSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Transferred', field: 'transferredSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Replication Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
-  { label: 'Job Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
-  { label: 'Sync Status', field: 'syncStatus', itemRenderer: STATUS_ITEM_RENDERER },
+  { label: 'Job Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER, allowFilter: true, checked: true },
+  { label: 'Sync Status', field: 'syncStatus', itemRenderer: STATUS_ITEM_RENDERER, allowFilter: true, checked: true },
 ];
 
 // Table fields for recovery virtual machines
@@ -133,7 +142,7 @@ export const TABLE_PROTECTION_PLAN_REPLICATIONS = [
 
 // Table fields for protection plan
 export const TABLE_PROTECTION_PLAN_RECOVERY = [
-  { label: 'Virtual Machines', field: 'vmNames' },
+  { label: 'Virtual Machines', field: 'vms', filterText: (text) => getRecoveryVMName(text) },
   { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Recovery Type', field: 'recoveryType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER },
   { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
@@ -142,17 +151,17 @@ export const TABLE_PROTECTION_PLAN_RECOVERY = [
 // Table fields for EVENTS
 export const TABLE_EVENTS = [
   { label: 'Date', field: 'timeStamp', itemRenderer: DATE_ITEM_RENDERER, width: 2 },
-  { label: 'Topic', field: 'topic', width: 2 },
-  { label: 'Level', field: 'severity', itemRenderer: EVENT_LEVEL_ITEM_RENDERER, width: 1 },
-  { label: 'Event Type', field: 'type', width: 1 },
-  { label: 'Description', field: 'description', width: 4 },
-  { label: 'User', field: 'generator' },
+  { label: 'Topic', field: 'topic', width: 2, allowFilter: true, checked: true },
+  { label: 'Level', field: 'severity', itemRenderer: EVENT_LEVEL_ITEM_RENDERER, width: 1, allowFilter: true, checked: true },
+  { label: 'Event Type', field: 'type', width: 1, allowFilter: true, checked: true },
+  { label: 'Description', field: 'description', width: 4, allowFilter: true, checked: true },
+  { label: 'User', field: 'generator', allowFilter: true, checked: true },
 ];
 
 // Table fields for ALERTS
 export const TABLE_ALERTS = [
-  { label: 'Title', field: 'title', itemRenderer: VIEW_ALERT_INFO_RENDERER },
-  { label: 'Severity', field: 'severity', itemRenderer: EVENT_LEVEL_ITEM_RENDERER },
+  { label: 'Title', field: 'title', itemRenderer: VIEW_ALERT_INFO_RENDERER, allowFilter: true, checked: true },
+  { label: 'Severity', field: 'severity', itemRenderer: EVENT_LEVEL_ITEM_RENDERER, allowFilter: true, checked: true },
   { label: 'Created', field: 'createdTime', itemRenderer: DATE_ITEM_RENDERER },
   { label: 'Last Updated', field: 'updatedTime', itemRenderer: DATE_ITEM_RENDERER },
   { label: 'Status', field: 'isAcknowledge', itemRenderer: ALERT_ACK_ITEM_RENDERER },
