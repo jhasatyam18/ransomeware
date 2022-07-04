@@ -4,6 +4,7 @@ import AwsNetworkConfig from './AwsNetworkConfig';
 import GCPNetworkConfig from './GCPNetworkConfig';
 import { PLATFORM_TYPES } from '../../constants/InputConstants';
 import { getValue } from '../../utils/InputUtils';
+import VMwareNetworkConfig from './VMwareNetworkConfig';
 
 class NetworkConfig extends Component {
   render() {
@@ -18,6 +19,10 @@ class NetworkConfig extends Component {
               <AwsNetworkConfig {...this.props} />
             </Form>
           </div>
+        );
+      case PLATFORM_TYPES.VMware:
+        return (
+          <VMwareNetworkConfig {...this.props} />
         );
       default:
         return (

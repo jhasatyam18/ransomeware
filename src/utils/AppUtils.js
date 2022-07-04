@@ -274,9 +274,9 @@ export function convertMinutesToDaysHourFormat(value = 0) {
  */
 export function getStorageWithUnit(value) {
   if (typeof value === 'undefined' || value === 0) {
-    return '0 GB';
+    return '0 KB';
   }
-  const units = ['GB', 'TB', 'PB', 'EB'];
+  const units = ['KB', 'MB', 'GB', 'TB', 'PB', 'EB'];
   const unitIndex = Math.floor(Math.log(value) / Math.log(1024));
   return `${Number.parseFloat((value / (1024 ** unitIndex)).toFixed(2))} ${units[unitIndex]}`;
 }

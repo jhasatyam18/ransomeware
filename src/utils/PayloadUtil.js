@@ -5,7 +5,8 @@ import { getValue,
   shouldShowNodeManagementPort,
   shouldShowNodeReplicationPort,
   shouldShowNodeEncryptionKey,
-  getAWSNetworkIDFromName } from './InputUtils';
+  getAWSNetworkIDFromName,
+  convertMemoryToMb } from './InputUtils';
 
 export function getKeyStruct(filterKey, values) {
   const result = {};
@@ -96,7 +97,23 @@ export function getVMConfigPayload(user) {
   const { values } = user;
   const vms = getValue('ui.site.seletedVMs', values);
   const instanceDetails = [];
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
   Object.keys(vms).forEach((key) => {
+    let folderPath = '';
+    // Data require for vmware as target platform
+    folderPath = getValue(`${key}-vmConfig.general.folderPath`, values);
+    if (folderPath && folderPath.length > 0) {
+      const [index] = folderPath;
+      folderPath = index;
+    }
+    const hostMoref = getValue(`${key}-vmConfig.general.hostMoref`, values);
+    const datastoreMoref = getValue(`${key}-vmConfig.general.dataStoreMoref`, values);
+    let numCPU = getValue(`${key}-vmConfig.general.numcpu`, values);
+    numCPU = parseInt(numCPU, 10);
+    const memory = getValue(`${key}-vmConfig.general-memory`, values);
+    const memoryunit = getValue(`${key}-vmConfig.general-unit`, values);
+    const memoryMB = convertMemoryToMb(memory, memoryunit || 'GB');
+    const datacenterMoref = getValue('ui.site.vmware.datacenterMoref', values);
     const { name } = vms[key];
     const instanceName = name;
     const sourceMoref = vms[key].moref;
@@ -122,7 +139,6 @@ export function getVMConfigPayload(user) {
     if (networks.length > 0) {
       availZone = networks[0].availZone;
     }
-    const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
     let sgs = getValue(`${key}-vmConfig.network.securityGroup`, values);
     if (recoveryPlatform === PLATFORM_TYPES.AWS) {
       sgs = [];
@@ -131,9 +147,9 @@ export function getVMConfigPayload(user) {
     const preScript = getValue(`${key}-vmConfig.scripts.preScript`, values);
     const postScript = getValue(`${key}-vmConfig.scripts.postScript`, values);
     if (typeof id !== 'undefined' && id !== '') {
-      instanceDetails.push({ sourceMoref, id, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone });
+      instanceDetails.push({ sourceMoref, id, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref: hostMoref.value, datastoreMoref: datastoreMoref.value, numCPU, datacenterMoref });
     } else {
-      instanceDetails.push({ sourceMoref, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone });
+      instanceDetails.push({ sourceMoref, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref: hostMoref.value, datastoreMoref: datastoreMoref.value, numCPU, datacenterMoref });
     }
   });
   return instanceDetails;
@@ -141,7 +157,7 @@ export function getVMConfigPayload(user) {
 
 export function getVMNetworkConfig(key, values) {
   const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
-  const networkKey = `${key}-vmConfig.network.net1`;
+  const networkKey = `${key}-vmConfig.network.net1`;//
   const eths = getValue(networkKey, values) || [];
   let networks = [];
   let hasPublicIP = false;
@@ -157,6 +173,10 @@ export function getVMNetworkConfig(key, values) {
     const sgs = getValue(`${networkKey}-eth-${index}-securityGroups`, values) || '';
     const networkTier = getValue(`${networkKey}-eth-${index}-networkTier`, values) || '';
     const network = getValue(`${networkKey}-eth-${index}-network`, values) || '';
+    const networkId = network.value;
+    const adapterType = `${getValue(`${networkKey}-eth-${index}-adapterType`, values)}`;
+    const macAddress = `${getValue(`${networkKey}-eth-${index}-macAddress-value`, values)}`;
+    const networkMoref = networkId;
     if (typeof isFromSource !== 'boolean') {
       isFromSource = false;
     }
@@ -166,7 +186,9 @@ export function getVMNetworkConfig(key, values) {
     if (network !== '' && recoveryPlatform === PLATFORM_TYPES.AWS) {
       publicIP = getAWSNetworkIDFromName(values, network) || publicIP;
     }
-    if (typeof id !== 'undefined' && id !== '') {
+    if (PLATFORM_TYPES.VMware === recoveryPlatform) {
+      networks.push({ isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network: network.label, isFromSource, vpcId, availZone, adapterType, networkMoref, macAddress });
+    } else if (typeof id !== 'undefined' && id !== '') {
       networks.push({ id, isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone });
     } else {
       networks.push({ isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone });
@@ -222,7 +244,6 @@ function getRecoveryConfigVMDetails(user) {
   });
   return machineDetails;
 }
-
 export function getReversePlanPayload(user) {
   const { values } = user;
   const sites = getValue('ui.values.sites', values);
@@ -329,4 +350,19 @@ export function getEditProtectionPlanPayload(user, sites) {
   result.drplan.replicationInterval = getReplicationInterval(getValue(STATIC_KEYS.REPLICATION_INTERVAL_TYPE, values), getValue('drplan.replicationInterval', values));
   result.drplan.startTime = getUnixTimeFromDate(result.drplan.startTime);
   return result;
+}
+
+export function getVMwareNetworkConfig(key, values) {
+  const networkKey = `${key}-vmConfig.network.net1`;//
+  const eths = getValue(networkKey, values) || [];
+  const networks = [];
+  for (let index = 0; index < eths.length; index += 1) {
+    const network = getValue(`${networkKey}-eth-${index}-network`, values);
+    const networkId = network.value;
+    const adapterType = `${getValue(`${networkKey}-eth-${index}-adapterType`, values)}`;
+    const macAddress = `${getValue(`${networkKey}-eth-${index}-macAddress-value`, values)}`;
+    const networkMoref = networkId;
+    networks.push({ network: network.label, networkMoref, adapterType, macAddress });
+  }
+  return networks;
 }
