@@ -245,3 +245,58 @@
   visibility: 'none';
    display: 'none'
 }
+
+.show-password{
+  height: 16;
+   width: 16
+}
+
+.stackview-icon{
+  height: 20px;
+}
+
+.dmtooltip{
+  min-width: 200px;
+  max-width: 350px;
+}
+
+.vmware-search-box{
+  min-width: 200px;
+}
+
+.dmtree_scrollbar{
+  max-height: 300px; 
+  min-height: 300px; 
+  background: #2e3548
+}
+
+.dmtree-selectedvm-scrollbar{
+  max-height: 240px;
+  min-height: 240px
+}
+
+.ack_alert_icon{
+  font-size: 16px
+}
+
+.protectedvm-icon{
+  font-size: 14px;
+}
+
+.vmware_placement_info{
+  text-decoration: underline;
+   display: flex
+}
+
+.vmware_placement_info_p{
+  font-size: 12px;
+  margin-right: 10px
+}
+
+.dmapi_col{
+  min-width: 200px;
+}
+
+.sidebar-height{
+  max-height: 100%;
+}

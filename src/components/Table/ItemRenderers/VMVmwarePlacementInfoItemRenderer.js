@@ -33,16 +33,16 @@ function VMVmwarePlacementInfoItemRenderer(props) {
   }
   const renderNetworkDetails = () => (
     <div key="nic">
-      <div style={{ textDecoration: 'underline', display: 'flex' }}>
-        <p style={{ fontSize: '12px', marginRight: '10px' }}>
+      <div className="vmware_placement_info">
+        <p className="vmware_placement_info_p">
           {' '}
           {t('title.hostname')}
         </p>
         &nbsp;
         <span>{hostMoref}</span>
       </div>
-      <div style={{ textDecoration: 'underline', display: 'flex' }}>
-        <p style={{ fontSize: '12px', marginRight: '10px' }}>
+      <div className="vmware_placement_info">
+        <p className="vmware_placement_info_p">
           {' '}
           {t('title.Datastore')}
         </p>
@@ -61,7 +61,7 @@ function VMVmwarePlacementInfoItemRenderer(props) {
   );
   return (
     <div>
-      <a id={key} href="#" style={{ fontSize: '14px' }} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)}>
+      <a id={key} href="#" className="protectedvm-icon" onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)}>
         {label}
         {renderPopOver()}
       </a>

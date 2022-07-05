@@ -83,7 +83,7 @@ class DMFieldText extends Component {
     const focused = state.isFocused;
     return (
       <span className={(focused && field.description) ? 'field-icon' : 'field-icon'}>
-        <box-icon name={icon} color="white" onClick={this.typeToggle} style={{ height: 16, width: 16 }} />
+        <box-icon name={icon} color="white" onClick={this.typeToggle} className="show-password" />
       </span>
     );
   }

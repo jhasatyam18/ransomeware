@@ -29,8 +29,8 @@ class DMStackView extends Component {
     return (
       <div className="wizard-header-options">
         <div className="wizard-header-div">
-          {openStack ? <box-icon name="chevron-down" color="white" onClick={this.toggle} style={{ height: 20 }} />
-            : <box-icon name="chevron-right" color="white" onClick={this.toggle} style={{ height: 20 }} />}
+          {openStack ? <box-icon name="chevron-down" color="white" onClick={this.toggle} className="stackview-icon" />
+            : <box-icon name="chevron-right" color="white" onClick={this.toggle} className="stackview-icon" />}
         </div>
       </div>
     );
@@ -45,7 +45,7 @@ class DMStackView extends Component {
       return Object.keys(children).map((conf, index) => (
         <Row className="stack__view" key={`stack-view-row-${index * 1}`}>
           <Col sm={4} className="key child">
-            <p style={{ minWidth: '5px' }}>
+            <p>
               {`${children[conf].label}`}
             </p>
           </Col>

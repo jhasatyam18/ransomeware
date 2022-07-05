@@ -166,11 +166,11 @@ function DMAPIPaginator(props) {
     const { hasNext, hasPrev, currentPage, totalPages } = pageInfo;
     return (
       <Row>
-        <Col className="padding-0 margin-0 display__flex__reverse" style={{ minWidth: 200 }}>
+        <Col className="padding-0 margin-0 display__flex__reverse dmapi_col">
           {renderFilter()}
         </Col>
         <Col className="padding-0 margin-0 display__flex__reverse">
-          <ButtonGroup style={{ paddingRight: 20 }} className="btn-group-sm">
+          <ButtonGroup className="btn-group-sm padding-right-20">
             <Button disabled={!hasPrev} onClick={onBack}>
               <box-icon type="solid" name="chevron-left" size="xs" />
             </Button>

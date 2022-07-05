@@ -21,7 +21,7 @@ function ProtectedVMItemRenderer({ data, dispatch }) {
 
   const renderEdit = () => (
     <a href="#" onClick={() => onEditVM()}>
-      <i className="far fa-edit fa-lg" style={{ fontSize: '14px' }} />
+      <i className="far fa-edit fa-lg protectedvm-icon" />
     </a>
   );
 
