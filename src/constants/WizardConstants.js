@@ -1,4 +1,4 @@
-import { onConfigureDRPlan, startMigration, startRecovery, startReversePlan, updateVMConfig } from '../store/actions/DrPlanActions';
+import { cleanupTestRecoveries, onConfigureDRPlan, startMigration, startRecovery, startReversePlan, updateVMConfig } from '../store/actions/DrPlanActions';
 import { noValidate, validateDRPlanProtectData, validateSteps, validateMigrationVMs, validateVMConfiguration, validateRecoveryVMs, validateReversePlan, validateVMSelection } from '../utils/validationUtils';
 import { postPlanSitesSelected } from '../store/actions/SiteActions';
 
@@ -15,6 +15,7 @@ export const DRPLAN_PROTECTION_CONFIG_STEP_FIELDS = ['drplan.startTime', 'drplan
 export const DRPLAN_SCRIPTS_CONFIG_STEP_FIELDS = ['drplan.replPreScript', 'drplan.replPostScript', 'drplan.preScript', 'drplan.postScript', 'drplan.scriptTimeout'];
 // export const DRPLAN_RECOVERY_CONFIG_AWS_STEP_FIELDS = ['drplan.recoveryEntities.instanceDetails.amiID', 'drplan.recoveryEntities.instanceDetails.instanceType', 'drplan.recoveryEntities.instanceDetails.availabilityZone', 'drplan.recoveryEntities.instanceDetails.volumeType'];
 export const RECOVERY_SUMMARY = 'RECOVERY_SUMMARY';
+export const TEST_RECOVERY_CLEANUP_SUMMARY = 'TEST_RECOVERY_CLEANUP_SUMMARY';
 export const PROTECTION_PLAN_SUMMARY_STEP = 'PROTECTION_PLAN_SUMMARY_STEP';
 export const RECOVERY_GENERAL_STEP = 'RECOVERY_GENERAL_STEP';
 export const RECOVERY_PROTECT_VM_STEP = 'RECOVERY_PROTECT_VM_STEP';
@@ -97,4 +98,11 @@ export const PROTECTED_VM_RECONFIGURATION_WIZARD = {
   steps: [
     { label: 'Alerts', title: '', component: VM_ALERTS_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
     { label: 'Recovery Configuration', title: '', component: VM_CONFIGURATION_STEP, validate: (user, dispatch) => validateVMConfiguration({ user, dispatch }) }],
+};
+
+export const CLEANUP_TEST_RECOVERY_WIZARDS = {
+  options: { title: 'Cleanup Test Recovery', onFinish: cleanupTestRecoveries },
+  steps: [
+    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateDRPlanProtectData({ user, dispatch }) },
+    { label: 'Summary', title: '', component: TEST_RECOVERY_CLEANUP_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch) }],
 };
