@@ -3,6 +3,9 @@ export const API_CHANGE_PASSWORD = 'api/v1/users/<id>';
 export const API_INFO = 'api/v1/info';
 export const API_FETCH_SITES = 'api/v1/sites';
 export const API_FETCH_SITE_VMS = 'api/v1/sites/<id>/vms';
+export const API_FETCH_VMWARE_INVENTORY = 'api/v1/sites/<id>/resources?type=Datacenter';
+export const API_FETCH_VMWARE_LOCATION = 'api/v1/sites/<id>/resources';
+export const API_FETCH_VMWARE_ADAPTER_TYPE = 'api/v1/sites/<id>/networks';
 export const API_CREATE_SITES = 'api/v1/sites';
 export const API_DELETE_SITES = 'api/v1/sites/<id>';
 // dr plan
@@ -14,7 +17,7 @@ export const API_DELETE_DR_PLAN = 'api/v1/protection/plans/<id>';
 export const API_SCRIPTS = 'api/v1/scripts';
 export const API_SITE_NETWORKS = 'api/v1/sites/<id>/networks';
 export const API_SITE_NETWORKS_ZONE = '?zone=<zone>';
-export const API_PROTECTION_PLAN_VMS = 'api/v1/sites/<sid>/vms/?protectionplanid=<pid>';
+export const API_PROTECTION_PLAN_VMS = 'api/v1/sites/<sid>/vms?protectionplan=<pid>';
 export const API_PROTECTION_PLAN_UPDATE = 'api/v1/protection/plans/<id>';
 export const API_PROTECTION_PLAN_PROTECTED_VMS = 'api/v1/protection/plans/<pid>?vmmoref=<moref>';
 export const API_EDIT_PROTECTED_VM = 'api/v1/protection/plans/<pid>/vm';
@@ -38,6 +41,7 @@ export const API_DASHBOARD_UNACK_ALERTS = 'api/v1/dashboard/unackalerts';
 
 // recovery
 export const API_RECOVER = 'api/v1/recover';
+export const API_TEST_RECOVERY_CLEANUP = 'api/v1/recover/cleanup';
 export const API_VALIDATE_RECOVERY = 'api/v1/recover/validate';
 
 // migration
@@ -62,7 +66,7 @@ export const API_MARK_READ_ALL = 'api/v1/alert/read';
 export const API_FETCH_UNREAD_ALERTS = 'api/v1/alert/unread';
 export const API_ACKNOWLEDGE_ALERT = 'api/v1/alert/acknowledge/<id>';
 export const API_ALERT_TAKE_VM_ACTION = 'api/v1/alert/action/<id>/vm';
-export const API_VM_ALERTS = 'api/v1/alert?vmmoref=<moref>&ack=0&type=monitor.vmconfmodified,monitor.vmrenamed';
+export const API_VM_ALERTS = 'api/v1/alert?vmmoref=<moref>&ack=0';
 
 // sb
 export const API_DELETE_SUPPORT_BUNDLE = 'api/v1/support/bundle/<id>';

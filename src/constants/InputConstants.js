@@ -73,7 +73,8 @@ export const STATIC_KEYS = {
   UI_VPC_SOURCE: 'ui.values.vpc.source',
   UI_VPC_TARGET: 'ui.values.vpc.target',
   UI_WORKFLOW_TEST_RECOVERY: 'ui.workflow.test.recovery',
-  UI_VOLUMETYPES: 'ui.volumes.type',
+  UI_VMWARE_CONFIG_RESPONSES: 'ui.vmware.config.responses',
+  UI_VOLUMETYPES: 'ui.values.volume.type',
 };
 
 // Recovery time in minutes
@@ -92,4 +93,12 @@ export const SETTINGS_TABS = [
 export const EXCLUDE_KEYS_RECOVERY_CONFIGURATION = {
   DELETE_INSTANCE: 'deleteInstance',
   IS_REQUIRED: 'isResetRequired',
+};
+export const VMWARE_OBJECT = {
+  Datacenter: 'Datacenter',
+  Folder: 'Folder',
+  Network: 'Network',
+  Datastore: 'Datastore',
+  ComputeResource: 'ComputeResource',
+  VirtualMachine: 'VirtualMachine',
 };

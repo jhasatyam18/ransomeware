@@ -1,21 +1,27 @@
 import React from 'react';
 import 'boxicons';
+import { withTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { convertKBtoUnit } from '../../../utils/InputUtils';
 
-function VMSizeItemRenderer({ data }) {
+function VMSizeItemRenderer(props) {
   let size = 0;
+  const { data } = props;
   const { virtualDisks = [] } = data;
   if (virtualDisks !== null) {
     virtualDisks.forEach((disk) => {
-      size += disk.size;
+      size = convertKBtoUnit(disk.size);
     });
   }
   return (
     <div>
       {size}
-      {' '}
-      GB
     </div>
   );
 }
 
-export default VMSizeItemRenderer;
+function mapStateToProps(state) {
+  const { drPlans } = state;
+  return { drPlans };
+}
+export default connect(mapStateToProps)(withTranslation()(VMSizeItemRenderer));

@@ -1,6 +1,11 @@
 import React from 'react';
+import VMVmwarePlacementInfoItemRenderer from '../components/Table/ItemRenderers/VMVmwarePlacementInfoItemRenderer';
+import VMInstanceItemRenderer from '../components/Table/ItemRenderers/VMInstanceItemRenderer';
+import Memory from '../components/Common/InstanceMemory';
+import DMTree from '../components/Shared/DMTree';
 import CloudTags from '../components/Common/CloudTags';
 import NetworkConfig from '../components/Common/NetworkConfig';
+import Location from '../components/Common/Location';
 import SecurityGroups from '../components/Common/SecurityGroups';
 import ReplicationInterval from '../components/Forms/ReplicationInterval';
 import DMDatePicker from '../components/Shared/DMDatePicker';
@@ -42,7 +47,7 @@ import VMSizeItemRenderer from '../components/Table/ItemRenderers/VMSizeItemRend
 import VMUsernameItemRenderer from '../components/Table/ItemRenderers/VMUsernameItemRenderer';
 import VMNetworkInfoItemRenderer from '../components/Table/ItemRenderers/VMNetworkInfoItemRenderer';
 import { DATE_PICKER_COMP, FIELDS, FIELD_TYPE, MULTISELECT_ITEM_COMP, REPLICATION_INTERVAL_COMP, TIME_PICKER_COMP } from '../constants/FieldsConstant';
-import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
+import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMORY, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
 import { ALERT_ACK_ITEM_RENDERER, DATE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, EMAIL_RECIPIENT_ACTION_ITEM_RENDER, EVENT_LEVEL_ITEM_RENDERER, LICENSE_ACTION_ITEM_RENDERER, LICENSE_STATUS_ITEM_RENDER, LICENSE_USAGE_ITEM_RENDERER, NODE_ACTION_RENDERER, NODE_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDERER, PROTECTED_VM_ACTIONS_ITEM_ITEM_RENDERER, PROTECTION_SITE_LINK_ITEM_RENDERER, RECOVERY_SITE_LINK_ITEM_RENDERER, RECOVERY_STATUS_ITEM_RENDERER, RECOVERY_TYPE_ITEM_RENDERER, REPLICATION_INTERVAL_ITEM_RENDERER, ROLE_ITEM_RENDERER, SCRIPT_ITEM_RENDERER, SERVER_PORT_ITEM_RENDERER, SIZE_ITEM_RENDERER, SSH_RDP_ITEM_RENDERER, STATUS_ITEM_RENDERER, SUPPORT_BUNDLE_ACTION_ITEM_RENDERER, THROTTLING_ACTION_ITEM_RENDER, THROTTLING_TIME_ITEM_RENDER, TIME_DURATION_RENDERER, TRANSFER_SIZE_ITEM_RENDERER, VIEW_ALERT_INFO_RENDERER, VM_BOOT_ORDER_ITEM_RENDER, VM_DISK_ITEM_RENDERER, VM_NETWORK_INFO_ITEM_RENDERER, VM_SIZE_ITEM_RENDERER, VM_UPASSWORD_ITEM_RENDERER, VM_USERNAME_ITEM_RENDERER } from '../constants/TableConstants';
 import ScriptItemRenderer from '../components/Table/ItemRenderers/ScriptItemRenderer';
 import ProtectedSiteLinkRenderer from '../components/Table/ItemRenderers/ProtectedSiteLinkItemRenderer';
@@ -62,6 +67,12 @@ export function getStackComponent(dispatch, user, children, conf, data) {
       return <DMFieldNumber dispatch={dispatch} fieldKey={conf} field={children[conf]} user={user} hideLabel="true" />;
     case FIELD_TYPE.SELECT_SEARCH:
       return <DMSearchSelect dispatch={dispatch} fieldKey={conf} field={children[conf]} user={user} hideLabel="true" />;
+    case FIELD_TYPE.TREE:
+      return <DMTree dispatch={dispatch} fieldKey={conf} field={children[conf]} user={user} hideLabel="true" />;
+    case STACK_COMPONENT_LOCATION:
+      return <Location dispatch={dispatch} fieldKey={conf} field={children[conf]} user={user} hideLabel="true" />;
+    case STACK_COMPONENT_MEMORY:
+      return <Memory dispatch={dispatch} fieldKey={conf} field={children[conf]} user={user} hideLabel="true" />;
     default:
       return <DMFieldSelect dispatch={dispatch} fieldKey={conf} field={children[conf]} user={user} hideLabel="true" />;
   }
@@ -155,6 +166,10 @@ export function getItemRendererComponent(render, data, field, user, dispatch) {
       return <ProtectedVMItemRenderer data={data} dispatch={dispatch} />;
     case PROTECTION_SITE_LINK_ITEM_RENDERER:
       return <ProtectedSiteLinkRenderer data={data} user={user} />;
+    case VMInstanceItemRenderer:
+      return <VMInstanceItemRenderer data={data} />;
+    case VMVmwarePlacementInfoItemRenderer:
+      return <VMVmwarePlacementInfoItemRenderer data={data} />;
     default:
       return (<div> 404 </div>);
   }

@@ -17,7 +17,7 @@ export function createPayload(type, data) {
     case API_TYPES.PUT:
       return { method: 'PUT', body: JSON.stringify(data) };
     case API_TYPES.DELETE:
-      return { method: 'DELETE' };
+      return { method: 'DELETE', body: JSON.stringify(data) };
     case API_TYPES.PATCH:
       return { method: 'PATCH', body: JSON.stringify(data) };
     default:

@@ -2,14 +2,14 @@
 import jsCookie from 'js-cookie';
 import * as Types from '../../constants/actionTypes';
 import { API_AUTHENTICATE, API_AWS_AVAILABILITY_ZONES, API_AWS_REGIONS, API_CHANGE_PASSWORD, API_GCP_AVAILABILITY_ZONES, API_GCP_REGIONS, API_INFO, API_SCRIPTS, API_USERS, API_USER_PRIVILEGES, API_USER_SCRIPT } from '../../constants/ApiConstants';
-import { APP_TYPE, PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
+import { APP_TYPE, PLATFORM_TYPES, STATIC_KEYS, VMWARE_OBJECT } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH } from '../../constants/RouterConstants';
 import { APPLICATION_API_TOKEN, APPLICATION_API_USER, APPLICATION_API_USER_ID } from '../../constants/UserConstant';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { getCookie, setCookie } from '../../utils/CookieUtils';
 import { onInit } from '../../utils/HistoryUtil';
-import { getValue, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
+import { getValue, getVMwareLocationPath, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { getUnreadAlerts } from './AlertActions';
 import { fetchDRPlanById, fetchDrPlans } from './DrPlanActions';
@@ -23,6 +23,7 @@ import { fetchSupportBundles } from './SupportActions';
 import { fetchBandwidthConfig, fetchBandwidthReplNodes } from './ThrottlingAction';
 import { MODAL_USER_SCRIPT } from '../../constants/Modalconstant';
 import { fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
+import { fetchSelectedVmsProperty, fetchVMwareComputeResource, fetchVMwareNetwork, getVMwareConfigDataForField, setVMwareAPIResponseData } from './VMwareActions';
 
 export function refreshApplication() {
   return {
@@ -88,6 +89,14 @@ export function logOutUser() {
 export function valueChange(key, value) {
   return {
     type: Types.VALUE_CHANGE,
+    key,
+    value,
+  };
+}
+
+export function treeDataChange(key, value) {
+  return {
+    type: Types.TREE_DATA,
     key,
     value,
   };
@@ -213,7 +222,6 @@ export function fetchAvailibilityZones(type) {
       });
   };
 }
-
 export function refresh() {
   return (dispatch) => {
     const { location } = window;
@@ -369,52 +377,6 @@ export function removeNicConfig(networkKey, index) {
         }
       });
       dispatch(valueChange(networkKey, newNicCards));
-    }
-  };
-}
-
-export function onAwsStorageTypeChange({ value, fieldKey }) {
-  return (dispatch) => {
-    if (value === 'gp2') {
-      const keys = fieldKey.split('.');
-      const iopsKey = `${keys.slice(0, keys.length - 1).join('.')}.volumeIOPS`;
-      dispatch(valueChange(iopsKey, '0'));
-    }
-  };
-}
-
-export function onAwsPublicIPChecked({ value, fieldKey }) {
-  return (dispatch) => {
-    if (value) {
-      const networkKey = fieldKey.replace('isPublic', 'network');
-      const publicIPKey = fieldKey.replace('isPublic', 'publicIP');
-      dispatch(valueChange(networkKey, ''));
-      dispatch(valueChange(publicIPKey, ''));
-    }
-  };
-}
-
-export function addAssociatedReverseIP({ fieldKey, ip, id }) {
-  return (dispatch, getState) => {
-    if (typeof ip === 'undefined' || ip === '' || typeof id === 'undefined') {
-      return;
-    }
-    const { user } = getState();
-    const { values } = user;
-    let ips = getValue(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, values) || {};
-    const hasKey = Object.keys(ips).filter((key) => ips[key].ip === ip);
-    if (hasKey.length === 0) {
-      ips = { ...ips, [ip]: { label: ip, value: id, fieldKey } };
-      dispatch(valueChange(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, ips));
-    }
-  };
-}
-
-export function onGCPNetworkChange({ fieldKey }) {
-  return (dispatch) => {
-    if (fieldKey) {
-      const subnetFieldKey = fieldKey.replace('-network', '-subnet');
-      dispatch(valueChange(subnetFieldKey, ''));
     }
   };
 }
@@ -596,5 +558,281 @@ export function onAwsVPCChange({ value, fieldKey }) {
       dispatch(valueChange(`${networkKey}-securityGroups`, ''));
       dispatch(valueChange(`${networkKey}-network`, ''));
     }
+  };
+}
+
+const iterate = (array, k, v) => {
+  const d = array;
+  const kerArray = Object.keys(d);
+  for (let i = 0; i < kerArray.length; i += 1) {
+    const a = kerArray[i];
+    if (d[a] === k) {
+      d.children = v;
+      d.doneChildrenLoading = true;
+      d.children = v;
+      break;
+    }
+
+    if (typeof d[a] === 'object' && d[a] !== null) {
+      const c = pushChildInObj(d[a], k, v);
+      d[a] = c;
+    }
+  }
+
+  return d;
+};
+
+export function pushChildInObj(array, k, v) {
+  const res = array;
+  for (let i = 0; i < array.length; i += 1) {
+    const keys = iterate(array[i], k, v);
+    if (keys.length > 0) {
+      res[i] = keys;
+      break;
+    }
+  }
+  return res;
+}
+
+export function loadTreeChildData(fieldKey, node, field) {
+  const { baseURL, urlParms, urlParmKey, baseURLIDReplace, dataKey } = field;
+
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const pplan = getValue('ui.selected.protection.planID', values);
+    dispatch(showApplicationLoader('TEST_KEY', 'loading tree data'));
+    let apiURL = baseURL;
+    let paramURL = '';
+    for (let i = 0; i < urlParms.length; i += 1) {
+      const parameKeyType = urlParmKey[i].split(':');
+      const paramKeyValue = parameKeyType[0] === 'static' ? parameKeyType[1] : node[parameKeyType[1]];
+      if (i === 0) {
+        paramURL = `?${urlParms[i]}=${paramKeyValue}`;
+      } else {
+        paramURL = `${paramURL}&${urlParms[i]}=${paramKeyValue}`;
+      }
+    }
+    if (typeof pplan !== 'undefined' || pplan !== '') {
+      paramURL += `&protectionplan=${pplan}`;
+    }
+    if (baseURLIDReplace) {
+      const parts = baseURLIDReplace.split(':');
+      const val = getValue(parts[1], values);
+      apiURL = apiURL.replace(parts[0], val);
+    }
+    const url = `${apiURL}${paramURL}`;
+    return callAPI(url).then((json) => {
+      dispatch(hideApplicationLoader('TEST_KEY'));
+      const childResp = [];
+      if (json !== null) {
+        json.forEach((d) => {
+          const nodes = {};
+          nodes.type = d.type;
+          nodes.doneChildrenLoading = false;
+          nodes.key = d.id;
+          nodes.value = d.id;
+          nodes.children = [];
+          nodes.title = d.name;
+          childResp.push(nodes);
+        });
+      }
+      const treeData = getValue(dataKey, values);
+      const res = pushChildInObj(treeData, node.key, childResp);
+      dispatch(treeDataChange(dataKey, res));
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('TEST_KEY'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+  };
+}
+
+export function loadRecoveryLocationData(site) {
+  return (dispatch) => {
+    dispatch(showApplicationLoader('ui.vmware.recovery.locations', 'loading tree data'));
+    return callAPI(`api/v1/sites/${site}/resources?type=Datacenter`).then((json) => {
+      dispatch(hideApplicationLoader('ui.vmware.recovery.locations'));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        const data = [];
+        json.forEach((d) => {
+          const node = {};
+          node.doneChildrenLoading = false;
+          node.key = d.id;
+          node.type = d.type;
+          node.value = d.id;
+          node.children = [];
+          node.title = d.name;
+          data.push(node);
+        });
+        dispatch(treeDataChange('ui.drplan.vms.location', data));
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('ui.vmware.recovery.locations'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+  };
+}
+
+export function getVMwareVMSProps(vms) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const siteId = getValue('ui.values.protectionSiteID', values);
+    let vmString = [];
+    const selectedVMS = {};
+    const platforForm = getValue('ui.values.protectionPlatform', values);
+    if (platforForm === PLATFORM_TYPES.VMware) {
+      const plan = getValue('ui.selected.protection.plan', values);
+      // if vm is already  in the pretection plan then don't fetch it from the backend
+      if (plan !== '') {
+        vms.forEach((moreF) => {
+          let found = false;
+          plan.protectedEntities.virtualMachines.forEach((vm) => {
+            if (moreF === vm.moref) {
+              selectedVMS[vm.moref] = vm;
+              found = true;
+            }
+          });
+          if (!found) {
+            vmString.push(moreF);
+          }
+        });
+      } else {
+        vmString = vms;
+      }
+      dispatch(valueChange('ui.site.seletedVMs', selectedVMS));
+      if (vmString && vmString.length > 0) {
+        vmString = vmString.join(',');
+        dispatch(fetchSelectedVmsProperty(siteId, vmString, selectedVMS));
+      }
+    } else {
+      vmString = vms.toString();
+      dispatch(showApplicationLoader('vmware_data', 'Loading vmware data'));
+      dispatch(fetchSelectedVmsProperty(siteId, vmString, selectedVMS));
+    }
+  };
+}
+
+export function getComputeResources(fieldKey, dataCenterKey) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const recoverySite = getValue('ui.values.recoverySiteID', values);
+    const locationData = getValue('ui.drplan.vms.location', values);
+    const fieldVal = getValue(fieldKey, values);
+    const key = getVMwareLocationPath(locationData, fieldVal[0]);
+    const computeKey = fieldKey.replace('folderPath', 'COMPUTERESOURCEDATA');
+    if (typeof key !== 'undefined') {
+      dispatch(valueChange('ui.site.vmware.datacenterMoref', key.value));
+    }
+    if (typeof fieldVal === 'undefined' || fieldVal.length === 0) {
+      dispatch(addMessage('Please select Datacenter', 'fieldval_err', true));
+      return;
+    }
+    let url = '';
+    let entityKey = '';
+    if (dataCenterKey) {
+      dispatch(valueChange('ui.site.vmware.datacenterMoref', dataCenterKey));
+      url = `api/v1/sites/${recoverySite}/resources?type=ClusterComputeResource,${VMWARE_OBJECT.ComputeResource}&entity=${dataCenterKey}`;
+      entityKey = dataCenterKey;
+    } else {
+      url = `api/v1/sites/${recoverySite}/resources?type=ClusterComputeResource,${VMWARE_OBJECT.ComputeResource}&entity=${key.key}`;
+      entityKey = key.key;
+    }
+
+    const responseData = getVMwareConfigDataForField(`ClusterComputeResource,${VMWARE_OBJECT.ComputeResource}`, entityKey, values);
+    if (responseData !== null) {
+      dispatch(valueChange(computeKey, responseData));
+      dispatch(closeModal());
+      return;
+    }
+
+    dispatch(showApplicationLoader('vmware_compute', 'Loading vmware computeResource'));
+    return callAPI(url).then((json) => {
+      dispatch(hideApplicationLoader('vmware_compute'));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        const res = [];
+        json.forEach((d) => {
+          const val = {};
+          val.label = d.name;
+          val.value = d.id;
+          res.push(val);
+        });
+        // set data
+        dispatch(setVMwareAPIResponseData(`ClusterComputeResource,${VMWARE_OBJECT.ComputeResource}`, entityKey, res));
+        dispatch(valueChange(computeKey, res));
+        dispatch(closeModal());
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('vmware_compute'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+  };
+}
+
+export function getStorageForVMware({ fieldKey, hostMoref }) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const recoverySite = getValue('ui.values.recoverySiteID', values);
+    const fieldVal = getValue(fieldKey, values);
+    let storageURL = '';
+    let networkURL = '';
+    let entityKey = '';
+    if (hostMoref) {
+      networkURL = `api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Network}&entity=${hostMoref}`;
+      storageURL = `api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Datastore}&entity=${hostMoref}`;
+      entityKey = `${hostMoref}`;
+    } else {
+      networkURL = `api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Network}&entity=${fieldVal.value}`;
+      storageURL = `api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Datastore}&entity=${fieldVal.value}`;
+      entityKey = `${fieldVal.value}`;
+    }
+
+    const apis = [dispatch(fetchVMwareComputeResource(storageURL, fieldKey, VMWARE_OBJECT.Network, entityKey)), dispatch(fetchVMwareNetwork(networkURL, fieldKey, VMWARE_OBJECT.Datastore, entityKey))];
+    return Promise.all(apis).then(
+      () => new Promise((resolve) => resolve()),
+      (err) => {
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+        return new Promise((resolve) => resolve());
+      },
+    );
+  };
+}
+
+export function getMemoryValue({ value }) {
+  return (dispatch) => {
+    if (value === '' || value === 'GB') {
+      dispatch(valueChange('ui.memory.min', 1));
+      dispatch(valueChange('ui.memory.max', 4096));
+    }
+    if (value === 'MB') {
+      dispatch(valueChange('ui.memory.min', 512));
+      dispatch(valueChange('ui.memory.max', 1024));
+    } if (value === 'TB') {
+      dispatch(valueChange('ui.memory.min', 1));
+      dispatch(valueChange('ui.memory.max', 4));
+    }
+  };
+}
+
+export function getDefaultValueFromUnit({ fieldKey, user }) {
+  return (dispatch) => {
+    const { values } = user;
+    const val = getValue('ui.memory.min', values);
+    dispatch(valueChange(fieldKey, val));
+  };
+}
+
+export function onMemChange({ fieldKey, value }) {
+  return (dispatch) => {
+    dispatch(valueChange(fieldKey, value));
   };
 }

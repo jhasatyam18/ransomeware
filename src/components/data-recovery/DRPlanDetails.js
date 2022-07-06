@@ -4,7 +4,7 @@ import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardTitle, Col, Container, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
 import { PLATFORM_TYPES, RECOVERY_STATUS, REPLICATION_STATUS, PROTECTION_PLANS_STATUS } from '../../constants/InputConstants';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
-import { deletePlanConfirmation, fetchDRPlanById, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
+import { deletePlanConfirmation, fetchDRPlanById, openCleanupTestRecoveryWizard, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
 import CheckBox from '../Common/CheckBox';
 import DisplayString from '../Common/DisplayString';
@@ -47,10 +47,10 @@ class DRPlanDetails extends Component {
     if (!protectionPlan) {
       return true;
     }
-    const { protectedSite, recoverySite } = protectionPlan;
+    const { protectedSite } = protectionPlan;
     const { platformDetails } = protectedSite;
-    // disable if recovery site is VMware disable if status is Initializing
-    if (recoverySite.platformDetails.platformType === PLATFORM_TYPES.VMware || isPlanRecovered(protectionPlan) || protectionPlan.status === PROTECTION_PLANS_STATUS.INITIALIZING) {
+    // disable if recovery site is VMware
+    if (isPlanRecovered(protectionPlan)) {
       return true;
     }
     if (platformDetails.platformType === user.platformType && hasRequestedPrivileges(user, ['protectionplan.edit'])) {
@@ -247,7 +247,8 @@ class DRPlanDetails extends Component {
       actions = [{ label: 'recover', action: openRecoveryWizard, icon: 'fa fa-plus', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.full']) },
         { label: 'Migrate', action: openMigrationWizard, icon: 'fa fa-clone', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.migration']) },
         { label: 'Reverse', action: openReverseWizard, icon: 'fa fa-backward', disabled: isReverseActionDisabled },
-        { label: 'Test Recovery', action: openTestRecoveryWizard, icon: 'fa fa-check', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.test']) }];
+        { label: 'Test Recovery', action: openTestRecoveryWizard, icon: 'fa fa-check', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.test']) },
+        { label: 'Cleanup Test Recoveries', action: openCleanupTestRecoveryWizard, icon: 'fa fa-broom', disabled: !hasRequestedPrivileges(user, ['recovery.test']) }];
     } else {
       // no action to add
     }

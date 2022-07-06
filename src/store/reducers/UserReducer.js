@@ -75,6 +75,11 @@ export default function user(state = INITIAL_STATE.user, action) {
         ...state, privileges: action.privileges,
       };
     }
+    case Types.TREE_DATA: {
+      return {
+        ...state, values: { ...state.values, [action.key]: action.value },
+      };
+    }
     default:
       return state;
   }
