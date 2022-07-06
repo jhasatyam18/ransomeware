@@ -13,9 +13,8 @@ import { addAssociatedReverseIP, clearValues, fetchScript, hideApplicationLoader
 import { closeWizard, openWizard } from './WizardActions';
 import { closeModal, openModal } from './ModalActions';
 import { MIGRATION_WIZARDS, RECOVERY_WIZARDS, TEST_RECOVERY_WIZARDS, REVERSE_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS, PROTECTED_VM_RECONFIGURATION_WIZARD, CLEANUP_TEST_RECOVERY_WIZARDS } from '../../constants/WizardConstants';
-import { getMatchingInsType, getValue, getVMMorefFromEvent, isSamePlatformPlan } from '../../utils/InputUtils';
+import { getMatchingInsType, getValue, getVMMorefFromEvent, isSamePlatformPlan, getVMInstanceFromEvent } from '../../utils/InputUtils';
 import { PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
-import { getMatchingInsType, getValue, getVMInstanceFromEvent, getVMMorefFromEvent, isSamePlatformPlan } from '../../utils/InputUtils';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
 import { setVmwareDataInitialData, setVMwareTargetData } from './VMwareActions';
