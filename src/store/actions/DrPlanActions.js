@@ -1,3 +1,4 @@
+import { changedVMRecoveryConfigurations } from '../../utils/validationUtils';
 import { MONITORING_DISK_CHANGES } from '../../constants/EventConstant';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
@@ -564,6 +565,7 @@ export function onEditProtectionPlan() {
     const { user, sites } = getState();
     const { values } = user;
     const payload = getEditProtectionPlanPayload(user, sites.sites);
+    changedVMRecoveryConfigurations(payload, user, dispatch);
     const obj = createPayload(API_TYPES.PUT, { ...payload.drplan });
     const id = getValue('ui.selected.protection.planID', values);
     let url = API_PROTECTION_PLAN_UPDATE.replace('<id>', id);
@@ -595,8 +597,10 @@ export function setProtectionPlanVMsForUpdate(protectionPlan, isEventAction = fa
   return (dispatch, getState) => {
     const { user } = getState();
     const { values } = user;
-    const { protectedSite, protectedEntities, id } = protectionPlan;
+    const { protectedSite, protectedEntities, id, recoveryEntities } = protectionPlan;
     const { virtualMachines } = protectedEntities;
+    const { instanceDetails } = recoveryEntities;
+    dispatch(valueChange('ui.site.recoveryEntities', instanceDetails));
     // extract the event impacted objects
     let vmMoref = '';
     if (event !== null && event.impactedObjectURNs !== '') {
@@ -826,6 +830,7 @@ function setGCPVMDetails(selectedVMS, protectionPlan, dispatch, user) {
             dispatch(valueChange(`${networkKey}-eth-${index}-network`, net.network));
             dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, net.Subnet));
             dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
+            // dispatch(valueChange(`${networkKey}-eth-${index}-availZone`, ins.availZone));
             dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, net.publicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkTier`, net.networkTier));
             dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, false));
