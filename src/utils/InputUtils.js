@@ -639,6 +639,22 @@ export function getVMMorefFromEvent(event) {
   return vmMoref;
 }
 
+export function getVMInstanceFromEvent(event) {
+  let vmMoref = '';
+  if (event !== null && event.impactedObjectURNs !== '') {
+    const parts = event.impactedObjectURNs.split(',');
+    if (parts.length > 0) {
+      for (let i = 0; i < parts.length; i += 1) {
+        const part = parts[i].split(':');
+        if (part[0] === 'Virtualmachine') {
+          vmMoref = part[part.length - 1];
+        }
+      }
+    }
+  }
+  return vmMoref;
+}
+
 export function isVMAlertAction(user) {
   const { values } = user;
   const isAlertAction = getValue('ui.vm.isVMAlertAction', values);

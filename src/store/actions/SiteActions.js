@@ -1,10 +1,10 @@
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import * as Types from '../../constants/actionTypes';
-import { API_AWS_AVAILABILITY_ZONES, API_AWS_INSTANCES, API_FETCH_VMWARE_INVENTORY, API_CREATE_SITES, API_DELETE_SITES, API_FETCH_SITES, API_FETCH_SITE_VMS, API_GCP_AVAILABILITY_ZONES, API_GCP_INSTANCES, API_SITE_NETWORKS, API_SITE_NETWORKS_ZONE } from '../../constants/ApiConstants';
+import { API_AWS_AVAILABILITY_ZONES, API_FETCH_VMWARE_INVENTORY, API_CREATE_SITES, API_DELETE_SITES, API_FETCH_SITES, API_FETCH_SITE_VMS, API_GCP_AVAILABILITY_ZONES, API_SITE_NETWORKS, API_SITE_NETWORKS_ZONE } from '../../constants/ApiConstants';
 import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { closeModal } from './ModalActions';
-import { hideApplicationLoader, loadRecoveryLocationData, showApplicationLoader, valueChange } from './UserActions';
+import { hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { getValue, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
@@ -172,31 +172,9 @@ export function onRecoverSiteChange({ value, availZone }) {
     const { values } = user;
     const recoverySite = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${value}`)[0];
     const { platformType } = { ...recoverySite.platformDetails };
-    const url = (platformType === PLATFORM_TYPES.AWS ? API_AWS_INSTANCES : API_GCP_INSTANCES);
     dispatch(fetchNetworks(value, undefined, availZone));
     dispatch(valueChange('ui.values.recoveryPlatform', platformType));
     dispatch(valueChange('ui.values.recoverySiteID', value));
-    if (PLATFORM_TYPES.AWS === platformType) {
-      return;
-    }
-    if (PLATFORM_TYPES.VMware === platformType) {
-      dispatch(loadRecoveryLocationData(value));
-    }
-    return callAPI(url)
-      .then((json) => {
-        if (json && json.hasError) {
-          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
-        } else {
-          let data = json;
-          if (data === null) {
-            data = [];
-          }
-          dispatch(valueChange('ui.values.instances', data));
-        }
-      },
-      (err) => {
-        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-      });
   };
 }
 
