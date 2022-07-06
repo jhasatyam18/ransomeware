@@ -42,12 +42,10 @@ function DashboardAlertOverview(props) {
     <Card>
       <CardBody style={{ maxHeight: 250 }}>
         <Link to={ALERTS_PATH} className="font-weight-medium text-white">
-          <p className="font-weight-medium text-muted">
-            {t('Alerts')}
-          </p>
+          <p className="font-weight-medium text-muted">{t('Alerts')}</p>
           <Row className="text-center" style={{ fontSize: '0.9rem' }}>
             <Col sm={4}>
-              <span className="text-danger-1">{t('Critical')}</span>
+              <span className="text-danger-1">{t('Alerts')}</span>
               <hr />
               {loading === true ? <Spinner /> : alert.criticalAlerts}
             </Col>
@@ -68,4 +66,4 @@ function DashboardAlertOverview(props) {
   );
 }
 
-export default (withTranslation()(DashboardAlertOverview));
+export default withTranslation()(DashboardAlertOverview);

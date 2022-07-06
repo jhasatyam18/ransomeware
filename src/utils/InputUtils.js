@@ -3,8 +3,9 @@ import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMO
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
 import { PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS } from '../constants/InputConstants';
 import { NODE_STATUS_ONLINE } from '../constants/AppStatus';
-import { isEmpty, isMemoryEmpty } from './validationUtils';
-import { getStorageForVMware, onAwsStorageTypeChange, onScriptChange } from '../store/actions';
+import { isEmpty } from './validationUtils';
+import { onScriptChange } from '../store/actions';
+import { onAwsStorageTypeChange } from '../store/actions/AwsActions';
 
 export function getValue(key, values) {
   const ret = values[key];
@@ -639,6 +640,22 @@ export function getVMMorefFromEvent(event) {
   return vmMoref;
 }
 
+export function getVMInstanceFromEvent(event) {
+  let vmMoref = '';
+  if (event !== null && event.impactedObjectURNs !== '') {
+    const parts = event.impactedObjectURNs.split(',');
+    if (parts.length > 0) {
+      for (let i = 0; i < parts.length; i += 1) {
+        const part = parts[i].split(':');
+        if (part[0] === 'Virtualmachine') {
+          vmMoref = part[part.length - 1];
+        }
+      }
+    }
+  }
+  return vmMoref;
+}
+
 export function isVMAlertAction(user) {
   const { values } = user;
   const isAlertAction = getValue('ui.vm.isVMAlertAction', values);
@@ -824,4 +841,21 @@ export function getMatchingInsType(values, ins) {
     }
   });
   return insType;
+}
+
+export function convertKBtoUnit(data) {
+  const sizes = ['KB', 'MB', 'GB', 'TB'];
+  if (data === 0) return '-';
+  const i = parseInt(Math.floor(Math.log(data) / Math.log(1024)), 10);
+  if (i >= sizes.length) return '-';
+  return `${Math.round(data / 1024 ** i, 2)} ${sizes[i]}`;
+}
+
+export function showInstallCloudPackageOption(user) {
+  const { values } = user;
+  const recoveryType = getValue('ui.values.recoveryPlatform', values);
+  if (recoveryType === PLATFORM_TYPES.VMware) {
+    return false;
+  }
+  return true;
 }

@@ -13,10 +13,13 @@ import Spinner from '../Common/Spinner';
 
 function DashBoardEvents(props) {
   const { t, dispatch } = props;
-  const [data, setData] = useState([]);
+  const [data, setData] = React.useState([]);
   const refresh = useSelector((state) => state.user.context.refresh);
-  const dataToDisplay = (data.length > 5 ? data.slice(0, 5) : data);
   const [loading, setLoading] = useState(false);
+  let dataToDisplay = [];
+  if (typeof data !== 'undefined' && data.length > 0) {
+    dataToDisplay = data.length > 5 ? data.slice(0, 5) : data;
+  }
 
   useEffect(() => {
     let isUnmounting = false;
@@ -34,7 +37,6 @@ function DashBoardEvents(props) {
         setLoading(false);
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
-
     return () => {
       isUnmounting = true;
     };
@@ -44,9 +46,7 @@ function DashBoardEvents(props) {
     <>
       <Card>
         <CardBody>
-          <p className="font-weight-medium color-white">
-            {t('events')}
-          </p>
+          <p className="font-weight-medium color-white">{t('events')}</p>
           {loading === true ? <Spinner /> : t('no.data.to.display')}
         </CardBody>
       </Card>
@@ -65,7 +65,9 @@ function DashBoardEvents(props) {
         <Media body>
           <div>
             <Link to={EVENTS_PATH} style={{ color: 'white' }}>
-              {description.length > 65 ? `${description.substr(0, 65)}....` : description}
+              {description.length > 65
+                ? `${description.substr(0, 65)}....`
+                : description}
             </Link>
           </div>
         </Media>
@@ -97,9 +99,7 @@ function DashBoardEvents(props) {
     <>
       <Card>
         <CardBody style={{ minHeight: 365 }}>
-          <p className="font-weight-medium color-white">
-            {t('events')}
-          </p>
+          <p className="font-weight-medium color-white">{t('events')}</p>
           <Row>
             {dataToDisplay.map((val) => (
               <Col sm={12} key={`dashboard-event-${val.id}`}>

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Form, Label } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
 import { getVMwareAdapterType } from '../../store/actions/VMwareActions';
-import { removeNicConfig, valueChange } from '../../store/actions';
+import { removeNicConfig, valueChange } from '../../store/actions/UserActions';
 import { MODAL_NETWORK_CONFIG } from '../../constants/Modalconstant';
 import { getValue } from '../../utils/InputUtils';
 import { openModal } from '../../store/actions/ModalActions';

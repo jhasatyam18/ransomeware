@@ -6,7 +6,7 @@ import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { drPlanDetailsFetched, initReconfigureProtectedVM, openEditProtectionPlanWizard } from './DrPlanActions';
 import { addMessage } from './MessageActions';
 import { closeModal } from './ModalActions';
-import { hideApplicationLoader, showApplicationLoader } from './UserActions';
+import { hideApplicationLoader, refresh, showApplicationLoader } from './UserActions';
 
 /**
  * Action to fetch all alerts
@@ -121,7 +121,7 @@ export function takeVMAction(alert, associatedEvent) {
     }
     if (VM_CONFIG_ACTION_EVENT.indexOf(associatedEvent.type) !== -1) {
       dispatch(closeModal());
-      dispatch(initReconfigureProtectedVM(null, null, associatedEvent));
+      dispatch(initReconfigureProtectedVM(null, null, associatedEvent, alert));
     }
   };
 }
@@ -160,6 +160,7 @@ export function takeActionOnVMAlert(alert) {
           dispatch(addMessage('Action initiated successfully', MESSAGE_TYPES.SUCCESS));
           dispatch(acknowledgeAlert(alert));
           dispatch(closeModal());
+          dispatch(refresh());
         }
       },
       (err) => {
