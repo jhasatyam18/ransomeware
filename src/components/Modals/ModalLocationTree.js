@@ -39,7 +39,7 @@ function ModalLocationTree(props) {
 
   return (
     <>
-      <SimpleBar style={{ maxHeight: '600px' }}>
+      <SimpleBar className="modal_location_simplebar">
         <DMTree dispatch={dispatch} field={options} user={user} fieldKey={fieldKey} />
       </SimpleBar>
       {renderFooter()}

@@ -275,7 +275,7 @@
   min-height: 240px
 }
 
-.ack_alert_icon{
+.icon_font{
   font-size: 16px
 }
 
@@ -299,4 +299,30 @@
 
 .sidebar-height{
   max-height: 100%;
+}
+
+.instance_memory_p{
+  min-width: 5px;
+   padding-top: 7px
+}
+
+.confirmation_modal_msg{
+  margin: auto
+}
+
+.modal_location_simplebar{
+max-height: 600px;  
+}
+
+.modal_nic_simplbar{
+  max-height: 400px;
+}
+
+.roles_simplebar{
+min-height: 55vh;
+max-height: 55vh;
+}
+
+.dm_table_th{
+  width: 10px;
 }

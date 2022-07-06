@@ -54,7 +54,7 @@ class DMTable extends Component {
     const { selected } = this.state;
     if (isSelectable && name) {
       return (
-        <Th style={{ width: 10 }}>
+        <Th className="dm_table_th">
           <div className="custom-control custom-checkbox" key="global-select">
             <input
               type="checkbox"

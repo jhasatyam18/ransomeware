@@ -123,12 +123,12 @@ function Roles(props) {
                 <Col sm={8}>
                   <Nav pills className="navtab-bg nav-justified">
                     <NavItem>
-                      <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '1' })} onClick={() => { setActiveTab('1'); }}>
+                      <NavLink className={`${classnames({ active: activeTab === '1' })} cursor-pointer`} onClick={() => { setActiveTab('1'); }}>
                         <span className="d-none d-sm-block">{t('privileges')}</span>
                       </NavLink>
                     </NavItem>
                     <NavItem>
-                      <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '2' })} onClick={() => { setActiveTab('2'); }}>
+                      <NavLink className={`${classnames({ active: activeTab === '2' })} cursor-pointer`} onClick={() => { setActiveTab('2'); }}>
                         <span className="d-none d-sm-block">{t('users')}</span>
                       </NavLink>
                     </NavItem>
@@ -137,7 +137,7 @@ function Roles(props) {
                     <TabPane tabId="1" className="p-3">
                       <Row>
                         <Col sm="12">
-                          <SimpleBar style={{ minHeight: '55vh', maxHeight: '55vh' }}>
+                          <SimpleBar className="roles_simplebar">
                             {renderPrivileges()}
                           </SimpleBar>
                         </Col>

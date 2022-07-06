@@ -265,7 +265,7 @@ class DRPlanDetails extends Component {
     if (localVMIP === recoverySite.node.hostname) {
       return (
         <NavItem>
-          <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '4' })} onClick={() => { this.toggleTab('4'); }}>
+          <NavLink className={`${classnames({ active: activeTab === '4' })} cursor-pointer`} onClick={() => { this.toggleTab('4'); }}>
             <span className="d-none d-sm-block">{t('recovery.jobs')}</span>
           </NavLink>
         </NavItem>

@@ -60,7 +60,7 @@ function VMNetworkInfoItemRenderer(props) {
 
   return (
     <div>
-      <a id={key} href="#" className="ack_alert_icon" onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)}>
+      <a id={key} href="#" className="icon_font" onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)}>
         {networks.length}
         {renderPopOver()}
       </a>

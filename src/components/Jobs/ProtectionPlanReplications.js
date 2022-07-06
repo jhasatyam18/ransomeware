@@ -20,8 +20,8 @@ class ProtectionPlanReplications extends Component {
     return (
       <div className="wizard-header-options">
         <div className="wizard-header-div">
-          {isOpen ? <box-icon name="chevron-down" color="white" onClick={this.toggle} />
-            : <box-icon name="chevron-right" color="white" onClick={this.toggle} /> }
+          {isOpen ? <box-icon name="chevron-down" color="white" onClick={this.toggle} style={{ height: 20 }} />
+            : <box-icon name="chevron-right" color="white" onClick={this.toggle} style={{ height: 20 }} /> }
         </div>
       </div>
     );
