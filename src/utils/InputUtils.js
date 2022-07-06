@@ -643,10 +643,12 @@ export function getVMInstanceFromEvent(event) {
   let vmMoref = '';
   if (event !== null && event.impactedObjectURNs !== '') {
     const parts = event.impactedObjectURNs.split(',');
-    for (let i = 0; i < parts.length; i += 1) {
-      const part = parts[i].split(':');
-      if (part[0] === 'Virtualmachine') {
-        vmMoref = part[part.length - 1];
+    if (parts.length > 0) {
+      for (let i = 0; i < parts.length; i += 1) {
+        const part = parts[i].split(':');
+        if (part[0] === 'Virtualmachine') {
+          vmMoref = part[part.length - 1];
+        }
       }
     }
   }
