@@ -723,6 +723,7 @@ export function excludeKeys(key, recoveryPlatform) {
       return false;
     }
   }
+  return true;
 }
 export function getReacoveryLocationData({ values, dataKey }) {
   return values[dataKey];
