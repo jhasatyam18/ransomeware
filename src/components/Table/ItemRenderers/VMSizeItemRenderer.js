@@ -2,28 +2,20 @@ import React from 'react';
 import 'boxicons';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { PLATFORM_TYPES } from '../../../constants/InputConstants';
+import { convertKBtoUnit } from '../../../utils/InputUtils';
 
 function VMSizeItemRenderer(props) {
   let size = 0;
-  const { data, drPlans } = props;
-  const { protectionPlan } = drPlans;
+  const { data } = props;
   const { virtualDisks = [] } = data;
   if (virtualDisks !== null) {
     virtualDisks.forEach((disk) => {
-      const devisorVal = 1048576;
-      if (protectionPlan.protectedSite.platformDetails.platformType === PLATFORM_TYPES.VMware) {
-        const kb = disk.size / devisorVal;
-        size += kb;
-      } else {
-        size += disk.size;
-      }
+      size = convertKBtoUnit(disk.size);
     });
   }
   return (
     <div>
       {size}
-      GB
     </div>
   );
 }
