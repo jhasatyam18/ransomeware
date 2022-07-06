@@ -741,7 +741,7 @@ export function changedVMRecoveryConfigurations(payload, user, dispatch) {
 
 export function checkChangesForArrayInObject(recoveryArr, payloadArr, recoveryPlatform, condition) {
   let clear = false;
-
+  // all the fields which are empty and are in EXCLUDE_KEYS_RECOVERY_CONFIGURATION keys list all of them will be discarded from getting checked
   for (let i = 0; i < recoveryArr.length; i += 1) {
     const keys = Object.keys(recoveryArr[i]);
     const rvm = recoveryArr[i];

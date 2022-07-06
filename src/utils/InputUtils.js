@@ -1,7 +1,7 @@
 import { API_FETCH_VMWARE_LOCATION } from '../constants/ApiConstants';
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMORY, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
-import { EXCLUDE_KEYS_RECOVERY_CONFIGURATION, PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS } from '../constants/InputConstants';
+import { EXCLUDE_KEYS_CONSTANTS, EXCLUDE_KEYS_RECOVERY_CONFIGURATION, PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS } from '../constants/InputConstants';
 import { NODE_STATUS_ONLINE } from '../constants/AppStatus';
 import { isEmpty, isMemoryEmpty } from './validationUtils';
 import { getStorageForVMware, onScriptChange } from '../store/actions';
@@ -714,7 +714,7 @@ export function getVPCOptions(user) {
 }
 
 export function excludeKeys(key, recoveryPlatform) {
-  if (recoveryPlatform === PLATFORM_TYPES.GCP && key === 'availZone') {
+  if (recoveryPlatform === PLATFORM_TYPES.GCP && key === EXCLUDE_KEYS_CONSTANTS.AVAILABILITY_ZONES) {
     return false;
   }
   const keys = Object.keys(EXCLUDE_KEYS_RECOVERY_CONFIGURATION);
