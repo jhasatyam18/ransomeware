@@ -39,12 +39,12 @@ class ModalAlertDetails extends Component {
   }
 
   takeAction = () => {
-    const { alerts, dispatch } = this.props;
+    const { alerts, dispatch, t } = this.props;
     const { associatedEvent, selected } = alerts;
     const { ackMessage } = this.state;
     const user = getCookie(APPLICATION_API_USER);
     if (ackMessage.length === 0) {
-      this.setState({ error: 'Required acknowledge message' });
+      this.setState({ error: t('required.acknowledge.message') });
       return;
     }
     selected.acknowledgeMessage = ackMessage;
@@ -53,12 +53,12 @@ class ModalAlertDetails extends Component {
   }
 
   acknowledgeAndClose() {
-    const { dispatch, alerts } = this.props;
+    const { dispatch, alerts, t } = this.props;
     const { selected } = alerts;
     const { ackMessage } = this.state;
     const user = getCookie(APPLICATION_API_USER);
     if (ackMessage.length === 0) {
-      this.setState({ error: 'Required acknowledge message' });
+      this.setState({ error: t('required.acknowledge.message') });
       return;
     }
     selected.acknowledgeMessage = ackMessage;
