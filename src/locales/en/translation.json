@@ -354,5 +354,6 @@
   "title.select":"Select",
   "title.unit":"Unit",
   "info.protectionplan.instance.network.tags": "Network tags enables to make firewall rules and routes applicable to instance.",
-  "required.acknowledge.message":"Required acknowledge message"
+  "required.acknowledge.message":"Required acknowledge message",
+  "info.test.recovery.cleanup" : "All test recovered copies for following virtual machines will be deleted."
 }
