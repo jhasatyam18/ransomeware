@@ -21,29 +21,40 @@ function DashBoardJob(props) {
   const refresh = useSelector((state) => state.user.context.refresh);
   const recoveryData = recovery.filter((data) => getMinutes(data.startTime) < MAX_RECOVERY_TIME); // checks if the time if less than 30 mins
   const combinedData = [...recoveryData, ...replication].sort((a, b) => a.startTime > b.startTime);
-  const dataToDisplay = (combinedData.length > 2 ? combinedData.slice(0, 2) : combinedData);
+  let dataToDisplay = [];
+  if (typeof combinedData !== 'undefined' && combinedData.length > 0) {
+    dataToDisplay = (combinedData.length > 2 ? combinedData.slice(0, 2) : combinedData);
+  }
 
   useEffect(() => {
+    let isUnmounting = false;
     setRecoveryJobs([]);
     setLoading(true);
     setReplicationJobs([]);
     callAPI(API_REPLICATION_JOBS)
       .then((json) => {
+        if (isUnmounting) return;
         setLoading(false);
         setReplicationJobs(json.records);
       },
       (err) => {
+        if (isUnmounting) return;
         setLoading(false);
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
 
     callAPI(API_RECOVERY_JOBS)
       .then((json) => {
+        if (isUnmounting) return;
         setRecoveryJobs(json.records);
       },
       (err) => {
+        if (isUnmounting) return;
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
+    return () => {
+      isUnmounting = true;
+    };
   }, [refresh]);
 
   const renderNoDataToShow = () => (
