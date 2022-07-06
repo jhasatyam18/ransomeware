@@ -639,7 +639,7 @@ export function getVMMorefFromEvent(event) {
   return vmMoref;
 }
 
-export function getVMInstancefFromEvent(event) {
+export function getVMInstanceFromEvent(event) {
   let vmMoref = '';
   if (event !== null && event.impactedObjectURNs !== '') {
     const parts = event.impactedObjectURNs.split(',');
