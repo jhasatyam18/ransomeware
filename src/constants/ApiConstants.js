@@ -66,7 +66,7 @@ export const API_MARK_READ_ALL = 'api/v1/alert/read';
 export const API_FETCH_UNREAD_ALERTS = 'api/v1/alert/unread';
 export const API_ACKNOWLEDGE_ALERT = 'api/v1/alert/acknowledge/<id>';
 export const API_ALERT_TAKE_VM_ACTION = 'api/v1/alert/action/<id>/vm';
-export const API_VM_ALERTS = 'api/v1/alert?vmmoref=<moref>&ack=0&type=monitor.vmconfmodified,monitor.vmrenamed';
+export const API_VM_ALERTS = 'api/v1/alert?vmmoref=<moref>&ack=0';
 
 // sb
 export const API_DELETE_SUPPORT_BUNDLE = 'api/v1/support/bundle/<id>';
