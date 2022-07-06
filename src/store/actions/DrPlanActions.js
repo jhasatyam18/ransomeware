@@ -1,3 +1,4 @@
+import { MONITORING_DISK_CHANGES } from '../../constants/EventConstant';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import * as Types from '../../constants/actionTypes';
@@ -13,7 +14,7 @@ import { closeWizard, openWizard } from './WizardActions';
 import { closeModal, openModal } from './ModalActions';
 import { MIGRATION_WIZARDS, RECOVERY_WIZARDS, TEST_RECOVERY_WIZARDS, REVERSE_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS, PROTECTED_VM_RECONFIGURATION_WIZARD } from '../../constants/WizardConstants';
 import { PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
-import { getMatchingInsType, getValue, getVMInstancefFromEvent, getVMMorefFromEvent, isSamePlatformPlan } from '../../utils/InputUtils';
+import { getMatchingInsType, getValue, getVMInstanceFromEvent, getVMMorefFromEvent, isSamePlatformPlan } from '../../utils/InputUtils';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
 import { setVmwareDataInitialData, setVMwareTargetData } from './VMwareActions';
@@ -965,7 +966,7 @@ export function initReconfigureProtectedVM(protectionPlanID, vmMoref = null, eve
       let url = (eve !== null ? API_PROTECTION_PLAN_PROTECTED_VMS.replace('<moref>', moref) : API_PROTECTION_PLAN_VMS.replace('<sid>', plan.protectedSite.id));
       url = url.replace('<pid>', plan.id);
       if (eve) {
-        if (eve.type === 'monitor.vmdisktypemodified' || eve.type === 'monitor.vmdiskiopsmodified') {
+        if (eve.type === MONITORING_DISK_CHANGES.DISK_TYPES || eve.type === MONITORING_DISK_CHANGES.DISK_IOPS) {
           url = `${url}&diskchange=true`;
         }
       }
@@ -1020,9 +1021,9 @@ export function initReconfigureProtectedVM(protectionPlanID, vmMoref = null, eve
         pPlan = await fetchProtection(pid);
         const { protectedSite } = pPlan;
         if (protectedSite.platformDetails.platformType === PLATFORM_TYPES.AWS) {
-          moref = getVMInstancefFromEvent(event);// getVMInstancefFromEvent
+          moref = getVMInstanceFromEvent(event);
         } else {
-          moref = getVMMorefFromEvent(event);// getVMInstancefFromEvent
+          moref = getVMMorefFromEvent(event);
         }
         if (moref === '') {
           dispatch(addMessage('Virtual Machine info not available in the event.', MESSAGE_TYPES.ERROR));
