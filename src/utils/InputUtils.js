@@ -3,8 +3,9 @@ import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMO
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
 import { PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS } from '../constants/InputConstants';
 import { NODE_STATUS_ONLINE } from '../constants/AppStatus';
-import { isEmpty, isMemoryEmpty } from './validationUtils';
-import { getStorageForVMware, onAwsStorageTypeChange, onScriptChange } from '../store/actions';
+import { isEmpty } from './validationUtils';
+import { onScriptChange } from '../store/actions';
+import { onAwsStorageTypeChange } from '../store/actions/AwsActions';
 
 export function getValue(key, values) {
   const ret = values[key];

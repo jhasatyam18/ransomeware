@@ -3,9 +3,8 @@ import SimpleBar from 'simplebar-react';
 import { withTranslation } from 'react-i18next';
 import DMTree from '../Shared/DMTree';
 import { closeModal } from '../../store/actions/ModalActions';
-import { getComputeResources } from '../../store/actions';
+import { getComputeResources, valueChange } from '../../store/actions/UserActions';
 import { getValue } from '../../utils/InputUtils';
-import { valueChange } from '../../store/actions/UserActions';
 
 function ModalLocationTree(props) {
   const { dispatch, user, options, fieldKey, t } = props;

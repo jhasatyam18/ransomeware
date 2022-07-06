@@ -222,7 +222,6 @@ export function fetchAvailibilityZones(type) {
       });
   };
 }
-
 export function refresh() {
   return (dispatch) => {
     const { location } = window;
@@ -378,52 +377,6 @@ export function removeNicConfig(networkKey, index) {
         }
       });
       dispatch(valueChange(networkKey, newNicCards));
-    }
-  };
-}
-
-export function onAwsStorageTypeChange({ value, fieldKey }) {
-  return (dispatch) => {
-    if (value === 'gp2') {
-      const keys = fieldKey.split('.');
-      const iopsKey = `${keys.slice(0, keys.length - 1).join('.')}.volumeIOPS`;
-      dispatch(valueChange(iopsKey, '0'));
-    }
-  };
-}
-
-export function onAwsPublicIPChecked({ value, fieldKey }) {
-  return (dispatch) => {
-    if (value) {
-      const networkKey = fieldKey.replace('isPublic', 'network');
-      const publicIPKey = fieldKey.replace('isPublic', 'publicIP');
-      dispatch(valueChange(networkKey, ''));
-      dispatch(valueChange(publicIPKey, ''));
-    }
-  };
-}
-
-export function addAssociatedReverseIP({ fieldKey, ip, id }) {
-  return (dispatch, getState) => {
-    if (typeof ip === 'undefined' || ip === '' || typeof id === 'undefined') {
-      return;
-    }
-    const { user } = getState();
-    const { values } = user;
-    let ips = getValue(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, values) || {};
-    const hasKey = Object.keys(ips).filter((key) => ips[key].ip === ip);
-    if (hasKey.length === 0) {
-      ips = { ...ips, [ip]: { label: ip, value: id, fieldKey } };
-      dispatch(valueChange(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, ips));
-    }
-  };
-}
-
-export function onGCPNetworkChange({ fieldKey }) {
-  return (dispatch) => {
-    if (fieldKey) {
-      const subnetFieldKey = fieldKey.replace('-network', '-subnet');
-      dispatch(valueChange(subnetFieldKey, ''));
     }
   };
 }
