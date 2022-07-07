@@ -172,7 +172,7 @@ export function getVMNetworkConfig(key, values) {
     let publicIP = getValue(`${networkKey}-eth-${index}-publicIP`, values) || '';
     const sgs = getValue(`${networkKey}-eth-${index}-securityGroups`, values) || '';
     const networkTier = getValue(`${networkKey}-eth-${index}-networkTier`, values) || '';
-    const network = getValue(`${networkKey}-eth-${index}-network`, values) || '';
+    let network = getValue(`${networkKey}-eth-${index}-network`, values) || '';
     const networkId = network.value;
     const adapterType = `${getValue(`${networkKey}-eth-${index}-adapterType`, values)}`;
     const macAddress = `${getValue(`${networkKey}-eth-${index}-macAddress-value`, values)}`;
@@ -186,12 +186,13 @@ export function getVMNetworkConfig(key, values) {
     if (network !== '' && recoveryPlatform === PLATFORM_TYPES.AWS) {
       publicIP = getAWSNetworkIDFromName(values, network) || publicIP;
     }
-    if (PLATFORM_TYPES.VMware === recoveryPlatform) {
-      networks.push({ isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network: network.label, isFromSource, vpcId, availZone, adapterType, networkMoref, macAddress });
-    } else if (typeof id !== 'undefined' && id !== '') {
-      networks.push({ id, isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone });
+    if (network !== '' && recoveryPlatform === PLATFORM_TYPES.VMware) {
+      network = network.label;
+    }
+    if (typeof id !== 'undefined' && id !== '') {
+      networks.push({ id, isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone, adapterType, networkMoref, macAddress });
     } else {
-      networks.push({ isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone });
+      networks.push({ isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone, adapterType, networkMoref, macAddress });
     }
   }
 
