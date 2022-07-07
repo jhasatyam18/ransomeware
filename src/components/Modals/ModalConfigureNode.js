@@ -88,7 +88,7 @@ class ModalConfigureNode extends Component {
 }
 
 function mapStateToProps(state) {
-  const { user, dispatch } = state;
-  return { user, dispatch };
+  const { user, dispatch, options } = state;
+  return { user, dispatch, options };
 }
 export default connect(mapStateToProps)(withTranslation()(ModalConfigureNode));
