@@ -97,6 +97,7 @@ export const EXCLUDE_KEYS_RECOVERY_CONFIGURATION = {
 
 export const EXCLUDE_KEYS_CONSTANTS = {
   AVAILABILITY_ZONES: 'availZone',
+  NETWORK_KEY: 'networkKey',
 };
 
 export const VMWARE_OBJECT = {

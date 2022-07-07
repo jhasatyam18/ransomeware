@@ -717,6 +717,9 @@ export function excludeKeys(key, recoveryPlatform) {
   if (recoveryPlatform === PLATFORM_TYPES.GCP && key === EXCLUDE_KEYS_CONSTANTS.AVAILABILITY_ZONES) {
     return false;
   }
+  if (key === EXCLUDE_KEYS_CONSTANTS.NETWORK_KEY && (PLATFORM_TYPES.AWS === recoveryPlatform || PLATFORM_TYPES.GCP === recoveryPlatform)) {
+    return false;
+  }
   const keys = Object.keys(EXCLUDE_KEYS_RECOVERY_CONFIGURATION);
   for (let i = 0; i < keys.length; i += 1) {
     if (EXCLUDE_KEYS_RECOVERY_CONFIGURATION[keys[i]] === key) {
