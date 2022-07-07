@@ -39,7 +39,7 @@ function VMNetworkInfoItemRenderer(props) {
       ];
       return (
         <div key={`nic-${index + 1}`}>
-          <div style={{ textDecoration: 'underline' }}>
+          <div className="vmnetwork_info">
             {`Nic-${index}`}
           </div>
           {
