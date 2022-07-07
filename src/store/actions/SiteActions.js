@@ -4,7 +4,7 @@ import { API_AWS_AVAILABILITY_ZONES, API_FETCH_VMWARE_INVENTORY, API_CREATE_SITE
 import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { closeModal } from './ModalActions';
-import { hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
+import { hideApplicationLoader, loadRecoveryLocationData, showApplicationLoader, valueChange } from './UserActions';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { getValue, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
@@ -175,6 +175,9 @@ export function onRecoverSiteChange({ value, availZone }) {
     dispatch(fetchNetworks(value, undefined, availZone));
     dispatch(valueChange('ui.values.recoveryPlatform', platformType));
     dispatch(valueChange('ui.values.recoverySiteID', value));
+    if (PLATFORM_TYPES.VMware === platformType) {
+      dispatch(loadRecoveryLocationData(value));
+    }
   };
 }
 
