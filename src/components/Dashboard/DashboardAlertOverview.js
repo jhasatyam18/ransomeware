@@ -17,17 +17,24 @@ function DashboardAlertOverview(props) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    let isUnmounting = false;
     setLoading(true);
     setAlerts([]);
-    callAPI(API_DASHBOARD_UNACK_ALERTS).then((json) => {
-      setAlerts(json);
-      setLoading(false);
-    },
-    (err) => {
-      setAlerts([]);
-      setLoading(false);
-      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-    });
+    callAPI(API_DASHBOARD_UNACK_ALERTS).then(
+      (json) => {
+        if (isUnmounting) return;
+        setAlerts(json);
+        setLoading(false);
+      },
+      (err) => {
+        setAlerts([]);
+        setLoading(false);
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      },
+    );
+    return () => {
+      isUnmounting = true;
+    };
   }, [refresh]);
   const { t } = props;
 
@@ -40,7 +47,7 @@ function DashboardAlertOverview(props) {
           </p>
           <Row className="text-center font-size-point-9rem">
             <Col sm={4}>
-              <span className="text-danger-1">{t('Critical')}</span>
+              <span className="text-danger-1">{t('Alerts')}</span>
               <hr />
               {loading === true ? <Spinner /> : alert.criticalAlerts}
             </Col>
@@ -61,4 +68,4 @@ function DashboardAlertOverview(props) {
   );
 }
 
-export default (withTranslation()(DashboardAlertOverview));
+export default withTranslation()(DashboardAlertOverview);

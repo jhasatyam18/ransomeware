@@ -39,28 +39,26 @@ class ModalAlertDetails extends Component {
   }
 
   takeAction = () => {
-    const { alerts, dispatch } = this.props;
+    const { alerts, dispatch, t } = this.props;
     const { associatedEvent, selected } = alerts;
     const { ackMessage } = this.state;
     const user = getCookie(APPLICATION_API_USER);
-    if (VM_CONFIG_ACTION_EVENT.indexOf(associatedEvent.type) === -1) {
-      if (ackMessage.length === 0) {
-        this.setState({ error: 'Required acknowledge message' });
-        return;
-      }
-      selected.acknowledgeMessage = ackMessage;
-      selected.acknowledgeBy = user;
+    if (ackMessage.length === 0) {
+      this.setState({ error: t('required.acknowledge.message') });
+      return;
     }
+    selected.acknowledgeMessage = ackMessage;
+    selected.acknowledgeBy = user;
     dispatch(takeVMAction(selected, associatedEvent));
   }
 
   acknowledgeAndClose() {
-    const { dispatch, alerts } = this.props;
+    const { dispatch, alerts, t } = this.props;
     const { selected } = alerts;
     const { ackMessage } = this.state;
     const user = getCookie(APPLICATION_API_USER);
     if (ackMessage.length === 0) {
-      this.setState({ error: 'Required acknowledge message' });
+      this.setState({ error: t('required.acknowledge.message') });
       return;
     }
     selected.acknowledgeMessage = ackMessage;

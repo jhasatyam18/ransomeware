@@ -9,7 +9,7 @@ import { API_VALIDATE_MIGRATION, API_VALIDATE_RECOVERY, API_VALIDATE_REVERSE_PLA
 import { getRecoveryPayload, getReversePlanPayload, getVMNetworkConfig, getVMwareNetworkConfig } from './PayloadUtil';
 import { IP_REGEX } from '../constants/ValidationConstants';
 import { PLATFORM_TYPES, STATIC_KEYS } from '../constants/InputConstants';
-import { createVMConfigStackObject, getValue, isAWSCopyNic, validateMacAddressForVMwareNetwork } from './InputUtils';
+import { createVMConfigStackObject, getValue, isAWSCopyNic, validateMacAddressForVMwareNetwork, excludeKeys } from './InputUtils';
 
 export function isRequired(value) {
   if (!value) {
@@ -725,4 +725,49 @@ export function validateVMSelection(user, dispatch) {
     return false;
   }
   return true;
+}
+
+export function changedVMRecoveryConfigurations(payload, user, dispatch) {
+  const { values } = user;
+  const { instanceDetails } = payload.drplan.recoveryEntities;
+  const recoverVms = getValue('ui.site.recoveryEntities', values);
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+  let res = false;
+  res = checkChangesForArrayInObject(recoverVms, instanceDetails, recoveryPlatform, 'sourceMoref');
+  if (res) {
+    dispatch(addMessage('Changes on recovery machine will be applied in next replication', MESSAGE_TYPES.WARNING));
+  }
+}
+
+export function checkChangesForArrayInObject(recoveryArr, payloadArr, recoveryPlatform, condition) {
+  let clear = false;
+  // all the fields which are empty and are in EXCLUDE_KEYS_RECOVERY_CONFIGURATION keys list all of them will be discarded from getting checked
+  for (let i = 0; i < recoveryArr.length; i += 1) {
+    const keys = Object.keys(recoveryArr[i]);
+    const rvm = recoveryArr[i];
+    const ins = payloadArr[i];
+    if (rvm[condition] === ins[condition]) {
+      for (let k = 0; k < keys.length; k += 1) {
+        if (keys[k] === 'networks') {
+          clear = checkChangesForArrayInObject(rvm[keys[k]], ins[keys[k]], recoveryPlatform, 'id');
+          if (clear) {
+            return clear;
+          }
+        } else if (rvm[keys[k]] !== '' && excludeKeys(keys[k], recoveryPlatform) && rvm[keys[k]] !== ins[keys[k]] && keys[k] !== 'tags') {
+          if (keys[k] === 'Subnet') {
+            if (rvm[keys[k]] !== ins.subnet) {
+              return true;
+            }
+          } else {
+            return true;
+          }
+        } else if (keys[k] === 'tags') {
+          if (rvm[keys[k]].length !== ins[keys[k]].length) {
+            return true;
+          }
+        }
+      }
+    }
+  }
+  return clear;
 }
