@@ -265,14 +265,14 @@
 }
 
 .dmtree_scrollbar{
-  max-height: 300px; 
-  min-height: 300px; 
+  max-height: 100vh; 
+  min-height: 100vh; 
   background: #2e3548
 }
 
 .dmtree-selectedvm-scrollbar{
-  max-height: 240px;
-  min-height: 240px
+  max-height: 100vh;
+  min-height: 100vh;
 }
 
 .icon_font{
