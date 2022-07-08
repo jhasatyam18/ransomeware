@@ -96,15 +96,10 @@ function DashBoardEvents(props) {
   return (
     <>
       <Card>
-<<<<<<< HEAD
         <CardBody className="min-h-365">
           <p className="font-weight-medium color-white">
             {t('events')}
           </p>
-=======
-        <CardBody style={{ minHeight: 365 }}>
-          <p className="font-weight-medium color-white">{t('events')}</p>
->>>>>>> dev
           <Row>
             {dataToDisplay.map((val) => (
               <Col sm={12} key={`dashboard-event-${val.id}`}>
