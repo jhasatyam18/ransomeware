@@ -29,8 +29,8 @@ class DMStackView extends Component {
     return (
       <div className="wizard-header-options">
         <div className="wizard-header-div">
-          {openStack ? <box-icon name="chevron-down" color="white" onClick={this.toggle} className="stackview-icon" />
-            : <box-icon name="chevron-right" color="white" onClick={this.toggle} className="stackview-icon" />}
+          {openStack ? <box-icon name="chevron-down" color="white" onClick={this.toggle} style={{ height: 20 }} />
+            : <box-icon name="chevron-right" color="white" onClick={this.toggle} style={{ height: 20 }} />}
         </div>
       </div>
     );

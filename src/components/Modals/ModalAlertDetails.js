@@ -84,12 +84,12 @@ class ModalAlertDetails extends Component {
     return (
       <Nav tabs className="nav-tabs-custom nav-justified">
         <NavItem key="alert-navItem-1">
-          <NavLink className={classnames({ active: activeTab === '1 cursor-pointer' })} onClick={() => { this.toggleTab('1'); }}>
+          <NavLink className={`${classnames({ active: activeTab === '1' })} cursor-pointer`} onClick={() => { this.toggleTab('1'); }}>
             <span className="d-none d-sm-block">Info</span>
           </NavLink>
         </NavItem>
         <NavItem key="alert-navItem-2">
-          <NavLink className={classnames({ active: activeTab === '2 cursor-pointer' })} onClick={() => { this.toggleTab('2'); }}>
+          <NavLink className={`${classnames({ active: activeTab === '2' })} cursor-pointer`} onClick={() => { this.toggleTab('2'); }}>
             <span className="d-none d-sm-block">Associated Event</span>
           </NavLink>
         </NavItem>
