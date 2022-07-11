@@ -19,7 +19,7 @@ function StatusItemRenderer({ data, field }) {
 
   // success info danger
 
-  function successRenderer({ name, title, text, space, icon }) {
+  function statusRenderer({ name, title, text, space, icon }) {
     return (
       <div>
         <Badge title={title ? `${title}` : null} className={`font-size-13 badge-soft-${name}`} color={`${name}`} pill>
@@ -34,28 +34,22 @@ function StatusItemRenderer({ data, field }) {
       </div>
     );
   }
-  if (status === JOB_COMPLETION_STATUS || status === JOB_INIT_SUCCESS || status === NODE_STATUS_ONLINE || status === JOB_RESYNC_SUCCESS) {
-    return successRenderer({ name: 'success' });
+  if (status === JOB_COMPLETION_STATUS || status === JOB_INIT_SUCCESS || status === NODE_STATUS_ONLINE || status === JOB_RESYNC_SUCCESS || status === JOB_IN_SYNC || status === 'migrated' || status === JOB_RECOVERED) {
+    return statusRenderer({ name: 'success' });
   }
   if (status === JOB_RUNNING_STATUS || status === JOB_IN_PROGRESS) {
-    return successRenderer({ name: 'info', title: data.step, text: 'Running', space: true, icon: true });
+    return statusRenderer({ name: 'info', title: data.step, text: 'Running', space: true, icon: true });
   }
   if (status === JOB_FAILED || status === JOB_STOPPED || status === JOB_INIT_FAILED || status === JOB_SYNC_FAILED || status === NODE_STATUS_OFFLINE || status === JOB_RESYNC_FAILED || status === JOB_INIT_SYNC_FAILED) {
     const { failureMessage, errorMessage } = data;
     const msg = (typeof failureMessage !== 'undefined' ? failureMessage : errorMessage);
-    return successRenderer({ name: 'danger', title: msg });
-  }
-  if (status === JOB_IN_SYNC || status === 'migrated') {
-    return successRenderer({ name: 'success' });
+    return statusRenderer({ name: 'danger', title: msg });
   }
   if (status === JOB_ONGOING) {
-    return successRenderer({ name: 'info', space: true });
+    return statusRenderer({ name: 'info', space: true });
   }
   if (status === JOB_ONGOING || status === JOB_INIT_PROGRESS || status === JOB_INIT_SYNC_PROGRESS || status === JOB_RESYNC_IN_PROGRESS || status === JOB_SYNC_IN_PROGRESS) {
-    return successRenderer({ name: 'info', space: true, icon: true });
-  }
-  if (status === JOB_RECOVERED) {
-    return successRenderer({ name: 'success' });
+    return statusRenderer({ name: 'info', space: true, icon: true });
   }
   if (status === JOB_COMPLETED_WITH_ERRORS) {
     return (
@@ -73,12 +67,12 @@ function StatusItemRenderer({ data, field }) {
   }
   // active status
   if (data[field] === true) {
-    return successRenderer({ name: 'info', text: 'Active', space: true });
+    return statusRenderer({ name: 'info', text: 'Active', space: true });
   }
   const { failureMessage, errorMessage } = data;
   const errMsg = (typeof failureMessage !== 'undefined' ? failureMessage : errorMessage);
   const msg = (typeof errMsg !== 'undefined' ? errMsg : '');
-  return successRenderer({ name: 'info', title: msg, space: true });
+  return statusRenderer({ name: 'info', title: msg, space: true });
 }
 
 export default StatusItemRenderer;
