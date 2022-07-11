@@ -29,7 +29,7 @@ function StatusItemRenderer({ data, field }) {
           &nbsp;&nbsp;
             </>
           ) : null}
-          {text ? `${text}` : resp}
+          {text || resp}
         </Badge>
       </div>
     );
@@ -42,7 +42,7 @@ function StatusItemRenderer({ data, field }) {
     //     </Badge>
     //   </div>
     // );
-    successRenderer({ name: 'success' });
+    return successRenderer({ name: 'success' });
   }
   if (status === JOB_RUNNING_STATUS || status === JOB_IN_PROGRESS) {
     // return (
@@ -54,7 +54,7 @@ function StatusItemRenderer({ data, field }) {
     //     </Badge>
     //   </div>
     // );
-    successRenderer({ name: 'info', title: data.step, text: 'Running', space: true, icon: true });
+    return successRenderer({ name: 'info', title: data.step, text: 'Running', space: true, icon: true });
   }
   if (status === JOB_FAILED || status === JOB_STOPPED || status === JOB_INIT_FAILED || status === JOB_SYNC_FAILED || status === NODE_STATUS_OFFLINE || status === JOB_RESYNC_FAILED || status === JOB_INIT_SYNC_FAILED) {
     const { failureMessage, errorMessage } = data;
@@ -66,7 +66,7 @@ function StatusItemRenderer({ data, field }) {
     //     </Badge>
     //   </div>
     // );
-    successRenderer({ name: 'danger', title: msg });
+    return successRenderer({ name: 'danger', title: msg });
   }
   if (status === JOB_IN_SYNC || status === 'migrated') {
     // return (
@@ -77,7 +77,7 @@ function StatusItemRenderer({ data, field }) {
     //   </div>
 
     // );
-    successRenderer({ name: 'success' });
+    return successRenderer({ name: 'success' });
   }
   if (status === JOB_ONGOING) {
     // return (
@@ -88,7 +88,7 @@ function StatusItemRenderer({ data, field }) {
     //     </Badge>
     //   </div>
     // );
-    successRenderer({ name: 'info', space: true });
+    return successRenderer({ name: 'info', space: true });
   }
   if (status === JOB_ONGOING || status === JOB_INIT_PROGRESS || status === JOB_INIT_SYNC_PROGRESS || status === JOB_RESYNC_IN_PROGRESS || status === JOB_SYNC_IN_PROGRESS) {
     // return (
@@ -101,7 +101,7 @@ function StatusItemRenderer({ data, field }) {
     //   </div>
 
     // );
-    successRenderer({ name: 'info', space: true, icon: true });
+    return successRenderer({ name: 'info', space: true, icon: true });
   }
   if (status === JOB_RECOVERED) {
     // return (
@@ -112,7 +112,7 @@ function StatusItemRenderer({ data, field }) {
     //     </Badge>
     //   </div>
     // );
-    successRenderer({ name: 'success', space: true, icon: true });
+    return successRenderer({ name: 'success', space: true, icon: true });
   }
   if (status === JOB_COMPLETED_WITH_ERRORS) {
     return (
