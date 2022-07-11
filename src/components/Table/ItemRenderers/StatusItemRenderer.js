@@ -1,9 +1,10 @@
+import { withTranslation } from 'react-i18next';
 import React from 'react';
 import { Badge } from 'reactstrap';
 import { NODE_STATUS_ONLINE, NODE_STATUS_OFFLINE, JOB_RECOVERED, JOB_COMPLETION_STATUS, JOB_RUNNING_STATUS, JOB_IN_PROGRESS, JOB_FAILED, JOB_INIT_FAILED, JOB_IN_SYNC, JOB_COMPLETED_WITH_ERRORS, JOB_ONGOING, JOB_STOPPED, JOB_INIT_SUCCESS, JOB_INIT_PROGRESS, JOB_SYNC_FAILED, JOB_INIT_SYNC_PROGRESS, JOB_RESYNC_FAILED, JOB_RESYNC_IN_PROGRESS, JOB_RESYNC_SUCCESS, JOB_SYNC_IN_PROGRESS, JOB_INIT_SYNC_FAILED, JOB_MIGRATED } from '../../../constants/AppStatus';
 import 'boxicons';
 
-function StatusItemRenderer({ data, field }) {
+function StatusItemRenderer({ data, field, t }) {
   const successStatus = [JOB_COMPLETION_STATUS, JOB_INIT_SUCCESS, NODE_STATUS_ONLINE, JOB_RESYNC_SUCCESS, JOB_IN_SYNC, JOB_RECOVERED, JOB_MIGRATED];
   const runningStatus = [JOB_RUNNING_STATUS, JOB_IN_PROGRESS];
   const errorStatus = [JOB_FAILED, JOB_STOPPED, JOB_INIT_FAILED, JOB_SYNC_FAILED, NODE_STATUS_OFFLINE, JOB_RESYNC_FAILED, JOB_INIT_SYNC_FAILED];
@@ -21,45 +22,42 @@ function StatusItemRenderer({ data, field }) {
   if (resp === 'Partialycompleted') {
     resp = 'Partially Completed';
   }
-  function statusRenderer({ name, title, text, space, icon }) {
+  function statusRenderer({ name, title, icon }) {
+    const { failureMessage, errorMessage } = data;
+    const errMsg = (typeof failureMessage !== 'undefined' ? failureMessage : errorMessage);
+    const msg = (typeof errMsg !== 'undefined' ? errMsg : '');
+    const hoverInfo = title || msg;
     return (
       <div>
-        <Badge title={title ? `${title}` : null} className={`font-size-13 badge-soft-${name}`} color={`${name}`} pill>
-          {icon ? <i className="fa fa-spinner fa-spin" /> : null}
-          { space ? (
+        <Badge title={hoverInfo} className={`font-size-13 badge-soft-${name}`} color={`${name}`} pill>
+          {icon ? (
             <>
-          &nbsp;&nbsp;
+              <i className="fa fa-spinner fa-spin" />
+            &nbsp;&nbsp;
             </>
           ) : null}
-          {text || resp}
+          { resp}
         </Badge>
       </div>
     );
   }
-  for (let i = 0; i < successStatus.length; i += 1) {
-    if (status === successStatus[i]) {
-      return statusRenderer({ name: 'success' });
-    }
+  if (successStatus.includes(status)) {
+    return statusRenderer({ name: 'success' });
   }
-  for (let i = 0; i < runningStatus; i += 1) {
-    if (status === runningStatus[i]) {
-      return statusRenderer({ name: 'info', title: data.step, text: 'Running', space: true, icon: true });
-    }
+
+  if (runningStatus.includes(status)) {
+    resp = t('running');
+    return statusRenderer({ name: 'info', title: data.step, icon: true });
   }
-  for (let i = 0; i < errorStatus.length; i += 1) {
-    if (status === errorStatus[i]) {
-      const { failureMessage, errorMessage } = data;
-      const msg = (typeof failureMessage !== 'undefined' ? failureMessage : errorMessage);
-      return statusRenderer({ name: 'danger', title: msg });
-    }
+
+  if (errorStatus.includes(status)) {
+    return statusRenderer({ name: 'danger' });
   }
   if (status === JOB_ONGOING) {
-    return statusRenderer({ name: 'info', space: true });
+    return statusRenderer({ name: 'info' });
   }
-  for (let i = 0; i < progressStatus; i += 1) {
-    if (status === progressStatus[i]) {
-      return statusRenderer({ name: 'info', space: true, icon: true });
-    }
+  if (status === progressStatus.includes(status)) {
+    return statusRenderer({ name: 'info', icon: true });
   }
   if (status === JOB_COMPLETED_WITH_ERRORS) {
     return (
@@ -75,14 +73,12 @@ function StatusItemRenderer({ data, field }) {
       </div>
     );
   }
-  // active status
   if (data[field] === true) {
-    return statusRenderer({ name: 'info', text: 'Active', space: true });
+    resp = t('active');
+    return statusRenderer({ name: 'info' });
   }
-  const { failureMessage, errorMessage } = data;
-  const errMsg = (typeof failureMessage !== 'undefined' ? failureMessage : errorMessage);
-  const msg = (typeof errMsg !== 'undefined' ? errMsg : '');
-  return statusRenderer({ name: 'info', title: msg, space: true });
+
+  return statusRenderer({ name: 'info' });
 }
 
-export default StatusItemRenderer;
+export default (withTranslation()(StatusItemRenderer));

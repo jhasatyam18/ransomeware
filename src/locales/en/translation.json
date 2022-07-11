@@ -196,6 +196,7 @@
   "download.speed.mbps": "Download Speed (Mbps)",
   "completed": "Completed",
   "running": "Running",
+  "active":"Active",
   "failures": "Failures",
   "change.rate": "Change Rate",
   "data.reduction": "Data Reduction",
