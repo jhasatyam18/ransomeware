@@ -335,7 +335,7 @@ class DRPlanDetails extends Component {
                   </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink className={`${classnames({ active: activeTab === '2' })} cursor-pointer`} onClick={() => { this.toggleTab('3'); }}>
+                  <NavLink className={`${classnames({ active: activeTab === '3' })} cursor-pointer`} onClick={() => { this.toggleTab('3'); }}>
                     <span className="d-none d-sm-block">{t('replication.jobs')}</span>
                   </NavLink>
                 </NavItem>
