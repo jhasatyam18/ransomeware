@@ -4,10 +4,10 @@ import { NODE_STATUS_ONLINE, NODE_STATUS_OFFLINE, JOB_RECOVERED, JOB_COMPLETION_
 import 'boxicons';
 
 function StatusItemRenderer({ data, field }) {
-  const successArray = [JOB_COMPLETION_STATUS, JOB_INIT_SUCCESS, NODE_STATUS_ONLINE, JOB_RESYNC_SUCCESS, JOB_IN_SYNC, JOB_RECOVERED, 'migrated'];
+  const successStatus = [JOB_COMPLETION_STATUS, JOB_INIT_SUCCESS, NODE_STATUS_ONLINE, JOB_RESYNC_SUCCESS, JOB_IN_SYNC, JOB_RECOVERED, 'migrated'];
   const runningStatus = [JOB_RUNNING_STATUS, JOB_IN_PROGRESS];
   const errorStatus = [JOB_FAILED, JOB_STOPPED, JOB_INIT_FAILED, JOB_SYNC_FAILED, NODE_STATUS_OFFLINE, JOB_RESYNC_FAILED, JOB_INIT_SYNC_FAILED];
-  const progressArray = [JOB_ONGOING, JOB_INIT_PROGRESS, JOB_INIT_SYNC_PROGRESS, JOB_RESYNC_IN_PROGRESS, JOB_SYNC_IN_PROGRESS];
+  const progressStatus = [JOB_ONGOING, JOB_INIT_PROGRESS, JOB_INIT_SYNC_PROGRESS, JOB_RESYNC_IN_PROGRESS, JOB_SYNC_IN_PROGRESS];
 
   if (!data) {
     return '-';
@@ -36,8 +36,8 @@ function StatusItemRenderer({ data, field }) {
       </div>
     );
   }
-  for (let i = 0; i < successArray.length; i += 1) {
-    if (status === successArray[i]) {
+  for (let i = 0; i < successStatus.length; i += 1) {
+    if (status === successStatus[i]) {
       return statusRenderer({ name: 'success' });
     }
   }
@@ -56,8 +56,8 @@ function StatusItemRenderer({ data, field }) {
   if (status === JOB_ONGOING) {
     return statusRenderer({ name: 'info', space: true });
   }
-  for (let i = 0; i < progressArray; i += 1) {
-    if (status === progressArray[i]) {
+  for (let i = 0; i < progressStatus; i += 1) {
+    if (status === progressStatus[i]) {
       return statusRenderer({ name: 'info', space: true, icon: true });
     }
   }
