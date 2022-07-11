@@ -16,78 +16,103 @@ function StatusItemRenderer({ data, field }) {
   if (resp === 'Partialycompleted') {
     resp = 'Partially Completed';
   }
-  if (status === JOB_COMPLETION_STATUS || status === JOB_INIT_SUCCESS || status === NODE_STATUS_ONLINE || status === JOB_RESYNC_SUCCESS) {
+
+  // success info danger
+
+  function successRenderer({ name, title, text, space, icon }) {
     return (
       <div>
-        <Badge className="font-size-13 badge-soft-success" color="success" pill>
-          {resp}
+        <Badge title={title ? `${title}` : null} className={`font-size-13 badge-soft-${name}`} color={`${name}`} pill>
+          {icon ? <i className="fa fa-spinner fa-spin" /> : null}
+          { space ? (
+            <>
+          &nbsp;&nbsp;
+            </>
+          ) : null}
+          {text ? `${text}` : resp}
         </Badge>
       </div>
     );
   }
+  if (status === JOB_COMPLETION_STATUS || status === JOB_INIT_SUCCESS || status === NODE_STATUS_ONLINE || status === JOB_RESYNC_SUCCESS) {
+    // return (
+    //   <div>
+    //     <Badge className="font-size-13 badge-soft-success" color="success" pill>
+    //       {resp}
+    //     </Badge>
+    //   </div>
+    // );
+    successRenderer({ name: 'success' });
+  }
   if (status === JOB_RUNNING_STATUS || status === JOB_IN_PROGRESS) {
-    return (
-      <div>
-        <Badge title={data.step} className="font-size-13 badge-soft-info" color="info" pill>
-          <i className="fa fa-spinner fa-spin" />
-          &nbsp;&nbsp;
-          Running
-        </Badge>
-      </div>
-    );
+    // return (
+    //   <div>
+    //     <Badge title={data.step} className="font-size-13 badge-soft-info" color="info" pill>
+    //       <i className="fa fa-spinner fa-spin" />
+    //       &nbsp;&nbsp;
+    //       Running
+    //     </Badge>
+    //   </div>
+    // );
+    successRenderer({ name: 'info', title: data.step, text: 'Running', space: true, icon: true });
   }
   if (status === JOB_FAILED || status === JOB_STOPPED || status === JOB_INIT_FAILED || status === JOB_SYNC_FAILED || status === NODE_STATUS_OFFLINE || status === JOB_RESYNC_FAILED || status === JOB_INIT_SYNC_FAILED) {
     const { failureMessage, errorMessage } = data;
     const msg = (typeof failureMessage !== 'undefined' ? failureMessage : errorMessage);
-    return (
-      <div>
-        <Badge title={msg} className="font-size-13 badge-soft-danger" color="danger" pill>
-          {resp}
-        </Badge>
-      </div>
-    );
+    // return (
+    //   <div>
+    //     <Badge title={msg} className="font-size-13 badge-soft-danger" color="danger" pill>
+    //       {resp}
+    //     </Badge>
+    //   </div>
+    // );
+    successRenderer({ name: 'danger', title: msg });
   }
   if (status === JOB_IN_SYNC || status === 'migrated') {
-    return (
-      <div>
-        <Badge className="font-size-13 badge-soft-success" color="success" pill>
-          {resp}
-        </Badge>
-      </div>
+    // return (
+    //   <div>
+    //     <Badge className="font-size-13 badge-soft-success" color="success" pill>
+    //       {resp}
+    //     </Badge>
+    //   </div>
 
-    );
+    // );
+    successRenderer({ name: 'success' });
   }
   if (status === JOB_ONGOING) {
-    return (
-      <div>
-        <Badge className="font-size-13 badge-soft-info" color="info" pill>
-          &nbsp;&nbsp;
-          {resp}
-        </Badge>
-      </div>
-    );
+    // return (
+    //   <div>
+    //     <Badge className="font-size-13 badge-soft-info" color="info" pill>
+    //       &nbsp;&nbsp;
+    //       {resp}
+    //     </Badge>
+    //   </div>
+    // );
+    successRenderer({ name: 'info', space: true });
   }
   if (status === JOB_ONGOING || status === JOB_INIT_PROGRESS || status === JOB_INIT_SYNC_PROGRESS || status === JOB_RESYNC_IN_PROGRESS || status === JOB_SYNC_IN_PROGRESS) {
-    return (
-      <div>
-        <Badge className="font-size-13 badge-soft-info" color="info" pill>
-          <i className="fa fa-spinner fa-spin" />
-          &nbsp;&nbsp;
-          {resp}
-        </Badge>
-      </div>
+    // return (
+    //   <div>
+    //     <Badge className="font-size-13 badge-soft-info" color="info" pill>
+    //       <i className="fa fa-spinner fa-spin" />
+    //       &nbsp;&nbsp;
+    //       {resp}
+    //     </Badge>
+    //   </div>
 
-    );
+    // );
+    successRenderer({ name: 'info', space: true, icon: true });
   }
   if (status === JOB_RECOVERED) {
-    return (
-      <div>
-        <Badge className="font-size-13 badge-soft-success" color="success" pill>
-          &nbsp;&nbsp;
-          {resp}
-        </Badge>
-      </div>
-    );
+    // return (
+    //   <div>
+    //     <Badge className="font-size-13 badge-soft-success" color="success" pill>
+    //       &nbsp;&nbsp;
+    //       {resp}
+    //     </Badge>
+    //   </div>
+    // );
+    successRenderer({ name: 'success', space: true, icon: true });
   }
   if (status === JOB_COMPLETED_WITH_ERRORS) {
     return (
@@ -105,26 +130,28 @@ function StatusItemRenderer({ data, field }) {
   }
   // active status
   if (data[field] === true) {
-    return (
-      <div>
-        <Badge className="font-size-13 badge-soft-info" color="info" pill>
-          &nbsp;&nbsp;
-          Active
-        </Badge>
-      </div>
-    );
+    // return (
+    //   <div>
+    //     <Badge className="font-size-13 badge-soft-info" color="info" pill>
+    //       &nbsp;&nbsp;
+    //       Active
+    //     </Badge>
+    //   </div>
+    // );
+    return successRenderer({ name: 'info', text: 'Active', space: true });
   }
   const { failureMessage, errorMessage } = data;
   const errMsg = (typeof failureMessage !== 'undefined' ? failureMessage : errorMessage);
   const msg = (typeof errMsg !== 'undefined' ? errMsg : '');
-  return (
-    <div>
-      <Badge title={msg} className="font-size-13 badge-soft-info" color="info" pill>
-        &nbsp;&nbsp;
-        {resp}
-      </Badge>
-    </div>
-  );
+  // return (
+  //   <div>
+  //     <Badge title={msg} className="font-size-13 badge-soft-info" color="info" pill>
+  //       &nbsp;&nbsp;
+  //       {resp}
+  //     </Badge>
+  //   </div>
+  // );
+  return successRenderer({ name: 'info', title: msg, space: true });
 }
 
 export default StatusItemRenderer;
