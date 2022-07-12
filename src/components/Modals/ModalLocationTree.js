@@ -11,8 +11,14 @@ function ModalLocationTree(props) {
   const { values } = user;
   const [original, setOriginal] = useState('');
   useEffect(() => {
+    let isUnmounting = false;
     const fieldVal = getValue(fieldKey, values);
-    setOriginal(fieldVal);
+    if (!isUnmounting) {
+      setOriginal(fieldVal);
+    }
+    return () => {
+      isUnmounting = true;
+    };
   }, []);
   const onClose = () => {
     dispatch(valueChange(fieldKey, original));

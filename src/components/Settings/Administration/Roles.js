@@ -55,7 +55,13 @@ function Roles(props) {
   };
 
   useEffect(() => {
-    fetchRoles();
+    let isUnmounting = false;
+    if (!isUnmounting) {
+      fetchRoles();
+    }
+    return () => {
+      isUnmounting = true;
+    };
   }, []);
 
   const renderRoles = () => (
