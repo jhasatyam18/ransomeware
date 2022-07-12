@@ -1,9 +1,15 @@
+import { withTranslation } from 'react-i18next';
 import React from 'react';
 import { Badge } from 'reactstrap';
-import { NODE_STATUS_ONLINE, NODE_STATUS_OFFLINE, JOB_RECOVERED, JOB_COMPLETION_STATUS, JOB_RUNNING_STATUS, JOB_IN_PROGRESS, JOB_FAILED, JOB_INIT_FAILED, JOB_IN_SYNC, JOB_COMPLETED_WITH_ERRORS, JOB_ONGOING, JOB_STOPPED, JOB_INIT_SUCCESS, JOB_INIT_PROGRESS, JOB_SYNC_FAILED, JOB_INIT_SYNC_PROGRESS, JOB_RESYNC_FAILED, JOB_RESYNC_IN_PROGRESS, JOB_RESYNC_SUCCESS, JOB_SYNC_IN_PROGRESS, JOB_INIT_SYNC_FAILED } from '../../../constants/AppStatus';
+import { NODE_STATUS_ONLINE, NODE_STATUS_OFFLINE, JOB_RECOVERED, JOB_COMPLETION_STATUS, JOB_RUNNING_STATUS, JOB_IN_PROGRESS, JOB_FAILED, JOB_INIT_FAILED, JOB_IN_SYNC, JOB_COMPLETED_WITH_ERRORS, JOB_ONGOING, JOB_STOPPED, JOB_INIT_SUCCESS, JOB_INIT_PROGRESS, JOB_SYNC_FAILED, JOB_INIT_SYNC_PROGRESS, JOB_RESYNC_FAILED, JOB_RESYNC_IN_PROGRESS, JOB_RESYNC_SUCCESS, JOB_SYNC_IN_PROGRESS, JOB_INIT_SYNC_FAILED, JOB_MIGRATED } from '../../../constants/AppStatus';
 import 'boxicons';
 
-function StatusItemRenderer({ data, field }) {
+function StatusItemRenderer({ data, field, t }) {
+  const successStatus = [JOB_COMPLETION_STATUS, JOB_INIT_SUCCESS, NODE_STATUS_ONLINE, JOB_RESYNC_SUCCESS, JOB_IN_SYNC, JOB_RECOVERED, JOB_MIGRATED];
+  const runningStatus = [JOB_RUNNING_STATUS, JOB_IN_PROGRESS];
+  const errorStatus = [JOB_FAILED, JOB_STOPPED, JOB_INIT_FAILED, JOB_SYNC_FAILED, NODE_STATUS_OFFLINE, JOB_RESYNC_FAILED, JOB_INIT_SYNC_FAILED];
+  const progressStatus = [JOB_ONGOING, JOB_INIT_PROGRESS, JOB_INIT_SYNC_PROGRESS, JOB_RESYNC_IN_PROGRESS, JOB_SYNC_IN_PROGRESS];
+
   if (!data) {
     return '-';
   }
@@ -16,78 +22,42 @@ function StatusItemRenderer({ data, field }) {
   if (resp === 'Partialycompleted') {
     resp = 'Partially Completed';
   }
-  if (status === JOB_COMPLETION_STATUS || status === JOB_INIT_SUCCESS || status === NODE_STATUS_ONLINE || status === JOB_RESYNC_SUCCESS) {
-    return (
-      <div>
-        <Badge className="font-size-13 badge-soft-success" color="success" pill>
-          {resp}
-        </Badge>
-      </div>
-    );
-  }
-  if (status === JOB_RUNNING_STATUS || status === JOB_IN_PROGRESS) {
-    return (
-      <div>
-        <Badge title={data.step} className="font-size-13 badge-soft-info" color="info" pill>
-          <i className="fa fa-spinner fa-spin" />
-          &nbsp;&nbsp;
-          Running
-        </Badge>
-      </div>
-    );
-  }
-  if (status === JOB_FAILED || status === JOB_STOPPED || status === JOB_INIT_FAILED || status === JOB_SYNC_FAILED || status === NODE_STATUS_OFFLINE || status === JOB_RESYNC_FAILED || status === JOB_INIT_SYNC_FAILED) {
+  function statusRenderer({ name, title, icon }) {
     const { failureMessage, errorMessage } = data;
-    const msg = (typeof failureMessage !== 'undefined' ? failureMessage : errorMessage);
+    const errMsg = (typeof failureMessage !== 'undefined' ? failureMessage : errorMessage);
+    const msg = (typeof errMsg !== 'undefined' ? errMsg : '');
+    const hoverInfo = title || msg;
     return (
       <div>
-        <Badge title={msg} className="font-size-13 badge-soft-danger" color="danger" pill>
-          {resp}
+        <Badge title={hoverInfo} className={`font-size-13 badge-soft-${name}`} color={`${name}`} pill>
+          {icon ? (
+            <>
+              <i className="fa fa-spinner fa-spin" />
+            &nbsp;&nbsp;
+            </>
+          ) : null}
+          { resp}
         </Badge>
       </div>
     );
   }
-  if (status === JOB_IN_SYNC || status === 'migrated') {
-    return (
-      <div>
-        <Badge className="font-size-13 badge-soft-success" color="success" pill>
-          {resp}
-        </Badge>
-      </div>
+  if (successStatus.includes(status)) {
+    return statusRenderer({ name: 'success' });
+  }
 
-    );
+  if (runningStatus.includes(status)) {
+    resp = t('running');
+    return statusRenderer({ name: 'info', title: data.step, icon: true });
+  }
+
+  if (errorStatus.includes(status)) {
+    return statusRenderer({ name: 'danger' });
   }
   if (status === JOB_ONGOING) {
-    return (
-      <div>
-        <Badge className="font-size-13 badge-soft-info" color="info" pill>
-          &nbsp;&nbsp;
-          {resp}
-        </Badge>
-      </div>
-    );
+    return statusRenderer({ name: 'info' });
   }
-  if (status === JOB_ONGOING || status === JOB_INIT_PROGRESS || status === JOB_INIT_SYNC_PROGRESS || status === JOB_RESYNC_IN_PROGRESS || status === JOB_SYNC_IN_PROGRESS) {
-    return (
-      <div>
-        <Badge className="font-size-13 badge-soft-info" color="info" pill>
-          <i className="fa fa-spinner fa-spin" />
-          &nbsp;&nbsp;
-          {resp}
-        </Badge>
-      </div>
-
-    );
-  }
-  if (status === JOB_RECOVERED) {
-    return (
-      <div>
-        <Badge className="font-size-13 badge-soft-success" color="success" pill>
-          &nbsp;&nbsp;
-          {resp}
-        </Badge>
-      </div>
-    );
+  if (status === progressStatus.includes(status)) {
+    return statusRenderer({ name: 'info', icon: true });
   }
   if (status === JOB_COMPLETED_WITH_ERRORS) {
     return (
@@ -103,28 +73,12 @@ function StatusItemRenderer({ data, field }) {
       </div>
     );
   }
-  // active status
   if (data[field] === true) {
-    return (
-      <div>
-        <Badge className="font-size-13 badge-soft-info" color="info" pill>
-          &nbsp;&nbsp;
-          Active
-        </Badge>
-      </div>
-    );
+    resp = t('active');
+    return statusRenderer({ name: 'info' });
   }
-  const { failureMessage, errorMessage } = data;
-  const errMsg = (typeof failureMessage !== 'undefined' ? failureMessage : errorMessage);
-  const msg = (typeof errMsg !== 'undefined' ? errMsg : '');
-  return (
-    <div>
-      <Badge title={msg} className="font-size-13 badge-soft-info" color="info" pill>
-        &nbsp;&nbsp;
-        {resp}
-      </Badge>
-    </div>
-  );
+
+  return statusRenderer({ name: 'info' });
 }
 
-export default StatusItemRenderer;
+export default (withTranslation()(StatusItemRenderer));

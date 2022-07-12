@@ -20,18 +20,18 @@ function DashboardAlertOverview(props) {
     let isUnmounting = false;
     setLoading(true);
     setAlerts([]);
-    callAPI(API_DASHBOARD_UNACK_ALERTS).then(
-      (json) => {
-        if (isUnmounting) return;
-        setAlerts(json);
-        setLoading(false);
-      },
-      (err) => {
-        setAlerts([]);
-        setLoading(false);
-        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-      },
-    );
+    callAPI(API_DASHBOARD_UNACK_ALERTS).then((json) => {
+      if (isUnmounting) return;
+      setAlerts(json);
+      setLoading(false);
+    },
+    (err) => {
+      if (isUnmounting) return;
+      setAlerts([]);
+      setLoading(false);
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+
     return () => {
       isUnmounting = true;
     };
