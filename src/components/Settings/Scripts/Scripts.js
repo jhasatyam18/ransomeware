@@ -21,18 +21,24 @@ function Scripts(props) {
   const refresh = useSelector((state) => state.user.context.refresh);
 
   useEffect(() => {
+    let isUnmounting = false;
     dispatch(showApplicationLoader(API_USER_SCRIPT, 'loading...'));
     setData([]);
     callAPI(API_USER_SCRIPT)
       .then((json) => {
+        if (isUnmounting) return;
         setData(json);
         dispatch(hideApplicationLoader(API_USER_SCRIPT));
       },
       (err) => {
+        if (isUnmounting) return;
         setData([]);
         dispatch(hideApplicationLoader(API_USER_SCRIPT));
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
+    return () => {
+      isUnmounting = true;
+    };
   }, [refresh]);
 
   const onNewScript = () => {
