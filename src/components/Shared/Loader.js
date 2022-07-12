@@ -15,7 +15,7 @@ function Loader(props) {
           <div className="chase-dot" key="r-1-5" />
           <div className="chase-dot" key="r-1-6" />
         </div>
-        <div className="loader-header padding-top-30">
+        <div className="padding-top-30">
           <CardTitle>
             {t('loading')}
           </CardTitle>
