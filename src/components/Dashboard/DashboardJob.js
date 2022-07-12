@@ -52,9 +52,7 @@ function DashBoardJob(props) {
         if (isUnmounting) return;
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
-    return () => {
-      isUnmounting = true;
-    };
+    return () => { isUnmounting = true; };
   }, [refresh]);
 
   const renderNoDataToShow = () => (

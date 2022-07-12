@@ -13,15 +13,21 @@ function NodeInfo(props) {
   const refresh = useSelector((state) => state.user.context.refresh);
   const [nodes, setNodes] = useState([]);
   useEffect(() => {
+    let isUnmounting = false;
     setNodes([]);
     callAPI(API_DASHBOARD_NODE_STATS)
       .then((json) => {
+        if (isUnmounting) return;
         setNodes(json);
       },
       (err) => {
+        if (isUnmounting) return;
         setNodes([]);
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
+    return () => {
+      isUnmounting = true;
+    };
   }, [refresh]);
 
   const renderNoDataToShow = () => (

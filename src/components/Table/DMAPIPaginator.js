@@ -61,9 +61,15 @@ function DMAPIPaginator(props) {
   };
 
   useEffect(() => {
-    fetchData(0);
-    const cols = Array.from(columns);
-    setFilterColumns(cols.filter((c) => c.allowFilter));
+    let isUnmounting = false;
+    if (!isUnmounting) {
+      fetchData(0);
+      const cols = Array.from(columns);
+      setFilterColumns(cols.filter((c) => c.allowFilter));
+    }
+    return () => {
+      isUnmounting = true;
+    };
   }, [refresh]);
 
   const onNext = () => {

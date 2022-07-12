@@ -12,17 +12,23 @@ function VMwareNetworkConfig(props) {
   const { data } = field;
   const { values } = user;
   useEffect(() => {
+    let isUnmounting = false;
     const eths = getValue(`${networkKey}`, values) || [];
     if (!eths || eths.length === 0) {
       const { virtualNics = [] } = data;
-      for (let index = 0; index < virtualNics.length; index += 1) {
-        dispatch(valueChange(`${networkKey}-eth-${index}-network`, ''));
-        dispatch(valueChange(`${networkKey}-eth-${index}-adapterType`, ''));
-        dispatch(valueChange(`${networkKey}-eth-${index}-macAddress`, ''));
-        eths.push({ key: `${networkKey}-eth-${index}`, isPublicIP: false, network: '', adapterType: '', macAddress: '' });
+      if (!isUnmounting) {
+        for (let index = 0; index < virtualNics.length; index += 1) {
+          dispatch(valueChange(`${networkKey}-eth-${index}-network`, ''));
+          dispatch(valueChange(`${networkKey}-eth-${index}-adapterType`, ''));
+          dispatch(valueChange(`${networkKey}-eth-${index}-macAddress`, ''));
+          eths.push({ key: `${networkKey}-eth-${index}`, isPublicIP: false, network: '', adapterType: '', macAddress: '' });
+        }
+        dispatch(valueChange(networkKey, eths));
       }
-      dispatch(valueChange(networkKey, eths));
     }
+    return () => {
+      isUnmounting = true;
+    };
   }, []);
 
   function removeNic(netKey, index) {

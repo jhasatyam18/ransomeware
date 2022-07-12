@@ -5,7 +5,7 @@ import { Label, Row, Col } from 'reactstrap';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import SimpleBar from 'simplebar-react';
-import { valueChange } from '../../store/actions';
+import { valueChange } from '../../store/actions/UserActions';
 import { filterDataForVMwareSearch } from '../../store/actions/VMwareActions';
 import { addMessage } from '../../store/actions/MessageActions';
 import { callAPI } from '../../utils/ApiUtils';

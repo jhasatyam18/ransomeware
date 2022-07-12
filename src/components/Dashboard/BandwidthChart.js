@@ -71,9 +71,11 @@ function BandwidthChart(props) {
   });
 
   useEffect(() => {
+    let isUnmounting = false;
     setLoading(true);
     setState({ ...state, series: [{ name: upLoadSpeedTitle, data: [] }, { name: downloadSpeedTitle, data: [] }] });
     callAPI(API_DASHBOARD_BANDWIDTH_USAGE).then((json) => {
+      if (isUnmounting) return;
       try {
         setLoading(false);
         const uploadSpeed = [];
@@ -86,14 +88,19 @@ function BandwidthChart(props) {
           setState({ ...state, series: [{ name: upLoadSpeedTitle, data: uploadSpeed }, { name: downloadSpeedTitle, data: downloadSpeed }] });
         }
       } catch (e) {
+        if (isUnmounting) return;
         setLoading(false);
         dispatch(addMessage(e.message, MESSAGE_TYPES.ERROR));
       }
     },
     (err) => {
+      if (isUnmounting) return;
       setLoading(false);
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
+    return () => {
+      isUnmounting = true;
+    };
   }, [refresh]);
 
   if (loading === true) {
