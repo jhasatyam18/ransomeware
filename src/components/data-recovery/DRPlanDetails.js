@@ -2,6 +2,7 @@ import classnames from 'classnames';
 import React, { Component, Suspense } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardTitle, Col, Container, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
+import Loader from '../Shared/Loader';
 import { PLATFORM_TYPES, RECOVERY_STATUS, REPLICATION_STATUS, PROTECTION_PLANS_STATUS } from '../../constants/InputConstants';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { deletePlanConfirmation, fetchDRPlanById, openCleanupTestRecoveryWizard, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
@@ -355,7 +356,7 @@ class DRPlanDetails extends Component {
                 <TabPane tabId="3" className="p-3">
                   <Row>
                     <Col sm="12">
-                      <Suspense fallback={<div>Loading...</div>}>
+                      <Suspense fallback={<Loader />}>
                         {activeTab === '3' ? <Replication protectionplanID={id} {...this.props} /> : null}
                       </Suspense>
                     </Col>
@@ -364,7 +365,7 @@ class DRPlanDetails extends Component {
                 <TabPane tabId="4" className="p-3">
                   <Row>
                     <Col sm="12">
-                      <Suspense fallback={<div>Loading...</div>}>
+                      <Suspense fallback={<Loader />}>
                         {activeTab === '4' ? <Recovery protectionplanID={id} {...this.props} /> : null}
                       </Suspense>
                     </Col>

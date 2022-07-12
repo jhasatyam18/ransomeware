@@ -8,6 +8,7 @@ import Login from '../../pages/AuthenticationInner/Login';
 // import Pages404 from '../../pages/Page-404';
 import DRPlans from '../data-recovery/DRPlans';
 import Node from '../Settings/node/Node';
+import Loader from '../Shared/Loader';
 import Header from './Header';
 import Sidebar from './Sidebar';
 // lazy load components
@@ -67,7 +68,10 @@ class Layout extends Component {
       return null;
     }
     return (
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={(
+        <Loader />
+        )}
+      >
         <Switch>
           <Route path={LOGIN_PATH} render={() => <Login {...this.props} />} />
           <Route path={NODES_PATH} render={() => <Node />} />
