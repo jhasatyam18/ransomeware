@@ -23,18 +23,35 @@ function ModalScripts(props) {
   const [isPostOnly, setPostOnly] = useState(false);
 
   useEffect(() => {
-    if (typeof data !== 'undefined' && typeof data.scriptType !== 'undefined' && typeof data.description !== 'undefined') {
-      setDescription(data.description);
-      setType(data.scriptType);
-    }
-    if (data && typeof data.fieldKey !== 'undefined') {
+    let isUnmounting = false;
+    if (!isUnmounting) {
+      if (typeof data !== 'undefined' && typeof data.scriptType !== 'undefined' && typeof data.description !== 'undefined') {
+        setDescription(data.description);
+        setType(data.scriptType);
+      }
+      if (data && typeof data.fieldKey !== 'undefined') {
+        // handle case insensitive text
+        const key = data.fieldKey.toLowerCase();
+        const isPre = key.indexOf('prescript') !== -1;
+        setPreOnly(isPre);
+        setPostOnly(!isPre);
+        setType((isPre ? 'preScript' : 'postScript'));
+      } if (typeof data !== 'undefined' && typeof data.scriptType !== 'undefined' && typeof data.description !== 'undefined') {
+        setDescription(data.description);
+        setType(data.scriptType);
+      }
+      if (data && typeof data.fieldKey !== 'undefined') {
       // handle case insensitive text
-      const key = data.fieldKey.toLowerCase();
-      const isPre = key.indexOf('prescript') !== -1;
-      setPreOnly(isPre);
-      setPostOnly(!isPre);
-      setType((isPre ? 'preScript' : 'postScript'));
+        const key = data.fieldKey.toLowerCase();
+        const isPre = key.indexOf('prescript') !== -1;
+        setPreOnly(isPre);
+        setPostOnly(!isPre);
+        setType((isPre ? 'preScript' : 'postScript'));
+      }
     }
+    return () => {
+      isUnmounting = true;
+    };
   }, []);
 
   const isWizardUpload = () => isPostOnly || isPreOnly;

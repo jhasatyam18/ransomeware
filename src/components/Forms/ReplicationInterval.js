@@ -15,28 +15,34 @@ function ReplicationInterval(props) {
   const [min, setMin] = useState(-1);
   useEffect(() => {
     const { values } = user;
+    let isUnmounting = false;
     // get fieldKey value from redux
     let interval = getValue(fieldKey, values);
-    if (typeof interval !== 'undefined' && interval > 0) {
+    if (!isUnmounting) {
+      if (typeof interval !== 'undefined' && interval > 0) {
       // extract days from interval
-      if (interval >= 1440) {
-        const d = Math.floor((interval / 1440));
-        setDays(d);
-        while (interval >= 1440) {
-          interval -= 1440;
+        if (interval >= 1440) {
+          const d = Math.floor((interval / 1440));
+          setDays(d);
+          while (interval >= 1440) {
+            interval -= 1440;
+          }
         }
-      }
-      if (interval >= 60) {
-        const h = Math.floor(interval / 60);
-        setHours(h);
-        while (interval >= 60) {
-          interval -= 60;
+        if (interval >= 60) {
+          const h = Math.floor(interval / 60);
+          setHours(h);
+          while (interval >= 60) {
+            interval -= 60;
+          }
         }
-      }
-      if (interval < 60) {
-        setMin(interval);
+        if (interval < 60) {
+          setMin(interval);
+        }
       }
     }
+    return () => {
+      isUnmounting = true;
+    };
   }, []);
 
   function onChange(value, unit) {
