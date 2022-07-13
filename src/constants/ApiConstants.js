@@ -43,6 +43,7 @@ export const API_DASHBOARD_UNACK_ALERTS = 'api/v1/dashboard/unackalerts';
 export const API_RECOVER = 'api/v1/recover';
 export const API_TEST_RECOVERY_CLEANUP = 'api/v1/recover/cleanup';
 export const API_VALIDATE_RECOVERY = 'api/v1/recover/validate';
+export const API_AUTO_MIGRATE_WORKFLOW = 'api/v1/migrate/auto';
 
 // migration
 export const API_VALIDATE_MIGRATION = 'api/v1/migrate/validate';

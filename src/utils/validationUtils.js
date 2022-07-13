@@ -150,6 +150,10 @@ export async function validateMigrationVMs({ user, dispatch }) {
   if (initialCheckPass) {
     try {
       const vms = getValue('ui.site.seletedVMs', values);
+      const autoMigrate = getValue('ui.automate.migration', values);
+      if (autoMigrate) {
+        return true;
+      }
       if (vms) {
         const payload = getRecoveryPayload(user, true);
         const obj = createPayload(API_TYPES.POST, { ...payload.recovery });

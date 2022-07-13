@@ -337,6 +337,9 @@
   "title.mac.address":"Mac Address",
   "title.hostname":"Hostname",
   "title.Datastore":"Datastore",
+  "title.machines.recovery":"Select Virtual Machine for recovery",
+  "title.machines.migration":"Select Virtual Machine for migration",
+  "auto.migration":"Auto Migrate",
   "info.aws.create.network.from.source" : "Creates new subnet and security group on recovery site based on protected entity's configuration",
   "info.protectionplan.protection.prescript": "Script will execute before every replication iteration.",
   "info.protectionplan.protection.postscript": "Script will execute after successful completion of every replication iteration.",
@@ -355,5 +358,6 @@
   "title.unit":"Unit",
   "info.protectionplan.instance.network.tags": "Network tags enables to make firewall rules and routes applicable to instance.",
   "required.acknowledge.message":"Required acknowledge message",
-  "info.test.recovery.cleanup" : "All test recovered copies for following virtual machines will be deleted."
+  "info.test.recovery.cleanup" : "All test recovered copies for following virtual machines will be deleted.",
+  "info.auto.migration" : "Enable auto migrate"
 }
