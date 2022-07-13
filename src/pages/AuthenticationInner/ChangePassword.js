@@ -17,18 +17,61 @@ import { APPLICATION_API_USER } from '../../constants/UserConstant';
 class ChangePassword extends Component {
   constructor() {
     super();
+    this.onfieldCheck = this.onfieldCheck.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    this.onEnter = this.onEnter.bind(this);
     this.onCancel = this.onCancel.bind(this);
+    this.onEnterCallBack = this.onEnterCallBack.bind(this);
+  }
+
+  componentDidMount() {
+    document.getElementById('password-parent').addEventListener('keydown', (e) => e.code === 'Enter' && this.onEnter(e));
+  }
+
+  componentWillUnmount() {
+    document.getElementById('password-parent').removeEventListener('keydown', (e) => e.code === 'Enter' && this.onEnter(e));
+  }
+
+  onfieldCheck() {
+    const { user } = this.props;
+    const { values } = user;
+    const oldPassword = getValue('user.oldPassword', values);
+    const password = getValue('user.newPassword', values);
+    const cnfPassword = getValue('user.confirmPassword', values);
+    if (oldPassword !== '' && password !== '' && cnfPassword !== '' && password === cnfPassword) return true;
+  }
+
+  onEnterCallBack() {
+    const { user, dispatch } = this.props;
+    const { values } = user;
+    const oldPassword = getValue('user.oldPassword', values);
+    const password = getValue('user.newPassword', values);
+    if (this.onfieldCheck()) {
+      dispatch(changeUserPassword(oldPassword, password));
+    } else {
+      document.getElementById('user.confirmPassword').focus();
+    }
+  }
+
+  onEnter(e) {
+    e.preventDefault();
+    if (e.code === 'Enter' && e.target.id === 'user.confirmPassword') {
+      document.getElementById('password-btn').focus();
+      setTimeout(() => {
+        this.onEnterCallBack();
+      }, 1000);
+    } else {
+      document.getElementById('user.confirmPassword').focus();
+    }
   }
 
   onSubmit(e) {
     e.preventDefault();
     const { user, dispatch } = this.props;
-    const { values, errors } = user;
+    const { values } = user;
     const oldPassword = getValue('user.oldPassword', values);
     const password = getValue('user.newPassword', values);
-    const cnfPassword = getValue('user.confirmPassword', values);
-    if (oldPassword !== '' && password === cnfPassword && errors && !errors['user.newPassword'] && !errors['user.confirmPassword'] && !errors['user.oldPassword']) {
+    if (this.onfieldCheck()) {
       dispatch(changeUserPassword(oldPassword, password));
     } else {
       document.getElementById('user.confirmPassword').focus();
@@ -48,7 +91,7 @@ class ChangePassword extends Component {
     const cnfPassword = { label: 'Confirm Password', placeHolderText: 'Confirm password', type: FIELD_TYPE.PASSWORD, validate: (v, u) => validatePassword(v, u), errorMessage: 'New password and confirm password does not match', shouldShow: true };
     return (
       <>
-        <div className="account-pages my-5 pt-sm-5">
+        <div id="password-parent" className="account-pages my-5 pt-sm-5">
           <Container>
             <Row className="justify-content-center">
               <Col md={8} lg={6} xl={5}>
@@ -98,7 +141,7 @@ class ChangePassword extends Component {
                       <DMFieldText dispatch={dispatch} fieldKey="user.confirmPassword" field={cnfPassword} user={user} hideLabel="true" />
                     </div>
                     <div className="mt-3">
-                      <button className="btn btn-success btn-block waves-effect waves-light" type="submit" onClick={this.onSubmit}>
+                      <button id="password-btn" className="btn btn-success btn-block waves-effect waves-light" type="submit" onClick={this.onSubmit}>
                         Change Password
                       </button>
                       { allowCancel ? <button className="btn btn-block waves-effect waves-light" type="submit" onClick={this.onCancel}> Cancel </button> : null }

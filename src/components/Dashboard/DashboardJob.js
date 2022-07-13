@@ -30,7 +30,7 @@ function DashBoardJob(props) {
     callAPI(API_REPLICATION_JOBS)
       .then((json) => {
         setLoading(false);
-        setReplicationJobs(json);
+        setReplicationJobs(json.records);
       },
       (err) => {
         setLoading(false);
@@ -39,7 +39,7 @@ function DashBoardJob(props) {
 
     callAPI(API_RECOVERY_JOBS)
       .then((json) => {
-        setRecoveryJobs(json);
+        setRecoveryJobs(json.records);
       },
       (err) => {
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));

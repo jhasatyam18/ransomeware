@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import React, { Component, Suspense } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardTitle, Col, Container, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
-import { PLATFORM_TYPES, RECOVERY_STATUS, REPLICATION_STATUS } from '../../constants/InputConstants';
+import { PLATFORM_TYPES, RECOVERY_STATUS, REPLICATION_STATUS, PROTECTION_PLANS_STATUS } from '../../constants/InputConstants';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { deletePlanConfirmation, fetchDRPlanById, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
@@ -49,8 +49,8 @@ class DRPlanDetails extends Component {
     }
     const { protectedSite, recoverySite } = protectionPlan;
     const { platformDetails } = protectedSite;
-    // disable if recovery site is VMware
-    if (recoverySite.platformDetails.platformType === PLATFORM_TYPES.VMware || isPlanRecovered(protectionPlan)) {
+    // disable if recovery site is VMware disable if status is Initializing
+    if (recoverySite.platformDetails.platformType === PLATFORM_TYPES.VMware || isPlanRecovered(protectionPlan) || protectionPlan.status === PROTECTION_PLANS_STATUS.INITIALIZING) {
       return true;
     }
     if (platformDetails.platformType === user.platformType && hasRequestedPrivileges(user, ['protectionplan.edit'])) {
@@ -61,20 +61,19 @@ class DRPlanDetails extends Component {
 
   disableStart(protectionPlan) {
     const { user } = this.props;
-    return (isPlanRecovered(protectionPlan) || protectionPlan.status.toUpperCase() === REPLICATION_STATUS.STARTED || !hasRequestedPrivileges(user, ['protectionplan.status']));
+    return (isPlanRecovered(protectionPlan) || protectionPlan.status === REPLICATION_STATUS.INIT_FAILED || protectionPlan.status === REPLICATION_STATUS.INITIALIZING || protectionPlan.status.toUpperCase() === REPLICATION_STATUS.STARTED || !hasRequestedPrivileges(user, ['protectionplan.status']));
   }
 
   disableStop(protectionPlan) {
     const { user } = this.props;
-    return (isPlanRecovered(protectionPlan) || protectionPlan.status === REPLICATION_STATUS.STOPPED || !hasRequestedPrivileges(user, ['protectionplan.status']));
+    return (isPlanRecovered(protectionPlan) || protectionPlan.status === REPLICATION_STATUS.INIT_FAILED || protectionPlan.status === REPLICATION_STATUS.INITIALIZING || protectionPlan.status === REPLICATION_STATUS.STOPPED || !hasRequestedPrivileges(user, ['protectionplan.status']));
   }
 
   disableReverse(protectionPlan) {
     const { user } = this.props;
-    const { protectedSite, recoverySite } = protectionPlan;
-    const protectedSitePlatform = protectedSite.platformDetails.platformType;
+    const { recoverySite } = protectionPlan;
     const recoverySitePlatform = recoverySite.platformDetails.platformType;
-    if (protectedSitePlatform === PLATFORM_TYPES.AWS || recoverySitePlatform === PLATFORM_TYPES.GCP) {
+    if (recoverySitePlatform === PLATFORM_TYPES.GCP) {
       return true;
     }
     if (!(protectionPlan.recoveryStatus === RECOVERY_STATUS.RECOVERED || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED)) {
@@ -166,8 +165,11 @@ class DRPlanDetails extends Component {
       { label: 'Differential Reverse Replication', field: 'enableReverse' },
 
       { label: 'Start Time', field: 'startTime', value: `${sd.toLocaleDateString()}-${sd.toLocaleTimeString()}` },
-      { label: 'Pre Script', field: 'preScript' },
-      { label: 'Post Script', field: 'postScript' },
+      { label: 'Replication Pre Script', field: 'replPreScript' },
+      { label: 'Replication Post Script', field: 'replPostScript' },
+      { label: 'Recovery Pre Script', field: 'preScript' },
+      { label: 'Recovery Post Script', field: 'postScript' },
+
       { label: 'Script Timeout (Seconds)', field: 'scriptTimeout' },
       { label: 'Boot Delay (Seconds)', field: 'bootDelay' },
     ];
@@ -179,27 +181,51 @@ class DRPlanDetails extends Component {
         <Col sm={4}>
           {this.renderRecoverFields(keys.slice(5, 10))}
         </Col>
+        <Col sm={4}>
+          {this.renderRecoverFields(keys.slice(10, 15))}
+        </Col>
       </Row>
     );
   }
 
-  renderStatus() {
+  renderRecoveryStatus() {
     const { drPlans } = this.props;
     const { protectionPlan } = drPlans;
-    const { status, recoveryStatus } = protectionPlan;
-    if (recoveryStatus !== '') {
+    const { recoveryStatus } = protectionPlan;
+    if (recoveryStatus) {
       return (
-        <span className="badge badge-success">{recoveryStatus.toUpperCase()}</span>
+        <span className="badge badge-success margin-right-5">{recoveryStatus.toUpperCase()}</span>
       );
     }
+  }
 
-    if (status === REPLICATION_STATUS.STOPPED) {
+  renderStatus() {
+    const { drPlans, t } = this.props;
+    const { protectionPlan } = drPlans;
+    const { status } = protectionPlan;
+
+    if (status === PROTECTION_PLANS_STATUS.STOPPED) {
       return (
-        <span className="badge badge-danger">STOPPED</span>
+        <span className="badge badge-danger">{t('status.stopped')}</span>
+      );
+    }
+    if (status === PROTECTION_PLANS_STATUS.INIT_FAILED) {
+      return (
+        <span className="badge badge-danger">{t('status.init.failed')}</span>
+      );
+    }
+    if (status === PROTECTION_PLANS_STATUS.INITIALIZING) {
+      return (
+        <span className="badge badge-info">{t('status.initializing')}</span>
+      );
+    }
+    if (status === PROTECTION_PLANS_STATUS.CREATED || status === PROTECTION_PLANS_STATUS.STARTED) {
+      return (
+        <span className="badge badge-info">{t('status.running')}</span>
       );
     }
     return (
-      <span className="badge badge-info">RUNNING</span>
+      <span className="badge badge-info">{t('status.running')}</span>
     );
   }
 
@@ -216,7 +242,7 @@ class DRPlanDetails extends Component {
       actions.push({ label: 'start', action: startPlan, id: protectionPlan.id, disabled: this.disableStart(protectionPlan) });
       actions.push({ label: 'stop', action: stopPlan, id: protectionPlan.id, disabled: this.disableStop(protectionPlan) });
       actions.push({ label: 'edit', action: openEditProtectionPlanWizard, id: protectionPlan, disabled: this.disableEdit() });
-      actions.push({ label: 'remove', action: deletePlanConfirmation, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS.STARTED, navigate: PROTECTION_PLANS_PATH });
+      actions.push({ label: 'remove', action: deletePlanConfirmation, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS, navigate: PROTECTION_PLANS_PATH });
     } else if (localVMIP === recoverySite.node.hostname) {
       actions = [{ label: 'recover', action: openRecoveryWizard, icon: 'fa fa-plus', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.full']) },
         { label: 'Migrate', action: openMigrationWizard, icon: 'fa fa-clone', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.migration']) },
@@ -267,6 +293,7 @@ class DRPlanDetails extends Component {
                   <CardTitle className="mb-4 title-color">
                     {t('Status')}
                     &nbsp;&nbsp;
+                    {this.renderRecoveryStatus()}
                     {this.renderStatus()}
                   </CardTitle>
                 </Col>

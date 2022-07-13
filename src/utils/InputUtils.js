@@ -3,7 +3,7 @@ import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
 import { PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS } from '../constants/InputConstants';
 import { NODE_STATUS_ONLINE } from '../constants/AppStatus';
 import { isEmpty } from './validationUtils';
-import { onAwsStorageTypeChange } from '../store/actions';
+import { onAwsStorageTypeChange, onScriptChange } from '../store/actions';
 
 export function getValue(key, values) {
   const ret = values[key];
@@ -123,7 +123,9 @@ export function getRegionOptions(user) {
 
 export function getScripts(type, user) {
   const key = (type === SCRIPT_TYPE.PRE ? STATIC_KEYS.UI_SCRIPT_PRE : STATIC_KEYS.UI_SCRIPT_POST);
-  return optionsBuilder(user, key);
+  const opts = optionsBuilder(user, key);
+  opts.splice(0, 0, { label: '+ Upload New Script', value: '+NEW_SCRIPT' });
+  return opts;
 }
 
 export function getPreScriptsOptions(user) {
@@ -162,24 +164,45 @@ export function optionsBuilder(user, key) {
   return options;
 }
 
-export function getSecurityGroupOption(user) {
+export function getSecurityGroupOption(user, fieldKey) {
   const { values } = user;
-  const opts = getValue(STATIC_KEYS.UI_SECURITY_GROUPS, values) || [];
+  let isCopyConfiguration = false;
+  if (fieldKey && isPlanWithSamePlatform(user)) {
+    isCopyConfiguration = isAWSCopyNic(fieldKey, '-securityGroups', user);
+  }
+  const dataSourceKey = (isCopyConfiguration === true ? STATIC_KEYS.UI_SECURITY_GROUPS_SOURCE : STATIC_KEYS.UI_SECURITY_GROUPS);
+  const opts = getValue(dataSourceKey, values) || [];
+  const networkID = getValue(fieldKey.replace('-securityGroups', '-vpcId'), values);
   const options = [];
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
   opts.forEach((op) => {
     const name = (op.name && op.name !== '' ? op.name : op.id);
-    options.push({ label: name, value: op.id });
+    if (op.vpcID === networkID || recoveryPlatform === PLATFORM_TYPES.GCP) {
+      options.push({ label: name, value: op.id });
+    }
   });
   return options || [];
 }
 
-export function getSubnetOptions(user) {
+export function getSubnetOptions(user, fieldKey) {
   const { values } = user;
-  const opts = getValue(STATIC_KEYS.UI_SUBNETS, values) || [];
+  let isCopyConfiguration = false;
+  if (fieldKey && isPlanWithSamePlatform(user)) {
+    isCopyConfiguration = isAWSCopyNic(fieldKey, '-subnet', user);
+  }
+  const dataSourceKey = (isCopyConfiguration === true ? STATIC_KEYS.UI_SUBNETS__SOURCE : STATIC_KEYS.UI_SUBNETS);
+  const opts = getValue(dataSourceKey, values) || [];
+  const networkID = getValue(fieldKey.replace('-subnet', '-vpcId'), values);
   const options = [];
+  const sourceSubnet = getValue(fieldKey, values);
   opts.forEach((op) => {
     const name = getSubnetLabel(op);
-    options.push({ label: name, value: op.id });
+    if (isCopyConfiguration && op.id === sourceSubnet) {
+      options.push({ label: name, value: op.id });
+    }
+    if (op.vpcID === networkID && !isCopyConfiguration) {
+      options.push({ label: name, value: op.id });
+    }
   });
   return options;
 }
@@ -249,7 +272,14 @@ export function getAWSElasticIPOptions(user, fieldKey) {
       }
     }
   }
-  return options;
+  const filteredOptions = [];
+  options.forEach((op) => {
+    const ops = filteredOptions.filter((o) => o.value === op.value);
+    if (ops.length === 0) {
+      filteredOptions.push(op);
+    }
+  });
+  return filteredOptions;
 }
 
 export function getGCPNetworkTierOptions() {
@@ -300,8 +330,10 @@ export function createVMConfigStackObject(vm, user) {
   switch (recoveryPlatform) {
     case PLATFORM_TYPES.GCP:
       return getGCPVMConfig(vm);
-    default:
+    case PLATFORM_TYPES.AWS:
       return getAwsVMConfig(vm);
+    default:
+      return { data: [] };
   }
 }
 
@@ -314,9 +346,9 @@ export function getGCPVMConfig(vm) {
         title: 'General',
         children: {
           [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', fieldInfo: 'info.protectionplan.instance.type', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
-          [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.instance.type.gcp', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u) },
+          [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.volume.type.gcp', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u), disabled: (u, f) => shouldDisableStorageType(u, f) },
           // [`${key}-vmConfig.general.bootOrder`]: { label: 'Boot Order', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select boot order.', shouldShow: true, options: (u) => geBootPriorityOptions(u) },
-          [`${key}-vmConfig.general.tags`]: { label: 'Tags', fieldInfo: 'info.protectionplan.instance.tags.gcp', type: STACK_COMPONENT_TAGS, validate: null, errorMessage: '', shouldShow: true },
+          [`${key}-vmConfig.general.tags`]: { label: 'Metadata', fieldInfo: 'info.protectionplan.instance.tags.gcp', type: STACK_COMPONENT_TAGS, validate: null, errorMessage: '', shouldShow: true },
         },
       },
       {
@@ -324,15 +356,23 @@ export function getGCPVMConfig(vm) {
         title: 'Network',
         children: {
           [`${key}-vmConfig.network.net1`]: { label: 'IP Address', fieldInfo: 'info.protectionplan.instance.network.gcp', type: STACK_COMPONENT_NETWORK, validate: null, errorMessage: '', shouldShow: true, options: (u) => getInstanceTypeOptions(u), data: vm },
-          [`${key}-vmConfig.network.securityGroup`]: { label: 'Firewall Tags', type: STACK_COMPONENT_SECURITY_GROUP, validate: null, errorMessage: '', shouldShow: true },
+          [`${key}-vmConfig.network.securityGroup`]: { label: 'Network Tags', type: STACK_COMPONENT_SECURITY_GROUP, validate: null, errorMessage: '', shouldShow: true, fieldInfo: 'info.protectionplan.instance.network.tags' },
         },
       },
       {
         hasChildren: true,
-        title: 'Scripts',
+        title: 'Replication Scripts',
         children: {
-          [`${key}-vmConfig.scripts.preScript`]: { label: 'Pre', fieldInfo: 'info.protectionplan.instance.prescript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPreScriptsOptions(u) },
-          [`${key}-vmConfig.scripts.postScript`]: { label: 'Post', fieldInfo: 'info.protectionplan.instance.postscript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPostScriptsOptions(u) },
+          [`${key}-protection.scripts.preScript`]: { label: 'Pre', fieldInfo: 'info.protectionplan.protection.prescript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPreScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
+          [`${key}-protection.scripts.postScript`]: { label: 'Post', fieldInfo: 'info.protectionplan.protection.postscript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPostScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
+        },
+      },
+      {
+        hasChildren: true,
+        title: 'Recovery Scripts',
+        children: {
+          [`${key}-vmConfig.scripts.preScript`]: { label: 'Pre', fieldInfo: 'info.protectionplan.instance.prescript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPreScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
+          [`${key}-vmConfig.scripts.postScript`]: { label: 'Post', fieldInfo: 'info.protectionplan.instance.postscript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPostScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
         },
       },
     ],
@@ -348,8 +388,8 @@ export function getAwsVMConfig(vm) {
         hasChildren: true,
         title: 'General',
         children: {
-          [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', fieldInfo: 'info.protectionplan.instance.type', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
-          [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.instance.volume.type.aws', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u), onChange: (user, dispatch) => onAwsStorageTypeChange(user, dispatch) },
+          [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', fieldInfo: 'info.protectionplan.instance.type', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
+          [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.instance.volume.type.aws', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u), onChange: (user, dispatch) => onAwsStorageTypeChange(user, dispatch), disabled: (u, f) => shouldDisableStorageType(u, f) },
           [`${key}-vmConfig.general.volumeIOPS`]: { label: 'Volume IOPS', fieldInfo: 'info.protectionplan.instance.volume.iops.aws', type: FIELD_TYPE.NUMBER, errorMessage: 'Provide volume IOPS.', disabled: (u, f) => shouldEnableAWSIOPS(u, f), min: 0 },
           [`${key}-vmConfig.general.tags`]: { label: 'Tags', fieldInfo: 'info.protectionplan.instance.tags.aws', type: STACK_COMPONENT_TAGS, validate: null, errorMessage: '', shouldShow: true },
         },
@@ -364,10 +404,18 @@ export function getAwsVMConfig(vm) {
       },
       {
         hasChildren: true,
-        title: 'Scripts',
+        title: 'Replication Scripts',
         children: {
-          [`${key}-vmConfig.scripts.preScript`]: { label: 'Pre', fieldInfo: 'info.protectionplan.instance.prescript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPreScriptsOptions(u) },
-          [`${key}-vmConfig.scripts.postScript`]: { label: 'Post', fieldInfo: 'info.protectionplan.instance.postscript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPostScriptsOptions(u) },
+          [`${key}-protection.scripts.preScript`]: { label: 'Pre', fieldInfo: 'info.protectionplan.protection.prescript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPreScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
+          [`${key}-protection.scripts.postScript`]: { label: 'Post', fieldInfo: 'info.protectionplan.protection.postscript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPostScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
+        },
+      },
+      {
+        hasChildren: true,
+        title: 'Recovery Scripts',
+        children: {
+          [`${key}-vmConfig.scripts.preScript`]: { label: 'Pre', fieldInfo: 'info.protectionplan.instance.prescript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPreScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
+          [`${key}-vmConfig.scripts.postScript`]: { label: 'Post', fieldInfo: 'info.protectionplan.instance.postscript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPostScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
         },
       },
     ],
@@ -513,6 +561,9 @@ export function shouldEnableAWSIOPS(user, fieldKey) {
   if (storageType === 'gp2') {
     return true;
   }
+  if (isVMAlertAction(user)) {
+    return true;
+  }
   return false;
 }
 
@@ -534,4 +585,84 @@ export function getAWSNetworkIDFromName(values, name) {
     });
   }
   return ipName;
+}
+
+export function getVMMorefFromEvent(event) {
+  let vmMoref = '';
+  if (event !== null && event.impactedObjectURNs !== '') {
+    const parts = event.impactedObjectURNs.split(',');
+    if (parts.length > 1) {
+      const urn = parts[parts.length - 1].split(':');
+      if (urn.length >= 2) {
+        vmMoref = `${urn[urn.length - 2]}:${urn[urn.length - 1]}`;
+      }
+    }
+  }
+  return vmMoref;
+}
+
+export function isVMAlertAction(user) {
+  const { values } = user;
+  const isAlertAction = getValue('ui.vm.isVMAlertAction', values);
+  if (typeof isAlertAction !== 'undefined' && isAlertAction === true) {
+    return true;
+  }
+  return false;
+}
+
+export function shouldDisableStorageType(user) {
+  return isVMAlertAction(user);
+}
+
+export function getSourceVMTags(vmKeyTag, values) {
+  const vms = getValue('ui.site.seletedVMs', values);
+  const vmKey = vmKeyTag.replace('-vmConfig.general.tags', '');
+  const vmObj = vms[vmKey];
+  if (vmObj && vmObj.tags) {
+    return vmObj.tags;
+  }
+  return [];
+}
+
+export function isPlanWithSamePlatform(user) {
+  const { values } = user;
+  const protectionPlatform = getValue('ui.values.protectionPlatform', values);
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+  return recoveryPlatform === protectionPlatform;
+}
+
+export function isSamePlatformPlan(selectedPlan) {
+  return selectedPlan.protectedSite.platformDetails.platformType === selectedPlan.recoverySite.platformDetails.platformType;
+}
+
+export function isAWSCopyNic(fieldKey, replaceKey, user) {
+  const { values } = user;
+  let isCopyConfiguration = false;
+  if (fieldKey && isPlanWithSamePlatform(user)) {
+    const cpyKey = fieldKey.replace(replaceKey, '-isFromSource');
+    isCopyConfiguration = getValue(cpyKey, values);
+  }
+  if (typeof isCopyConfiguration !== 'boolean') {
+    isCopyConfiguration = false;
+  }
+  return isCopyConfiguration;
+}
+
+export function getVPCOptions(user) {
+  const { values } = user;
+  const opts = getValue(STATIC_KEYS.UI_VPC_TARGET, values) || [];
+  const options = [];
+  opts.forEach((op) => {
+    options.push({ label: op.cidr, value: op.id });
+  });
+  return options;
+}
+
+export function showInstallCloudPackageOption(user) {
+  const { values } = user;
+  const recoveryType = getValue('ui.values.recoveryPlatform', values);
+  if (recoveryType === PLATFORM_TYPES.VMware) {
+    return false;
+  }
+  return true;
 }

@@ -60,6 +60,10 @@ export function getCreateDRPlanPayload(user, sites) {
   Object.keys(vms).forEach((key) => {
     const vm = vms[key];
     vm.id = 0;
+    const preScript = getValue(`${key}-protection.scripts.preScript`, values);
+    const postScript = getValue(`${key}-protection.scripts.postScript`, values);
+    vm.preScript = preScript;
+    vm.postScript = postScript;
     result.drplan.protectedEntities.VirtualMachines.push(vm);
   });
   result.drplan.protectedEntities.Name = 'dummy';
@@ -97,7 +101,13 @@ export function getVMConfigPayload(user) {
     const instanceName = name;
     const sourceMoref = vms[key].moref;
     const id = getValue(`${key}-vmConfig.general.id`, values);
-    const instanceType = getValue(`${key}-vmConfig.general.instanceType`, values);
+    let instanceType = '';
+    const insType = getValue(`${key}-vmConfig.general.instanceType`, values);
+    if (typeof insType === 'object' && insType.value) {
+      instanceType = insType.value;
+    } else {
+      instanceType = insType;
+    }
     const volumeType = getValue(`${key}-vmConfig.general.volumeType`, values);
     let volumeIOPS = getValue(`${key}-vmConfig.general.volumeIOPS`, values) || 0;
     if (volumeType === 'gp2') {
@@ -108,6 +118,10 @@ export function getVMConfigPayload(user) {
     // const isPublicIP = (getValue(`${key}-vmConfig.network.net1`, values) === 'public');
     // const privateIP = (isPublicIP ? '' : getValue(`${key}-vmConfig.network.net1-manual-ip`, values));
     const networks = getVMNetworkConfig(key, values);
+    let availZone = '';
+    if (networks.length > 0) {
+      availZone = networks[0].availZone;
+    }
     const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
     let sgs = getValue(`${key}-vmConfig.network.securityGroup`, values);
     if (recoveryPlatform === PLATFORM_TYPES.AWS) {
@@ -117,9 +131,9 @@ export function getVMConfigPayload(user) {
     const preScript = getValue(`${key}-vmConfig.scripts.preScript`, values);
     const postScript = getValue(`${key}-vmConfig.scripts.postScript`, values);
     if (typeof id !== 'undefined' && id !== '') {
-      instanceDetails.push({ sourceMoref, id, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript });
+      instanceDetails.push({ sourceMoref, id, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone });
     } else {
-      instanceDetails.push({ sourceMoref, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript });
+      instanceDetails.push({ sourceMoref, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone });
     }
   });
   return instanceDetails;
@@ -133,13 +147,19 @@ export function getVMNetworkConfig(key, values) {
   let hasPublicIP = false;
   for (let index = 0; index < eths.length; index += 1) {
     const id = getValue(`${networkKey}-eth-${index}-id`, values);
+    const vpcId = getValue(`${networkKey}-eth-${index}-vpcId`, values);
     const isPublicIP = getValue(`${networkKey}-eth-${index}-isPublic`, values) || false;
+    let isFromSource = getValue(`${networkKey}-eth-${index}-isFromSource`, values);
     const subnet = getValue(`${networkKey}-eth-${index}-subnet`, values);
+    const availZone = getValue(`${networkKey}-eth-${index}-availZone`, values);
     const privateIP = getValue(`${networkKey}-eth-${index}-privateIP`, values) || '';
     let publicIP = getValue(`${networkKey}-eth-${index}-publicIP`, values) || '';
     const sgs = getValue(`${networkKey}-eth-${index}-securityGroups`, values) || '';
     const networkTier = getValue(`${networkKey}-eth-${index}-networkTier`, values) || '';
     const network = getValue(`${networkKey}-eth-${index}-network`, values) || '';
+    if (typeof isFromSource !== 'boolean') {
+      isFromSource = false;
+    }
     if (isPublicIP) {
       hasPublicIP = true;
     }
@@ -147,9 +167,9 @@ export function getVMNetworkConfig(key, values) {
       publicIP = getAWSNetworkIDFromName(values, network) || publicIP;
     }
     if (typeof id !== 'undefined' && id !== '') {
-      networks.push({ id, isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network });
+      networks.push({ id, isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone });
     } else {
-      networks.push({ isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network });
+      networks.push({ isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone });
     }
   }
 
@@ -175,13 +195,30 @@ function getReplicationInterval(type, value) {
 function getRecoveryConfigVMDetails(user) {
   const { values } = user;
   const vms = getValue('ui.site.seletedVMs', values);
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
   const machineDetails = [];
+  let instanceConfig = [];
+  if (PLATFORM_TYPES.VMware === recoveryPlatform) {
+    // TODO: remove this post vmware as target is supported
+    const plan = getValue('ui.recovery.plan', values);
+    const { recoveryEntities } = plan;
+    const { instanceDetails } = recoveryEntities;
+    instanceConfig = instanceDetails;
+  } else {
+    instanceConfig = getVMConfigPayload(user);
+  }
   Object.keys(vms).forEach((key) => {
     const vm = vms[key];
     const { name, moref } = vm;
     const userName = getValue(`${moref}-username`, values);
     const password = getValue(`${moref}-password`, values);
-    machineDetails.push({ vmName: name, winUser: (userName && userName !== '' ? userName : ''), winPassword: (password && password !== '' ? password : '') });
+    let instanceDetails = {};
+    instanceConfig.forEach((ins) => {
+      if (ins.sourceMoref === moref) {
+        instanceDetails = ins;
+      }
+    });
+    machineDetails.push({ instanceDetails, vmMoref: moref, vmName: name, username: (userName && userName !== '' ? userName : ''), password: (password && password !== '' ? password : '') });
   });
   return machineDetails;
 }
@@ -281,6 +318,10 @@ export function getEditProtectionPlanPayload(user, sites) {
   result.drplan.protectedEntities.VirtualMachines = [];
   Object.keys(vms).forEach((key) => {
     const vm = vms[key];
+    const preScript = getValue(`${key}-protection.scripts.preScript`, values) || '';
+    const postScript = getValue(`${key}-protection.scripts.postScript`, values) || '';
+    vm.preScript = preScript;
+    vm.postScript = postScript;
     result.drplan.protectedEntities.VirtualMachines.push(vm);
   });
   result.drplan.protectedEntities.Name = 'dummy';

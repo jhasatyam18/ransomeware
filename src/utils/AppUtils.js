@@ -173,12 +173,23 @@ export function calculateChangedData(val) {
     if (val === 0) {
       return '-';
     }
+    try {
+      if (val > 0 && val < 1) {
+        // show 2 decimal value only
+        return `${(val).toFixed(2)} MB`;
+      }
+    } catch (error) {
+      return '-';
+    }
     const units = ['MB', 'GB', 'TB', 'PB'];
     const factor = 1024;
     let index = parseInt(Math.floor(Math.log(val) / Math.log(factor)), 10);
     const result = Math.round(val / (factor ** index), 2);
     if (index > 3) {
       index = 3;
+    }
+    if (index < 0) {
+      return `${result} BYTES`;
     }
     return `${result} ${units[index]}`;
   } catch (error) {
@@ -289,3 +300,18 @@ export function getAllObjectKeys(obj, prefix = '') {
     return [...res, `${prefix}${o}`];
   }, []);
 }
+
+/**
+ * @param t : requried t is function of react18-next,
+ * @returns document title
+ */
+
+export const changePageTitle = (t) => {
+  const location = window.location.pathname.slice(1).replace('/', '.');
+  const path = t(`title.${location}`);
+  if (path.indexOf('protection.plan/details') !== -1) {
+    document.title = 'Protection Plans | Datamotive';
+    return;
+  }
+  document.title = `${path} | Datamotive`;
+};
