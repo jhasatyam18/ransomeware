@@ -93,10 +93,12 @@ export const SETTINGS_TABS = [
 export const EXCLUDE_KEYS_RECOVERY_CONFIGURATION = {
   DELETE_INSTANCE: 'deleteInstance',
   IS_REQUIRED: 'isResetRequired',
+  NETWORK_KEY: 'networkKey',
 };
 
 export const EXCLUDE_KEYS_CONSTANTS = {
   AVAILABILITY_ZONES: 'availZone',
+  NUM_CPU: 'numCPU',
 };
 
 export const VMWARE_OBJECT = {

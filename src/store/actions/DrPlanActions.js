@@ -565,7 +565,6 @@ export function onEditProtectionPlan() {
     const { user, sites } = getState();
     const { values } = user;
     const payload = getEditProtectionPlanPayload(user, sites.sites);
-    changedVMRecoveryConfigurations(payload, user, dispatch);
     const obj = createPayload(API_TYPES.PUT, { ...payload.drplan });
     const id = getValue('ui.selected.protection.planID', values);
     let url = API_PROTECTION_PLAN_UPDATE.replace('<id>', id);
@@ -585,6 +584,7 @@ export function onEditProtectionPlan() {
         dispatch(clearValues());
         fetchByDelay(dispatch, refresh, 2000);
       }
+      changedVMRecoveryConfigurations(payload, user, dispatch);
     },
     (err) => {
       dispatch(hideApplicationLoader('update-dr-plan'));

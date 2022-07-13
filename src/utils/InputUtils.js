@@ -717,6 +717,14 @@ export function excludeKeys(key, recoveryPlatform) {
   if (recoveryPlatform === PLATFORM_TYPES.GCP && key === EXCLUDE_KEYS_CONSTANTS.AVAILABILITY_ZONES) {
     return false;
   }
+  const excludeKey = Object.keys(EXCLUDE_KEYS_CONSTANTS);
+  if (PLATFORM_TYPES.AWS === recoveryPlatform || PLATFORM_TYPES.GCP === recoveryPlatform) {
+    for (let i = 1; i < excludeKey.length; i += 1) {
+      if (key === EXCLUDE_KEYS_CONSTANTS[excludeKey[i]]) {
+        return false;
+      }
+    }
+  }
   const keys = Object.keys(EXCLUDE_KEYS_RECOVERY_CONFIGURATION);
   for (let i = 0; i < keys.length; i += 1) {
     if (EXCLUDE_KEYS_RECOVERY_CONFIGURATION[keys[i]] === key) {
