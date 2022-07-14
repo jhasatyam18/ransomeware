@@ -75,7 +75,7 @@ function VMwareNetworkConfig(props) {
   function renderIPField() {
     return (
       <div>
-        <table className="renderIPField-table">
+        <table className="render-ipfield-table">
           <tbody>
             {renderRows()}
           </tbody>
