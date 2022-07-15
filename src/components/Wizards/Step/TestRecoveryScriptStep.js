@@ -10,7 +10,7 @@ function TestRecoveryScriptStep(props) {
     <Card>
       <CardBody>
         <CardTitle>{t('tools.installation')}</CardTitle>
-        <Form style={{ width: '100%' }}>
+        <Form className="form_w">
           <DMField dispatch={dispatch} user={user} fieldKey="recovery.installSystemAgent" />
           <DMField dispatch={dispatch} user={user} fieldKey="recovery.installCloudPkg" />
         </Form>

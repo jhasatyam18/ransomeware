@@ -64,10 +64,8 @@ function DashBoardEvents(props) {
         </div>
         <Media body>
           <div>
-            <Link to={EVENTS_PATH} style={{ color: 'white' }}>
-              {description.length > 65
-                ? `${description.substr(0, 65)}....`
-                : description}
+            <Link to={EVENTS_PATH} className="color-white">
+              {description.length > 65 ? `${description.substr(0, 65)}....` : description}
             </Link>
           </div>
         </Media>
@@ -98,8 +96,10 @@ function DashBoardEvents(props) {
   return (
     <>
       <Card>
-        <CardBody style={{ minHeight: 365 }}>
-          <p className="font-weight-medium color-white">{t('events')}</p>
+        <CardBody className="min-h-365">
+          <p className="font-weight-medium color-white">
+            {t('events')}
+          </p>
           <Row>
             {dataToDisplay.map((val) => (
               <Col sm={12} key={`dashboard-event-${val.id}`}>

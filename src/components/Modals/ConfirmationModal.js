@@ -42,7 +42,7 @@ class ConfirmationModal extends Component {
               <div className="col-sm-3 confirmation-icon">
                 <i className="fas fa-exclamation-triangle" />
               </div>
-              <div className="col-sm-8" style={{ margin: 'auto' }}>
+              <div className="col-sm-8 confirmation_modal_msg">
                 {message}
               </div>
             </div>

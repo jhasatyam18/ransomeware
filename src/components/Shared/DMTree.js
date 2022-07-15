@@ -92,7 +92,7 @@ function DMTree(props) {
     if (search) {
       return (
         <Row>
-          <Col sm={7} style={{ minWidth: 200, marginBottom: '15px' }}>
+          <Col sm={7} className="margin-bottom-15 vmware-search-box">
             <div className="input-group">
               <input
                 type="text"
@@ -154,7 +154,7 @@ function DMTree(props) {
                 </>
               ) : (
                 <>
-                  <SimpleBar style={{ maxHeight: '240px', minHeight: '240px' }}>
+                  <SimpleBar className="dmtree-selectedvm-scrollbar">
                     {showSelectedData.map((node) => (
                       <p>
                         {node.name}
@@ -209,7 +209,7 @@ function DMTree(props) {
               </Col>
             ) : (
               <Col sm={showSelectedvmdata && showSelectedData.length > 0 ? 7 : 12}>
-                <SimpleBar style={{ maxHeight: '300px', minHeight: '300px', background: '#2e3548' }}>
+                <SimpleBar className="dmtree_scrollbar">
                   {render()}
                 </SimpleBar>
               </Col>

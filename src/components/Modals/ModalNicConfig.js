@@ -143,7 +143,7 @@ class ModalNicConfig extends Component {
       <>
         <Container>
           <Card>
-            <SimpleBar style={{ maxHeight: '400px' }}>
+            <SimpleBar className="modal_nic_simplbar">
               <CardBody>
                 <Form>
                   <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-vpcId`} field={vpc} user={user} />

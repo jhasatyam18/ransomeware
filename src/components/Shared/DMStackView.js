@@ -45,7 +45,7 @@ class DMStackView extends Component {
       return Object.keys(children).map((conf, index) => (
         <Row className="stack__view" key={`stack-view-row-${index * 1}`}>
           <Col sm={4} className="key child">
-            <p style={{ minWidth: '5px' }}>
+            <p>
               {`${children[conf].label}`}
             </p>
           </Col>

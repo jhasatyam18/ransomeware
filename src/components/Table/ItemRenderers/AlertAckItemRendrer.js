@@ -70,7 +70,7 @@ function AlertAckItemRenderer({ data, field }) {
   }
   return (
     <div>
-      <a href="#" onClick={onViewDetails} style={{ fontSize: '16px' }}>
+      <a href="#" onClick={onViewDetails} className="icon_font">
         <i className={`${isAcknowledged ? 'fas fa-check-circle text-success' : 'fas fa-exclamation-triangle text-danger'}`} id={key} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} />
         {renderTooltip()}
       </a>

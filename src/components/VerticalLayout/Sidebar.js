@@ -28,7 +28,7 @@ class Sidebar extends Component {
         <div className="vertical-menu">
           <div data-simplebar className="h-100">
             {type !== 'condensed' ? (
-              <SimpleBar style={{ maxHeight: '100%' }}>
+              <SimpleBar className="sidebar-height">
                 <SidebarContent />
               </SimpleBar>
             ) : (

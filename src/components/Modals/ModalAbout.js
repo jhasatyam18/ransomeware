@@ -49,7 +49,7 @@ class ModalAbout extends Component {
                   {`${task.label}`}
                 </Col>
                 <Col sm={8}>
-                  <p style={{ color: 'white' }}>{task.value}</p>
+                  <p>{task.value}</p>
                 </Col>
               </Row>
             ))}

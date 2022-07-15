@@ -32,7 +32,7 @@ function GettingStarted(props) {
       <div className="getting_started__item">
         <div className={`step__icon ${isActive ? 'step__active' : 'step__disabled'}`}>
           <Link to={path} title={t(`${stepName}.tooltip`)}>
-            <i className={icon} style={{ color: 'white' }} />
+            <i className={`${icon} text-white`} />
           </Link>
         </div>
         <div className="step__name">{t(stepName)}</div>

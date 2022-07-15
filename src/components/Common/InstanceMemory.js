@@ -23,7 +23,7 @@ function Memory(props) {
                   <Col sm={8}>
                     <Row>
                       <Col sm={4}>
-                        <p style={{ minWidth: '5px', paddingTop: '7px' }}>
+                        <p className="instance_memory_p">
                           {t('title.unit')}
                         </p>
                       </Col>

@@ -39,7 +39,7 @@ function VMNetworkInfoItemRenderer(props) {
       ];
       return (
         <div key={`nic-${index + 1}`}>
-          <div style={{ textDecoration: 'underline' }}>
+          <div className="vmnetwork_info">
             {`Nic-${index}`}
           </div>
           {
@@ -60,7 +60,7 @@ function VMNetworkInfoItemRenderer(props) {
 
   return (
     <div>
-      <a id={key} href="#" style={{ fontSize: '16px' }} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)}>
+      <a id={key} href="#" className="icon_font" onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)}>
         {networks.length}
         {renderPopOver()}
       </a>
