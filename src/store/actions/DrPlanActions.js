@@ -435,13 +435,9 @@ export function openTestRecoveryWizard(cleanUpTestRecoveries) {
       return Promise.all(apis).then(
         () => {
           if (platformDetails.platformType === PLATFORM_TYPES.VMware) {
-            if (typeof cleanUpTestRecoveries !== 'undefined' && cleanUpTestRecoveries === true) {
-              dispatch(openWizard(CLEANUP_TEST_RECOVERY_WIZARDS.options, CLEANUP_TEST_RECOVERY_WIZARDS.steps));
-            } else {
-              const { options, steps } = RECOVERY_WIZARDS;
-              options.title = 'Test Recovery';
-              dispatch(openWizard(options, steps));
-            }
+            const { options, steps } = RECOVERY_WIZARDS;
+            options.title = 'Test Recovery';
+            dispatch(openWizard(options, steps));
           } else {
             const url = (platformDetails.platformType === PLATFORM_TYPES.AWS ? API_AWS_INSTANCES : API_GCP_INSTANCES);
             dispatch(fetchNetworks(recoverySite.id, undefined, availZone));
@@ -887,7 +883,7 @@ function setVMWAREVMDetails(selectedVMS, protectionPlan, dispatch) {
         dispatch(valueChange(`${key}-vmConfig.general-memory`, ins.memoryMB));
         dispatch(valueChange(`${key}-vmConfig.general-unit`, 'MB'));
         dispatch(valueChange(`${key}-vmConfig.general.folderPath`, [ins.folderPath]));
-        dispatch(valueChange('ui.memory.min', 0));
+        dispatch(valueChange('ui.memory.max', 1));
         fetchByDelay(dispatch, setVMwareTargetData, 2000, [`${key}-vmConfig.general`, ins.datacenterMoref, ins.hostMoref]);
         if (ins.securityGroups && ins.securityGroups.length > 0) {
           dispatch(valueChange(`${key}-vmConfig.network.securityGroup`, ''));
@@ -1039,7 +1035,6 @@ export function initReconfigureProtectedVM(protectionPlanID, vmMoref = null, eve
       }
       // get protectection Plan details
       if (vmMoref === null) {
-        // s pPlan = await fetchProtection(pid);
         const { protectedSite } = pPlan;
         if (protectedSite.platformDetails.platformType === PLATFORM_TYPES.AWS) {
           moref = getVMInstanceFromEvent(event);
