@@ -435,9 +435,13 @@ export function openTestRecoveryWizard(cleanUpTestRecoveries) {
       return Promise.all(apis).then(
         () => {
           if (platformDetails.platformType === PLATFORM_TYPES.VMware) {
-            const { options, steps } = RECOVERY_WIZARDS;
-            options.title = 'Test Recovery';
-            dispatch(openWizard(options, steps));
+            if (typeof cleanUpTestRecoveries !== 'undefined' && cleanUpTestRecoveries === true) {
+              dispatch(openWizard(CLEANUP_TEST_RECOVERY_WIZARDS.options, CLEANUP_TEST_RECOVERY_WIZARDS.steps));
+            } else {
+              const { options, steps } = RECOVERY_WIZARDS;
+              options.title = 'Test Recovery';
+              dispatch(openWizard(options, steps));
+            }
           } else {
             const url = (platformDetails.platformType === PLATFORM_TYPES.AWS ? API_AWS_INSTANCES : API_GCP_INSTANCES);
             dispatch(fetchNetworks(recoverySite.id, undefined, availZone));
@@ -883,6 +887,7 @@ function setVMWAREVMDetails(selectedVMS, protectionPlan, dispatch) {
         dispatch(valueChange(`${key}-vmConfig.general-memory`, ins.memoryMB));
         dispatch(valueChange(`${key}-vmConfig.general-unit`, 'MB'));
         dispatch(valueChange(`${key}-vmConfig.general.folderPath`, [ins.folderPath]));
+        dispatch(valueChange('ui.memory.min', 0));
         fetchByDelay(dispatch, setVMwareTargetData, 2000, [`${key}-vmConfig.general`, ins.datacenterMoref, ins.hostMoref]);
         if (ins.securityGroups && ins.securityGroups.length > 0) {
           dispatch(valueChange(`${key}-vmConfig.network.securityGroup`, ''));
@@ -967,10 +972,12 @@ export function initReconfigureProtectedVM(protectionPlanID, vmMoref = null, eve
     // get protection plan details
     function fetchProtection(id) {
       return callAPI(API_FETCH_DR_PLAN_BY_ID.replace('<id>', id)).then((json) => {
+        dispatch(hideApplicationLoader('RECONFIGURE_VM'));
         dispatch(drPlanDetailsFetched(json));
         return json;
       },
       (err) => {
+        dispatch(hideApplicationLoader('RECONFIGURE_VM'));
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
         return false;
       });
@@ -1018,7 +1025,7 @@ export function initReconfigureProtectedVM(protectionPlanID, vmMoref = null, eve
     // if event is passed then extract the protectionPlan ID
     let pid = protectionPlanID;
     let moref = vmMoref;
-    let pPlan = '';
+    const pPlan = await fetchProtection(pid);
     if (event !== null) {
       const parts = event.impactedObjectURNs.split(',');
       const urn = parts[0].split(':');
@@ -1032,7 +1039,7 @@ export function initReconfigureProtectedVM(protectionPlanID, vmMoref = null, eve
       }
       // get protectection Plan details
       if (vmMoref === null) {
-        pPlan = await fetchProtection(pid);
+        // s pPlan = await fetchProtection(pid);
         const { protectedSite } = pPlan;
         if (protectedSite.platformDetails.platformType === PLATFORM_TYPES.AWS) {
           moref = getVMInstanceFromEvent(event);
@@ -1069,7 +1076,7 @@ export function openVMReconfigWizard(vmMoref, pPlan, selectedVMS, alerts) {
     dispatch(valueChange('ui.vm.reconfigure.vm.moref', vmMoref));
     dispatch(valueChange('ui.site.seletedVMs', selectedVMS));
     let { steps } = PROTECTED_VM_RECONFIGURATION_WIZARD;
-    if (typeof alerts === 'undefined' || alerts.length === 0) {
+    if (typeof alerts === 'undefined' || alerts === null || alerts.length === 0) {
       steps = [steps[1]];
     } else {
       dispatch(valueChange('ui.vm.isVMAlertAction', true));

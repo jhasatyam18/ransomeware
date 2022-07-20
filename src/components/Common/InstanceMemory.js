@@ -30,10 +30,8 @@ function Memory(props) {
                       <Col sm={8}>
                         <DMFieldSelect hideLabel dispatch={dispatch} fieldKey={`${fieldKey}-unit`} user={user} field={unitField} />
                       </Col>
-
                     </Row>
                   </Col>
-
                 </Row>
               </Col>
             </Row>
