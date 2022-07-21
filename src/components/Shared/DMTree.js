@@ -17,10 +17,10 @@ function DMTree(props) {
   const [searchData, setSearchData] = useState([]);
   const [searchStr, setSearchStr] = useState('');
   const [apiData, setApiData] = useState([]);
-  const { data, user, dispatch, field, disabled, fieldKey, hideLabel, border, search, searchURL, showSelectedvmdata } = props;
+  const { data, user, dispatch, field, disabled, fieldKey, hideLabel, border, search, searchURL, showSelectedvmdata, selectedVMkey } = props;
   const { getTreeData, dataKey } = field;
   const { values } = user;
-  const showSelectedData = getValue('ui.selectedvm.value', values);
+  const showSelectedData = getValue(selectedVMkey, values);
   let treeData = data;
   function renderLabel() {
     const { label } = field;
@@ -118,7 +118,7 @@ function DMTree(props) {
 
   function removeFromSelectedList(node) {
     const fieldVal = getValue(fieldKey, values);
-    const getSelectedVmsValue = getValue('ui.selectedvm.value', values);
+    const getSelectedVmsValue = getValue(selectedVMkey, values);
     const arr = fieldVal.filter((d) => {
       if (d !== node.key) {
         return d;
@@ -130,7 +130,7 @@ function DMTree(props) {
       }
     });
     dispatch(valueChange(fieldKey, arr));
-    dispatch(valueChange('ui.selectedvm.value', arr1));
+    dispatch(valueChange(selectedVMkey, arr1));
   }
   function renderSelectedVMNode() {
     if (showSelectedData.length > 0 && showSelectedvmdata) {
@@ -181,14 +181,14 @@ function DMTree(props) {
           <Row>
             <Col sm={12}>
               {searchData.map((node) => (
-                <TreeNode node={node} key={`dm-tree-parent-${node.key}`} dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} showChildren />
+                <TreeNode selectedVMkey={selectedVMkey} node={node} key={`dm-tree-parent-${node.key}`} dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} showChildren />
               ))}
             </Col>
           </Row>
           <Row>
             <Col sm={12}>
               {treeData.map((node) => (
-                <TreeNode node={node} key={`dm-tree-parent-${node.key}`} dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} />
+                <TreeNode selectedVMkey={selectedVMkey} node={node} key={`dm-tree-parent-${node.key}`} dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} />
               ))}
             </Col>
           </Row>

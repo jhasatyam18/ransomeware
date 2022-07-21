@@ -53,7 +53,7 @@ class DRPlanProtectVMStep extends Component {
       return (
         <Container fluid className="padding-top-20">
           <Label>{t('Select Virtual Machine for protection')}</Label>
-          <DMTree dispatch={dispatch} search searchURL={`api/v1/sites/${id}/vms`} user={user} selectedData={selectedVMs} showSelectedvmdata fieldKey="ui.site.vmware.selectedvms" field={field} />
+          <DMTree dispatch={dispatch} search searchURL={`api/v1/sites/${id}/vms`} user={user} selectedData={selectedVMs} showSelectedvmdata fieldKey="ui.site.vmware.selectedvms" field={field} selectedVMkey="ui.selectedvm.value" />
         </Container>
       );
     }
