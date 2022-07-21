@@ -360,10 +360,10 @@
   "info.protectionplan.instance.network.tags": "Network tags enables to make firewall rules and routes applicable to instance.",
   "required.acknowledge.message":"Required acknowledge message",
   "info.test.recovery.cleanup" : "All test recovered copies for following virtual machines will be deleted.",
-  "info.auto.migration" : "Enable auto migrate. Auto migrate workflow will perform following operations on the selected workloads. 1. Power Off 2. Initiate replications till change data not reach to zero. 3. Migration will start.",
+  "info.auto.migration" : "Auto migrate workflow will perform following operations on the selected workloads. 1. Power Off 2. Initiate one replication cycle to ensure there is no change data. 3. Initiate Migration.",
   "info.auto.migration.note" : "Auto migrate workflow will perform following operations on the selected workloads.",
   "info.auto.migration.step-1" : "1. Power Off all below workloads",
-  "info.auto.migration.step-2" : "2. Initiate replications till change data not reach to zero",
-  "info.auto.migration.step-3" : "3. Migration will start.",
+  "info.auto.migration.step-2" : "2. Initiate one replication cycle to ensure there is no change data.",
+  "info.auto.migration.step-3" : "3. Initiate Migration.",
   "loading":"Loading..."
 }
