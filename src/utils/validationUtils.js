@@ -60,7 +60,7 @@ export function isEmpty({ value }) {
   return (typeof value === 'undefined' || typeof value === 'string' && value.trim() === '' || value === null);
 }
 
-export function isMemoryEmpty({ user, fieldKey }) {
+export function isMemoryValueValid({ user, fieldKey }) {
   const { values } = user;
   const memVal = getValue(`${fieldKey}-memory`, values);
   const units = getValue(`${fieldKey}-unit`, values);

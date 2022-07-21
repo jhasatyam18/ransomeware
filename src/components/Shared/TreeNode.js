@@ -41,7 +41,7 @@ function TreeNode(props) {
     if (e.target.checked) {
       if (isMultiSelect) {
         const fieldVal = getValue(fieldKey, values);
-        const getSelectedVmsValue = getValue(selectedVMkey, values);
+        const getSelectedVmsValue = getValue(selectedVMkey, values) || [];
         const set = new Set([node.value, ...fieldVal]);
         const array = Array.from(set);
         if (fieldVal.length > 0) {
@@ -51,12 +51,12 @@ function TreeNode(props) {
         }
         if (typeof selectedVMkey !== 'undefined') {
           if (getSelectedVmsValue.length > 0) {
-            const arr1 = getSelectedVmsValue.filter((d) => {
+            const selecteVmChedcked = getSelectedVmsValue.filter((d) => {
               if (d.key !== node.key) {
                 return d;
               }
             });
-            dispatch(valueChange(selectedVMkey, [obj, ...arr1]));
+            dispatch(valueChange(selectedVMkey, [obj, ...selecteVmChedcked]));
           } else {
             dispatch(valueChange(selectedVMkey, [obj]));
           }
