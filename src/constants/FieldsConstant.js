@@ -7,7 +7,7 @@ import { getAvailibilityZoneOptions, enableNodeTypeVM, getDefaultRecoverySite, g
 import { isEmpty, validateDrSiteSelection, validateReplicationInterval, validateReplicationValue } from '../utils/validationUtils';
 import { STATIC_KEYS } from './InputConstants';
 import { EMAIL_REGEX, FQDN_REGEX, HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX } from './ValidationConstants';
-import { onScriptChange, loadTreeChildData, getMemoryValue } from '../store/actions/UserActions';
+import { onScriptChange, loadTreeChildData, getMemoryValue, getValueFromUnit } from '../store/actions/UserActions';
 
 export const CONFIURE_SITE_GROUP = ['configureSite.platformDetails.type', 'configureSite.platformDetails.platformName'];
 export const REPLICATION_INTERVAL_COMP = 'REPLICATION_INTERVAL_COMP';
@@ -213,6 +213,6 @@ export const FIELDS = {
   'recovery.runPPlanScripts': { label: 'run.protection.plan.scripts', description: 'Run Protection Plan Scripts', type: FIELD_TYPE.CHECKBOX, shouldShow: true, fieldInfo: 'info.test.recovery.runPPlanScripts', defaultValue: false },
   'recovery.cleanupTestRecoveries': { label: 'cleanup.test.recoveries', description: 'Cleanup Test Recovery', type: FIELD_TYPE.CHECKBOX, shouldShow: true, fieldInfo: 'info.test.recovery.cleanupTestRecoveries', defaultValue: false },
   'drplan.vms': { label: '', description: '', type: FIELD_TYPE.TREE, isMultiSelect: true, errorMessage: 'Please select virtual machine for protection', shouldShow: true, validate: (value, user) => isEmpty(value, user), fieldInfo: 'info.protection.protectionVm', getTreeData: ({ dataKey, values, fieldKey }) => getVMwareVMSelectionData({ dataKey, values, fieldKey }), baseURL: 'api/v1/sites/<id>/resources', baseURLIDReplace: '<id>:ui.values.protectionSiteID', urlParms: ['type', 'entity'], urlParmKey: ['static:Folder,VirtualMachine', 'object:value'], dataKey: 'ui.site.vms.data', enableSelection: (node) => enableNodeTypeVM(node), loadChildDta: ({ dataKey, field, node }) => loadTreeChildData(dataKey, node, field) },
-  'drplan.memory.cpu': { label: 'CPU', errorMessage: '', shouldShow: true, validate: (value, user) => isEmpty(value, user), min: 1, max: 12, getMinMax: (user) => getMinMaxVal(user), disabled: (user, fieldKey) => diableVMwareMemory(user, fieldKey) },
+  'drplan.memory.cpu': { label: 'CPU', errorMessage: '', onChange: ({ user, dispatch, fieldKey }) => getValueFromUnit({ user, dispatch, fieldKey }), shouldShow: true, validate: (value, user) => isEmpty(value, user), min: 1, getMinMax: (user) => getMinMaxVal(user), disabled: (user, fieldKey) => diableVMwareMemory(user, fieldKey) },
   'drplan.memory.unit': { label: 'Unit', onChange: (user, dispatch) => getMemoryValue(user, dispatch), errorMessage: '', options: [{ label: 'MB', value: 'MB' }, { label: 'GB', value: 'GB' }, { label: 'TB', value: 'TB' }], shouldShow: true, validate: (value, user) => isEmpty(value, user), min: 1 },
 };

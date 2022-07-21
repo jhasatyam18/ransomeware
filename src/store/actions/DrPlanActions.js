@@ -883,7 +883,6 @@ function setVMWAREVMDetails(selectedVMS, protectionPlan, dispatch) {
         dispatch(valueChange(`${key}-vmConfig.general-memory`, ins.memoryMB));
         dispatch(valueChange(`${key}-vmConfig.general-unit`, 'MB'));
         dispatch(valueChange(`${key}-vmConfig.general.folderPath`, [ins.folderPath]));
-        dispatch(valueChange('ui.memory.max', 1));
         fetchByDelay(dispatch, setVMwareTargetData, 2000, [`${key}-vmConfig.general`, ins.datacenterMoref, ins.hostMoref]);
         if (ins.securityGroups && ins.securityGroups.length > 0) {
           dispatch(valueChange(`${key}-vmConfig.network.securityGroup`, ''));
@@ -968,12 +967,10 @@ export function initReconfigureProtectedVM(protectionPlanID, vmMoref = null, eve
     // get protection plan details
     function fetchProtection(id) {
       return callAPI(API_FETCH_DR_PLAN_BY_ID.replace('<id>', id)).then((json) => {
-        dispatch(hideApplicationLoader('RECONFIGURE_VM'));
         dispatch(drPlanDetailsFetched(json));
         return json;
       },
       (err) => {
-        dispatch(hideApplicationLoader('RECONFIGURE_VM'));
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
         return false;
       });

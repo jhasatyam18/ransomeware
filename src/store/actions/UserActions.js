@@ -810,9 +810,21 @@ export function getDefaultValueFromUnit({ fieldKey, user }) {
     dispatch(valueChange(fieldKey, val));
   };
 }
-
-export function onMemChange({ fieldKey, value }) {
+export function getValueFromUnit({ fieldKey, user }) {
   return (dispatch) => {
-    dispatch(valueChange(fieldKey, value));
+    const { values } = user;
+    const fieldkey = fieldKey.replace('-memory', '-unit');
+    const unit = getValue(fieldkey, values);
+    if (unit === '' || unit === 'GB') {
+      dispatch(valueChange('ui.memory.min', 1));
+      dispatch(valueChange('ui.memory.max', 4096));
+    }
+    if (unit === 'MB') {
+      dispatch(valueChange('ui.memory.min', 512));
+      dispatch(valueChange('ui.memory.max', 1024));
+    } if (unit === 'TB') {
+      dispatch(valueChange('ui.memory.min', 1));
+      dispatch(valueChange('ui.memory.max', 4));
+    }
   };
 }
