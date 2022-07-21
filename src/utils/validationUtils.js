@@ -777,3 +777,13 @@ export function checkChangesForArrayInObject(recoveryArr, payloadArr, recoveryPl
   }
   return clear;
 }
+
+export function validateMemoryValue({ value, user, fieldKey }) {
+  const { values } = user;
+  const unitKey = fieldKey.replace('-memory', '-unit');
+  const unitValue = getValue(unitKey, values);
+  if (value > 4 && unitValue === 'TB') {
+    return true;
+  }
+  return (typeof value === 'undefined' || typeof value === 'string' && value.trim() === '' || value === null);
+}

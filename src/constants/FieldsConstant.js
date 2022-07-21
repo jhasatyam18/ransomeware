@@ -4,7 +4,7 @@ import { onProtectSiteChange, onRecoverSiteChange, updateAvailabilityZones } fro
 
 import { onLimitChange, onTimeLimitChange } from '../store/actions/ThrottlingAction';
 import { getAvailibilityZoneOptions, enableNodeTypeVM, getDefaultRecoverySite, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getReportProtectionPlans, getSiteNodeOptions, getSitesOptions, getSubnetOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware, shouldShowNodeEncryptionKey, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort, getVMwareVMSelectionData, diableVMwareMemory, showInstallCloudPackageOption } from '../utils/InputUtils';
-import { isEmpty, validateDrSiteSelection, validateReplicationInterval, validateReplicationValue } from '../utils/validationUtils';
+import { isEmpty, validateDrSiteSelection, validateMemoryValue, validateReplicationInterval, validateReplicationValue } from '../utils/validationUtils';
 import { STATIC_KEYS } from './InputConstants';
 import { EMAIL_REGEX, FQDN_REGEX, HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX } from './ValidationConstants';
 import { onScriptChange, loadTreeChildData } from '../store/actions/UserActions';
@@ -213,6 +213,6 @@ export const FIELDS = {
   'recovery.runPPlanScripts': { label: 'run.protection.plan.scripts', description: 'Run Protection Plan Scripts', type: FIELD_TYPE.CHECKBOX, shouldShow: true, fieldInfo: 'info.test.recovery.runPPlanScripts', defaultValue: false },
   'recovery.cleanupTestRecoveries': { label: 'cleanup.test.recoveries', description: 'Cleanup Test Recovery', type: FIELD_TYPE.CHECKBOX, shouldShow: true, fieldInfo: 'info.test.recovery.cleanupTestRecoveries', defaultValue: false },
   'drplan.vms': { label: '', description: '', type: FIELD_TYPE.TREE, isMultiSelect: true, errorMessage: 'Please select virtual machine for protection', shouldShow: true, validate: (value, user) => isEmpty(value, user), fieldInfo: 'info.protection.protectionVm', getTreeData: ({ dataKey, values, fieldKey }) => getVMwareVMSelectionData({ dataKey, values, fieldKey }), baseURL: 'api/v1/sites/<id>/resources', baseURLIDReplace: '<id>:ui.values.protectionSiteID', urlParms: ['type', 'entity'], urlParmKey: ['static:Folder,VirtualMachine', 'object:value'], dataKey: 'ui.site.vms.data', enableSelection: (node) => enableNodeTypeVM(node), loadChildDta: ({ dataKey, field, node }) => loadTreeChildData(dataKey, node, field) },
-  'drplan.memory.value': { label: 'CPU', errorMessage: '', shouldShow: true, validate: ({ value, user, fieldKey }) => isEmpty({ value, user, fieldKey }), min: 1, max: 4000, disabled: (user, fieldKey) => diableVMwareMemory(user, fieldKey) },
+  'drplan.memory.value': { label: 'CPU', errorMessage: '', shouldShow: true, validate: ({ value, user, fieldKey }) => validateMemoryValue({ value, user, fieldKey }), min: 1, max: 4000, disabled: (user, fieldKey) => diableVMwareMemory(user, fieldKey) },
   'drplan.memory.unit': { label: 'Unit', errorMessage: '', options: [{ label: 'MB', value: 'MB' }, { label: 'GB', value: 'GB' }, { label: 'TB', value: 'TB' }], shouldShow: true, validate: (value, user) => isEmpty(value, user), min: 1 },
 };

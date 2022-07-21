@@ -7,7 +7,7 @@ import { valueChange, loadTreeChildData } from '../../store/actions/UserActions'
 import DMTree from './DMTree';
 
 function TreeNode(props) {
-  const { node, dispatch, user, fieldKey, field, disabled, showChildren, selectedVMkey } = props;// showSelectedvmdata
+  const { node, dispatch, user, fieldKey, field, disabled, showChildren, selectedVMkey } = props;
   const [showChild, setChildVisibility] = useState(showChildren || false);
   const { isMultiSelect, enableSelection, dataKey } = field;
   const { values } = user;
@@ -44,24 +44,28 @@ function TreeNode(props) {
         const getSelectedVmsValue = getValue(selectedVMkey, values);
         const set = new Set([node.value, ...fieldVal]);
         const array = Array.from(set);
-        if (getSelectedVmsValue.length > 0) {
-          if (fieldVal.length > 0) {
-            dispatch(valueChange(fieldKey, array));
-          } else {
-            dispatch(valueChange(fieldKey, [node.value]));
-          }
-          const arr1 = getSelectedVmsValue.filter((d) => {
-            if (d.key !== node.key) {
-              return d;
-            }
-          });
-          dispatch(valueChange(selectedVMkey, [obj, ...arr1]));
+        if (fieldVal.length > 0) {
+          dispatch(valueChange(fieldKey, array));
         } else {
-          dispatch(valueChange(selectedVMkey, [obj]));
+          dispatch(valueChange(fieldKey, [node.value]));
+        }
+        if (typeof selectedVMkey !== 'undefined') {
+          if (getSelectedVmsValue.length > 0) {
+            const arr1 = getSelectedVmsValue.filter((d) => {
+              if (d.key !== node.key) {
+                return d;
+              }
+            });
+            dispatch(valueChange(selectedVMkey, [obj, ...arr1]));
+          } else {
+            dispatch(valueChange(selectedVMkey, [obj]));
+          }
         }
       } else {
         dispatch(valueChange(fieldKey, [node.value]));
-        dispatch(valueChange(selectedVMkey, [obj]));
+        if (typeof selectedVMkey !== 'undefined') {
+          dispatch(valueChange(selectedVMkey, [obj]));
+        }
       }
     } else if (isMultiSelect && !e.target.checked) {
       const fieldVal = getValue(fieldKey, values);
@@ -77,10 +81,14 @@ function TreeNode(props) {
         }
       });
       dispatch(valueChange(fieldKey, arr));
-      dispatch(valueChange(selectedVMkey, arr1));
+      if (typeof selectedVMkey !== 'undefined') {
+        dispatch(valueChange(selectedVMkey, arr1));
+      }
     } else {
       dispatch(valueChange(fieldKey, ''));
-      dispatch(valueChange(selectedVMkey, ''));
+      if (typeof selectedVMkey !== 'undefined') {
+        dispatch(valueChange(selectedVMkey, ''));
+      }
     }
   };
 
