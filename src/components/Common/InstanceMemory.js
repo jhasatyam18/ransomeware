@@ -7,7 +7,7 @@ import { FIELDS } from '../../constants/FieldsConstant';
 
 function Memory(props) {
   const { dispatch, user, fieldKey, t } = props;
-  const numField = FIELDS['drplan.memory.cpu'];
+  const numField = FIELDS['drplan.memory.value'];
   const unitField = FIELDS['drplan.memory.unit'];
   return (
     <>
@@ -30,10 +30,12 @@ function Memory(props) {
                       <Col sm={8}>
                         <DMFieldSelect hideLabel dispatch={dispatch} fieldKey={`${fieldKey}-unit`} user={user} field={unitField} />
                       </Col>
+
                     </Row>
                   </Col>
                 </Row>
               </Col>
+
             </Row>
           </Col>
         </Row>

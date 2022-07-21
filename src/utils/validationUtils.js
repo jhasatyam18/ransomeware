@@ -67,6 +67,9 @@ export function isMemoryEmpty({ fieldKey, user }) {
   if (typeof memVal === 'undefined' || typeof units === 'undefined' || memVal === '' || units === '') {
     return true;
   }
+  if (memVal > 4 && units === 'TB') {
+    return true;
+  }
   return false;
 }
 
