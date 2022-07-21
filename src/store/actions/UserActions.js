@@ -793,15 +793,17 @@ export function getMemoryValue({ value, fieldKey }) {
     if (value === '' || value === 'GB' || fieldKey) {
       dispatch(valueChange('ui.memory.min', 1));
       dispatch(valueChange('ui.memory.max', 4096));
+      dispatch(valueChange(fieldkey, 1));
     }
     if (value === 'MB') {
       dispatch(valueChange('ui.memory.min', 512));
       dispatch(valueChange('ui.memory.max', 1024));
+      dispatch(valueChange(fieldkey, 512));
     } if (value === 'TB') {
       dispatch(valueChange('ui.memory.min', 1));
       dispatch(valueChange('ui.memory.max', 4));
+      dispatch(valueChange(fieldkey, 1));
     }
-    dispatch(valueChange(fieldkey, ''));
   };
 }
 
