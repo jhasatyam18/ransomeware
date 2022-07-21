@@ -790,7 +790,7 @@ export function getStorageForVMware({ fieldKey, hostMoref }) {
 export function getMemoryValue({ value, fieldKey }) {
   return (dispatch) => {
     const fieldkey = fieldKey.replace('-unit', '-memory');
-    if (value === '' || value === 'GB' || fieldKey) {
+    if (value === '' || value === 'GB') {
       dispatch(valueChange('ui.memory.min', 1));
       dispatch(valueChange('ui.memory.max', 4096));
     }
