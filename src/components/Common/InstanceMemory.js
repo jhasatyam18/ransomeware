@@ -33,9 +33,9 @@ function Memory(props) {
 
                     </Row>
                   </Col>
+
                 </Row>
               </Col>
-
             </Row>
           </Col>
         </Row>
