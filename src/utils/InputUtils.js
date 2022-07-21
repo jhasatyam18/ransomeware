@@ -431,7 +431,7 @@ export function getVMwareVMConfig(vm) {
           [`${key}-vmConfig.general.hostMoref`]: { label: 'Compute', fieldInfo: 'info.vmware.compute', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select compute resourced.', shouldShow: true, options: (u, fieldKey) => getComputeResourceOptions(u, fieldKey), onChange: (user, dispatch) => getStorageForVMware(user, dispatch) },
           [`${key}-vmConfig.general.dataStoreMoref`]: { label: 'Storage', fieldInfo: 'info.vmware.storage', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select storage', shouldShow: true, options: (u, fieldKey) => getDatastoreOptions(u, fieldKey) },
           [`${key}-vmConfig.general.numcpu`]: { label: 'CPU', description: '', type: FIELD_TYPE.NUMBER, errorMessage: 'Required Memory', shouldShow: true, validate: (value, user) => isEmpty(value, user), fieldInfo: 'info.vmware.cpu', min: 1, max: 12, defaultValue: 2 },
-          [`${key}-vmConfig.general`]: { label: 'Memory', description: '', validate: (value, user, fieldKey) => isMemoryEmpty(value, user, fieldKey), type: STACK_COMPONENT_MEMORY, errorMessage: 'Required Memory Units', shouldShow: true, fieldInfo: 'info.vmware.memory.unit', min: 1, max: 12 },
+          [`${key}-vmConfig.general`]: { label: 'Memory', description: '', validate: ({ user, fieldKey }) => isMemoryEmpty({ user, fieldKey }), type: STACK_COMPONENT_MEMORY, errorMessage: 'Required Memory Units', shouldShow: true, fieldInfo: 'info.vmware.memory.unit', min: 1, max: 12 },
         },
       },
       {
@@ -844,7 +844,7 @@ export function getVMwareLocationPath(data, fieldVal) {
 
 export const diableVMwareMemory = (user, fieldKey) => {
   const { values } = user;
-  const fieldKeyUnit = fieldKey.replace('memory', 'unit');
+  const fieldKeyUnit = `${fieldKey}-unit`;
   const memoryUnit = getValue(fieldKeyUnit, values);
   if (!memoryUnit && memoryUnit.length === 0) {
     return true;

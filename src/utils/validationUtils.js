@@ -60,7 +60,7 @@ export function isEmpty({ value }) {
   return (typeof value === 'undefined' || typeof value === 'string' && value.trim() === '' || value === null);
 }
 
-export function isMemoryEmpty({ fieldKey, user }) {
+export function isMemoryEmpty({ user, fieldKey }) {
   const { values } = user;
   const memVal = getValue(`${fieldKey}-memory`, values);
   const units = getValue(`${fieldKey}-unit`, values);
@@ -780,7 +780,7 @@ export function checkChangesForArrayInObject(recoveryArr, payloadArr, recoveryPl
 
 export function validateMemoryValue({ value, user, fieldKey }) {
   const { values } = user;
-  const unitKey = fieldKey.replace('-memory', '-unit');
+  const unitKey = `${fieldKey}-unit`;
   const unitValue = getValue(unitKey, values);
   if (value > 4 && unitValue === 'TB') {
     return true;

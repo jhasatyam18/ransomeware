@@ -1,14 +1,16 @@
 import React from 'react';
 import { Row, Col } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
+import { validateMemoryValue, isEmpty } from '../../utils/validationUtils';
+import { diableVMwareMemory } from '../../utils/InputUtils';
 import DMFieldSelect from '../Shared/DMFieldSelect';
 import DMFieldNumber from '../Shared/DMFieldNumber';
-import { FIELDS } from '../../constants/FieldsConstant';
 
 function Memory(props) {
   const { dispatch, user, fieldKey, t } = props;
-  const numField = FIELDS['drplan.memory.value'];
-  const unitField = FIELDS['drplan.memory.unit'];
+  const numField = { label: '', errorMessage: 'required', shouldShow: true, validate: ({ value }) => validateMemoryValue({ value, user, fieldKey }), min: 1, max: 4000, disabled: () => diableVMwareMemory(user, fieldKey) };
+  const unitField = { label: 'Unit', errorMessage: 'unit', options: [{ label: 'MB', value: 'MB' }, { label: 'GB', value: 'GB' }, { label: 'TB', value: 'TB' }], shouldShow: true, validate: (value) => isEmpty(value, user), min: 1 };
+
   return (
     <>
       <Col sm={12}>
