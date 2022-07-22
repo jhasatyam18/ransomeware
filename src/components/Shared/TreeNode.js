@@ -70,19 +70,19 @@ function TreeNode(props) {
     } else if (isMultiSelect && !e.target.checked) {
       const fieldVal = getValue(fieldKey, values);
       const getSelectedVmsValue = getValue(selectedVMkey, values);
-      const arr = fieldVal.filter((d) => {
+      const vmChecked = fieldVal.filter((d) => {
         if (d !== node.value) {
           return d;
         }
       });
-      const arr1 = getSelectedVmsValue.filter((d) => {
+      const selectedVMChecked = getSelectedVmsValue.filter((d) => {
         if (d.key !== node.key) {
           return d;
         }
       });
-      dispatch(valueChange(fieldKey, arr));
+      dispatch(valueChange(fieldKey, vmChecked));
       if (typeof selectedVMkey !== 'undefined') {
-        dispatch(valueChange(selectedVMkey, arr1));
+        dispatch(valueChange(selectedVMkey, selectedVMChecked));
       }
     } else {
       dispatch(valueChange(fieldKey, ''));
