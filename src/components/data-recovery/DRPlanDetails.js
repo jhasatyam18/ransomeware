@@ -238,7 +238,6 @@ class DRPlanDetails extends Component {
     const protectedSitePlatform = protectedSite.platformDetails.platformType;
     const isServerActionDisabled = (protectionPlan.recoveryStatus === RECOVERY_STATUS.RECOVERED || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED);
     const isReverseActionDisabled = this.disableReverse(protectionPlan);
-    const isCleanupTestRecoveryDisable = recoverySite.platformDetails.platformType === PLATFORM_TYPES.VMware;
     let actions = [];
     if (platformType === protectedSitePlatform && localVMIP !== recoverySite.node.hostname) {
       actions.push({ label: 'start', action: startPlan, id: protectionPlan.id, disabled: this.disableStart(protectionPlan) });
@@ -249,10 +248,12 @@ class DRPlanDetails extends Component {
       actions = [{ label: 'recover', action: openRecoveryWizard, icon: 'fa fa-plus', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.full']) },
         { label: 'Migrate', action: openMigrationWizard, icon: 'fa fa-clone', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.migration']) },
         { label: 'Reverse', action: openReverseWizard, icon: 'fa fa-backward', disabled: isReverseActionDisabled },
-        { label: 'Test Recovery', action: openTestRecoveryWizard, icon: 'fa fa-check', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.test']) },
-        { label: 'Cleanup Test Recoveries', action: openCleanupTestRecoveryWizard, icon: 'fa fa-broom', disabled: isCleanupTestRecoveryDisable || !hasRequestedPrivileges(user, ['recovery.test']) }];
+        { label: 'Test Recovery', action: openTestRecoveryWizard, icon: 'fa fa-check', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.test']) }];
     } else {
       // no action to add
+    }
+    if (recoverySite.platformDetails.platformType !== PLATFORM_TYPES.VMware) {
+      actions.push({ label: 'Cleanup Test Recoveries', action: openCleanupTestRecoveryWizard, icon: 'fa fa-broom', disabled: !hasRequestedPrivileges(user, ['recovery.test']) });
     }
     return (
       <DropdownActions title={t('actions')} dispatch={dispatch} actions={actions} />
