@@ -94,6 +94,7 @@ export const EXCLUDE_KEYS_RECOVERY_CONFIGURATION = {
   DELETE_INSTANCE: 'deleteInstance',
   IS_REQUIRED: 'isResetRequired',
   NETWORK_KEY: 'networkKey',
+  BOOT_PRIORITY: 'bootPriority',
 };
 
 export const EXCLUDE_KEYS_CONSTANTS = {
