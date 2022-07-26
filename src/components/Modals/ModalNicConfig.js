@@ -235,7 +235,7 @@ class ModalNicConfig extends Component {
                   {t('title.mac.address')}
                 </Col>
                 <Col sm={9}>
-                  <DMFieldText hideLabel dispatch={dispatch} fieldKey={`${networkKey}-macAddress-value`} field={MacAddressField} user={user} />
+                  <DMFieldText hideLabel dispatch={dispatch} fieldKey={`${networkKey}-macAddress`} field={MacAddressField} user={user} />
                 </Col>
               </Row>
             </Form>
