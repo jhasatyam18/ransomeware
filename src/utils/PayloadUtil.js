@@ -175,7 +175,7 @@ export function getVMNetworkConfig(key, values) {
     let network = getValue(`${networkKey}-eth-${index}-network`, values) || '';
     const networkId = network.value;
     const adapterType = `${getValue(`${networkKey}-eth-${index}-adapterType`, values)}`;
-    const macAddress = `${getValue(`${networkKey}-eth-${index}-macAddress-value`, values)}`;
+    const macAddress = `${getValue(`${networkKey}-eth-${index}-macAddress`, values)}`;
     const networkMoref = networkId;
     if (typeof isFromSource !== 'boolean') {
       isFromSource = false;

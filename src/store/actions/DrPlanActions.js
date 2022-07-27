@@ -373,6 +373,7 @@ export function openMigrationWizard() {
       dispatch(onProtectionPlanChange({ value: id }));
       // set is test recovery flag to false
       dispatch(valueChange('recovery.dryrun', false));
+      dispatch(valueChange('ui.workflow', UI_WORKFLOW.MIGRATION));
       dispatch(openWizard(MIGRATION_WIZARDS.options, MIGRATION_WIZARDS.steps));
     }, 1000);
   };
@@ -549,6 +550,7 @@ export function setProtectionPlanDataForUpdate(selectedPlan, isEventAction = fal
           }
           dispatch(onRecoverSiteChange({ value: selectedPlan.recoverySite.id, availZone }));
           dispatch(openWizard(wiz.options, UPDATE_PROTECTION_PLAN_WIZARDS.steps));
+          dispatch(valueChange('ui.workflow', UI_WORKFLOW.EDIT_PLAN));
           return new Promise((resolve) => resolve());
         },
         (err) => {
@@ -1078,6 +1080,7 @@ export function openVMReconfigWizard(vmMoref, pPlan, selectedVMS, alerts) {
       () => {
         dispatch(valueChange('ui.editplan.alert.id', (alert !== null ? alert.id : alert)));
         dispatch(valueChange('ui.selected.protection.planID', pPlan.id));
+        dispatch(valueChange('ui.selected.protection.plan', pPlan));
         dispatch(valueChange('drplan.recoverySite', pPlan.recoverySite.id));
         dispatch(valueChange('ui.values.recoveryPlatform', pPlan.recoverySite.platformDetails.platformType));
         dispatch(setProtectionPlanVMConfig(selectedVMS, pPlan));
