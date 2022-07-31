@@ -17,7 +17,7 @@ function ProtectionPlanVMConfig(props) {
     const { platformType } = user;
     let cols = TABLE_PROTECTION_PLAN_VMS;
     if (protectedSite.platformDetails.platformType !== platformType) {
-      cols = TABLE_PROTECTION_PLAN_VMS.slice(0, TABLE_PROTECTION_PLAN_VMS.length - 2);
+      cols = TABLE_PROTECTION_PLAN_VMS.slice(0, TABLE_PROTECTION_PLAN_VMS.length - 1);
     }
     return (
       <Col sm="12">
