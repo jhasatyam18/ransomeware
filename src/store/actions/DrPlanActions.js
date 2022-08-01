@@ -4,7 +4,7 @@ import { fetchByDelay } from '../../utils/SlowFetch';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import * as Types from '../../constants/actionTypes';
 import {
-  API_FETCH_DR_PLANS, API_START_DR_PLAN, API_STOP_DR_PLAN, API_DELETE_DR_PLAN, API_FETCH_DR_PLAN_BY_ID, API_FETCH_REVERSE_DR_PLAN_BY_ID, API_RECOVER, API_MIGRATE, API_REVERSE, API_PROTECTION_PLAN_VMS, API_PROTECTION_PLAN_UPDATE, API_PROTECTION_PLAN_PROTECTED_VMS, API_VM_ALERTS, API_EDIT_PROTECTED_VM, API_AWS_INSTANCES, API_GCP_INSTANCES, API_FETCH_VMWARE_INVENTORY, API_TEST_RECOVERY_CLEANUP,
+  API_FETCH_DR_PLANS, API_START_DR_PLAN, API_STOP_DR_PLAN, API_DELETE_DR_PLAN, API_FETCH_DR_PLAN_BY_ID, API_FETCH_REVERSE_DR_PLAN_BY_ID, API_RECOVER, API_MIGRATE, API_REVERSE, API_PROTECTION_PLAN_VMS, API_PROTECTION_PLAN_UPDATE, API_PROTECTION_PLAN_PROTECTED_VMS, API_VM_ALERTS, API_EDIT_PROTECTED_VM, API_AWS_INSTANCES, API_GCP_INSTANCES, API_FETCH_VMWARE_INVENTORY, API_TEST_RECOVERY_CLEANUP, API_AUTO_MIGRATE_WORKFLOW,
 } from '../../constants/ApiConstants';
 import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
@@ -309,11 +309,13 @@ export function startRecovery() {
 export function startMigration() {
   return (dispatch, getState) => {
     const { user } = getState();
-    const values = user;
-    const payload = getRecoveryPayload(values, true);
+    const { values } = user;
+    const isAutoMigration = getValue('ui.automate.migration', values);
+    const payload = getRecoveryPayload(user, true);
     const obj = createPayload(API_TYPES.POST, { ...payload.recovery });
     dispatch(showApplicationLoader('RECOVERY-API-EXECUTION', 'Initiating Migration'));
-    return callAPI(API_MIGRATE, obj).then((json) => {
+    const url = (isAutoMigration ? API_AUTO_MIGRATE_WORKFLOW : API_MIGRATE);
+    return callAPI(url, obj).then((json) => {
       dispatch(hideApplicationLoader('RECOVERY-API-EXECUTION'));
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Card, CardBody, CardTitle, Col, Row } from 'reactstrap';
+import { withTranslation } from 'react-i18next';
 import DMTable from '../Table/DMTable';
 import { TABLE_PROTECT_VM_VMWARE } from '../../constants/TableConstants';
 import { getValue } from '../../utils/InputUtils';
@@ -17,6 +18,21 @@ class RecoverySummary extends Component {
     return (dryRun ? 'TEST' : 'FULL');
   }
 
+  renderAutoMigrationWarning() {
+    const { t } = this.props;
+    return (
+      <p className="text-warning">
+        {t('info.auto.migration.note')}
+        <br />
+        {t('info.auto.migration.step-1')}
+        <br />
+        {t('info.auto.migration.step-2')}
+        <br />
+        {t('info.auto.migration.step-3')}
+      </p>
+    );
+  }
+
   render() {
     const { dispatch, user } = this.props;
     const { values } = user;
@@ -27,6 +43,7 @@ class RecoverySummary extends Component {
     const { name } = selectedDrPlan;
     const type = getValue('ui.isMigration.workflow', values);
     const summaryTitle = type ? 'Migration Summary' : 'Recovery Summary';
+    const isAutoMigrate = getValue('ui.automate.migration', values);
     let size = 0;
     Object.keys(selectedVMs).forEach((key) => {
       data.push(selectedVMs[key]);
@@ -63,6 +80,7 @@ class RecoverySummary extends Component {
               </Col>
             </Row>
           </CardBody>
+          { isAutoMigrate ? this.renderAutoMigrationWarning() : null }
           <DMTable
             dispatch={dispatch}
             columns={TABLE_PROTECT_VM_VMWARE}
@@ -74,4 +92,4 @@ class RecoverySummary extends Component {
   }
 }
 
-export default RecoverySummary;
+export default (withTranslation()(RecoverySummary));
