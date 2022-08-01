@@ -67,7 +67,7 @@ class ProfileMenu extends Component {
             id="page-header-user-dropdown"
             tag="button"
           >
-            <span className="d-none d-xl-inline-block ml-2 mr-1" style={{ textTransform: 'capitalize' }}>
+            <span className="d-none d-xl-inline-block ml-2 mr-1 text-capitalize">
               {name}
             </span>
             <i className="bx bx-chevron-down" />
@@ -80,7 +80,7 @@ class ProfileMenu extends Component {
             </DropdownItem>
             <div className="dropdown-divider" />
             <DropdownItem>
-              <a href={`${window.location.origin}/docs/index.html`} rel="noreferrer" target="_blank" style={{ color: '#BFC8E2' }}>
+              <a href={`${window.location.origin}/docs/index.html`} rel="noreferrer" target="_blank" className="drop-down-menu-color">
                 <i className="fa fa-book font-size-16 align-middle mr-1" />
                 &nbsp;&nbsp;
                 {t('Documentation')}

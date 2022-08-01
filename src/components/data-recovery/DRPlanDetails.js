@@ -248,10 +248,12 @@ class DRPlanDetails extends Component {
       actions = [{ label: 'recover', action: openRecoveryWizard, icon: 'fa fa-plus', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.full']) },
         { label: 'Migrate', action: openMigrationWizard, icon: 'fa fa-clone', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.migration']) },
         { label: 'Reverse', action: openReverseWizard, icon: 'fa fa-backward', disabled: isReverseActionDisabled },
-        { label: 'Test Recovery', action: openTestRecoveryWizard, icon: 'fa fa-check', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.test']) },
-        { label: 'Cleanup Test Recoveries', action: openCleanupTestRecoveryWizard, icon: 'fa fa-broom', disabled: !hasRequestedPrivileges(user, ['recovery.test']) }];
+        { label: 'Test Recovery', action: openTestRecoveryWizard, icon: 'fa fa-check', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.test']) }];
     } else {
       // no action to add
+    }
+    if (recoverySite.platformDetails.platformType !== PLATFORM_TYPES.VMware) {
+      actions.push({ label: 'Cleanup Test Recoveries', action: openCleanupTestRecoveryWizard, icon: 'fa fa-broom', disabled: !hasRequestedPrivileges(user, ['recovery.test']) });
     }
     return (
       <DropdownActions title={t('actions')} dispatch={dispatch} actions={actions} />
@@ -267,7 +269,7 @@ class DRPlanDetails extends Component {
     if (localVMIP === recoverySite.node.hostname) {
       return (
         <NavItem>
-          <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '4' })} onClick={() => { this.toggleTab('4'); }}>
+          <NavLink className={`${classnames({ active: activeTab === '4' })} cursor-pointer`} onClick={() => { this.toggleTab('4'); }}>
             <span className="d-none d-sm-block">{t('recovery.jobs')}</span>
           </NavLink>
         </NavItem>
@@ -326,17 +328,17 @@ class DRPlanDetails extends Component {
             <CardBody>
               <Nav tabs className="nav-tabs-custom nav-justified">
                 <NavItem>
-                  <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '1' })} onClick={() => { this.toggleTab('1'); }}>
+                  <NavLink className={`${classnames({ active: activeTab === '1' })} cursor-pointer`} onClick={() => { this.toggleTab('1'); }}>
                     <span className="d-none d-sm-block">{t('Virtual Machines')}</span>
                   </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '2' })} onClick={() => { this.toggleTab('2'); }}>
+                  <NavLink className={`${classnames({ active: activeTab === '2' })} cursor-pointer`} onClick={() => { this.toggleTab('2'); }}>
                     <span className="d-none d-sm-block">{t('Configuration')}</span>
                   </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '3' })} onClick={() => { this.toggleTab('3'); }}>
+                  <NavLink className={`${classnames({ active: activeTab === '3' })} cursor-pointer`} onClick={() => { this.toggleTab('3'); }}>
                     <span className="d-none d-sm-block">{t('replication.jobs')}</span>
                   </NavLink>
                 </NavItem>

@@ -51,7 +51,7 @@ class ModalConfigureSite extends Component {
     return (
       <>
         <div className="modal-body noPadding">
-          <SimpleBar style={{ maxHeight: '400px' }}>
+          <SimpleBar className="max-h-400">
             <ConfigureSite {...this.props} />
           </SimpleBar>
 

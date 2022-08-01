@@ -14,35 +14,29 @@ import { getValue } from '../../utils/InputUtils';
 class DMFieldRange extends Component {
   constructor() {
     super();
-    this.state = { value: 0, isFocused: false };
+    this.state = { isFocused: false };
   }
 
   componentDidMount() {
-    const { user, fieldKey, field, dispatch } = this.props;
-    const { values } = user;
+    const { fieldKey, field, dispatch } = this.props;
     const { defaultValue } = field;
-    const value = getValue(fieldKey, values);
-    if (value && isNumber(value)) {
-      this.setState({ value });
-    } else {
-      dispatch(valueChange(fieldKey, defaultValue));
-      this.setState({ value: defaultValue });
+    if (defaultValue && isNumber(defaultValue)) {
       dispatch(valueChange(fieldKey, defaultValue));
     }
   }
 
   handleChange = (e) => {
-    const { field } = this.props;
+    const { field, dispatch, fieldKey } = this.props;
     const { min, max } = field;
     const targetValue = parseInt(`${e.target.value}`, 10);
     if (targetValue < min) {
-      this.setState({ value: min });
+      dispatch(valueChange(fieldKey, min));
     } else if (targetValue > max) {
-      this.setState({ value: max });
+      dispatch(valueChange(fieldKey, max));
     } else if (Number.isNaN(targetValue)) {
-      this.setState({ value: min });
+      dispatch(valueChange(fieldKey, min));
     } else {
-      this.setState({ value: targetValue });
+      dispatch(valueChange(fieldKey, targetValue));
     }
   }
 
@@ -55,25 +49,19 @@ class DMFieldRange extends Component {
   }
 
   getRangeValue() {
-    const { value } = this.state;
-    const { fieldKey, user } = this.props;
+    const { fieldKey, user, dispatch } = this.props;
     const { values } = user;
     const fieldValue = getValue(fieldKey, values);
-    if (fieldValue === '') {
-      return value;
-    }
-    if (fieldValue === undefined) {
-      return value;
-    }
-    if (value !== fieldValue) {
-      this.setState({ value: fieldValue });
+    if (fieldValue === '' || fieldValue === undefined) {
+      return dispatch(valueChange(fieldKey, 0));
     }
     return fieldValue;
   }
 
   onBlur = () => {
     const { fieldKey, dispatch, user, field } = this.props;
-    const { value } = this.state;
+    const { values } = user;
+    const value = getValue(fieldKey, values);
     this.setState({ isFocused: false });
     dispatch(valueChange(fieldKey, parseInt(value, 10)));
     validateField(field, fieldKey, value, dispatch, user);
@@ -111,7 +99,6 @@ class DMFieldRange extends Component {
   render() {
     const { field, fieldKey, user, hideLabel, disabled } = this.props;
     const { shouldShow, min, max } = field;
-    // const { value } = user;
     const { errors } = user;
     const hasErrors = !!(errors && errors[fieldKey] !== undefined);
     const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);

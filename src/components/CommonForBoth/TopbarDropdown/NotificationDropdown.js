@@ -120,7 +120,7 @@ class NotificationDropdown extends Component {
               </Row>
             </div>
 
-            <SimpleBar style={{ maxHeight: '230px', minHeight: '100px' }}>
+            <SimpleBar className="max-h-230 min-h-100">
               <Link to="notifications" className="text-reset notification-item" />
               {this.renderAlerts()}
             </SimpleBar>

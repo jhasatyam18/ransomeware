@@ -60,11 +60,14 @@ export function isEmpty({ value }) {
   return (typeof value === 'undefined' || typeof value === 'string' && value.trim() === '' || value === null);
 }
 
-export function isMemoryEmpty({ fieldKey, user }) {
+export function isMemoryValueValid({ user, fieldKey }) {
   const { values } = user;
   const memVal = getValue(`${fieldKey}-memory`, values);
   const units = getValue(`${fieldKey}-unit`, values);
   if (typeof memVal === 'undefined' || typeof units === 'undefined' || memVal === '' || units === '') {
+    return true;
+  }
+  if (memVal > 4 && units === 'TB') {
     return true;
   }
   return false;
@@ -745,8 +748,11 @@ export function changedVMRecoveryConfigurations(payload, user, dispatch) {
 
 export function checkChangesForArrayInObject(recoveryArr, payloadArr, recoveryPlatform, condition) {
   let clear = false;
+  if (payloadArr.length !== recoveryArr.length) {
+    return true;
+  }
   // all the fields which are empty and are in EXCLUDE_KEYS_RECOVERY_CONFIGURATION keys list all of them will be discarded from getting checked
-  for (let i = 0; i < recoveryArr.length; i += 1) {
+  for (let i = 0; i < payloadArr.length; i += 1) {
     const keys = Object.keys(recoveryArr[i]);
     const rvm = recoveryArr[i];
     const ins = payloadArr[i];
@@ -774,4 +780,14 @@ export function checkChangesForArrayInObject(recoveryArr, payloadArr, recoveryPl
     }
   }
   return clear;
+}
+
+export function validateMemoryValue({ value, user, fieldKey }) {
+  const { values } = user;
+  const unitKey = `${fieldKey}-unit`;
+  const unitValue = getValue(unitKey, values);
+  if (value > 4 && unitValue === 'TB') {
+    return true;
+  }
+  return (typeof value === 'undefined' || typeof value === 'string' && value.trim() === '' || value === null);
 }

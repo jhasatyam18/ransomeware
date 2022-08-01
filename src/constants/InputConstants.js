@@ -1,5 +1,10 @@
 export const UI_WORKFLOW = {
   TEST_RECOVERY: 'TEST_RECOVERY',
+  CREATE_PLAN: 'CREATE_PLAN',
+  EDIT_PLAN: 'EDIT_PLAN',
+  REVERSE_PLAN: 'REVERSE_PLAN',
+  MIGRATION: 'MIGRATION_WIZARD',
+  FULL_RECOVERY: 'FULL_RECOVERY',
 };
 
 export const PLATFORM_TYPES = {
@@ -93,10 +98,13 @@ export const SETTINGS_TABS = [
 export const EXCLUDE_KEYS_RECOVERY_CONFIGURATION = {
   DELETE_INSTANCE: 'deleteInstance',
   IS_REQUIRED: 'isResetRequired',
+  NETWORK_KEY: 'networkKey',
+  BOOT_PRIORITY: 'bootPriority',
 };
 
 export const EXCLUDE_KEYS_CONSTANTS = {
   AVAILABILITY_ZONES: 'availZone',
+  NUM_CPU: 'numCPU',
 };
 
 export const VMWARE_OBJECT = {

@@ -375,6 +375,7 @@ export function openMigrationWizard() {
       dispatch(onProtectionPlanChange({ value: id }));
       // set is test recovery flag to false
       dispatch(valueChange('recovery.dryrun', false));
+      dispatch(valueChange('ui.workflow', UI_WORKFLOW.MIGRATION));
       dispatch(openWizard(MIGRATION_WIZARDS.options, MIGRATION_WIZARDS.steps));
     }, 1000);
   };
@@ -551,6 +552,7 @@ export function setProtectionPlanDataForUpdate(selectedPlan, isEventAction = fal
           }
           dispatch(onRecoverSiteChange({ value: selectedPlan.recoverySite.id, availZone }));
           dispatch(openWizard(wiz.options, UPDATE_PROTECTION_PLAN_WIZARDS.steps));
+          dispatch(valueChange('ui.workflow', UI_WORKFLOW.EDIT_PLAN));
           return new Promise((resolve) => resolve());
         },
         (err) => {
@@ -567,7 +569,6 @@ export function onEditProtectionPlan() {
     const { user, sites } = getState();
     const { values } = user;
     const payload = getEditProtectionPlanPayload(user, sites.sites);
-    changedVMRecoveryConfigurations(payload, user, dispatch);
     const obj = createPayload(API_TYPES.PUT, { ...payload.drplan });
     const id = getValue('ui.selected.protection.planID', values);
     let url = API_PROTECTION_PLAN_UPDATE.replace('<id>', id);
@@ -587,6 +588,7 @@ export function onEditProtectionPlan() {
         dispatch(clearValues());
         fetchByDelay(dispatch, refresh, 2000);
       }
+      changedVMRecoveryConfigurations(payload, user, dispatch);
     },
     (err) => {
       dispatch(hideApplicationLoader('update-dr-plan'));
@@ -1020,7 +1022,7 @@ export function initReconfigureProtectedVM(protectionPlanID, vmMoref = null, eve
     // if event is passed then extract the protectionPlan ID
     let pid = protectionPlanID;
     let moref = vmMoref;
-    let pPlan = '';
+    const pPlan = await fetchProtection(pid);
     if (event !== null) {
       const parts = event.impactedObjectURNs.split(',');
       const urn = parts[0].split(':');
@@ -1034,7 +1036,6 @@ export function initReconfigureProtectedVM(protectionPlanID, vmMoref = null, eve
       }
       // get protectection Plan details
       if (vmMoref === null) {
-        pPlan = await fetchProtection(pid);
         const { protectedSite } = pPlan;
         if (protectedSite.platformDetails.platformType === PLATFORM_TYPES.AWS) {
           moref = getVMInstanceFromEvent(event);
@@ -1071,7 +1072,7 @@ export function openVMReconfigWizard(vmMoref, pPlan, selectedVMS, alerts) {
     dispatch(valueChange('ui.vm.reconfigure.vm.moref', vmMoref));
     dispatch(valueChange('ui.site.seletedVMs', selectedVMS));
     let { steps } = PROTECTED_VM_RECONFIGURATION_WIZARD;
-    if (typeof alerts === 'undefined' || alerts.length === 0) {
+    if (typeof alerts === 'undefined' || alerts === null || alerts.length === 0) {
       steps = [steps[1]];
     } else {
       dispatch(valueChange('ui.vm.isVMAlertAction', true));
@@ -1081,6 +1082,7 @@ export function openVMReconfigWizard(vmMoref, pPlan, selectedVMS, alerts) {
       () => {
         dispatch(valueChange('ui.editplan.alert.id', (alert !== null ? alert.id : alert)));
         dispatch(valueChange('ui.selected.protection.planID', pPlan.id));
+        dispatch(valueChange('ui.selected.protection.plan', pPlan));
         dispatch(valueChange('drplan.recoverySite', pPlan.recoverySite.id));
         dispatch(valueChange('ui.values.recoveryPlatform', pPlan.recoverySite.platformDetails.platformType));
         dispatch(setProtectionPlanVMConfig(selectedVMS, pPlan));

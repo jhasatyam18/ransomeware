@@ -16,7 +16,7 @@ class RecoveryConfig extends Component {
         <Card className="padding-20">
           <CardTitle>{t('Tools Installation')}</CardTitle>
           <CardBody>
-            <Form style={{ width: '100%' }}>
+            <Form className="form_w">
               <DMField dispatch={dispatch} user={user} fieldKey="recovery.installSystemAgent" />
               {recoveryPlatform !== PLATFORM_TYPES.VMware ? <DMField dispatch={dispatch} user={user} fieldKey="recovery.installCloudPkg" /> : null}
             </Form>

@@ -108,7 +108,7 @@ class AwsNetworkConfig extends Component {
   renderIPField() {
     return (
       <div>
-        <table style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+        <table className="render-ipfield-table">
           <tbody>
             {this.renderRows()}
           </tbody>

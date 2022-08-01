@@ -3,7 +3,7 @@ import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMO
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
 import { EXCLUDE_KEYS_CONSTANTS, EXCLUDE_KEYS_RECOVERY_CONFIGURATION, PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS } from '../constants/InputConstants';
 import { NODE_STATUS_ONLINE } from '../constants/AppStatus';
-import { isEmpty, isMemoryEmpty } from './validationUtils';
+import { isEmpty, isMemoryValueValid } from './validationUtils';
 import { getStorageForVMware, onScriptChange } from '../store/actions';
 import { onAwsStorageTypeChange } from '../store/actions/AwsActions';
 
@@ -430,8 +430,8 @@ export function getVMwareVMConfig(vm) {
           [`${key}-vmConfig.general.folderPath`]: { label: 'Location', description: '', type: STACK_COMPONENT_LOCATION, dataKey: 'ui.drplan.vms.location', isMultiSelect: false, errorMessage: 'Required virtual machine path', shouldShow: true, validate: (value, user) => isEmpty(value, user), fieldInfo: 'info.vmware.folder.location', getTreeData: ({ values, dataKey }) => getReacoveryLocationData({ values, dataKey }), baseURL: API_FETCH_VMWARE_LOCATION, baseURLIDReplace: '<id>:ui.values.recoverySiteID', urlParms: ['type', 'entity'], urlParmKey: ['static:Folder', 'object:value'], enableSelection: (node) => enableNodeDatastore(node) },
           [`${key}-vmConfig.general.hostMoref`]: { label: 'Compute', fieldInfo: 'info.vmware.compute', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select compute resourced.', shouldShow: true, options: (u, fieldKey) => getComputeResourceOptions(u, fieldKey), onChange: (user, dispatch) => getStorageForVMware(user, dispatch) },
           [`${key}-vmConfig.general.dataStoreMoref`]: { label: 'Storage', fieldInfo: 'info.vmware.storage', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select storage', shouldShow: true, options: (u, fieldKey) => getDatastoreOptions(u, fieldKey) },
-          [`${key}-vmConfig.general.numcpu`]: { label: 'CPU', description: '', type: FIELD_TYPE.NUMBER, errorMessage: 'Required Memory', shouldShow: true, validate: (value, user) => isEmpty(value, user), fieldInfo: 'info.vmware.cpu', min: 1, max: 12, defaultValue: 2 },
-          [`${key}-vmConfig.general`]: { label: 'Memory', description: '', validate: (value, user, fieldKey) => isMemoryEmpty(value, user, fieldKey), type: STACK_COMPONENT_MEMORY, errorMessage: 'Required Memory Units', shouldShow: true, fieldInfo: 'info.vmware.memory.unit', min: 1, max: 12 },
+          [`${key}-vmConfig.general.numcpu`]: { label: 'CPU', description: '', type: FIELD_TYPE.NUMBER, errorMessage: 'Required Memory', shouldShow: true, validate: (value, user) => isEmpty(value, user), fieldInfo: 'info.vmware.cpu', min: 1, max: 128, defaultValue: 2 },
+          [`${key}-vmConfig.general`]: { label: 'Memory', description: '', validate: ({ user, fieldKey }) => isMemoryValueValid({ user, fieldKey }), type: STACK_COMPONENT_MEMORY, errorMessage: 'Required Memory Units', shouldShow: true, fieldInfo: 'info.vmware.memory.unit', min: 1, max: 12 },
         },
       },
       {
@@ -717,6 +717,14 @@ export function excludeKeys(key, recoveryPlatform) {
   if (recoveryPlatform === PLATFORM_TYPES.GCP && key === EXCLUDE_KEYS_CONSTANTS.AVAILABILITY_ZONES) {
     return false;
   }
+  const excludeKey = Object.keys(EXCLUDE_KEYS_CONSTANTS);
+  if (PLATFORM_TYPES.AWS === recoveryPlatform || PLATFORM_TYPES.GCP === recoveryPlatform) {
+    for (let i = 1; i < excludeKey.length; i += 1) {
+      if (key === EXCLUDE_KEYS_CONSTANTS[excludeKey[i]]) {
+        return false;
+      }
+    }
+  }
   const keys = Object.keys(EXCLUDE_KEYS_RECOVERY_CONFIGURATION);
   for (let i = 0; i < keys.length; i += 1) {
     if (EXCLUDE_KEYS_RECOVERY_CONFIGURATION[keys[i]] === key) {
@@ -836,7 +844,7 @@ export function getVMwareLocationPath(data, fieldVal) {
 
 export const diableVMwareMemory = (user, fieldKey) => {
   const { values } = user;
-  const fieldKeyUnit = fieldKey.replace('memory', 'unit');
+  const fieldKeyUnit = `${fieldKey}-unit`;
   const memoryUnit = getValue(fieldKeyUnit, values);
   if (!memoryUnit && memoryUnit.length === 0) {
     return true;

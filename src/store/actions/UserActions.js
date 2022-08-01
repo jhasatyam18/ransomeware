@@ -786,33 +786,3 @@ export function getStorageForVMware({ fieldKey, hostMoref }) {
     );
   };
 }
-
-export function getMemoryValue({ value }) {
-  return (dispatch) => {
-    if (value === '' || value === 'GB') {
-      dispatch(valueChange('ui.memory.min', 1));
-      dispatch(valueChange('ui.memory.max', 4096));
-    }
-    if (value === 'MB') {
-      dispatch(valueChange('ui.memory.min', 512));
-      dispatch(valueChange('ui.memory.max', 1024));
-    } if (value === 'TB') {
-      dispatch(valueChange('ui.memory.min', 1));
-      dispatch(valueChange('ui.memory.max', 4));
-    }
-  };
-}
-
-export function getDefaultValueFromUnit({ fieldKey, user }) {
-  return (dispatch) => {
-    const { values } = user;
-    const val = getValue('ui.memory.min', values);
-    dispatch(valueChange(fieldKey, val));
-  };
-}
-
-export function onMemChange({ fieldKey, value }) {
-  return (dispatch) => {
-    dispatch(valueChange(fieldKey, value));
-  };
-}

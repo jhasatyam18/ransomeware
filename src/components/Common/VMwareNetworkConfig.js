@@ -75,7 +75,7 @@ function VMwareNetworkConfig(props) {
   function renderIPField() {
     return (
       <div>
-        <table style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+        <table className="render-ipfield-table">
           <tbody>
             {renderRows()}
           </tbody>

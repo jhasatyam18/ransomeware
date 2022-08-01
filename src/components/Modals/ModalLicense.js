@@ -132,7 +132,7 @@ class ModalLicense extends Component {
     if (state === 'success') {
       return (
         <div className="padding-left-20">
-          <Label className="text-center" style={{ width: '100%' }}>License Details</Label>
+          <Label className="text-center width-100">License Details</Label>
           <Row class="form-horizontal margin-left-20">
             <Col sm={3}>{t('Type')}</Col>
             <Col sm={3} className="text-muted">{Type}</Col>
@@ -185,7 +185,7 @@ class ModalLicense extends Component {
     return (
       <div className="details">
         <div className="progress">
-          <div className="progress-bar progress-bar-striped progress-bar-animated" style={{ width: '100%' }} />
+          <div className="progress-bar progress-bar-striped progress-bar-animated width-100" />
         </div>
       </div>
     );
@@ -208,7 +208,7 @@ class ModalLicense extends Component {
           <label htmlFor="fileUpload" className="label">
             <i className="fas fa-cloud-upload-alt fa-4x" />
           </label>
-          <Input type="file" id="fileUpload" name="fileUpload" style={{ visibility: 'none', display: 'none' }} onSelect={this.onFileChange} onChange={this.onFileChange} />
+          <Input type="file" id="fileUpload" name="fileUpload" className="modal-lic-upload" onSelect={this.onFileChange} onChange={this.onFileChange} />
         </div>
         <span>{msg}</span>
       </>
