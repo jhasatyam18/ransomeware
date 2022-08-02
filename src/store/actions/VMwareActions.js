@@ -1,10 +1,11 @@
 import { getValue } from '../../utils/InputUtils';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { API_FETCH_VMWARE_ADAPTER_TYPE } from '../../constants/ApiConstants';
+import { API_FETCH_SITES, API_FETCH_VMWARE_ADAPTER_TYPE } from '../../constants/ApiConstants';
 import { callAPI } from '../../utils/ApiUtils';
 import { addMessage } from './MessageActions';
 import { getComputeResources, getStorageForVMware, hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
 import { STATIC_KEYS } from '../../constants/InputConstants';
+
 // getStorageForVMware
 export function getVMwareAdapterType() {
   return (dispatch, getState) => {
@@ -252,4 +253,31 @@ export function getVMwareConfigDataForField(requestedField, entity, values) {
     }
   }
   return null;
+}
+
+export function getVMwareVCenterIP(user) {
+  return (dispatch) => {
+    const { values } = user;
+    let vcIP = getValue('vmware.vcIp', values);
+    if (vcIP === '' || typeof vcIP === 'undefined') {
+      return callAPI(API_FETCH_SITES)
+        .then((json) => {
+          dispatch(hideApplicationLoader('Fetching'));
+          if (json.hasError) {
+            dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+          } else {
+            json.map((site) => {
+              if (site.node.isLocalNode) {
+                vcIP = site.platformDetails.hostname;
+                dispatch(valueChange('vmware.vcIP', vcIP));
+              }
+            });
+          }
+        },
+        (err) => {
+          dispatch(hideApplicationLoader('Fetching'));
+          dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+        });
+    }
+  };
 }

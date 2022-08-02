@@ -10,9 +10,12 @@ function VMSizeItemRenderer(props) {
   const { virtualDisks = [] } = data;
   if (virtualDisks !== null) {
     virtualDisks.forEach((disk) => {
-      size = convertKBtoUnit(disk.size);
+      if (typeof disk.size === 'number') {
+        size += disk.size;
+      }
     });
   }
+  size = convertKBtoUnit(size);
   return (
     <div>
       {size}

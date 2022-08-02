@@ -2,6 +2,9 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { getValue } from '../../utils/InputUtils';
+import { PLATFORM_TYPES } from '../../constants/InputConstants';
+import { getVMwareVCenterIP } from '../../store/actions/VMwareActions';
 import NotificationDropdown from '../CommonForBoth/TopbarDropdown/NotificationDropdown';
 import ProfileMenu from '../CommonForBoth/TopbarDropdown/ProfileMenu';
 import dmlogoname from '../../assets/images/logo_name.png';
@@ -60,10 +63,15 @@ class Header extends Component {
   }
 
   renderAppType() {
-    const { user } = this.props;
+    const { user, dispatch } = this.props;
+    const { values } = user;
     const { platformType, zone } = user;
-    const type = `${platformType}`;
+    let type = `${platformType}`;
     const appZone = (typeof zone !== 'undefined' ? `${zone}` : '');
+    if (type === PLATFORM_TYPES.VMware) {
+      dispatch(getVMwareVCenterIP(user));
+      type += getValue('vmware.vcIp', values);
+    }
     return (
       <div className="dropdown d-none d-lg-inline-block ml-1">
         <button type="button" className="btn header-item noti-icon waves-effect">
