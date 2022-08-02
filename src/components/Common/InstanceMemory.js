@@ -8,8 +8,8 @@ import DMFieldNumber from '../Shared/DMFieldNumber';
 
 function Memory(props) {
   const { dispatch, user, fieldKey, t } = props;
-  const numField = { label: '', errorMessage: 'required', shouldShow: true, validate: ({ value }) => validateMemoryValue({ value, user, fieldKey }), min: 1, max: 4000, disabled: () => diableVMwareMemory(user, fieldKey) };
-  const unitField = { label: 'Unit', errorMessage: 'unit', options: [{ label: 'MB', value: 'MB' }, { label: 'GB', value: 'GB' }, { label: 'TB', value: 'TB' }], shouldShow: true, validate: (value) => isEmpty(value, user) };
+  const numField = { label: '', errorMessage: 'required', shouldShow: true, validate: ({ value }) => validateMemoryValue({ value, user, fieldKey }), min: 1, max: 4000, disabled: () => diableVMwareMemory(user, fieldKey), defaultValue: 1 };
+  const unitField = { label: 'Unit', errorMessage: 'unit', options: [{ label: 'MB', value: 'MB' }, { label: 'GB', value: 'GB' }, { label: 'TB', value: 'TB' }], shouldShow: true, validate: (value) => isEmpty(value, user), defaultValue: 'GB' };
 
   return (
     <>
