@@ -12,7 +12,7 @@ function TestRecoveryVMConfiguration(props) {
   const renderVMConfig = (vm, index) => {
     const { dispatch, user } = props;
     const config = createVMTestRecoveryConfig(vm, user, dispatch);
-    dispatch(addMessage('message', MESSAGE_TYPES.WARNING));
+    dispatch(addMessage('Test recoveries allow you to validate sanity of your DR copy. It includes entire data of source workload including operating system, configurations, services, registry entries, installed application configurations and data. It is recommended to test recover workloads in an isolated VPC or subnet to avoid conflicts or race conditions with other services such as Active Directory, DNS, and shared repositories', MESSAGE_TYPES.WARNING, true));
     return (
       <DMAccordion title={vm.name} config={config} dispatch={dispatch} user={user} key={`accordion-vm-config-${vm.name}`} openByDefault={index === 0 ? 'true' : false} />
     );
