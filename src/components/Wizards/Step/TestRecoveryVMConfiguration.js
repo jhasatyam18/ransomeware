@@ -4,7 +4,6 @@ import { withTranslation } from 'react-i18next';
 import { Card, CardBody } from 'reactstrap';
 import { MESSAGE_TYPES } from '../../../constants/MessageConstants';
 import { addMessage } from '../../../store/actions/MessageActions';
-import { STACK_COMPONENT_NOTE } from '../../../constants/StackConstants';
 import { getValue } from '../../../utils/InputUtils';
 import DMAccordion from '../../Shared/DMAccordion';
 import { createVMTestRecoveryConfig } from '../../../utils/RecoveryUtils';
@@ -13,15 +12,7 @@ function TestRecoveryVMConfiguration(props) {
   const renderVMConfig = (vm, index) => {
     const { dispatch, user } = props;
     const config = createVMTestRecoveryConfig(vm, user, dispatch);
-    const note = {
-      hasChildren: true,
-      title: 'Note',
-      children: {
-        '': { label: '', fieldInfo: 'info.protectionplan.instance.type', type: STACK_COMPONENT_NOTE },
-      },
-    };
     dispatch(addMessage('message', MESSAGE_TYPES.WARNING));
-    config.data.push(note);
     return (
       <DMAccordion title={vm.name} config={config} dispatch={dispatch} user={user} key={`accordion-vm-config-${vm.name}`} openByDefault={index === 0 ? 'true' : false} />
     );
