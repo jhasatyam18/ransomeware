@@ -3,6 +3,7 @@ import { connect, useSelector } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, Badge, Col, Row } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import { getStorageWithUnit } from '../../utils/AppUtils';
 import { API_DASHBOARD_NODE_STATS } from '../../constants/ApiConstants';
 import { addMessage } from '../../store/actions/MessageActions';
 import { callAPI } from '../../utils/ApiUtils';
@@ -111,7 +112,7 @@ function NodeInfo(props) {
                         {' '}
                       </td>
                       <td>{node.vms}</td>
-                      <td>{`${node.usage} GB`}</td>
+                      <td>{getStorageWithUnit(node.usage)}</td>
                       <td>
                         <Badge className={`font-size-12 badge-soft-${node.status === 'online' ? 'success' : 'danger'}`} color={node.status === 'online' ? 'success' : 'danger'} pill>
                           {node.status}
