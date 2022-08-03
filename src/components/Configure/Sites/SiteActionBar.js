@@ -63,7 +63,9 @@ class SiteActionBar extends Component {
         dispatch(valueChange(key, selectedSites[siteKey][parts[1]][parts[2]]));
       }
     });
-    dispatch(valueChange('configureSite.node', `${selectedSites[siteKey].node.id}`));
+    if (typeof selectedSites[siteKey].node.id !== 'undefined' && selectedSites[siteKey].node.id !== '') {
+      dispatch(valueChange('configureSite.node', `${selectedSites[siteKey].node.id}`));
+    }
     const options = { isEdit: true, id: selectedSites[siteKey].id, title: 'Reconfigure Site ' };
     dispatch(openModal(MODAL_CONFIGURE_NEW_SITE, options));
   }
