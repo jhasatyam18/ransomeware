@@ -72,8 +72,9 @@ class Header extends Component {
       const vcIP = getValue('vmware.vcIP', values);
       if (vcIP === '' || typeof vcIP === 'undefined') {
         dispatch(getVMwareVCenterIP());
+      } else {
+        type += ` vCenter IP - ${getValue('vmware.vcIP', values)}`;
       }
-      type += ` vCenter IP - ${getValue('vmware.vcIP', values)}`;
     }
     return (
       <div className="dropdown d-none d-lg-inline-block ml-1">
