@@ -69,8 +69,11 @@ class Header extends Component {
     let type = `${platformType}`;
     const appZone = (typeof zone !== 'undefined' ? `${zone}` : '');
     if (type === PLATFORM_TYPES.VMware) {
-      dispatch(getVMwareVCenterIP(user));
-      type += getValue('vmware.vcIp', values);
+      const vcIP = getValue('vmware.vcIP', values);
+      if (vcIP === '' || typeof vcIP === 'undefined') {
+        dispatch(getVMwareVCenterIP());
+      }
+      type += ` vCenter IP - ${getValue('vmware.vcIP', values)}`;
     }
     return (
       <div className="dropdown d-none d-lg-inline-block ml-1">

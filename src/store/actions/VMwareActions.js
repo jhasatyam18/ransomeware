@@ -255,29 +255,26 @@ export function getVMwareConfigDataForField(requestedField, entity, values) {
   return null;
 }
 
-export function getVMwareVCenterIP(user) {
+export function getVMwareVCenterIP() {
   return (dispatch) => {
-    const { values } = user;
-    let vcIP = getValue('vmware.vcIp', values);
-    if (vcIP === '' || typeof vcIP === 'undefined') {
-      return callAPI(API_FETCH_SITES)
-        .then((json) => {
-          dispatch(hideApplicationLoader('Fetching'));
-          if (json.hasError) {
-            dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
-          } else {
-            json.map((site) => {
-              if (site.node.isLocalNode) {
-                vcIP = site.platformDetails.hostname;
-                dispatch(valueChange('vmware.vcIP', vcIP));
-              }
-            });
-          }
-        },
-        (err) => {
-          dispatch(hideApplicationLoader('Fetching'));
-          dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-        });
-    }
+    dispatch(showApplicationLoader('Fetching', 'Loading sites'));
+    callAPI(API_FETCH_SITES)
+      .then((json) => {
+        dispatch(hideApplicationLoader('Fetching'));
+        if (json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          json.map((site) => {
+            if (site.node.isLocalNode) {
+              const vcIP = site.platformDetails.hostname;
+              dispatch(valueChange('vmware.vcIP', vcIP));
+            }
+          });
+        }
+      },
+      (err) => {
+        dispatch(hideApplicationLoader('Fetching'));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
   };
 }
