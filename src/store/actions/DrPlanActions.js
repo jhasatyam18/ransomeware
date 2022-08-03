@@ -1,3 +1,4 @@
+import { calculateChangedData } from '../../utils/AppUtils';
 import { changedVMRecoveryConfigurations } from '../../utils/validationUtils';
 import { MONITORING_DISK_CHANGES } from '../../constants/EventConstant';
 import { fetchByDelay } from '../../utils/SlowFetch';
@@ -884,8 +885,10 @@ function setVMWAREVMDetails(selectedVMS, protectionPlan, dispatch) {
         dispatch(valueChange(`${key}-vmConfig.general.hostMoref`, { value: ins.hostMoref, label: ins.hostMoref }));
         dispatch(valueChange(`${key}-vmConfig.general.dataStoreMoref`, { value: ins.datastoreMoref, label: ins.datastoreMoref }));
         dispatch(valueChange(`${key}-vmConfig.general.numcpu`, ins.numCPU));
-        dispatch(valueChange(`${key}-vmConfig.general-memory`, ins.memoryMB));
-        dispatch(valueChange(`${key}-vmConfig.general-unit`, 'MB'));
+        let memMb = calculateChangedData(ins.memoryMB);
+        memMb = memMb.split(' ');
+        dispatch(valueChange(`${key}-vmConfig.general-memory`, parseInt(memMb[0], 10)));
+        dispatch(valueChange(`${key}-vmConfig.general-unit`, memMb[1]));
         dispatch(valueChange(`${key}-vmConfig.general.folderPath`, [ins.folderPath]));
         fetchByDelay(dispatch, setVMwareTargetData, 2000, [`${key}-vmConfig.general`, ins.datacenterMoref, ins.hostMoref]);
         if (ins.securityGroups && ins.securityGroups.length > 0) {
