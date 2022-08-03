@@ -38,7 +38,7 @@ class DMAccordion extends Component {
     const { data } = config;
     return data.map((conf, index) => (
       <>
-        <DMStackView dispatch={dispatch} index={index} user={user} configuration={conf} title={conf.title} hasChildren={conf.hasChildren} key={`stack-view-${index * 1}`} openStack={stackIndex === index} onToggleStack={this.toggleStack} openByDefault={index === 0 ? 'true' : 'false'} />
+        <DMStackView dispatch={dispatch} info={conf.info} index={index} user={user} configuration={conf} title={conf.title} hasChildren={conf.hasChildren} key={`stack-view-${index * 1}`} openStack={stackIndex === index} onToggleStack={this.toggleStack} openByDefault={index === 0 ? 'true' : 'false'} />
       </>
     ));
   }

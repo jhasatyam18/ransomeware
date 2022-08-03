@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, Row } from 'reactstrap';
+import { withTranslation } from 'react-i18next';
 import { getStackComponent } from '../../utils/ComponentFactory';
 
 class DMStackView extends Component {
@@ -79,18 +80,26 @@ class DMStackView extends Component {
   }
 
   render() {
-    const { title, hasChildren } = this.props;
+    const { title, hasChildren, info, t } = this.props;
     return (
       <>
-        <Row className="stack__view margin-left-0 margin-right-0">
-          <Col sm={4} className="key">
-            {hasChildren ? this.renderParentHeader() : `${title}`}
-          </Col>
-          <Col sm={8} className="value">
-            {!hasChildren ? this.renderComponent() : null}
-          </Col>
-        </Row>
-        {hasChildren ? this.renderChildren() : null}
+        {!hasChildren && info ? (
+          <p>
+            {t(info)}
+          </p>
+        ) : (
+          <>
+            <Row className="stack__view margin-left-0 margin-right-0">
+              <Col sm={4} className="key">
+                {hasChildren ? this.renderParentHeader() : `${title}`}
+              </Col>
+              <Col sm={8} className="value">
+                {!hasChildren ? this.renderComponent() : null}
+              </Col>
+            </Row>
+            {hasChildren ? this.renderChildren() : null}
+          </>
+        )}
       </>
     );
   }
@@ -102,4 +111,4 @@ const propTypes = {
   configuration: PropTypes.any.isRequired,
 };
 DMStackView.propTypes = propTypes;
-export default DMStackView;
+export default (withTranslation()(DMStackView));
