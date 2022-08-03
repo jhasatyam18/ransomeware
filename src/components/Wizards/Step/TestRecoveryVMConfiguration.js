@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody } from 'reactstrap';
+import Note from '../../Common/Note';
 import { getValue } from '../../../utils/InputUtils';
 import DMAccordion from '../../Shared/DMAccordion';
 import { createVMTestRecoveryConfig } from '../../../utils/RecoveryUtils';
@@ -31,7 +32,7 @@ function TestRecoveryVMConfiguration(props) {
       title: 'Configurtion',
       info: 'test.recovery.note',
     }] };
-    return <DMAccordion title="Note" config={config} dispatch={dispatch} user={user} />;
+    return <Note title="Note" info="test.recovery.note" config={config} dispatch={dispatch} user={user} />;
   };
   return (
     <Card>
