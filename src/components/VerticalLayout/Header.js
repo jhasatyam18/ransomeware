@@ -2,9 +2,11 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { getValue } from '../../utils/InputUtils';
+import { addMessage } from '../../store/actions/MessageActions';
+import { MESSAGE_TYPES } from '../../constants/MessageConstants';
+import { API_FETCH_SITES } from '../../constants/ApiConstants';
+import { callAPI } from '../../utils/ApiUtils';
 import { PLATFORM_TYPES } from '../../constants/InputConstants';
-import { getVMwareVCenterIP } from '../../store/actions/VMwareActions';
 import NotificationDropdown from '../CommonForBoth/TopbarDropdown/NotificationDropdown';
 import ProfileMenu from '../CommonForBoth/TopbarDropdown/ProfileMenu';
 import dmlogoname from '../../assets/images/logo_name.png';
@@ -17,9 +19,33 @@ class Header extends Component {
   constructor(props) {
     super(props);
     // TOGGLE MENU
+    this.state = { vcIp: '' };
     this.toggleMenu = this.toggleMenu.bind(this);
     this.toggleFullscreen = this.toggleFullscreen.bind(this);
     this.onRefresh = this.onRefresh.bind(this);
+  }
+
+  componentDidMount() {
+    const { dispatch } = this.props;
+    const { vcIp } = this.state;
+    if (vcIp === '') {
+      callAPI(API_FETCH_SITES)
+        .then((json) => {
+          if (json.hasError) {
+            dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+          } else {
+            json.map((site) => {
+              if (site.node.isLocalNode) {
+                const vcIP = site.platformDetails.hostname;
+                this.setState({ vcIp: vcIP });
+              }
+            });
+          }
+        },
+        (err) => {
+          dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+        });
+    }
   }
 
   onRefresh() {
@@ -63,17 +89,14 @@ class Header extends Component {
   }
 
   renderAppType() {
-    const { user, dispatch } = this.props;
-    const { values } = user;
+    const { user } = this.props;
+    const { vcIp } = this.state;
     const { platformType, zone } = user;
     let type = `${platformType}`;
     const appZone = (typeof zone !== 'undefined' ? `${zone}` : '');
     if (type === PLATFORM_TYPES.VMware) {
-      const vcIP = getValue('vmware.vcIP', values);
-      if (vcIP === '' || typeof vcIP === 'undefined') {
-        dispatch(getVMwareVCenterIP());
-      } else {
-        type += ` vCenter IP - ${getValue('vmware.vcIP', values)}`;
+      if (vcIp !== '') {
+        type += ` vCenter IP -${vcIp}`;
       }
     }
     return (
