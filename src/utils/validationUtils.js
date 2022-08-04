@@ -275,11 +275,13 @@ export function validateAWSNetworks(user, dispatch) {
   const elasticIPs = [];
   let isClean = true;
   let message = '';
+  const messages = [];
   Object.keys(vms).forEach((vm) => {
     const netConfigs = getVMNetworkConfig(`${vm}`, values);
     const vmName = vms[vm].name;
     if (netConfigs.length === 0) {
       message = `${vmName}: Network configuration required`;
+      messages.push(message);
       isClean = false;
     }
     const vpc = [];
@@ -288,10 +290,12 @@ export function validateAWSNetworks(user, dispatch) {
       if (netConfigs[i].subnet === '') {
         isClean = false;
         message = `${vmName}: Subnet missing for Nic-${i}`;
+        messages.push(message);
       }
       if (netConfigs[i].securityGroups === '' || typeof netConfigs[i].securityGroups === 'undefined') {
         isClean = false;
         message = `${vmName}: SecurityGroup missing for Nic-${i}`;
+        messages.push(message);
       }
       if (typeof netConfigs[i].network !== 'undefined' && netConfigs[i].network !== '') {
         elasticIPs.push(netConfigs[i].network);
@@ -309,6 +313,7 @@ export function validateAWSNetworks(user, dispatch) {
     // nics with different vpcid
     if (vpcSet.length > 1) {
       message = `${vmName}: All nics of an instance must belong to same VPC.`;
+      messages.push(message);
       isClean = false;
     }
 
@@ -316,6 +321,7 @@ export function validateAWSNetworks(user, dispatch) {
     // nics with different vpcid
     if (zoneSet.length > 1) {
       message = `${vmName}: All nics of an instance must belong to same Availability Zone.`;
+      messages.push(message);
       isClean = false;
     }
   });
@@ -326,10 +332,11 @@ export function validateAWSNetworks(user, dispatch) {
   if (duplicates.length > 0) {
     isClean = false;
     message = 'Same elastic ip is mapped with multiple networks';
+    messages.push(message);
   }
 
   if (!isClean) {
-    dispatch(addMessage(message, MESSAGE_TYPES.ERROR));
+    dispatch(addMessage(messages.join(', '), MESSAGE_TYPES.ERROR));
   }
   return isClean;
 }
