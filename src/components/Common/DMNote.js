@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardHeader, Col, Collapse, Row } from 'reactstrap';
 
-function Note(props) {
+function DMNote(props) {
   const { title, t, info } = props;
   const [isOpen, setIopen] = useState(false);
   const toggle = () => {
@@ -23,7 +23,7 @@ function Note(props) {
         <CardHeader>
           <Row>
             <Col sm={6}>
-              <a href="#" onClick={toggle}>
+              <a href="#" onClick={toggle} style={{ color: '#34c38f' }}>
                 {title}
               </a>
             </Col>
@@ -42,4 +42,4 @@ function Note(props) {
   );
 }
 
-export default (withTranslation()(Note));
+export default (withTranslation()(DMNote));
