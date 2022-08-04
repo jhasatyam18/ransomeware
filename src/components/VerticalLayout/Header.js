@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { addMessage } from '../../store/actions/MessageActions';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
@@ -23,6 +23,7 @@ class Header extends Component {
     this.toggleMenu = this.toggleMenu.bind(this);
     this.toggleFullscreen = this.toggleFullscreen.bind(this);
     this.onRefresh = this.onRefresh.bind(this);
+    this.refresh = useSelector((state) => state.user.context);
   }
 
   componentDidMount() {

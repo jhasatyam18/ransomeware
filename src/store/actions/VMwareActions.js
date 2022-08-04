@@ -1,6 +1,6 @@
 import { getValue } from '../../utils/InputUtils';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { API_FETCH_SITES, API_FETCH_VMWARE_ADAPTER_TYPE } from '../../constants/ApiConstants';
+import { API_FETCH_VMWARE_ADAPTER_TYPE } from '../../constants/ApiConstants';
 import { callAPI } from '../../utils/ApiUtils';
 import { addMessage } from './MessageActions';
 import { getComputeResources, getStorageForVMware, hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
