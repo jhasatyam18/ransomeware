@@ -23,7 +23,7 @@ class Header extends Component {
     this.toggleMenu = this.toggleMenu.bind(this);
     this.toggleFullscreen = this.toggleFullscreen.bind(this);
     this.onRefresh = this.onRefresh.bind(this);
-    this.refresh = useSelector((state) => state.user.context);
+    this.refresh = this.getRefreshState.bind(this);
   }
 
   componentDidMount() {
@@ -36,7 +36,7 @@ class Header extends Component {
             dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
           } else {
             json.map((site) => {
-              if (site.node.isLocalNode) {
+              if (site.node.isLocalNode && site.node.platformType === PLATFORM_TYPES.VMware) {
                 const vcIP = site.platformDetails.hostname;
                 this.setState({ vcIp: vcIP });
               }
@@ -52,6 +52,11 @@ class Header extends Component {
   onRefresh() {
     const { dispatch } = this.props;
     dispatch(refresh());
+  }
+
+  getRefreshState() {
+    const res = useSelector((state) => state.user.context);
+    return res;
   }
 
   toggleMenu() {
@@ -95,10 +100,8 @@ class Header extends Component {
     const { platformType, zone } = user;
     let type = `${platformType}`;
     const appZone = (typeof zone !== 'undefined' ? `${zone}` : '');
-    if (type === PLATFORM_TYPES.VMware) {
-      if (vcIp !== '') {
-        type += ` vCenter IP -${vcIp}`;
-      }
+    if (vcIp !== '') {
+      type += ` - ${vcIp}`;
     }
     return (
       <div className="dropdown d-none d-lg-inline-block ml-1">
