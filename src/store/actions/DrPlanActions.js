@@ -1020,15 +1020,16 @@ export function initReconfigureProtectedVM(protectionPlanID, vmMoref = null, eve
       });
     }
     // if event is passed then extract the protectionPlan ID
-    let pid = protectionPlanID;
     let moref = vmMoref;
-    const pPlan = await fetchProtection(pid);
-    if (event !== null) {
+    let pPlan = '';
+    if (protectionPlanID !== null) {
+      pPlan = await fetchProtection(protectionPlanID);
+    } else if (event !== null) {
       const parts = event.impactedObjectURNs.split(',');
       const urn = parts[0].split(':');
       if (urn.length > 1) {
-        const [p] = urn[2];
-        pid = p;
+        const pid = urn[2];
+        pPlan = await fetchProtection(pid);
       } else {
         dispatch(addMessage('Protection plan details not identified in the event.', MESSAGE_TYPES.ERROR));
         dispatch(hideApplicationLoader('RECONFIGURE_VM'));
