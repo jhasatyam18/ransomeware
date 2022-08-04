@@ -3,7 +3,7 @@ import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardHeader, Col, Collapse, Row } from 'reactstrap';
 
 function DMNote(props) {
-  const { title, t, info } = props;
+  const { title, t, info, color } = props;
   const [isOpen, setIopen] = useState(false);
   const toggle = () => {
     setIopen(!isOpen);
@@ -19,11 +19,11 @@ function DMNote(props) {
 
   return (
     <div key={`dm-accordion-${title}`}>
-      <Card className="margin-bottom-10 card-color">
-        <CardHeader>
+      <Card className="margin-bottom-10">
+        <CardHeader className="card_note-backgrd">
           <Row>
             <Col sm={6}>
-              <a href="#" onClick={toggle} style={{ color: '#34c38f' }}>
+              <a href="#" onClick={toggle} className={`card_note_${color}`}>
                 {title}
               </a>
             </Col>
