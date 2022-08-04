@@ -25,15 +25,7 @@ function TestRecoveryVMConfiguration(props) {
     ));
   };
 
-  const renderNote = () => {
-    const { dispatch, user } = props;
-    const config = { data: [{
-      hasChildren: false,
-      title: 'Configurtion',
-      info: 'test.recovery.note',
-    }] };
-    return <Note title="Note" info="test.recovery.note" config={config} dispatch={dispatch} user={user} />;
-  };
+  const renderNote = () => <Note title="Note" info="test.recovery.note" />;
   return (
     <Card>
       <CardBody>
