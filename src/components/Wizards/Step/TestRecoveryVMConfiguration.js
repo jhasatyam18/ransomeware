@@ -26,7 +26,7 @@ function TestRecoveryVMConfiguration(props) {
     ));
   };
 
-  const renderNote = () => <DMNote title="Note" info="test.recovery.note" color={NOTE_TEXT.INFO} />;
+  const renderNote = () => <DMNote title="Info" info="test.recovery.note" color={NOTE_TEXT.INFO} open />;
   return (
     <Card>
       <CardBody>

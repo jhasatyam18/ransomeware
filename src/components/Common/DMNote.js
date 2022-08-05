@@ -3,8 +3,9 @@ import { withTranslation } from 'react-i18next';
 import { Card, CardHeader, Col, Collapse, Row } from 'reactstrap';
 
 function DMNote(props) {
-  const { title, t, info, color } = props;
-  const [isOpen, setIopen] = useState(false);
+  const { title, t, info, color, open } = props;
+  const [isOpen, setIopen] = useState(open);
+  const noteText = t(info);
   const toggle = () => {
     setIopen(!isOpen);
   };
@@ -22,18 +23,25 @@ function DMNote(props) {
       <Card className="margin-bottom-10">
         <CardHeader className="card_note-backgrd">
           <Row>
-            <Col sm={6}>
-              <a href="#" onClick={toggle} className={`card_note_${color}`}>
-                {title}
-              </a>
+            <Col sm={11}>
+              {!isOpen ? (
+                <>
+                  <a href="#" onClick={toggle} className={`card_note_${color}`}>
+                    {title}
+                  </a>
+                </>
+              ) : (
+                <>
+                  <Collapse isOpen={isOpen}>
+                    {noteText}
+                  </Collapse>
+                </>
+              )}
             </Col>
-            <Col sm={6} className="d-flex flex-row-reverse">
+            <Col sm={1} className="d-flex flex-row-reverse">
               {renderIcon()}
             </Col>
           </Row>
-          <Collapse isOpen={isOpen}>
-            {t(info)}
-          </Collapse>
         </CardHeader>
       </Card>
     </div>
