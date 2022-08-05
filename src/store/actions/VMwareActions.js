@@ -5,6 +5,7 @@ import { callAPI } from '../../utils/ApiUtils';
 import { addMessage } from './MessageActions';
 import { getComputeResources, getStorageForVMware, hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
 import { STATIC_KEYS } from '../../constants/InputConstants';
+
 // getStorageForVMware
 export function getVMwareAdapterType() {
   return (dispatch, getState) => {
