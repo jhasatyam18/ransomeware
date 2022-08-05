@@ -50,18 +50,14 @@ export function Header(props) {
     const { dispatch } = props;
     callAPI(API_FETCH_SITES)
       .then((json) => {
-        if (json.hasError) {
-          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
-        } else {
-          let IP = '';
-          json.map((site) => {
-            if (site.node.isLocalNode && site.node.platformType === PLATFORM_TYPES.VMware) {
-              const vcIP = site.platformDetails.hostname;
-              IP = vcIP;
-            }
-          });
-          setVcIp(IP);
-        }
+        let IP = '';
+        json.map((site) => {
+          if (site.node.isLocalNode && site.node.platformType === PLATFORM_TYPES.VMware) {
+            const vcIP = site.platformDetails.hostname;
+            IP = vcIP;
+          }
+        });
+        setVcIp(IP);
       },
       (err) => {
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
