@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 import { Col, Popover, PopoverBody, Row } from 'reactstrap';
+import { PLATFORM_TYPES } from '../../../constants/InputConstants';
 
 function VMNetworkInfoItemRenderer(props) {
-  const { t, data } = props;
+  const { t, data, drPlans } = props;
+  const { recoverySite } = drPlans.protectionPlan;
   const key = `netowrk-popover-key-${data.id}`;
   const [popoverOpen, setPopoverOpen] = useState(false);
   if (!data) {
@@ -34,9 +37,13 @@ function VMNetworkInfoItemRenderer(props) {
         { label: 'private.ip.address', field: 'privateIP' },
         { label: 'subnet', field: 'Subnet' },
         { label: 'networkTier', field: 'networkTier' },
-        { label: 'vmware.network', field: 'network' },
-        { label: 'vmware.adapterType', field: 'adapterType' },
       ];
+
+      if (recoverySite.platformDetails.platformType === PLATFORM_TYPES.VMware) {
+        const netowrk = { label: 'vmware.network', field: 'network' };
+        const adapterType = { label: 'vmware.adapterType', field: 'adapterType' };
+        fields.push(netowrk, adapterType);
+      }
       return (
         <div key={`nic-${index + 1}`}>
           <div className="vmnetwork_info">
@@ -68,4 +75,8 @@ function VMNetworkInfoItemRenderer(props) {
   );
 }
 
-export default (withTranslation()(VMNetworkInfoItemRenderer));
+function mapStateToProps(state) {
+  const { drPlans } = state;
+  return { drPlans };
+}
+export default connect(mapStateToProps)(withTranslation()(VMNetworkInfoItemRenderer));
