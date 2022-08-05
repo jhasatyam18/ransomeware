@@ -18,28 +18,30 @@ import { changeLeftSidebarType, refresh } from '../../store/actions';
 export function Header(props) {
   const [vcIp, setVcIp] = useState('');
   const { sites, user } = props;
-
+  const { platformType } = user;
   useEffect(() => {
-    if (vcIp === '') {
-      if (!sites.sites || sites.sites.length === 0) {
-        fetchVCIp();
+    if (platformType === PLATFORM_TYPES.VMware) {
+      if (vcIp === '') {
+        if (!sites.sites || sites.sites.length === 0) {
+          fetchVCIp();
+        } else {
+          sites.sites.forEach((s) => {
+            if (s.node.isLocalNode) {
+              setVcIp(s.platformDetails.hostname);
+            }
+          });
+        }
       } else {
-        sites.sites.forEach((s) => {
-          if (s.node.isLocalNode && s.node.platformType === PLATFORM_TYPES.VMware) {
-            setVcIp(s.platformDetails.hostname);
+        let index;
+        if (sites) {
+          sites.sites.forEach((s, i) => {
+            if (s.node.hostname === user.localVMIP) {
+              index = i;
+            }
+          });
+          if (typeof sites.sites[index] === 'undefined') {
+            setVcIp('');
           }
-        });
-      }
-    } else {
-      let index;
-      if (sites) {
-        sites.sites.forEach((s, i) => {
-          if (s.node.hostname === user.localVMIP) {
-            index = i;
-          }
-        });
-        if (typeof sites.sites[index] === 'undefined') {
-          setVcIp('');
         }
       }
     }
@@ -52,7 +54,7 @@ export function Header(props) {
       .then((json) => {
         let IP = '';
         json.map((site) => {
-          if (site.node.isLocalNode && site.node.platformType === PLATFORM_TYPES.VMware) {
+          if (site.node.isLocalNode) {
             const vcIP = site.platformDetails.hostname;
             IP = vcIP;
           }
@@ -105,7 +107,7 @@ export function Header(props) {
   };
 
   const renderAppType = () => {
-    const { platformType, zone } = user;
+    const { zone } = user;
     let type = `${platformType}`;
     const appZone = (typeof zone !== 'undefined' ? `${zone}` : '');
     if (vcIp !== '') {
