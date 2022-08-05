@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
-import { Card, CardBody, CardHeader, Col, Collapse, Row } from 'reactstrap';
+import { Card, CardHeader, Col, Collapse, Row } from 'reactstrap';
 
 function DMNote(props) {
   const { title, t, info, color } = props;
@@ -32,9 +32,7 @@ function DMNote(props) {
             </Col>
           </Row>
           <Collapse isOpen={isOpen}>
-            <CardBody className="padding-left-0 paddings-right-0">
-              {t(info)}
-            </CardBody>
+            {t(info)}
           </Collapse>
         </CardHeader>
       </Card>
