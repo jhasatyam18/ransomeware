@@ -15,7 +15,7 @@ import dmlogo from '../../assets/images/dm_logo.png';
 // Redux Store
 import { changeLeftSidebarType, refresh } from '../../store/actions';
 
-export function Header(props) {
+function Header(props) {
   const [vcIp, setVcIp] = useState('');
   const { sites, user } = props;
   const { platformType } = user;
