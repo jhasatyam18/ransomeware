@@ -51,6 +51,13 @@ export function isPlatformTypeGCP(user) {
   }
   return false;
 }
+export function isPlatformTypeAzure(user) {
+  const { values } = user;
+  if (getValue('configureSite.platformDetails.platformType', values) === PLATFORM_TYPES.AZURE) {
+    return true;
+  }
+  return false;
+}
 
 export function getSitesOptions(user) {
   const { values } = user;
@@ -476,6 +483,7 @@ export function getPlatformTypeOptions() {
     { label: 'VMware', value: 'VMware' },
     { label: 'AWS', value: 'AWS' },
     { label: 'GCP', value: 'GCP' },
+    { label: 'Azure', value: 'Azure' },
   ];
 }
 
