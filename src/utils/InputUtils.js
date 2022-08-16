@@ -53,7 +53,7 @@ export function isPlatformTypeGCP(user) {
 }
 export function isPlatformTypeAzure(user) {
   const { values } = user;
-  if (getValue('configureSite.platformDetails.platformType', values) === PLATFORM_TYPES.AZURE) {
+  if (getValue('configureSite.platformDetails.platformType', values) === PLATFORM_TYPES.Azure) {
     return true;
   }
   return false;
