@@ -8,7 +8,7 @@ export const UI_WORKFLOW = {
 };
 
 export const PLATFORM_TYPES = {
-  VMware: 'VMware', GCP: 'GCP', AWS: 'AWS', Azure: 'Azure'
+  VMware: 'VMware', GCP: 'GCP', AWS: 'AWS', Azure: 'Azure',
 };
 
 export const REPLICATION_STATUS = {
