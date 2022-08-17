@@ -21,3 +21,18 @@
   color: #74788d;
   margin-bottom: 24px;
 }
+
+.card_note-backgrd{
+  background-color: $sidebar-dark-bg;
+}
+
+.card_note_info{
+  color: $green;
+}
+
+.card_note_warning{
+  color:$yellow;
+}
+.card_note_error{
+  color:$red;
+}

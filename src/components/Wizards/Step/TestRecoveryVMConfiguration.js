@@ -2,6 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody } from 'reactstrap';
+import { NOTE_TEXT } from '../../../constants/DMNoteConstant';
+import DMNote from '../../Common/DMNote';
 import { getValue } from '../../../utils/InputUtils';
 import DMAccordion from '../../Shared/DMAccordion';
 import { createVMTestRecoveryConfig } from '../../../utils/RecoveryUtils';
@@ -24,9 +26,11 @@ function TestRecoveryVMConfiguration(props) {
     ));
   };
 
+  const renderNote = () => <DMNote title="Info" info="test.recovery.note" color={NOTE_TEXT.INFO} open />;
   return (
     <Card>
       <CardBody>
+        {renderNote()}
         {renderNodes()}
       </CardBody>
     </Card>
