@@ -36,8 +36,14 @@ export const FIELDS = {
   'configureSite.node': {
     label: 'site.node', type: FIELD_TYPE.SELECT, options: (user) => getSiteNodeOptions(user), validate: (value, user) => isEmpty(value, user), errorMessage: 'Select node', shouldShow: true, fieldInfo: 'info.site.node',
   },
+  'configureSite.platformDetails.region': {
+    label: 'region', description: 'Cloud Site Region where Management Server is deployed and Protection needs to be done', type: FIELD_TYPE.SELECT, errorMessage: 'Region required', shouldShow: (user) => !isPlatformTypeVMware(user), options: (user) => getRegionOptions(user), onChange: (user, dispatch) => updateAvailabilityZones(user, dispatch), fieldInfo: 'info.site.region',
+  },
+  'configureSite.platformDetails.projectId': {
+    label: 'project.ID', description: 'Project ID for Cloud Site(GCP)', type: FIELD_TYPE.TEXT, patterns: [HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX], errorMessage: 'Project ID is required', shouldShow: (user) => isPlatformTypeGCP(user) || isPlatformTypeAzure(user), fieldInfo: 'info.site.gcp.projectid',
+  },
   'configureSite.platformDetails.hostname': {
-    label: 'vCenter.server.IP', description: 'vCenter Server IPv4 address', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], errorMessage: 'Enter valid IP address', shouldShow: (user) => isPlatformTypeVMware(user), fieldInfo: 'info.site.vcenterhost',
+    label: 'vCenter.server.IP', description: 'vCenter Server IPv4 address', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], errorMessage: 'Enter valid IP address', shouldShow: (user) => isPlatformTypeVMware(user) || isPlatformTypeAzure(user), fieldInfo: 'info.site.vcenterhost',
   },
   'configureSite.platformDetails.port': {
     label: 'port', description: 'vCenter Server management port', defaultValue: 443, min: 1, max: 65536, type: FIELD_TYPE.NUMBER, errorMessage: 'Port value required, if different.', shouldShow: (user) => isPlatformTypeVMware(user), fieldInfo: 'info.site.port',
@@ -48,20 +54,14 @@ export const FIELDS = {
   'configureSite.platformDetails.password': {
     label: 'password', description: 'vCenter Server User Password', type: FIELD_TYPE.PASSWORD, validate: (value, user) => isEmpty(value, user), errorMessage: 'Password required', shouldShow: (user) => isPlatformTypeVMware(user) || isPlatformTypeAzure(user), fieldInfo: 'info.site.vcenter.password',
   },
-  'configureSite.platformDetails.region': {
-    label: 'region', description: 'Cloud Site Region where Management Server is deployed and Protection needs to be done', type: FIELD_TYPE.SELECT, errorMessage: 'Region required', shouldShow: (user) => !isPlatformTypeVMware(user), options: (user) => getRegionOptions(user), onChange: (user, dispatch) => updateAvailabilityZones(user, dispatch), fieldInfo: 'info.site.region',
-  },
   'configureSite.platformDetails.availZone': {
-    label: 'zone', description: 'Availability Zone for Cloud Site where Management Server is deployed and Protection needs to be done', type: FIELD_TYPE.SELECT, patterns: [HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX], errorMessage: 'Zone required', shouldShow: (user) => isPlatformTypeAWS(user) || (user), options: (user) => getAvailibilityZoneOptions(user), fieldInfo: 'info.site.availZone',
+    label: 'zone', description: 'Availability Zone for Cloud Site where Management Server is deployed and Protection needs to be done', type: FIELD_TYPE.SELECT, patterns: [HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX], errorMessage: 'Zone required', shouldShow: (user) => isPlatformTypeAWS(user), options: (user) => getAvailibilityZoneOptions(user), fieldInfo: 'info.site.availZone',
   },
   'configureSite.platformDetails.accessKey': {
     label: 'access.key', description: 'Access Key for Cloud Site(AWS)', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Access Key is required', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeAzure(user), fieldInfo: 'info.site.access.key',
   },
   'configureSite.platformDetails.secretKey': {
     label: 'secret.key', description: 'Secret Key for Cloud Site(AWS)', type: FIELD_TYPE.PASSWORD, validate: (value, user) => isEmpty(value, user), shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeAzure(user), fieldInfo: 'info.site.secrete.key',
-  },
-  'configureSite.platformDetails.projectId': {
-    label: 'project.ID', description: 'Project ID for Cloud Site(GCP)', type: FIELD_TYPE.TEXT, patterns: [HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX], errorMessage: 'Project ID is required', shouldShow: (user) => isPlatformTypeGCP(user), fieldInfo: 'info.site.gcp.projectid',
   },
   // 'configureSite.platformDetails.serverIp': {
   //   label: 'datamotive.server.IP', description: 'Datamotive Management Server IP', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], errorMessage: 'Enter valid IP address', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
