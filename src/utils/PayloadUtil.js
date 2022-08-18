@@ -102,7 +102,9 @@ export function getVMConfigPayload(user) {
     let folderPath = '';
     // Data require for vmware as target platform
     folderPath = getValue(`${key}-vmConfig.general.folderPath`, values);
-    if (folderPath && folderPath.length > 0) {
+    if (typeof folderPath === 'object') {
+      folderPath = folderPath.value;
+    } else if (folderPath && folderPath.length > 0) {
       const [index] = folderPath;
       folderPath = index;
     }
@@ -164,7 +166,7 @@ export function getVMNetworkConfig(key, values) {
   for (let index = 0; index < eths.length; index += 1) {
     const id = getValue(`${networkKey}-eth-${index}-id`, values);
     const vpcId = getValue(`${networkKey}-eth-${index}-vpcId`, values);
-    const isPublicIP = getValue(`${networkKey}-eth-${index}-isPublic`, values) || false;
+    let isPublicIP = getValue(`${networkKey}-eth-${index}-isPublic`, values) || false;
     let isFromSource = getValue(`${networkKey}-eth-${index}-isFromSource`, values);
     const subnet = getValue(`${networkKey}-eth-${index}-subnet`, values);
     const availZone = getValue(`${networkKey}-eth-${index}-availZone`, values);
@@ -185,6 +187,15 @@ export function getVMNetworkConfig(key, values) {
     }
     if (network !== '' && recoveryPlatform === PLATFORM_TYPES.AWS) {
       publicIP = getAWSNetworkIDFromName(values, network) || publicIP;
+    }
+    if (recoveryPlatform === PLATFORM_TYPES.Azure) {
+      if (publicIP === 'None') {
+        isPublicIP = false;
+        publicIP = '';
+      } else {
+        isPublicIP = true;
+        publicIP = '';
+      }
     }
     if (network !== '' && recoveryPlatform === PLATFORM_TYPES.VMware) {
       network = network.label;

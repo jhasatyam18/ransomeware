@@ -80,6 +80,7 @@ export const STATIC_KEYS = {
   UI_WORKFLOW_TEST_RECOVERY: 'ui.workflow.test.recovery',
   UI_VMWARE_CONFIG_RESPONSES: 'ui.vmware.config.responses',
   UI_VOLUMETYPES: 'ui.values.volume.type',
+  RESOURCE_GROUP: 'ui.values.resource.type',
 };
 
 // Recovery time in minutes

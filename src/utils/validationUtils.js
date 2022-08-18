@@ -20,22 +20,26 @@ export function isRequired(value) {
 
 export function validateField(field, fieldKey, value, dispatch, user) {
   const { patterns, validate, errorMessage } = field;
+  const { values } = user;
+  const platformType = getValue('configureSite.platformDetails.platformType', values);
   // const field = FIELDS[fieldKey];
   const { type } = field;
   const { errors } = user;
-  if (patterns) {
-    let isValid = false;
-    patterns.forEach((pattern) => {
-      const re = new RegExp(pattern);
-      if (value) {
-        if (value.match(re) !== null) {
-          isValid = true;
+  if (platformType !== PLATFORM_TYPES.Azure) {
+    if (patterns) {
+      let isValid = false;
+      patterns.forEach((pattern) => {
+        const re = new RegExp(pattern);
+        if (value) {
+          if (value.match(re) !== null) {
+            isValid = true;
+          }
         }
+      });
+      if (!isValid) {
+        dispatch(addErrorMessage(fieldKey, errorMessage));
+        return false;
       }
-    });
-    if (!isValid) {
-      dispatch(addErrorMessage(fieldKey, errorMessage));
-      return false;
     }
   }
   if (typeof validate === 'function') {
@@ -210,12 +214,67 @@ export function validateNetworkConfig(user, dispatch) {
       return validateAWSNetworks(user, dispatch);
     case PLATFORM_TYPES.GCP:
       return validateGCPNetworks(user, dispatch);
+    case PLATFORM_TYPES.Azure:
+      return validateAzureNetworks(user, dispatch);
     default:
       return validateVMware(user, dispatch);
   }
 }
 
 export function validateGCPNetworks(user, dispatch) {
+  const { values } = user;
+  const vms = getValue('ui.site.seletedVMs', values);
+  const subnets = getValue(STATIC_KEYS.UI_SUBNETS, values);
+  let isClean = true;
+  let message = '';
+  // empty config
+  const ips = [];
+  Object.keys(vms).forEach((vm) => {
+    const netConfigs = getVMNetworkConfig(`${vm}`, values);
+    const vpc = [];
+    const vmName = vms[vm].name;
+    if (netConfigs.length === 0) {
+      message = `${vmName}: Network configuration required`;
+      isClean = false;
+    } else {
+      for (let i = 0; i < netConfigs.length; i += 1) {
+        if (netConfigs[i].subnet === '') {
+          message = `${vmName}: Network configure missing for nic-${i}`;
+          isClean = false;
+        }
+        if (typeof netConfigs.privateIP !== 'undefined' && netConfigs.privateIP !== '') {
+          ips.push(netConfigs.privateIP);
+        }
+        if (typeof netConfigs.publicIP !== 'undefined' && netConfigs.publicIP !== '') {
+          ips.push(netConfigs.publicIP);
+        }
+        for (let j = 0; j < subnets.length; j += 1) {
+          if (subnets[j].id === netConfigs[i].subnet) {
+            vpc.push(subnets[j].vpcID);
+          }
+        }
+      }
+      // unique network check
+      const vpcSet = [...new Set(vpc)];
+      if (vpcSet.length !== vpc.length && message === '') {
+        message = `${vmName}: network must be unique for each interface`;
+        isClean = false;
+      }
+    }
+  });
+  // duplicate ip check
+  const ipSet = [...new Set(ips)];
+  if (ipSet.length !== ips.length && message === '') {
+    message = 'Duplicate ip address not allowed';
+    isClean = false;
+  }
+  if (!isClean) {
+    dispatch(addMessage(message, MESSAGE_TYPES.ERROR));
+  }
+  return isClean;
+}
+
+export function validateAzureNetworks(user, dispatch) {
   const { values } = user;
   const vms = getValue('ui.site.seletedVMs', values);
   const subnets = getValue(STATIC_KEYS.UI_SUBNETS, values);
@@ -501,6 +560,8 @@ export function validateNicConfig(dispatch, user, options) {
       return validateGCPNicConfig(dispatch, user, options);
     case PLATFORM_TYPES.VMware:
       return validateVMwareNicConfig(dispatch, user, options);
+    case PLATFORM_TYPES.Azure:
+      return validateAzureNicConfig(dispatch, user, options);
     default:
       return true;
   }
@@ -561,6 +622,33 @@ function validateVMwareNicConfig(dispatch, user, options) {
       dispatch(addMessage('Please fill the right mac Address', MESSAGE_TYPES.ERROR));
       return false;
     }
+  }
+  return true;
+}
+
+function validateAzureNicConfig(dispatch, user, options) {
+  const { values } = user;
+  const { networkKey } = options;
+  const subnet = getValue(`${networkKey}-subnet`, values) || '';
+  const pubIP = getValue(`${networkKey}-publicIP`, values) || '';
+  const network = getValue(`${networkKey}-network`, values) || '';
+  const sg = getValue(`${networkKey}-securityGroups`, values) || [];
+  if (network === '') {
+    dispatch(addMessage('Please select the network', MESSAGE_TYPES.ERROR));
+    return false;
+  }
+  if (subnet === '' || subnet === '-') {
+    dispatch(addMessage('Select network subnet', MESSAGE_TYPES.ERROR));
+    return false;
+  }
+
+  if (pubIP === '') {
+    dispatch(addMessage('Select external ip config', MESSAGE_TYPES.ERROR));
+    return false;
+  }
+  if (sg.length === 0) {
+    dispatch(addMessage('Select security group', MESSAGE_TYPES.ERROR));
+    return false;
   }
   return true;
 }

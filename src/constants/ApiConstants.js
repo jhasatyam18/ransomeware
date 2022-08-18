@@ -54,6 +54,7 @@ export const API_AWS_INSTANCES = 'aws_instances.json';
 export const API_GCP_INSTANCES = 'gcp_instances.json';
 export const API_AWS_REGIONS = 'aws_regions.json';
 export const API_GCP_REGIONS = 'gcp_regions.json';
+export const API_AZURE_REGIONS = 'azure_regions.json';
 export const API_AWS_AVAILABILITY_ZONES = 'aws_availability_zones.json';
 export const API_GCP_AVAILABILITY_ZONES = 'gcp_zones.json';
 

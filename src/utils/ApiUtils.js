@@ -1,9 +1,11 @@
+import { PLATFORM_TYPES } from '../constants/InputConstants';
 import { clearMessages } from '../store/actions/MessageActions';
 import store from '../store/index';
 import { clearValues, logOutUser } from '../store/actions';
 import { getApplicationToken } from './CookieUtils';
 import { closeModal } from '../store/actions/ModalActions';
 import { closeWizard } from '../store/actions/WizardActions';
+import { getValue } from './InputUtils';
 
 export const API_TYPES = { POST: 'POST', PUT: 'PUT', DELETE: 'DELETE', PATCH: 'PATCH' };
 
@@ -61,4 +63,25 @@ export function callAPI(URL, obj = {}, token = null) {
 
 export function getErrorText(err) {
   return { code: 0, message: err };
+}
+
+export function getLabelForAzure({ user, fieldKey, label }) {
+  const { values } = user;
+  let res = label;
+  const platFormType = getValue('configureSite.platformDetails.platformType', values);
+  if (platFormType === PLATFORM_TYPES.Azure) {
+    if (fieldKey === 'configureSite.platformDetails.projectId') {
+      res = 'subscription.id';
+    }
+    if (fieldKey === 'configureSite.platformDetails.hostname') {
+      res = 'storage.account';
+    }
+    if (fieldKey === 'configureSite.platformDetails.accessKey') {
+      res = 'tenant.id';
+    }
+    if (fieldKey === 'configureSite.platformDetails.secretKey') {
+      res = 'client.id';
+    }
+  }
+  return res;
 }

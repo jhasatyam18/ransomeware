@@ -104,6 +104,19 @@ export function getInstanceTypeOptions(user) {
   return result;
 }
 
+export function getResourceTypeOptions(user) {
+  const { values } = user;
+  const resourceTypeOpt = getValue(STATIC_KEYS.RESOURCE_GROUP, values);
+  const array = [];
+  resourceTypeOpt.map((res) => {
+    const obj = {};
+    obj.label = res;
+    obj.value = res;
+    array.push(obj);
+  });
+  return array;
+}
+
 export function getAvailibilityZoneOptions(user) {
   const { values } = user;
   const zones = getValue(STATIC_KEYS.UI_AVAILABILITY_ZONES, values);
@@ -224,6 +237,21 @@ export function getGCPSubnetOptions(user, fieldKey) {
   return options;
 }
 
+export function getAzureSubnetOptions(user, fieldKey) {
+  const { values } = user;
+  const opts = getValue(STATIC_KEYS.UI_SUBNETS, values) || [];
+  const networkFieldKey = fieldKey.replace('-subnet', '-network');
+  const netID = getValue(networkFieldKey, values);
+  const options = [];
+  opts.forEach((op) => {
+    if (netID === op.vpcID) {
+      const name = `${op.name}-${op.cidr}`;
+      options.push({ label: name, value: op.id });
+    }
+  });
+  return options;
+}
+
 export function getNetworkOptions(user) {
   const { values } = user;
   const opts = getValue(STATIC_KEYS.UI_SUBNETS, values) || [];
@@ -240,6 +268,20 @@ export function getNetworkOptions(user) {
 }
 
 export function getGCPExternalIPOptions(user) {
+  const { values } = user;
+  const options = [];
+  options.push({ label: 'None', value: 'None' });
+  options.push({ label: 'Auto', value: 'Ephemeral' });
+  const ips = getValue(STATIC_KEYS.UI_RESERVE_IPS, values) || [];
+  ips.forEach((op) => {
+    if (op.ipType === 'EXTERNAL') {
+      options.push({ label: op.name, value: op.name });
+    }
+  });
+  return options;
+}
+
+export function getAzureExternalIPOptions(user) {
   const { values } = user;
   const options = [];
   options.push({ label: 'None', value: 'None' });
@@ -479,7 +521,7 @@ export function getAzureVMConfig(vm) {
         hasChildren: true,
         title: 'General',
         children: {
-          [`${key}-vmConfig.general.resourceGroup`]: { label: 'Resource Group', fieldInfo: 'info.protectionplan.instance.type', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
+          [`${key}-vmConfig.general.folderPath`]: { label: 'Resource Group', fieldInfo: 'info.protectionplan.instance.type', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select Resource Group', shouldShow: true, options: (u) => getResourceTypeOptions(u) },
           [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', fieldInfo: 'info.protectionplan.instance.type', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
           [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.instance.volume.type.aws', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u), onChange: (user, dispatch) => onAwsStorageTypeChange(user, dispatch), disabled: (u, f) => shouldDisableStorageType(u, f) },
           [`${key}-vmConfig.general.tags`]: { label: 'Tags', fieldInfo: 'info.protectionplan.instance.tags.aws', type: STACK_COMPONENT_TAGS, validate: null, errorMessage: '', shouldShow: true },

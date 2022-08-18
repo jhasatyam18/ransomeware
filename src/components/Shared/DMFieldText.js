@@ -99,10 +99,18 @@ class DMFieldText extends Component {
   }
 
   renderLabel() {
-    const { t, hideLabel, field } = this.props;
-    const { label } = field;
+    const { t, hideLabel, field, user, fieldKey } = this.props;
+    const { label, labelFunction } = field;
     if (hideLabel) {
       return null;
+    }
+    if (typeof labelFunction !== 'undefined' && typeof labelFunction === 'function') {
+      const res = labelFunction({ user, fieldKey, label });
+      return (
+        <label htmlFor="horizontal-Input margin-top-10 padding-top=10" className="col-sm-4 col-form-Label">
+          {t(res)}
+        </label>
+      );
     }
     return (
       <label htmlFor="horizontal-Input margin-top-10 padding-top=10" className="col-sm-4 col-form-Label">
