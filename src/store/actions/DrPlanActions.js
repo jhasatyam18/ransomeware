@@ -444,6 +444,7 @@ export function openTestRecoveryWizard(cleanUpTestRecoveries) {
             const { options, steps } = RECOVERY_WIZARDS;
             options.title = 'Test Recovery';
             dispatch(openWizard(options, steps));
+            dispatch(onProtectionPlanChange({ value: protectionPlan.id }));
           } else {
             const url = (platformDetails.platformType === PLATFORM_TYPES.AWS ? API_AWS_INSTANCES : API_GCP_INSTANCES);
             dispatch(fetchNetworks(recoverySite.id, undefined, availZone));
