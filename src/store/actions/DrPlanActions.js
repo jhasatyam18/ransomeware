@@ -222,7 +222,7 @@ export function drPlanDetailsFetched(protectionPlan) {
   };
 }
 
-export function onProtectionPlanChange({ value }) {
+export function onProtectionPlanChange({ value, allowDeleted }) {
   return (dispatch) => {
     const url = API_FETCH_DR_PLAN_BY_ID.replace('<id>', value);
     return callAPI(url)
@@ -239,7 +239,9 @@ export function onProtectionPlanChange({ value }) {
                 const machine = vm;
                 machine.name = rE.instanceName;
                 if (typeof vm.recoveryStatus !== 'undefined' && (vm.recoveryStatus === 'Migrated' || vm.recoveryStatus === 'Recovered' || vm.isRemovedFromPlan === true)) {
-                  machine.isDisabled = true;
+                  if (typeof allowDeleted === 'undefined' || !allowDeleted) {
+                    machine.isDisabled = true;
+                  }
                 }
                 data.push(vm);
               }
@@ -448,11 +450,12 @@ export function openTestRecoveryWizard(cleanUpTestRecoveries) {
             dispatch(setInstances(url));
             if (typeof cleanUpTestRecoveries !== 'undefined' && cleanUpTestRecoveries === true) {
               dispatch(openWizard(CLEANUP_TEST_RECOVERY_WIZARDS.options, CLEANUP_TEST_RECOVERY_WIZARDS.steps));
+              dispatch(onProtectionPlanChange({ value: protectionPlan.id, allowDeleted: true }));
             } else {
               dispatch(openWizard(TEST_RECOVERY_WIZARDS.options, TEST_RECOVERY_WIZARDS.steps));
+              dispatch(onProtectionPlanChange({ value: protectionPlan.id }));
             }
           }
-          dispatch(onProtectionPlanChange({ value: protectionPlan.id }));
           dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW_TEST_RECOVERY, true));
           return new Promise((resolve) => resolve());
         },
