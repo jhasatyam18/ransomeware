@@ -1,0 +1,227 @@
+[
+  {  "label":"East US",
+    "value":"EastUS"},
+   
+  {  "label":"East US 2",
+    "value":"EastUS2"},
+   
+  {  "label":"South Central US",
+    "value":"SouthCentralUS"},
+   
+  {  "label":"West US 2",
+    "value":"WestUS2"},
+   
+  {  "label":"West US 3",
+    "value":"WestUS3"},
+   
+  {  "label":"Australia East",
+    "value":"AustraliaEast"},
+   
+  {  "label":"Southeast Asia",
+    "value":"SoutheastAsia"},
+   
+  {  "label":"North Europe",
+    "value":"NorthEurope"},
+
+  {  "label":"Sweden Central",
+    "value":"SwedenCentral"},
+   
+  {  "label":"UK South",
+    "value":"UKSouth"},
+   
+  {  "label":"West Europe",
+    "value":"WestEurope"},
+   
+  {  "label":"Central US",
+    "value":"CentralUS"},
+   
+  {  "label":"North Central US",
+    "value":"NorthCentralUS"},
+   
+  {  "label":"West US",
+    "value":"WestUS"},
+   
+  {  "label":"South Africa North",
+    "value":"SouthAfricaNorth"},
+   
+  {  "label":"Central India",
+    "value":"CentralIndia"},
+
+  {  "label":"East Asia",
+    "value":"EastAsia"},
+   
+  {  "label":"Japan East",
+    "value":"JapanEast"},
+   
+  {  "label":"Jio India West",
+    "value":"JioIndiaWest"},
+   
+  {  "label":"Korea Central",
+    "value":"KoreaCentral"},
+   
+  {  "label":"Canada Central",
+    "value":"CanadaCentral"},
+   
+  {  "label":"France Central",
+    "value":"FranceCentral"},
+    
+  {  "label":"Germany West Central",
+    "value":"GermanyWestCentral"},
+   
+  {  "label":"Norway East",
+    "value":"NorwayEast"},
+   
+  {  "label":"Switzerland North",
+    "value":"SwitzerlandNorth"},
+   
+  {  "label":"UAE North",
+    "value":"UAENorth"},
+   
+  {  "label":"Brazil South",
+    "value":"BrazilSouth"},
+
+  {  "label":"Central US (Stage)",
+    "value":"CentralUSStage"},
+   
+  {  "label":"East US (Stage)",
+    "value":"eastEastUSStage"},
+   
+  {  "label":"East US 2 (Stage)",
+    "value":"EastUS2Stage"},
+   
+  {  "label":"North Central US (Stage)",
+    "value":"NorthCentralUSStage"},
+   
+  {  "label":"South Central US (Stage)",
+    "value":"SouthCentralUSStage"},
+
+  {  "label":"West US (Stage)",
+    "value":"WestUSStage"},
+   
+  {  "label":"West US 2 (Stage)",
+    "value":"WestUS2Stage"},
+   
+  {  "label":"Asia asia",
+    "value":"Asiaasia"},
+   
+  {  "label":"Asia Pacific",
+    "value":"AsiaPacific"},
+    
+ {    "label":"Australia",
+      "value":"Australia"},
+   
+ {    "label":"Brazil",
+      "value":"Brazil"},
+   
+ {    "label":"Canada",
+      "value":"Canada"},
+   
+ {    "label":"Europe",
+      "value":"Europe"},
+   
+ {    "label":"France",
+      "value":"France"},
+   
+ {    "label":"Germany",
+      "value":"Germany"},
+   
+ {    "label":"Global",
+      "value":"Global"},
+   
+ {    "label":"India",
+      "value":"India"},
+
+ {    "label":"Japan",
+      "value":"Japan"},
+   
+ {    "label":"Korea",
+      "value":"Korea"},
+   
+ {    "label":"Norway",
+      "value":"NNorway"},
+   
+ {    "label":"South Africa",
+      "value":"SouthAfrica"},
+   
+ {    "label":"Switzerland",
+      "value":"Switzerland"},
+
+ {    "label":"United Arab Emirates",
+      "value":"UnitedArabEmirates"},
+   
+ {    "label":"United Kingdom",
+      "value":"UnitedKingdom"},
+   
+ {    "label":"United States",
+      "value":"UnitedStates"},
+   
+ {    "label":"United States EUAP",
+      "value":"UnitedStatesEUAP"},
+   
+ {    "label":"East Asia (Stage)",
+      "value":"EastAsiaStage"},
+   
+ {    "label":"Southeast Asia (Stage)",
+      "value":"SoutheastAsiaStage"},
+
+ {    "label":"Central US EUAP",
+      "value":"CentralUSEUAP"},
+   
+ {    "label":"East US 2 EUAP",
+      "value":"EastUS2EUAP"},
+   
+ {    "label":"West Central US",
+      "value":"WestCentralUS"},
+   
+ {    "label":"South Africa West",
+      "value":"SouthAfricaWest"},
+   
+ {    "label":"Australia Central",
+      "value":"AustraliaCentral"},
+    
+ {    "label":"Australia Central 2",
+      "value":"AustraliaCentral2"},
+   
+ {    "label":"Australia Southeast",
+      "value":"AustraliaSoutheast"},
+   
+ {    "label":"Japan West",
+      "value":"JapanWest"},
+   
+ {    "label":"Jio India Central",
+      "value":"JioIndiaCentral"},
+   
+ {    "label":"Korea South",
+      "value":"KoreaSouth"},
+   
+ {    "label":"South India",
+      "value":"SouthIndia"},
+   
+ {    "label":"West India",
+      "value":"WestIndia"},
+
+ {    "label":"Canada East",
+      "value":"CanadaEast"},
+   
+ {    "label":"France South",
+      "value":"FranceSouth"},
+   
+ {    "label":"Germany North",
+      "value":"GermanyNorth"},
+   
+ {    "label":"Norway West",
+      "value":"NorwayWest"},
+   
+ {    "label":"Switzerland West",
+      "value":"SwitzerlandWest"},
+   
+ {    "label":"UK West",
+      "value":"UKWest"},
+   
+ {    "label":"UAE Central",
+      "value":"UAECentral"},
+   
+ {    "label":"Brazil Southeast",
+      "value":"BrazilSoutheast"}
+   
+]
