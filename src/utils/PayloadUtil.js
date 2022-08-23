@@ -102,9 +102,7 @@ export function getVMConfigPayload(user) {
     let folderPath = '';
     // Data require for vmware as target platform
     folderPath = getValue(`${key}-vmConfig.general.folderPath`, values);
-    if (typeof folderPath === 'object') {
-      folderPath = folderPath.value;
-    } else if (folderPath && folderPath.length > 0) {
+    if (typeof folderPath !== 'string') {
       const [index] = folderPath;
       folderPath = index;
     }

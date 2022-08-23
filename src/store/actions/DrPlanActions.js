@@ -715,6 +715,8 @@ export function setProtectionPlanVMConfig(selectedVMS, protectionPlan) {
         return setGCPVMDetails(selectedVMS, protectionPlan, dispatch, user);
       case PLATFORM_TYPES.VMware:
         return setVMWAREVMDetails(selectedVMS, protectionPlan, dispatch);
+      case PLATFORM_TYPES.Azure:
+        return setAZUREVMDetails(selectedVMS, protectionPlan, dispatch, user);
       default:
         dispatch(addMessage('Unknown platform type', MESSAGE_TYPES.ERROR));
         dispatch(clearValues());
@@ -919,6 +921,76 @@ function setVMWAREVMDetails(selectedVMS, protectionPlan, dispatch) {
             dispatch(valueChange(`${networkKey}-eth-${index}-macAddress`, net.macAddress));
             dispatch(valueChange(`${networkKey}-eth-${index}-adapterType`, net.adapterType));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkMoref`, net.networkMoref));
+            eths.push({ key: `${networkKey}-eth-${index}`, isPublicIP: false, publicIP: '', privateIP: '', subnet: '', securityGroup: '' });
+          });
+          // check for additional nics
+          if (vm.virtualNics.length > ins.networks.length) {
+            // add missing additional nics for configuration
+            for (let startIndex = ins.networks.length; startIndex < vm.virtualNics.length; startIndex += 1) {
+              dispatch(valueChange(`${networkKey}-eth-${startIndex}-subnet`, ''));
+              dispatch(valueChange(`${networkKey}-eth-${startIndex}-privateIP`, ''));
+              dispatch(valueChange(`${networkKey}-eth-${startIndex}-publicIP`, ''));
+              dispatch(valueChange(`${networkKey}-eth-${startIndex}-networkTier`, ''));
+              dispatch(valueChange(`${networkKey}-eth-${startIndex}-isPublic`, false));
+              eths.push({ key: `${networkKey}-eth-${startIndex}`, isPublicIP: false, publicIP: '', privateIP: '', subnet: '', securityGroup: '' });
+            }
+          }
+          dispatch(valueChange(`${networkKey}`, eths));
+        }
+      }
+    });
+  });
+}
+
+function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch, user) {
+  const { values } = user;
+  const vms = Object.values(selectedVMS);
+  const { recoveryEntities, protectedEntities } = protectionPlan;
+  const { instanceDetails } = recoveryEntities;
+  const { virtualMachines = [] } = protectedEntities;
+  vms.forEach((vm) => {
+    const key = vm.moref;
+    virtualMachines.forEach((pvm) => {
+      if (vm.moref === pvm.moref) {
+        dispatch(valueChange(`${key}-protection.scripts.preScript`, pvm.preScript));
+        dispatch(valueChange(`${key}-protection.scripts.postScript`, pvm.postScript));
+      }
+    });
+    instanceDetails.forEach((ins) => {
+      if (ins.sourceMoref === vm.moref) {
+        dispatch(valueChange(`${key}-vmConfig.general.id`, ins.id));
+        dispatch(valueChange(`${key}-vmConfig.general.sourceMoref`, vm.moref));
+        const insType = getMatchingInsType(values, ins);
+        dispatch(valueChange(`${key}-vmConfig.general.folderPath`, ins.folderPath));
+        dispatch(valueChange(`${key}-vmConfig.general.instanceType`, insType));
+        dispatch(valueChange(`${key}-vmConfig.general.volumeType`, ins.volumeType));
+        dispatch(valueChange(`${key}-vmConfig.general.bootOrder`, ins.bootPriority));
+        dispatch(valueChange(`${key}-vmConfig.scripts.preScript`, ins.preScript));
+        dispatch(valueChange(`${key}-vmConfig.scripts.postScript`, ins.postScript));
+        if (ins.securityGroups && ins.securityGroups.length > 0) {
+          const selSgs = ins.securityGroups.split(',') || '';
+          dispatch(valueChange(`${key}-vmConfig.network.securityGroup`, selSgs));
+        }
+        if (ins.tags && ins.tags.length > 0) {
+          const tagsData = [];
+          ins.tags.forEach((tag) => {
+            tagsData.push({ id: tag.id, key: tag.key, value: tag.value });
+          });
+          dispatch(valueChange(`${key}-vmConfig.general.tags`, tagsData));
+        }
+        // network config "vm-1442-vmConfig.network.net1"
+        const networkKey = `${key}-vmConfig.network.net1`;
+        const eths = [];
+        if (ins.networks && ins.networks.length > 0) {
+          ins.networks.forEach((net, index) => {
+            dispatch(valueChange(`${networkKey}-eth-${index}-id`, net.id));
+            dispatch(valueChange(`${networkKey}-eth-${index}-network`, net.network));
+            dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, net.Subnet));
+            dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
+            // dispatch(valueChange(`${networkKey}-eth-${index}-availZone`, ins.availZone));
+            dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, net.publicIP));
+            dispatch(valueChange(`${networkKey}-eth-${index}-networkTier`, net.networkTier));
+            dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, false));
             eths.push({ key: `${networkKey}-eth-${index}`, isPublicIP: false, publicIP: '', privateIP: '', subnet: '', securityGroup: '' });
           });
           // check for additional nics
