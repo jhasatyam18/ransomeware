@@ -3,7 +3,7 @@ export const API_CHANGE_PASSWORD = 'api/v1/users/<id>';
 export const API_INFO = 'api/v1/info';
 export const API_FETCH_SITES = 'api/v1/sites';
 export const API_FETCH_SITE_VMS = 'api/v1/sites/<id>/vms';
-export const API_FETCH_VMWARE_INVENTORY = 'api/v1/sites/<id>/resources?type=datacenter';
+export const API_FETCH_VMWARE_INVENTORY = 'api/v1/sites/<id>/resources?type=Datacenter';
 export const API_FETCH_VMWARE_LOCATION = 'api/v1/sites/<id>/resources';
 export const API_FETCH_VMWARE_ADAPTER_TYPE = 'api/v1/sites/<id>/networks';
 export const API_CREATE_SITES = 'api/v1/sites';
