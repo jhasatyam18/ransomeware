@@ -21,3 +21,8 @@ export const NODE_STATUS_ONLINE = 'online';
 export const NODE_STATUS_OFFLINE = 'offline';
 export const JOB_INIT_SYNC_FAILED = 'init-sync-failed';
 export const JOB_MIGRATED = 'migrated';
+
+export const RECOVERY_STATUS = {
+  MIGRATED: 'Migrated',
+  RECOVERED: 'Recovered',
+};

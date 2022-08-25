@@ -652,7 +652,7 @@ export function setProtectionPlanVMsForUpdate(protectionPlan, isEventAction = fa
             data.forEach((vm) => {
               virtualMachines.forEach((pvm) => {
                 if (pvm.moref === vm.moref) {
-                  selectedVMS = { ...selectedVMS, [vm.moref]: { id: pvm.id, ...vm } };
+                  selectedVMS = { ...selectedVMS, [vm.moref]: setVMDetails(vm, pvm) };
                 }
               });
             });
@@ -1368,4 +1368,17 @@ export function cleanupTestRecoveries() {
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
   };
+}
+
+/**
+ * setVMDetails
+ * @param {*} vmDetails vm details retrieve from the API response
+ * @param {*} protectedVMInfo protected vm details from the plan
+ * @returns required vm details for the protection plan edit.
+ */
+function setVMDetails(vmDetails, protectedVMInfo) {
+  if (protectedVMInfo.isDelete || protectedVMInfo.isRemovedFromPlan) {
+    return { id: protectedVMInfo.id, ...protectedVMInfo };
+  }
+  return { id: protectedVMInfo.id, ...vmDetails };
 }

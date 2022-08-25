@@ -8,7 +8,7 @@ import { API_TYPES, callAPI, createPayload } from './ApiUtils';
 import { API_VALIDATE_MIGRATION, API_VALIDATE_RECOVERY, API_VALIDATE_REVERSE_PLAN } from '../constants/ApiConstants';
 import { getRecoveryPayload, getReversePlanPayload, getVMNetworkConfig, getVMwareNetworkConfig } from './PayloadUtil';
 import { IP_REGEX } from '../constants/ValidationConstants';
-import { PLATFORM_TYPES, STATIC_KEYS } from '../constants/InputConstants';
+import { PLATFORM_TYPES, RECOVERY_STATUS, STATIC_KEYS } from '../constants/InputConstants';
 import { createVMConfigStackObject, getValue, isAWSCopyNic, validateMacAddressForVMwareNetwork, excludeKeys } from './InputUtils';
 
 export function isRequired(value) {
@@ -184,6 +184,9 @@ export function validateVMConfiguration({ user, dispatch }) {
   const vms = getValue('ui.site.seletedVMs', values);
   let fields = {};
   Object.keys(vms).forEach((vm) => {
+    if (isRemovedOrRecoveredVM(vms[vm])) {
+      return;
+    }
     const vmConfig = createVMConfigStackObject(vm, user);
     const { data } = vmConfig;
     data.forEach((item) => {
@@ -224,6 +227,9 @@ export function validateGCPNetworks(user, dispatch) {
   // empty config
   const ips = [];
   Object.keys(vms).forEach((vm) => {
+    if (isRemovedOrRecoveredVM(vms[vm])) {
+      return;
+    }
     const netConfigs = getVMNetworkConfig(`${vm}`, values);
     const vpc = [];
     const vmName = vms[vm].name;
@@ -277,6 +283,9 @@ export function validateAWSNetworks(user, dispatch) {
   let message = '';
   const messages = [];
   Object.keys(vms).forEach((vm) => {
+    if (isRemovedOrRecoveredVM(vms[vm])) {
+      return;
+    }
     const netConfigs = getVMNetworkConfig(`${vm}`, values);
     const vmName = vms[vm].name;
     if (netConfigs.length === 0) {
@@ -347,6 +356,9 @@ export function validateVMware(user, dispatch) {
   let isClean = true;
   let message = '';
   Object.keys(vms).forEach((vm) => {
+    if (isRemovedOrRecoveredVM(vms[vm])) {
+      return;
+    }
     const netConfigs = getVMwareNetworkConfig(`${vm}`, values);
     const vmName = vms[vm].name;
     if (netConfigs.length === 0) {
@@ -797,4 +809,12 @@ export function validateMemoryValue({ value, user, fieldKey }) {
     return true;
   }
   return (typeof value === 'undefined' || typeof value === 'string' && value.trim() === '' || value === null);
+}
+
+export function isRemovedOrRecoveredVM(vm) {
+  if (typeof vm === 'object' && vm.isDeleted || vm.isRemovedFromPlan
+      || vm.recoveryStatus === RECOVERY_STATUS.MIGRATED || vm.recoveryStatus === RECOVERY_STATUS.RECOVERED) {
+    return true;
+  }
+  return false;
 }
