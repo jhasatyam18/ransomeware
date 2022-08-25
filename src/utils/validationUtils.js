@@ -811,7 +811,7 @@ export function validateMemoryValue({ value, user, fieldKey }) {
   return (typeof value === 'undefined' || typeof value === 'string' && value.trim() === '' || value === null);
 }
 
-function isRemovedOrRecoveredVM(vm) {
+export function isRemovedOrRecoveredVM(vm) {
   if (typeof vm === 'object' && vm.isDeleted || vm.isRemovedFromPlan
       || vm.recoveryStatus === RECOVERY_STATUS.MIGRATED || vm.recoveryStatus === RECOVERY_STATUS.RECOVERED) {
     return true;

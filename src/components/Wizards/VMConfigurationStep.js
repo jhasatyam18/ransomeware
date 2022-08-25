@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Card, CardBody, CardHeader, Col, Row } from 'reactstrap';
 import DMAccordion from '../Shared/DMAccordion';
-import { createVMConfigStackObject, getValue } from '../../utils/InputUtils';
 import RecoveryStatusItemRenderer from '../Table/ItemRenderers/RecoveryStatusItemRenderer';
-import { RECOVERY_STATUS } from '../../constants/InputConstants';
+import { createVMConfigStackObject, getValue } from '../../utils/InputUtils';
+import { isRemovedOrRecoveredVM } from '../../utils/validationUtils';
 
 class VMConfigurationStep extends Component {
   renderNonEditableVM(vm) {
@@ -29,8 +29,7 @@ class VMConfigurationStep extends Component {
 
   renderVMConfig(vm, index) {
     const { dispatch, user } = this.props;
-    if (vm.isDeleted || vm.isRemovedFromPlan || vm.recoveryStatus === RECOVERY_STATUS.MIGRATED
-      || vm.recoveryStatus === RECOVERY_STATUS.RECOVERED) {
+    if (isRemovedOrRecoveredVM(vm)) {
       return this.renderNonEditableVM(vm);
     }
     const config = createVMConfigStackObject(vm, user);
