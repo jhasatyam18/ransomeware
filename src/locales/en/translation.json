@@ -306,9 +306,9 @@
 
   "info.recovery.system.agent": "For AWS, install OS agents like EC2Launch and SSMAgents. For GCP, install google os-config and compute-engine agents",
   "info.recovery.install.cloud.packages": "For AWS. install AWS Cloud SDK and for GCP, install GCP Cloud SDK",
-  "info.protectionplan.network.gcp.externalip": "An external IP address associated with this instance. Select an unused static IP address or choose 'Ephemeral' to use an IP from a shared ephemeral IP address pool.",
+  "info.protectionplan.network.cloud.externalip": "An external IP address associated with this instance. Select an unused static IP address or choose 'Ephemeral' to use an IP from a shared ephemeral IP address pool.",
   "info.protectionplan.network.gcp.privateip": "Leave blank to assign an address from the network range or provide ip from the network range",
-  "info.protectionplan.network.gcp.subnet": "Subnet used to allocate ip address to the instance.",
+  "info.protectionplan.network.cloud.subnet": "Subnet used to allocate ip address to the instance.",
   "info.protectionplan.network.gcp.network": "Network used to allocate ip address to the instance.",
   "info.protectionplan.network.aws.elasticip": "An Elastic IP address is a reserved public IP address that you can assign to any EC2 instance in a particular region.",
   "info.protectionplan.tags.aws.tags.copy": "Add all source system tags in the protected instance",
