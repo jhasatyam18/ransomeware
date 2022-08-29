@@ -36,7 +36,7 @@ export const ROLE_ITEM_RENDERER = 'ROLE_ITEM_RENDERER';
 export const VM_NETWORK_INFO_ITEM_RENDERER = 'VM_NETWORK_INFO_ITEM_RENDERER';
 export const SCRIPT_ITEM_RENDERER = 'SCRIPT_ITEM_RENDERER';
 export const PROTECTED_VM_ACTIONS_ITEM_ITEM_RENDERER = 'PROTECTED_VM_ACTIONS_ITEM_ITEM_RENDERER';
-export const APP_LOCATION_ITEM_RENDERER = 'APP_LOCATION_ITEM_RENDERER';
+export const SITE_LOCATION_ITEM_RENDERER = 'SITE_LOCATION_ITEM_RENDERER';
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
@@ -46,7 +46,7 @@ export const TABLE_HEADER_SITES = [
   { label: 'site.type', field: 'siteType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER },
   { label: 'description', field: 'description' },
   { label: 'platform', field: 'platformDetails.platformType' },
-  { label: 'Location', itemRenderer: APP_LOCATION_ITEM_RENDERER },
+  { label: 'Location', itemRenderer: SITE_LOCATION_ITEM_RENDERER },
   { label: 'Node', field: 'node.name', itemRenderer: NODE_NAME_ITEM_RENDERER },
 ];
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { PLATFORM_TYPES } from '../../../constants/InputConstants';
 
-function AppLocationItemRenderer({ data }) {
+function SiteLocationItemRenderer({ data }) {
   const { availZone, hostname, platformType } = data.platformDetails;
   const [loc, setLoc] = useState(availZone);
 
@@ -14,4 +14,4 @@ function AppLocationItemRenderer({ data }) {
   return loc;
 }
 
-export default AppLocationItemRenderer;
+export default SiteLocationItemRenderer;
