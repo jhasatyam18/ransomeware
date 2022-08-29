@@ -190,10 +190,7 @@ export function getVMNetworkConfig(key, values) {
       publicIP = getAWSNetworkIDFromName(values, network) || publicIP;
     }
     if (recoveryPlatform === PLATFORM_TYPES.Azure) {
-      if (publicIP === 'None') {
-        isPublicIP = false;
-        publicIP = '';
-      } else {
+      if (publicIP === 'Ephemeral') {
         isPublicIP = true;
         publicIP = '';
       }

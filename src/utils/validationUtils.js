@@ -213,68 +213,15 @@ export function validateNetworkConfig(user, dispatch) {
     case PLATFORM_TYPES.AWS:
       return validateAWSNetworks(user, dispatch);
     case PLATFORM_TYPES.GCP:
-      return validateGCPNetworks(user, dispatch);
+      return validateCloudNetwork(user, dispatch);
     case PLATFORM_TYPES.Azure:
-      return validateAzureNetworks(user, dispatch);
+      return validateCloudNetwork(user, dispatch);
     default:
       return validateVMware(user, dispatch);
   }
 }
 
-export function validateGCPNetworks(user, dispatch) {
-  const { values } = user;
-  const vms = getValue('ui.site.seletedVMs', values);
-  const subnets = getValue(STATIC_KEYS.UI_SUBNETS, values);
-  let isClean = true;
-  let message = '';
-  // empty config
-  const ips = [];
-  Object.keys(vms).forEach((vm) => {
-    const netConfigs = getVMNetworkConfig(`${vm}`, values);
-    const vpc = [];
-    const vmName = vms[vm].name;
-    if (netConfigs.length === 0) {
-      message = `${vmName}: Network configuration required`;
-      isClean = false;
-    } else {
-      for (let i = 0; i < netConfigs.length; i += 1) {
-        if (netConfigs[i].subnet === '') {
-          message = `${vmName}: Network configure missing for nic-${i}`;
-          isClean = false;
-        }
-        if (typeof netConfigs.privateIP !== 'undefined' && netConfigs.privateIP !== '') {
-          ips.push(netConfigs.privateIP);
-        }
-        if (typeof netConfigs.publicIP !== 'undefined' && netConfigs.publicIP !== '') {
-          ips.push(netConfigs.publicIP);
-        }
-        for (let j = 0; j < subnets.length; j += 1) {
-          if (subnets[j].id === netConfigs[i].subnet) {
-            vpc.push(subnets[j].vpcID);
-          }
-        }
-      }
-      // unique network check
-      const vpcSet = [...new Set(vpc)];
-      if (vpcSet.length !== vpc.length && message === '') {
-        message = `${vmName}: network must be unique for each interface`;
-        isClean = false;
-      }
-    }
-  });
-  // duplicate ip check
-  const ipSet = [...new Set(ips)];
-  if (ipSet.length !== ips.length && message === '') {
-    message = 'Duplicate ip address not allowed';
-    isClean = false;
-  }
-  if (!isClean) {
-    dispatch(addMessage(message, MESSAGE_TYPES.ERROR));
-  }
-  return isClean;
-}
-
-export function validateAzureNetworks(user, dispatch) {
+export function validateCloudNetwork(user, dispatch) {
   const { values } = user;
   const vms = getValue('ui.site.seletedVMs', values);
   const subnets = getValue(STATIC_KEYS.UI_SUBNETS, values);

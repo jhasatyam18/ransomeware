@@ -186,8 +186,19 @@ export function onPlatformTypeChange({ value }) {
 export function fetchRegions(TYPE) {
   return (dispatch) => {
     let url = (PLATFORM_TYPES.AWS === TYPE ? API_AWS_REGIONS : API_GCP_REGIONS);
-    if (TYPE === PLATFORM_TYPES.Azure) {
-      url = API_AZURE_REGIONS;
+    switch (TYPE) {
+      case PLATFORM_TYPES.AWS:
+        url = API_AWS_REGIONS;
+        break;
+      case PLATFORM_TYPES.GCP:
+        url = API_GCP_REGIONS;
+        break;
+      case PLATFORM_TYPES.Azure:
+        url = API_AZURE_REGIONS;
+        break;
+      default:
+        url = '';
+        break;
     }
     return callAPI(url)
       .then((json) => {
