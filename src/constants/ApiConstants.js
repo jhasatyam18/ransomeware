@@ -57,6 +57,7 @@ export const API_GCP_REGIONS = 'gcp_regions.json';
 export const API_AZURE_REGIONS = 'azure_regions.json';
 export const API_AWS_AVAILABILITY_ZONES = 'aws_availability_zones.json';
 export const API_GCP_AVAILABILITY_ZONES = 'gcp_zones.json';
+export const API_AZURE_AVAILIBITY_ZONES = 'azure_availibility_zones.json';
 
 // events
 export const API_FETCH_EVENTS = 'api/v1/event';

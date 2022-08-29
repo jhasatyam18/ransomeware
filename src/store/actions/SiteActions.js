@@ -1,6 +1,6 @@
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import * as Types from '../../constants/actionTypes';
-import { API_AWS_AVAILABILITY_ZONES, API_FETCH_VMWARE_INVENTORY, API_CREATE_SITES, API_DELETE_SITES, API_FETCH_SITES, API_FETCH_SITE_VMS, API_GCP_AVAILABILITY_ZONES, API_SITE_NETWORKS, API_SITE_NETWORKS_ZONE } from '../../constants/ApiConstants';
+import { API_AWS_AVAILABILITY_ZONES, API_FETCH_VMWARE_INVENTORY, API_CREATE_SITES, API_DELETE_SITES, API_FETCH_SITES, API_FETCH_SITE_VMS, API_GCP_AVAILABILITY_ZONES, API_SITE_NETWORKS, API_SITE_NETWORKS_ZONE, API_AZURE_AVAILIBITY_ZONES } from '../../constants/ApiConstants';
 import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { closeModal } from './ModalActions';
@@ -9,6 +9,7 @@ import { fetchByDelay } from '../../utils/SlowFetch';
 import { getValue, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
 import { setRecoveryVMDetails } from './DrPlanActions';
+import { fetchAvailibilityZonesForAzure } from './AzureAction';
 
 export function fetchSites(key) {
   return (dispatch) => {
@@ -197,7 +198,10 @@ export function updateAvailabilityZones({ value }) {
 }
 export function fetchAvailibilityZones(type) {
   return (dispatch) => {
-    const url = (type === PLATFORM_TYPES.AWS ? API_AWS_AVAILABILITY_ZONES : API_GCP_AVAILABILITY_ZONES);
+    let url = (type === PLATFORM_TYPES.AWS ? API_AWS_AVAILABILITY_ZONES : API_GCP_AVAILABILITY_ZONES);
+    if (PLATFORM_TYPES.Azure === type) {
+      url = API_AZURE_AVAILIBITY_ZONES;
+    }
     return callAPI(url)
       .then((json) => {
         if (json && json.hasError) {
@@ -291,7 +295,10 @@ export function handleSelectAllRecoveryVMs(value) {
 }
 
 export function fetchNetworks(id, sourceNet = undefined, availZone) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const recoveryPlateform = getValue('ui.values.recoveryPlatform', values);
     dispatch(showApplicationLoader('FETCHING_SITE_NETWORK', 'Loading network info...'));
     let url = API_SITE_NETWORKS.replace('<id>', id);
     if (typeof availZone !== 'undefined' && availZone !== '') {
@@ -338,6 +345,9 @@ export function fetchNetworks(id, sourceNet = undefined, availZone) {
                 }
               }
             });
+          }
+          if (PLATFORM_TYPES.Azure === recoveryPlateform && zones.length === 0) {
+            dispatch(fetchAvailibilityZonesForAzure());
           }
           dispatch(valueChange(STATIC_KEYS.UI_AVAILABILITY_ZONES, zones));
           dispatch(valueChange(STATIC_KEYS.RESOURCE_GROUP, data.adapters));

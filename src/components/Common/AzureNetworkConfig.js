@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withTranslation } from 'react-i18next';
 import { Form, Label } from 'reactstrap';
 import { MODAL_NETWORK_CONFIG } from '../../constants/Modalconstant';
 import { valueChange } from '../../store/actions';
@@ -46,7 +47,7 @@ class AzureNetworkConfig extends Component {
   }
 
   renderRows() {
-    const { user, networkKey } = this.props;
+    const { user, networkKey, t } = this.props;
     const { values } = user;
     const getNetworks = getValue(networkKey, values) || [];
     const isFirstPublic = this.isFirstPublic(networkKey, values);
@@ -66,11 +67,11 @@ class AzureNetworkConfig extends Component {
             <Label className="padding-left-20" disabled={isFirstPublic && index > 0}>
               {isFirstPublic && index > 0 ? (
                 <Label className="disabled padding-top-5">
-                  Config
+                  {t('title.network')}
                 </Label>
               ) : (
                 <a href="#" onClick={() => this.configureNic(nic.key, index)} title={title}>
-                  Config
+                  {t('title.network')}
                 </a>
               )}
 
@@ -80,7 +81,7 @@ class AzureNetworkConfig extends Component {
             {index !== 0 ? (
               <Label className="padding-left-20">
                 <a href="#" onClick={() => this.removeNic(networkKey, index)}>
-                  Remove
+                  {t('title.remove')}
                 </a>
               </Label>
             ) : null}
@@ -113,4 +114,4 @@ class AzureNetworkConfig extends Component {
   }
 }
 
-export default AzureNetworkConfig;
+export default (withTranslation()(AzureNetworkConfig));

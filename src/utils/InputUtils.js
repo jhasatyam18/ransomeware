@@ -199,6 +199,21 @@ export function getSecurityGroupOption(user, fieldKey) {
   return options || [];
 }
 
+export function getAzureSecurityGroupOption(user, fieldKey) {
+  const { values } = user;
+  const opts = getValue(STATIC_KEYS.UI_SECURITY_GROUPS, values) || [];
+  const networkID = getValue(fieldKey.replace('-securityGroups', '-vpcId'), values);
+  const options = [];
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+  opts.forEach((op) => {
+    const name = (op.name && op.name !== '' ? op.name : op.id);
+    if (op.vpcID === networkID || recoveryPlatform === PLATFORM_TYPES.GCP) {
+      options.push({ label: name, value: op.name });
+    }
+  });
+  return options || [];
+}
+
 export function getSubnetOptions(user, fieldKey) {
   const { values } = user;
   let isCopyConfiguration = false;
@@ -246,7 +261,7 @@ export function getAzureSubnetOptions(user, fieldKey) {
   opts.forEach((op) => {
     if (netID === op.vpcID) {
       const name = `${op.name}-${op.cidr}`;
-      options.push({ label: name, value: op.id });
+      options.push({ label: name, value: op.name });
     }
   });
   return options;
@@ -522,6 +537,7 @@ export function getAzureVMConfig(vm) {
         title: 'General',
         children: {
           [`${key}-vmConfig.general.folderPath`]: { label: 'Resource Group', fieldInfo: 'info.protectionplan.instance.type', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select Resource Group', shouldShow: true, options: (u) => getResourceTypeOptions(u) },
+          [`${key}-vmConfig.general.availibility.zone`]: { label: 'Availability Zone', fieldInfo: 'info.availability.zone', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select Availability Zone', shouldShow: true, options: (u) => getAvailibilityZoneOptions(u) },
           [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', fieldInfo: 'info.protectionplan.instance.type', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
           [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.instance.volume.type.aws', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u), onChange: (user, dispatch) => onAwsStorageTypeChange(user, dispatch), disabled: (u, f) => shouldDisableStorageType(u, f) },
           [`${key}-vmConfig.general.tags`]: { label: 'Tags', fieldInfo: 'info.protectionplan.instance.tags.aws', type: STACK_COMPONENT_TAGS, validate: null, errorMessage: '', shouldShow: true },

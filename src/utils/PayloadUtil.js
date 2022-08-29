@@ -146,6 +146,9 @@ export function getVMConfigPayload(user) {
     const securityGroups = joinArray(sgs, ',');
     const preScript = getValue(`${key}-vmConfig.scripts.preScript`, values);
     const postScript = getValue(`${key}-vmConfig.scripts.postScript`, values);
+    if (PLATFORM_TYPES.Azure === recoveryPlatform) {
+      availZone = getValue(`${key}-vmConfig.general.availibility.zone`, values);
+    }
     if (typeof id !== 'undefined' && id !== '') {
       instanceDetails.push({ sourceMoref, id, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref: hostMoref.value, datastoreMoref: datastoreMoref.value, numCPU, datacenterMoref });
     } else {
