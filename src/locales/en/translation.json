@@ -346,6 +346,7 @@
   "title.Datastore":"Datastore",
   "title.machines.recovery":"Select Virtual Machine for recovery",
   "title.machines.migration":"Select Virtual Machine for migration",
+  "title.resource.grp":"Resource Group",
   "auto.migration":"Auto Migrate",
   "info.aws.create.network.from.source" : "Creates new subnet and security group on recovery site based on protected entity's configuration",
   "info.protectionplan.protection.prescript": "Script will execute before every replication iteration.",
