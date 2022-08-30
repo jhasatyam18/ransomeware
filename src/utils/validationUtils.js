@@ -460,11 +460,11 @@ export async function validateReversePlan({ user, dispatch }) {
         dispatch(addMessage('Recovery site is not reachable. Please select a different recovery site.', MESSAGE_TYPES.ERROR, true));
         return false;
       }
-      if (response.failedVMs === null) {
+      if (response.failedEntities === null) {
         return true;
       }
-      if (response.failedVMs.length !== 0) {
-        dispatch(addMessage(`[${response.failedVMs.join(', ')}] The last replication job has failed or snapshots across the sites are not in sync. Please select full incremental for replication type.`, MESSAGE_TYPES.ERROR, true));
+      if (response.failedEntities.length !== 0) {
+        dispatch(addMessage(`[${response.failedEntities.join(', ')}] The last replication job has failed or snapshots across the sites are not in sync. Please select full incremental for replication type.`, MESSAGE_TYPES.ERROR, true));
       }
       return false;
     } catch (err) {
