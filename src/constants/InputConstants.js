@@ -115,3 +115,8 @@ export const VMWARE_OBJECT = {
   ComputeResource: 'ComputeResource',
   VirtualMachine: 'VirtualMachine',
 };
+
+export const RECOVERY_ENTITY_TYPES = {
+  VIRTUALMACHINE: 'VIRTUALMACHINE',
+  DISK: 'DISK',
+};
