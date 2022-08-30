@@ -11,12 +11,12 @@ import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { fetchNetworks, fetchSites, onRecoverSiteChange } from './SiteActions';
 import { getCreateDRPlanPayload, getEditProtectionPlanPayload, getRecoveryPayload, getReversePlanPayload, getVMConfigPayload } from '../../utils/PayloadUtil';
-import { clearValues, fetchScript, hideApplicationLoader, refresh, showApplicationLoader, valueChange } from './UserActions';
+import { clearValues, fetchScript, hideApplicationLoader, refresh, setInstanceDetails, setProtectionPlanScript, setTags, showApplicationLoader, valueChange } from './UserActions';
 import { closeWizard, openWizard } from './WizardActions';
 import { closeModal, openModal } from './ModalActions';
 import { addAssociatedReverseIP } from './AwsActions';
 import { MIGRATION_WIZARDS, RECOVERY_WIZARDS, TEST_RECOVERY_WIZARDS, REVERSE_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS, PROTECTED_VM_RECONFIGURATION_WIZARD, CLEANUP_TEST_RECOVERY_WIZARDS } from '../../constants/WizardConstants';
-import { getMatchingInsType, getValue, getVMMorefFromEvent, isSamePlatformPlan, getVMInstanceFromEvent } from '../../utils/InputUtils';
+import { getValue, getVMMorefFromEvent, isSamePlatformPlan, getVMInstanceFromEvent } from '../../utils/InputUtils';
 import { PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
@@ -726,8 +726,7 @@ export function setProtectionPlanVMConfig(selectedVMS, protectionPlan) {
   };
 }
 
-function setAWSVMDetails(selectedVMS, protectionPlan, dispatch, user) {
-  const { values } = user;
+function setAWSVMDetails(selectedVMS, protectionPlan, dispatch) {
   const vms = Object.values(selectedVMS);
   const { recoveryEntities, protectedEntities } = protectionPlan;
   const { instanceDetails } = recoveryEntities;
@@ -736,29 +735,13 @@ function setAWSVMDetails(selectedVMS, protectionPlan, dispatch, user) {
     const key = vm.moref;
     virtualMachines.forEach((pvm) => {
       if (vm.moref === pvm.moref) {
-        dispatch(valueChange(`${key}-protection.scripts.preScript`, pvm.preScript));
-        dispatch(valueChange(`${key}-protection.scripts.postScript`, pvm.postScript));
+        dispatch(setProtectionPlanScript(key, pvm));
       }
     });
     instanceDetails.forEach((ins) => {
       if (ins.sourceMoref === vm.moref) {
-        dispatch(valueChange(`${key}-vmConfig.general.id`, ins.id));
-        dispatch(valueChange(`${key}-vmConfig.general.sourceMoref`, ins.sourceMoref));
-        const insType = getMatchingInsType(values, ins);
-        dispatch(valueChange(`${key}-vmConfig.general.instanceType`, insType));
-        dispatch(valueChange(`${key}-vmConfig.general.volumeType`, ins.volumeType));
-        dispatch(valueChange(`${key}-vmConfig.general.volumeIOPS`, ins.volumeIOPS));
-        dispatch(valueChange(`${key}-vmConfig.general.bootOrder`, ins.bootPriority));
-        dispatch(valueChange(`${key}-vmConfig.scripts.preScript`, ins.preScript));
-        dispatch(valueChange(`${key}-vmConfig.scripts.postScript`, ins.postScript));
-        dispatch(valueChange(`${key}-vmConfig.scripts.postScript`, ins.postScript));
-        if (ins.tags && ins.tags.length > 0) {
-          const tagsData = [];
-          ins.tags.forEach((tag) => {
-            tagsData.push({ id: tag.id, key: tag.key, value: tag.value });
-          });
-          dispatch(valueChange(`${key}-vmConfig.general.tags`, tagsData));
-        }
+        dispatch(setInstanceDetails(key, ins));
+        dispatch(setTags(key, ins));
         // network config "vm-1442-vmConfig.network.net1"
         const networkKey = `${key}-vmConfig.network.net1`;
         const eths = [];
@@ -796,8 +779,7 @@ function setAWSVMDetails(selectedVMS, protectionPlan, dispatch, user) {
   });
 }
 
-function setGCPVMDetails(selectedVMS, protectionPlan, dispatch, user) {
-  const { values } = user;
+function setGCPVMDetails(selectedVMS, protectionPlan, dispatch) {
   const vms = Object.values(selectedVMS);
   const { recoveryEntities, protectedEntities } = protectionPlan;
   const { instanceDetails } = recoveryEntities;
@@ -806,31 +788,17 @@ function setGCPVMDetails(selectedVMS, protectionPlan, dispatch, user) {
     const key = vm.moref;
     virtualMachines.forEach((pvm) => {
       if (vm.moref === pvm.moref) {
-        dispatch(valueChange(`${key}-protection.scripts.preScript`, pvm.preScript));
-        dispatch(valueChange(`${key}-protection.scripts.postScript`, pvm.postScript));
+        dispatch(setProtectionPlanScript(key, pvm));
       }
     });
     instanceDetails.forEach((ins) => {
       if (ins.sourceMoref === vm.moref) {
-        dispatch(valueChange(`${key}-vmConfig.general.id`, ins.id));
-        dispatch(valueChange(`${key}-vmConfig.general.sourceMoref`, vm.moref));
-        const insType = getMatchingInsType(values, ins);
-        dispatch(valueChange(`${key}-vmConfig.general.instanceType`, insType));
-        dispatch(valueChange(`${key}-vmConfig.general.volumeType`, ins.volumeType));
-        dispatch(valueChange(`${key}-vmConfig.general.bootOrder`, ins.bootPriority));
-        dispatch(valueChange(`${key}-vmConfig.scripts.preScript`, ins.preScript));
-        dispatch(valueChange(`${key}-vmConfig.scripts.postScript`, ins.postScript));
+        dispatch(setInstanceDetails(key, ins));
         if (ins.securityGroups && ins.securityGroups.length > 0) {
           const selSgs = ins.securityGroups.split(',') || '';
           dispatch(valueChange(`${key}-vmConfig.network.securityGroup`, selSgs));
         }
-        if (ins.tags && ins.tags.length > 0) {
-          const tagsData = [];
-          ins.tags.forEach((tag) => {
-            tagsData.push({ id: tag.id, key: tag.key, value: tag.value });
-          });
-          dispatch(valueChange(`${key}-vmConfig.general.tags`, tagsData));
-        }
+        dispatch(setTags(key, ins));
         // network config "vm-1442-vmConfig.network.net1"
         const networkKey = `${key}-vmConfig.network.net1`;
         const eths = [];
@@ -874,8 +842,7 @@ function setVMWAREVMDetails(selectedVMS, protectionPlan, dispatch) {
     const key = vm.moref;
     virtualMachines.forEach((pvm) => {
       if (vm.moref === pvm.moref) {
-        dispatch(valueChange(`${key}-protection.scripts.preScript`, pvm.preScript));
-        dispatch(valueChange(`${key}-protection.scripts.postScript`, pvm.postScript));
+        dispatch(setProtectionPlanScript(key, pvm));
       }
     });
     instanceDetails.forEach((ins) => {
@@ -898,13 +865,7 @@ function setVMWAREVMDetails(selectedVMS, protectionPlan, dispatch) {
         if (ins.securityGroups && ins.securityGroups.length > 0) {
           dispatch(valueChange(`${key}-vmConfig.network.securityGroup`, ''));
         }
-        if (ins.tags && ins.tags.length > 0) {
-          const tagsData = [];
-          ins.tags.forEach((tag) => {
-            tagsData.push({ id: tag.id, key: tag.key, value: tag.value });
-          });
-          dispatch(valueChange(`${key}-vmConfig.general.tags`, tagsData));
-        }
+        dispatch(setTags(key, ins));
         // network config "vm-1442-vmConfig.network.net1"
         const networkKey = `${key}-vmConfig.network.net1`;
         const eths = [];
@@ -942,8 +903,7 @@ function setVMWAREVMDetails(selectedVMS, protectionPlan, dispatch) {
   });
 }
 
-function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch, user) {
-  const { values } = user;
+function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch) {
   const vms = Object.values(selectedVMS);
   const { recoveryEntities, protectedEntities } = protectionPlan;
   const { instanceDetails } = recoveryEntities;
@@ -952,21 +912,13 @@ function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch, user) {
     const key = vm.moref;
     virtualMachines.forEach((pvm) => {
       if (vm.moref === pvm.moref) {
-        dispatch(valueChange(`${key}-protection.scripts.preScript`, pvm.preScript));
-        dispatch(valueChange(`${key}-protection.scripts.postScript`, pvm.postScript));
+        dispatch(setProtectionPlanScript(key, pvm));
       }
     });
     instanceDetails.forEach((ins) => {
       if (ins.sourceMoref === vm.moref) {
-        dispatch(valueChange(`${key}-vmConfig.general.id`, ins.id));
-        dispatch(valueChange(`${key}-vmConfig.general.sourceMoref`, vm.moref));
-        const insType = getMatchingInsType(values, ins);
+        dispatch(setInstanceDetails(key, ins));
         dispatch(valueChange(`${key}-vmConfig.general.folderPath`, ins.folderPath));
-        dispatch(valueChange(`${key}-vmConfig.general.instanceType`, insType));
-        dispatch(valueChange(`${key}-vmConfig.general.volumeType`, ins.volumeType));
-        dispatch(valueChange(`${key}-vmConfig.general.bootOrder`, ins.bootPriority));
-        dispatch(valueChange(`${key}-vmConfig.scripts.preScript`, ins.preScript));
-        dispatch(valueChange(`${key}-vmConfig.scripts.postScript`, ins.postScript));
         if (ins.tags && ins.tags.length > 0) {
           const tagsData = [];
           ins.tags.forEach((tag) => {

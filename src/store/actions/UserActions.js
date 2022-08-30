@@ -9,7 +9,7 @@ import { APPLICATION_API_TOKEN, APPLICATION_API_USER, APPLICATION_API_USER_ID } 
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { getCookie, setCookie } from '../../utils/CookieUtils';
 import { onInit } from '../../utils/HistoryUtil';
-import { getValue, getVMwareLocationPath, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
+import { getMatchingInsType, getValue, getVMwareLocationPath, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { getUnreadAlerts } from './AlertActions';
 import { fetchDRPlanById, fetchDrPlans } from './DrPlanActions';
@@ -800,5 +800,45 @@ export function getStorageForVMware({ fieldKey, hostMoref }) {
         return new Promise((resolve) => resolve());
       },
     );
+  };
+}
+
+/**
+ * set the script for pplan
+ *
+ * @param {key,obj} options
+ */
+export function setProtectionPlanScript(key, obj) {
+  return (dispatch) => {
+    dispatch(valueChange(`${key}-protection.scripts.preScript`, obj.preScript));
+    dispatch(valueChange(`${key}-protection.scripts.postScript`, obj.postScript));
+  };
+}
+
+export function setInstanceDetails(key, obj) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    dispatch(valueChange(`${key}-vmConfig.general.id`, obj.id));
+    dispatch(valueChange(`${key}-vmConfig.general.sourceMoref`, obj.sourceMoref));
+    const insType = getMatchingInsType(values, obj);
+    dispatch(valueChange(`${key}-vmConfig.general.instanceType`, insType));
+    dispatch(valueChange(`${key}-vmConfig.general.volumeType`, obj.volumeType));
+    dispatch(valueChange(`${key}-vmConfig.general.volumeIOPS`, obj.volumeIOPS));
+    dispatch(valueChange(`${key}-vmConfig.general.bootOrder`, obj.bootPriority));
+    dispatch(valueChange(`${key}-vmConfig.scripts.preScript`, obj.preScript));
+    dispatch(valueChange(`${key}-vmConfig.scripts.postScript`, obj.postScript));
+  };
+}
+
+export function setTags(key, obj) {
+  return (dispatch) => {
+    if (obj.tags && obj.tags.length > 0) {
+      const tagsData = [];
+      obj.tags.forEach((tag) => {
+        tagsData.push({ id: tag.id, key: tag.key, value: tag.value });
+      });
+      dispatch(valueChange(`${key}-vmConfig.general.tags`, tagsData));
+    }
   };
 }

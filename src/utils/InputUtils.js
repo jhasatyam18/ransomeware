@@ -282,21 +282,22 @@ export function getNetworkOptions(user) {
   return options;
 }
 
-export function getGCPExternalIPOptions(user) {
+export function getAzureNetworkOptions(user) {
   const { values } = user;
+  const opts = getValue(STATIC_KEYS.UI_SUBNETS, values) || [];
   const options = [];
-  options.push({ label: 'None', value: 'None' });
-  options.push({ label: 'Auto', value: 'Ephemeral' });
-  const ips = getValue(STATIC_KEYS.UI_RESERVE_IPS, values) || [];
-  ips.forEach((op) => {
-    if (op.ipType === 'EXTERNAL') {
-      options.push({ label: op.name, value: op.name });
+  opts.forEach((op) => {
+    const network = op.vpcID;
+    const name = network.split(/[\s/]+/).pop();
+    const exist = options.find((item) => item.label === name);
+    if (!exist) {
+      options.push({ label: name, value: op.name });
     }
   });
   return options;
 }
 
-export function getAzureExternalIPOptions(user) {
+export function getCloudExternalIPOptions(user) {
   const { values } = user;
   const options = [];
   options.push({ label: 'None', value: 'None' });
