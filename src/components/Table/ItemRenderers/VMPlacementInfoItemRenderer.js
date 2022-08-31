@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Popover, PopoverBody } from 'reactstrap';
 import { PLATFORM_TYPES } from '../../../constants/InputConstants';
 
-function VMVmwarePlacementInfoItemRenderer(props) {
+function VMPlacementInfoItemRenderer(props) {
   const { data, drPlans, t } = props;
   const key = `netowrk-popover-key-${data.id - drPlans.size}`;
   const { protectionPlan } = drPlans;
@@ -64,14 +64,16 @@ function VMVmwarePlacementInfoItemRenderer(props) {
     &nbsp;
         <span>{folderPath}</span>
       </div>
-      <div className="vmware_placement_info">
-        <p className="vmware_placement_info_p">
-          {' '}
-          {t('zone')}
-        </p>
+      {availZone ? (
+        <div className="vmware_placement_info">
+          <p className="vmware_placement_info_p">
+            {' '}
+            {t('zone')}
+          </p>
     &nbsp;
-        <span>{availZone}</span>
-      </div>
+          <span>{availZone}</span>
+        </div>
+      ) : ''}
     </div>
   );
   const renderNetworkDetails = () => {
@@ -103,4 +105,4 @@ function mapStateToProps(state) {
   const { drPlans } = state;
   return { drPlans };
 }
-export default connect(mapStateToProps)(withTranslation()(VMVmwarePlacementInfoItemRenderer));
+export default connect(mapStateToProps)(withTranslation()(VMPlacementInfoItemRenderer));

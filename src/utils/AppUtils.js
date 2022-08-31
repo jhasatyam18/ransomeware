@@ -1,4 +1,6 @@
+import { STATIC_KEYS } from '../constants/InputConstants';
 import * as RPATH from '../constants/RouterConstants';
+import { getAzureNetworkOptions, getValue } from './InputUtils';
 
 const KEY_NAME = 'datamotive';
 let startValue = 1;
@@ -328,4 +330,37 @@ export function getMemoryInfo(value) {
   unit = units[unitIndex] || 'MB';
 
   return [val, unit];
+}
+
+export function getMatchingNetwork(val, user) {
+  let res = '';
+  const azureNetOpt = getAzureNetworkOptions(user);
+  azureNetOpt.forEach((opt) => {
+    if (opt.name === val) {
+      res = opt.value;
+    }
+  });
+  return res;
+}
+
+export function getNetworkIDFromName(val, values) {
+  let res = '';
+  const netArray = getValue(STATIC_KEYS.UI_NETWORK, values);
+  netArray.forEach((net) => {
+    if (net.name === val) {
+      res = net.id;
+    }
+  });
+  return res;
+}
+
+export function getSubnetIDFromName(val, values) {
+  let res = '';
+  const netArray = getValue(STATIC_KEYS.UI_SUBNETS, values);
+  netArray.forEach((net) => {
+    if (net.name === val) {
+      res = net.id;
+    }
+  });
+  return res;
 }

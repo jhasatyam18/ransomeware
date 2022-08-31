@@ -251,6 +251,7 @@
   "info.site.vcenter.username": "vCenter server username",
   "info.site.vcenter.password": "vCenter server password",
   "info.site.gcp.projectid": "The project ID is a unique identifier for a gcp project",
+  "info.site.storage.acc":"Azure Storage Account",
 
   "info.node.name": "Name of the deployed node VM or instance",
   "info.node.username": "Username of the deployed node",
@@ -307,7 +308,7 @@
   "info.recovery.system.agent": "For AWS, install OS agents like EC2Launch and SSMAgents. For GCP, install google os-config and compute-engine agents",
   "info.recovery.install.cloud.packages": "For AWS. install AWS Cloud SDK and for GCP, install GCP Cloud SDK",
   "info.protectionplan.network.cloud.externalip": "An external IP address associated with this instance. Select an unused static IP address or choose 'Ephemeral' to use an IP from a shared ephemeral IP address pool.",
-  "info.protectionplan.network.gcp.privateip": "Leave blank to assign an address from the network range or provide ip from the network range",
+  "info.protectionplan.network.cloud.privateip": "Leave blank to assign an address from the network range or provide ip from the network range",
   "info.protectionplan.network.cloud.subnet": "Subnet used to allocate ip address to the instance.",
   "info.protectionplan.network.gcp.network": "Network used to allocate ip address to the instance.",
   "info.protectionplan.network.aws.elasticip": "An Elastic IP address is a reserved public IP address that you can assign to any EC2 instance in a particular region.",
@@ -373,5 +374,6 @@
   "info.auto.migration.step-2" : "2. Initiate one replication cycle to ensure there is no change data.",
   "info.auto.migration.step-3" : "3. Initiate Migration.",
   "loading":"Loading...",
+  "msg.resource.grp":"Please Select Resource Group",
   "test.recovery.note":"Test recoveries allow you to validate the sanity of your DR copy. It is recommended to test recover workloads in an isolated VPC or subnet to avoid conflicts or race conditions in DR environment. If there are recovery scripts which make changes to DR environment like updating DNS entries etc., it is recommended to omit their execution during Test recovery, to avoid  unnecessary changes to the DR environment"
 }

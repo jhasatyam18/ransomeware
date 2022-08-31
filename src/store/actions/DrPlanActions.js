@@ -1,4 +1,4 @@
-import { getMemoryInfo } from '../../utils/AppUtils';
+import { getMemoryInfo, getNetworkIDFromName, getSubnetIDFromName } from '../../utils/AppUtils';
 import { changedVMRecoveryConfigurations } from '../../utils/validationUtils';
 import { MONITORING_DISK_CHANGES } from '../../constants/EventConstant';
 import { fetchByDelay } from '../../utils/SlowFetch';
@@ -903,7 +903,8 @@ function setVMWAREVMDetails(selectedVMS, protectionPlan, dispatch) {
   });
 }
 
-function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch) {
+function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch, user) {
+  const { values } = user;
   const vms = Object.values(selectedVMS);
   const { recoveryEntities, protectedEntities } = protectionPlan;
   const { instanceDetails } = recoveryEntities;
@@ -932,8 +933,10 @@ function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch) {
         if (ins.networks && ins.networks.length > 0) {
           ins.networks.forEach((net, index) => {
             dispatch(valueChange(`${networkKey}-eth-${index}-id`, net.id));
-            dispatch(valueChange(`${networkKey}-eth-${index}-network`, net.network));
-            dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, net.Subnet));
+            const network = getNetworkIDFromName(net.network, values);
+            const subnet = getSubnetIDFromName(net.Subnet, values);
+            dispatch(valueChange(`${networkKey}-eth-${index}-network`, network));
+            dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, subnet));
             dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
             // dispatch(valueChange(`${networkKey}-eth-${index}-availZone`, ins.availZone));
             dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, net.publicIP));

@@ -20,26 +20,22 @@ export function isRequired(value) {
 
 export function validateField(field, fieldKey, value, dispatch, user) {
   const { patterns, validate, errorMessage } = field;
-  const { values } = user;
-  const platformType = getValue('configureSite.platformDetails.platformType', values);
   // const field = FIELDS[fieldKey];
   const { type } = field;
   const { errors } = user;
-  if (platformType !== PLATFORM_TYPES.Azure) {
-    if (patterns) {
-      let isValid = false;
-      patterns.forEach((pattern) => {
-        const re = new RegExp(pattern);
-        if (value) {
-          if (value.match(re) !== null) {
-            isValid = true;
-          }
+  if (patterns) {
+    let isValid = false;
+    patterns.forEach((pattern) => {
+      const re = new RegExp(pattern);
+      if (value) {
+        if (value.match(re) !== null) {
+          isValid = true;
         }
-      });
-      if (!isValid) {
-        dispatch(addErrorMessage(fieldKey, errorMessage));
-        return false;
       }
+    });
+    if (!isValid) {
+      dispatch(addErrorMessage(fieldKey, errorMessage));
+      return false;
     }
   }
   if (typeof validate === 'function') {

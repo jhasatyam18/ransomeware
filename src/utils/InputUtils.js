@@ -261,7 +261,7 @@ export function getAzureSubnetOptions(user, fieldKey) {
   opts.forEach((op) => {
     if (netID === op.vpcID) {
       const name = `${op.name}-${op.cidr}`;
-      options.push({ label: name, value: op.name });
+      options.push({ label: name, value: op.id });
     }
   });
   return options;
@@ -282,16 +282,24 @@ export function getNetworkOptions(user) {
   return options;
 }
 
-export function getAzureNetworkOptions(user) {
+export function getAzureNetworkOptions(user, fieldKey) {
   const { values } = user;
-  const opts = getValue(STATIC_KEYS.UI_SUBNETS, values) || [];
+  const vmMoref = fieldKey.split('.');
+  const resourceGrpKey = getValue(`${vmMoref[0]}.general.folderPath`, values);
+  // resourceGrpKey = 'Test';
+  let opts = getValue(STATIC_KEYS.UI_NETWORKS, values) || [];
+  opts = opts.filter((sub) => {
+    if (sub.vpcID === resourceGrpKey) {
+      return sub;
+    }
+  });
   const options = [];
   opts.forEach((op) => {
-    const network = op.vpcID;
+    const network = op.id;
     const name = network.split(/[\s/]+/).pop();
     const exist = options.find((item) => item.label === name);
     if (!exist) {
-      options.push({ label: name, value: op.name });
+      options.push({ label: name, value: op.id });
     }
   });
   return options;

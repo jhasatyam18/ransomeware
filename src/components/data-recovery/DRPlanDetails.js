@@ -88,9 +88,9 @@ class DRPlanDetails extends Component {
       return null;
     }
     const { platformDetails, node, name } = site;
-
-    const keys = [{ label: 'Name', field: name }, { label: 'Platform Type', field: platformDetails.platformType }, { label: 'Hostname', field: platformDetails.hostname },
-      { label: 'Region', field: platformDetails.region }, { label: 'Zone', field: platformDetails.availZone }, { label: 'Project ID', field: platformDetails.projectId }, { label: 'Datamotive Node IP', field: node.hostname },
+    const { platformType } = platformDetails;
+    const keys = [{ label: 'Name', field: name }, { label: 'Platform Type', field: platformDetails.platformType }, { label: PLATFORM_TYPES.Azure === platformType ? 'Storage Account' : 'Hostname', field: platformDetails.hostname },
+      { label: 'Region', field: platformDetails.region }, { label: 'Zone', field: platformDetails.availZone }, { label: PLATFORM_TYPES.Azure === platformType ? 'Subscription ID' : 'Project ID', field: platformDetails.projectId }, { label: 'Datamotive Node IP', field: node.hostname },
       { label: 'Datamotive Server Port', field: node.replicationDataPort }];
     const fields = keys.map((ele, index) => {
       const { field, label } = ele;

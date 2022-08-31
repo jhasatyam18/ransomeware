@@ -169,7 +169,7 @@ export function getVMNetworkConfig(key, values) {
     const vpcId = getValue(`${networkKey}-eth-${index}-vpcId`, values);
     let isPublicIP = getValue(`${networkKey}-eth-${index}-isPublic`, values) || false;
     let isFromSource = getValue(`${networkKey}-eth-${index}-isFromSource`, values);
-    const subnet = getValue(`${networkKey}-eth-${index}-subnet`, values);
+    let subnet = getValue(`${networkKey}-eth-${index}-subnet`, values);
     const availZone = getValue(`${networkKey}-eth-${index}-availZone`, values);
     const privateIP = getValue(`${networkKey}-eth-${index}-privateIP`, values) || '';
     let publicIP = getValue(`${networkKey}-eth-${index}-publicIP`, values) || '';
@@ -193,7 +193,13 @@ export function getVMNetworkConfig(key, values) {
       if (publicIP === 'Ephemeral') {
         isPublicIP = true;
         publicIP = '';
+      } else {
+        publicIP = '';
       }
+      const netArr = network.split('/');
+      network = netArr[netArr.length - 1];
+      const subArr = subnet.split('/');
+      subnet = subArr[subArr.length - 1];
     }
     if (network !== '' && recoveryPlatform === PLATFORM_TYPES.VMware) {
       network = network.label;

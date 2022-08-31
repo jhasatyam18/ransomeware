@@ -65,16 +65,9 @@ class AzureNetworkConfig extends Component {
           </td>
           <td>
             <Label className="padding-left-20" disabled={isFirstPublic && index > 0}>
-              {isFirstPublic && index > 0 ? (
-                <Label className="disabled padding-top-5">
-                  {t('title.network')}
-                </Label>
-              ) : (
-                <a href="#" onClick={() => this.configureNic(nic.key, index)} title={title}>
-                  {t('title.network')}
-                </a>
-              )}
-
+              <a href="#" onClick={() => this.configureNic(nic.key, index)} title={title}>
+                {t('title.network')}
+              </a>
             </Label>
           </td>
           <td>

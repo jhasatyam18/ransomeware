@@ -81,6 +81,7 @@ export const STATIC_KEYS = {
   UI_VMWARE_CONFIG_RESPONSES: 'ui.vmware.config.responses',
   UI_VOLUMETYPES: 'ui.values.volume.type',
   RESOURCE_GROUP: 'ui.values.resource.type',
+  UI_NETWORKS: 'ui.values.network',
 };
 
 // Recovery time in minutes

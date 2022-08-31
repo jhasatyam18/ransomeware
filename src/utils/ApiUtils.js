@@ -73,15 +73,6 @@ export function getLabelForAzure({ user, fieldKey, label }) {
     if (fieldKey === 'configureSite.platformDetails.projectId') {
       res = 'subscription.id';
     }
-    if (fieldKey === 'configureSite.platformDetails.hostname') {
-      res = 'storage.account';
-    }
-    if (fieldKey === 'configureSite.platformDetails.accessKey') {
-      res = 'tenant.id';
-    }
-    if (fieldKey === 'configureSite.platformDetails.secretKey') {
-      res = 'client.id';
-    }
   }
   return res;
 }
