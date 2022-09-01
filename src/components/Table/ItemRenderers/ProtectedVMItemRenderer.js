@@ -8,6 +8,9 @@ function ProtectedVMItemRenderer({ data, dispatch }) {
   if (!data || isVMRecovered(data)) {
     return '';
   }
+  if (data.isDeleted || data.isRemovedFromPlan) {
+    return '';
+  }
   const onEditVM = () => {
     const { location } = window;
     const { pathname } = location;

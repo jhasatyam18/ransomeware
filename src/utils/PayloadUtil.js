@@ -1,4 +1,4 @@
-import { PLATFORM_TYPES, STATIC_KEYS } from '../constants/InputConstants';
+import { PLATFORM_TYPES, RECOVERY_ENTITY_TYPES, STATIC_KEYS } from '../constants/InputConstants';
 import { FIELDS } from '../constants/FieldsConstant';
 import { getValue,
   shouldShowNodePlatformType,
@@ -71,6 +71,7 @@ export function getCreateDRPlanPayload(user, sites) {
   result.drplan.recoveryEntities.instanceDetails = getVMConfigPayload(user);
   result.drplan.replicationInterval = getReplicationInterval(getValue(STATIC_KEYS.REPLICATION_INTERVAL_TYPE, values), getValue('drplan.replicationInterval', values));
   result.drplan.startTime = getUnixTimeFromDate(result.drplan.startTime);
+  result.drplan.protectedEntityType = getRecoveryEntityType();
   return result;
 }
 
@@ -359,6 +360,7 @@ export function getEditProtectionPlanPayload(user, sites) {
   result.drplan.recoveryEntities.instanceDetails = getVMConfigPayload(user);
   result.drplan.replicationInterval = getReplicationInterval(getValue(STATIC_KEYS.REPLICATION_INTERVAL_TYPE, values), getValue('drplan.replicationInterval', values));
   result.drplan.startTime = getUnixTimeFromDate(result.drplan.startTime);
+  result.drplan.protectedEntityType = getRecoveryEntityType();
   return result;
 }
 
@@ -375,4 +377,10 @@ export function getVMwareNetworkConfig(key, values) {
     networks.push({ network: network.label, networkMoref, adapterType, macAddress });
   }
   return networks;
+}
+
+export function getRecoveryEntityType() {
+  // setting VIRTUALMACHINE as default for now
+  // TODO : MODIFY ONCE FCD or other entity ui support added
+  return RECOVERY_ENTITY_TYPES.VIRTUALMACHINE;
 }

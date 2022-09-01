@@ -549,7 +549,7 @@ export function getSiteNodeOptions(user) {
   const result = [];
   if (nodes) {
     nodes.reduce((previous, next) => {
-      previous.push({ label: next.name, value: next.id });
+      previous.push({ label: (next.hostname ? `${next.name} (${next.hostname})` : next.name), value: next.id });
       return previous;
     }, result);
   }
