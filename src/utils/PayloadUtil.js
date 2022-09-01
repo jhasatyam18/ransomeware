@@ -167,7 +167,7 @@ export function getVMNetworkConfig(key, values) {
   for (let index = 0; index < eths.length; index += 1) {
     const id = getValue(`${networkKey}-eth-${index}-id`, values);
     const vpcId = getValue(`${networkKey}-eth-${index}-vpcId`, values);
-    let isPublicIP = getValue(`${networkKey}-eth-${index}-isPublic`, values) || false;
+    const isPublicIP = getValue(`${networkKey}-eth-${index}-isPublic`, values) || false;
     let isFromSource = getValue(`${networkKey}-eth-${index}-isFromSource`, values);
     let subnet = getValue(`${networkKey}-eth-${index}-subnet`, values);
     const availZone = getValue(`${networkKey}-eth-${index}-availZone`, values);
@@ -190,12 +190,6 @@ export function getVMNetworkConfig(key, values) {
       publicIP = getAWSNetworkIDFromName(values, network) || publicIP;
     }
     if (recoveryPlatform === PLATFORM_TYPES.Azure) {
-      if (publicIP === 'Ephemeral') {
-        isPublicIP = true;
-        publicIP = '';
-      } else {
-        publicIP = '';
-      }
       const netArr = network.split('/');
       network = netArr[netArr.length - 1];
       const subArr = subnet.split('/');
