@@ -308,8 +308,8 @@ export function getAzureNetworkOptions(user, fieldKey) {
 export function getCloudExternalIPOptions(user) {
   const { values } = user;
   const options = [];
-  options.push({ label: 'None', value: false });
-  options.push({ label: 'Auto', value: true });
+  options.push({ label: 'None', value: 'None' });
+  options.push({ label: 'Auto', value: 'Ephemeral' });
   const ips = getValue(STATIC_KEYS.UI_RESERVE_IPS, values) || [];
   ips.forEach((op) => {
     if (op.ipType === 'EXTERNAL') {

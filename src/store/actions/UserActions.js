@@ -9,7 +9,7 @@ import { APPLICATION_API_TOKEN, APPLICATION_API_USER, APPLICATION_API_USER_ID } 
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { getCookie, setCookie } from '../../utils/CookieUtils';
 import { onInit } from '../../utils/HistoryUtil';
-import { getMatchingInsType, getValue, getVMwareLocationPath, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
+import { getValue, getVMwareLocationPath, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { getUnreadAlerts } from './AlertActions';
 import { fetchDRPlanById, fetchDrPlans } from './DrPlanActions';
@@ -816,13 +816,10 @@ export function setProtectionPlanScript(key, obj) {
 }
 
 export function setInstanceDetails(key, obj) {
-  return (dispatch, getState) => {
-    const { user } = getState();
-    const { values } = user;
+  return (dispatch) => {
     dispatch(valueChange(`${key}-vmConfig.general.id`, obj.id));
     dispatch(valueChange(`${key}-vmConfig.general.sourceMoref`, obj.sourceMoref));
-    const insType = getMatchingInsType(values, obj);
-    dispatch(valueChange(`${key}-vmConfig.general.instanceType`, insType));
+    dispatch(valueChange(`${key}-vmConfig.general.instanceType`, obj.insType));
     dispatch(valueChange(`${key}-vmConfig.general.volumeType`, obj.volumeType));
     dispatch(valueChange(`${key}-vmConfig.general.volumeIOPS`, obj.volumeIOPS));
     dispatch(valueChange(`${key}-vmConfig.general.bootOrder`, obj.bootPriority));

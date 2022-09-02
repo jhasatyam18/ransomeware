@@ -252,6 +252,12 @@
   "info.site.vcenter.password": "vCenter server password",
   "info.site.gcp.projectid": "The project ID is a unique identifier for a gcp project",
   "info.site.storage.acc":"Azure Storage Account",
+  "info.site.storage.tenant.id":"Tenant ID for Cloud Site(Azure)",
+  "info.site.storage.client.id":"Client ID for Cloud Site(Azure)",
+  "info.azure.configureSite.platformDetails.projectId":"Subscription id  ID for Cloud Site(Azure)",
+  "info.azure.configureSite.platformDetails.username":"Azure username",
+  "info.azure.configureSite.platformDetails.password":"Azure password",
+
 
   "info.node.name": "Name of the deployed node VM or instance",
   "info.node.username": "Username of the deployed node",
@@ -375,5 +381,7 @@
   "info.auto.migration.step-3" : "3. Initiate Migration.",
   "loading":"Loading...",
   "msg.resource.grp":"Please Select Resource Group",
-  "test.recovery.note":"Test recoveries allow you to validate the sanity of your DR copy. It is recommended to test recover workloads in an isolated VPC or subnet to avoid conflicts or race conditions in DR environment. If there are recovery scripts which make changes to DR environment like updating DNS entries etc., it is recommended to omit their execution during Test recovery, to avoid  unnecessary changes to the DR environment"
+  "test.recovery.note":"Test recoveries allow you to validate the sanity of your DR copy. It is recommended to test recover workloads in an isolated VPC or subnet to avoid conflicts or race conditions in DR environment. If there are recovery scripts which make changes to DR environment like updating DNS entries etc., it is recommended to omit their execution during Test recovery, to avoid  unnecessary changes to the DR environment",
+
+  "error.configureSite.platformDetails.projectId":"Subscription id is required"
 }

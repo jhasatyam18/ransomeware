@@ -255,7 +255,7 @@ class ModalNicConfig extends Component {
     const networkField = { fieldInfo: 'info.protectionplan.network.gcp.network', label: 'Network', description: '', type: FIELD_TYPE.SELECT, options: (u, f) => getAzureNetworkOptions(u, f), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select network', shouldShow: true };
     const subnetField = { fieldInfo: 'info.protectionplan.network.cloud.subnet', label: 'Subnet', description: '', type: FIELD_TYPE.SELECT, options: (u, f) => getAzureSubnetOptions(u, f), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select subnet', shouldShow: true };
     const publicIP = { fieldInfo: 'info.protectionplan.network.cloud.externalip', label: 'External IP', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.SELECT, shouldShow: true, errorMessage: 'Select external', options: (u) => getCloudExternalIPOptions(u), validate: (v, u) => isEmpty(v, u) };
-    const securityGroup = { label: 'Security  Groups', placeHolderText: 'Security group', description: '', type: FIELD_TYPE.CUSTOM, shouldShow: true, validate: (v, u) => isEmpty(v, u), errorMessage: 'Select security group', COMPONENT: MULTISELECT_ITEM_COMP, options: (u, k) => getAzureSecurityGroupOption(u, k), fieldInfo: 'info.protectionplan.network.aws.security.group' };
+    const securityGroup = { label: 'Security  Groups', placeHolderText: 'Security group', description: '', type: FIELD_TYPE.SELECT, shouldShow: true, validate: (v, u) => isEmpty(v, u), errorMessage: 'Select security group', options: (u, k) => getAzureSecurityGroupOption(u, k), fieldInfo: 'info.protectionplan.network.aws.security.group' };
     const privateIPField = { fieldInfo: 'info.protectionplan.network.cloud.privateip', label: 'Private IP', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.TEXT, shouldShow: true, validate: (v, u) => validateOptionalIPAddress(v, u), errorMessage: 'Invalid ip address or ip is not in subnet cidr range' };
 
     return (
@@ -268,7 +268,7 @@ class ModalNicConfig extends Component {
                 <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-subnet`} field={subnetField} user={user} />
                 <DMFieldText dispatch={dispatch} fieldKey={`${networkKey}-privateIP`} field={privateIPField} user={user} />
                 <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-publicIP`} field={publicIP} user={user} />
-                <DMMultiSelect dispatch={dispatch} fieldKey={`${networkKey}-securityGroups`} field={securityGroup} user={user} />
+                <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-securityGroups`} field={securityGroup} user={user} />
               </Form>
             </CardBody>
           </Card>

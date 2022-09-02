@@ -16,7 +16,7 @@ import { closeWizard, openWizard } from './WizardActions';
 import { closeModal, openModal } from './ModalActions';
 import { addAssociatedReverseIP } from './AwsActions';
 import { MIGRATION_WIZARDS, RECOVERY_WIZARDS, TEST_RECOVERY_WIZARDS, REVERSE_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS, PROTECTED_VM_RECONFIGURATION_WIZARD, CLEANUP_TEST_RECOVERY_WIZARDS } from '../../constants/WizardConstants';
-import { getValue, getVMMorefFromEvent, isSamePlatformPlan, getVMInstanceFromEvent } from '../../utils/InputUtils';
+import { getValue, getVMMorefFromEvent, isSamePlatformPlan, getVMInstanceFromEvent, getMatchingInsType } from '../../utils/InputUtils';
 import { PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
@@ -919,6 +919,8 @@ function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch, user) {
     instanceDetails.forEach((ins) => {
       if (ins.sourceMoref === vm.moref) {
         dispatch(setInstanceDetails(key, ins));
+        const insType = getMatchingInsType(values, ins);
+        dispatch(valueChange(`${key}-vmConfig.general.instanceType`, insType));
         dispatch(valueChange(`${key}-vmConfig.general.folderPath`, ins.folderPath));
         if (ins.tags && ins.tags.length > 0) {
           const tagsData = [];
@@ -939,7 +941,13 @@ function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch, user) {
             dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, subnet));
             dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
             // dispatch(valueChange(`${networkKey}-eth-${index}-availZone`, ins.availZone));
-            dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, net.publicIP));
+            let { publicIP } = net;
+            if (net.isPublicIP === true) {
+              publicIP = 'Ephemeral';
+            } else if (net.isPublicIP === false) {
+              publicIP = 'None';
+            }
+            dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, publicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkTier`, net.networkTier));
             dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, false));
             const sgs = (net.securityGroups ? net.securityGroups.split(',') : []);
@@ -1389,7 +1397,8 @@ export function setAzureVMRecoveryData(vmMoref) {
       if (key === vmMoref) {
         dispatch(valueChange(`${key}-vmConfig.general.id`, ins.id));
         dispatch(valueChange(`${key}-vmConfig.general.sourceMoref`, vmMoref));
-        dispatch(valueChange(`${key}-vmConfig.general.instanceType`, ins.instanceType));
+        const insType = getMatchingInsType(values, ins);
+        dispatch(valueChange(`${key}-vmConfig.general.instanceType`, insType));
         dispatch(valueChange(`${key}-vmConfig.general.volumeType`, ins.volumeType));
         dispatch(valueChange(`${key}-vmConfig.general.bootOrder`, ins.bootPriority));
         dispatch(valueChange(`${key}-vmConfig.scripts.preScript`, ins.preScript));
@@ -1412,10 +1421,19 @@ export function setAzureVMRecoveryData(vmMoref) {
         if (ins.networks && ins.networks.length > 0) {
           ins.networks.forEach((net, index) => {
             dispatch(valueChange(`${networkKey}-eth-${index}-id`, net.id));
-            dispatch(valueChange(`${networkKey}-eth-${index}-network`, net.network));
-            dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, net.Subnet));
+            const network = getNetworkIDFromName(net.network, values);
+            const subnet = getSubnetIDFromName(net.Subnet, values);
+            dispatch(valueChange(`${networkKey}-eth-${index}-network`, network));
+            dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, subnet));
             dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
-            dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, net.publicIP));
+            // dispatch(valueChange(`${networkKey}-eth-${index}-availZone`, ins.availZone));
+            let { publicIP } = net;
+            if (net.isPublicIP === true) {
+              publicIP = 'Ephemeral';
+            } else if (net.isPublicIP === false) {
+              publicIP = 'None';
+            }
+            dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, publicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkTier`, net.networkTier));
             dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, false));
             const sgs = (net.securityGroups ? net.securityGroups.split(',') : []);

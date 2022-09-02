@@ -89,10 +89,18 @@ class DMFieldText extends Component {
   }
 
   renderError(hasError) {
-    const { fieldKey, field } = this.props;
+    const { fieldKey, field, user } = this.props;
+    let { errorMessage } = field;
+    const { errorFunction } = field;
+    if (errorFunction && typeof errorFunction === 'function') {
+      const res = errorFunction({ fieldKey, user });
+      if (res !== '') {
+        errorMessage = errorFunction({ fieldKey, user });
+      }
+    }
     if (hasError) {
       return (
-        <small className="form-text app_danger" htmlFor={fieldKey}>{field.errorMessage}</small>
+        <small className="form-text app_danger" htmlFor={fieldKey}>{errorMessage}</small>
       );
     }
     return null;
@@ -120,10 +128,17 @@ class DMFieldText extends Component {
   }
 
   renderTooltip() {
-    const { field } = this.props;
-    const { fieldInfo } = field;
+    const { field, fieldKey, user } = this.props;
+    let { fieldInfo } = field;
+    const { infoFunction } = field;
     if (typeof fieldInfo === 'undefined') {
       return null;
+    }
+    if (infoFunction && typeof infoFunction === 'function') {
+      const res = infoFunction(user, fieldKey);
+      if (res !== '') {
+        fieldInfo = res;
+      }
     }
     return (
       <DMToolTip tooltip={fieldInfo} />
