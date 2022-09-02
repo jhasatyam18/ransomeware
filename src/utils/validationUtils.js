@@ -182,7 +182,6 @@ export async function validateMigrationVMs({ user, dispatch }) {
 export function validateVMConfiguration({ user, dispatch }) {
   const { values } = user;
   const vms = getValue('ui.site.seletedVMs', values);
-  const recoverySite = getValue('ui.values.recoveryPlatform', values);
   let fields = {};
   Object.keys(vms).forEach((vm) => {
     if (isRemovedOrRecoveredVM(vms[vm])) {
@@ -193,9 +192,7 @@ export function validateVMConfiguration({ user, dispatch }) {
     data.forEach((item) => {
       const { children } = item;
       Object.keys(children).forEach((key) => {
-        if (recoverySite !== PLATFORM_TYPES.Azure && !key.contains('folderPath')) {
-          fields = { ...fields, [key]: children[key] };
-        }
+        fields = { ...fields, [key]: children[key] };
       });
     });
   });
