@@ -74,7 +74,7 @@ class DRPlanDetails extends Component {
     const { user } = this.props;
     const { recoverySite } = protectionPlan;
     const recoverySitePlatform = recoverySite.platformDetails.platformType;
-    if (recoverySitePlatform === PLATFORM_TYPES.GCP) {
+    if (recoverySitePlatform === PLATFORM_TYPES.GCP || recoverySitePlatform === PLATFORM_TYPES.Azure) {
       return true;
     }
     if (!(protectionPlan.recoveryStatus === RECOVERY_STATUS.RECOVERED || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED)) {

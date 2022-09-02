@@ -408,6 +408,10 @@ export function openRecoveryWizard() {
       dispatch(valueChange('ui.isMigration.workflow', false));
       // set is test recovery flag to false
       dispatch(valueChange('recovery.dryrun', false));
+      // to fetch instance type,availibility zone,volume type  so that we can show it to the ui in case of azure
+      if (platformDetails.platformType === PLATFORM_TYPES.Azure) {
+        dispatch(fetchNetworks(recoverySite.id, undefined, recoverySite.platformDetails.availZone));
+      }
       dispatch(openWizard(RECOVERY_WIZARDS.options, RECOVERY_WIZARDS.steps));
     }, 1000);
   };
