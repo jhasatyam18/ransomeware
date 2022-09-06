@@ -95,7 +95,7 @@ class DMFieldText extends Component {
     if (errorFunction && typeof errorFunction === 'function') {
       const res = errorFunction({ fieldKey, user });
       if (res !== '') {
-        errorMessage = errorFunction({ fieldKey, user });
+        errorMessage = res;
       }
     }
     if (hasError) {

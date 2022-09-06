@@ -9,7 +9,7 @@ import { APPLICATION_API_TOKEN, APPLICATION_API_USER, APPLICATION_API_USER_ID } 
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { getCookie, setCookie } from '../../utils/CookieUtils';
 import { onInit } from '../../utils/HistoryUtil';
-import { getValue, getVMwareLocationPath, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
+import { getMatchingInsType, getValue, getVMwareLocationPath, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { getUnreadAlerts } from './AlertActions';
 import { fetchDRPlanById, fetchDrPlans } from './DrPlanActions';
@@ -815,16 +815,19 @@ export function setProtectionPlanScript(key, obj) {
   };
 }
 
-export function setInstanceDetails(key, obj) {
-  return (dispatch) => {
-    dispatch(valueChange(`${key}-vmConfig.general.id`, obj.id));
-    dispatch(valueChange(`${key}-vmConfig.general.sourceMoref`, obj.sourceMoref));
-    dispatch(valueChange(`${key}-vmConfig.general.instanceType`, obj.insType));
-    dispatch(valueChange(`${key}-vmConfig.general.volumeType`, obj.volumeType));
-    dispatch(valueChange(`${key}-vmConfig.general.volumeIOPS`, obj.volumeIOPS));
-    dispatch(valueChange(`${key}-vmConfig.general.bootOrder`, obj.bootPriority));
-    dispatch(valueChange(`${key}-vmConfig.scripts.preScript`, obj.preScript));
-    dispatch(valueChange(`${key}-vmConfig.scripts.postScript`, obj.postScript));
+export function setInstanceDetails(key, ins) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    dispatch(valueChange(`${key}-vmConfig.general.id`, ins.id));
+    dispatch(valueChange(`${key}-vmConfig.general.sourceMoref`, ins.sourceMoref));
+    const insType = getMatchingInsType(values, ins);
+    dispatch(valueChange(`${key}-vmConfig.general.instanceType`, insType));
+    dispatch(valueChange(`${key}-vmConfig.general.volumeType`, ins.volumeType));
+    dispatch(valueChange(`${key}-vmConfig.general.volumeIOPS`, ins.volumeIOPS));
+    dispatch(valueChange(`${key}-vmConfig.general.bootOrder`, ins.bootPriority));
+    dispatch(valueChange(`${key}-vmConfig.scripts.preScript`, ins.preScript));
+    dispatch(valueChange(`${key}-vmConfig.scripts.postScript`, ins.postScript));
   };
 }
 

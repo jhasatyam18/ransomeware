@@ -849,13 +849,7 @@ function setVMWAREVMDetails(selectedVMS, protectionPlan, dispatch) {
     });
     instanceDetails.forEach((ins) => {
       if (ins.sourceMoref === vm.moref) {
-        dispatch(valueChange(`${key}-vmConfig.general.id`, ins.id));
-        dispatch(valueChange(`${key}-vmConfig.general.sourceMoref`, vm.moref));
-        dispatch(valueChange(`${key}-vmConfig.general.instanceType`, ins.instanceType));
-        dispatch(valueChange(`${key}-vmConfig.general.volumeType`, ins.volumeType));
-        dispatch(valueChange(`${key}-vmConfig.general.bootOrder`, ins.bootPriority));
-        dispatch(valueChange(`${key}-vmConfig.scripts.preScript`, ins.preScript));
-        dispatch(valueChange(`${key}-vmConfig.scripts.postScript`, ins.postScript));
+        dispatch(setInstanceDetails(key, ins));
         dispatch(valueChange(`${key}-vmConfig.general.hostMoref`, { value: ins.hostMoref, label: ins.hostMoref }));
         dispatch(valueChange(`${key}-vmConfig.general.dataStoreMoref`, { value: ins.datastoreMoref, label: ins.datastoreMoref }));
         dispatch(valueChange(`${key}-vmConfig.general.numcpu`, ins.numCPU));
@@ -921,8 +915,6 @@ function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch, user) {
     instanceDetails.forEach((ins) => {
       if (ins.sourceMoref === vm.moref) {
         dispatch(setInstanceDetails(key, ins));
-        const insType = getMatchingInsType(values, ins);
-        dispatch(valueChange(`${key}-vmConfig.general.instanceType`, insType));
         dispatch(valueChange(`${key}-vmConfig.general.folderPath`, ins.folderPath));
         if (ins.tags && ins.tags.length > 0) {
           const tagsData = [];
