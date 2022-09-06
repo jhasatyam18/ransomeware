@@ -729,14 +729,21 @@ export function vpcSubnetMatch(vpcCidr, subnetCidr) {
   if (vpcCidr === '' || subnetCidr === '') {
     return false;
   }
-  const vpc = ip.cidrSubnet(vpcCidr);
+  const associatedCIDRs = vpcCidr.split(',');
+  let isSubnetAssociated = false;
   const sub = ip.cidrSubnet(subnetCidr);
-  if (vpc && sub) {
-    const firstIPMatch = ip.cidrSubnet(vpcCidr).contains(sub.firstAddress);
-    const lastIPMatch = ip.cidrSubnet(vpcCidr).contains(sub.lastAddress);
-    return firstIPMatch && lastIPMatch;
+  for (let i = 0; i < associatedCIDRs.length; i += 1) {
+    const vpc = ip.cidrSubnet(associatedCIDRs[i]);
+    if (vpc && sub) {
+      const firstIPMatch = ip.cidrSubnet(associatedCIDRs[i]).contains(sub.firstAddress);
+      const lastIPMatch = ip.cidrSubnet(associatedCIDRs[i]).contains(sub.lastAddress);
+      if (firstIPMatch && lastIPMatch) {
+        isSubnetAssociated = true;
+        break;
+      }
+    }
   }
-  return false;
+  return isSubnetAssociated;
 }
 
 export function isIPsPartOfCidr(cidr, ipAddr) {
