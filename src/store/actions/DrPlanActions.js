@@ -937,9 +937,9 @@ function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch, user) {
             // dispatch(valueChange(`${networkKey}-eth-${index}-availZone`, ins.availZone));
             let { publicIP } = net;
             if (net.isPublicIP === true) {
-              publicIP = 'Ephemeral';
+              publicIP = 'true';
             } else if (net.isPublicIP === false) {
-              publicIP = 'None';
+              publicIP = 'false';
             }
             dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, publicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkTier`, net.networkTier));

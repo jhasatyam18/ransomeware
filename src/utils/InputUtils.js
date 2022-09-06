@@ -305,11 +305,25 @@ export function getAzureNetworkOptions(user, fieldKey) {
   return options;
 }
 
-export function getCloudExternalIPOptions(user) {
+export function getGCPExternalIPOptions(user) {
   const { values } = user;
   const options = [];
   options.push({ label: 'None', value: 'None' });
   options.push({ label: 'Auto', value: 'Ephemeral' });
+  const ips = getValue(STATIC_KEYS.UI_RESERVE_IPS, values) || [];
+  ips.forEach((op) => {
+    if (op.ipType === 'EXTERNAL') {
+      options.push({ label: op.name, value: op.name });
+    }
+  });
+  return options;
+}
+
+export function getAzureExternalIPOptions(user) {
+  const { values } = user;
+  const options = [];
+  options.push({ label: 'None', value: false });
+  options.push({ label: 'Auto', value: true });
   const ips = getValue(STATIC_KEYS.UI_RESERVE_IPS, values) || [];
   ips.forEach((op) => {
     if (op.ipType === 'EXTERNAL') {

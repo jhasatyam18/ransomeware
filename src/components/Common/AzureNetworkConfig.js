@@ -27,14 +27,6 @@ class AzureNetworkConfig extends Component {
     }
   }
 
-  isFirstPublic(networkKey, values) {
-    const firstNic = getValue(`${networkKey}-eth-0-isPublic`, values);
-    if (typeof firstNic === 'boolean' && firstNic) {
-      return true;
-    }
-    return false;
-  }
-
   removeNic(netKey, index) {
     const { dispatch } = this.props;
     dispatch(removeNicConfig(netKey, index));
@@ -50,7 +42,6 @@ class AzureNetworkConfig extends Component {
     const { user, networkKey, t } = this.props;
     const { values } = user;
     const getNetworks = getValue(networkKey, values) || [];
-    const isFirstPublic = this.isFirstPublic(networkKey, values);
     return getNetworks.map((nic, index) => {
       const key = `${nic.key}-${index}`;
       const info = getNetInfo(networkKey, index, values);
@@ -64,7 +55,7 @@ class AzureNetworkConfig extends Component {
             </Label>
           </td>
           <td>
-            <Label className="padding-left-20" disabled={isFirstPublic && index > 0}>
+            <Label className="padding-left-20">
               <a href="#" onClick={() => this.configureNic(nic.key, index)} title={title}>
                 {t('title.network')}
               </a>

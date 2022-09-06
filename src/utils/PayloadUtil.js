@@ -195,10 +195,10 @@ export function getVMNetworkConfig(key, values) {
       network = netArr[netArr.length - 1];
       const subArr = subnet.split('/');
       subnet = subArr[subArr.length - 1];
-      if (publicIP === 'Ephemeral') {
+      if (publicIP === 'true') {
         isPublicIP = true;
         publicIP = '';
-      } else if (publicIP === 'None') {
+      } else if (publicIP === 'false') {
         publicIP = '';
       }
     }
