@@ -40,6 +40,9 @@ export const FIELDS = {
   'configureSite.platformDetails.region': {
     label: 'region', description: 'Cloud Site Region where Management Server is deployed and Protection needs to be done', type: FIELD_TYPE.SELECT, errorMessage: 'Region required', shouldShow: (user) => !isPlatformTypeVMware(user), options: (user) => getRegionOptions(user), onChange: (user, dispatch) => updateAvailabilityZones(user, dispatch), fieldInfo: 'info.site.region',
   },
+  'configureSite.platformDetails.availZone': {
+    label: 'zone', description: 'Availability Zone for Cloud Site where Management Server is deployed and Protection needs to be done', type: FIELD_TYPE.SELECT, patterns: [HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX], errorMessage: 'Zone required', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user), options: (user) => getAvailibilityZoneOptions(user), fieldInfo: 'info.site.availZone',
+  },
   'configureSite.platformDetails.projectId': {
     label: 'project.ID', labelFunction: ({ user, fieldKey, label }) => getLabel({ user, fieldKey, label }), description: 'Project ID for Cloud Site(GCP)', type: FIELD_TYPE.TEXT, patterns: [HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX], errorMessage: 'Project ID is required', errorFunction: ({ user, fieldKey }) => getErrorMessage({ user, fieldKey }), shouldShow: (user) => isPlatformTypeGCP(user) || isPlatformTypeAzure(user), fieldInfo: 'info.site.gcp.projectid', infoFunction: (user, fieldKey) => getFieldInfo({ user, fieldKey }),
 
@@ -64,9 +67,6 @@ export const FIELDS = {
   },
   'configureSite.platformDetails.password': {
     label: 'password', description: 'vCenter Server User Password', type: FIELD_TYPE.PASSWORD, validate: (value, user) => isEmpty(value, user), errorMessage: 'Password required', shouldShow: (user) => isPlatformTypeVMware(user) || isPlatformTypeAzure(user), fieldInfo: 'info.site.vcenter.password', infoFunction: (user, fieldKey) => getFieldInfo({ user, fieldKey }),
-  },
-  'configureSite.platformDetails.availZone': {
-    label: 'zone', description: 'Availability Zone for Cloud Site where Management Server is deployed and Protection needs to be done', type: FIELD_TYPE.SELECT, patterns: [HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX], errorMessage: 'Zone required', shouldShow: (user) => isPlatformTypeAWS(user), options: (user) => getAvailibilityZoneOptions(user), fieldInfo: 'info.site.availZone',
   },
   'configureSite.platformDetails.accessKey': {
     label: 'access.key', description: 'Access Key for Cloud Site(AWS)', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Access Key is required', shouldShow: (user) => isPlatformTypeAWS(user), fieldInfo: 'info.site.access.key',
