@@ -174,7 +174,7 @@ export function onPlatformTypeChange({ value }) {
     if (value === PLATFORM_TYPES.AWS) {
       dispatch(fetchRegions(PLATFORM_TYPES.AWS));
       dispatch(fetchAvailibilityZones(PLATFORM_TYPES.AWS));
-    } else if (value === PLATFORM_TYPES.AWS) {
+    } else if (value === PLATFORM_TYPES.GCP) {
       dispatch(fetchRegions(PLATFORM_TYPES.GCP));
       dispatch(fetchAvailibilityZones(PLATFORM_TYPES.GCP));
     } else {
@@ -185,7 +185,7 @@ export function onPlatformTypeChange({ value }) {
 
 export function fetchRegions(TYPE) {
   return (dispatch) => {
-    let url = (PLATFORM_TYPES.AWS === TYPE ? API_AWS_REGIONS : API_GCP_REGIONS);
+    let url = '';
     switch (TYPE) {
       case PLATFORM_TYPES.AWS:
         url = API_AWS_REGIONS;
