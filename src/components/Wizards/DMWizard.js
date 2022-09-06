@@ -100,7 +100,8 @@ class DMWizard extends React.Component {
 
   getStep(name) {
     const { wizard } = this.props;
-    const { steps } = wizard;
+    const { steps, options } = wizard;
+    const { title } = options;
     const { currentStep } = this.state;
     switch (name) {
       case DRPLAN_RECOVERY_STEP:
@@ -136,7 +137,7 @@ class DMWizard extends React.Component {
       case DRPLAN_SCRIPT_STEP:
         return <DRPlanScriptStep {...this.props} />;
       case TEST_RECOVERY_CONFIG_STEP:
-        return <TestRecoveryVMConfiguration />;
+        return <TestRecoveryVMConfiguration title={title} />;
       case TEST_RECOVERY_CONFIG_SCRIPTS:
         return <TestRecoveryScriptStep />;
       case TEST_RECOVERY_CLEANUP_SUMMARY:

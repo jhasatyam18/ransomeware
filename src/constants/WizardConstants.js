@@ -78,6 +78,8 @@ export const REVERSE_WIZARDS = {
   options: { title: 'Reverse Protection Plan', onFinish: startReversePlan },
   steps: [
     { label: 'Reverse Plan', title: '', component: REVERSE_CONFIG_STEP, validate: (user, dispatch) => validateReversePlan({ user, dispatch }), isAync: true },
+    { label: 'Test Recovery Configuration', title: '', component: TEST_RECOVERY_CONFIG_STEP, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), isAync: true },
+    { label: 'Tools and Scripts', title: '', component: TEST_RECOVERY_CONFIG_SCRIPTS, validate: (user, dispatch) => noValidate(user, dispatch) },
     { label: 'Summary', title: '', component: REVERSE_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch) }],
 };
 

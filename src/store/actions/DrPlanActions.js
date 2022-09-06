@@ -271,6 +271,8 @@ export function onReverseProtectionPlanChange(id) {
             return;
           }
           dispatch(valueChange('ui.reverse.drPlan', json));
+          dispatch(valueChange('ui.site.seletedVMs', json.recoveryEntities.instanceDetails));
+          dispatch(valueChange('ui.values.recoveryPlatform', json.recoverySite.platformDetails.platformType));
           dispatch(openWizard(REVERSE_WIZARDS.options, REVERSE_WIZARDS.steps));
         }
       },
