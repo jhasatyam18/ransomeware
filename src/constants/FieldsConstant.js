@@ -57,7 +57,7 @@ export const FIELDS = {
     label: 'tenant.id', description: 'Tenant ID for Cloud Site(Azure)', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Tenant ID is required', shouldShow: (user) => isPlatformTypeAzure(user), fieldInfo: 'info.site.storage.tenant.id',
   },
   'configureSite.platformDetails.ClientID': {
-    label: 'client.id', description: 'Client ID for Cloud Site(Azure)', type: FIELD_TYPE.PASSWORD, validate: (value, user) => isEmpty(value, user), errorMessage: 'Client ID is required', shouldShow: (user) => isPlatformTypeAzure(user), fieldInfo: 'info.site.storage.client.id',
+    label: 'client.id', description: 'Client ID for Cloud Site(Azure)', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Client ID is required', shouldShow: (user) => isPlatformTypeAzure(user), fieldInfo: 'info.site.storage.client.id',
   },
   'configureSite.platformDetails.port': {
     label: 'port', description: 'vCenter Server management port', defaultValue: 443, min: 1, max: 65536, type: FIELD_TYPE.NUMBER, errorMessage: 'Port value required, if different.', shouldShow: (user) => isPlatformTypeVMware(user), fieldInfo: 'info.site.port',
