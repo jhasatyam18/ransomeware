@@ -354,12 +354,12 @@ export function getNetworkIDFromName(val, values) {
   return res;
 }
 
-export function getSubnetIDFromName(val, values) {
+export function getSubnetIDFromName(val, values, netID) {
   let res = '';
   const netArray = getValue(STATIC_KEYS.UI_SUBNETS, values);
-  netArray.forEach((net) => {
-    if (net.name === val) {
-      res = net.id;
+  netArray.forEach((op) => {
+    if (netID === op.vpcID && op.name === val) {
+      res = op.id;
     }
   });
   return res;

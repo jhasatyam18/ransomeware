@@ -925,14 +925,16 @@ export const diableVMwareMemory = (user, fieldKey) => {
   return false;
 };
 export function getMatchingInsType(values, ins) {
-  const savedInsType = getValue('ui.values.instances', values);
+  const savedInsType = getValue('ui.values.instances', values) || [];
   const insType = {};
-  savedInsType.forEach((inst) => {
-    if (inst.value === ins.instanceType) {
-      insType.label = inst.label;
-      insType.value = inst.value;
-    }
-  });
+  if (savedInsType.length > 0) {
+    savedInsType.forEach((inst) => {
+      if (inst.value === ins.instanceType) {
+        insType.label = inst.label;
+        insType.value = inst.value;
+      }
+    });
+  }
   return insType;
 }
 

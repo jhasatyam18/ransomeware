@@ -387,7 +387,6 @@ export function validateAzureNetwork(user, dispatch) {
   const { values } = user;
   const vms = getValue('ui.site.seletedVMs', values);
   const subnets = getValue(STATIC_KEYS.UI_SUBNETS, values);
-  const net = [];
   let isClean = true;
   let message = '';
   // empty config
@@ -398,6 +397,7 @@ export function validateAzureNetwork(user, dispatch) {
     }
     const netConfigs = getVMNetworkConfig(`${vm}`, values);
     const vpc = [];
+    const net = [];
     const vmName = vms[vm].name;
     if (netConfigs.length === 0) {
       message = `${vmName}: Network configuration required`;

@@ -200,21 +200,23 @@ export function fetchRegions(TYPE) {
         url = '';
         break;
     }
-    return callAPI(url)
-      .then((json) => {
-        if (json && json.hasError) {
-          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
-        } else {
-          let data = json;
-          if (data === null) {
-            data = [];
+    if (url !== '') {
+      return callAPI(url)
+        .then((json) => {
+          if (json && json.hasError) {
+            dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+          } else {
+            let data = json;
+            if (data === null) {
+              data = [];
+            }
+            dispatch(valueChange('ui.values.regions', data));
           }
-          dispatch(valueChange('ui.values.regions', data));
-        }
-      },
-      (err) => {
-        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-      });
+        },
+        (err) => {
+          dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+        });
+    }
   };
 }
 

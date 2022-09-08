@@ -930,8 +930,8 @@ function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch, user) {
           ins.networks.forEach((net, index) => {
             dispatch(valueChange(`${networkKey}-eth-${index}-id`, net.id));
             const network = getNetworkIDFromName(net.network, values);
-            const subnet = getSubnetIDFromName(net.Subnet, values);
             dispatch(valueChange(`${networkKey}-eth-${index}-network`, network));
+            const subnet = getSubnetIDFromName(net.Subnet, values, network);
             dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, subnet));
             dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
             // dispatch(valueChange(`${networkKey}-eth-${index}-availZone`, ins.availZone));
