@@ -15,13 +15,21 @@ function VMNetworkInfoItemRenderer(props) {
   const { networks } = data;
 
   const renderField = (field, obj, index) => {
-    if (field && obj[field.field]) {
-      return (
-        <Row key={`${field.label}-${index}`}>
-          <Col sm={6}>{t(field.label)}</Col>
-          <Col sm={6}>{obj[field.field]}</Col>
-        </Row>
-      );
+    const object = obj;
+    if (field && object[field.field]) {
+      if (recoverySite.platformDetails.platformType === PLATFORM_TYPES.Azure && field.field === 'isPublicIP') {
+        if (object[field.field] === true) {
+          object[field.field] = 'Auto';
+        } else if (object[field.field] === false) {
+          object[field.field] = 'None';
+        }
+        return (
+          <Row key={`${field.label}-${index}`}>
+            <Col sm={6}>{t(field.label)}</Col>
+            <Col sm={6}>{object[field.field]}</Col>
+          </Row>
+        );
+      }
     }
     return null;
   };
