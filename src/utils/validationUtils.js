@@ -212,15 +212,15 @@ export function validateNetworkConfig(user, dispatch) {
     case PLATFORM_TYPES.AWS:
       return validateAWSNetworks(user, dispatch);
     case PLATFORM_TYPES.GCP:
-      return validateCloudNetwork(user, dispatch);
+      return validateGCPNetwork(user, dispatch);
     case PLATFORM_TYPES.Azure:
-      return validateCloudNetwork(user, dispatch);
+      return validateAzureNetwork(user, dispatch);
     default:
       return validateVMware(user, dispatch);
   }
 }
 
-export function validateCloudNetwork(user, dispatch) {
+export function validateGCPNetwork(user, dispatch) {
   const { values } = user;
   const vms = getValue('ui.site.seletedVMs', values);
   const subnets = getValue(STATIC_KEYS.UI_SUBNETS, values);
@@ -377,6 +377,68 @@ export function validateVMware(user, dispatch) {
       }
     }
   });
+  if (!isClean) {
+    dispatch(addMessage(message, MESSAGE_TYPES.ERROR));
+  }
+  return isClean;
+}
+
+export function validateAzureNetwork(user, dispatch) {
+  const { values } = user;
+  const vms = getValue('ui.site.seletedVMs', values);
+  const subnets = getValue(STATIC_KEYS.UI_SUBNETS, values);
+  const net = [];
+  let isClean = true;
+  let message = '';
+  // empty config
+  const ips = [];
+  Object.keys(vms).forEach((vm) => {
+    if (isRemovedOrRecoveredVM(vms[vm])) {
+      return;
+    }
+    const netConfigs = getVMNetworkConfig(`${vm}`, values);
+    const vpc = [];
+    const vmName = vms[vm].name;
+    if (netConfigs.length === 0) {
+      message = `${vmName}: Network configuration required`;
+      isClean = false;
+    } else {
+      for (let i = 0; i < netConfigs.length; i += 1) {
+        if (netConfigs[i].subnet === '') {
+          message = `${vmName}: Network configure missing for nic-${i}`;
+          isClean = false;
+        }
+        if (typeof netConfigs.privateIP !== 'undefined' && netConfigs.privateIP !== '') {
+          ips.push(netConfigs.privateIP);
+        }
+
+        for (let j = 0; j < subnets.length; j += 1) {
+          if (subnets[j].id === netConfigs[i].subnet) {
+            vpc.push(subnets[j].vpcID);
+          }
+        }
+        net.push(netConfigs[i].network);
+      }
+      // unique network check
+      const vpcSet = [...new Set(vpc)];
+      const netSet = [...new Set(net)];
+      // nics with different vpcid
+      if (vpcSet.length > 1) {
+        message = `${vmName}: All nics of an instance must belong to same VPC.`;
+        isClean = false;
+      }
+      if (netSet.length > 1) {
+        message = `${vmName}: All the virtual networks for a vm should be same.`;
+        isClean = false;
+      }
+    }
+  });
+  // duplicate ip check
+  const ipSet = [...new Set(ips)];
+  if (ipSet.length !== ips.length && message === '') {
+    message = 'Duplicate ip address not allowed';
+    isClean = false;
+  }
   if (!isClean) {
     dispatch(addMessage(message, MESSAGE_TYPES.ERROR));
   }

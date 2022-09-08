@@ -609,7 +609,7 @@ export function loadTreeChildData(fieldKey, node, field) {
         paramURL = `${paramURL}&${urlParms[i]}=${paramKeyValue}`;
       }
     }
-    if (typeof pplan !== 'undefined' || pplan !== '') {
+    if (typeof pplan !== 'undefined' && pplan !== '') {
       paramURL += `&protectionplan=${pplan}`;
     }
     if (baseURLIDReplace) {
