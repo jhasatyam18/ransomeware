@@ -98,23 +98,25 @@ export function getVMConfigPayload(user) {
   const { values } = user;
   const vms = getValue('ui.site.seletedVMs', values);
   const instanceDetails = [];
-  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values) || '';
   Object.keys(vms).forEach((key) => {
     let folderPath = '';
     // Data require for vmware as target platform
-    folderPath = getValue(`${key}-vmConfig.general.folderPath`, values);
+    folderPath = getValue(`${key}-vmConfig.general.folderPath`, values) || '';
     if (typeof folderPath !== 'string') {
       const [index] = folderPath;
       folderPath = index;
     }
-    const hostMoref = getValue(`${key}-vmConfig.general.hostMoref`, values);
-    const datastoreMoref = getValue(`${key}-vmConfig.general.dataStoreMoref`, values);
+    let hostMoref = getValue(`${key}-vmConfig.general.hostMoref`, values) || '';
+    hostMoref = hostMoref.value || '';
+    let datastoreMoref = getValue(`${key}-vmConfig.general.dataStoreMoref`, values) || '';
+    datastoreMoref = datastoreMoref.value || '';
     let numCPU = getValue(`${key}-vmConfig.general.numcpu`, values);
-    numCPU = parseInt(numCPU, 10);
-    const memory = getValue(`${key}-vmConfig.general-memory`, values);
-    const memoryunit = getValue(`${key}-vmConfig.general-unit`, values);
+    numCPU = parseInt(numCPU, 10) || 0;
+    const memory = getValue(`${key}-vmConfig.general-memory`, values) || '';
+    const memoryunit = getValue(`${key}-vmConfig.general-unit`, values) || '';
     const memoryMB = convertMemoryToMb(memory, memoryunit || 'GB');
-    const datacenterMoref = getValue('ui.site.vmware.datacenterMoref', values);
+    const datacenterMoref = getValue('ui.site.vmware.datacenterMoref', values) || '';
     const { name } = vms[key];
     const instanceName = name;
     const sourceMoref = vms[key].moref;
@@ -151,9 +153,9 @@ export function getVMConfigPayload(user) {
       availZone = getValue(`${key}-vmConfig.general.availibility.zone`, values);
     }
     if (typeof id !== 'undefined' && id !== '') {
-      instanceDetails.push({ sourceMoref, id, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref: hostMoref.value, datastoreMoref: datastoreMoref.value, numCPU, datacenterMoref });
+      instanceDetails.push({ sourceMoref, id, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref });
     } else {
-      instanceDetails.push({ sourceMoref, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref: hostMoref.value, datastoreMoref: datastoreMoref.value, numCPU, datacenterMoref });
+      instanceDetails.push({ sourceMoref, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref });
     }
   });
   return instanceDetails;
@@ -169,18 +171,18 @@ export function getVMNetworkConfig(key, values) {
     const id = getValue(`${networkKey}-eth-${index}-id`, values);
     const vpcId = getValue(`${networkKey}-eth-${index}-vpcId`, values);
     let isPublicIP = getValue(`${networkKey}-eth-${index}-isPublic`, values) || false;
-    let isFromSource = getValue(`${networkKey}-eth-${index}-isFromSource`, values);
-    let subnet = getValue(`${networkKey}-eth-${index}-subnet`, values);
+    let isFromSource = getValue(`${networkKey}-eth-${index}-isFromSource`, values) || '';
+    let subnet = getValue(`${networkKey}-eth-${index}-subnet`, values) || '';
     const availZone = getValue(`${networkKey}-eth-${index}-availZone`, values);
     const privateIP = getValue(`${networkKey}-eth-${index}-privateIP`, values) || '';
     let publicIP = getValue(`${networkKey}-eth-${index}-publicIP`, values) || '';
     const sgs = getValue(`${networkKey}-eth-${index}-securityGroups`, values) || '';
     const networkTier = getValue(`${networkKey}-eth-${index}-networkTier`, values) || '';
     let network = getValue(`${networkKey}-eth-${index}-network`, values) || '';
-    const networkId = network.value;
-    const adapterType = `${getValue(`${networkKey}-eth-${index}-adapterType`, values)}`;
-    const macAddress = `${getValue(`${networkKey}-eth-${index}-macAddress`, values)}`;
-    const networkMoref = networkId;
+    const networkId = network.value || '';
+    const adapterType = `${getValue(`${networkKey}-eth-${index}-adapterType`, values)}` || '';
+    const macAddress = `${getValue(`${networkKey}-eth-${index}-macAddress`, values)}` || '';
+    const networkMoref = networkId || '';
     if (typeof isFromSource !== 'boolean') {
       isFromSource = false;
     }
