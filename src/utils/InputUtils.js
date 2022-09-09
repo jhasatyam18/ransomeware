@@ -326,9 +326,7 @@ export function getAzureExternalIPOptions(user) {
   options.push({ label: 'Auto', value: true });
   const ips = getValue(STATIC_KEYS.UI_RESERVE_IPS, values) || [];
   ips.forEach((op) => {
-    if (op.ipType === 'EXTERNAL') {
-      options.push({ label: op.name, value: op.name });
-    }
+    options.push({ label: op.name, value: op.name });
   });
   return options;
 }
@@ -445,7 +443,8 @@ export function getGCPVMConfig(vm) {
           [`${key}-vmConfig.network.securityGroup`]: { label: 'Network Tags', type: STACK_COMPONENT_SECURITY_GROUP, validate: null, errorMessage: '', shouldShow: true, fieldInfo: 'info.protectionplan.instance.network.tags' },
         },
       },
-      ...getReplRecScripts(key),
+      ...getReplicationScripts(key),
+      ...getRecoveryScript(key),
     ],
   };
   return config;
@@ -472,7 +471,8 @@ export function getAwsVMConfig(vm) {
           [`${key}-vmConfig.network.net1`]: { label: 'IP Address', fieldInfo: 'info.protectionplan.instance.network.aws', type: STACK_COMPONENT_NETWORK, validate: null, errorMessage: '', shouldShow: true, options: (u) => getInstanceTypeOptions(u), data: vm },
         },
       },
-      ...getReplRecScripts(key),
+      ...getReplicationScripts(key),
+      ...getRecoveryScript(key),
     ],
   };
   return config;
@@ -500,7 +500,8 @@ export function getVMwareVMConfig(vm) {
           [`${key}-vmConfig.network.net1`]: { label: '', type: STACK_COMPONENT_NETWORK, validate: null, errorMessage: '', shouldShow: true, options: (u) => getInstanceTypeOptions(u), data: vm },
         },
       },
-      ...getReplRecScripts(key),
+      ...getReplicationScripts(key),
+      ...getRecoveryScript(key),
     ],
   };
   return config;
@@ -528,7 +529,8 @@ export function getAzureVMConfig(vm) {
           [`${key}-vmConfig.network.net1`]: { label: 'IP Address', fieldInfo: 'info.protectionplan.instance.network.aws', type: STACK_COMPONENT_NETWORK, validate: null, errorMessage: '', shouldShow: true, options: (u) => getInstanceTypeOptions(u), data: vm },
         },
       },
-      ...getReplRecScripts(key),
+      ...getReplicationScripts(key),
+      ...getRecoveryScript(key),
     ],
   };
   return config;
@@ -955,7 +957,7 @@ export function showInstallCloudPackageOption(user) {
   return true;
 }
 
-export function getReplRecScripts(key) {
+export function getReplicationScripts(key) {
   const data = [{
     hasChildren: true,
     title: 'Replication Scripts',
@@ -963,14 +965,19 @@ export function getReplRecScripts(key) {
       [`${key}-protection.scripts.preScript`]: { label: 'Pre', fieldInfo: 'info.protectionplan.protection.prescript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPreScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
       [`${key}-protection.scripts.postScript`]: { label: 'Post', fieldInfo: 'info.protectionplan.protection.postscript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPostScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
     },
-  },
-  {
-    hasChildren: true,
-    title: 'Recovery Scripts',
-    children: {
-      [`${key}-vmConfig.scripts.preScript`]: { label: 'Pre', fieldInfo: 'info.protectionplan.instance.prescript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPreScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
-      [`${key}-vmConfig.scripts.postScript`]: { label: 'Post', fieldInfo: 'info.protectionplan.instance.postscript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPostScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
-    },
   }];
+  return data;
+}
+
+export function getRecoveryScript(key) {
+  const data = [
+    {
+      hasChildren: true,
+      title: 'Recovery Scripts',
+      children: {
+        [`${key}-vmConfig.scripts.preScript`]: { label: 'Pre', fieldInfo: 'info.protectionplan.instance.prescript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPreScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
+        [`${key}-vmConfig.scripts.postScript`]: { label: 'Post', fieldInfo: 'info.protectionplan.instance.postscript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPostScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
+      },
+    }];
   return data;
 }

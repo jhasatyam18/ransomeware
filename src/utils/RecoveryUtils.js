@@ -1,10 +1,9 @@
 import { addMessage } from '../store/actions/MessageActions';
-import { onScriptChange } from '../store/actions';
 import { FIELD_TYPE } from '../constants/FieldsConstant';
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
 import { MESSAGE_TYPES } from '../constants/MessageConstants';
 import { PLATFORM_TYPES } from '../constants/InputConstants';
-import { getAvailibilityZoneOptions, getInstanceTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getResourceTypeOptions, getStorageTypeOptions, getValue, shouldDisableStorageType } from './InputUtils';
+import { getAvailibilityZoneOptions, getInstanceTypeOptions, getRecoveryScript, getResourceTypeOptions, getStorageTypeOptions, getValue, shouldDisableStorageType } from './InputUtils';
 import { isEmpty } from './validationUtils';
 import { onAwsStorageTypeChange } from '../store/actions/AwsActions';
 
@@ -41,7 +40,7 @@ function getAWSVMTestConfig(vm) {
           [`${key}-vmConfig.network.net1`]: { label: 'IP Address', fieldInfo: 'info.protectionplan.instance.network.aws', type: STACK_COMPONENT_NETWORK, validate: null, errorMessage: '', shouldShow: true, options: (u) => getInstanceTypeOptions(u), data: vm },
         },
       },
-      ...getTestRecoveryScripts(key),
+      ...getRecoveryScript(key),
     ],
   };
   return config;
@@ -66,7 +65,7 @@ function getGCPVMTestConfig(vm) {
           [`${key}-vmConfig.network.securityGroup`]: { label: 'Firewall Tags', type: STACK_COMPONENT_SECURITY_GROUP, validate: null, errorMessage: '', shouldShow: true },
         },
       },
-      ...getTestRecoveryScripts(key),
+      ...getRecoveryScript(key),
     ],
   };
   return config;
@@ -94,22 +93,8 @@ function getAzureVMTestConfig(vm) {
           [`${key}-vmConfig.network.net1`]: { label: 'IP Address', fieldInfo: 'info.protectionplan.instance.network.aws', type: STACK_COMPONENT_NETWORK, validate: null, errorMessage: '', shouldShow: true, options: (u) => getInstanceTypeOptions(u), data: vm },
         },
       },
-      ...getTestRecoveryScripts(key),
+      ...getRecoveryScript(key),
     ],
   };
   return config;
-}
-
-function getTestRecoveryScripts(key) {
-  const data = [
-    {
-      hasChildren: true,
-      title: 'Recovery Scripts',
-      children: {
-        [`${key}-vmConfig.scripts.preScript`]: { label: 'Pre', fieldInfo: 'info.protectionplan.instance.prescript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPreScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
-        [`${key}-vmConfig.scripts.postScript`]: { label: 'Post', fieldInfo: 'info.protectionplan.instance.postscript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPostScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
-      },
-    },
-  ];
-  return data;
 }
