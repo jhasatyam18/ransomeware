@@ -934,7 +934,6 @@ function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch, user) {
             const subnet = getSubnetIDFromName(net.Subnet, values, network);
             dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, subnet));
             dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
-            // dispatch(valueChange(`${networkKey}-eth-${index}-availZone`, ins.availZone));
             let { publicIP } = net;
             if (net.isPublicIP === true) {
               publicIP = 'true';
@@ -1393,16 +1392,15 @@ export function setAzureVMRecoveryData(vmMoref) {
           ins.networks.forEach((net, index) => {
             dispatch(valueChange(`${networkKey}-eth-${index}-id`, net.id));
             const network = getNetworkIDFromName(net.network, values);
-            const subnet = getSubnetIDFromName(net.Subnet, values);
             dispatch(valueChange(`${networkKey}-eth-${index}-network`, network));
+            const subnet = getSubnetIDFromName(net.Subnet, values, network);
             dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, subnet));
             dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
-            // dispatch(valueChange(`${networkKey}-eth-${index}-availZone`, ins.availZone));
             let { publicIP } = net;
             if (net.isPublicIP === true) {
-              publicIP = 'Ephemeral';
+              publicIP = 'true';
             } else if (net.isPublicIP === false) {
-              publicIP = 'None';
+              publicIP = 'false';
             }
             dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, publicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkTier`, net.networkTier));
