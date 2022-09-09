@@ -659,7 +659,7 @@ function validateAzureNicConfig(dispatch, user, options) {
   }
 
   if (pubIP === '') {
-    dispatch(addMessage('Select external ip config', MESSAGE_TYPES.ERROR));
+    dispatch(addMessage('Select Public ip config', MESSAGE_TYPES.ERROR));
     return false;
   }
   return true;
