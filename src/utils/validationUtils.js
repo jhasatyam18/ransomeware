@@ -649,7 +649,6 @@ function validateAzureNicConfig(dispatch, user, options) {
   const subnet = getValue(`${networkKey}-subnet`, values) || '';
   const pubIP = getValue(`${networkKey}-publicIP`, values) || '';
   const network = getValue(`${networkKey}-network`, values) || '';
-  const sg = getValue(`${networkKey}-securityGroups`, values) || [];
   if (network === '') {
     dispatch(addMessage('Please select the network', MESSAGE_TYPES.ERROR));
     return false;
@@ -661,10 +660,6 @@ function validateAzureNicConfig(dispatch, user, options) {
 
   if (pubIP === '') {
     dispatch(addMessage('Select external ip config', MESSAGE_TYPES.ERROR));
-    return false;
-  }
-  if (sg.length === 0) {
-    dispatch(addMessage('Select security group', MESSAGE_TYPES.ERROR));
     return false;
   }
   return true;
