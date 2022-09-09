@@ -318,6 +318,9 @@ export function fetchNetworks(id, sourceNet = undefined, availZone) {
             });
             dispatch(valueChange('ui.values.instances', insTypes));
           }
+          let ips = getValue(STATIC_KEYS.UI_EDIT_RESERVE_IPS, values) || [];
+          const address = data.ipAddress || [];
+          ips = [...ips, ...address];
           if (typeof sourceNet !== 'undefined') {
             dispatch(valueChange(STATIC_KEYS.UI_SECURITY_GROUPS_SOURCE, (data.securityGroups ? data.securityGroups : [])));
             dispatch(valueChange(STATIC_KEYS.UI_SUBNETS__SOURCE, (data.subnets ? data.subnets : [])));
@@ -325,7 +328,7 @@ export function fetchNetworks(id, sourceNet = undefined, availZone) {
           }
           dispatch(valueChange(STATIC_KEYS.UI_SECURITY_GROUPS, (data.securityGroups ? data.securityGroups : [])));
           dispatch(valueChange(STATIC_KEYS.UI_SUBNETS, (data.subnets ? data.subnets : [])));
-          dispatch(valueChange(STATIC_KEYS.UI_RESERVE_IPS, (data.ipAddress ? data.ipAddress : [])));
+          dispatch(valueChange(STATIC_KEYS.UI_RESERVE_IPS, (data.ipAddress ? ips : [])));
           dispatch(valueChange(STATIC_KEYS.UI_VPC_TARGET, (data.networks ? data.networks : [])));
           if (data.volumeTypes) {
             const volumetype = [];

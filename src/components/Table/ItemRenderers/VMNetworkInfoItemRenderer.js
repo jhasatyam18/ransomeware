@@ -23,13 +23,13 @@ function VMNetworkInfoItemRenderer(props) {
         } else if (object[field.field] === false) {
           object[field.field] = 'None';
         }
-        return (
-          <Row key={`${field.label}-${index}`}>
-            <Col sm={6}>{t(field.label)}</Col>
-            <Col sm={6}>{object[field.field]}</Col>
-          </Row>
-        );
       }
+      return (
+        <Row key={`${field.label}-${index}`}>
+          <Col sm={6}>{t(field.label)}</Col>
+          <Col sm={6}>{object[field.field]}</Col>
+        </Row>
+      );
     }
     return null;
   };

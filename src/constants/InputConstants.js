@@ -82,6 +82,7 @@ export const STATIC_KEYS = {
   UI_VOLUMETYPES: 'ui.values.volume.type',
   RESOURCE_GROUP: 'ui.values.resource.type',
   UI_NETWORKS: 'ui.values.network',
+  UI_EDIT_RESERVE_IPS: 'ui.values.edit.reserveips',
 };
 
 // Recovery time in minutes

@@ -934,13 +934,7 @@ function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch, user) {
             const subnet = getSubnetIDFromName(net.Subnet, values, network);
             dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, subnet));
             dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
-            let { publicIP } = net;
-            if (net.isPublicIP === true) {
-              publicIP = 'true';
-            } else if (net.isPublicIP === false) {
-              publicIP = 'false';
-            }
-            dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, publicIP));
+            dispatch(setPublicIPWhileEdit(net.isPublicIP, net.publicIP, networkKey, index));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkTier`, net.networkTier));
             dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, false));
             const sgs = (net.securityGroups ? net.securityGroups.split(',') : []);
@@ -964,6 +958,29 @@ function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch, user) {
       }
     });
   });
+}
+
+function setPublicIPWhileEdit(isPublicIP, publicip, networkKey, index) {
+  return (dispatch) => {
+    let publicIP = publicip || '';
+    if (isPublicIP === true) {
+      if (publicIP === '') {
+        publicIP = 'true';
+      }
+    } else if (isPublicIP === false) {
+      if (publicIP === '') {
+        publicIP = 'false';
+      }
+    }
+    if (publicIP !== '' && publicIP !== 'false' && publicIP !== 'true') {
+      const obj = {
+        id: publicIP,
+        name: publicIP,
+      };
+      dispatch(valueChange(STATIC_KEYS.UI_EDIT_RESERVE_IPS, [obj]));
+    }
+    dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, publicIP));
+  };
 }
 
 export function getVirtualMachineAlerts(moref, alertID) {
