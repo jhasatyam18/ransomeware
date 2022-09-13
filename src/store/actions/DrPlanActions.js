@@ -421,7 +421,7 @@ export function openTestRecoveryWizard(cleanUpTestRecoveries) {
   return (dispatch, getState) => {
     const { drPlans } = getState();
     const { protectionPlan } = drPlans;
-    const { id, protectedSite, recoverySite } = protectionPlan;
+    const { id, protectedSite, recoverySite, protectedEntities } = protectionPlan;
     const { platformDetails } = recoverySite;
     const protectedSitePlatform = protectedSite.platformDetails.platformType;
     dispatch(clearValues());
@@ -431,6 +431,7 @@ export function openTestRecoveryWizard(cleanUpTestRecoveries) {
       dispatch(valueChange('ui.isMigration.workflow', false));
       dispatch(valueChange('ui.values.protectionPlatform', protectedSitePlatform));
       dispatch(valueChange('ui.values.recoveryPlatform', platformDetails.platformType));
+      dispatch(valueChange('ui.values.recoverySiteID', recoverySite.id));
       dispatch(valueChange('recovery.dryrun', true));
       dispatch(valueChange('ui.workflow', UI_WORKFLOW.TEST_RECOVERY));
       let availZone = '';
@@ -442,18 +443,17 @@ export function openTestRecoveryWizard(cleanUpTestRecoveries) {
         () => {
           const isCleanUpFlow = (typeof cleanUpTestRecoveries !== 'undefined' && cleanUpTestRecoveries === true);
           if (platformDetails.platformType === PLATFORM_TYPES.VMware) {
-            const { options, steps } = RECOVERY_WIZARDS;
-            options.title = 'Test Recovery';
-            dispatch(openWizard(options, steps));
+            const { virtualMachines } = protectedEntities;
+            const url = API_FETCH_VMWARE_INVENTORY.replace('<id>', recoverySite.id);
+            dispatch(setVmwareDataInitialData(url, virtualMachines));
+          }
+          const url = (platformDetails.platformType === PLATFORM_TYPES.AWS ? API_AWS_INSTANCES : API_GCP_INSTANCES);
+          dispatch(fetchNetworks(recoverySite.id, undefined, availZone));
+          dispatch(setInstances(url));
+          if (isCleanUpFlow) {
+            dispatch(openWizard(CLEANUP_TEST_RECOVERY_WIZARDS.options, CLEANUP_TEST_RECOVERY_WIZARDS.steps));
           } else {
-            const url = (platformDetails.platformType === PLATFORM_TYPES.AWS ? API_AWS_INSTANCES : API_GCP_INSTANCES);
-            dispatch(fetchNetworks(recoverySite.id, undefined, availZone));
-            dispatch(setInstances(url));
-            if (isCleanUpFlow) {
-              dispatch(openWizard(CLEANUP_TEST_RECOVERY_WIZARDS.options, CLEANUP_TEST_RECOVERY_WIZARDS.steps));
-            } else {
-              dispatch(openWizard(TEST_RECOVERY_WIZARDS.options, TEST_RECOVERY_WIZARDS.steps));
-            }
+            dispatch(openWizard(TEST_RECOVERY_WIZARDS.options, TEST_RECOVERY_WIZARDS.steps));
           }
           dispatch(onProtectionPlanChange({ value: protectionPlan.id, allowDeleted: isCleanUpFlow }));
           dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW_TEST_RECOVERY, true));
@@ -1226,6 +1226,7 @@ export function setVMwareVMRecoveryData(vmMoref) {
     const { user } = getState();
     const { values } = user;
     const plan = getValue('ui.recovery.plan', values);
+    const workFlow = getValue('ui.workflow', values);
     if (typeof plan === 'undefined' || plan === '' || !plan) {
       return;
     }
@@ -1244,9 +1245,28 @@ export function setVMwareVMRecoveryData(vmMoref) {
         dispatch(valueChange(`${key}-vmConfig.general.hostMoref`, { value: ins.hostMoref, label: ins.hostMoref }));
         dispatch(valueChange(`${key}-vmConfig.general.dataStoreMoref`, { value: ins.datastoreMoref, label: ins.datastoreMoref }));
         dispatch(valueChange(`${key}-vmConfig.general.numcpu`, ins.numCPU));
-        dispatch(valueChange(`${key}-vmConfig.general-memory`, ins.memoryMB));
-        dispatch(valueChange(`${key}-vmConfig.general-unit`, 'MB'));
         dispatch(valueChange(`${key}-vmConfig.general.folderPath`, [ins.folderPath]));
+        if (workFlow === UI_WORKFLOW.TEST_RECOVERY) {
+          const memory = getMemoryInfo(ins.memoryMB);
+          dispatch(valueChange(`${key}-vmConfig.general-memory`, parseInt(memory[0], 10)));
+          dispatch(valueChange(`${key}-vmConfig.general-unit`, memory[1]));
+          // Only for edit test recovery flow to get the options for folder path,compute resources
+          fetchByDelay(dispatch, setVMwareTargetData, 2000, [`${key}-vmConfig.general`, ins.datacenterMoref, ins.hostMoref]);
+        } else {
+        // For full Recovery Flow
+          dispatch(valueChange(`${key}-vmConfig.general-memory`, ins.memoryMB));
+          dispatch(valueChange(`${key}-vmConfig.general-unit`, 'MB'));
+        }
+        if (ins.tags && ins.tags.length > 0) {
+          const tagsData = [];
+          ins.tags.forEach((tag) => {
+            tagsData.push({ id: tag.id, key: tag.key, value: tag.value });
+          });
+          dispatch(valueChange(`${key}-vmConfig.general.tags`, tagsData));
+        }
+        if (ins.securityGroups && ins.securityGroups.length > 0) {
+          dispatch(valueChange(`${key}-vmConfig.network.securityGroup`, ''));
+        }
         const networkKey = `${key}-vmConfig.network.net1`;
         const eths = [];
         if (ins.networks && ins.networks.length > 0) {
