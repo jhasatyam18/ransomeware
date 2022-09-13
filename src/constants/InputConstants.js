@@ -114,6 +114,7 @@ export const VMWARE_OBJECT = {
   Datastore: 'Datastore',
   ComputeResource: 'ComputeResource',
   VirtualMachine: 'VirtualMachine',
+  DistributedVirtualPortgroup: 'DistributedVirtualPortgroup',
 };
 
 export const RECOVERY_ENTITY_TYPES = {

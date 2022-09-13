@@ -767,11 +767,11 @@ export function getStorageForVMware({ fieldKey, hostMoref }) {
     let networkURL = '';
     let entityKey = '';
     if (hostMoref) {
-      networkURL = `api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Network}&entity=${hostMoref}`;
+      networkURL = `api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Network},${VMWARE_OBJECT.DistributedVirtualPortgroup}&entity=${hostMoref}`;
       storageURL = `api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Datastore}&entity=${hostMoref}`;
       entityKey = `${hostMoref}`;
     } else {
-      networkURL = `api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Network}&entity=${fieldVal.value}`;
+      networkURL = `api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Network},${VMWARE_OBJECT.DistributedVirtualPortgroup}&entity=${fieldVal.value}`;
       storageURL = `api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Datastore}&entity=${fieldVal.value}`;
       entityKey = `${fieldVal.value}`;
     }
