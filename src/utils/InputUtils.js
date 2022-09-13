@@ -879,3 +879,16 @@ export function showInstallCloudPackageOption(user) {
   }
   return true;
 }
+
+export function getRecoveryScript(key) {
+  const data = [
+    {
+      hasChildren: true,
+      title: 'Recovery Scripts',
+      children: {
+        [`${key}-vmConfig.scripts.preScript`]: { label: 'Pre', fieldInfo: 'info.protectionplan.instance.prescript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPreScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
+        [`${key}-vmConfig.scripts.postScript`]: { label: 'Post', fieldInfo: 'info.protectionplan.instance.postscript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPostScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
+      },
+    }];
+  return data;
+}

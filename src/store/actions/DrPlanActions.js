@@ -20,7 +20,7 @@ import { getMatchingInsType, getValue, getVMMorefFromEvent, isSamePlatformPlan, 
 import { PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
-import { setVmwareDataInitialData, setVMwareTargetData } from './VMwareActions';
+import { setVmwareInitialData, setVMwareTargetData } from './VMwareActions';
 import { setCookie } from '../../utils/CookieUtils';
 import { APPLICATION_GETTING_STARTED_COMPLETED } from '../../constants/UserConstant';
 
@@ -445,7 +445,7 @@ export function openTestRecoveryWizard(cleanUpTestRecoveries) {
           if (platformDetails.platformType === PLATFORM_TYPES.VMware) {
             const { virtualMachines } = protectedEntities;
             const url = API_FETCH_VMWARE_INVENTORY.replace('<id>', recoverySite.id);
-            dispatch(setVmwareDataInitialData(url, virtualMachines));
+            dispatch(setVmwareInitialData(url, virtualMachines));
           }
           const url = (platformDetails.platformType === PLATFORM_TYPES.AWS ? API_AWS_INSTANCES : API_GCP_INSTANCES);
           dispatch(fetchNetworks(recoverySite.id, undefined, availZone));
@@ -624,7 +624,7 @@ export function setProtectionPlanVMsForUpdate(protectionPlan, isEventAction = fa
     if (PLATFORM_TYPES.VMware === protectedSite.platformDetails.platformType) {
       dispatch(valueChange('ui.values.protectionSiteID', protectedSite.id));
       const url = API_FETCH_VMWARE_INVENTORY.replace('<id>', protectedSite.id);
-      dispatch(setVmwareDataInitialData(url, virtualMachines));
+      dispatch(setVmwareInitialData(url, virtualMachines));
     }
     let url = (isEventAction ? API_PROTECTION_PLAN_PROTECTED_VMS.replace('<moref>', vmMoref) : API_PROTECTION_PLAN_VMS.replace('<sid>', protectedSite.id));
     url = url.replace('<pid>', id);
@@ -1264,9 +1264,7 @@ export function setVMwareVMRecoveryData(vmMoref) {
           });
           dispatch(valueChange(`${key}-vmConfig.general.tags`, tagsData));
         }
-        if (ins.securityGroups && ins.securityGroups.length > 0) {
-          dispatch(valueChange(`${key}-vmConfig.network.securityGroup`, ''));
-        }
+
         const networkKey = `${key}-vmConfig.network.net1`;
         const eths = [];
         if (ins.networks && ins.networks.length > 0) {
