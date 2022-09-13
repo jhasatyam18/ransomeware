@@ -271,7 +271,6 @@ export function onReverseProtectionPlanChange(id) {
             return;
           }
           dispatch(valueChange('ui.reverse.drPlan', json));
-          dispatch(valueChange('ui.site.seletedVMs', json.recoveryEntities.instanceDetails));
           dispatch(valueChange('ui.values.recoveryPlatform', json.recoverySite.platformDetails.platformType));
           dispatch(openWizard(REVERSE_WIZARDS.options, REVERSE_WIZARDS.steps));
         }
@@ -493,11 +492,45 @@ export function openReverseWizard() {
   return (dispatch, getState) => {
     const { drPlans } = getState();
     const { protectionPlan } = drPlans;
-    const { id } = protectionPlan;
+    const { id, protectedSite, recoverySite, protectedEntities } = protectionPlan;
+    const { platformDetails } = recoverySite;
+    const protectedSitePlatform = protectedSite.platformDetails.platformType;
     dispatch(clearValues());
-    dispatch(fetchDrPlans('ui.values.drplan'));
-    dispatch(fetchSites('ui.values.sites'));
-    dispatch(onReverseProtectionPlanChange(id));
+    setTimeout(() => {
+      dispatch(valueChange('recovery.protectionplanID', id));
+      dispatch(valueChange('ui.recovery.plan', protectionPlan));
+      dispatch(valueChange('ui.isMigration.workflow', false));
+      dispatch(valueChange('ui.values.protectionPlatform', protectedSitePlatform));
+      dispatch(valueChange('ui.values.recoveryPlatform', platformDetails.platformType));
+      dispatch(valueChange('ui.values.recoverySiteID', recoverySite.id));
+      dispatch(valueChange('recovery.dryrun', true));
+      dispatch(valueChange('ui.workflow', UI_WORKFLOW.REVERSE_PLAN));
+
+      let availZone = '';
+      if (!isSamePlatformPlan(protectionPlan)) {
+        availZone = recoverySite.platformDetails.availZone;
+      }
+      const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined, availZone)), dispatch(fetchScript()), dispatch(fetchDrPlans('ui.values.drplan'))];
+      return Promise.all(apis).then(
+        () => {
+          if (platformDetails.platformType === PLATFORM_TYPES.VMware) {
+            const { virtualMachines } = protectedEntities;
+            const url = API_FETCH_VMWARE_INVENTORY.replace('<id>', recoverySite.id);
+            dispatch(setVmwareDataInitialData(url, virtualMachines));
+          }
+          const url = (platformDetails.platformType === PLATFORM_TYPES.AWS ? API_AWS_INSTANCES : API_GCP_INSTANCES);
+          dispatch(fetchNetworks(recoverySite.id, undefined, availZone));
+          dispatch(setInstances(url));
+          dispatch(onProtectionPlanChange({ value: protectionPlan.id, allowDeleted: true }));
+          dispatch(onReverseProtectionPlanChange(id));
+          return new Promise((resolve) => resolve());
+        },
+        (err) => {
+          dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+          return new Promise((resolve) => resolve());
+        },
+      );
+    }, 1000);
   };
 }
 
@@ -1246,9 +1279,12 @@ export function setVMwareVMRecoveryData(vmMoref) {
         dispatch(valueChange(`${key}-vmConfig.general.hostMoref`, { value: ins.hostMoref, label: ins.hostMoref }));
         dispatch(valueChange(`${key}-vmConfig.general.dataStoreMoref`, { value: ins.datastoreMoref, label: ins.datastoreMoref }));
         dispatch(valueChange(`${key}-vmConfig.general.numcpu`, ins.numCPU));
-        dispatch(valueChange(`${key}-vmConfig.general-memory`, ins.memoryMB));
-        dispatch(valueChange(`${key}-vmConfig.general-unit`, 'MB'));
         dispatch(valueChange(`${key}-vmConfig.general.folderPath`, [ins.folderPath]));
+        const memory = getMemoryInfo(ins.memoryMB);
+        dispatch(valueChange(`${key}-vmConfig.general-memory`, parseInt(memory[0], 10)));
+        dispatch(valueChange(`${key}-vmConfig.general-unit`, memory[1]));
+        // Only for edit test recovery flow to get the options for folder path,compute resources
+        fetchByDelay(dispatch, setVMwareTargetData, 2000, [`${key}-vmConfig.general`, ins.datacenterMoref, ins.hostMoref]);
         const networkKey = `${key}-vmConfig.network.net1`;
         const eths = [];
         if (ins.networks && ins.networks.length > 0) {

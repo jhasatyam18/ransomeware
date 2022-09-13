@@ -261,6 +261,7 @@ export function getReversePlanPayload(user) {
   }
   drplan.recoverySite = rSite;
   drplan.recoveryEntities.suffix = recoverySufffix;
+  drplan.recoveryEntities.instanceDetails = getVMConfigPayload(user);
   return drplan;
 }
 
