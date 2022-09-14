@@ -272,6 +272,17 @@ export function onReverseProtectionPlanChange(id) {
           }
           dispatch(valueChange('ui.reverse.drPlan', json));
           dispatch(valueChange('ui.values.recoveryPlatform', json.recoverySite.platformDetails.platformType));
+          const data = [];
+          const info = json.protectedEntities.virtualMachines || [];
+          const rEntities = json.recoveryEntities.instanceDetails || [];
+          info.forEach((vm) => {
+            rEntities.forEach((rE) => {
+              if (vm.moref === rE.sourceMoref) {
+                data.push(vm);
+              }
+            });
+          });
+          dispatch(valueChange('ui.recovery.vms', data));
           dispatch(openWizard(REVERSE_WIZARDS.options, REVERSE_WIZARDS.steps));
         }
       },
@@ -521,7 +532,6 @@ export function openReverseWizard() {
           const url = (platformDetails.platformType === PLATFORM_TYPES.AWS ? API_AWS_INSTANCES : API_GCP_INSTANCES);
           dispatch(fetchNetworks(recoverySite.id, undefined, availZone));
           dispatch(setInstances(url));
-          dispatch(onProtectionPlanChange({ value: protectionPlan.id, allowDeleted: true }));
           dispatch(onReverseProtectionPlanChange(id));
           return new Promise((resolve) => resolve());
         },
