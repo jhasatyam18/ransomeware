@@ -710,7 +710,7 @@ export function getComputeResources(fieldKey, dataCenterKey) {
       dispatch(valueChange('ui.site.vmware.datacenterMoref', key.value));
     }
     if (typeof fieldVal === 'undefined' || fieldVal.length === 0) {
-      dispatch(addMessage('Please select Datacenter', 'fieldval_err', true));
+      dispatch(addMessage('Please select Datacenter', MESSAGE_TYPES.ERROR));
       return;
     }
     let url = '';
