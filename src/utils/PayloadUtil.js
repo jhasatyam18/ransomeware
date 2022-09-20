@@ -110,7 +110,7 @@ export function getVMConfigPayload(user) {
     const hostMoref = getValue(`${key}-vmConfig.general.hostMoref`, values);
     const datastoreMoref = getValue(`${key}-vmConfig.general.dataStoreMoref`, values);
     let numCPU = getValue(`${key}-vmConfig.general.numcpu`, values);
-    numCPU = parseInt(numCPU, 10) || 0;
+    numCPU = parseInt(numCPU, 10);
     const memory = getValue(`${key}-vmConfig.general-memory`, values);
     const memoryunit = getValue(`${key}-vmConfig.general-unit`, values);
     const memoryMB = convertMemoryToMb(memory, memoryunit || 'GB');

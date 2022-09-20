@@ -258,7 +258,7 @@ export function onProtectionPlanChange({ value, allowDeleted }) {
 
 export function onReverseProtectionPlanChange(ID) {
   return (dispatch) => {
-    let url = API_FETCH_REVERSE_DR_PLAN_BY_ID.replace('<id>', ID);
+    const url = API_FETCH_REVERSE_DR_PLAN_BY_ID.replace('<id>', ID);
     dispatch(showApplicationLoader(url, 'Loading reverse protection plan'));
     return callAPI(url)
       .then((json) => {
@@ -282,39 +282,7 @@ export function onReverseProtectionPlanChange(ID) {
             });
           });
           dispatch(valueChange('ui.recovery.vms', data));
-          const { id, protectedSite, recoverySite, protectedEntities } = json;
-          const { platformDetails } = recoverySite;
-          const protectedSitePlatform = protectedSite.platformDetails.platformType;
-          setTimeout(() => {
-            dispatch(valueChange('recovery.protectionplanID', id));
-            dispatch(valueChange('ui.isMigration.workflow', false));
-            dispatch(valueChange('ui.values.protectionPlatform', protectedSitePlatform));
-            dispatch(valueChange('ui.values.recoveryPlatform', platformDetails.platformType));
-            dispatch(valueChange('ui.values.recoverySiteID', recoverySite.id));
-            dispatch(valueChange('ui.recovery.plan', json));
-            dispatch(valueChange('ui.workflow', UI_WORKFLOW.REVERSE_PLAN));
-
-            let availZone = '';
-            if (!isSamePlatformPlan(json)) {
-              availZone = recoverySite.platformDetails.availZone;
-            }
-            const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined, availZone)), dispatch(fetchScript()), dispatch(fetchDrPlans('ui.values.drplan'))];
-            return Promise.all(apis).then(
-              () => {
-                if (platformDetails.platformType === PLATFORM_TYPES.VMware) {
-                  const { virtualMachines } = protectedEntities;
-                  url = API_FETCH_VMWARE_INVENTORY.replace('<id>', recoverySite.id);
-                  dispatch(setVmwareDataInitialData(url, virtualMachines));
-                }
-                dispatch(openWizard(REVERSE_WIZARDS.options, REVERSE_WIZARDS.steps));
-                return new Promise((resolve) => resolve());
-              },
-              (err) => {
-                dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-                return new Promise((resolve) => resolve());
-              },
-            );
-          }, 1000);
+          dispatch(setReverseData(json));
         }
       },
       (err) => {
@@ -1438,4 +1406,42 @@ function setVMDetails(vmDetails, protectedVMInfo) {
     return { id: protectedVMInfo.id, ...protectedVMInfo };
   }
   return { id: protectedVMInfo.id, ...vmDetails };
+}
+
+function setReverseData(json) {
+  return (dispatch) => {
+    const { id, protectedSite, recoverySite, protectedEntities } = json;
+    const { platformDetails } = recoverySite;
+    const protectedSitePlatform = protectedSite.platformDetails.platformType;
+    setTimeout(() => {
+      dispatch(valueChange('recovery.protectionplanID', id));
+      dispatch(valueChange('ui.isMigration.workflow', false));
+      dispatch(valueChange('ui.values.protectionPlatform', protectedSitePlatform));
+      dispatch(valueChange('ui.values.recoveryPlatform', platformDetails.platformType));
+      dispatch(valueChange('ui.values.recoverySiteID', recoverySite.id));
+      dispatch(valueChange('ui.recovery.plan', json));
+      dispatch(valueChange('ui.workflow', UI_WORKFLOW.REVERSE_PLAN));
+
+      let availZone = '';
+      if (!isSamePlatformPlan(json)) {
+        availZone = recoverySite.platformDetails.availZone;
+      }
+      const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined, availZone)), dispatch(fetchScript()), dispatch(fetchDrPlans('ui.values.drplan'))];
+      return Promise.all(apis).then(
+        () => {
+          if (platformDetails.platformType === PLATFORM_TYPES.VMware) {
+            const { virtualMachines } = protectedEntities;
+            const url = API_FETCH_VMWARE_INVENTORY.replace('<id>', recoverySite.id);
+            dispatch(setVmwareDataInitialData(url, virtualMachines));
+          }
+          dispatch(openWizard(REVERSE_WIZARDS.options, REVERSE_WIZARDS.steps));
+          return new Promise((resolve) => resolve());
+        },
+        (err) => {
+          dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+          return new Promise((resolve) => resolve());
+        },
+      );
+    }, 1000);
+  };
 }
