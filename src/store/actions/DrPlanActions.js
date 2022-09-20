@@ -20,7 +20,7 @@ import { getMatchingInsType, getValue, getVMMorefFromEvent, isSamePlatformPlan, 
 import { PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
-import { setVmwareDataInitialData, setVMwareTargetData } from './VMwareActions';
+import { setVmwareInitialData, setVMwareTargetData } from './VMwareActions';
 import { setCookie } from '../../utils/CookieUtils';
 import { APPLICATION_GETTING_STARTED_COMPLETED } from '../../constants/UserConstant';
 
@@ -635,7 +635,7 @@ export function setProtectionPlanVMsForUpdate(protectionPlan, isEventAction = fa
     if (PLATFORM_TYPES.VMware === protectedSite.platformDetails.platformType) {
       dispatch(valueChange('ui.values.protectionSiteID', protectedSite.id));
       const url = API_FETCH_VMWARE_INVENTORY.replace('<id>', protectedSite.id);
-      dispatch(setVmwareDataInitialData(url, virtualMachines));
+      dispatch(setVmwareInitialData(url, virtualMachines));
     }
     let url = (isEventAction ? API_PROTECTION_PLAN_PROTECTED_VMS.replace('<moref>', vmMoref) : API_PROTECTION_PLAN_VMS.replace('<sid>', protectedSite.id));
     url = url.replace('<pid>', id);
@@ -1371,6 +1371,25 @@ export function setGCPVMRecoveryData(vmMoref) {
   };
 }
 
+function fetchPlatformSpecificData() {
+  return (dispatch, getState) => {
+    const { drPlans } = getState();
+    const { protectionPlan } = drPlans;
+    const { protectedEntities } = protectionPlan;
+    const { recoverySite } = protectionPlan;
+    const { platformDetails } = recoverySite;
+    let availZone = '';
+    if (!isSamePlatformPlan(protectionPlan)) {
+      availZone = recoverySite.platformDetails.availZone;
+    }
+    if (platformDetails.platformType === PLATFORM_TYPES.VMware) {
+      const { virtualMachines } = protectedEntities;
+      const url = API_FETCH_VMWARE_INVENTORY.replace('<id>', recoverySite.id);
+      dispatch(setVmwareInitialData(url, virtualMachines));
+    }
+    dispatch(fetchNetworks(recoverySite.id, undefined, availZone));
+  };
+}
 export function cleanupTestRecoveries() {
   return (dispatch, getState) => {
     const { user } = getState();
@@ -1410,7 +1429,7 @@ function setVMDetails(vmDetails, protectedVMInfo) {
 
 function setReverseData(json) {
   return (dispatch) => {
-    const { id, protectedSite, recoverySite, protectedEntities } = json;
+    const { id, protectedSite, recoverySite } = json;
     const { platformDetails } = recoverySite;
     const protectedSitePlatform = protectedSite.platformDetails.platformType;
     setTimeout(() => {
@@ -1429,11 +1448,7 @@ function setReverseData(json) {
       const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined, availZone)), dispatch(fetchScript()), dispatch(fetchDrPlans('ui.values.drplan'))];
       return Promise.all(apis).then(
         () => {
-          if (platformDetails.platformType === PLATFORM_TYPES.VMware) {
-            const { virtualMachines } = protectedEntities;
-            const url = API_FETCH_VMWARE_INVENTORY.replace('<id>', recoverySite.id);
-            dispatch(setVmwareDataInitialData(url, virtualMachines));
-          }
+          dispatch(fetchPlatformSpecificData());
           dispatch(openWizard(REVERSE_WIZARDS.options, REVERSE_WIZARDS.steps));
           return new Promise((resolve) => resolve());
         },
