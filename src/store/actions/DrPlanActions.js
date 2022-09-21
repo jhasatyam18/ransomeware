@@ -1371,6 +1371,29 @@ export function setGCPVMRecoveryData(vmMoref) {
   };
 }
 
+/**
+ * fetch required data for perticular platform
+ * @param {*} pplan : Protection plan
+ */
+
+function fetchPlatformSpecificData(pPlan) {
+  return (dispatch) => {
+    const { recoverySite } = pPlan;
+    const { platformDetails } = recoverySite;
+    const { platformType } = platformDetails;
+    let availZone = '';
+    if (!isSamePlatformPlan(pPlan)) {
+      availZone = recoverySite.platformDetails.availZone;
+    }
+    if (platformDetails.platformType === PLATFORM_TYPES.VMware) {
+      if (PLATFORM_TYPES.VMware === platformType) {
+        dispatch(loadRecoveryLocationData(recoverySite.id));
+      }
+    }
+    dispatch(fetchNetworks(recoverySite.id, undefined, availZone));
+  };
+}
+
 export function cleanupTestRecoveries() {
   return (dispatch, getState) => {
     const { user } = getState();
@@ -1413,7 +1436,6 @@ function setReverseData(json) {
     const { id, protectedSite, recoverySite } = json;
     const { platformDetails } = recoverySite;
     const protectedSitePlatform = protectedSite.platformDetails.platformType;
-    const { platformType } = { ...recoverySite.platformDetails };
     setTimeout(() => {
       dispatch(valueChange('recovery.protectionplanID', id));
       dispatch(valueChange('ui.isMigration.workflow', false));
@@ -1430,9 +1452,7 @@ function setReverseData(json) {
       const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined, availZone)), dispatch(fetchScript()), dispatch(fetchDrPlans('ui.values.drplan'))];
       return Promise.all(apis).then(
         () => {
-          if (PLATFORM_TYPES.VMware === platformType) {
-            dispatch(loadRecoveryLocationData(recoverySite.id));
-          }
+          dispatch(fetchPlatformSpecificData(json));
           dispatch(openWizard(REVERSE_WIZARDS.options, REVERSE_WIZARDS.steps));
           return new Promise((resolve) => resolve());
         },
