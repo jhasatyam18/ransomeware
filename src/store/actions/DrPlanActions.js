@@ -11,7 +11,7 @@ import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { fetchNetworks, fetchSites, onRecoverSiteChange } from './SiteActions';
 import { getCreateDRPlanPayload, getEditProtectionPlanPayload, getRecoveryPayload, getReversePlanPayload, getVMConfigPayload } from '../../utils/PayloadUtil';
-import { clearValues, fetchScript, hideApplicationLoader, refresh, showApplicationLoader, valueChange } from './UserActions';
+import { clearValues, fetchScript, hideApplicationLoader, loadRecoveryLocationData, refresh, showApplicationLoader, valueChange } from './UserActions';
 import { closeWizard, openWizard } from './WizardActions';
 import { closeModal, openModal } from './ModalActions';
 import { addAssociatedReverseIP } from './AwsActions';
@@ -1378,17 +1378,17 @@ function setVMDetails(vmDetails, protectedVMInfo) {
 
 function fetchPlatformSpecificData(pPlan) {
   return (dispatch) => {
-    const { protectedEntities } = pPlan;
     const { recoverySite } = pPlan;
     const { platformDetails } = recoverySite;
+    const { platformType } = platformDetails;
     let availZone = '';
     if (!isSamePlatformPlan(pPlan)) {
       availZone = recoverySite.platformDetails.availZone;
     }
     if (platformDetails.platformType === PLATFORM_TYPES.VMware) {
-      const { virtualMachines } = protectedEntities;
-      const url = API_FETCH_VMWARE_INVENTORY.replace('<id>', recoverySite.id);
-      dispatch(setVmwareInitialData(url, virtualMachines));
+      if (PLATFORM_TYPES.VMware === platformType) {
+        dispatch(loadRecoveryLocationData(recoverySite.id));
+      }
     }
     dispatch(fetchNetworks(recoverySite.id, undefined, availZone));
   };
