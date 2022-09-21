@@ -442,7 +442,7 @@ export function openTestRecoveryWizard(cleanUpTestRecoveries) {
       return Promise.all(apis).then(
         () => {
           const isCleanUpFlow = (typeof cleanUpTestRecoveries !== 'undefined' && cleanUpTestRecoveries === true);
-          dispatch(fetchPlatformSpecificData());
+          dispatch(fetchPlatformSpecificData(protectionPlan));
           if (isCleanUpFlow) {
             dispatch(openWizard(CLEANUP_TEST_RECOVERY_WIZARDS.options, CLEANUP_TEST_RECOVERY_WIZARDS.steps));
           } else {
@@ -1371,15 +1371,18 @@ function setVMDetails(vmDetails, protectedVMInfo) {
   return { id: protectedVMInfo.id, ...vmDetails };
 }
 
-function fetchPlatformSpecificData() {
-  return (dispatch, getState) => {
-    const { drPlans } = getState();
-    const { protectionPlan } = drPlans;
-    const { protectedEntities } = protectionPlan;
-    const { recoverySite } = protectionPlan;
+/**
+ * fetch required data for perticular platform
+ * @param {*} pplan : Protection plan
+ */
+
+function fetchPlatformSpecificData(pPlan) {
+  return (dispatch) => {
+    const { protectedEntities } = pPlan;
+    const { recoverySite } = pPlan;
     const { platformDetails } = recoverySite;
     let availZone = '';
-    if (!isSamePlatformPlan(protectionPlan)) {
+    if (!isSamePlatformPlan(pPlan)) {
       availZone = recoverySite.platformDetails.availZone;
     }
     if (platformDetails.platformType === PLATFORM_TYPES.VMware) {
