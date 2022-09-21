@@ -1371,15 +1371,13 @@ export function setGCPVMRecoveryData(vmMoref) {
   };
 }
 
-function fetchPlatformSpecificData() {
-  return (dispatch, getState) => {
-    const { drPlans } = getState();
-    const { protectionPlan } = drPlans;
-    const { protectedEntities } = protectionPlan;
-    const { recoverySite } = protectionPlan;
+function fetchPlatformSpecificData(pPlan) {
+  return (dispatch) => {
+    const { protectedEntities } = pPlan;
+    const { recoverySite } = pPlan;
     const { platformDetails } = recoverySite;
     let availZone = '';
-    if (!isSamePlatformPlan(protectionPlan)) {
+    if (!isSamePlatformPlan(pPlan)) {
       availZone = recoverySite.platformDetails.availZone;
     }
     if (platformDetails.platformType === PLATFORM_TYPES.VMware) {
@@ -1448,7 +1446,7 @@ function setReverseData(json) {
       const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined, availZone)), dispatch(fetchScript()), dispatch(fetchDrPlans('ui.values.drplan'))];
       return Promise.all(apis).then(
         () => {
-          dispatch(fetchPlatformSpecificData());
+          dispatch(fetchPlatformSpecificData(json));
           dispatch(openWizard(REVERSE_WIZARDS.options, REVERSE_WIZARDS.steps));
           return new Promise((resolve) => resolve());
         },
