@@ -11,7 +11,7 @@ import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { fetchNetworks, fetchSites, onRecoverSiteChange } from './SiteActions';
 import { getCreateDRPlanPayload, getEditProtectionPlanPayload, getRecoveryPayload, getReversePlanPayload, getVMConfigPayload } from '../../utils/PayloadUtil';
-import { clearValues, fetchScript, hideApplicationLoader, refresh, showApplicationLoader, valueChange } from './UserActions';
+import { clearValues, fetchScript, hideApplicationLoader, loadRecoveryLocationData, refresh, showApplicationLoader, valueChange } from './UserActions';
 import { closeWizard, openWizard } from './WizardActions';
 import { closeModal, openModal } from './ModalActions';
 import { addAssociatedReverseIP } from './AwsActions';
@@ -1371,23 +1371,6 @@ export function setGCPVMRecoveryData(vmMoref) {
   };
 }
 
-function fetchPlatformSpecificData(pPlan) {
-  return (dispatch) => {
-    const { protectedEntities } = pPlan;
-    const { recoverySite } = pPlan;
-    const { platformDetails } = recoverySite;
-    let availZone = '';
-    if (!isSamePlatformPlan(pPlan)) {
-      availZone = recoverySite.platformDetails.availZone;
-    }
-    if (platformDetails.platformType === PLATFORM_TYPES.VMware) {
-      const { virtualMachines } = protectedEntities;
-      const url = API_FETCH_VMWARE_INVENTORY.replace('<id>', recoverySite.id);
-      dispatch(setVmwareInitialData(url, virtualMachines));
-    }
-    dispatch(fetchNetworks(recoverySite.id, undefined, availZone));
-  };
-}
 export function cleanupTestRecoveries() {
   return (dispatch, getState) => {
     const { user } = getState();
@@ -1430,6 +1413,7 @@ function setReverseData(json) {
     const { id, protectedSite, recoverySite } = json;
     const { platformDetails } = recoverySite;
     const protectedSitePlatform = protectedSite.platformDetails.platformType;
+    const { platformType } = { ...recoverySite.platformDetails };
     setTimeout(() => {
       dispatch(valueChange('recovery.protectionplanID', id));
       dispatch(valueChange('ui.isMigration.workflow', false));
@@ -1446,7 +1430,9 @@ function setReverseData(json) {
       const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined, availZone)), dispatch(fetchScript()), dispatch(fetchDrPlans('ui.values.drplan'))];
       return Promise.all(apis).then(
         () => {
-          dispatch(fetchPlatformSpecificData(json));
+          if (PLATFORM_TYPES.VMware === platformType) {
+            dispatch(loadRecoveryLocationData(recoverySite.id));
+          }
           dispatch(openWizard(REVERSE_WIZARDS.options, REVERSE_WIZARDS.steps));
           return new Promise((resolve) => resolve());
         },
