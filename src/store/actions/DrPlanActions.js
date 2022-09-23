@@ -1250,14 +1250,6 @@ export function setVMwareVMRecoveryData(vmMoref) {
           dispatch(valueChange(`${key}-vmConfig.general-memory`, ins.memoryMB));
           dispatch(valueChange(`${key}-vmConfig.general-unit`, 'MB'));
         }
-        if (ins.tags && ins.tags.length > 0) {
-          const tagsData = [];
-          ins.tags.forEach((tag) => {
-            tagsData.push({ id: tag.id, key: tag.key, value: tag.value });
-          });
-          dispatch(valueChange(`${key}-vmConfig.general.tags`, tagsData));
-        }
-
         const networkKey = `${key}-vmConfig.network.net1`;
         const eths = [];
         if (ins.networks && ins.networks.length > 0) {
