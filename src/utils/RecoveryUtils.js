@@ -105,7 +105,7 @@ function getVMwareVMTestConfig(vm) {
         hasChildren: true,
         title: 'Network',
         children: {
-          [`${key}-vmConfig.network.net1`]: { label: 'IP Address', fieldInfo: 'info.protectionplan.instance.network.aws', type: STACK_COMPONENT_NETWORK, validate: null, errorMessage: '', shouldShow: true, options: (u) => getInstanceTypeOptions(u), data: vm },
+          [`${key}-vmConfig.network.net1`]: { label: 'IP Address', type: STACK_COMPONENT_NETWORK, validate: null, errorMessage: '', shouldShow: true, options: (u) => getInstanceTypeOptions(u), data: vm },
         },
       },
       ...getRecoveryScript(key),

@@ -1,6 +1,6 @@
 import { getMemoryInfo } from '../../utils/AppUtils';
 import { changedVMRecoveryConfigurations } from '../../utils/validationUtils';
-import { MONITORING_DISK_CHANGES } from '../../constants/EventConstant';
+import { MILI_SECONDS_TIME, MONITORING_DISK_CHANGES } from '../../constants/EventConstant';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import * as Types from '../../constants/actionTypes';
@@ -1244,7 +1244,7 @@ export function setVMwareVMRecoveryData(vmMoref) {
           dispatch(valueChange(`${key}-vmConfig.general-memory`, parseInt(memory[0], 10)));
           dispatch(valueChange(`${key}-vmConfig.general-unit`, memory[1]));
           // Only for edit test recovery flow to get the options for folder path,compute resources
-          fetchByDelay(dispatch, setVMwareTargetData, 2000, [`${key}-vmConfig.general`, ins.datacenterMoref, ins.hostMoref]);
+          fetchByDelay(dispatch, setVMwareTargetData, MILI_SECONDS_TIME.TWO_THOUSAND, [`${key}-vmConfig.general`, ins.datacenterMoref, ins.hostMoref]);
         } else {
         // For full Recovery Flow
           dispatch(valueChange(`${key}-vmConfig.general-memory`, ins.memoryMB));
