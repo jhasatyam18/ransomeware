@@ -1377,10 +1377,8 @@ function fetchPlatformSpecificData(pPlan) {
     if (!isSamePlatformPlan(pPlan)) {
       availZone = recoverySite.platformDetails.availZone;
     }
-    if (platformDetails.platformType === PLATFORM_TYPES.VMware) {
-      if (PLATFORM_TYPES.VMware === platformType) {
-        dispatch(loadRecoveryLocationData(recoverySite.id));
-      }
+    if (PLATFORM_TYPES.VMware === platformType) {
+      dispatch(loadRecoveryLocationData(recoverySite.id));
     }
     dispatch(fetchNetworks(recoverySite.id, undefined, availZone));
   };
