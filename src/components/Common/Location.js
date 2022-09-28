@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
+import { loadRecoveryLocationData } from '../../store/actions';
 import { getValue } from '../../utils/InputUtils';
 import { openModal } from '../../store/actions/ModalActions';
 import { MODAL_LOCATION_CONFIG } from '../../constants/Modalconstant';
@@ -18,6 +19,12 @@ function Location(props) {
 
   const handleClick = () => {
     const options = field;
+    const { dataKey } = options;
+    const data = getValue(dataKey, values) || [];
+    if (data === '' || data.length === 0) {
+      const siteId = getValue('ui.values.recoverySiteID', values);
+      dispatch(loadRecoveryLocationData(siteId));
+    }
     options.fieldKey = fieldKey;
     dispatch(openModal(MODAL_LOCATION_CONFIG, options));
   };
