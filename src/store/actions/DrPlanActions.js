@@ -256,9 +256,9 @@ export function onProtectionPlanChange({ value, allowDeleted }) {
   };
 }
 
-export function onReverseProtectionPlanChange(id) {
+export function onReverseProtectionPlanChange(ID) {
   return (dispatch) => {
-    const url = API_FETCH_REVERSE_DR_PLAN_BY_ID.replace('<id>', id);
+    const url = API_FETCH_REVERSE_DR_PLAN_BY_ID.replace('<id>', ID);
     dispatch(showApplicationLoader(url, 'Loading reverse protection plan'));
     return callAPI(url)
       .then((json) => {
@@ -271,7 +271,18 @@ export function onReverseProtectionPlanChange(id) {
             return;
           }
           dispatch(valueChange('ui.reverse.drPlan', json));
-          dispatch(openWizard(REVERSE_WIZARDS.options, REVERSE_WIZARDS.steps));
+          const data = [];
+          const info = json.protectedEntities.virtualMachines || [];
+          const rEntities = json.recoveryEntities.instanceDetails || [];
+          info.forEach((vm) => {
+            rEntities.forEach((rE) => {
+              if (vm.moref === rE.sourceMoref) {
+                data.push(vm);
+              }
+            });
+          });
+          dispatch(valueChange('ui.recovery.vms', data));
+          dispatch(setReverseData(json));
         }
       },
       (err) => {
@@ -1164,6 +1175,7 @@ export function setAWSVMRecoveryData(vmMoref) {
     const { user } = getState();
     const { values } = user;
     const plan = getValue('ui.recovery.plan', values);
+    // const workflow = getValue('ui.workflow', values);
     if (typeof plan === 'undefined' || plan === '' || !plan) {
       return;
     }
@@ -1219,7 +1231,7 @@ export function setVMwareVMRecoveryData(vmMoref) {
     const { user } = getState();
     const { values } = user;
     const plan = getValue('ui.recovery.plan', values);
-    const workFlow = getValue('ui.workflow', values);
+    const workflow = getValue('ui.workflow', values);
     if (typeof plan === 'undefined' || plan === '' || !plan) {
       return;
     }
@@ -1239,7 +1251,7 @@ export function setVMwareVMRecoveryData(vmMoref) {
         dispatch(valueChange(`${key}-vmConfig.general.dataStoreMoref`, { value: ins.datastoreMoref, label: ins.datastoreMoref }));
         dispatch(valueChange(`${key}-vmConfig.general.numcpu`, ins.numCPU));
         dispatch(valueChange(`${key}-vmConfig.general.folderPath`, [ins.folderPath]));
-        if (workFlow === UI_WORKFLOW.TEST_RECOVERY) {
+        if (workflow === UI_WORKFLOW.REVERSE_PLAN || workflow === UI_WORKFLOW.TEST_RECOVERY) {
           const memory = getMemoryInfo(ins.memoryMB);
           dispatch(valueChange(`${key}-vmConfig.general-memory`, parseInt(memory[0], 10)));
           dispatch(valueChange(`${key}-vmConfig.general-unit`, memory[1]));
@@ -1326,6 +1338,26 @@ export function setGCPVMRecoveryData(vmMoref) {
   };
 }
 
+/**
+ * fetch required data for perticular platform
+ * @param {*} pplan : Protection plan
+ */
+
+function fetchPlatformSpecificData(pPlan) {
+  return (dispatch) => {
+    const { recoverySite } = pPlan;
+    const { platformDetails } = recoverySite;
+    let availZone = '';
+    if (!isSamePlatformPlan(pPlan)) {
+      availZone = recoverySite.platformDetails.availZone;
+    }
+    if (platformDetails.platformType === PLATFORM_TYPES.VMware) {
+      dispatch(loadRecoveryLocationData(recoverySite.id));
+    }
+    dispatch(fetchNetworks(recoverySite.id, undefined, availZone));
+  };
+}
+
 export function cleanupTestRecoveries() {
   return (dispatch, getState) => {
     const { user } = getState();
@@ -1363,23 +1395,36 @@ function setVMDetails(vmDetails, protectedVMInfo) {
   return { id: protectedVMInfo.id, ...vmDetails };
 }
 
-/**
- * fetch required data for perticular platform
- * @param {*} pplan : Protection plan
- */
-
-function fetchPlatformSpecificData(pPlan) {
+function setReverseData(json) {
   return (dispatch) => {
-    const { recoverySite } = pPlan;
+    const { id, protectedSite, recoverySite } = json;
     const { platformDetails } = recoverySite;
-    const { platformType } = platformDetails;
-    let availZone = '';
-    if (!isSamePlatformPlan(pPlan)) {
-      availZone = recoverySite.platformDetails.availZone;
-    }
-    if (PLATFORM_TYPES.VMware === platformType) {
-      dispatch(loadRecoveryLocationData(recoverySite.id));
-    }
-    dispatch(fetchNetworks(recoverySite.id, undefined, availZone));
+    const protectedSitePlatform = protectedSite.platformDetails.platformType;
+    setTimeout(() => {
+      dispatch(valueChange('recovery.protectionplanID', id));
+      dispatch(valueChange('ui.isMigration.workflow', false));
+      dispatch(valueChange('ui.values.protectionPlatform', protectedSitePlatform));
+      dispatch(valueChange('ui.values.recoveryPlatform', platformDetails.platformType));
+      dispatch(valueChange('ui.values.recoverySiteID', recoverySite.id));
+      dispatch(valueChange('ui.recovery.plan', json));
+      dispatch(valueChange('ui.workflow', UI_WORKFLOW.REVERSE_PLAN));
+
+      let availZone = '';
+      if (!isSamePlatformPlan(json)) {
+        availZone = recoverySite.platformDetails.availZone;
+      }
+      const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined, availZone)), dispatch(fetchScript()), dispatch(fetchDrPlans('ui.values.drplan'))];
+      return Promise.all(apis).then(
+        () => {
+          dispatch(fetchPlatformSpecificData(json));
+          dispatch(openWizard(REVERSE_WIZARDS.options, REVERSE_WIZARDS.steps));
+          return new Promise((resolve) => resolve());
+        },
+        (err) => {
+          dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+          return new Promise((resolve) => resolve());
+        },
+      );
+    }, 1000);
   };
 }

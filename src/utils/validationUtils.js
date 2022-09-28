@@ -146,6 +146,16 @@ export function validateDRPlanProtectData({ user, dispatch }) {
   return true;
 }
 
+export function validateInTargetDRPLanProtectedData({ user, dispatch }) {
+  const { values } = user;
+  const vms = getValue('ui.site.seletedVMs', values);
+  if (!vms || Object.keys(vms).length === 0) {
+    dispatch(addMessage('Select virtual machine.', MESSAGE_TYPES.ERROR));
+    return false;
+  }
+  return true;
+}
+
 export function noValidate() {
   return true;
 }
