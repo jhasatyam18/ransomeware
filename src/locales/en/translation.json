@@ -311,7 +311,7 @@
   "info.throttling.time.limit.start": "Start time for the time based throttling",
   "info.throttling.time.limit.end": "End time for the time based throttling",
 
-  "info.recovery.system.agent": "For AWS, install OS agents like EC2Launch and SSMAgents. For GCP, install google os-config and compute-engine agents",
+  "info.recovery.system.agent": "For AWS, install OS agents like EC2Launch and SSMAgents. For GCP, install google os-config and compute-engine agents. For Azure, install azure vm agent",
   "info.recovery.install.cloud.packages": "For AWS. install AWS Cloud SDK and for GCP, install GCP Cloud SDK",
   "info.protectionplan.network.gcp.externalip": "An external IP address associated with this instance. Select an unused static IP address or choose 'Ephemeral' to use an IP from a shared ephemeral IP address pool.",
   "info.protectionplan.network.gcp.privateip": "Leave blank to assign an address from the network range or provide ip from the network range",
