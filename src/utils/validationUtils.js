@@ -834,7 +834,8 @@ export function validateMemoryValue({ value, user, fieldKey }) {
 
 export function isRemovedOrRecoveredVM(vm) {
   if (typeof vm === 'object' && vm.isDeleted || vm.isRemovedFromPlan
-      || vm.recoveryStatus === RECOVERY_STATUS.MIGRATED || vm.recoveryStatus === RECOVERY_STATUS.RECOVERED) {
+      || vm.recoveryStatus === RECOVERY_STATUS.MIGRATED || vm.recoveryStatus === RECOVERY_STATUS.RECOVERED
+      || vm.recoveryStatus === RECOVERY_STATUS.MIGRATION_INIT) {
     return true;
   }
   return false;

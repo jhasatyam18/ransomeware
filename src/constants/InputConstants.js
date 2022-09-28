@@ -20,7 +20,7 @@ export const PROTECTION_PLANS_STATUS = {
 };
 
 export const RECOVERY_STATUS = {
-  RECOVERED: 'Recovered', MIGRATED: 'Migrated',
+  RECOVERED: 'Recovered', MIGRATED: 'Migrated', MIGRATION_INIT: 'migration_init',
 };
 
 export const JOBS_TABS = [
