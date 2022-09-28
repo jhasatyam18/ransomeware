@@ -8,15 +8,14 @@ import DMTable from '../Table/DMTable';
 
 function ProtectionPlanVMConfig(props) {
   const [viewProtection, setViewProtection] = useState(true);
-  const { protectionPlan, dispatch, t, user } = props;
-  const { protectedEntities, recoveryEntities, protectedSite, recoverySite } = protectionPlan;
+  const { protectionPlan, dispatch, t } = props;
+  const { protectedEntities, recoveryEntities, recoverySite } = protectionPlan;
   const { virtualMachines } = protectedEntities;
   const { instanceDetails } = recoveryEntities;
 
   const renderProtectedEntities = () => {
-    const { platformType } = user;
     let cols = TABLE_PROTECTION_PLAN_VMS;
-    if (protectedSite.platformDetails.platformType !== platformType) {
+    if (recoverySite.node.isLocalNode) {
       cols = TABLE_PROTECTION_PLAN_VMS.slice(0, TABLE_PROTECTION_PLAN_VMS.length - 1);
     }
     return (
