@@ -728,7 +728,7 @@ export function getComputeResources(fieldKey, dataCenterKey) {
       dispatch(valueChange('ui.site.vmware.datacenterMoref', key.value));
     }
     if (typeof fieldVal === 'undefined' || fieldVal.length === 0) {
-      dispatch(addMessage('Please select Datacenter', 'fieldval_err', true));
+      dispatch(addMessage('Please select Datacenter', MESSAGE_TYPES.ERROR));
       return;
     }
     let url = '';
@@ -785,11 +785,11 @@ export function getStorageForVMware({ fieldKey, hostMoref }) {
     let networkURL = '';
     let entityKey = '';
     if (hostMoref) {
-      networkURL = `api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Network}&entity=${hostMoref}`;
+      networkURL = `api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Network},${VMWARE_OBJECT.DistributedVirtualPortgroup}&entity=${hostMoref}`;
       storageURL = `api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Datastore}&entity=${hostMoref}`;
       entityKey = `${hostMoref}`;
     } else {
-      networkURL = `api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Network}&entity=${fieldVal.value}`;
+      networkURL = `api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Network},${VMWARE_OBJECT.DistributedVirtualPortgroup}&entity=${fieldVal.value}`;
       storageURL = `api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Datastore}&entity=${fieldVal.value}`;
       entityKey = `${fieldVal.value}`;
     }

@@ -20,7 +20,7 @@ export const PROTECTION_PLANS_STATUS = {
 };
 
 export const RECOVERY_STATUS = {
-  RECOVERED: 'Recovered', MIGRATED: 'Migrated',
+  RECOVERED: 'Recovered', MIGRATED: 'Migrated', MIGRATION_INIT: 'migration_init',
 };
 
 export const JOBS_TABS = [
@@ -117,6 +117,7 @@ export const VMWARE_OBJECT = {
   Datastore: 'Datastore',
   ComputeResource: 'ComputeResource',
   VirtualMachine: 'VirtualMachine',
+  DistributedVirtualPortgroup: 'DistributedVirtualPortgroup',
 };
 
 export const RECOVERY_ENTITY_TYPES = {

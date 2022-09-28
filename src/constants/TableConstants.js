@@ -144,7 +144,7 @@ export const TABLE_PROTECTION_PLAN_REPLICATIONS = [
 
 // Table fields for protection plan
 export const TABLE_PROTECTION_PLAN_RECOVERY = [
-  { label: 'Virtual Machines', field: 'vms', filterText: (text) => getRecoveryVMName(text) },
+  { label: 'Virtual Machines', field: 'entities', filterText: (text) => getRecoveryVMName(text) },
   { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Recovery Type', field: 'recoveryType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER },
   { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },

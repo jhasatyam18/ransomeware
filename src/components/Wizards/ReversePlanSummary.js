@@ -33,7 +33,7 @@ class ReversePlanSummary extends Component {
       selectedVMs = drPlan.protectedEntities.virtualMachines;
     }
     const replType = getValue('reverse.replType', values);
-    const replicationUnit = 'miniutes';
+    const replicationUnit = 'minutes';
     let size = 0;
     Object.keys(selectedVMs).forEach((key) => {
       selectedVMs[key].virtualDisks.forEach((disk) => {
@@ -74,7 +74,7 @@ class ReversePlanSummary extends Component {
                   <Col sm={3} className="text-muted">Virtual Machines</Col>
                   <Col sm={3}>{Object.keys(selectedVMs).length}</Col>
                   <Col sm={3} className="text-muted">Total Storage</Col>
-                  <Col sm={3}>{`${size} GB`}</Col>
+                  <Col sm={3}>{size}</Col>
                 </Row>
                 <hr className="mt-3 mb-3" />
               </Col>

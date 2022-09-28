@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
+import { STATUS_STARTED } from '../../constants/AppStatus';
 import { clearValues, fetchScript } from '../../store/actions';
 import {
   drPlanStopStart, deletePlan, openRecoveryWizard, openMigrationWizard, openReverseWizard, openEditProtectionPlanWizard,
@@ -91,6 +92,11 @@ class DRPlanActionBar extends Component {
       return false;
     }
     if (isSingle && len === 1) {
+      let key = Object.keys(selectedPlans);
+      key = parseInt(key[0], 10);
+      if (selectedPlans[key].status === STATUS_STARTED) {
+        return true;
+      }
       return false;
     }
     return true;

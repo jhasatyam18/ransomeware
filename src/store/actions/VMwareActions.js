@@ -36,7 +36,7 @@ export function getVMwareAdapterType() {
   };
 }
 
-export function setVmwareDataInitialData(url, virtualMachines) {
+export function setVmwareInitialData(url, virtualMachines) {
   return (dispatch) => {
     callAPI(url)
       .then((json) => {
@@ -58,7 +58,6 @@ export function setVmwareDataInitialData(url, virtualMachines) {
             node.title = d.name;
             convertedData.push(node);
           });
-          dispatch(valueChange('ui.drplan.vms.location', convertedData));
           dispatch(valueChange('ui.site.vms.data', convertedData));
         }
 

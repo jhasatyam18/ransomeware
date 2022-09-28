@@ -1,5 +1,5 @@
 import { cleanupTestRecoveries, onConfigureDRPlan, startMigration, startRecovery, startReversePlan, updateVMConfig } from '../store/actions/DrPlanActions';
-import { noValidate, validateDRPlanProtectData, validateSteps, validateMigrationVMs, validateVMConfiguration, validateRecoveryVMs, validateReversePlan, validateVMSelection } from '../utils/validationUtils';
+import { noValidate, validateDRPlanProtectData, validateSteps, validateMigrationVMs, validateVMConfiguration, validateRecoveryVMs, validateReversePlan, validateVMSelection, validateInTargetDRPLanProtectedData } from '../utils/validationUtils';
 import { postPlanSitesSelected } from '../store/actions/SiteActions';
 
 export const WIZARD_STEP = 'WIZARD_STEP';
@@ -77,7 +77,10 @@ export const TEST_RECOVERY_WIZARDS = {
 export const REVERSE_WIZARDS = {
   options: { title: 'Reverse Protection Plan', onFinish: startReversePlan },
   steps: [
+    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateInTargetDRPLanProtectedData({ user, dispatch }) },
     { label: 'Reverse Plan', title: '', component: REVERSE_CONFIG_STEP, validate: (user, dispatch) => validateReversePlan({ user, dispatch }), isAync: true },
+    { label: 'Test Recovery Configuration', title: '', component: TEST_RECOVERY_CONFIG_STEP, validate: (user, dispatch) => validateReversePlan({ user, dispatch }), isAync: true },
+    { label: 'Tools and Scripts', title: '', component: TEST_RECOVERY_CONFIG_SCRIPTS, validate: (user, dispatch) => noValidate(user, dispatch) },
     { label: 'Summary', title: '', component: REVERSE_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch) }],
 };
 

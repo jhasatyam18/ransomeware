@@ -8,3 +8,7 @@ export const MONITORING_DISK_CHANGES = {
   DISK_TYPES: 'monitor.vmdisktypemodified',
   DISK_IOPS: 'monitor.vmdiskiopsmodified',
 };
+
+export const MILI_SECONDS_TIME = {
+  TWO_THOUSAND: 2000,
+};

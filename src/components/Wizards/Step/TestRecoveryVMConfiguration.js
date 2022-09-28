@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody } from 'reactstrap';
+import { UI_WORKFLOW } from '../../../constants/InputConstants';
 import { NOTE_TEXT } from '../../../constants/DMNoteConstant';
 import DMNote from '../../Common/DMNote';
 import { getValue } from '../../../utils/InputUtils';
@@ -9,8 +10,11 @@ import DMAccordion from '../../Shared/DMAccordion';
 import { createVMTestRecoveryConfig } from '../../../utils/RecoveryUtils';
 
 function TestRecoveryVMConfiguration(props) {
+  const { user } = props;
+  const { values } = user;
+  const workFlow = getValue('ui.workflow', values);
   const renderVMConfig = (vm, index) => {
-    const { dispatch, user } = props;
+    const { dispatch } = props;
     const config = createVMTestRecoveryConfig(vm, user, dispatch);
     return (
       <DMAccordion title={vm.name} config={config} dispatch={dispatch} user={user} key={`accordion-vm-config-${vm.name}`} openByDefault={index === 0 ? 'true' : false} />
@@ -18,8 +22,6 @@ function TestRecoveryVMConfiguration(props) {
   };
 
   const renderNodes = () => {
-    const { user } = props;
-    const { values } = user;
     const selectedVMs = getValue('ui.site.seletedVMs', values);
     return Object.keys(selectedVMs).map((key, index) => (
       renderVMConfig(selectedVMs[key], index)
@@ -30,7 +32,7 @@ function TestRecoveryVMConfiguration(props) {
   return (
     <Card>
       <CardBody>
-        {renderNote()}
+        {workFlow === UI_WORKFLOW.TEST_RECOVERY ? renderNote() : null}
         {renderNodes()}
       </CardBody>
     </Card>

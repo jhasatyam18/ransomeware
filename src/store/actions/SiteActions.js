@@ -149,7 +149,6 @@ export function onProtectSiteChange({ value }) {
               node.title = d.name;
               convertedData.push(node);
             });
-            dispatch(valueChange('ui.drplan.vms.location', convertedData));
             dispatch(valueChange('ui.site.vms.data', convertedData));
             return;
           }

@@ -8,7 +8,7 @@ import { API_TYPES, callAPI, createPayload } from './ApiUtils';
 import { API_VALIDATE_MIGRATION, API_VALIDATE_RECOVERY, API_VALIDATE_REVERSE_PLAN } from '../constants/ApiConstants';
 import { getRecoveryPayload, getReversePlanPayload, getVMNetworkConfig, getVMwareNetworkConfig } from './PayloadUtil';
 import { IP_REGEX } from '../constants/ValidationConstants';
-import { PLATFORM_TYPES, RECOVERY_STATUS, STATIC_KEYS } from '../constants/InputConstants';
+import { PLATFORM_TYPES, RECOVERY_STATUS, STATIC_KEYS, UI_WORKFLOW } from '../constants/InputConstants';
 import { createVMConfigStackObject, getValue, isAWSCopyNic, validateMacAddressForVMwareNetwork, excludeKeys } from './InputUtils';
 
 export function isRequired(value) {
@@ -126,14 +126,28 @@ export function validateDRPlanProtectData({ user, dispatch }) {
   const { values } = user;
   const vmwareVMS = getValue('ui.site.vmware.selectedvms', values);
   if (typeof vmwareVMS !== 'undefined' && vmwareVMS) {
-    const vmwareVMSKeys = Object.keys(vmwareVMS);
-    if (!vmwareVMSKeys || vmwareVMSKeys.length === 0) {
-      dispatch(addMessage('Select virtual machine.', MESSAGE_TYPES.ERROR));
-      return false;
+    // Below code is to fetch the datacenter from the the source dev center and in case of test recovery we don't want it
+    const workFlow = getValue('ui.workflow', values) || '';
+    if (workFlow !== UI_WORKFLOW.TEST_RECOVERY) {
+      const vmwareVMSKeys = Object.keys(vmwareVMS);
+      if (!vmwareVMSKeys || vmwareVMSKeys.length === 0) {
+        dispatch(addMessage('Select virtual machine.', MESSAGE_TYPES.ERROR));
+        return false;
+      }
+      dispatch(getVMwareVMSProps(vmwareVMS));
+      return true;
     }
-    dispatch(getVMwareVMSProps(vmwareVMS));
-    return true;
   }
+  const vms = getValue('ui.site.seletedVMs', values);
+  if (!vms || Object.keys(vms).length === 0) {
+    dispatch(addMessage('Select virtual machine.', MESSAGE_TYPES.ERROR));
+    return false;
+  }
+  return true;
+}
+
+export function validateInTargetDRPLanProtectedData({ user, dispatch }) {
+  const { values } = user;
   const vms = getValue('ui.site.seletedVMs', values);
   if (!vms || Object.keys(vms).length === 0) {
     dispatch(addMessage('Select virtual machine.', MESSAGE_TYPES.ERROR));
@@ -908,7 +922,8 @@ export function validateMemoryValue({ value, user, fieldKey }) {
 
 export function isRemovedOrRecoveredVM(vm) {
   if (typeof vm === 'object' && vm.isDeleted || vm.isRemovedFromPlan
-      || vm.recoveryStatus === RECOVERY_STATUS.MIGRATED || vm.recoveryStatus === RECOVERY_STATUS.RECOVERED) {
+      || vm.recoveryStatus === RECOVERY_STATUS.MIGRATED || vm.recoveryStatus === RECOVERY_STATUS.RECOVERED
+      || vm.recoveryStatus === RECOVERY_STATUS.MIGRATION_INIT) {
     return true;
   }
   return false;
