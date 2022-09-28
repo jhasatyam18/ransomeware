@@ -1175,7 +1175,7 @@ export function setAWSVMRecoveryData(vmMoref) {
     const { user } = getState();
     const { values } = user;
     const plan = getValue('ui.recovery.plan', values);
-    const workflow = getValue('ui.workflow', values);
+    // const workflow = getValue('ui.workflow', values);
     if (typeof plan === 'undefined' || plan === '' || !plan) {
       return;
     }
@@ -1211,10 +1211,10 @@ export function setAWSVMRecoveryData(vmMoref) {
             dispatch(valueChange(`${networkKey}-eth-${index}-availZone`, ins.availZone));
             dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, net.isPublicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-network`, net.network));
-            let { privateIP } = net;
-            if (workflow === UI_WORKFLOW.REVERSE_PLAN) {
-              privateIP = '';
-            }
+            const { privateIP } = net;
+            // if (workflow === UI_WORKFLOW.REVERSE_PLAN) {
+            //   privateIP = '';
+            // }
             dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, net.publicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, privateIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkTier`, net.networkTier));
@@ -1351,15 +1351,12 @@ function fetchPlatformSpecificData(pPlan) {
   return (dispatch) => {
     const { recoverySite } = pPlan;
     const { platformDetails } = recoverySite;
-    const { platformType } = platformDetails;
     let availZone = '';
     if (!isSamePlatformPlan(pPlan)) {
       availZone = recoverySite.platformDetails.availZone;
     }
     if (platformDetails.platformType === PLATFORM_TYPES.VMware) {
-      if (PLATFORM_TYPES.VMware === platformType) {
-        dispatch(loadRecoveryLocationData(recoverySite.id));
-      }
+      dispatch(loadRecoveryLocationData(recoverySite.id));
     }
     dispatch(fetchNetworks(recoverySite.id, undefined, availZone));
   };
