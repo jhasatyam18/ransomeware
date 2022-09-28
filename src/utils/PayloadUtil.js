@@ -219,18 +219,9 @@ function getReplicationInterval(type, value) {
 function getRecoveryConfigVMDetails(user) {
   const { values } = user;
   const vms = getValue('ui.site.seletedVMs', values);
-  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
   const machineDetails = [];
   let instanceConfig = [];
-  if (PLATFORM_TYPES.VMware === recoveryPlatform) {
-    // TODO: remove this post vmware as target is supported
-    const plan = getValue('ui.recovery.plan', values);
-    const { recoveryEntities } = plan;
-    const { instanceDetails } = recoveryEntities;
-    instanceConfig = instanceDetails;
-  } else {
-    instanceConfig = getVMConfigPayload(user);
-  }
+  instanceConfig = getVMConfigPayload(user);
   Object.keys(vms).forEach((key) => {
     const vm = vms[key];
     const { name, moref } = vm;
