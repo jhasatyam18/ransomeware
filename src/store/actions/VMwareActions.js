@@ -36,7 +36,7 @@ export function getVMwareAdapterType() {
   };
 }
 
-export function setVmwareDataInitialData(url, virtualMachines) {
+export function setVmwareInitialData(url, virtualMachines) {
   return (dispatch) => {
     callAPI(url)
       .then((json) => {

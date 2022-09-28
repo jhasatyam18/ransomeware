@@ -1,17 +1,17 @@
 import { getMemoryInfo } from '../../utils/AppUtils';
 import { changedVMRecoveryConfigurations } from '../../utils/validationUtils';
-import { MONITORING_DISK_CHANGES } from '../../constants/EventConstant';
+import { MILI_SECONDS_TIME, MONITORING_DISK_CHANGES } from '../../constants/EventConstant';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import * as Types from '../../constants/actionTypes';
 import {
-  API_FETCH_DR_PLANS, API_START_DR_PLAN, API_STOP_DR_PLAN, API_DELETE_DR_PLAN, API_FETCH_DR_PLAN_BY_ID, API_FETCH_REVERSE_DR_PLAN_BY_ID, API_RECOVER, API_MIGRATE, API_REVERSE, API_PROTECTION_PLAN_VMS, API_PROTECTION_PLAN_UPDATE, API_PROTECTION_PLAN_PROTECTED_VMS, API_VM_ALERTS, API_EDIT_PROTECTED_VM, API_AWS_INSTANCES, API_GCP_INSTANCES, API_FETCH_VMWARE_INVENTORY, API_TEST_RECOVERY_CLEANUP, API_AUTO_MIGRATE_WORKFLOW,
+  API_FETCH_DR_PLANS, API_START_DR_PLAN, API_STOP_DR_PLAN, API_DELETE_DR_PLAN, API_FETCH_DR_PLAN_BY_ID, API_FETCH_REVERSE_DR_PLAN_BY_ID, API_RECOVER, API_MIGRATE, API_REVERSE, API_PROTECTION_PLAN_VMS, API_PROTECTION_PLAN_UPDATE, API_PROTECTION_PLAN_PROTECTED_VMS, API_VM_ALERTS, API_EDIT_PROTECTED_VM, API_FETCH_VMWARE_INVENTORY, API_TEST_RECOVERY_CLEANUP, API_AUTO_MIGRATE_WORKFLOW,
 } from '../../constants/ApiConstants';
 import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { fetchNetworks, fetchSites, onRecoverSiteChange } from './SiteActions';
 import { getCreateDRPlanPayload, getEditProtectionPlanPayload, getRecoveryPayload, getReversePlanPayload, getVMConfigPayload } from '../../utils/PayloadUtil';
-import { clearValues, fetchScript, hideApplicationLoader, refresh, showApplicationLoader, valueChange } from './UserActions';
+import { clearValues, fetchScript, hideApplicationLoader, loadRecoveryLocationData, refresh, showApplicationLoader, valueChange } from './UserActions';
 import { closeWizard, openWizard } from './WizardActions';
 import { closeModal, openModal } from './ModalActions';
 import { addAssociatedReverseIP } from './AwsActions';
@@ -20,7 +20,7 @@ import { getMatchingInsType, getValue, getVMMorefFromEvent, isSamePlatformPlan, 
 import { PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
-import { setVmwareDataInitialData, setVMwareTargetData } from './VMwareActions';
+import { setVmwareInitialData, setVMwareTargetData } from './VMwareActions';
 import { setCookie } from '../../utils/CookieUtils';
 import { APPLICATION_GETTING_STARTED_COMPLETED } from '../../constants/UserConstant';
 
@@ -431,6 +431,7 @@ export function openTestRecoveryWizard(cleanUpTestRecoveries) {
       dispatch(valueChange('ui.isMigration.workflow', false));
       dispatch(valueChange('ui.values.protectionPlatform', protectedSitePlatform));
       dispatch(valueChange('ui.values.recoveryPlatform', platformDetails.platformType));
+      dispatch(valueChange('ui.values.recoverySiteID', recoverySite.id));
       dispatch(valueChange('recovery.dryrun', true));
       dispatch(valueChange('ui.workflow', UI_WORKFLOW.TEST_RECOVERY));
       let availZone = '';
@@ -441,19 +442,11 @@ export function openTestRecoveryWizard(cleanUpTestRecoveries) {
       return Promise.all(apis).then(
         () => {
           const isCleanUpFlow = (typeof cleanUpTestRecoveries !== 'undefined' && cleanUpTestRecoveries === true);
-          if (platformDetails.platformType === PLATFORM_TYPES.VMware) {
-            const { options, steps } = RECOVERY_WIZARDS;
-            options.title = 'Test Recovery';
-            dispatch(openWizard(options, steps));
+          dispatch(fetchPlatformSpecificData(protectionPlan));
+          if (isCleanUpFlow) {
+            dispatch(openWizard(CLEANUP_TEST_RECOVERY_WIZARDS.options, CLEANUP_TEST_RECOVERY_WIZARDS.steps));
           } else {
-            const url = (platformDetails.platformType === PLATFORM_TYPES.AWS ? API_AWS_INSTANCES : API_GCP_INSTANCES);
-            dispatch(fetchNetworks(recoverySite.id, undefined, availZone));
-            dispatch(setInstances(url));
-            if (isCleanUpFlow) {
-              dispatch(openWizard(CLEANUP_TEST_RECOVERY_WIZARDS.options, CLEANUP_TEST_RECOVERY_WIZARDS.steps));
-            } else {
-              dispatch(openWizard(TEST_RECOVERY_WIZARDS.options, TEST_RECOVERY_WIZARDS.steps));
-            }
+            dispatch(openWizard(TEST_RECOVERY_WIZARDS.options, TEST_RECOVERY_WIZARDS.steps));
           }
           dispatch(onProtectionPlanChange({ value: protectionPlan.id, allowDeleted: isCleanUpFlow }));
           dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW_TEST_RECOVERY, true));
@@ -624,7 +617,7 @@ export function setProtectionPlanVMsForUpdate(protectionPlan, isEventAction = fa
     if (PLATFORM_TYPES.VMware === protectedSite.platformDetails.platformType) {
       dispatch(valueChange('ui.values.protectionSiteID', protectedSite.id));
       const url = API_FETCH_VMWARE_INVENTORY.replace('<id>', protectedSite.id);
-      dispatch(setVmwareDataInitialData(url, virtualMachines));
+      dispatch(setVmwareInitialData(url, virtualMachines));
     }
     let url = (isEventAction ? API_PROTECTION_PLAN_PROTECTED_VMS.replace('<moref>', vmMoref) : API_PROTECTION_PLAN_VMS.replace('<sid>', protectedSite.id));
     url = url.replace('<pid>', id);
@@ -1226,6 +1219,7 @@ export function setVMwareVMRecoveryData(vmMoref) {
     const { user } = getState();
     const { values } = user;
     const plan = getValue('ui.recovery.plan', values);
+    const workFlow = getValue('ui.workflow', values);
     if (typeof plan === 'undefined' || plan === '' || !plan) {
       return;
     }
@@ -1244,9 +1238,18 @@ export function setVMwareVMRecoveryData(vmMoref) {
         dispatch(valueChange(`${key}-vmConfig.general.hostMoref`, { value: ins.hostMoref, label: ins.hostMoref }));
         dispatch(valueChange(`${key}-vmConfig.general.dataStoreMoref`, { value: ins.datastoreMoref, label: ins.datastoreMoref }));
         dispatch(valueChange(`${key}-vmConfig.general.numcpu`, ins.numCPU));
-        dispatch(valueChange(`${key}-vmConfig.general-memory`, ins.memoryMB));
-        dispatch(valueChange(`${key}-vmConfig.general-unit`, 'MB'));
         dispatch(valueChange(`${key}-vmConfig.general.folderPath`, [ins.folderPath]));
+        if (workFlow === UI_WORKFLOW.TEST_RECOVERY) {
+          const memory = getMemoryInfo(ins.memoryMB);
+          dispatch(valueChange(`${key}-vmConfig.general-memory`, parseInt(memory[0], 10)));
+          dispatch(valueChange(`${key}-vmConfig.general-unit`, memory[1]));
+          // Only for edit test recovery flow to get the options for folder path,compute resources
+          fetchByDelay(dispatch, setVMwareTargetData, MILI_SECONDS_TIME.TWO_THOUSAND, [`${key}-vmConfig.general`, ins.datacenterMoref, ins.hostMoref]);
+        } else {
+        // For full Recovery Flow
+          dispatch(valueChange(`${key}-vmConfig.general-memory`, ins.memoryMB));
+          dispatch(valueChange(`${key}-vmConfig.general-unit`, 'MB'));
+        }
         const networkKey = `${key}-vmConfig.network.net1`;
         const eths = [];
         if (ins.networks && ins.networks.length > 0) {
@@ -1268,29 +1271,6 @@ export function setVMwareVMRecoveryData(vmMoref) {
         }
       }
     });
-  };
-}
-
-export function setInstances(url) {
-  return (dispatch) => {
-    dispatch(showApplicationLoader('INSTANCE_LOADING', 'Loading instances...'));
-    return callAPI(url)
-      .then((json) => {
-        dispatch(hideApplicationLoader('INSTANCE_LOADING'));
-        if (json && json.hasError) {
-          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
-        } else {
-          let data = json;
-          if (data === null) {
-            data = [];
-          }
-          dispatch(valueChange('ui.values.instances', data));
-        }
-      },
-      (err) => {
-        dispatch(hideApplicationLoader('INSTANCE_LOADING'));
-        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-      });
   };
 }
 
@@ -1381,4 +1361,25 @@ function setVMDetails(vmDetails, protectedVMInfo) {
     return { id: protectedVMInfo.id, ...protectedVMInfo };
   }
   return { id: protectedVMInfo.id, ...vmDetails };
+}
+
+/**
+ * fetch required data for perticular platform
+ * @param {*} pplan : Protection plan
+ */
+
+function fetchPlatformSpecificData(pPlan) {
+  return (dispatch) => {
+    const { recoverySite } = pPlan;
+    const { platformDetails } = recoverySite;
+    const { platformType } = platformDetails;
+    let availZone = '';
+    if (!isSamePlatformPlan(pPlan)) {
+      availZone = recoverySite.platformDetails.availZone;
+    }
+    if (PLATFORM_TYPES.VMware === platformType) {
+      dispatch(loadRecoveryLocationData(recoverySite.id));
+    }
+    dispatch(fetchNetworks(recoverySite.id, undefined, availZone));
+  };
 }

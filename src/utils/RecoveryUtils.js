@@ -4,7 +4,7 @@ import { FIELD_TYPE } from '../constants/FieldsConstant';
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP } from '../constants/StackConstants';
 import { MESSAGE_TYPES } from '../constants/MessageConstants';
 import { PLATFORM_TYPES } from '../constants/InputConstants';
-import { getInstanceTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getValue } from './InputUtils';
+import { getInstanceTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRecoveryScript, getValue, getVMwareGeneralSettings } from './InputUtils';
 import { isEmpty } from './validationUtils';
 
 export function createVMTestRecoveryConfig(vm, user, dispatch) {
@@ -15,6 +15,8 @@ export function createVMTestRecoveryConfig(vm, user, dispatch) {
       return getAWSVMTestConfig(vm);
     case PLATFORM_TYPES.GCP:
       return getGCPVMTestConfig(vm);
+    case PLATFORM_TYPES.VMware:
+      return getVMwareVMTestConfig(vm);
     default:
       dispatch(addMessage('Invalid recovery platform', MESSAGE_TYPES.ERROR));
   }
@@ -78,6 +80,17 @@ function getGCPVMTestConfig(vm) {
           [`${key}-vmConfig.scripts.postScript`]: { label: 'Post', fieldInfo: 'info.protectionplan.instance.postscript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPostScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
         },
       },
+    ],
+  };
+  return config;
+}
+
+function getVMwareVMTestConfig(vm) {
+  const key = vm.moref;
+  const config = {
+    data: [
+      ...getVMwareGeneralSettings(key, vm),
+      ...getRecoveryScript(key),
     ],
   };
   return config;
