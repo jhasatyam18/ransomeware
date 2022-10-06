@@ -1,5 +1,6 @@
 import JsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import i18n from 'i18next';
 import { calculateChangedData, formatTime } from './AppUtils';
 import { getCookie } from './CookieUtils';
 import { APPLICATION_API_USER } from '../constants/UserConstant';
@@ -53,6 +54,18 @@ export function addTable(doc, data, columns, title, styles = { }) {
   });
 }
 
+export const getBase64FromUrl = async (url) => {
+  const data = await fetch(url);
+  const blob = await data.blob();
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(blob);
+    reader.onloadend = () => {
+      const base64data = reader.result;
+      resolve(base64data);
+    };
+  });
+};
 export function addHeaderPage(doc) {
   doc.setFontSize(48);
   doc.setTextColor('#16a085');
@@ -60,7 +73,6 @@ export function addHeaderPage(doc) {
   doc.setFontSize(12);
   doc.setTextColor('#2c3e50');
   doc.text(350, 340, 'Audit report', 'left');
-  // doc.text(350, 380, `${getDateFormat(startDate)} To ${getDateFormat(endDate)}`, 'left');
   doc.text(350, 380, `Owner: ${getCookie(APPLICATION_API_USER)}`, 'left');
 }
 
@@ -108,7 +120,13 @@ export function systemOverview(doc, data) {
   });
 }
 
-export function exportDoc(doc, name) {
+export async function exportDoc(doc, name) {
+  const img = await getBase64FromUrl('/docs/assets/images/docheader.png');
+  const pageCount = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i += 1) {
+    doc.setPage(i);
+    doc.addImage(img, 'PNG', 8, 3, doc.internal.pageSize.width - 15, 30);
+  }
   doc.save(name);
 }
 
@@ -125,4 +143,14 @@ function calculateDataReduction(val) {
     return;
   }
   return `${parseInt(val, 10)}%`;
+}
+
+export function addFooters(doc) {
+  const pageCount = doc.internal.getNumberOfPages();
+  doc.setFontSize(6);
+  for (let i = 1; i <= pageCount; i += 1) {
+    doc.setPage(i);
+    doc.text(`Page No - ${String(i)}`, 20, doc.internal.pageSize.height - 10);
+    doc.text(i18n.t('report.pdf.title'), doc.internal.pageSize.width - 80, doc.internal.pageSize.height - 10);
+  }
 }
