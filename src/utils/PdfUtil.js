@@ -151,6 +151,6 @@ export function addFooters(doc) {
   for (let i = 1; i <= pageCount; i += 1) {
     doc.setPage(i);
     doc.text(`Page No - ${String(i)}`, 20, doc.internal.pageSize.height - 10);
-    doc.text(i18n.t('report.pdf.title'), doc.internal.pageSize.width - 80, doc.internal.pageSize.height - 10);
+    doc.text(i18n.t('report.pdf.title'), 250, doc.internal.pageSize.height - 10);
   }
 }
