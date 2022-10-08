@@ -1,6 +1,8 @@
 import JsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import i18n from 'i18next';
+import * as ExcelJS from 'exceljs';
+import * as FileSaver from 'file-saver';
 import { calculateChangedData, formatTime } from './AppUtils';
 import { getCookie } from './CookieUtils';
 import { APPLICATION_API_USER } from '../constants/UserConstant';
@@ -120,14 +122,13 @@ export function systemOverview(doc, data) {
   });
 }
 
-export async function exportDoc(doc, name) {
+export async function exportDoc(doc) {
   const img = await getBase64FromUrl('/docs/assets/images/docheader.png');
   const pageCount = doc.internal.getNumberOfPages();
   for (let i = 1; i <= pageCount; i += 1) {
     doc.setPage(i);
     doc.addImage(img, 'PNG', 8, 3, doc.internal.pageSize.width - 15, 30);
   }
-  doc.save(name);
 }
 
 // function getDateFormat(date) {
@@ -153,4 +154,64 @@ export function addFooters(doc) {
     doc.text(`Page No - ${String(i)}`, 20, doc.internal.pageSize.height - 10);
     doc.text(i18n.t('report.pdf.title'), 250, doc.internal.pageSize.height - 10);
   }
+}
+
+export function exportTableToExcel() {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('My Sheet', {
+    pageSetup: { paperSize: 9, orientation: 'landscape' },
+  });
+  workbook.views = [
+    {
+      x: 0,
+      y: 0,
+      width: 10000,
+      height: 20000,
+      firstSheet: 0,
+      activeTab: 1,
+      visibility: 'visible',
+    },
+  ];
+  worksheet.columns = [
+    { header: 'Id', key: 'id', width: 10 },
+    { header: 'Name', key: 'name', width: 32 },
+    { header: 'D.O.B.', key: 'DOB', width: 10 },
+  ];
+
+  worksheet.addRow({ id: 1, name: 'John Doe', dob: new Date(1970, 1, 1) });
+  worksheet.addRow({ id: 2, name: 'Jane Doe', dob: new Date(1965, 1, 7) });
+  const blobType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+  workbook.xlsx.writeBuffer().then((data) => {
+    const blob = new Blob([data], { type: blobType });
+    FileSaver.saveAs(blob, 'export2.xlsx');
+  });
+  // let downloadLink = '';
+  // const dataType = 'application/vnd.ms-excel';
+  // const tableSelect = document.getElementById(tableID);
+  // const tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
+  // let filename = '';
+  // // Specify file name
+  // filename = filename ? `${filename}.xls` : 'excel_data.xls';
+
+  // // Create download link element
+  // downloadLink = document.createElement('a');
+
+  // document.body.appendChild(downloadLink);
+
+  // if (window.navigator.msSaveOrOpenBlob) {
+  //   const blob = new Blob(['\ufeff', tableHTML], {
+  //     type: dataType,
+  //   });
+  //   navigator.msSaveOrOpenBlob(blob, filename);
+  // } else {
+  //   // Create a link to the file
+  //   downloadLink.href = `data:${dataType}, ${tableHTML}`;
+
+  //   // Setting the file name
+  //   downloadLink.download = workbook;
+
+  //   // triggering the function
+  //   downloadLink.click();
+  // }
+  // doc.save(name);
 }
