@@ -129,6 +129,7 @@ export async function exportDoc(doc) {
     doc.setPage(i);
     doc.addImage(img, 'PNG', 8, 3, doc.internal.pageSize.width - 15, 30);
   }
+  doc.save();
 }
 
 // function getDateFormat(date) {
@@ -157,61 +158,114 @@ export function addFooters(doc) {
 }
 
 export function exportTableToExcel() {
-  const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet('My Sheet', {
-    pageSetup: { paperSize: 9, orientation: 'landscape' },
-  });
-  workbook.views = [
-    {
-      x: 0,
-      y: 0,
-      width: 10000,
-      height: 20000,
-      firstSheet: 0,
-      activeTab: 1,
-      visibility: 'visible',
-    },
-  ];
-  worksheet.columns = [
-    { header: 'Id', key: 'id', width: 10 },
-    { header: 'Name', key: 'name', width: 32 },
-    { header: 'D.O.B.', key: 'DOB', width: 10 },
-  ];
-
-  worksheet.addRow({ id: 1, name: 'John Doe', dob: new Date(1970, 1, 1) });
-  worksheet.addRow({ id: 2, name: 'Jane Doe', dob: new Date(1965, 1, 7) });
+  const arrayOfIDS = ['rpt-protection_plans', 'rpt-sites', 'rpt-nodes', 'rpt-protected_machines', 'rpt-events', 'rpt-alerts', 'rpt-replication_jobs', 'rpt-recovery_jobs'];
+  const nameOfWorksheet = ['Protection Plans', 'Sites', 'Node', 'Protected Machine', 'Events', 'Alerts', 'Replication Jobs', 'Recovery Jobs'];
   const blobType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+  const workbook = new ExcelJS.Workbook();
+  for (let a = 0; a < arrayOfIDS.length; a += 1) {
+    const oTable = document.getElementById(arrayOfIDS[a]);
+    // gets rows of table
+    if (oTable) {
+      const rowLength = oTable.rows.length;
+      const worksheet = workbook.addWorksheet(nameOfWorksheet[a], { pageSetup: { paperSize: 5, orientation: 'landscape' } });
+      workbook.views = [{ x: 0, y: 0, width: 10000, firstSheet: 0, activeTab: 1, visibility: 'visible' }];
+      addRowColToWS(worksheet, rowLength, oTable, nameOfWorksheet);
+    }
+  }
   workbook.xlsx.writeBuffer().then((data) => {
     const blob = new Blob([data], { type: blobType });
-    FileSaver.saveAs(blob, 'export2.xlsx');
+    FileSaver.saveAs(blob, 'DatamotiveReport.xlsx');
   });
-  // let downloadLink = '';
-  // const dataType = 'application/vnd.ms-excel';
-  // const tableSelect = document.getElementById(tableID);
-  // const tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
-  // let filename = '';
-  // // Specify file name
-  // filename = filename ? `${filename}.xls` : 'excel_data.xls';
+}
 
-  // // Create download link element
-  // downloadLink = document.createElement('a');
+function addRowColToWS(ws, rowLength, oTable) {
+  const worksheet = ws;
+  if (rowLength > 0) {
+    // loops through rows
+    for (let i = 0; i <= rowLength; i += 1) {
+      if (i === 0) {
+        // gets cells of current row
+        const oCells = oTable.rows.item(i).cells;
+        // gets amount of cells of current row
+        const cellLength = oCells.length;
+        const columns = [];
+        for (let j = 0; j < cellLength; j += 1) {
+          // get your cell info here
+          const cellVal = oCells.item(j).innerText;
+          columns.push({ header: cellVal, key: cellVal, style: { font: { name: 'times new roman' }, alignment: { vertical: 'middle', horizontal: 'center' } } });
+        }
+        worksheet.columns = columns;
+      } else {
+        // gets cells of current row
+        const oCells = oTable.rows.item(i).cells;
+        // gets amount of cells of current row
+        const cellLength = oCells.length;
+        // loops through each cell in current row
+        const row = {};
+        for (let j = 0; j < cellLength; j += 1) {
+          // get your cell info here
+          const cellVal = oCells.item(j).innerText;
+          const f = oTable.rows.item(0).cells;
+          const b = f.item(j).innerText;
+          if (b) {
+            row[b] = cellVal;
+          }
+        }
+        worksheet.addRow(row);
+        AdjustColumnWidth(worksheet, rowLength);
+      }
+      addingStyleToWS(worksheet, rowLength);
+    }
+  }
+}
 
-  // document.body.appendChild(downloadLink);
+function AdjustColumnWidth(ws) {
+  const worksheet = ws;
+  worksheet.columns.forEach((col) => {
+    const column = col;
+    const lengths = column.values.map((v) => v.toString().length);
+    const maxLength = Math.max(...lengths.filter((v) => typeof v === 'number'));
+    column.width = maxLength;
+    ['A1',
+      'B1',
+      'C1',
+      'D1',
+      'E1',
+      'F1',
+      'G1',
+      'H1',
+      'I1'].map((key) => {
+      worksheet.getCell(key).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '96C8FB' },
+        bgColor: { argb: '96C8FB' },
+      };
+    });
+  });
+}
 
-  // if (window.navigator.msSaveOrOpenBlob) {
-  //   const blob = new Blob(['\ufeff', tableHTML], {
-  //     type: dataType,
-  //   });
-  //   navigator.msSaveOrOpenBlob(blob, filename);
-  // } else {
-  //   // Create a link to the file
-  //   downloadLink.href = `data:${dataType}, ${tableHTML}`;
+function addingStyleToWS(ws, rowLength) {
+  const worksheet = ws;
+  const alphaBets = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+  worksheet.addConditionalFormatting({
+    ref: `A2:${alphaBets[rowLength + 1]}${worksheet.columns.length - 3}`,
+    rules: [
+      {
+        type: 'expression',
+        formulae: ['MOD(ROW(),2)=1'],
+        style: { fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: 'DFF6FF' } } },
+      },
+    ],
 
-  //   // Setting the file name
-  //   downloadLink.download = workbook;
-
-  //   // triggering the function
-  //   downloadLink.click();
-  // }
-  // doc.save(name);
+  });
+  worksheet.columns.forEach((col) => {
+    const column = col;
+    column.border = {
+      top: { style: 'thick' },
+      left: { style: 'thick' },
+      bottom: { style: 'thick' },
+      right: { style: 'thick' },
+    };
+  });
 }

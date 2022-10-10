@@ -4,7 +4,7 @@ import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { callAPI } from '../../utils/ApiUtils';
 import { getAppDateFormat } from '../../utils/AppUtils';
 import { getValue } from '../../utils/InputUtils';
-import { addFooters, addHeaderPage, addTableFromHtml, exportDoc, createPDFDoc, systemOverview, exportTableToExcel } from '../../utils/PdfUtil';
+import { addFooters, addHeaderPage, addTableFromHtml, exportDoc, createPDFDoc, systemOverview } from '../../utils/PdfUtil';
 import { fetchDashboardTitles, fetchRecoveryStats, fetchReplicationStats } from './DashboardActions';
 import { addMessage } from './MessageActions';
 import { hideApplicationLoader, showApplicationLoader } from './UserActions';
@@ -325,7 +325,6 @@ export function exportReportToPDF() {
       const d = new Date();
       addFooters(doc);
       exportDoc(doc, `Datamotive-report-${getAppDateFormat(d, true)}`);
-      exportTableToExcel();
     } catch (error) {
       dispatch(hideApplicationLoader('PDF_REPORT'));
       dispatch(addMessage(error, MESSAGE_TYPES.ERROR));

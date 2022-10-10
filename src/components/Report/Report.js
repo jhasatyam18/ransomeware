@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Button, Card, CardBody, Col, Container, Row } from 'reactstrap';
+import { exportTableToExcel } from '../../utils/PdfUtil';
 import { fetchDrPlans } from '../../store/actions/DrPlanActions';
 import ReportSideBar from './ReportSideBar';
 import ReportSystemOverview from './ReportSystemOverview';
@@ -69,6 +70,19 @@ class Report extends Component {
     setTimeout(() => {
       this.setState({ printView: false });
       dispatch(hideApplicationLoader('PDF_REPORT'));
+    }, 10000);
+  }
+
+  exportToExcel = () => {
+    const { dispatch } = this.props;
+    this.setState({ printView: true });
+    dispatch(showApplicationLoader('EXCEL_REPORT', 'Exporting data to Excel.'));
+    setTimeout(() => {
+      exportTableToExcel();
+    }, 1000);
+    setTimeout(() => {
+      this.setState({ printView: false });
+      dispatch(hideApplicationLoader('EXCEL_REPORT'));
     }, 10000);
   }
 
@@ -160,10 +174,16 @@ class Report extends Component {
                 </Button>
                 {hasData
                   ? (
-                    <Button className="btn btn-outline-dark btn-sm margin-left-10 margin-bottom-15" onClick={this.exportToPDF}>
-                      <i className="far fa-file-pdf text-danger icon_font" title="Export to PDF" />
-                      <span className="padding-left-5">Export</span>
-                    </Button>
+                    <>
+                      <Button className="btn btn-outline-dark btn-sm margin-left-10 margin-bottom-15" onClick={this.exportToPDF}>
+                        <i className="far fa-file-pdf text-danger icon_font" title="Export to PDF" />
+                        <span className="padding-left-5">Export</span>
+                      </Button>
+                      <Button className="btn btn-outline-dark btn-sm margin-left-10 margin-bottom-15" onClick={this.exportToExcel}>
+                        <i className="far fa-file-pdf text-danger icon_font" title="Export to PDF" />
+                        <span className="padding-left-5">Export To Excel</span>
+                      </Button>
+                    </>
                   ) : null}
                 <Row>
                   {this.renderReportFilter()}
