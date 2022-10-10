@@ -169,7 +169,7 @@ export function exportTableToExcel() {
       const rowLength = oTable.rows.length;
       const worksheet = workbook.addWorksheet(nameOfWorksheet[a], { pageSetup: { paperSize: 5, orientation: 'landscape' } });
       workbook.views = [{ x: 0, y: 0, width: 10000, firstSheet: 0, activeTab: 1, visibility: 'visible' }];
-      addRowColToWS(worksheet, rowLength, oTable, nameOfWorksheet);
+      addRowColToWS(worksheet, rowLength, oTable);
     }
   }
   workbook.xlsx.writeBuffer().then((data) => {
@@ -182,39 +182,33 @@ function addRowColToWS(ws, rowLength, oTable) {
   const worksheet = ws;
   if (rowLength > 0) {
     // loops through rows
-    for (let i = 0; i <= rowLength; i += 1) {
-      if (i === 0) {
-        // gets cells of current row
-        const oCells = oTable.rows.item(i).cells;
-        // gets amount of cells of current row
-        const cellLength = oCells.length;
-        const columns = [];
-        for (let j = 0; j < cellLength; j += 1) {
-          // get your cell info here
-          const cellVal = oCells.item(j).innerText;
-          columns.push({ header: cellVal, key: cellVal, style: { font: { name: 'times new roman' }, alignment: { vertical: 'middle', horizontal: 'center' } } });
-        }
-        worksheet.columns = columns;
-      } else {
-        // gets cells of current row
-        const oCells = oTable.rows.item(i).cells;
-        // gets amount of cells of current row
-        const cellLength = oCells.length;
-        // loops through each cell in current row
-        const row = {};
-        for (let j = 0; j < cellLength; j += 1) {
-          // get your cell info here
-          const cellVal = oCells.item(j).innerText;
+    for (let i = 0; i < rowLength; i += 1) {
+      // gets cells of current row
+      const oCells = oTable.rows.item(i).cells;
+      // gets amount of cells of current row
+      const cellLength = oCells.length;
+      const columns = [];
+      // loops through each cell in current row
+      const row = {};
+      for (let j = 0; j < cellLength; j += 1) {
+        // get your cell info here
+        const cellVal = oCells.item(j).innerText;
+        if (i > 0) {
           const f = oTable.rows.item(0).cells;
           const b = f.item(j).innerText;
           if (b) {
             row[b] = cellVal;
           }
+        } else {
+          columns.push({ header: cellVal, key: cellVal, style: { font: { name: 'times new roman' }, alignment: { vertical: 'middle', horizontal: 'center' } } });
         }
-        worksheet.addRow(row);
-        AdjustColumnWidth(worksheet, rowLength);
       }
-      addingStyleToWS(worksheet, rowLength);
+      if (i > 0) {
+        worksheet.addRow(row);
+      } else {
+        worksheet.columns = columns;
+      }
+      AdjustColumnWidth(worksheet, i);
     }
   }
 }
@@ -223,42 +217,15 @@ function AdjustColumnWidth(ws) {
   const worksheet = ws;
   worksheet.columns.forEach((col) => {
     const column = col;
-    const lengths = column.values.map((v) => v.toString().length);
+    const lengths = column.values.map((v) => v.toString().length + 3);
     const maxLength = Math.max(...lengths.filter((v) => typeof v === 'number'));
     column.width = maxLength;
-    ['A1',
-      'B1',
-      'C1',
-      'D1',
-      'E1',
-      'F1',
-      'G1',
-      'H1',
-      'I1'].map((key) => {
-      worksheet.getCell(key).fill = {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: '96C8FB' },
-        bgColor: { argb: '96C8FB' },
-      };
-    });
   });
+  addingStyleToWS(worksheet);
 }
 
-function addingStyleToWS(ws, rowLength) {
+function addingStyleToWS(ws) {
   const worksheet = ws;
-  const alphaBets = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-  worksheet.addConditionalFormatting({
-    ref: `A2:${alphaBets[rowLength + 1]}${worksheet.columns.length - 3}`,
-    rules: [
-      {
-        type: 'expression',
-        formulae: ['MOD(ROW(),2)=1'],
-        style: { fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: 'DFF6FF' } } },
-      },
-    ],
-
-  });
   worksheet.columns.forEach((col) => {
     const column = col;
     column.border = {
@@ -266,6 +233,22 @@ function addingStyleToWS(ws, rowLength) {
       left: { style: 'thick' },
       bottom: { style: 'thick' },
       right: { style: 'thick' },
+    };
+  });
+  ['A1',
+    'B1',
+    'C1',
+    'D1',
+    'E1',
+    'F1',
+    'G1',
+    'H1',
+    'I1'].map((key) => {
+    worksheet.getCell(key).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '96C8FB' },
+      bgColor: { argb: '96C8FB' },
     };
   });
 }
