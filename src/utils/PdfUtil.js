@@ -124,7 +124,7 @@ export function systemOverview(doc, data) {
 }
 
 export async function exportDoc(doc) {
-  const img = await getBase64FromUrl('/docs/assets/images/docheader.png');
+  const img = await getBase64FromUrl(REPORT_TYPES.HEADER_IMG_URL);
   const pageCount = doc.internal.getNumberOfPages();
   for (let i = 1; i <= pageCount; i += 1) {
     doc.setPage(i);

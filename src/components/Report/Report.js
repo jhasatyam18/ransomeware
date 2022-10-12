@@ -63,9 +63,9 @@ class Report extends Component {
   }
 
   exportToPDF = () => {
-    const { dispatch } = this.props;
+    const { dispatch, t } = this.props;
     this.setState({ printView: true });
-    dispatch(showApplicationLoader('PDF_REPORT', 'Exporting data to pdf.'));
+    dispatch(showApplicationLoader('PDF_REPORT', t('report.export.pdf')));
     setTimeout(() => {
       dispatch(exportReportToPDF());
     }, MILI_SECONDS_TIME.ONE_THOUSAND);
@@ -76,9 +76,9 @@ class Report extends Component {
   }
 
   exportToExcel = () => {
-    const { dispatch, dashboard } = this.props;
+    const { dispatch, dashboard, t } = this.props;
     this.setState({ printView: true });
-    dispatch(showApplicationLoader('EXCEL_REPORT', 'Exporting data to Excel.'));
+    dispatch(showApplicationLoader('EXCEL_REPORT', t('report.export.excel')));
     setTimeout(() => {
       exportTableToExcel(dashboard);
     }, MILI_SECONDS_TIME.TEN_THOUSAND);
