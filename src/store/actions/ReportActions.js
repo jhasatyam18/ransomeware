@@ -335,18 +335,3 @@ export function exportReportToPDF() {
 function isPlanSpecificData(id) {
   return !(`${id}` === '0' || `${id}` === '');
 }
-// function getPDFTableFormat(columns) {
-//   const pdfTableFormat = [];
-//   columns.forEach((col) => {
-//     const c = { title: col.label, dataKey: col.field };
-//     pdfTableFormat.push(c);
-//   });
-// }
-
-export function getAllDashboardData(dispatch) {
-  const apis = [];
-  apis.push(dispatch(fetchRecoveryStats()));
-  apis.push(dispatch(fetchReplicationStats()));
-  apis.push(dispatch(fetchDashboardTitles()));
-  return apis;
-}

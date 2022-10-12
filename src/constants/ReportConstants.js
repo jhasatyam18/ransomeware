@@ -14,3 +14,5 @@ export const BORDER_STYLE = {
 
 export const EXCEL_WORKSHEET_TABLE_HEADER_CELL = ['A5', 'B5', 'C5', 'D5', 'E5', 'F5', 'G5', 'H5', 'I5'];
 export const EXCEL_WORKSHEET_TITLE = ['A3', 'B3', 'C3', 'D3', 'E3', 'F3', 'G3', 'H3', 'I3'];
+
+export const ALPHABETS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];

@@ -3,7 +3,7 @@ import autoTable from 'jspdf-autotable';
 import i18n from 'i18next';
 import * as ExcelJS from 'exceljs';
 import * as FileSaver from 'file-saver';
-import { BLUE, LIGHT_NAVY_BLUE, LIGHT_GREY, REPORT_TYPES, DARK_NAVY_BLUE, BORDER_STYLE, EXCEL_WORKSHEET_TABLE_HEADER_CELL, EXCEL_WORKSHEET_TITLE } from '../constants/ReportConstants';
+import { BLUE, LIGHT_NAVY_BLUE, LIGHT_GREY, REPORT_TYPES, DARK_NAVY_BLUE, EXCEL_WORKSHEET_TABLE_HEADER_CELL, EXCEL_WORKSHEET_TITLE, ALPHABETS, BORDER_STYLE } from '../constants/ReportConstants';
 import { calculateChangedData, formatTime } from './AppUtils';
 import { getCookie } from './CookieUtils';
 import { APPLICATION_API_USER } from '../constants/UserConstant';
@@ -277,7 +277,6 @@ function addingHeaderItemToWorksheet(oTable, wb, ws, base64ImgUrl, title) {
   const workbook = wb;
   const worksheet = ws;
   // for getting the aplabets in the excelsheet
-  const aplpha = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
   let totalCol = '';
   if (typeof oTable === 'object') {
     totalCol = oTable.rows.item(0).cells.length;
@@ -289,9 +288,9 @@ function addingHeaderItemToWorksheet(oTable, wb, ws, base64ImgUrl, title) {
     base64: base64ImgUrl,
     extension: 'png',
   });
-  worksheet.addImage(imageId, `A1:${aplpha[totalCol - 1]}2`);
-  worksheet.mergeCells(`A1:${aplpha[totalCol - 1]}2`);
-  worksheet.mergeCells('A3', `${aplpha[totalCol - 1]}4`);
+  worksheet.addImage(imageId, `A1:${ALPHABETS[totalCol - 1]}2`);
+  worksheet.mergeCells(`A1:${ALPHABETS[totalCol - 1]}2`);
+  worksheet.mergeCells('A3', `${ALPHABETS[totalCol - 1]}4`);
   // for setting title to the worksheet
   worksheet.getCell('A3').value = title;
   worksheet.getCell('A3').style = { font: { name: 'Century Gothic' }, alignment: { vertical: 'middle', horizontal: 'center' } };
