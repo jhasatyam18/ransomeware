@@ -54,6 +54,7 @@ class Report extends Component {
     //   dispatch(addMessage('Select report time duration', MESSAGE_TYPES.ERROR));
     //   return;
     // }
+    dispatch(valueChange('report.system.includeSystemOverView', true));
     dispatch(generateAuditReport());
     if (openCollapse) {
       this.toggleCollapse();
@@ -74,11 +75,11 @@ class Report extends Component {
   }
 
   exportToExcel = () => {
-    const { dispatch } = this.props;
+    const { dispatch, dashboard } = this.props;
     this.setState({ printView: true });
     dispatch(showApplicationLoader('EXCEL_REPORT', 'Exporting data to Excel.'));
     setTimeout(() => {
-      exportTableToExcel();
+      exportTableToExcel(dashboard);
     }, 1000);
     setTimeout(() => {
       this.setState({ printView: false });
@@ -180,7 +181,7 @@ class Report extends Component {
                         <span className="padding-left-5">Export</span>
                       </Button>
                       <Button className="btn btn-outline-dark btn-sm margin-left-10 margin-bottom-15" onClick={this.exportToExcel}>
-                        <i className="far fa-file-pdf text-danger icon_font" title="Export to PDF" />
+                        <i className="fa fa-solid fa-file-excel text-success icon_font" />
                         <span className="padding-left-5">Export To Excel</span>
                       </Button>
                     </>
@@ -199,7 +200,7 @@ class Report extends Component {
 }
 
 function mapStateToProps(state) {
-  const { user, reports } = state;
-  return { user, reports };
+  const { user, reports, dashboard } = state;
+  return { user, reports, dashboard };
 }
 export default connect(mapStateToProps)(withTranslation()(Report));

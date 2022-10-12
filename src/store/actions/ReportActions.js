@@ -342,3 +342,11 @@ function isPlanSpecificData(id) {
 //     pdfTableFormat.push(c);
 //   });
 // }
+
+export function getAllDashboardData(dispatch) {
+  const apis = [];
+  apis.push(dispatch(fetchRecoveryStats()));
+  apis.push(dispatch(fetchReplicationStats()));
+  apis.push(dispatch(fetchDashboardTitles()));
+  return apis;
+}
