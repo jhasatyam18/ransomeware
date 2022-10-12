@@ -50,6 +50,9 @@
   "recovery.configuration": "Recovery Configuration ",
   "select.virtual.machine.for.protection": "Select Virtual Machine for protection ",
   "name": "Name ",
+  "filter":"Filter",
+  "export.pdf":"Export",
+  "export.excel":"Export To Excel",
   "protected.site": "Protected Site ",
   "replication.interval.(minutes)": "Replication Interval (Minutes)",
   "replication.interval": "Replication Interval ",
@@ -368,5 +371,4 @@
   "info.auto.migration.step-3" : "3. Initiate Migration.",
   "loading":"Loading...",
   "test.recovery.note":"Test recoveries allow you to validate the sanity of your DR copy. It is recommended to test recover workloads in an isolated VPC or subnet to avoid conflicts or race conditions in DR environment. If there are recovery scripts which make changes to DR environment like updating DNS entries etc., it is recommended to omit their execution during Test recovery, to avoid  unnecessary changes to the DR environment"
-
 }

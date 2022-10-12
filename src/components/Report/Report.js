@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Button, Card, CardBody, Col, Container, Row } from 'reactstrap';
+import { MILI_SECONDS_TIME } from '../../constants/EventConstant';
 import { exportTableToExcel } from '../../utils/PdfUtil';
 import { fetchDrPlans } from '../../store/actions/DrPlanActions';
 import ReportSideBar from './ReportSideBar';
@@ -67,11 +68,11 @@ class Report extends Component {
     dispatch(showApplicationLoader('PDF_REPORT', 'Exporting data to pdf.'));
     setTimeout(() => {
       dispatch(exportReportToPDF());
-    }, 1000);
+    }, MILI_SECONDS_TIME.ONE_THOUSAND);
     setTimeout(() => {
       this.setState({ printView: false });
       dispatch(hideApplicationLoader('PDF_REPORT'));
-    }, 10000);
+    }, MILI_SECONDS_TIME.TEN_THOUSAND);
   }
 
   exportToExcel = () => {
@@ -80,11 +81,11 @@ class Report extends Component {
     dispatch(showApplicationLoader('EXCEL_REPORT', 'Exporting data to Excel.'));
     setTimeout(() => {
       exportTableToExcel(dashboard);
-    }, 1000);
+    }, MILI_SECONDS_TIME.TEN_THOUSAND);
     setTimeout(() => {
       this.setState({ printView: false });
       dispatch(hideApplicationLoader('EXCEL_REPORT'));
-    }, 10000);
+    }, MILI_SECONDS_TIME.TEN_THOUSAND);
   }
 
   renderForm() {
@@ -129,7 +130,7 @@ class Report extends Component {
   }
 
   renderReportContents() {
-    const { reports } = this.props;
+    const { reports, t } = this.props;
     const { result } = reports;
     // const { values } = user;
     const { openCollapse } = this.state;
@@ -141,7 +142,7 @@ class Report extends Component {
         <Col sm={openCollapse === true ? 8 : 12}>
           <div className="report__content">
             <span className="no__data">
-              No data to display
+              {t('no.data.to.display')}
             </span>
           </div>
         </Col>
@@ -158,7 +159,7 @@ class Report extends Component {
 
   render() {
     const { openCollapse } = this.state;
-    const { reports } = this.props;
+    const { reports, t } = this.props;
     const { result = {} } = reports;
     const keys = Object.keys(result).length;
     const hasData = keys !== 0;
@@ -171,18 +172,18 @@ class Report extends Component {
                 <DMBreadCrumb links={[{ label: 'report', link: '#' }]} />
                 <Button className="btn btn-outline-dark btn-sm margin-bottom-15 " onClick={this.toggleCollapse}>
                   <i className={openCollapse === true ? 'fas fa-arrow-down icon_font' : 'fas fa-arrow-right icon_font'} title="Report Filter" />
-                  <span className="padding-left-5">Filter</span>
+                  <span className="padding-left-5">{t('filter')}</span>
                 </Button>
                 {hasData
                   ? (
                     <>
                       <Button className="btn btn-outline-dark btn-sm margin-left-10 margin-bottom-15" onClick={this.exportToPDF}>
                         <i className="far fa-file-pdf text-danger icon_font" title="Export to PDF" />
-                        <span className="padding-left-5">Export</span>
+                        <span className="padding-left-5">{t('export.pdf')}</span>
                       </Button>
                       <Button className="btn btn-outline-dark btn-sm margin-left-10 margin-bottom-15" onClick={this.exportToExcel}>
                         <i className="fa fa-solid fa-file-excel text-success icon_font" />
-                        <span className="padding-left-5">Export To Excel</span>
+                        <span className="padding-left-5">{t('export.excel')}</span>
                       </Button>
                     </>
                   ) : null}
