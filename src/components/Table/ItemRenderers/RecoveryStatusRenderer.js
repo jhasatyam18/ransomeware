@@ -5,11 +5,6 @@ import StatusItemRenderer from './StatusItemRenderer';
 import StatusSteps from '../../Common/StatusSteps';
 
 function RecoveryStatusRenderer({ data, field, t }) {
-  let { step } = data;
-  if (typeof step === 'undefined' || step === null || step.length === 0) {
-    return '-';
-  }
-  step = JSON.parse(step) || [];
   const [toggle, setToggle] = useState(false);
   const handleCheckbox = () => {
     setToggle(!toggle);
@@ -35,19 +30,17 @@ function RecoveryStatusRenderer({ data, field, t }) {
   return (
     <>
       <Row>
-        <Col sm={2}>
+        <Col sm={3}>
           <StatusItemRenderer data={data} field={field} />
         </Col>
-        <Row>
-          <Col sm={5}>
-            {t('show.details')}
-          </Col>
-          <Col sm={3}>
-            {renderCheckbox()}
-          </Col>
-        </Row>
+        <Col sm={3}>
+          {t('show.details')}
+        </Col>
+        <Col sm={3}>
+          {renderCheckbox()}
+        </Col>
       </Row>
-      {toggle === true ? StatusSteps() : null}
+      {toggle === true ? <StatusSteps data={data} /> : null}
     </>
   );
 }

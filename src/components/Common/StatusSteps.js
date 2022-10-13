@@ -1,12 +1,17 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { Col, Row } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
 import { JOB_COMPLETION_STATUS, JOB_FAILED, JOB_IN_PROGRESS } from '../../constants/AppStatus';
 
 function StatusSteps({ data }) {
-  const { step } = data;
+  let { step } = data;
+  if (typeof step === 'undefined' || step === null || step.length === 0 || typeof step !== 'object') {
+    return null;
+  }
+  step = JSON.parse(step) || [];
+
   const renderSteps = () => step.map((st, i) => (
     <Row className="padding-left-15">
       <Col sm={12}>
