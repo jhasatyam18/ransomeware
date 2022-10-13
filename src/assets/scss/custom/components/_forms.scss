@@ -197,3 +197,11 @@
 .form__direction__reverse {
   flex-direction: row-reverse;
 }
+
+.vertical{
+    height: 35px;
+    border-left: 2px solid grey;
+    position:absolute;
+    left: 40%;
+    top:21px;
+   }
