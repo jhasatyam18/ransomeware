@@ -288,9 +288,9 @@ function addingHeaderItemToWorksheet(oTable, wb, ws, base64ImgUrl, title) {
     base64: base64ImgUrl,
     extension: 'png',
   });
-  worksheet.addImage(imageId, `A1:${ALPHABETS[totalCol - 1]}2`);
-  worksheet.mergeCells(`A1:${ALPHABETS[totalCol - 1]}2`);
-  worksheet.mergeCells('A3', `${ALPHABETS[totalCol - 1]}4`);
+  worksheet.addImage(imageId, `A1:${ALPHABETS[totalCol]}2`);
+  worksheet.mergeCells(`A1:${ALPHABETS[totalCol]}2`);
+  worksheet.mergeCells('A3', `${ALPHABETS[totalCol]}4`);
   // for setting title to the worksheet
   worksheet.getCell('A3').value = title;
   worksheet.getCell('A3').style = { font: { name: 'Century Gothic' }, alignment: { vertical: 'middle', horizontal: 'center' } };
