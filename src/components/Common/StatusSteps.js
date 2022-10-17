@@ -15,7 +15,7 @@ function StatusSteps({ data, dispatch }) {
 
   useEffect(() => {
     let isUnmounting = false;
-    const timerId = setTimeout(() => {
+    const timerId = setInterval(() => {
       let runningState = '';
       if (steps.length > 0) {
         runningState = steps.some((step) => step.status === 'running');
@@ -29,10 +29,10 @@ function StatusSteps({ data, dispatch }) {
           dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
         });
       }
-    }, 1000);
+    }, 10000);
     return () => {
       isUnmounting = true;
-      clearTimeout(timerId);
+      clearInterval(timerId);
     };
   }, []);
 
