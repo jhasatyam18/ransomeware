@@ -6,36 +6,49 @@ import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { addMessage } from '../../store/actions/MessageActions';
-import { API_RESCOVERY_JOB_STATUS_STEPS } from '../../constants/ApiConstants';
 import { callAPI } from '../../utils/ApiUtils';
 import { JOB_COMPLETION_STATUS, JOB_FAILED, JOB_IN_PROGRESS } from '../../constants/AppStatus';
+import { MILI_SECONDS_TIME } from '../../constants/EventConstant';
 
-function StatusSteps({ data, dispatch }) {
+/**
+ *
+ * @param {*} props is an object of data , apiURL
+ * @returns render recovery jobs status in steps
+ */
+function StatusSteps(props) {
   const [steps, setSteps] = useState([]);
-
+  const { data } = props;
+  let isUnmounting = false;
   useEffect(() => {
-    let isUnmounting = false;
+    fetchRunningJobsSteps();
     const timerId = setInterval(() => {
-      let runningState = '';
-      if (steps.length > 0) {
-        runningState = steps.some((step) => step.status === 'running');
-      }
-      if (runningState || steps.length === 0) {
-        const url = API_RESCOVERY_JOB_STATUS_STEPS.replace('<id>', data.id);
-        callAPI(url).then((json) => {
-          setSteps(json);
-        }, (err) => {
-          if (isUnmounting) return;
-          dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-        });
-      }
-    }, 10000);
+      fetchRunningJobsSteps();
+    }, MILI_SECONDS_TIME.TEN_THOUSAND);
+
     return () => {
       isUnmounting = true;
       clearInterval(timerId);
     };
   }, []);
 
+  function fetchRunningJobsSteps() {
+    const { dispatch, apiURL } = props;
+    let runningState = false;
+    if (steps.length > 0) {
+      runningState = steps.all((step) => step.status === JOB_IN_PROGRESS);
+    }
+    if (!runningState || steps.length === 0) {
+      const url = apiURL.replace('<id>', data.id);
+      callAPI(url).then((json) => {
+        if (isUnmounting) return;
+        const step = JSON.parse(json.step);
+        setSteps(step);
+      }, (err) => {
+        if (isUnmounting) return;
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+    }
+  }
   if (typeof steps === 'undefined' || steps === null || steps.length === 0) {
     return null;
   }
