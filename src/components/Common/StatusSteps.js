@@ -1,18 +1,46 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { Col, Row } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { MESSAGE_TYPES } from '../../constants/MessageConstants';
+import { addMessage } from '../../store/actions/MessageActions';
+import { API_RESCOVERY_JOB_STATUS_STEPS } from '../../constants/ApiConstants';
+import { callAPI } from '../../utils/ApiUtils';
 import { JOB_COMPLETION_STATUS, JOB_FAILED, JOB_IN_PROGRESS } from '../../constants/AppStatus';
 
-function StatusSteps({ data }) {
-  let { step } = data;
-  if (typeof step === 'undefined' || step === null || step.length === 0 || typeof step !== 'object') {
+function StatusSteps({ data, dispatch }) {
+  const [steps, setSteps] = useState([]);
+
+  useEffect(() => {
+    let isUnmounting = false;
+    const timerId = setTimeout(() => {
+      let runningState = '';
+      if (steps.length > 0) {
+        runningState = steps.some((step) => step.status === 'running');
+      }
+      if (runningState || steps.length === 0) {
+        const url = API_RESCOVERY_JOB_STATUS_STEPS.replace('<id>', data.id);
+        callAPI(url).then((json) => {
+          setSteps(json);
+        }, (err) => {
+          if (isUnmounting) return;
+          dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+        });
+      }
+    }, 1000);
+    return () => {
+      isUnmounting = true;
+      clearTimeout(timerId);
+    };
+  }, []);
+
+  if (typeof steps === 'undefined' || steps === null || steps.length === 0) {
     return null;
   }
-  step = JSON.parse(step) || [];
 
-  const renderSteps = () => step.map((st, i) => (
+  const renderSteps = () => steps.map((st, i) => (
     <Row className="padding-left-15">
       <Col sm={12}>
         {renderIndividualSteps(st, i)}
@@ -43,7 +71,7 @@ function StatusSteps({ data }) {
           <div>
             {renderIcons(st)}
           </div>
-          {i === step.length - 1 ? '' : (
+          {i === steps.length - 1 ? '' : (
             <div className="vertical" />
           ) }
         </Col>
@@ -61,5 +89,8 @@ function StatusSteps({ data }) {
     </>
   );
 }
-
-export default (withTranslation()(StatusSteps));
+function mapStateToProps(state) {
+  const { dispatch } = state;
+  return { dispatch };
+}
+export default connect(mapStateToProps)(withTranslation()(StatusSteps));
