@@ -4,7 +4,7 @@ import i18n from 'i18next';
 import * as ExcelJS from 'exceljs';
 import * as FileSaver from 'file-saver';
 import { BLUE, LIGHT_NAVY_BLUE, LIGHT_GREY, REPORT_TYPES, DARK_NAVY_BLUE, EXCEL_WORKSHEET_TABLE_HEADER_CELL, EXCEL_WORKSHEET_TITLE, ALPHABETS, BORDER_STYLE } from '../constants/ReportConstants';
-import { calculateChangedData, formatTime } from './AppUtils';
+import { calculateChangedData, formatTime, getStorageWithUnit } from './AppUtils';
 import { getCookie } from './CookieUtils';
 import { APPLICATION_API_USER } from '../constants/UserConstant';
 
@@ -337,7 +337,7 @@ function getExcelData(dashboard) {
     { mergeCell: 'J6:L7', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'Protected Machine', fontSize: 8 },
     { mergeCell: 'J8:L9', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: vms },
     { mergeCell: 'N6:P7', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'Storage', fontSize: 8 },
-    { mergeCell: 'N8:P9', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: storage > 1024 ? `${storage} TB` : `${storage} GB` },
+    { mergeCell: 'N8:P9', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: getStorageWithUnit(storage) },
     { mergeCell: 'B11:H12', fontColor: LIGHT_GREY, backgroundColor: DARK_NAVY_BLUE, value: 'Replication Statistics', fontSize: 10 },
     { mergeCell: 'J11:P12', fontColor: LIGHT_GREY, backgroundColor: DARK_NAVY_BLUE, value: 'Recovery Statistics', fontSize: 10 },
     { mergeCell: 'B13:D14', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'Completed', fontSize: 8 },
