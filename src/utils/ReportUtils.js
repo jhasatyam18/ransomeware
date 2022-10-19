@@ -279,10 +279,10 @@ function addingStyleToWorksheet(ws) {
 function addingHeaderItemToWorksheet(oTable, wb, ws, base64ImgUrl, title) {
   const workbook = wb;
   const worksheet = ws;
-  // for getting the aplabets in the excelsheet
+  // for getting the aplabets row in the excelsheet
   let totalCol = '';
   if (typeof oTable === 'object') {
-    totalCol = oTable.rows.item(0).cells.length;
+    totalCol = oTable.rows.item(0).cells.length - 1;
   } else {
     totalCol = oTable;
   }
