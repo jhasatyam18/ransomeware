@@ -4,7 +4,7 @@ import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { callAPI } from '../../utils/ApiUtils';
 import { getAppDateFormat } from '../../utils/AppUtils';
 import { getValue } from '../../utils/InputUtils';
-import { addFooters, addHeaderPage, addTableFromHtml, exportDoc, createPDFDoc, systemOverview } from '../../utils/PdfUtil';
+import { addFooters, addHeaderPage, addTableFromHtml, exportDoc, createPDFDoc, systemOverview } from '../../utils/ReportUtils';
 import { fetchDashboardTitles, fetchRecoveryStats, fetchReplicationStats } from './DashboardActions';
 import { addMessage } from './MessageActions';
 import { hideApplicationLoader, showApplicationLoader } from './UserActions';

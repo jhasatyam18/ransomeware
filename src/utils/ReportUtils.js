@@ -4,7 +4,7 @@ import i18n from 'i18next';
 import * as ExcelJS from 'exceljs';
 import * as FileSaver from 'file-saver';
 import { BLUE, LIGHT_NAVY_BLUE, LIGHT_GREY, REPORT_TYPES, DARK_NAVY_BLUE, EXCEL_WORKSHEET_TABLE_HEADER_CELL, EXCEL_WORKSHEET_TITLE, ALPHABETS, BORDER_STYLE } from '../constants/ReportConstants';
-import { calculateChangedData, formatTime, getStorageWithUnit } from './AppUtils';
+import { calculateChangedData, formatTime, getAppDateFormat, getStorageWithUnit } from './AppUtils';
 import { getCookie } from './CookieUtils';
 import { APPLICATION_API_USER } from '../constants/UserConstant';
 
@@ -123,14 +123,14 @@ export function systemOverview(doc, data) {
   });
 }
 
-export async function exportDoc(doc) {
+export async function exportDoc(doc, name) {
   const img = await getBase64FromUrl(REPORT_TYPES.HEADER_IMG_URL);
   const pageCount = doc.internal.getNumberOfPages();
   for (let i = 1; i <= pageCount; i += 1) {
     doc.setPage(i);
     doc.addImage(img, 'PNG', 8, 3, doc.internal.pageSize.width - 15, 30);
   }
-  doc.save();
+  doc.save(name);
 }
 
 // function getDateFormat(date) {
@@ -176,7 +176,10 @@ export async function exportTableToExcel(dashboard) {
   }
   workbook.xlsx.writeBuffer().then((data) => {
     const blob = new Blob([data], { type: REPORT_TYPES.EXCEL_BLOBTYPE });
-    FileSaver.saveAs(blob, 'DatamotiveReport.xlsx');
+    const someDate = new Date();
+    const dateFormated = getAppDateFormat(someDate, false);
+
+    FileSaver.saveAs(blob, `Datamotive-Report-${dateFormated}.xlsx`);
   });
 }
 

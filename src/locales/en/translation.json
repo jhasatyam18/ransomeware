@@ -51,7 +51,7 @@
   "select.virtual.machine.for.protection": "Select Virtual Machine for protection ",
   "name": "Name ",
   "filter":"Filter",
-  "export.pdf":"Export",
+  "export.pdf":"Export To PDF",
   "export.excel":"Export To Excel",
   "protected.site": "Protected Site ",
   "replication.interval.(minutes)": "Replication Interval (Minutes)",

@@ -3,7 +3,7 @@ import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Button, Card, CardBody, Col, Container, Row } from 'reactstrap';
 import { MILI_SECONDS_TIME } from '../../constants/EventConstant';
-import { exportTableToExcel } from '../../utils/PdfUtil';
+import { exportTableToExcel } from '../../utils/ReportUtils';
 import { fetchDrPlans } from '../../store/actions/DrPlanActions';
 import ReportSideBar from './ReportSideBar';
 import ReportSystemOverview from './ReportSystemOverview';
