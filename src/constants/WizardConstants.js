@@ -77,7 +77,6 @@ export const TEST_RECOVERY_WIZARDS = {
 export const REVERSE_WIZARDS = {
   options: { title: 'Reverse Protection Plan', onFinish: startReversePlan },
   steps: [
-    // { label: 'Virtual Machines', title: '', component: DRPLAN_PROTECT_STEP, validate: (user, dispatch) => validateDRPlanProtectData({ user, dispatch }) },
     { label: 'Reverse Plan', title: '', component: REVERSE_CONFIG_STEP, validate: (user, dispatch) => validateReversePlan({ user, dispatch }), isAync: true },
     { label: 'Recovery Configuration', title: '', component: TEST_RECOVERY_CONFIG_STEP, validate: (user, dispatch) => validateReversePlan({ user, dispatch }), isAync: true },
     { label: 'Boot Order', title: '', component: DRPLAN_BOOT_ORDER_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
