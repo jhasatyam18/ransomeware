@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardTitle, Col, Row } from 'reactstrap';
+import { convertMinutesToDaysHourFormat } from '../../utils/AppUtils';
 import { convertKBtoUnit, getValue } from '../../utils/InputUtils';
 import { getFilteredObject } from '../../utils/PayloadUtil';
 
@@ -28,12 +29,11 @@ class ReversePlanSummary extends Component {
     let selectedVMs = {};
     if (drPlan) {
       name = drPlan.name;
-      replicationInterval = drPlan.replicationInterval;
+      replicationInterval = convertMinutesToDaysHourFormat(drPlan.replicationInterval);
       protectedSiteName = drPlan.protectedSite.name;
       selectedVMs = drPlan.protectedEntities.virtualMachines;
     }
     const replType = getValue('reverse.replType', values);
-    const replicationUnit = 'minutes';
     let size = 0;
     Object.keys(selectedVMs).forEach((key) => {
       selectedVMs[key].virtualDisks.forEach((disk) => {
@@ -54,8 +54,6 @@ class ReversePlanSummary extends Component {
                   <Col sm={3} className="text-muted">Replication Interval</Col>
                   <Col sm={3}>
                     {replicationInterval}
-                    {' '}
-                    {replicationUnit}
                   </Col>
                 </Row>
                 <hr className="mt-3 mb-3" />
