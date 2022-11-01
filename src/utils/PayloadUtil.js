@@ -253,6 +253,8 @@ export function getReversePlanPayload(user) {
   drplan.recoverySite = rSite;
   drplan.recoveryEntities.suffix = recoverySufffix;
   drplan.recoveryEntities.instanceDetails = getVMConfigPayload(user);
+  drplan.replicationInterval = getReplicationInterval(getValue(STATIC_KEYS.REPLICATION_INTERVAL_TYPE, values), getValue('drplan.replicationInterval', values));
+  drplan.startTime = getUnixTimeFromDate(drplan.startTime);
   return drplan;
 }
 
