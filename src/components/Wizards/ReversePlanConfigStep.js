@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardTitle, Form } from 'reactstrap';
+import { convertMinutesToDaysHourFormat } from '../../utils/AppUtils';
 import { getValue } from '../../utils/InputUtils';
 import DMField from '../Shared/DMField';
 
@@ -17,8 +18,7 @@ class ReversePlanConfigStep extends Component {
       replicationInterval = drPlan.replicationInterval;
       protectedSiteName = drPlan.protectedSite.name;
     }
-    const replicationUnit = ' minutes';
-    const interval = replicationInterval + replicationUnit;
+    const interval = convertMinutesToDaysHourFormat(replicationInterval);
     return (
       <>
         <Card className="padding-20">
