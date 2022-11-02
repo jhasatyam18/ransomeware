@@ -19,7 +19,7 @@ class Report extends Component {
   constructor() {
     super();
     this.state = {
-      openCollapse: false,
+      openCollapse: true,
       printView: false,
     };
   }
@@ -100,11 +100,11 @@ class Report extends Component {
       return null;
     }
     return (
-      <Col sm={4}>
-        <div className="container padding-top-10">
+      <Col sm={12}>
+        <div className="padding-top-10">
           {this.renderForm()}
         </div>
-        <Button className="btn btn-outline-success btn-sm" onClick={this.generateReport}>Generate Report</Button>
+        <Button className="btn btn-outline-success btn-sm margin-bottom-10" onClick={this.generateReport}>Generate Report</Button>
       </Col>
     );
   }
@@ -139,9 +139,9 @@ class Report extends Component {
     const resultKeys = Object.keys(result).length;
     if (resultKeys === 0) {
       return (
-        <Col sm={openCollapse === true ? 8 : 12}>
-          <div className="report__content">
-            <span className="no__data">
+        <Col sm={openCollapse === true ? 8 : 12} className="margin-bottom-20 margin-top-10 container">
+          <div className="report__content ">
+            <span className="no__data ">
               {t('no.data.to.display')}
             </span>
           </div>
@@ -149,8 +149,8 @@ class Report extends Component {
       );
     }
     return (
-      <Col sm={openCollapse === true ? 8 : 12} id="datamotiveReport">
-        <div className="report__content data">
+      <Col sm={12} id="datamotiveReport">
+        <div className="report__content padding-top-5">
           {this.renderReports()}
         </div>
       </Col>
@@ -158,7 +158,6 @@ class Report extends Component {
   }
 
   render() {
-    const { openCollapse } = this.state;
     const { reports, t } = this.props;
     const { result = {} } = reports;
     const keys = Object.keys(result).length;
@@ -170,25 +169,22 @@ class Report extends Component {
             <Card>
               <CardBody>
                 <DMBreadCrumb links={[{ label: 'report', link: '#' }]} />
-                <Button className="btn btn-outline-dark btn-sm margin-bottom-15 " onClick={this.toggleCollapse}>
-                  <i className={openCollapse === true ? 'fas fa-arrow-down icon_font' : 'fas fa-arrow-right icon_font'} title="Report Filter" />
-                  <span className="padding-left-5">{t('filter')}</span>
-                </Button>
-                {hasData
-                  ? (
-                    <>
-                      <Button className="btn btn-outline-dark btn-sm margin-left-10 margin-bottom-15" onClick={this.exportToPDF}>
-                        <i className="far fa-file-pdf text-danger icon_font" title="Export to PDF" />
-                        <span className="padding-left-5">{t('export.pdf')}</span>
-                      </Button>
-                      <Button className="btn btn-outline-dark btn-sm margin-left-10 margin-bottom-15" onClick={this.exportToExcel}>
-                        <i className="fa fa-solid fa-file-excel text-success icon_font" />
-                        <span className="padding-left-5">{t('export.excel')}</span>
-                      </Button>
-                    </>
-                  ) : null}
-                <Row>
+                {hasData ? (
+                  <>
+                    <Button className="btn btn-outline-dark btn-sm margin-left-10 margin-bottom-15" onClick={this.exportToPDF}>
+                      <i className="far fa-file-pdf text-danger icon_font" title="Export to PDF" />
+                      <span className="padding-left-5">{t('export.pdf')}</span>
+                    </Button>
+                    <Button className="btn btn-outline-dark btn-sm margin-left-10 margin-bottom-15" onClick={this.exportToExcel}>
+                      <i className="fa fa-solid fa-file-excel text-success icon_font" />
+                      <span className="padding-left-5">{t('export.excel')}</span>
+                    </Button>
+                  </>
+                ) : null}
+                <Row className="margin-left-8">
                   {this.renderReportFilter()}
+                </Row>
+                <Row className="margin-left-5">
                   {this.renderReportContents()}
                 </Row>
               </CardBody>
