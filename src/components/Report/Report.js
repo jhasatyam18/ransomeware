@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Button, Card, CardBody, Col, Container, Row } from 'reactstrap';
+import { MILI_SECONDS_TIME } from '../../constants/EventConstant';
+import { exportTableToExcel } from '../../utils/ReportUtils';
 import { fetchDrPlans } from '../../store/actions/DrPlanActions';
 import ReportSideBar from './ReportSideBar';
 import ReportSystemOverview from './ReportSystemOverview';
@@ -53,6 +55,7 @@ class Report extends Component {
     //   dispatch(addMessage('Select report time duration', MESSAGE_TYPES.ERROR));
     //   return;
     // }
+    dispatch(valueChange('report.system.includeSystemOverView', true));
     dispatch(generateAuditReport());
     if (openCollapse) {
       this.toggleCollapse();
@@ -60,16 +63,29 @@ class Report extends Component {
   }
 
   exportToPDF = () => {
-    const { dispatch } = this.props;
+    const { dispatch, t } = this.props;
     this.setState({ printView: true });
-    dispatch(showApplicationLoader('PDF_REPORT', 'Exporting data to pdf.'));
+    dispatch(showApplicationLoader('PDF_REPORT', t('report.export.pdf')));
     setTimeout(() => {
       dispatch(exportReportToPDF());
-    }, 1000);
+    }, MILI_SECONDS_TIME.ONE_THOUSAND);
     setTimeout(() => {
       this.setState({ printView: false });
       dispatch(hideApplicationLoader('PDF_REPORT'));
-    }, 10000);
+    }, MILI_SECONDS_TIME.TEN_THOUSAND);
+  }
+
+  exportToExcel = () => {
+    const { dispatch, dashboard, t } = this.props;
+    this.setState({ printView: true });
+    dispatch(showApplicationLoader('EXCEL_REPORT', t('report.export.excel')));
+    setTimeout(() => {
+      exportTableToExcel(dashboard);
+    }, MILI_SECONDS_TIME.TEN_THOUSAND);
+    setTimeout(() => {
+      this.setState({ printView: false });
+      dispatch(hideApplicationLoader('EXCEL_REPORT'));
+    }, MILI_SECONDS_TIME.TEN_THOUSAND);
   }
 
   renderForm() {
@@ -114,7 +130,7 @@ class Report extends Component {
   }
 
   renderReportContents() {
-    const { reports } = this.props;
+    const { reports, t } = this.props;
     const { result } = reports;
     // const { values } = user;
     const { openCollapse } = this.state;
@@ -126,7 +142,7 @@ class Report extends Component {
         <Col sm={openCollapse === true ? 8 : 12} className="margin-bottom-20 margin-top-10 container">
           <div className="report__content ">
             <span className="no__data ">
-              No data to display
+              {t('no.data.to.display')}
             </span>
           </div>
         </Col>
@@ -142,7 +158,7 @@ class Report extends Component {
   }
 
   render() {
-    const { reports } = this.props;
+    const { reports, t } = this.props;
     const { result = {} } = reports;
     const keys = Object.keys(result).length;
     const hasData = keys !== 0;
@@ -153,13 +169,18 @@ class Report extends Component {
             <Card>
               <CardBody>
                 <DMBreadCrumb links={[{ label: 'report', link: '#' }]} />
-                {hasData
-                  ? (
-                    <Button className="btn btn-outline-dark btn-sm margin-left-18 margin-bottom-15" onClick={this.exportToPDF}>
+                {hasData ? (
+                  <>
+                    <Button className="btn btn-outline-dark btn-sm margin-left-10 margin-bottom-15" onClick={this.exportToPDF}>
                       <i className="far fa-file-pdf text-danger icon_font" title="Export to PDF" />
-                      <span className="padding-left-5">Export</span>
+                      <span className="padding-left-5">{t('export.pdf')}</span>
                     </Button>
-                  ) : null}
+                    <Button className="btn btn-outline-dark btn-sm margin-left-10 margin-bottom-15" onClick={this.exportToExcel}>
+                      <i className="fa fa-solid fa-file-excel text-success icon_font" />
+                      <span className="padding-left-5">{t('export.excel')}</span>
+                    </Button>
+                  </>
+                ) : null}
                 <Row className="margin-left-8">
                   {this.renderReportFilter()}
                 </Row>
@@ -176,7 +197,7 @@ class Report extends Component {
 }
 
 function mapStateToProps(state) {
-  const { user, reports } = state;
-  return { user, reports };
+  const { user, reports, dashboard } = state;
+  return { user, reports, dashboard };
 }
 export default connect(mapStateToProps)(withTranslation()(Report));
