@@ -643,8 +643,11 @@ export function setProtectionPlanVMsForUpdate(protectionPlan, isEventAction = fa
           } else {
             dispatch(valueChange('ui.site.vms', data));
             // set selected vms for plan update
-            data.forEach((vm) => {
-              virtualMachines.forEach((pvm) => {
+            virtualMachines.forEach((pvm) => {
+              if (pvm.isDeleted) {
+                selectedVMS = { ...selectedVMS, [pvm.moref]: setVMDetails(pvm, pvm) };
+              }
+              data.forEach((vm) => {
                 if (pvm.moref === vm.moref) {
                   selectedVMS = { ...selectedVMS, [vm.moref]: setVMDetails(vm, pvm) };
                 }
