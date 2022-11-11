@@ -911,12 +911,15 @@ function setVMWAREVMDetails(selectedVMS, protectionPlan, dispatch) {
             dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, net.publicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkTier`, net.networkTier));
-            dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, false));
+            dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, net.isPublicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-network`, { label: net.network, value: net.networkMoref }));
             dispatch(valueChange(`${networkKey}-eth-${index}-macAddress`, net.macAddress));
             dispatch(valueChange(`${networkKey}-eth-${index}-adapterType`, net.adapterType));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkMoref`, net.networkMoref));
-            eths.push({ key: `${networkKey}-eth-${index}`, isPublicIP: false, publicIP: '', privateIP: '', subnet: '', securityGroup: '' });
+            dispatch(valueChange(`${networkKey}-eth-${index}-netmask`, net.netmask));
+            dispatch(valueChange(`${networkKey}-eth-${index}-gateway`, net.gateway));
+            dispatch(valueChange(`${networkKey}-eth-${index}-dnsserver`, net.dns));
+            eths.push({ key: `${networkKey}-eth-${index}`, netmask: '', gateway: '', subnet: '', dns: '', publicIP: '' });
           });
           // check for additional nics
           if (vm.virtualNics.length > ins.networks.length) {
@@ -927,7 +930,7 @@ function setVMWAREVMDetails(selectedVMS, protectionPlan, dispatch) {
               dispatch(valueChange(`${networkKey}-eth-${startIndex}-publicIP`, ''));
               dispatch(valueChange(`${networkKey}-eth-${startIndex}-networkTier`, ''));
               dispatch(valueChange(`${networkKey}-eth-${startIndex}-isPublic`, false));
-              eths.push({ key: `${networkKey}-eth-${startIndex}`, isPublicIP: false, publicIP: '', privateIP: '', subnet: '', securityGroup: '' });
+              eths.push({ key: `${networkKey}-eth-${startIndex}`, isPublicIP: false, publicIP: '', networkTier: '', subnet: '' });
             }
           }
           dispatch(valueChange(`${networkKey}`, eths));
@@ -1265,12 +1268,16 @@ export function setVMwareVMRecoveryData(vmMoref) {
             dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, net.publicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkTier`, net.networkTier));
-            dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, false));
+            dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, net.isPublicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-network`, { label: net.network, value: net.networkMoref }));
             dispatch(valueChange(`${networkKey}-eth-${index}-macAddress`, net.macAddress));
             dispatch(valueChange(`${networkKey}-eth-${index}-adapterType`, net.adapterType));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkMoref`, net.networkMoref));
-            eths.push({ key: `${networkKey}-eth-${index}`, isPublicIP: false, publicIP: '', privateIP: '', subnet: '', securityGroup: '' });
+            dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, net.publicIP));
+            dispatch(valueChange(`${networkKey}-eth-${index}-netmask`, net.netmask));
+            dispatch(valueChange(`${networkKey}-eth-${index}-gateway`, net.gateway));
+            dispatch(valueChange(`${networkKey}-eth-${index}-dnsserver`, net.dns));
+            eths.push({ key: `${networkKey}-eth-${index}`, isPublicIP: net.isPublicIP, publicIP: '', privateIP: '', subnet: '', securityGroup: '' });
           });
           dispatch(valueChange(`${networkKey}`, eths));
         }

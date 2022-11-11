@@ -158,7 +158,7 @@ export function getVMConfigPayload(user) {
 
 export function getVMNetworkConfig(key, values) {
   const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
-  const networkKey = `${key}-vmConfig.network.net1`;//
+  const networkKey = `${key}-vmConfig.network.net1`;
   const eths = getValue(networkKey, values) || [];
   let networks = [];
   let hasPublicIP = false;
@@ -177,6 +177,9 @@ export function getVMNetworkConfig(key, values) {
     const networkId = network.value;
     const adapterType = `${getValue(`${networkKey}-eth-${index}-adapterType`, values)}`;
     const macAddress = `${getValue(`${networkKey}-eth-${index}-macAddress`, values)}`;
+    let netmask = getValue(`${networkKey}-eth-${index}-netmask`, values) || '';
+    let gateway = getValue(`${networkKey}-eth-${index}-gateway`, values) || '';
+    let dns = getValue(`${networkKey}-eth-${index}-dnsserver`, values) || '';
     const networkMoref = networkId;
     if (typeof isFromSource !== 'boolean') {
       isFromSource = false;
@@ -189,11 +192,18 @@ export function getVMNetworkConfig(key, values) {
     }
     if (network !== '' && recoveryPlatform === PLATFORM_TYPES.VMware) {
       network = network.label;
+      // if isPublicIP is false then the static IP was set automatically for that these below options needs to be empty
+      if (!isPublicIP) {
+        netmask = '';
+        gateway = '';
+        dns = '';
+        publicIP = '';
+      }
     }
     if (typeof id !== 'undefined' && id !== '') {
-      networks.push({ id, isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone, adapterType, networkMoref, macAddress });
+      networks.push({ id, isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone, adapterType, networkMoref, macAddress, netmask, gateway, dns });
     } else {
-      networks.push({ isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone, adapterType, networkMoref, macAddress });
+      networks.push({ isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone, adapterType, networkMoref, macAddress, netmask, gateway, dns });
     }
   }
 
