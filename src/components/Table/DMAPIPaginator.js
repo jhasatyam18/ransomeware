@@ -180,13 +180,17 @@ function DMAPIPaginator(props) {
             <Button disabled={!hasPrev} onClick={onBack}>
               <box-icon type="solid" name="chevron-left" size="xs" />
             </Button>
-            <Button>
-              {currentPage}
-              &nbsp;
-              /
-              &nbsp;
-              {totalPages}
-            </Button>
+            <div className="input-group ">
+              <div className="w-20 input-group ">
+                <input type="text" className="form-control input_none_border" id="tablecurrentpage" autoComplete="off" value={currentPage} onChange={(e) => setSearchStr(e.target.value)} onKeyPress={(e) => onKeyPress(e)} />
+                <span className="input-group-append input_span">
+                  /
+                </span>
+              </div>
+              <div className="w-20 input-group ">
+                <input type="text" className="form-control input_none_border" id="tablecurrentpage" autoComplete="off" value={totalPages} />
+              </div>
+            </div>
             <Button disabled={!hasNext} onClick={onNext}>
               <box-icon type="solid" name="chevron-right" size="xs" />
             </Button>
