@@ -10,6 +10,7 @@ import { callAPI } from '../../utils/ApiUtils';
 function DMAPIPaginator(props) {
   const emptyPageInfo = { limit: 100, currentPage: 0, hasNext: false, hasPrev: false, nextOffset: 0, pageRecords: 0, totalPages: 0, totalRecords: 0 };
   const [pageInfo, setPageInfo] = useState(emptyPageInfo);
+  const [current, setCurrent] = useState();
   const { apiUrl, storeFn, dispatch, columns, t, isParameterizedUrl, name } = props;
   const [isOpenFilterCol, toggleFilterCol] = useState(false);
   const [filterColumns, setFilterColumns] = useState([]);
@@ -168,6 +169,9 @@ function DMAPIPaginator(props) {
     return null;
   };
 
+  const setCurrentValue = (e) => {
+    setCurrent(e);
+  };
   const renderData = () => {
     const { hasNext, hasPrev, currentPage, totalPages } = pageInfo;
     return (
@@ -182,13 +186,13 @@ function DMAPIPaginator(props) {
             </Button>
             <div className="input-group ">
               <div className="w-20 input-group ">
-                <input type="text" className="form-control input_none_border" id="tablecurrentpage" autoComplete="off" value={currentPage} onChange={(e) => setSearchStr(e.target.value)} onKeyPress={(e) => onKeyPress(e)} />
+                <input type="number" className="form-control input_none_border" id="tablecurrentpage" autoComplete="off" value={current || currentPage} onChange={(e) => setCurrentValue(e.target.value)} onKeyPress={(e) => onKeyPress(e)} />
                 <span className="input-group-append input_span">
                   /
                 </span>
               </div>
               <div className="w-20 input-group ">
-                <input type="text" className="form-control input_none_border" id="tablecurrentpage" autoComplete="off" value={totalPages} />
+                <input type="number" className="form-control input_none_border" id="tableTotalPage" autoComplete="off" value={totalPages} />
               </div>
             </div>
             <Button disabled={!hasNext} onClick={onNext}>
