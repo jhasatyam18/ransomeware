@@ -47,7 +47,7 @@ function DashboardAlertOverview(props) {
           </p>
           <Row className="text-center font-size-point-9rem">
             <Col sm={4}>
-              <span className="text-danger-1">{t('Alerts')}</span>
+              <span className="text-danger-1">{t('critical')}</span>
               <hr />
               {loading === true ? <Spinner /> : alert.criticalAlerts}
             </Col>

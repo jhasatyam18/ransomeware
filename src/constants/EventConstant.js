@@ -16,3 +16,4 @@ export const MILI_SECONDS_TIME = {
   TEN_THOUSAND: 10000,
   ONE_THOUSAND: 1000,
 };
+export const MONITOR_NODE_AUTH = ['monitor.nodecredentialexpiringsoon', 'monitor.nodeauthentication'];

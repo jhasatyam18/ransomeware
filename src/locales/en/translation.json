@@ -78,6 +78,7 @@
   "replication": "Replication",
   "virtual.machine": "Virtual Machine",
   "disk": "Disk",
+  "critical":"Critical",
   "start.time": "Start Time",
   "end.time": "End Time",
   "status": "Status",
@@ -318,6 +319,9 @@
   "info.protectionplan.network.aws.vpc": "Launch recovery instance into the Amazon Virtual Private Cloud (VPC).",
   "info.test.recovery.cleanupTestRecoveries": "Cleanup all previously test recovered instances",
   "info.test.recovery.runPPlanScripts": "Run protection plan pre and post recovery scripts.",
+  "info.node.password.change":"Update Datamotive system users (dmadmin, dmsupport) credentials",
+  "info.new.password":"New Password (System Users)",
+  "info.cnfrm.password":"Confirm New Password (System Users) ",
   "info.protectionplan.network.vmware.staticip": "Select for configuring static network settings for Guest OS. Requires VMware Tools installed. Refer user guide for supported configurations.",
   
 
@@ -353,6 +357,13 @@
   "title.staticip":"Configure Guest Network",
   "title.ip":" IP address",
   "auto.migration":"Auto Migrate",
+  "title.node.name":"Node Name",
+  "title.node.hostname":"Node Hostname",
+  "title.node.username":"System Users",
+  "title.node.new.password":" New Password",
+  "title.node.cnf.password":"Confirm Password ",
+  "title.save":"Save",
+  "title.system.cred":"Update System Credential",
   "info.aws.create.network.from.source" : "Creates new subnet and security group on recovery site based on protected entity's configuration",
   "info.protectionplan.protection.prescript": "Script will execute before every replication iteration.",
   "info.protectionplan.protection.postscript": "Script will execute after successful completion of every replication iteration.",
@@ -384,8 +395,11 @@
   "info.vmware.primary.dns":"Add DNS servers (Comma separated) ",
   "loading":"Loading...",
   "test.recovery.note":"Test recoveries allow you to validate the sanity of your DR copy. It is recommended to test recover workloads in an isolated VPC or subnet to avoid conflicts or race conditions in DR environment. If there are recovery scripts which make changes to DR environment like updating DNS entries etc., it is recommended to omit their execution during Test recovery, to avoid  unnecessary changes to the DR environment",
+  "msg.node.alert.success":"Action initiated successfully",
   "warning.vmware.ip.addr":"Please provide valid IP Address",
   "warning.vmware.netmask":"Please provide valid Subnet",
   "warning.vmware.gateway":"Please provide valid Gateway",
-  "warning.vmware.dns":"Please provide valid DNS"
+  "warning.vmware.dns":"Please provide valid DNS",
+  "error.ackn.pplan.alert":"Virtual Machine info not available in the event.",
+  "succes.ackn.alert":"Acknowledging alert."
 }

@@ -4,9 +4,9 @@ import { onProtectSiteChange, onRecoverSiteChange, updateAvailabilityZones } fro
 
 import { onLimitChange, onTimeLimitChange } from '../store/actions/ThrottlingAction';
 import { getAvailibilityZoneOptions, enableNodeTypeVM, getDefaultRecoverySite, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getReportProtectionPlans, getSiteNodeOptions, getSitesOptions, getSubnetOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware, shouldShowNodeEncryptionKey, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort, getVMwareVMSelectionData, showInstallCloudPackageOption } from '../utils/InputUtils';
-import { isEmpty, validateDrSiteSelection, validateReplicationInterval, validateReplicationValue } from '../utils/validationUtils';
+import { isEmpty, validateDrSiteSelection, validatePassword, validateReplicationInterval, validateReplicationValue } from '../utils/validationUtils';
 import { STATIC_KEYS } from './InputConstants';
-import { EMAIL_REGEX, FQDN_REGEX, HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX } from './ValidationConstants';
+import { EMAIL_REGEX, FQDN_REGEX, HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX, PASSWORD_REGEX } from './ValidationConstants';
 import { onScriptChange, loadTreeChildData } from '../store/actions/UserActions';
 
 export const CONFIURE_SITE_GROUP = ['configureSite.platformDetails.type', 'configureSite.platformDetails.platformName'];
@@ -214,4 +214,6 @@ export const FIELDS = {
   'recovery.cleanupTestRecoveries': { label: 'cleanup.test.recoveries', description: 'Cleanup Test Recovery', type: FIELD_TYPE.CHECKBOX, shouldShow: true, fieldInfo: 'info.test.recovery.cleanupTestRecoveries', defaultValue: false },
   'drplan.vms': { label: '', description: '', type: FIELD_TYPE.TREE, isMultiSelect: true, errorMessage: 'Please select virtual machine for protection', shouldShow: true, validate: (value, user) => isEmpty(value, user), fieldInfo: 'info.protection.protectionVm', getTreeData: ({ dataKey, values, fieldKey }) => getVMwareVMSelectionData({ dataKey, values, fieldKey }), baseURL: 'api/v1/sites/<id>/resources', baseURLIDReplace: '<id>:ui.values.protectionSiteID', urlParms: ['type', 'entity'], urlParmKey: ['static:Folder,VirtualMachine', 'object:value'], dataKey: 'ui.site.vms.data', enableSelection: (node) => enableNodeTypeVM(node), loadChildDta: ({ dataKey, field, node }) => loadTreeChildData(dataKey, node, field) },
   'ui.automate.migration': { label: 'auto.migration', type: FIELD_TYPE.CHECKBOX, shouldShow: true, fieldInfo: 'info.auto.migration', default: false },
+  'ui.new.password': { label: 'New Password', placeHolderText: 'Enter new password', type: FIELD_TYPE.PASSWORD, patterns: [PASSWORD_REGEX], errorMessage: 'Password should have atleast 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character and be at least 8 characters long.', shouldShow: true },
+  'ui.cnfm.password': { label: 'Confirm Password', placeHolderText: 'Confirm password', type: FIELD_TYPE.PASSWORD, validate: (v, u) => validatePassword(v, u), errorMessage: 'New password and confirm password does not match', shouldShow: true },
 };
