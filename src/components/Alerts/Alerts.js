@@ -47,9 +47,9 @@ class Alerts extends Component {
             <Card>
               <CardBody>
                 <DMBreadCrumb links={[{ label: 'alerts', link: '#' }]} />
-                <Row className="padding-left-20">
+                <Row className="padding-left-10">
                   <Col sm={12}>
-                    <div className="padding-right-30 padding-left-10">
+                    <div className="padding-right-10 padding-left-10">
                       <DMAPIPaginator
                         showFilter="true"
                         columns={TABLE_ALERTS}
