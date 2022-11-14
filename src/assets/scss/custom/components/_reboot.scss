@@ -324,24 +324,13 @@ max-height: 55vh;
   width: 55px;
   background-color: #c3cbe4;
   border-color: #c3cbe4;
-}
-
-.input_span{
-  color: #2a3042;
-  width:15px;
-  color: #32394e;
-  border: none !important;
-  background-color: #bfc8e2;
-  display: flex;
   justify-content: center;
-  align-items: center;
+    align-items: center;
+    display: flex;
 }
 
 .api_paginator_input{
-  display: block;
-     width: 100%; 
-    height: calc( 1.5em + 0.94rem + 2px);
-    padding: 0.47rem 0.75rem;
+  display: flex;
     font-size: 0.8125rem;
     font-weight: 400;
     line-height: 1.5;
@@ -349,8 +338,16 @@ max-height: 55vh;
     border: none !important;
     background-color: #bfc8e2;
     outline: none;
+    text-align: right;
 }
 
-.text-align-right{
-  text-align: right;
+.dmaipaginator_totalpage{
+  width: 50px;
+  background-color: #c3cbe4;
+  border-color: #c3cbe4;
+}
+
+.totalpag_text{
+  position: relative;
+  top:8px;
 }

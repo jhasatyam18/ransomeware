@@ -112,7 +112,7 @@ function DMAPIPaginator(props) {
     // const { totalPages } = pageInfo;
     const a = onlyNumberKey(e.target.value);
     if (a) {
-      if (e.target.value <= 0) {
+      if (e.target.value < 0) {
         setCurrent(1);
       } else {
         setCurrent(e.target.value);
@@ -206,14 +206,11 @@ function DMAPIPaginator(props) {
               <box-icon type="solid" name="chevron-left" size="xs" />
             </Button>
             <div className="input-group">
-              <div className="w-20 input-group ">
-                <input type="number" className=" api_paginator_input input-group " id="tablecurrentpage" autoComplete="off" value={current} onChange={(e) => setCurrentValue(e)} onKeyPress={(e) => onKeyPress(e)} />
-              </div>
-              <div className=" input-group input_span">
-                /
-              </div>
-              <div className="w-20 input-group ">
-                <input type="number" className="api_paginator_input " id="tableTotalPage" autoComplete="off" value={totalPages} disabled />
+              <input type="text" className=" api_paginator_input input-group w-20  " id="tablecurrentpage" autoComplete="off" value={current} onChange={(e) => setCurrentValue(e)} onKeyPress={(e) => onKeyPress(e)} />
+              <div className="dmaipaginator_totalpage input-group ">
+                <p className="api_paginator_input totalpag_text ">
+                  {`/ ${totalPages}1233`}
+                </p>
               </div>
             </div>
             <Button disabled={!hasNext} onClick={onNext}>
