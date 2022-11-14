@@ -71,12 +71,10 @@ class DMFieldText extends Component {
   }
 
   showPasswordToggle() {
-    const { fieldKey, user, field, hidepassword } = this.props;
-    const { errors } = user;
-    const hasErrors = !!(errors && errors[fieldKey] !== undefined);
+    const { field, hidepassword } = this.props;
     const { type } = field;
     const { state } = this;
-    if (hidepassword || hasErrors || type !== FIELD_TYPE.PASSWORD) {
+    if (hidepassword || type !== FIELD_TYPE.PASSWORD) {
       return null;
     }
     const icon = (state.type === FIELD_TYPE.PASSWORD ? 'hide' : 'show');
