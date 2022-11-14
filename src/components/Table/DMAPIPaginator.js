@@ -77,6 +77,7 @@ function DMAPIPaginator(props) {
   const onNext = () => {
     const { nextOffset } = pageInfo;
     fetchData(nextOffset);
+    setCurrent((current + 1));
   };
 
   const onBack = () => {
@@ -86,7 +87,7 @@ function DMAPIPaginator(props) {
 
   const onSearch = () => {
     setPageInfo(emptyPageInfo);
-    fetchData(current);
+    fetchData(current + 100);
   };
 
   const applyFilter = () => {
@@ -100,26 +101,19 @@ function DMAPIPaginator(props) {
     }
   };
 
-  const onlyNumberKey = (e) => {
-    const numStr = '123456789';
-    if (numStr.includes(e)) {
-      return true;
-    }
-    return false;
-  };
-
   const setCurrentValue = (e) => {
-    // const { totalPages } = pageInfo;
-    const a = onlyNumberKey(e.target.value);
-    if (a) {
-      if (e.target.value < 0) {
+    const { totalPages } = pageInfo;
+    const numStr = '123456789';
+    const valueStr = e.target.value[e.target.value.length - 1];
+    const valInNum = parseInt(e.target.value, 10);
+    if (numStr.indexOf(valueStr) !== -1) {
+      if (valInNum < 0) {
         setCurrent(1);
+      } else if (valInNum > totalPages) {
+        setCurrent(totalPages);
       } else {
-        setCurrent(e.target.value);
+        setCurrent(valInNum);
       }
-      // else if (e.target.value > totalPages) {
-      //   setCurrent(totalPages);
-      // }
     }
   };
 
@@ -206,10 +200,10 @@ function DMAPIPaginator(props) {
               <box-icon type="solid" name="chevron-left" size="xs" />
             </Button>
             <div className="input-group">
-              <input type="text" className=" api_paginator_input input-group w-20  " id="tablecurrentpage" autoComplete="off" value={current} onChange={(e) => setCurrentValue(e)} onKeyPress={(e) => onKeyPress(e)} />
+              <input type="text" className=" api_paginator_input input-group w-20  " id="tablecurrentpage" value={current} onChange={(e) => setCurrentValue(e)} onKeyPress={(e) => onKeyPress(e)} />
               <div className="dmaipaginator_totalpage input-group ">
                 <p className="api_paginator_input totalpag_text ">
-                  {`/ ${totalPages}1233`}
+                  {`/ ${totalPages}`}
                 </p>
               </div>
             </div>
