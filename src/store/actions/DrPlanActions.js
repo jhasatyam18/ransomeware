@@ -1,4 +1,5 @@
 import { getMemoryInfo, getNetworkIDFromName, getSubnetIDFromName } from '../../utils/AppUtils';
+import { DRPLAN_CONFIG_STEP } from '../../constants/DrplanConstants';
 import { changedVMRecoveryConfigurations } from '../../utils/validationUtils';
 import { MILI_SECONDS_TIME, MONITORING_DISK_CHANGES } from '../../constants/EventConstant';
 import { fetchByDelay } from '../../utils/SlowFetch';
@@ -271,17 +272,6 @@ export function onReverseProtectionPlanChange(ID) {
             return;
           }
           dispatch(valueChange('ui.reverse.drPlan', json));
-          const data = [];
-          const info = json.protectedEntities.virtualMachines || [];
-          const rEntities = json.recoveryEntities.instanceDetails || [];
-          info.forEach((vm) => {
-            rEntities.forEach((rE) => {
-              if (vm.moref === rE.sourceMoref) {
-                data.push(vm);
-              }
-            });
-          });
-          dispatch(valueChange('ui.recovery.vms', data));
           dispatch(setReverseData(json));
         }
       },
@@ -660,8 +650,11 @@ export function setProtectionPlanVMsForUpdate(protectionPlan, isEventAction = fa
           } else {
             dispatch(valueChange('ui.site.vms', data));
             // set selected vms for plan update
-            data.forEach((vm) => {
-              virtualMachines.forEach((pvm) => {
+            virtualMachines.forEach((pvm) => {
+              if (pvm.isDeleted) {
+                selectedVMS = { ...selectedVMS, [pvm.moref]: setVMDetails(pvm, pvm) };
+              }
+              data.forEach((vm) => {
                 if (pvm.moref === vm.moref) {
                   selectedVMS = { ...selectedVMS, [vm.moref]: setVMDetails(vm, pvm) };
                 }
@@ -882,12 +875,15 @@ function setVMWAREVMDetails(selectedVMS, protectionPlan, dispatch) {
             dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, net.publicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkTier`, net.networkTier));
-            dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, false));
+            dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, net.isPublicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-network`, { label: net.network, value: net.networkMoref }));
             dispatch(valueChange(`${networkKey}-eth-${index}-macAddress`, net.macAddress));
             dispatch(valueChange(`${networkKey}-eth-${index}-adapterType`, net.adapterType));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkMoref`, net.networkMoref));
-            eths.push({ key: `${networkKey}-eth-${index}`, isPublicIP: false, publicIP: '', privateIP: '', subnet: '', securityGroup: '' });
+            dispatch(valueChange(`${networkKey}-eth-${index}-netmask`, net.netmask));
+            dispatch(valueChange(`${networkKey}-eth-${index}-gateway`, net.gateway));
+            dispatch(valueChange(`${networkKey}-eth-${index}-dnsserver`, net.dns));
+            eths.push({ key: `${networkKey}-eth-${index}`, netmask: '', gateway: '', subnet: '', dns: '', publicIP: '' });
           });
           // check for additional nics
           if (vm.virtualNics.length > ins.networks.length) {
@@ -898,7 +894,7 @@ function setVMWAREVMDetails(selectedVMS, protectionPlan, dispatch) {
               dispatch(valueChange(`${networkKey}-eth-${startIndex}-publicIP`, ''));
               dispatch(valueChange(`${networkKey}-eth-${startIndex}-networkTier`, ''));
               dispatch(valueChange(`${networkKey}-eth-${startIndex}-isPublic`, false));
-              eths.push({ key: `${networkKey}-eth-${startIndex}`, isPublicIP: false, publicIP: '', privateIP: '', subnet: '', securityGroup: '' });
+              eths.push({ key: `${networkKey}-eth-${startIndex}`, isPublicIP: false, publicIP: '', networkTier: '', subnet: '' });
             }
           }
           dispatch(valueChange(`${networkKey}`, eths));
@@ -1323,12 +1319,16 @@ export function setVMwareVMRecoveryData(vmMoref) {
             dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, net.publicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkTier`, net.networkTier));
-            dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, false));
+            dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, net.isPublicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-network`, { label: net.network, value: net.networkMoref }));
             dispatch(valueChange(`${networkKey}-eth-${index}-macAddress`, net.macAddress));
             dispatch(valueChange(`${networkKey}-eth-${index}-adapterType`, net.adapterType));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkMoref`, net.networkMoref));
-            eths.push({ key: `${networkKey}-eth-${index}`, isPublicIP: false, publicIP: '', privateIP: '', subnet: '', securityGroup: '' });
+            dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, net.publicIP));
+            dispatch(valueChange(`${networkKey}-eth-${index}-netmask`, net.netmask));
+            dispatch(valueChange(`${networkKey}-eth-${index}-gateway`, net.gateway));
+            dispatch(valueChange(`${networkKey}-eth-${index}-dnsserver`, net.dns));
+            eths.push({ key: `${networkKey}-eth-${index}`, isPublicIP: net.isPublicIP, publicIP: '', privateIP: '', subnet: '', securityGroup: '' });
           });
           dispatch(valueChange(`${networkKey}`, eths));
         }
@@ -1531,6 +1531,25 @@ function setReverseData(json) {
       return Promise.all(apis).then(
         () => {
           dispatch(fetchPlatformSpecificData(json));
+          // for setting recovery data of all vm
+          // vm selection is their in reverse edit then remove this
+          // const data = [];
+          dispatch(setReverseConfig(json));
+          const info = json.protectedEntities.virtualMachines || [];
+          const rEntities = json.recoveryEntities.instanceDetails || [];
+          let selectedVMs = {};
+          info.forEach((vm) => {
+            rEntities.forEach((rE) => {
+              if (vm.moref === rE.sourceMoref) {
+                // data.push(vm);
+                selectedVMs = { ...selectedVMs, [vm.moref]: vm };
+                dispatch(setRecoveryVMDetails(vm.moref));
+              }
+            });
+          });
+          dispatch(valueChange('ui.site.seletedVMs', selectedVMs));
+          // for giving selection of vm in wizard if vm selection is not their then remove this
+          // dispatch(valueChange('ui.site.vms', data));
           dispatch(openWizard(REVERSE_WIZARDS.options, REVERSE_WIZARDS.steps));
           return new Promise((resolve) => resolve());
         },
@@ -1540,5 +1559,51 @@ function setReverseData(json) {
         },
       );
     }, 1000);
+  };
+}
+
+/**
+ * For setting replication interval,boot priority and script of the reverse vm
+ * @param {*} protectionPlan
+ */
+
+export function setReverseConfig(protectionPlan) {
+  return (dispatch) => {
+    const { protectedEntities, recoveryEntities, protectedSite, recoverySite } = protectionPlan;
+    const protectedSitePlatform = protectedSite.platformDetails.platformType;
+    const recoverySitePlatform = recoverySite.platformDetails.platformType;
+    dispatch(valueChange(DRPLAN_CONFIG_STEP.PROTECTION_PLATFORM, protectedSitePlatform));
+    dispatch(valueChange(DRPLAN_CONFIG_STEP.RECOVERY_PLATFORM, recoverySitePlatform));
+    if (isSamePlatformPlan(protectionPlan)) {
+      dispatch(fetchNetworks(protectedSite.id, 'source_network'));
+    } else {
+      dispatch(fetchNetworks(recoverySite.id, undefined, recoverySite.platformDetails.availZone));
+    }
+    dispatch(valueChange('drplan.id', protectionPlan.id));
+    dispatch(valueChange(DRPLAN_CONFIG_STEP.REMOTEPPLAN_ID, protectionPlan.remoteProtectionPlanId));
+    dispatch(valueChange('drplan.name', protectionPlan.name));
+    dispatch(valueChange('drplan.bootDelay', protectionPlan.bootDelay));
+    dispatch(valueChange('drplan.preScript', protectionPlan.preScript));
+    dispatch(valueChange('drplan.postScript', protectionPlan.postScript));
+    dispatch(valueChange('drplan.preInputs', protectionPlan.preInputs));
+    dispatch(valueChange('drplan.postInputs', protectionPlan.postInputs));
+    dispatch(valueChange('drplan.protectedSite', protectionPlan.protectedSite.id));
+    dispatch(valueChange('drplan.recoverySite', protectionPlan.recoverySite.id));
+    dispatch(valueChange('drplan.replicationInterval', protectionPlan.replicationInterval));
+    dispatch(valueChange('drplan.scriptTimeout', protectionPlan.scriptTimeout));
+    dispatch(valueChange(DRPLAN_CONFIG_STEP.PROTECTED_ENTITIES_ID, protectedEntities.id));
+    dispatch(valueChange(DRPLAN_CONFIG_STEP.RECOVERY_ENTITIES_ID, recoveryEntities.id));
+    dispatch(valueChange(DRPLAN_CONFIG_STEP.STATUS, protectionPlan.status));
+    dispatch(valueChange(DRPLAN_CONFIG_STEP.PLAN_ID, protectionPlan.id));
+    const time = protectionPlan.startTime * 1000;
+    const d = new Date(time);
+    dispatch(valueChange('drplan.startTime', d));
+    dispatch(valueChange('drplan.isEncryptionOnWire', protectionPlan.isEncryptionOnWire));
+    dispatch(valueChange('drplan.isEncryptionOnWireOnRest', protectionPlan.isEncryptionOnRest));
+    dispatch(valueChange('drplan.isCompression', protectionPlan.isCompression));
+    dispatch(valueChange('drplan.isDeDupe', protectionPlan.isDeDupe));
+    dispatch(valueChange('drplan.enableReverse', protectionPlan.enableReverse));
+    dispatch(valueChange('drplan.replPostScript', protectionPlan.replPostScript));
+    dispatch(valueChange('drplan.replPreScript', protectionPlan.replPreScript));
   };
 }

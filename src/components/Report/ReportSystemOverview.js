@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Card, CardBody, CardHeader, Col, Collapse, Media, Row } from 'reactstrap';
+import { getStorageWithUnit } from '../../utils/AppUtils';
 import RtoRpo from '../Dashboard/RtoRpo';
 
 class ReportSystemOverview extends Component {
@@ -42,7 +43,7 @@ class ReportSystemOverview extends Component {
       { title: 'Sites', icon: 'cloud', description: sites },
       { title: 'Protection Plans', icon: 'layer', description: protectionPlans },
       { title: 'Protected Machines', icon: 'desktop', description: vms },
-      { title: 'Storage', icon: 'hdd', description: (storage > 1024 ? `${storage} TB` : `${storage} GB`) },
+      { title: 'Storage', icon: 'hdd', description: getStorageWithUnit(storage) },
     ];
     return (
       <div key="rpt-system-overview" id="rpt-system-overview">

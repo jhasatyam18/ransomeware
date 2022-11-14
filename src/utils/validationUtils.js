@@ -1,4 +1,5 @@
 import ip from 'ip';
+import i18n from 'i18next';
 import { addErrorMessage, hideApplicationLoader, removeErrorMessage, showApplicationLoader, valueChange } from '../store/actions';
 import { addMessage } from '../store/actions/MessageActions';
 import { getVMwareVMSProps } from '../store/actions/UserActions';
@@ -638,6 +639,7 @@ function validateVMwareNicConfig(dispatch, user, options) {
   const network = getValue(`${networkKey}-network`, values) || '';
   const adapterType = getValue(`${networkKey}-adapterType`, values) || '';
   const macAddress = getValue(`${networkKey}-macAddress-value`, values) || '';
+  const staticip = getValue(`${networkKey}-isPublic`, values) || '';
   if (network === '' || network === '-') {
     dispatch(addMessage('Select network', MESSAGE_TYPES.ERROR));
     return false;
@@ -646,12 +648,50 @@ function validateVMwareNicConfig(dispatch, user, options) {
     dispatch(addMessage('Adapter type is required', MESSAGE_TYPES.ERROR));
     return false;
   }
-
   if (macAddress) {
     const validMac = validateMacAddressForVMwareNetwork(macAddress);
     if (!validMac) {
       dispatch(addMessage('Please fill the right mac Address', MESSAGE_TYPES.ERROR));
       return false;
+    }
+  }
+  if (staticip) {
+    const validated = validateForStaticIP(networkKey, dispatch, values);
+    if (!validated) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function validateForStaticIP(network, dispatch, values) {
+  const Ip = getValue(`${network}-publicIP`, values) || '';
+  const subnet = getValue(`${network}-netmask`, values) || '';
+  const gateway = getValue(`${network}-gateway`, values) || '';
+  let dns = getValue(`${network}-dnsserver`, values) || '';
+  const IP = new RegExp(IP_REGEX);
+  // const DNS = new RegExp(DNS_REGEX);
+  if (Ip) {
+    if (Ip.match(IP) === null) {
+      dispatch(addMessage(i18n.t('warning.vmware.ip.addr'), MESSAGE_TYPES.ERROR));
+      return false;
+    }
+    if (subnet.match(IP) === null || subnet === '') {
+      dispatch(addMessage(i18n.t('warning.vmware.netmask'), MESSAGE_TYPES.ERROR));
+      return false;
+    }
+    if (gateway.match(IP) === null || gateway === '') {
+      dispatch(addMessage(i18n.t('warning.vmware.gateway'), MESSAGE_TYPES.ERROR));
+      return false;
+    }
+    if (dns.length > 0) {
+      dns = dns.split(',');
+      for (let i = 0; i < dns.length; i += 1) {
+        if (dns[i].match(IP) == null) {
+          dispatch(addMessage(i18n.t('warning.vmware.dns'), MESSAGE_TYPES.ERROR));
+          return false;
+        }
+      }
     }
   }
   return true;

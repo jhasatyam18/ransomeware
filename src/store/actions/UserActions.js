@@ -1,7 +1,7 @@
 // import { addMessage, clearMessages } from './MessageActions';
 import jsCookie from 'js-cookie';
 import * as Types from '../../constants/actionTypes';
-import { API_AUTHENTICATE, API_AWS_REGIONS, API_AZURE_REGIONS, API_CHANGE_PASSWORD, API_GCP_REGIONS, API_INFO, API_SCRIPTS, API_USERS, API_USER_PRIVILEGES, API_USER_SCRIPT } from '../../constants/ApiConstants';
+import { API_AUTHENTICATE, API_AWS_REGIONS, API_AZURE_REGIONS, API_CHANGE_NODE_PASSWORD, API_CHANGE_PASSWORD, API_GCP_REGIONS, API_INFO, API_SCRIPTS, API_USERS, API_USER_PRIVILEGES, API_USER_SCRIPT } from '../../constants/ApiConstants';
 import { APP_TYPE, PLATFORM_TYPES, STATIC_KEYS, VMWARE_OBJECT } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH } from '../../constants/RouterConstants';
@@ -11,7 +11,7 @@ import { getCookie, setCookie } from '../../utils/CookieUtils';
 import { onInit } from '../../utils/HistoryUtil';
 import { getMatchingInsType, getValue, getVMwareLocationPath, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { fetchByDelay } from '../../utils/SlowFetch';
-import { getUnreadAlerts } from './AlertActions';
+import { acknowledgeNodeAlert, getUnreadAlerts } from './AlertActions';
 import { fetchDRPlanById, fetchDrPlans } from './DrPlanActions';
 import { fetchEmailConfig, fetchEmailRecipients } from './EmailActions';
 import { fetchLicenses } from './LicenseActions';
@@ -670,6 +670,30 @@ export function loadRecoveryLocationData(site) {
     },
     (err) => {
       dispatch(hideApplicationLoader('ui.vmware.recovery.locations'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+  };
+}
+
+export function changeSystemPassword(nodeID, selectedAlerts) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const password = getValue('user.newPassword', values) || '';
+    dispatch(showApplicationLoader('CHANGE_PASSWORD', 'Changing password...'));
+    const obj = createPayload(API_TYPES.PUT, { newPassword: password });
+    const uID = getCookie(APPLICATION_API_USER_ID);
+    const URL = API_CHANGE_NODE_PASSWORD.replace('<id>', uID).replace('<nodeid>', nodeID);
+    return callAPI(URL, obj).then((json) => {
+      dispatch(hideApplicationLoader('CHANGE_PASSWORD'));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      }
+      dispatch(acknowledgeNodeAlert(selectedAlerts));
+      dispatch(closeModal());
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('CHANGE_PASSWORD'));
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
   };

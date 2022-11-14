@@ -4,7 +4,7 @@ import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { callAPI } from '../../utils/ApiUtils';
 import { getAppDateFormat } from '../../utils/AppUtils';
 import { getValue } from '../../utils/InputUtils';
-import { addHeaderPage, addTableFromHtml, createPDFDoc, exportDoc, systemOverview } from '../../utils/PdfUtil';
+import { addFooters, addHeaderPage, addTableFromHtml, exportDoc, createPDFDoc, systemOverview } from '../../utils/ReportUtils';
 import { fetchDashboardTitles, fetchRecoveryStats, fetchReplicationStats } from './DashboardActions';
 import { addMessage } from './MessageActions';
 import { hideApplicationLoader, showApplicationLoader } from './UserActions';
@@ -323,6 +323,7 @@ export function exportReportToPDF() {
         addTableFromHtml(doc, 'rpt-recovery_jobs', 'Recovery Jobs');
       }
       const d = new Date();
+      addFooters(doc);
       exportDoc(doc, `Datamotive-report-${getAppDateFormat(d, true)}`);
     } catch (error) {
       dispatch(hideApplicationLoader('PDF_REPORT'));
@@ -334,10 +335,3 @@ export function exportReportToPDF() {
 function isPlanSpecificData(id) {
   return !(`${id}` === '0' || `${id}` === '');
 }
-// function getPDFTableFormat(columns) {
-//   const pdfTableFormat = [];
-//   columns.forEach((col) => {
-//     const c = { title: col.label, dataKey: col.field };
-//     pdfTableFormat.push(c);
-//   });
-// }
