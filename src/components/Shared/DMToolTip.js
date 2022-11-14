@@ -10,7 +10,7 @@ function DMToolTip(props) {
   return (
     <div className="info__container">
       <i className="fas fa-info-circle info__icon" ref={localRef} />
-      <Tooltip placement="auto" isOpen={tooltipOpen} target={localRef} toggle={toggle} autohide={false} style={{ minWidth: '200px', maxWidth: '350px' }}>
+      <Tooltip placement="auto" isOpen={tooltipOpen} target={localRef} toggle={toggle} autohide={false} className="dmtooltip">
         {t(tooltip)}
       </Tooltip>
     </div>

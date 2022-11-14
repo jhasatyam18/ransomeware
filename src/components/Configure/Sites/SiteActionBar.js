@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { openModal } from '../../../store/actions/ModalActions';
 import { MODAL_CONFIGURE_NEW_SITE, MODAL_CONFIRMATION_WARNING } from '../../../constants/Modalconstant';
-import { clearValues, fetchRegions, fetchAvailibilityZones, valueChange } from '../../../store/actions';
+import { clearValues, valueChange, fetchRegions } from '../../../store/actions';
 import { fetchNodes } from '../../../store/actions/NodeActions';
-import { deleteSites } from '../../../store/actions/SiteActions';
+import { deleteSites, fetchAvailibilityZones } from '../../../store/actions/SiteActions';
+
 import { FIELDS } from '../../../constants/FieldsConstant';
 import ActionButton from '../../Common/ActionButton';
 import { STATIC_KEYS } from '../../../constants/InputConstants';
@@ -62,6 +63,9 @@ class SiteActionBar extends Component {
         dispatch(valueChange(key, selectedSites[siteKey][parts[1]][parts[2]]));
       }
     });
+    if (typeof selectedSites[siteKey].node.id !== 'undefined' && selectedSites[siteKey].node.id !== '') {
+      dispatch(valueChange('configureSite.node', `${selectedSites[siteKey].node.id}`));
+    }
     const options = { isEdit: true, id: selectedSites[siteKey].id, title: 'Reconfigure Site ' };
     dispatch(openModal(MODAL_CONFIGURE_NEW_SITE, options));
   }

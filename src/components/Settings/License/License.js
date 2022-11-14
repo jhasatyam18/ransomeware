@@ -15,7 +15,13 @@ function License(props) {
   const { dispatch, t, settings, user } = props;
   const { licenses = [] } = settings;
   useEffect(() => {
-    dispatch(fetchLicenses());
+    let isUnmounting = false;
+    if (!isUnmounting) {
+      dispatch(fetchLicenses());
+    }
+    return () => {
+      isUnmounting = true;
+    };
   }, []);
 
   function openInstallNewModal() {

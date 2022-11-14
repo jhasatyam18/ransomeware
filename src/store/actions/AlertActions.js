@@ -1,12 +1,15 @@
+import i18n from 'i18next';
+import { getValue } from '../../utils/InputUtils';
+import { MODAL_NODE_PASSWORD_CHANGE } from '../../constants/Modalconstant';
 import * as Types from '../../constants/actionTypes';
-import { API_ACKNOWLEDGE_ALERT, API_ALERT_TAKE_VM_ACTION, API_FETCH_ALERTS, API_FETCH_DR_PLAN_BY_ID, API_FETCH_EVENT_BY_ID, API_FETCH_UNREAD_ALERTS } from '../../constants/ApiConstants';
-import { EVENT_LEVELS, VM_CONFIG_ACTION_EVENT, VM_DISK_ACTION_EVENT } from '../../constants/EventConstant';
+import { API_ACKNOWLEDGE_ALERT, API_ACKNOWLEDGE_NODE_ALERT, API_ALERT_TAKE_VM_ACTION, API_FETCH_ALERTS, API_FETCH_DR_PLAN_BY_ID, API_FETCH_EVENT_BY_ID, API_FETCH_UNREAD_ALERTS, API_NODE_ALERTS } from '../../constants/ApiConstants';
+import { EVENT_LEVELS, PPLAN_EVENTS, MONITOR_NODE_AUTH, VM_CONFIG_ACTION_EVENT, VM_DISK_ACTION_EVENT } from '../../constants/EventConstant';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { drPlanDetailsFetched, initReconfigureProtectedVM, openEditProtectionPlanWizard } from './DrPlanActions';
 import { addMessage } from './MessageActions';
-import { closeModal } from './ModalActions';
-import { hideApplicationLoader, showApplicationLoader } from './UserActions';
+import { closeModal, openModal } from './ModalActions';
+import { hideApplicationLoader, refresh, showApplicationLoader, valueChange } from './UserActions';
 
 /**
  * Action to fetch all alerts
@@ -89,6 +92,24 @@ export function acknowledgeAlert(alert) {
   };
 }
 
+export function acknowledgeNodeAlert(alert) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    dispatch(showApplicationLoader('ACKNOWLEDGING_ALERT', i18n.t('succes.ackn.alert')));
+    const obj = createPayload(API_TYPES.POST, alert);
+    const alertStr = getValue('ui.ack.node.alerts.id', values);
+    const URL = API_ACKNOWLEDGE_NODE_ALERT.replace('<alertid>', alertStr);
+    return callAPI(URL, obj)
+      .then(() => {
+        dispatch(hideApplicationLoader('ACKNOWLEDGING_ALERT'));
+      },
+      (err) => {
+        dispatch(hideApplicationLoader('ACKNOWLEDGING_ALERT'));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  };
+}
 /**
  *
  * @param data, type , action
@@ -121,8 +142,40 @@ export function takeVMAction(alert, associatedEvent) {
     }
     if (VM_CONFIG_ACTION_EVENT.indexOf(associatedEvent.type) !== -1) {
       dispatch(closeModal());
-      dispatch(initReconfigureProtectedVM(null, null, associatedEvent));
+      dispatch(initReconfigureProtectedVM(null, null, associatedEvent, alert));
     }
+    if (PPLAN_EVENTS.indexOf(associatedEvent.type) !== -1) {
+      dispatch(closeModal());
+      dispatch(initEditPlanAction(associatedEvent, alert));
+    }
+    if (MONITOR_NODE_AUTH.indexOf(associatedEvent.type) !== -1) {
+      dispatch(closeModal());
+      dispatch(resetSystemCredentials(associatedEvent, alert));
+    }
+  };
+}
+
+export function resetSystemCredentials(associatedEvent, alert) {
+  return (dispatch) => {
+    let { impactedObjectURNs } = associatedEvent;
+    impactedObjectURNs = impactedObjectURNs.split(':');
+    let options = '';
+    let nodeID = '';
+    if (impactedObjectURNs.length > 2) {
+      const nodeName = impactedObjectURNs[impactedObjectURNs.length - 2];
+      nodeID = impactedObjectURNs[impactedObjectURNs.length - 1];
+      options = { title: i18n.t('title.system.cred'), nodeName, nodeID };
+    } else {
+      dispatch(addMessage(i18n.t('error.ackn.pplan.alert'), MESSAGE_TYPES.ERROR));
+    }
+    dispatch(valueChange('user.newPassword', ''));
+    dispatch(valueChange('user.confirmPassword', ''));
+    const api = [dispatch(getAssociatedNodeAlerts(nodeID, alert.id))];
+    return Promise.all(api).then(() => {
+      dispatch(openModal(MODAL_NODE_PASSWORD_CHANGE, options));
+    }, (err) => {
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
   };
 }
 
@@ -160,10 +213,33 @@ export function takeActionOnVMAlert(alert) {
           dispatch(addMessage('Action initiated successfully', MESSAGE_TYPES.SUCCESS));
           dispatch(acknowledgeAlert(alert));
           dispatch(closeModal());
+          dispatch(refresh());
         }
       },
       (err) => {
         dispatch(hideApplicationLoader('VM_ACTION'));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  };
+}
+
+export function getAssociatedNodeAlerts(nodeID, alertID) {
+  return (dispatch) => {
+    let url = API_NODE_ALERTS.replace('<id>', nodeID);
+    url = url.replace('<alertid>', alertID);
+    return callAPI(url)
+      .then((json) => {
+        dispatch(hideApplicationLoader('NODE_ALERTS'));
+        if (json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          const idStr = json.map((el) => el.id);
+          dispatch(valueChange('ui.ack.node.alerts.id', idStr.join(',')));
+          dispatch(valueChange('ui.vm.alerts', json));
+        }
+      },
+      (err) => {
+        dispatch(hideApplicationLoader('NODE_ALERTS'));
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
   };

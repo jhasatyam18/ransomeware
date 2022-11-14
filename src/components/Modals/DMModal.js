@@ -16,6 +16,8 @@ import ModalNicConfig from './ModalNicConfig';
 import ModalLicense from './ModalLicense';
 import ModalBandwidthConfig from './ModalBandwidthConfig';
 import ModalScripts from './ModalScripts';
+import ModalLocationTree from './ModalLocationTree';
+import ModalChangeNodePassword from './ModalChangeNodePassword';
 
 class DMModal extends Component {
   constructor() {
@@ -59,6 +61,10 @@ class DMModal extends Component {
           return <ModalLicense options={options} />;
         case MODALS.MODAL_USER_SCRIPT:
           return <ModalScripts options={options} />;
+        case MODALS.MODAL_LOCATION_CONFIG:
+          return <ModalLocationTree dispatch={dispatch} user={user} options={options} fieldKey={options.fieldKey} />;
+        case MODALS.MODAL_NODE_PASSWORD_CHANGE:
+          return <ModalChangeNodePassword dispatch={dispatch} user={user} options={options} fieldKey={options.fieldKey} />;
         default:
           return (<div>404</div>);
       }

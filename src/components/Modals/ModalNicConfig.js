@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Card, CardBody, Container, Form } from 'reactstrap';
+import { Card, CardBody, Col, Container, Form, Row } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
+import { IP_REGEX } from '../../constants/ValidationConstants';
+import { onGCPNetworkChange } from '../../store/actions/GcpActions';
+import { onAwsPublicIPChecked } from '../../store/actions/AwsActions';
+import DMSearchSelect from '../Shared/DMSearchSelect';
 import DMFieldCheckbox from '../Shared/DMFieldCheckbox';
 import DMFieldRadio from '../Shared/DMFieldRadio';
 import DMFieldSelect from '../Shared/DMFieldSelect';
@@ -10,11 +14,10 @@ import DMFieldText from '../Shared/DMFieldText';
 import DMMultiSelect from '../Shared/DMMultiSelect';
 import { FIELD_TYPE, MULTISELECT_ITEM_COMP } from '../../constants/FieldsConstant';
 import { PLATFORM_TYPES, UI_WORKFLOW } from '../../constants/InputConstants';
-import { onAwsCopyNetConfigChange, onAwsPublicIPChecked, onAwsSubnetChange, onAwsVPCChange, onGCPNetworkChange, valueChange } from '../../store/actions';
+import { onAwsCopyNetConfigChange, onAwsSubnetChange, onAwsVPCChange, valueChange } from '../../store/actions';
 import { closeModal } from '../../store/actions/ModalActions';
-import { getAvailibilityZoneOptions, getAWSElasticIPOptions, getGCPExternalIPOptions, getGCPNetworkTierOptions, getGCPSubnetOptions, getNetworkOptions, getSecurityGroupOption, getSubnetOptions, getValue, getVPCOptions, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
+import { getAvailibilityZoneOptions, getAWSElasticIPOptions, getGCPExternalIPOptions, getGCPNetworkTierOptions, getGCPSubnetOptions, getNetworkOptions, getSecurityGroupOption, getSubnetOptions, getValue, getVMwareAdpaterOption, getVPCOptions, getWMwareNetworkOptions, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { isEmpty, validateNicConfig, validateOptionalIPAddress } from '../../utils/validationUtils';
-
 /**
  * Component for network adapter config
  */
@@ -68,6 +71,16 @@ class ModalNicConfig extends Component {
       const networkTier = getValue(`${networkKey}-networkTier`, values);
       this.setState({ oldConfig: { network, subnet, privateIP, publicIP, networkTier } });
     }
+    if (recoveryPlatform === PLATFORM_TYPES.VMware) {
+      const network = getValue(`${networkKey}-network`, values);
+      const adapterType = getValue(`${networkKey}-adapterType`, values);
+      const macAddress = getValue(`${networkKey}-macAddress`, values);
+      const publicIP = getValue(`${networkKey}-publicIP`, values) || '';
+      const netmask = getValue(`${networkKey}-netmask`, values) || '';
+      const gateway = getValue(`${networkKey}-gateway`, values) || '';
+      const dnsserver = getValue(`${networkKey}-dnsserver`, values) || '';
+      this.setState({ oldConfig: { network, adapterType, publicIP, macAddress, netmask, gateway, dnsserver } });
+    }
   }
 
   resetInitialData() {
@@ -94,6 +107,16 @@ class ModalNicConfig extends Component {
       dispatch(valueChange(`${networkKey}-privateIP`, privateIP));
       dispatch(valueChange(`${networkKey}-publicIP`, publicIP));
       dispatch(valueChange(`${networkKey}-networkTier`, networkTier));
+    }
+    if (recoveryPlatform === PLATFORM_TYPES.VMware) {
+      const { network, adapterType, macAddress, publicIP, netmask, gateway, dnsserver } = oldConfig;
+      dispatch(valueChange(`${networkKey}-network`, network));
+      dispatch(valueChange(`${networkKey}-adapterType`, adapterType));
+      dispatch(valueChange(`${networkKey}-macAddress`, macAddress));
+      dispatch(valueChange(`${networkKey}-publicIP`, publicIP));
+      dispatch(valueChange(`${networkKey}-netmask`, netmask));
+      dispatch(valueChange(`${networkKey}-gateway`, gateway));
+      dispatch(valueChange(`${networkKey}-dnsserver`, dnsserver));
     }
   }
 
@@ -129,7 +152,7 @@ class ModalNicConfig extends Component {
       <>
         <Container>
           <Card>
-            <SimpleBar style={{ maxHeight: '400px' }}>
+            <SimpleBar className="modal_nic_simplbar">
               <CardBody>
                 <Form>
                   <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-vpcId`} field={vpc} user={user} />
@@ -188,6 +211,103 @@ class ModalNicConfig extends Component {
     );
   }
 
+  renderVMwareConfig() {
+    const { user, dispatch, options, t } = this.props;
+    const { values } = user;
+    const { networkKey } = options;
+    const networkField = { label: '', description: '', type: FIELD_TYPE.SELECT_SEARCH, shouldShow: true, defaultValue: false, options: (u, f) => getWMwareNetworkOptions(u, f), fieldInfo: 'info.vmware.network' };
+    const AdapterField = { label: '', description: '', type: FIELD_TYPE.SELECT, options: (u, f) => getVMwareAdpaterOption(u, f), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select Adapter Type', shouldShow: true, fieldInfo: 'info.vmware.adapter.type' };
+    const MacAddressField = { label: '', description: '', type: FIELD_TYPE.TEXT, options: (u, f) => getVPCOptions(u, f), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select Mac address', shouldShow: true, fieldInfo: 'info.vmware.mac.address' };
+    const staticIP = { fieldInfo: 'info.protectionplan.network.vmware.staticip', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.SELECT, shouldShow: true, errorMessage: 'Configure static IP Address', validate: (v, u) => isEmpty(v, u) };
+    const ip = { label: '', description: '', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], validate: (value, u) => isEmpty(value, u), errorMessage: 'Please add IP address', shouldShow: true, fieldInfo: 'info.vmware.ip.addr' };
+    const subnet = { label: '', description: '', type: FIELD_TYPE.TEXT, validate: (value, u) => isEmpty(value, u), errorMessage: 'Please add Subnet', shouldShow: true, fieldInfo: 'info.vmware.subnet' };
+    const gateway = { label: '', description: '', type: FIELD_TYPE.TEXT, validate: (value, u) => isEmpty(value, u), errorMessage: 'Please add Gateway', shouldShow: true, fieldInfo: 'info.vmware.network.gateway' };
+    const dns = { label: '', description: '', type: FIELD_TYPE.TEXT, validate: (value, u) => isEmpty(value, u), errorMessage: 'Please add DNS', shouldShow: true, fieldInfo: 'info.vmware.primary.dns' };
+    const staticip = getValue(`${networkKey}-isPublic`, values);
+    return (
+      <Container>
+        <Card className="nic_modal_Width">
+          <CardBody>
+            <Form>
+              <Row>
+                <Col sm={4}>
+                  {t('title.network.name')}
+                </Col>
+                <Col sm={8}>
+                  <DMSearchSelect hideLabel user={user} dispatch={dispatch} fieldKey={`${networkKey}-network`} field={networkField} />
+                </Col>
+              </Row>
+              <Row>
+                <Col sm={4}>
+                  {t('title.adapter.type')}
+                </Col>
+                <Col sm={8}>
+                  <DMFieldSelect hideLabel dispatch={dispatch} fieldKey={`${networkKey}-adapterType`} field={AdapterField} user={user} />
+                </Col>
+              </Row>
+              <Row>
+                <Col sm={4}>
+                  {t('title.mac.address')}
+                </Col>
+                <Col sm={8}>
+                  <DMFieldText hideLabel dispatch={dispatch} fieldKey={`${networkKey}-macAddress`} field={MacAddressField} user={user} />
+                </Col>
+              </Row>
+              <Row style={{ marginTop: '10px' }}>
+                <Col sm={4}>
+                  {t('title.staticip')}
+                </Col>
+                <Col sm={6}>
+                  <DMFieldCheckbox hideLabel dispatch={dispatch} fieldKey={`${networkKey}-isPublic`} field={staticIP} user={user} />
+                </Col>
+              </Row>
+              {staticip ? (
+                <>
+                  <Row className="margin-top-15">
+                    <Col sm={4}>
+                      {t('title.ip')}
+                    </Col>
+                    <Col sm={8}>
+                      <DMFieldText hideLabel dispatch={dispatch} fieldKey={`${networkKey}-publicIP`} field={ip} user={user} />
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col sm={4}>
+                      {t('subnet')}
+                    </Col>
+                    <Col sm={8}>
+                      <DMFieldText hideLabel dispatch={dispatch} fieldKey={`${networkKey}-netmask`} field={subnet} user={user} />
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col sm={4}>
+                      {t('gateway')}
+                    </Col>
+                    <Col sm={8}>
+                      <DMFieldText hideLabel dispatch={dispatch} fieldKey={`${networkKey}-gateway`} field={gateway} user={user} />
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col sm={4}>
+                      {t('dns')}
+                    </Col>
+                    <Col sm={8}>
+                      <DMFieldText hideLabel dispatch={dispatch} fieldKey={`${networkKey}-dnsserver`} field={dns} user={user} />
+                    </Col>
+                  </Row>
+                </>
+              ) : null}
+            </Form>
+          </CardBody>
+        </Card>
+        <div className="modal-footer">
+          <button type="button" className="btn btn-secondary" onClick={this.onCancel}>Cancel</button>
+          <button type="button" className="btn btn-success" onClick={this.onSave}>Save</button>
+        </div>
+      </Container>
+    );
+  }
+
   render() {
     const { user } = this.props;
     const { values } = user;
@@ -195,6 +315,8 @@ class ModalNicConfig extends Component {
     switch (recoveryPlatform) {
       case PLATFORM_TYPES.GCP:
         return this.renderGCPConfig();
+      case PLATFORM_TYPES.VMware:
+        return this.renderVMwareConfig();
       default:
         return this.renderAWSConfig();
     }

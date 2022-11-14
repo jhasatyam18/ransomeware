@@ -1,14 +1,16 @@
 import ip from 'ip';
+import i18n from 'i18next';
 import { addErrorMessage, hideApplicationLoader, removeErrorMessage, showApplicationLoader, valueChange } from '../store/actions';
 import { addMessage } from '../store/actions/MessageActions';
+import { getVMwareVMSProps } from '../store/actions/UserActions';
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
 import { MESSAGE_TYPES } from '../constants/MessageConstants';
 import { API_TYPES, callAPI, createPayload } from './ApiUtils';
 import { API_VALIDATE_MIGRATION, API_VALIDATE_RECOVERY, API_VALIDATE_REVERSE_PLAN } from '../constants/ApiConstants';
-import { getRecoveryPayload, getReversePlanPayload, getVMNetworkConfig } from './PayloadUtil';
+import { getRecoveryPayload, getReversePlanPayload, getVMNetworkConfig, getVMwareNetworkConfig } from './PayloadUtil';
 import { IP_REGEX } from '../constants/ValidationConstants';
-import { PLATFORM_TYPES, STATIC_KEYS } from '../constants/InputConstants';
-import { createVMConfigStackObject, getValue, isAWSCopyNic } from './InputUtils';
+import { PLATFORM_TYPES, RECOVERY_STATUS, STATIC_KEYS, UI_WORKFLOW } from '../constants/InputConstants';
+import { createVMConfigStackObject, getValue, isAWSCopyNic, validateMacAddressForVMwareNetwork, excludeKeys } from './InputUtils';
 
 export function isRequired(value) {
   if (!value) {
@@ -48,6 +50,7 @@ export function validateField(field, fieldKey, value, dispatch, user) {
       return false;
     }
   }
+
   if (errors[fieldKey]) {
     dispatch(removeErrorMessage(fieldKey));
   }
@@ -56,6 +59,19 @@ export function validateField(field, fieldKey, value, dispatch, user) {
 
 export function isEmpty({ value }) {
   return (typeof value === 'undefined' || typeof value === 'string' && value.trim() === '' || value === null);
+}
+
+export function isMemoryValueValid({ user, fieldKey }) {
+  const { values } = user;
+  const memVal = getValue(`${fieldKey}-memory`, values);
+  const units = getValue(`${fieldKey}-unit`, values);
+  if (typeof memVal === 'undefined' || typeof units === 'undefined' || memVal === '' || units === '') {
+    return true;
+  }
+  if (memVal > 4 && units === 'TB') {
+    return true;
+  }
+  return false;
 }
 
 export function validateConfigureSite(user, dispatch) {
@@ -109,6 +125,30 @@ export function validateDrSiteSelection({ user, fieldKey }) {
 
 export function validateDRPlanProtectData({ user, dispatch }) {
   const { values } = user;
+  const vmwareVMS = getValue('ui.site.vmware.selectedvms', values);
+  if (typeof vmwareVMS !== 'undefined' && vmwareVMS) {
+    // Below code is to fetch the datacenter from the the source dev center and in case of test recovery we don't want it
+    const workFlow = getValue('ui.workflow', values) || '';
+    if (workFlow !== UI_WORKFLOW.TEST_RECOVERY) {
+      const vmwareVMSKeys = Object.keys(vmwareVMS);
+      if (!vmwareVMSKeys || vmwareVMSKeys.length === 0) {
+        dispatch(addMessage('Select virtual machine.', MESSAGE_TYPES.ERROR));
+        return false;
+      }
+      dispatch(getVMwareVMSProps(vmwareVMS));
+      return true;
+    }
+  }
+  const vms = getValue('ui.site.seletedVMs', values);
+  if (!vms || Object.keys(vms).length === 0) {
+    dispatch(addMessage('Select virtual machine.', MESSAGE_TYPES.ERROR));
+    return false;
+  }
+  return true;
+}
+
+export function validateInTargetDRPLanProtectedData({ user, dispatch }) {
+  const { values } = user;
   const vms = getValue('ui.site.seletedVMs', values);
   if (!vms || Object.keys(vms).length === 0) {
     dispatch(addMessage('Select virtual machine.', MESSAGE_TYPES.ERROR));
@@ -128,6 +168,10 @@ export async function validateMigrationVMs({ user, dispatch }) {
   if (initialCheckPass) {
     try {
       const vms = getValue('ui.site.seletedVMs', values);
+      const autoMigrate = getValue('ui.automate.migration', values);
+      if (autoMigrate) {
+        return true;
+      }
       if (vms) {
         const payload = getRecoveryPayload(user, true);
         const obj = createPayload(API_TYPES.POST, { ...payload.recovery });
@@ -155,6 +199,9 @@ export function validateVMConfiguration({ user, dispatch }) {
   const vms = getValue('ui.site.seletedVMs', values);
   let fields = {};
   Object.keys(vms).forEach((vm) => {
+    if (isRemovedOrRecoveredVM(vms[vm])) {
+      return;
+    }
     const vmConfig = createVMConfigStackObject(vm, user);
     const { data } = vmConfig;
     data.forEach((item) => {
@@ -170,7 +217,6 @@ export function validateVMConfiguration({ user, dispatch }) {
     return false;
   }
   // validate Network
-
   return validateNetworkConfig(user, dispatch);
 }
 
@@ -183,7 +229,7 @@ export function validateNetworkConfig(user, dispatch) {
     case PLATFORM_TYPES.GCP:
       return validateGCPNetworks(user, dispatch);
     default:
-      return true;
+      return validateVMware(user, dispatch);
   }
 }
 
@@ -196,6 +242,9 @@ export function validateGCPNetworks(user, dispatch) {
   // empty config
   const ips = [];
   Object.keys(vms).forEach((vm) => {
+    if (isRemovedOrRecoveredVM(vms[vm])) {
+      return;
+    }
     const netConfigs = getVMNetworkConfig(`${vm}`, values);
     const vpc = [];
     const vmName = vms[vm].name;
@@ -247,11 +296,16 @@ export function validateAWSNetworks(user, dispatch) {
   const elasticIPs = [];
   let isClean = true;
   let message = '';
+  const messages = [];
   Object.keys(vms).forEach((vm) => {
+    if (isRemovedOrRecoveredVM(vms[vm])) {
+      return;
+    }
     const netConfigs = getVMNetworkConfig(`${vm}`, values);
     const vmName = vms[vm].name;
     if (netConfigs.length === 0) {
       message = `${vmName}: Network configuration required`;
+      messages.push(message);
       isClean = false;
     }
     const vpc = [];
@@ -260,10 +314,12 @@ export function validateAWSNetworks(user, dispatch) {
       if (netConfigs[i].subnet === '') {
         isClean = false;
         message = `${vmName}: Subnet missing for Nic-${i}`;
+        messages.push(message);
       }
       if (netConfigs[i].securityGroups === '' || typeof netConfigs[i].securityGroups === 'undefined') {
         isClean = false;
         message = `${vmName}: SecurityGroup missing for Nic-${i}`;
+        messages.push(message);
       }
       if (typeof netConfigs[i].network !== 'undefined' && netConfigs[i].network !== '') {
         elasticIPs.push(netConfigs[i].network);
@@ -281,6 +337,7 @@ export function validateAWSNetworks(user, dispatch) {
     // nics with different vpcid
     if (vpcSet.length > 1) {
       message = `${vmName}: All nics of an instance must belong to same VPC.`;
+      messages.push(message);
       isClean = false;
     }
 
@@ -288,6 +345,7 @@ export function validateAWSNetworks(user, dispatch) {
     // nics with different vpcid
     if (zoneSet.length > 1) {
       message = `${vmName}: All nics of an instance must belong to same Availability Zone.`;
+      messages.push(message);
       isClean = false;
     }
   });
@@ -298,8 +356,40 @@ export function validateAWSNetworks(user, dispatch) {
   if (duplicates.length > 0) {
     isClean = false;
     message = 'Same elastic ip is mapped with multiple networks';
+    messages.push(message);
   }
 
+  if (!isClean) {
+    dispatch(addMessage(messages.join(', '), MESSAGE_TYPES.ERROR));
+  }
+  return isClean;
+}
+
+export function validateVMware(user, dispatch) {
+  const { values } = user;
+  const vms = getValue('ui.site.seletedVMs', values);
+  let isClean = true;
+  let message = '';
+  Object.keys(vms).forEach((vm) => {
+    if (isRemovedOrRecoveredVM(vms[vm])) {
+      return;
+    }
+    const netConfigs = getVMwareNetworkConfig(`${vm}`, values);
+    const vmName = vms[vm].name;
+    if (netConfigs.length === 0) {
+      message = `${vmName}: Network configuration required`;
+      isClean = false;
+    }
+    for (let i = 0; i < netConfigs.length; i += 1) {
+      if (netConfigs[i].network === '' || typeof netConfigs[i].network === 'undefined') {
+        isClean = false;
+        message = `${vmName}: network is  missing for Nic-${i}`;
+      } else if (typeof netConfigs[i].adapterType === 'undefined') {
+        isClean = false;
+        message = `${vmName}: adapterType missing for Nic-${i}`;
+      }
+    }
+  });
   if (!isClean) {
     dispatch(addMessage(message, MESSAGE_TYPES.ERROR));
   }
@@ -385,11 +475,11 @@ export async function validateReversePlan({ user, dispatch }) {
         dispatch(addMessage('Recovery site is not reachable. Please select a different recovery site.', MESSAGE_TYPES.ERROR, true));
         return false;
       }
-      if (response.failedVMs === null) {
+      if (response.failedEntities === null) {
         return true;
       }
-      if (response.failedVMs.length !== 0) {
-        dispatch(addMessage(`[${response.failedVMs.join(', ')}] The last replication job has failed or snapshots across the sites are not in sync. Please select full incremental for replication type.`, MESSAGE_TYPES.ERROR, true));
+      if (response.failedEntities.length !== 0) {
+        dispatch(addMessage(`[${response.failedEntities.join(', ')}] The last replication job has failed or snapshots across the sites are not in sync. Please select full incremental for replication type.`, MESSAGE_TYPES.ERROR, true));
       }
       return false;
     } catch (err) {
@@ -436,6 +526,8 @@ export function validateNicConfig(dispatch, user, options) {
       return validateAWSNic(dispatch, user, options);
     case PLATFORM_TYPES.GCP:
       return validateGCPNicConfig(dispatch, user, options);
+    case PLATFORM_TYPES.VMware:
+      return validateVMwareNicConfig(dispatch, user, options);
     default:
       return true;
   }
@@ -474,6 +566,71 @@ function validateGCPNicConfig(dispatch, user, options) {
   }
   return true;
 }
+
+function validateVMwareNicConfig(dispatch, user, options) {
+  const { values } = user;
+  const { networkKey } = options;
+  const network = getValue(`${networkKey}-network`, values) || '';
+  const adapterType = getValue(`${networkKey}-adapterType`, values) || '';
+  const macAddress = getValue(`${networkKey}-macAddress-value`, values) || '';
+  const staticip = getValue(`${networkKey}-isPublic`, values) || '';
+  if (network === '' || network === '-') {
+    dispatch(addMessage('Select network', MESSAGE_TYPES.ERROR));
+    return false;
+  }
+  if (adapterType === '') {
+    dispatch(addMessage('Adapter type is required', MESSAGE_TYPES.ERROR));
+    return false;
+  }
+  if (macAddress) {
+    const validMac = validateMacAddressForVMwareNetwork(macAddress);
+    if (!validMac) {
+      dispatch(addMessage('Please fill the right mac Address', MESSAGE_TYPES.ERROR));
+      return false;
+    }
+  }
+  if (staticip) {
+    const validated = validateForStaticIP(networkKey, dispatch, values);
+    if (!validated) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function validateForStaticIP(network, dispatch, values) {
+  const Ip = getValue(`${network}-publicIP`, values) || '';
+  const subnet = getValue(`${network}-netmask`, values) || '';
+  const gateway = getValue(`${network}-gateway`, values) || '';
+  let dns = getValue(`${network}-dnsserver`, values) || '';
+  const IP = new RegExp(IP_REGEX);
+  // const DNS = new RegExp(DNS_REGEX);
+  if (Ip) {
+    if (Ip.match(IP) === null) {
+      dispatch(addMessage(i18n.t('warning.vmware.ip.addr'), MESSAGE_TYPES.ERROR));
+      return false;
+    }
+    if (subnet.match(IP) === null || subnet === '') {
+      dispatch(addMessage(i18n.t('warning.vmware.netmask'), MESSAGE_TYPES.ERROR));
+      return false;
+    }
+    if (gateway.match(IP) === null || gateway === '') {
+      dispatch(addMessage(i18n.t('warning.vmware.gateway'), MESSAGE_TYPES.ERROR));
+      return false;
+    }
+    if (dns.length > 0) {
+      dns = dns.split(',');
+      for (let i = 0; i < dns.length; i += 1) {
+        if (dns[i].match(IP) == null) {
+          dispatch(addMessage(i18n.t('warning.vmware.dns'), MESSAGE_TYPES.ERROR));
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+
 function validateAWSNic(dispatch, user, options) {
   const { networkKey } = options;
   const { values, errors } = user;
@@ -595,14 +752,21 @@ export function vpcSubnetMatch(vpcCidr, subnetCidr) {
   if (vpcCidr === '' || subnetCidr === '') {
     return false;
   }
-  const vpc = ip.cidrSubnet(vpcCidr);
+  const associatedCIDRs = vpcCidr.split(',');
+  let isSubnetAssociated = false;
   const sub = ip.cidrSubnet(subnetCidr);
-  if (vpc && sub) {
-    const firstIPMatch = ip.cidrSubnet(vpcCidr).contains(sub.firstAddress);
-    const lastIPMatch = ip.cidrSubnet(vpcCidr).contains(sub.lastAddress);
-    return firstIPMatch && lastIPMatch;
+  for (let i = 0; i < associatedCIDRs.length; i += 1) {
+    const vpc = ip.cidrSubnet(associatedCIDRs[i]);
+    if (vpc && sub) {
+      const firstIPMatch = ip.cidrSubnet(associatedCIDRs[i]).contains(sub.firstAddress);
+      const lastIPMatch = ip.cidrSubnet(associatedCIDRs[i]).contains(sub.lastAddress);
+      if (firstIPMatch && lastIPMatch) {
+        isSubnetAssociated = true;
+        break;
+      }
+    }
   }
-  return false;
+  return isSubnetAssociated;
 }
 
 export function isIPsPartOfCidr(cidr, ipAddr) {
@@ -648,4 +812,71 @@ export function validateVMSelection(user, dispatch) {
     return false;
   }
   return true;
+}
+
+export function changedVMRecoveryConfigurations(payload, user, dispatch) {
+  const { values } = user;
+  const { instanceDetails } = payload.drplan.recoveryEntities;
+  const recoverVms = getValue('ui.site.recoveryEntities', values);
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+  let res = false;
+  res = checkChangesForArrayInObject(recoverVms, instanceDetails, recoveryPlatform, 'sourceMoref');
+  if (res) {
+    dispatch(addMessage('Changes on recovery machine will be applied in next replication', MESSAGE_TYPES.WARNING));
+  }
+}
+
+export function checkChangesForArrayInObject(recoveryArr, payloadArr, recoveryPlatform, condition) {
+  let clear = false;
+  if (payloadArr.length !== recoveryArr.length) {
+    return true;
+  }
+  // all the fields which are empty and are in EXCLUDE_KEYS_RECOVERY_CONFIGURATION keys list all of them will be discarded from getting checked
+  for (let i = 0; i < payloadArr.length; i += 1) {
+    const keys = Object.keys(recoveryArr[i]);
+    const rvm = recoveryArr[i];
+    const ins = payloadArr[i];
+    if (rvm[condition] === ins[condition]) {
+      for (let k = 0; k < keys.length; k += 1) {
+        if (keys[k] === 'networks') {
+          clear = checkChangesForArrayInObject(rvm[keys[k]], ins[keys[k]], recoveryPlatform, 'id');
+          if (clear) {
+            return clear;
+          }
+        } else if (rvm[keys[k]] !== '' && excludeKeys(keys[k], recoveryPlatform) && rvm[keys[k]] !== ins[keys[k]] && keys[k] !== 'tags') {
+          if (keys[k] === 'Subnet') {
+            if (rvm[keys[k]] !== ins.subnet) {
+              return true;
+            }
+          } else {
+            return true;
+          }
+        } else if (keys[k] === 'tags') {
+          if (rvm[keys[k]].length !== ins[keys[k]].length) {
+            return true;
+          }
+        }
+      }
+    }
+  }
+  return clear;
+}
+
+export function validateMemoryValue({ value, user, fieldKey }) {
+  const { values } = user;
+  const unitKey = `${fieldKey}-unit`;
+  const unitValue = getValue(unitKey, values);
+  if (value > 4 && unitValue === 'TB') {
+    return true;
+  }
+  return (typeof value === 'undefined' || typeof value === 'string' && value.trim() === '' || value === null);
+}
+
+export function isRemovedOrRecoveredVM(vm) {
+  if (typeof vm === 'object' && vm.isDeleted || vm.isRemovedFromPlan
+      || vm.recoveryStatus === RECOVERY_STATUS.MIGRATED || vm.recoveryStatus === RECOVERY_STATUS.RECOVERED
+      || vm.recoveryStatus === RECOVERY_STATUS.MIGRATION_INIT) {
+    return true;
+  }
+  return false;
 }

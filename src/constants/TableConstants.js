@@ -1,3 +1,5 @@
+import VMInstanceItemRenderer from '../components/Table/ItemRenderers/VMInstanceItemRenderer';
+import VMVolumeTypeItemRenderer from '../components/Table/ItemRenderers/VMVmwarePlacementInfoItemRenderer';
 import { getRecoveryVMName } from '../utils/TableUtils';
 
 export const OS_TYPE_ITEM_RENDERER = 'OS_TYPE_ITEM_RENDERER';
@@ -34,6 +36,7 @@ export const ROLE_ITEM_RENDERER = 'ROLE_ITEM_RENDERER';
 export const VM_NETWORK_INFO_ITEM_RENDERER = 'VM_NETWORK_INFO_ITEM_RENDERER';
 export const SCRIPT_ITEM_RENDERER = 'SCRIPT_ITEM_RENDERER';
 export const PROTECTED_VM_ACTIONS_ITEM_ITEM_RENDERER = 'PROTECTED_VM_ACTIONS_ITEM_ITEM_RENDERER';
+export const SITE_LOCATION_ITEM_RENDERER = 'SITE_LOCATION_ITEM_RENDERER';
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
@@ -43,6 +46,7 @@ export const TABLE_HEADER_SITES = [
   { label: 'site.type', field: 'siteType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER },
   { label: 'description', field: 'description' },
   { label: 'platform', field: 'platformDetails.platformType' },
+  { label: 'Location', itemRenderer: SITE_LOCATION_ITEM_RENDERER },
   { label: 'Node', field: 'node.name', itemRenderer: NODE_NAME_ITEM_RENDERER },
 ];
 
@@ -77,8 +81,9 @@ export const TABLE_PROTECTION_PLAN_VMS = [
 
 export const TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG = [
   { label: 'name', field: 'instanceName' },
-  { label: 'Instance Type', field: 'instanceType' },
+  { label: 'Instance Type', field: 'instanceType', itemRenderer: VMInstanceItemRenderer },
   { label: 'Volume Type', field: 'volumeType' },
+  { label: 'Placement Info', field: '', itemRenderer: VMVolumeTypeItemRenderer },
   { label: 'Network', field: 'instanceDetails', itemRenderer: VM_NETWORK_INFO_ITEM_RENDERER },
   { label: 'Boot Order', field: 'bootPriority' },
 ];
@@ -139,7 +144,7 @@ export const TABLE_PROTECTION_PLAN_REPLICATIONS = [
 
 // Table fields for protection plan
 export const TABLE_PROTECTION_PLAN_RECOVERY = [
-  { label: 'Virtual Machines', field: 'vms', filterText: (text) => getRecoveryVMName(text) },
+  { label: 'Virtual Machines', field: 'entities', filterText: (text) => getRecoveryVMName(text) },
   { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Recovery Type', field: 'recoveryType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER },
   { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },

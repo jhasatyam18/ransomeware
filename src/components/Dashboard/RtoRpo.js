@@ -18,25 +18,33 @@ function RtoRpo(props) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    let isUnmounting = false;
     setLoading(true);
     setRecoveryStats({ testExecutions: 0, fullRecovery: 0, migrations: 0, rto: 0 });
     setReplicationStats({ completed: 0, running: 0, failures: 0, dataReduction: 0, changedRate: 0 });
     callAPI(API_DASHBOARD_RECOVERY_STATS)
       .then((json) => {
+        if (isUnmounting) return;
         setLoading(false);
         setRecoveryStats(json);
       },
       (err) => {
+        if (isUnmounting) return;
         setLoading(false);
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
     callAPI(API_DASHBOARD_REPLICATION_STATS)
       .then((json) => {
+        if (isUnmounting) return;
         setReplicationStats(json);
       },
       (err) => {
+        if (isUnmounting) return;
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
+    return () => {
+      isUnmounting = true;
+    };
   }, [refresh]);
 
   const renderRtoStatus = (rtoTime, css) => (
@@ -67,7 +75,7 @@ function RtoRpo(props) {
               {`${task.label}`}
             </Col>
             <Col sm={5}>
-              <p style={{ color: 'white' }}>{task.value}</p>
+              <p className="color-white">{task.value}</p>
             </Col>
           </Row>
         </div>

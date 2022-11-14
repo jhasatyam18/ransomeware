@@ -50,6 +50,10 @@
   font-size: 24px !important;
 }
 
+.font-size-point-9rem {
+  font-size: 0.9rem;
+}
+
 // Font weight help class
 
 .font-weight-medium {
@@ -93,4 +97,11 @@
 
 .w-xl {
   min-width: 160px;
+}
+
+.tree_node_p{
+  padding: 0px;
+  margin: 0px;
+  font-weight: 200;
+  font-family: sans-sarif;
 }

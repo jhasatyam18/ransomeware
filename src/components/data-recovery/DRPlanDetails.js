@@ -2,9 +2,10 @@ import classnames from 'classnames';
 import React, { Component, Suspense } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardTitle, Col, Container, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
+import Loader from '../Shared/Loader';
 import { PLATFORM_TYPES, RECOVERY_STATUS, REPLICATION_STATUS, PROTECTION_PLANS_STATUS } from '../../constants/InputConstants';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
-import { deletePlanConfirmation, fetchDRPlanById, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
+import { deletePlanConfirmation, fetchDRPlanById, openCleanupTestRecoveryWizard, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
 import CheckBox from '../Common/CheckBox';
 import DisplayString from '../Common/DisplayString';
@@ -47,10 +48,10 @@ class DRPlanDetails extends Component {
     if (!protectionPlan) {
       return true;
     }
-    const { protectedSite, recoverySite } = protectionPlan;
+    const { protectedSite } = protectionPlan;
     const { platformDetails } = protectedSite;
-    // disable if recovery site is VMware disable if status is Initializing
-    if (recoverySite.platformDetails.platformType === PLATFORM_TYPES.VMware || isPlanRecovered(protectionPlan) || protectionPlan.status === PROTECTION_PLANS_STATUS.INITIALIZING) {
+    // disable if recovery site is VMware
+    if (isPlanRecovered(protectionPlan)) {
       return true;
     }
     if (platformDetails.platformType === user.platformType && hasRequestedPrivileges(user, ['protectionplan.edit'])) {
@@ -248,6 +249,9 @@ class DRPlanDetails extends Component {
         { label: 'Migrate', action: openMigrationWizard, icon: 'fa fa-clone', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.migration']) },
         { label: 'Reverse', action: openReverseWizard, icon: 'fa fa-backward', disabled: isReverseActionDisabled },
         { label: 'Test Recovery', action: openTestRecoveryWizard, icon: 'fa fa-check', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.test']) }];
+      if (recoverySite.platformDetails.platformType !== PLATFORM_TYPES.VMware) {
+        actions.push({ label: 'Cleanup Test Recoveries', action: openCleanupTestRecoveryWizard, icon: 'fa fa-broom', disabled: !hasRequestedPrivileges(user, ['recovery.test']) });
+      }
     } else {
       // no action to add
     }
@@ -265,7 +269,7 @@ class DRPlanDetails extends Component {
     if (localVMIP === recoverySite.node.hostname) {
       return (
         <NavItem>
-          <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '4' })} onClick={() => { this.toggleTab('4'); }}>
+          <NavLink className={`${classnames({ active: activeTab === '4' })} cursor-pointer`} onClick={() => { this.toggleTab('4'); }}>
             <span className="d-none d-sm-block">{t('recovery.jobs')}</span>
           </NavLink>
         </NavItem>
@@ -324,17 +328,17 @@ class DRPlanDetails extends Component {
             <CardBody>
               <Nav tabs className="nav-tabs-custom nav-justified">
                 <NavItem>
-                  <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '1' })} onClick={() => { this.toggleTab('1'); }}>
+                  <NavLink className={`${classnames({ active: activeTab === '1' })} cursor-pointer`} onClick={() => { this.toggleTab('1'); }}>
                     <span className="d-none d-sm-block">{t('Virtual Machines')}</span>
                   </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '2' })} onClick={() => { this.toggleTab('2'); }}>
+                  <NavLink className={`${classnames({ active: activeTab === '2' })} cursor-pointer`} onClick={() => { this.toggleTab('2'); }}>
                     <span className="d-none d-sm-block">{t('Configuration')}</span>
                   </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '3' })} onClick={() => { this.toggleTab('3'); }}>
+                  <NavLink className={`${classnames({ active: activeTab === '3' })} cursor-pointer`} onClick={() => { this.toggleTab('3'); }}>
                     <span className="d-none d-sm-block">{t('replication.jobs')}</span>
                   </NavLink>
                 </NavItem>
@@ -354,7 +358,7 @@ class DRPlanDetails extends Component {
                 <TabPane tabId="3" className="p-3">
                   <Row>
                     <Col sm="12">
-                      <Suspense fallback={<div>Loading...</div>}>
+                      <Suspense fallback={<Loader />}>
                         {activeTab === '3' ? <Replication protectionplanID={id} {...this.props} /> : null}
                       </Suspense>
                     </Col>
@@ -363,7 +367,7 @@ class DRPlanDetails extends Component {
                 <TabPane tabId="4" className="p-3">
                   <Row>
                     <Col sm="12">
-                      <Suspense fallback={<div>Loading...</div>}>
+                      <Suspense fallback={<Loader />}>
                         {activeTab === '4' ? <Recovery protectionplanID={id} {...this.props} /> : null}
                       </Suspense>
                     </Col>

@@ -282,9 +282,9 @@ export function convertMinutesToDaysHourFormat(value = 0) {
  */
 export function getStorageWithUnit(value) {
   if (typeof value === 'undefined' || value === 0) {
-    return '0 GB';
+    return '0 KB';
   }
-  const units = ['GB', 'TB', 'PB', 'EB'];
+  const units = ['KB', 'MB', 'GB', 'TB', 'PB', 'EB'];
   const unitIndex = Math.floor(Math.log(value) / Math.log(1024));
   return `${Number.parseFloat((value / (1024 ** unitIndex)).toFixed(2))} ${units[unitIndex]}`;
 }
@@ -315,3 +315,17 @@ export const changePageTitle = (t) => {
   }
   document.title = `${path} | Datamotive`;
 };
+
+export function getMemoryInfo(value) {
+  let val = 0;
+  let unit = 'MB';
+  if (typeof value === 'undefined' || value === 0) {
+    return [val, unit];
+  }
+  const units = ['MB', 'GB', 'TB'];
+  const unitIndex = Math.floor(Math.log(value) / Math.log(1024));
+  val = Number.parseFloat((value / (1024 ** unitIndex)).toFixed(2)) || 0;
+  unit = units[unitIndex] || 'MB';
+
+  return [val, unit];
+}

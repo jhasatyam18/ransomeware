@@ -38,7 +38,7 @@ class ProtectionPlanReplications extends Component {
     const { title, vms } = this.props;
     return (
       <div key={`dm-accordion-${title}`}>
-        <Card style={{ marginBottom: 10 }}>
+        <Card className="margin-bottom-10">
           <CardHeader>
             <Row>
               <Col sm={6}>

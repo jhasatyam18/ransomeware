@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { Col, Label, Row, Container } from 'reactstrap';
+import { withTranslation } from 'react-i18next';
 import DMTable from '../Table/DMTable';
 import DMTPaginator from '../Table/DMTPaginator';
+import DMField from '../Shared/DMField';
 import { TABLE_FILTER_TEXT, TABLE_RECOVERY_VMS } from '../../constants/TableConstants';
 import { handleProtectVMSeletion, handleSelectAllRecoveryVMs } from '../../store/actions/SiteActions';
 import { getValue } from '../../utils/InputUtils';
@@ -32,7 +34,7 @@ class RecoveryMachines extends Component {
   }
 
   render() {
-    const { dispatch, user } = this.props;
+    const { dispatch, user, t } = this.props;
     const { values } = user;
     const { hasFilterString, searchData, dataToDisplay } = this.state;
     const vms = getValue('ui.recovery.vms', values);
@@ -41,12 +43,16 @@ class RecoveryMachines extends Component {
     if (!selectedVMs) {
       selectedVMs = {};
     }
+    const isMigrationWorkflow = getValue('ui.isMigration.workflow', values);
     return (
       <Container fluid className="padding-10">
         <br />
-        <Label>Select Virtual Machine for recovery</Label>
+        <Label>{isMigrationWorkflow ? t('title.machines.migration') : t('title.machines.recovery')}</Label>
         <br />
         <Row>
+          <Col sm={12} className="padding-left-30">
+            {isMigrationWorkflow ? <DMField dispatch={dispatch} user={user} fieldKey="ui.automate.migration" key="ui.automate.migration" /> : null}
+          </Col>
           <Col className="margin-left-30 padding-right-30 margin-right-10">
             <DMTPaginator
               defaultLayout="true"
@@ -76,4 +82,4 @@ class RecoveryMachines extends Component {
   }
 }
 
-export default RecoveryMachines;
+export default (withTranslation()(RecoveryMachines));

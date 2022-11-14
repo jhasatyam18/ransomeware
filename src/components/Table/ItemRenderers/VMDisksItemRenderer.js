@@ -5,7 +5,7 @@ import { getAppKey, getStorageWithUnit } from '../../../utils/AppUtils';
 
 function VMDisksItemRenderer(props) {
   const { data, t } = props;
-  const { virtualDisks = [] } = data;
+  let { virtualDisks = [] } = data;
   const [popoverOpen, setPopoverOpen] = useState(false);
   let name = data.name.replace(/\s/g, '');
   name = name.replace(/[^a-zA-Z ]/g, '');
@@ -15,6 +15,12 @@ function VMDisksItemRenderer(props) {
   } else {
     key = getAppKey();
   }
+
+  virtualDisks = virtualDisks.filter((el) => {
+    if (!el.isDeleted) {
+      return el;
+    }
+  });
 
   function renderDiskSize(disk, index) {
     return (

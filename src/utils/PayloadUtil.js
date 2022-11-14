@@ -1,11 +1,12 @@
-import { PLATFORM_TYPES, STATIC_KEYS } from '../constants/InputConstants';
+import { PLATFORM_TYPES, RECOVERY_ENTITY_TYPES, STATIC_KEYS } from '../constants/InputConstants';
 import { FIELDS } from '../constants/FieldsConstant';
 import { getValue,
   shouldShowNodePlatformType,
   shouldShowNodeManagementPort,
   shouldShowNodeReplicationPort,
   shouldShowNodeEncryptionKey,
-  getAWSNetworkIDFromName } from './InputUtils';
+  getAWSNetworkIDFromName,
+  convertMemoryToMb } from './InputUtils';
 
 export function getKeyStruct(filterKey, values) {
   const result = {};
@@ -70,6 +71,7 @@ export function getCreateDRPlanPayload(user, sites) {
   result.drplan.recoveryEntities.instanceDetails = getVMConfigPayload(user);
   result.drplan.replicationInterval = getReplicationInterval(getValue(STATIC_KEYS.REPLICATION_INTERVAL_TYPE, values), getValue('drplan.replicationInterval', values));
   result.drplan.startTime = getUnixTimeFromDate(result.drplan.startTime);
+  result.drplan.protectedEntityType = getRecoveryEntityType();
   return result;
 }
 
@@ -96,7 +98,23 @@ export function getVMConfigPayload(user) {
   const { values } = user;
   const vms = getValue('ui.site.seletedVMs', values);
   const instanceDetails = [];
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
   Object.keys(vms).forEach((key) => {
+    let folderPath = '';
+    // Data require for vmware as target platform
+    folderPath = getValue(`${key}-vmConfig.general.folderPath`, values);
+    if (folderPath && folderPath.length > 0) {
+      const [index] = folderPath;
+      folderPath = index;
+    }
+    const hostMoref = getValue(`${key}-vmConfig.general.hostMoref`, values);
+    const datastoreMoref = getValue(`${key}-vmConfig.general.dataStoreMoref`, values);
+    let numCPU = getValue(`${key}-vmConfig.general.numcpu`, values);
+    numCPU = parseInt(numCPU, 10);
+    const memory = getValue(`${key}-vmConfig.general-memory`, values);
+    const memoryunit = getValue(`${key}-vmConfig.general-unit`, values);
+    const memoryMB = convertMemoryToMb(memory, memoryunit || 'GB');
+    const datacenterMoref = getValue('ui.site.vmware.datacenterMoref', values);
     const { name } = vms[key];
     const instanceName = name;
     const sourceMoref = vms[key].moref;
@@ -122,7 +140,6 @@ export function getVMConfigPayload(user) {
     if (networks.length > 0) {
       availZone = networks[0].availZone;
     }
-    const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
     let sgs = getValue(`${key}-vmConfig.network.securityGroup`, values);
     if (recoveryPlatform === PLATFORM_TYPES.AWS) {
       sgs = [];
@@ -131,9 +148,9 @@ export function getVMConfigPayload(user) {
     const preScript = getValue(`${key}-vmConfig.scripts.preScript`, values);
     const postScript = getValue(`${key}-vmConfig.scripts.postScript`, values);
     if (typeof id !== 'undefined' && id !== '') {
-      instanceDetails.push({ sourceMoref, id, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone });
+      instanceDetails.push({ sourceMoref, id, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref: hostMoref.value, datastoreMoref: datastoreMoref.value, numCPU, datacenterMoref });
     } else {
-      instanceDetails.push({ sourceMoref, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone });
+      instanceDetails.push({ sourceMoref, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref: hostMoref.value, datastoreMoref: datastoreMoref.value, numCPU, datacenterMoref });
     }
   });
   return instanceDetails;
@@ -156,7 +173,14 @@ export function getVMNetworkConfig(key, values) {
     let publicIP = getValue(`${networkKey}-eth-${index}-publicIP`, values) || '';
     const sgs = getValue(`${networkKey}-eth-${index}-securityGroups`, values) || '';
     const networkTier = getValue(`${networkKey}-eth-${index}-networkTier`, values) || '';
-    const network = getValue(`${networkKey}-eth-${index}-network`, values) || '';
+    let network = getValue(`${networkKey}-eth-${index}-network`, values) || '';
+    const networkId = network.value;
+    const adapterType = `${getValue(`${networkKey}-eth-${index}-adapterType`, values)}`;
+    const macAddress = `${getValue(`${networkKey}-eth-${index}-macAddress`, values)}`;
+    let netmask = getValue(`${networkKey}-eth-${index}-netmask`, values) || '';
+    let gateway = getValue(`${networkKey}-eth-${index}-gateway`, values) || '';
+    let dns = getValue(`${networkKey}-eth-${index}-dnsserver`, values) || '';
+    const networkMoref = networkId;
     if (typeof isFromSource !== 'boolean') {
       isFromSource = false;
     }
@@ -166,10 +190,20 @@ export function getVMNetworkConfig(key, values) {
     if (network !== '' && recoveryPlatform === PLATFORM_TYPES.AWS) {
       publicIP = getAWSNetworkIDFromName(values, network) || publicIP;
     }
+    if (network !== '' && recoveryPlatform === PLATFORM_TYPES.VMware) {
+      network = network.label;
+      // if isPublicIP is false then the static IP was set automatically for that these below options needs to be empty
+      if (!isPublicIP) {
+        netmask = '';
+        gateway = '';
+        dns = '';
+        publicIP = '';
+      }
+    }
     if (typeof id !== 'undefined' && id !== '') {
-      networks.push({ id, isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone });
+      networks.push({ id, isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone, adapterType, networkMoref, macAddress, netmask, gateway, dns });
     } else {
-      networks.push({ isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone });
+      networks.push({ isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone, adapterType, networkMoref, macAddress, netmask, gateway, dns });
     }
   }
 
@@ -195,18 +229,9 @@ function getReplicationInterval(type, value) {
 function getRecoveryConfigVMDetails(user) {
   const { values } = user;
   const vms = getValue('ui.site.seletedVMs', values);
-  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
   const machineDetails = [];
   let instanceConfig = [];
-  if (PLATFORM_TYPES.VMware === recoveryPlatform) {
-    // TODO: remove this post vmware as target is supported
-    const plan = getValue('ui.recovery.plan', values);
-    const { recoveryEntities } = plan;
-    const { instanceDetails } = recoveryEntities;
-    instanceConfig = instanceDetails;
-  } else {
-    instanceConfig = getVMConfigPayload(user);
-  }
+  instanceConfig = getVMConfigPayload(user);
   Object.keys(vms).forEach((key) => {
     const vm = vms[key];
     const { name, moref } = vm;
@@ -222,7 +247,6 @@ function getRecoveryConfigVMDetails(user) {
   });
   return machineDetails;
 }
-
 export function getReversePlanPayload(user) {
   const { values } = user;
   const sites = getValue('ui.values.sites', values);
@@ -238,6 +262,9 @@ export function getReversePlanPayload(user) {
   }
   drplan.recoverySite = rSite;
   drplan.recoveryEntities.suffix = recoverySufffix;
+  drplan.recoveryEntities.instanceDetails = getVMConfigPayload(user);
+  drplan.replicationInterval = getReplicationInterval(getValue(STATIC_KEYS.REPLICATION_INTERVAL_TYPE, values), getValue('drplan.replicationInterval', values));
+  drplan.startTime = getUnixTimeFromDate(drplan.startTime);
   return drplan;
 }
 
@@ -328,5 +355,27 @@ export function getEditProtectionPlanPayload(user, sites) {
   result.drplan.recoveryEntities.instanceDetails = getVMConfigPayload(user);
   result.drplan.replicationInterval = getReplicationInterval(getValue(STATIC_KEYS.REPLICATION_INTERVAL_TYPE, values), getValue('drplan.replicationInterval', values));
   result.drplan.startTime = getUnixTimeFromDate(result.drplan.startTime);
+  result.drplan.protectedEntityType = getRecoveryEntityType();
   return result;
+}
+
+export function getVMwareNetworkConfig(key, values) {
+  const networkKey = `${key}-vmConfig.network.net1`;//
+  const eths = getValue(networkKey, values) || [];
+  const networks = [];
+  for (let index = 0; index < eths.length; index += 1) {
+    const network = getValue(`${networkKey}-eth-${index}-network`, values);
+    const networkId = network.value;
+    const adapterType = `${getValue(`${networkKey}-eth-${index}-adapterType`, values)}`;
+    const macAddress = `${getValue(`${networkKey}-eth-${index}-macAddress-value`, values)}`;
+    const networkMoref = networkId;
+    networks.push({ network: network.label, networkMoref, adapterType, macAddress });
+  }
+  return networks;
+}
+
+export function getRecoveryEntityType() {
+  // setting VIRTUALMACHINE as default for now
+  // TODO : MODIFY ONCE FCD or other entity ui support added
+  return RECOVERY_ENTITY_TYPES.VIRTUALMACHINE;
 }

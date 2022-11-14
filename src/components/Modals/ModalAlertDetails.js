@@ -9,7 +9,7 @@ import EventLevelItemRenderer from '../Table/ItemRenderers/EventLevelItemRendere
 import { acknowledgeAlert, takeVMAction } from '../../store/actions/AlertActions';
 import { closeModal } from '../../store/actions/ModalActions';
 import { getCookie } from '../../utils/CookieUtils';
-import { VM_CONFIG_ACTION_EVENT, VM_DISK_ACTION_EVENT } from '../../constants/EventConstant';
+import { MONITOR_NODE_AUTH, PPLAN_EVENTS, VM_CONFIG_ACTION_EVENT, VM_DISK_ACTION_EVENT } from '../../constants/EventConstant';
 import { APPLICATION_API_USER } from '../../constants/UserConstant';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
 import { refresh } from '../../store/actions/UserActions';
@@ -39,28 +39,26 @@ class ModalAlertDetails extends Component {
   }
 
   takeAction = () => {
-    const { alerts, dispatch } = this.props;
+    const { alerts, dispatch, t } = this.props;
     const { associatedEvent, selected } = alerts;
     const { ackMessage } = this.state;
     const user = getCookie(APPLICATION_API_USER);
-    if (VM_CONFIG_ACTION_EVENT.indexOf(associatedEvent.type) === -1) {
-      if (ackMessage.length === 0) {
-        this.setState({ error: 'Required acknowledge message' });
-        return;
-      }
-      selected.acknowledgeMessage = ackMessage;
-      selected.acknowledgeBy = user;
+    if (ackMessage.length === 0) {
+      this.setState({ error: t('required.acknowledge.message') });
+      return;
     }
+    selected.acknowledgeMessage = ackMessage;
+    selected.acknowledgeBy = user;
     dispatch(takeVMAction(selected, associatedEvent));
   }
 
   acknowledgeAndClose() {
-    const { dispatch, alerts } = this.props;
+    const { dispatch, alerts, t } = this.props;
     const { selected } = alerts;
     const { ackMessage } = this.state;
     const user = getCookie(APPLICATION_API_USER);
     if (ackMessage.length === 0) {
-      this.setState({ error: 'Required acknowledge message' });
+      this.setState({ error: t('required.acknowledge.message') });
       return;
     }
     selected.acknowledgeMessage = ackMessage;
@@ -84,12 +82,12 @@ class ModalAlertDetails extends Component {
     return (
       <Nav tabs className="nav-tabs-custom nav-justified">
         <NavItem key="alert-navItem-1">
-          <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '1' })} onClick={() => { this.toggleTab('1'); }}>
+          <NavLink className={`${classnames({ active: activeTab === '1' })} cursor-pointer`} onClick={() => { this.toggleTab('1'); }}>
             <span className="d-none d-sm-block">Info</span>
           </NavLink>
         </NavItem>
         <NavItem key="alert-navItem-2">
-          <NavLink style={{ cursor: 'pointer' }} className={classnames({ active: activeTab === '2' })} onClick={() => { this.toggleTab('2'); }}>
+          <NavLink className={`${classnames({ active: activeTab === '2' })} cursor-pointer`} onClick={() => { this.toggleTab('2'); }}>
             <span className="d-none d-sm-block">Associated Event</span>
           </NavLink>
         </NavItem>
@@ -225,7 +223,7 @@ class ModalAlertDetails extends Component {
     if (selected.isAcknowledge || !hasRequestedPrivileges(user, ['alerts.actions'])) {
       return null;
     }
-    if (VM_DISK_ACTION_EVENT.indexOf(type) !== -1 || VM_CONFIG_ACTION_EVENT.indexOf(type) !== -1) {
+    if (VM_DISK_ACTION_EVENT.indexOf(type) !== -1 || VM_CONFIG_ACTION_EVENT.indexOf(type) !== -1 || PPLAN_EVENTS.indexOf(type) !== -1 || MONITOR_NODE_AUTH.indexOf(type) !== -1) {
       const toolTip = (VM_DISK_ACTION_EVENT.indexOf(type) !== -1 ? t('take.action.tooltip.vm.disk.operation') : t('take.action.tooltip.vm.reconfigure.operation'));
       return (
         <button type="button" className="btn btn-secondary" onClick={this.takeAction} title={toolTip}>
@@ -242,7 +240,7 @@ class ModalAlertDetails extends Component {
       <>
         <Container>
           <Card>
-            <SimpleBar style={{ maxHeight: '350px' }}>
+            <SimpleBar className="max-h-350">
               <CardBody>
                 {this.renderNav()}
                 <TabContent activeTab={activeTab}>
@@ -272,6 +270,7 @@ class ModalAlertDetails extends Component {
             {this.renderTakeAction()}
             {this.renderAcknowledge()}
             <button type="button" className="btn btn-secondary" onClick={this.onClose}>Close </button>
+
           </div>
         </Container>
       </>

@@ -8,6 +8,9 @@ function ProtectedVMItemRenderer({ data, dispatch }) {
   if (!data || isVMRecovered(data)) {
     return '';
   }
+  if (data.isDeleted || data.isRemovedFromPlan) {
+    return '';
+  }
   const onEditVM = () => {
     const { location } = window;
     const { pathname } = location;
@@ -21,7 +24,7 @@ function ProtectedVMItemRenderer({ data, dispatch }) {
 
   const renderEdit = () => (
     <a href="#" onClick={() => onEditVM()}>
-      <i className="far fa-edit fa-lg" style={{ fontSize: '14px' }} />
+      <i className="far fa-edit fa-lg protectedvm-icon" />
     </a>
   );
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Badge } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
+import { MIGRATION_INIT_FAILED } from '../../../constants/AppStatus';
 
 function RecoveryStatusItemRenderer(props) {
   const { t, data } = props;
@@ -34,9 +35,10 @@ function RecoveryStatusItemRenderer(props) {
     if (typeof data.recoveryStatus === 'undefined') {
       return null;
     }
+    const color = (data.recoveryStatus === MIGRATION_INIT_FAILED ? 'danger' : 'success');
     return (
       <div>
-        <Badge className="font-size-13 badge-soft-success" color="success" pill>
+        <Badge className={`font-size-13 badge-soft-${color}`} pill>
           {data.recoveryStatus}
         </Badge>
       </div>

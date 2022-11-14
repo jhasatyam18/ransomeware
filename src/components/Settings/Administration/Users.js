@@ -31,7 +31,13 @@ function Users(props) {
   };
 
   useEffect(() => {
-    getUsers();
+    let isUnmounting = false;
+    if (!isUnmounting) {
+      getUsers();
+    }
+    return () => {
+      isUnmounting = true;
+    };
   }, []);
 
   return (

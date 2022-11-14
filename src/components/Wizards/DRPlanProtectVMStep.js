@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import { Label, Container, Row, Col } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
+import DMTree from '../Shared/DMTree';
 import DMTable from '../Table/DMTable';
 import DMTPaginator from '../Table/DMTPaginator';
 import { TABLE_FILTER_TEXT, TABLE_PROTECT_VM_VMWARE } from '../../constants/TableConstants';
 import { handleProtectVMSeletion } from '../../store/actions/SiteActions';
 import { getValue } from '../../utils/InputUtils';
 import { filterData } from '../../utils/AppUtils';
+import { PLATFORM_TYPES } from '../../constants/InputConstants';
+import { FIELDS } from '../../constants/FieldsConstant';
 
 class DRPlanProtectVMStep extends Component {
   constructor() {
@@ -39,8 +42,20 @@ class DRPlanProtectVMStep extends Component {
     const vms = getValue('ui.site.vms', values);
     const data = (hasFilterString ? searchData : vms);
     let selectedVMs = getValue('ui.site.seletedVMs', values);
+    const platfromType = getValue('ui.values.protectionPlatform', values);
+    const field = FIELDS['drplan.vms'];
+    const id = getValue('ui.values.protectionSiteID', values);
     if (!selectedVMs) {
       selectedVMs = {};
+    }
+    if (platfromType === PLATFORM_TYPES.VMware) {
+      // VirtualMachine
+      return (
+        <Container fluid className="padding-top-20">
+          <Label>{t('Select Virtual Machine for protection')}</Label>
+          <DMTree dispatch={dispatch} search searchURL={`api/v1/sites/${id}/vms`} user={user} selectedData={selectedVMs} showSelectedvmdata fieldKey="ui.site.vmware.selectedvms" field={field} selectedVMkey="ui.selectedvm.value" />
+        </Container>
+      );
     }
     return (
       <Container fluid className="padding-10">

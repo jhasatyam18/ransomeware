@@ -46,7 +46,11 @@ class ModalConfigureNode extends Component {
 
   renderForm() {
     const { user, dispatch, options } = this.props;
-    const { isUpdate } = options;
+    let isUpdate = '';
+    if (options) {
+      isUpdate = options.isUpdate;
+    }
+    // const { isUpdate } = options;
     const fields = Object.keys(FIELDS).filter((key) => key.indexOf('node.') !== -1);
     const renderFields = [];
     fields.forEach((field) => {
@@ -73,7 +77,7 @@ class ModalConfigureNode extends Component {
     return (
       <>
         <div className="modal-body noPadding">
-          <SimpleBar style={{ maxHeight: '400px' }}>
+          <SimpleBar className="max-h-400">
             {this.renderForm()}
           </SimpleBar>
         </div>
@@ -84,7 +88,7 @@ class ModalConfigureNode extends Component {
 }
 
 function mapStateToProps(state) {
-  const { user } = state;
-  return { user };
+  const { user, dispatch } = state;
+  return { user, dispatch };
 }
 export default connect(mapStateToProps)(withTranslation()(ModalConfigureNode));

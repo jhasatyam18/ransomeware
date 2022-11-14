@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
+import { STATUS_STARTED } from '../../constants/AppStatus';
+import { clearValues, fetchScript } from '../../store/actions';
 import {
   drPlanStopStart, deletePlan, openRecoveryWizard, openMigrationWizard, openReverseWizard, openEditProtectionPlanWizard,
 } from '../../store/actions/DrPlanActions';
@@ -8,11 +10,10 @@ import ActionButton from '../Common/ActionButton';
 import { openModal } from '../../store/actions/ModalActions';
 import { openWizard } from '../../store/actions/WizardActions';
 import { fetchSites } from '../../store/actions/SiteActions';
-import { clearValues, fetchScript } from '../../store/actions';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
 import { CREATE_DR_PLAN_WIZARDS } from '../../constants/WizardConstants';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
-import { PLATFORM_TYPES, PROTECTION_PLANS_STATUS } from '../../constants/InputConstants';
+import { PROTECTION_PLANS_STATUS } from '../../constants/InputConstants';
 import { isPlanRecovered } from '../../utils/validationUtils';
 
 class DRPlanActionBar extends Component {
@@ -91,6 +92,11 @@ class DRPlanActionBar extends Component {
       return false;
     }
     if (isSingle && len === 1) {
+      let key = Object.keys(selectedPlans);
+      key = parseInt(key[0], 10);
+      if (selectedPlans[key].status === STATUS_STARTED) {
+        return true;
+      }
       return false;
     }
     return true;
@@ -98,7 +104,7 @@ class DRPlanActionBar extends Component {
 
   showEdit() {
     const { selectedPlans, user } = this.props;
-    const { platformType, localVMIP } = user;
+    const { localVMIP } = user;
     if (!selectedPlans) {
       return true;
     }
@@ -108,17 +114,13 @@ class DRPlanActionBar extends Component {
     }
     if (keys.length === 1) {
       const plan = selectedPlans[keys[0]];
-      const { protectedSite, recoverySite } = plan;
+      const { recoverySite } = plan;
       // disable if status of plan is recovered or migrated
       if (isPlanRecovered(plan) || localVMIP === recoverySite.node.hostname || plan.status === PROTECTION_PLANS_STATUS.INITIALIZING) {
         return true;
       }
-      // disable if recovery site is VMware
-      if (protectedSite.platformDetails.platformType === platformType && recoverySite.platformDetails.platformType !== PLATFORM_TYPES.VMware) {
-        return false;
-      }
     }
-    return true;
+    return false;
   }
 
   renderServerOptions() {
