@@ -201,13 +201,14 @@ export function getSecurityGroupOption(user, fieldKey) {
 
 export function getAzureSecurityGroupOption(user, fieldKey) {
   const { values } = user;
+  const vmMoref = fieldKey.split('.');
+  const resourceGrpKey = getValue(`${vmMoref[0]}.general.folderPath`, values);
   const opts = getValue(STATIC_KEYS.UI_SECURITY_GROUPS, values) || [];
-  const networkID = getValue(fieldKey.replace('-securityGroups', '-vpcId'), values);
   const options = [];
-  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+  // const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
   opts.forEach((op) => {
     const name = (op.name && op.name !== '' ? op.name : op.id);
-    if (op.vpcID === networkID || recoveryPlatform === PLATFORM_TYPES.GCP) {
+    if (op.vpcID === resourceGrpKey) {
       options.push({ label: name, value: op.name });
     }
   });
@@ -286,7 +287,6 @@ export function getAzureNetworkOptions(user, fieldKey) {
   const { values } = user;
   const vmMoref = fieldKey.split('.');
   const resourceGrpKey = getValue(`${vmMoref[0]}.general.folderPath`, values);
-  // resourceGrpKey = 'Test';
   let opts = getValue(STATIC_KEYS.UI_NETWORKS, values) || [];
   opts = opts.filter((sub) => {
     if (sub.vpcID === resourceGrpKey) {
@@ -319,14 +319,18 @@ export function getGCPExternalIPOptions(user) {
   return options;
 }
 
-export function getAzureExternalIPOptions(user) {
+export function getAzureExternalIPOptions(user, fieldKey) {
   const { values } = user;
   const options = [];
+  const vmMoref = fieldKey.split('.');
+  const resourceGrpKey = getValue(`${vmMoref[0]}.general.folderPath`, values);
   options.push({ label: 'None', value: false });
   options.push({ label: 'Auto', value: true });
   const ips = getValue(STATIC_KEYS.UI_RESERVE_IPS, values) || [];
   ips.forEach((op) => {
-    options.push({ label: op.name, value: op.name });
+    if (op.vpcID === resourceGrpKey) {
+      options.push({ label: op.name, value: op.name });
+    }
   });
   return options;
 }
