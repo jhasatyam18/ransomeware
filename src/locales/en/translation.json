@@ -402,6 +402,6 @@
   "warning.vmware.dns":"Please provide valid DNS",
   "error.ackn.pplan.alert":"Virtual Machine info not available in the event.",
   "succes.ackn.alert":"Acknowledging alert.",
-  "vmware.subnet":"Subnet Mask",
-  "show.details":"Show details"
+  "show.details":"Show details",
+  "vmware.subnet":"Subnet Mask"
 }
