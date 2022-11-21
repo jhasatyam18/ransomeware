@@ -41,7 +41,10 @@ function StatusSteps(props) {
       const url = apiURL.replace('<id>', data.id);
       callAPI(url).then((json) => {
         if (isUnmounting) return;
-        const step = JSON.parse(json.step);
+        let step = [];
+        if (json.step !== '' && typeof json.step !== 'undefined') {
+          step = JSON.parse(json.step);
+        }
         setSteps(step);
       }, (err) => {
         if (isUnmounting) return;
