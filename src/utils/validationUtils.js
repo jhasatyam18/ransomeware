@@ -880,3 +880,14 @@ export function isRemovedOrRecoveredVM(vm) {
   }
   return false;
 }
+
+export function validatedNewAndCnfmPass(user) {
+  const { values, errors } = user;
+  const password = getValue('user.newPassword', values);
+  const cnfPassword = getValue('user.confirmPassword', values);
+  // Added Below line to check if the new password and cnfirm new password fields has any error if it has then it should not call the change password api
+  const passError = errors['user.newPassword'] || '';
+  const cnfmError = errors['user.confirmPassword'] || '';
+  if (password !== '' && cnfPassword !== '' && passError === '' && cnfmError === '' && password === cnfPassword) return true;
+  return false;
+}

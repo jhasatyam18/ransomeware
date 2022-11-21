@@ -159,6 +159,7 @@ class Report extends Component {
 
   render() {
     const { reports, t } = this.props;
+    const { openCollapse } = this.state;
     const { result = {} } = reports;
     const keys = Object.keys(result).length;
     const hasData = keys !== 0;
@@ -171,6 +172,10 @@ class Report extends Component {
                 <DMBreadCrumb links={[{ label: 'report', link: '#' }]} />
                 {hasData ? (
                   <>
+                    <Button className="btn btn-outline-dark btn-sm margin-bottom-15 margin-left-19 " onClick={this.toggleCollapse}>
+                      <i className={openCollapse === true ? 'fas fa-arrow-down icon_font' : 'fas fa-arrow-right icon_font'} title="Report Filter" />
+                      <span className="padding-left-5">{t('filter')}</span>
+                    </Button>
                     <Button className="btn btn-outline-dark btn-sm margin-left-10 margin-bottom-15" onClick={this.exportToPDF}>
                       <i className="far fa-file-pdf text-danger icon_font" title="Export to PDF" />
                       <span className="padding-left-5">{t('export.pdf')}</span>

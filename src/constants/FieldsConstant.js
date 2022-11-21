@@ -176,8 +176,8 @@ export const FIELDS = {
     label: 'emailConfiguration.smtpPort', description: 'SMTP port', placeHolderText: 'SMTP port', type: FIELD_TYPE.NUMBER, errorMessage: 'Enter valid smtp port', shouldShow: true, validate: (value, user) => isEmpty(value, user), fieldInfo: 'info.email.smtp.port' },
   'emailConfiguration.insecureSkipVerify': {
     label: 'emailConfiguration.insecureSkipVerify', description: 'Skip SSL certificate', placeHolderText: '', type: FIELD_TYPE.CHECKBOX, shouldShow: true, fieldInfo: 'info.email.skip.ssl' },
-  'emailConfiguration.replicateConfig': {
-    label: 'emailConfiguration.replicateConfig', description: 'Replicate configuration on connected sites', placeHolderText: 'Replicate configuration on connected sites', type: FIELD_TYPE.CHECKBOX, shouldShow: true, fieldInfo: 'info.email.replicate.config' },
+  // 'emailConfiguration.replicateConfig': {
+  //   label: 'emailConfiguration.replicateConfig', description: 'Replicate configuration on connected sites', placeHolderText: 'Replicate configuration on connected sites', type: FIELD_TYPE.CHECKBOX, shouldShow: true, fieldInfo: 'info.email.replicate.config' },
   'emailRecipient.emailAddress': {
     label: 'emailRecipient.emailAddress', description: 'Email address of recipient', placeHolderText: 'Email address of recipient', type: FIELD_TYPE.TEXT, shouldShow: true, errorMessage: 'Enter valid email address', patterns: [EMAIL_REGEX], fieldInfo: 'info.email.recipient.address' },
   'emailRecipient.subscribedEvents': {

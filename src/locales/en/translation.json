@@ -401,5 +401,6 @@
   "warning.vmware.gateway":"Please provide valid Gateway",
   "warning.vmware.dns":"Please provide valid DNS",
   "error.ackn.pplan.alert":"Virtual Machine info not available in the event.",
-  "succes.ackn.alert":"Acknowledging alert."
+  "succes.ackn.alert":"Acknowledging alert.",
+  "vmware.subnet":"Subnet Mask"
 }
