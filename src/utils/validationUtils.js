@@ -590,7 +590,11 @@ function validateVMwareNicConfig(dispatch, user, options) {
     }
   }
   if (staticip) {
-    const validated = validateForStaticIP(networkKey, dispatch, values);
+    const Ip = getValue(`${networkKey}-publicIP`, values) || '';
+    const subnet = getValue(`${networkKey}-netmask`, values) || '';
+    const gateway = getValue(`${networkKey}-gateway`, values) || '';
+    const dns = getValue(`${networkKey}-dnsserver`, values) || '';
+    const validated = dispatch(validateForStaticIP({ Ip, subnet, gateway, dns }));
     if (!validated) {
       return false;
     }
@@ -598,39 +602,50 @@ function validateVMwareNicConfig(dispatch, user, options) {
   return true;
 }
 
-function validateForStaticIP(network, dispatch, values) {
-  const Ip = getValue(`${network}-publicIP`, values) || '';
-  const subnet = getValue(`${network}-netmask`, values) || '';
-  const gateway = getValue(`${network}-gateway`, values) || '';
-  let dns = getValue(`${network}-dnsserver`, values) || '';
-  const IP = new RegExp(IP_REGEX);
-  // const DNS = new RegExp(DNS_REGEX);
-  if (Ip) {
-    if (Ip.match(IP) === null) {
+function validateForStaticIP({ Ip, subnet, gateway, dns }) {
+  return (dispatch) => {
+    if (!validateIps(Ip)) {
       dispatch(addMessage(i18n.t('warning.vmware.ip.addr'), MESSAGE_TYPES.ERROR));
       return false;
     }
-    if (subnet.match(IP) === null || subnet === '') {
+    if (!validateIps(subnet)) {
       dispatch(addMessage(i18n.t('warning.vmware.netmask'), MESSAGE_TYPES.ERROR));
       return false;
     }
-    if (gateway.match(IP) === null || gateway === '') {
+    if (!validateIps(gateway)) {
       dispatch(addMessage(i18n.t('warning.vmware.gateway'), MESSAGE_TYPES.ERROR));
       return false;
     }
-    if (dns.length > 0) {
-      dns = dns.split(',');
-      for (let i = 0; i < dns.length; i += 1) {
-        if (dns[i].match(IP) == null) {
-          dispatch(addMessage(i18n.t('warning.vmware.dns'), MESSAGE_TYPES.ERROR));
-          return false;
-        }
-      }
+
+    if (!validateDNS(dns)) {
+      dispatch(addMessage(i18n.t('warning.vmware.dns'), MESSAGE_TYPES.ERROR));
+      return false;
     }
+    return true;
+  };
+}
+
+function validateIps(value) {
+  const IP = new RegExp(IP_REGEX);
+  if (value.match(IP) === null || value === '') {
+    return false;
   }
   return true;
 }
 
+function validateDNS(dns) {
+  const Dns = dns.split(',');
+  if (Dns.length > 0) {
+    for (let i = 0; i < Dns.length; i += 1) {
+      if (!validateIps(Dns[i])) {
+        return false;
+      }
+    }
+  } else {
+    return false;
+  }
+  return true;
+}
 function validateAWSNic(dispatch, user, options) {
   const { networkKey } = options;
   const { values, errors } = user;
