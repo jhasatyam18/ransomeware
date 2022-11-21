@@ -175,13 +175,12 @@ export function getVMNetworkConfig(key, values) {
     const sgs = getValue(`${networkKey}-eth-${index}-securityGroups`, values) || '';
     const networkTier = getValue(`${networkKey}-eth-${index}-networkTier`, values) || '';
     let network = getValue(`${networkKey}-eth-${index}-network`, values) || '';
-    const networkId = network.value;
     const adapterType = `${getValue(`${networkKey}-eth-${index}-adapterType`, values)}`;
     const macAddress = `${getValue(`${networkKey}-eth-${index}-macAddress`, values)}`;
+    const networkPlatformID = getValue(`${networkKey}-eth-${index}-networkPlatformID`, values) || '';
     let netmask = getValue(`${networkKey}-eth-${index}-netmask`, values) || '';
     let gateway = getValue(`${networkKey}-eth-${index}-gateway`, values) || '';
     let dns = getValue(`${networkKey}-eth-${index}-dnsserver`, values) || '';
-    const networkMoref = networkId;
     if (typeof isFromSource !== 'boolean') {
       isFromSource = false;
     }
@@ -202,9 +201,9 @@ export function getVMNetworkConfig(key, values) {
       }
     }
     if (typeof id !== 'undefined' && id !== '') {
-      networks.push({ id, isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone, adapterType, networkMoref, macAddress, netmask, gateway, dns });
+      networks.push({ id, isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone, adapterType, networkPlatformID, macAddress, netmask, gateway, dns });
     } else {
-      networks.push({ isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone, adapterType, networkMoref, macAddress, netmask, gateway, dns });
+      networks.push({ isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone, adapterType, networkPlatformID, macAddress, netmask, gateway, dns });
     }
   }
 
@@ -366,11 +365,9 @@ export function getVMwareNetworkConfig(key, values) {
   const networks = [];
   for (let index = 0; index < eths.length; index += 1) {
     const network = getValue(`${networkKey}-eth-${index}-network`, values);
-    const networkId = network.value;
     const adapterType = `${getValue(`${networkKey}-eth-${index}-adapterType`, values)}`;
     const macAddress = `${getValue(`${networkKey}-eth-${index}-macAddress-value`, values)}`;
-    const networkMoref = networkId;
-    networks.push({ network: network.label, networkMoref, adapterType, macAddress });
+    networks.push({ network: network.label, adapterType, macAddress });
   }
   return networks;
 }

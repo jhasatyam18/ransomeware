@@ -915,7 +915,7 @@ function setVMWAREVMDetails(selectedVMS, protectionPlan, dispatch) {
             dispatch(valueChange(`${networkKey}-eth-${index}-network`, { label: net.network, value: net.networkMoref }));
             dispatch(valueChange(`${networkKey}-eth-${index}-macAddress`, net.macAddress));
             dispatch(valueChange(`${networkKey}-eth-${index}-adapterType`, net.adapterType));
-            dispatch(valueChange(`${networkKey}-eth-${index}-networkMoref`, net.networkMoref));
+            dispatch(valueChange(`${networkKey}-eth-${index}-networkPlatformID`, net.networkPlatformID));
             dispatch(valueChange(`${networkKey}-eth-${index}-netmask`, net.netmask));
             dispatch(valueChange(`${networkKey}-eth-${index}-gateway`, net.gateway));
             dispatch(valueChange(`${networkKey}-eth-${index}-dnsserver`, net.dns));
@@ -1274,7 +1274,7 @@ export function setVMwareVMRecoveryData(vmMoref) {
             dispatch(valueChange(`${networkKey}-eth-${index}-network`, { label: net.network, value: net.networkMoref }));
             dispatch(valueChange(`${networkKey}-eth-${index}-macAddress`, net.macAddress));
             dispatch(valueChange(`${networkKey}-eth-${index}-adapterType`, net.adapterType));
-            dispatch(valueChange(`${networkKey}-eth-${index}-networkMoref`, net.networkMoref));
+            dispatch(valueChange(`${networkKey}-eth-${index}-networkPlatformID`, net.networkPlatformID));
             dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, net.publicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-netmask`, net.netmask));
             dispatch(valueChange(`${networkKey}-eth-${index}-gateway`, net.gateway));
