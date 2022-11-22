@@ -906,13 +906,12 @@ function setVMWAREVMDetails(selectedVMS, protectionPlan, dispatch) {
         if (ins.networks && ins.networks.length > 0) {
           ins.networks.forEach((net, index) => {
             dispatch(valueChange(`${networkKey}-eth-${index}-id`, net.id));
-            dispatch(valueChange(`${networkKey}-eth-${index}-network`, net.network));
             dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, net.Subnet));
             dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, net.publicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkTier`, net.networkTier));
             dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, net.isPublicIP));
-            dispatch(valueChange(`${networkKey}-eth-${index}-network`, { label: net.network, value: net.networkMoref }));
+            dispatch(valueChange(`${networkKey}-eth-${index}-network`, { label: net.network, value: net.networkPlatformID }));
             dispatch(valueChange(`${networkKey}-eth-${index}-macAddress`, net.macAddress));
             dispatch(valueChange(`${networkKey}-eth-${index}-adapterType`, net.adapterType));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkPlatformID`, net.networkPlatformID));
@@ -1265,13 +1264,12 @@ export function setVMwareVMRecoveryData(vmMoref) {
         if (ins.networks && ins.networks.length > 0) {
           ins.networks.forEach((net, index) => {
             dispatch(valueChange(`${networkKey}-eth-${index}-id`, net.id));
-            dispatch(valueChange(`${networkKey}-eth-${index}-network`, net.network));
             dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, net.Subnet));
             dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, net.publicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkTier`, net.networkTier));
             dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, net.isPublicIP));
-            dispatch(valueChange(`${networkKey}-eth-${index}-network`, { label: net.network, value: net.networkMoref }));
+            dispatch(valueChange(`${networkKey}-eth-${index}-network`, { label: net.network, value: net.networkPlatformID }));
             dispatch(valueChange(`${networkKey}-eth-${index}-macAddress`, net.macAddress));
             dispatch(valueChange(`${networkKey}-eth-${index}-adapterType`, net.adapterType));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkPlatformID`, net.networkPlatformID));

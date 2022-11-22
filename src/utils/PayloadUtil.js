@@ -177,7 +177,12 @@ export function getVMNetworkConfig(key, values) {
     let network = getValue(`${networkKey}-eth-${index}-network`, values) || '';
     const adapterType = `${getValue(`${networkKey}-eth-${index}-adapterType`, values)}`;
     const macAddress = `${getValue(`${networkKey}-eth-${index}-macAddress`, values)}`;
-    const networkPlatformID = getValue(`${networkKey}-eth-${index}-networkPlatformID`, values) || '';
+    let networkPlatformID = '';
+    if (typeof network === 'object' && network.value) {
+      networkPlatformID = network.value;
+    } else {
+      networkPlatformID = network;
+    }
     let netmask = getValue(`${networkKey}-eth-${index}-netmask`, values) || '';
     let gateway = getValue(`${networkKey}-eth-${index}-gateway`, values) || '';
     let dns = getValue(`${networkKey}-eth-${index}-dnsserver`, values) || '';
