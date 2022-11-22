@@ -322,8 +322,8 @@ max-height: 55vh;
 
 .paginator_input_div{
   width: 55px;
-  background-color: #c3cbe4;
-  border-color: #c3cbe4;
+  background-color: $gray-600;
+  border-color: $gray-600;
   justify-content: center;
   align-items: center;
   display: flex;
@@ -334,17 +334,17 @@ max-height: 55vh;
     font-size: 0.8125rem;
     font-weight: 400;
     line-height: 1.5;
-    color: #32394e;
-    border: none !important;
-    background-color: #bfc8e2;
+    color: $gray-300;
+    border: none ;
+    background-color: $gray-500;
     outline: none;
     text-align: right;
 }
 
 .dmaipaginator_totalpage{
   width: 70px;
-  background-color: #c3cbe4;
-  border-color: #c3cbe4;
+  background-color: $gray-600;
+  border-color: $gray-600;
 }
 
 .totalpag_text{
