@@ -29,11 +29,19 @@ function VMNetworkInfoItemRenderer(props) {
   const { networks } = data;
 
   const renderField = (field, obj, index) => {
-    if (field && (obj[field.field] || field.fieldValue)) {
+    const object = obj;
+    if (field && object[field.field]) {
+      if (recoverySite.platformDetails.platformType === PLATFORM_TYPES.Azure && field.field === 'isPublicIP') {
+        if (object[field.field] === true) {
+          object[field.field] = 'Auto';
+        } else if (object[field.field] === false) {
+          object[field.field] = 'None';
+        }
+      }
       return (
         <Row key={`${field.label}-${index}`}>
-          <Col sm={5}>{t(field.label)}</Col>
-          {field.fieldValue ? <Col sm={7}>{field.fieldValue}</Col> : <Col sm={7}>{obj[field.field]}</Col>}
+          <Col sm={6}>{t(field.label)}</Col>
+          {field.fieldValue ? <Col sm={7}>{field.fieldValue}</Col> : <Col sm={7}>{object[field.field]}</Col>}
         </Row>
       );
     }

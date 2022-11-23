@@ -51,6 +51,13 @@ export function isPlatformTypeGCP(user) {
   }
   return false;
 }
+export function isPlatformTypeAzure(user) {
+  const { values } = user;
+  if (getValue('configureSite.platformDetails.platformType', values) === PLATFORM_TYPES.Azure) {
+    return true;
+  }
+  return false;
+}
 
 export function getSitesOptions(user) {
   const { values } = user;
@@ -95,6 +102,19 @@ export function getInstanceTypeOptions(user) {
     }, result);
   }
   return result;
+}
+
+export function getResourceTypeOptions(user) {
+  const { values } = user;
+  const resourceTypeOpt = getValue(STATIC_KEYS.RESOURCE_GROUP, values);
+  const array = [];
+  resourceTypeOpt.map((res) => {
+    const obj = {};
+    obj.label = res;
+    obj.value = res;
+    array.push(obj);
+  });
+  return array;
 }
 
 export function getAvailibilityZoneOptions(user) {
@@ -179,6 +199,22 @@ export function getSecurityGroupOption(user, fieldKey) {
   return options || [];
 }
 
+export function getAzureSecurityGroupOption(user, fieldKey) {
+  const { values } = user;
+  const vmMoref = fieldKey.split('.');
+  const resourceGrpKey = getValue(`${vmMoref[0]}.general.folderPath`, values);
+  const opts = getValue(STATIC_KEYS.UI_SECURITY_GROUPS, values) || [];
+  const options = [];
+  // const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+  opts.forEach((op) => {
+    const name = (op.name && op.name !== '' ? op.name : op.id);
+    if (op.vpcID === resourceGrpKey) {
+      options.push({ label: name, value: op.name });
+    }
+  });
+  return options || [];
+}
+
 export function getSubnetOptions(user, fieldKey) {
   const { values } = user;
   let isCopyConfiguration = false;
@@ -217,6 +253,21 @@ export function getGCPSubnetOptions(user, fieldKey) {
   return options;
 }
 
+export function getAzureSubnetOptions(user, fieldKey) {
+  const { values } = user;
+  const opts = getValue(STATIC_KEYS.UI_SUBNETS, values) || [];
+  const networkFieldKey = fieldKey.replace('-subnet', '-network');
+  const netID = getValue(networkFieldKey, values);
+  const options = [];
+  opts.forEach((op) => {
+    if (netID === op.vpcID) {
+      const name = `${op.name}-${op.cidr}`;
+      options.push({ label: name, value: op.id });
+    }
+  });
+  return options;
+}
+
 export function getNetworkOptions(user) {
   const { values } = user;
   const opts = getValue(STATIC_KEYS.UI_SUBNETS, values) || [];
@@ -232,6 +283,28 @@ export function getNetworkOptions(user) {
   return options;
 }
 
+export function getAzureNetworkOptions(user, fieldKey) {
+  const { values } = user;
+  const vmMoref = fieldKey.split('.');
+  const resourceGrpKey = getValue(`${vmMoref[0]}.general.folderPath`, values);
+  let opts = getValue(STATIC_KEYS.UI_NETWORKS, values) || [];
+  opts = opts.filter((sub) => {
+    if (sub.vpcID === resourceGrpKey) {
+      return sub;
+    }
+  });
+  const options = [];
+  opts.forEach((op) => {
+    const network = op.id;
+    const name = network.split(/[\s/]+/).pop();
+    const exist = options.find((item) => item.label === name);
+    if (!exist) {
+      options.push({ label: name, value: op.id });
+    }
+  });
+  return options;
+}
+
 export function getGCPExternalIPOptions(user) {
   const { values } = user;
   const options = [];
@@ -240,6 +313,22 @@ export function getGCPExternalIPOptions(user) {
   const ips = getValue(STATIC_KEYS.UI_RESERVE_IPS, values) || [];
   ips.forEach((op) => {
     if (op.ipType === 'EXTERNAL') {
+      options.push({ label: op.name, value: op.name });
+    }
+  });
+  return options;
+}
+
+export function getAzureExternalIPOptions(user, fieldKey) {
+  const { values } = user;
+  const options = [];
+  const vmMoref = fieldKey.split('.');
+  const resourceGrpKey = getValue(`${vmMoref[0]}.general.folderPath`, values);
+  options.push({ label: 'None', value: false });
+  options.push({ label: 'Auto', value: true });
+  const ips = getValue(STATIC_KEYS.UI_RESERVE_IPS, values) || [];
+  ips.forEach((op) => {
+    if (op.vpcID === resourceGrpKey) {
       options.push({ label: op.name, value: op.name });
     }
   });
@@ -329,6 +418,8 @@ export function createVMConfigStackObject(vm, user) {
       return getVMwareVMConfig(vm);
     case PLATFORM_TYPES.AWS:
       return getAwsVMConfig(vm);
+    case PLATFORM_TYPES.Azure:
+      return getAzureVMConfig(vm);
     default:
       return { data: [] };
   }
@@ -356,22 +447,8 @@ export function getGCPVMConfig(vm) {
           [`${key}-vmConfig.network.securityGroup`]: { label: 'Network Tags', type: STACK_COMPONENT_SECURITY_GROUP, validate: null, errorMessage: '', shouldShow: true, fieldInfo: 'info.protectionplan.instance.network.tags' },
         },
       },
-      {
-        hasChildren: true,
-        title: 'Replication Scripts',
-        children: {
-          [`${key}-protection.scripts.preScript`]: { label: 'Pre', fieldInfo: 'info.protectionplan.protection.prescript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPreScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
-          [`${key}-protection.scripts.postScript`]: { label: 'Post', fieldInfo: 'info.protectionplan.protection.postscript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPostScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
-        },
-      },
-      {
-        hasChildren: true,
-        title: 'Recovery Scripts',
-        children: {
-          [`${key}-vmConfig.scripts.preScript`]: { label: 'Pre', fieldInfo: 'info.protectionplan.instance.prescript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPreScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
-          [`${key}-vmConfig.scripts.postScript`]: { label: 'Post', fieldInfo: 'info.protectionplan.instance.postscript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPostScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
-        },
-      },
+      ...getReplicationScript(key),
+      ...getRecoveryScript(key),
     ],
   };
   return config;
@@ -398,22 +475,8 @@ export function getAwsVMConfig(vm) {
           [`${key}-vmConfig.network.net1`]: { label: 'IP Address', fieldInfo: 'info.protectionplan.instance.network.aws', type: STACK_COMPONENT_NETWORK, validate: null, errorMessage: '', shouldShow: true, options: (u) => getInstanceTypeOptions(u), data: vm },
         },
       },
-      {
-        hasChildren: true,
-        title: 'Replication Scripts',
-        children: {
-          [`${key}-protection.scripts.preScript`]: { label: 'Pre', fieldInfo: 'info.protectionplan.protection.prescript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPreScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
-          [`${key}-protection.scripts.postScript`]: { label: 'Post', fieldInfo: 'info.protectionplan.protection.postscript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPostScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
-        },
-      },
-      {
-        hasChildren: true,
-        title: 'Recovery Scripts',
-        children: {
-          [`${key}-vmConfig.scripts.preScript`]: { label: 'Pre', fieldInfo: 'info.protectionplan.instance.prescript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPreScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
-          [`${key}-vmConfig.scripts.postScript`]: { label: 'Post', fieldInfo: 'info.protectionplan.instance.postscript', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: true, options: (u) => getPostScriptsOptions(u), onChange: (user, dispatch) => onScriptChange(user, dispatch) },
-        },
-      },
+      ...getReplicationScript(key),
+      ...getRecoveryScript(key),
     ],
   };
   return config;
@@ -431,6 +494,33 @@ export function getVMwareVMConfig(vm) {
   return config;
 }
 
+export function getAzureVMConfig(vm) {
+  const key = (typeof vm === 'string' ? vm : vm.moref);
+  const config = {
+    data: [
+      {
+        hasChildren: true,
+        title: 'General',
+        children: {
+          [`${key}-vmConfig.general.folderPath`]: { label: 'Resource Group', fieldInfo: 'info.protectionplan.resource.group.azure', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select Resource Group', shouldShow: true, options: (u) => getResourceTypeOptions(u) },
+          [`${key}-vmConfig.general.availibility.zone`]: { label: 'Availability Zone', fieldInfo: 'info.protectionplan.availibility.zone.azure', type: FIELD_TYPE.SELECT, errorMessage: 'Select Availability Zone', shouldShow: true, options: (u) => getAvailibilityZoneOptions(u) },
+          [`${key}-vmConfig.general.instanceType`]: { label: 'VM Size', fieldInfo: 'info.protectionplan.vmsize.azure', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
+          [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.volume.type.azure', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u), onChange: (user, dispatch) => onAwsStorageTypeChange(user, dispatch), disabled: (u, f) => shouldDisableStorageType(u, f) },
+          [`${key}-vmConfig.general.tags`]: { label: 'Tags', fieldInfo: 'info.protectionplan.tags.azure', type: STACK_COMPONENT_TAGS, validate: null, errorMessage: '', shouldShow: true },
+        },
+      },
+      {
+        hasChildren: true,
+        title: 'Network',
+        children: {
+          [`${key}-vmConfig.network.net1`]: { label: 'IP Address', fieldInfo: 'info.protectionplan.instance.network.aws', type: STACK_COMPONENT_NETWORK, validate: null, errorMessage: '', shouldShow: true, options: (u) => getInstanceTypeOptions(u), data: vm },
+        },
+      },
+      ...getReplicationScript(key),
+    ],
+  };
+  return config;
+}
 export function getNodeTypeOptions() {
   return [
     { label: 'Management', value: 'Management' },
@@ -445,6 +535,7 @@ export function getPlatformTypeOptions() {
     { label: 'VMware', value: 'VMware' },
     { label: 'AWS', value: 'AWS' },
     { label: 'GCP', value: 'GCP' },
+    { label: 'Azure', value: 'Azure' },
   ];
 }
 
@@ -821,14 +912,16 @@ export const diableVMwareMemory = (user, fieldKey) => {
   return false;
 };
 export function getMatchingInsType(values, ins) {
-  const savedInsType = getValue('ui.values.instances', values);
+  const savedInsType = getValue('ui.values.instances', values) || [];
   const insType = {};
-  savedInsType.forEach((inst) => {
-    if (inst.value === ins.instanceType) {
-      insType.label = inst.label;
-      insType.value = inst.value;
-    }
-  });
+  if (savedInsType.length > 0) {
+    savedInsType.forEach((inst) => {
+      if (inst.value === ins.instanceType) {
+        insType.label = inst.label;
+        insType.value = inst.value;
+      }
+    });
+  }
   return insType;
 }
 
