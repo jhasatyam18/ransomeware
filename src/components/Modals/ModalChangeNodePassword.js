@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Card, Col, Container, Form, Row } from 'reactstrap';
+import { validatedNewAndCnfmPass } from '../../utils/validationUtils';
 import { NOTE_TEXT } from '../../constants/DMNoteConstant';
-import { getValue } from '../../utils/InputUtils';
 import { changeSystemPassword, valueChange } from '../../store/actions';
 import { closeModal } from '../../store/actions/ModalActions';
 import DMFieldText from '../Shared/DMFieldText';
@@ -25,18 +25,11 @@ function ModalChangeNodePassword(props) {
     dispatch(closeModal());
   }
 
-  function onfieldCheck() {
-    const { values } = user;
-    const password = getValue('user.newPassword', values);
-    const cnfPassword = getValue('user.confirmPassword', values);
-    if (password !== '' && cnfPassword !== '' && password === cnfPassword) return true;
-  }
-
   function onSave() {
     const { alerts } = props;
     const { selected } = alerts;
     const { nodeID } = options;
-    if (onfieldCheck()) {
+    if (validatedNewAndCnfmPass(user)()) {
       dispatch(changeSystemPassword(nodeID, selected));
     }
   }

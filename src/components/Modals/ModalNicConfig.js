@@ -273,7 +273,7 @@ class ModalNicConfig extends Component {
                   </Row>
                   <Row>
                     <Col sm={4}>
-                      {t('subnet')}
+                      {t('vmware.subnet')}
                     </Col>
                     <Col sm={8}>
                       <DMFieldText hideLabel dispatch={dispatch} fieldKey={`${networkKey}-netmask`} field={subnet} user={user} />

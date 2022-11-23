@@ -870,16 +870,15 @@ function setVMWAREVMDetails(selectedVMS, protectionPlan, dispatch) {
         if (ins.networks && ins.networks.length > 0) {
           ins.networks.forEach((net, index) => {
             dispatch(valueChange(`${networkKey}-eth-${index}-id`, net.id));
-            dispatch(valueChange(`${networkKey}-eth-${index}-network`, net.network));
             dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, net.Subnet));
             dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, net.publicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkTier`, net.networkTier));
             dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, net.isPublicIP));
-            dispatch(valueChange(`${networkKey}-eth-${index}-network`, { label: net.network, value: net.networkMoref }));
+            dispatch(valueChange(`${networkKey}-eth-${index}-network`, { label: net.network, value: net.networkPlatformID }));
             dispatch(valueChange(`${networkKey}-eth-${index}-macAddress`, net.macAddress));
             dispatch(valueChange(`${networkKey}-eth-${index}-adapterType`, net.adapterType));
-            dispatch(valueChange(`${networkKey}-eth-${index}-networkMoref`, net.networkMoref));
+            dispatch(valueChange(`${networkKey}-eth-${index}-networkPlatformID`, net.networkPlatformID));
             dispatch(valueChange(`${networkKey}-eth-${index}-netmask`, net.netmask));
             dispatch(valueChange(`${networkKey}-eth-${index}-gateway`, net.gateway));
             dispatch(valueChange(`${networkKey}-eth-${index}-dnsserver`, net.dns));
@@ -1237,6 +1236,7 @@ export function setAWSVMRecoveryData(vmMoref) {
         dispatch(valueChange(`${key}-vmConfig.general.volumeType`, ins.volumeType));
         dispatch(valueChange(`${key}-vmConfig.general.volumeIOPS`, ins.volumeIOPS));
         dispatch(valueChange(`${key}-vmConfig.general.bootOrder`, ins.bootPriority));
+        dispatch(valueChange(`${key}-vmConfig.general.instanceID`, ins.instanceID));
         dispatch(valueChange(`${key}-vmConfig.scripts.preScript`, ins.preScript));
         dispatch(valueChange(`${key}-vmConfig.scripts.postScript`, ins.postScript));
         dispatch(valueChange(`${key}-vmConfig.scripts.postScript`, ins.postScript));
@@ -1292,6 +1292,7 @@ export function setVMwareVMRecoveryData(vmMoref) {
         dispatch(valueChange(`${key}-vmConfig.general.instanceType`, ins.instanceType));
         dispatch(valueChange(`${key}-vmConfig.general.volumeType`, ins.volumeType));
         dispatch(valueChange(`${key}-vmConfig.general.bootOrder`, ins.bootPriority));
+        dispatch(valueChange(`${key}-vmConfig.general.instanceID`, ins.instanceID));
         dispatch(valueChange(`${key}-vmConfig.scripts.preScript`, ins.preScript));
         dispatch(valueChange(`${key}-vmConfig.scripts.postScript`, ins.postScript));
         dispatch(valueChange(`${key}-vmConfig.general.hostMoref`, { value: ins.hostMoref, label: ins.hostMoref }));
@@ -1314,16 +1315,15 @@ export function setVMwareVMRecoveryData(vmMoref) {
         if (ins.networks && ins.networks.length > 0) {
           ins.networks.forEach((net, index) => {
             dispatch(valueChange(`${networkKey}-eth-${index}-id`, net.id));
-            dispatch(valueChange(`${networkKey}-eth-${index}-network`, net.network));
             dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, net.Subnet));
             dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, net.publicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkTier`, net.networkTier));
             dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, net.isPublicIP));
-            dispatch(valueChange(`${networkKey}-eth-${index}-network`, { label: net.network, value: net.networkMoref }));
+            dispatch(valueChange(`${networkKey}-eth-${index}-network`, { label: net.network, value: net.networkPlatformID }));
             dispatch(valueChange(`${networkKey}-eth-${index}-macAddress`, net.macAddress));
             dispatch(valueChange(`${networkKey}-eth-${index}-adapterType`, net.adapterType));
-            dispatch(valueChange(`${networkKey}-eth-${index}-networkMoref`, net.networkMoref));
+            dispatch(valueChange(`${networkKey}-eth-${index}-networkPlatformID`, net.networkPlatformID));
             dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, net.publicIP));
             dispatch(valueChange(`${networkKey}-eth-${index}-netmask`, net.netmask));
             dispatch(valueChange(`${networkKey}-eth-${index}-gateway`, net.gateway));

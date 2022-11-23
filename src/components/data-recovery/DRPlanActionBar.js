@@ -123,6 +123,22 @@ class DRPlanActionBar extends Component {
     return false;
   }
 
+  disableDeletePlan() {
+    const { selectedPlans, user } = this.props;
+    const { localVMIP } = user;
+    if (!selectedPlans) { return true; }
+    const keys = Object.keys(selectedPlans);
+    if (keys.length > 1 || keys.length === 0) {
+      return true;
+    }
+    const plan = selectedPlans[keys[0]];
+    const { recoverySite } = plan;
+    if (localVMIP === recoverySite.node.hostname) {
+      return true;
+    }
+    return false;
+  }
+
   renderServerOptions() {
     const { user } = this.props;
     const hasPrivilege = this.hasPrivilege(user, ['asd']);
@@ -140,7 +156,7 @@ class DRPlanActionBar extends Component {
     const { user } = this.props;
     const actions = [{ label: 'New', onClick: this.onCreate, icon: 'fa fa-plus', isDisabled: !hasRequestedPrivileges(user, ['protectionplan.edit']) },
       { label: 'Edit', onClick: this.onEdit, icon: 'fa fa-edit', isDisabled: (!hasRequestedPrivileges(user, ['protectionplan.create']) || this.showEdit()) },
-      { label: 'remove', onClick: this.onDelete, icon: 'fa fa-trash', isDisabled: (!hasRequestedPrivileges(user, ['protectionplan.delete']) || this.shouldShowAction(true)) }];
+      { label: 'remove', onClick: this.onDelete, icon: 'fa fa-trash', isDisabled: (!hasRequestedPrivileges(user, ['protectionplan.delete']) || this.disableDeletePlan(true)) }];
       // { label: 'start', onClick: () => { this.planAction(startPlan); }, icon: 'fa fa-play', isDisabled: this.shouldShowAction(false) },
       // { label: 'stop', onClick: () => { this.planAction(stopPlan); }, icon: 'fa fa-stop', isDisabled: this.shouldShowAction(false) }
     return (

@@ -17,7 +17,7 @@ function TimeDurationItemRenderer({ data }) {
     return (
       <div>
         <button type="button" id={key} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} className="btn noPadding">
-          { duration === '-' ? '0 Seconds' : duration }
+          { duration === '-' ? '0s' : duration }
         </button>
         <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: 'black' }}>
           <PopoverBody>

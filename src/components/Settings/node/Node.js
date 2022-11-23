@@ -67,6 +67,8 @@ class Node extends Component {
     const selNodes = Object.keys(selectedNodes).length;
     const hasOnline = Object.keys(selectedNodes).some((key) => selectedNodes[key].status === 'online');
     const hasOffline = Object.keys(selectedNodes).some((key) => selectedNodes[key].status === 'offline');
+    // if the selected node has local node then diable the offline button
+    const isLocalNode = Object.keys(selectedNodes).some((key) => selectedNodes[key].isLocalNode === true);
     return (
       <>
         <Container fluid>
@@ -78,7 +80,7 @@ class Node extends Component {
                 <ActionButton label="Edit" onClick={this.onReconfigureNode} icon="fa fa-edit" isDisabled={(selNodes === 0 || selNodes > 1) || !hasRequestedPrivileges(user, ['node.edit'])} t={t} key="addNewNode" />
                 <ActionButton label="remove" onClick={this.onRemoveNode} icon="fa fa-trash" isDisabled={(selNodes === 0 || selNodes > 1) || !hasRequestedPrivileges(user, ['node.delete'])} t={t} key="removeNode" />
                 <ActionButton label="Online" onClick={this.onOnlineNode} icon="fas fa-plug" isDisabled={(selNodes === 0 || hasOnline) || !hasRequestedPrivileges(user, ['node.status'])} t={t} key="makeNodeOnline" iconColor="#34c38f" />
-                <ActionButton label="Offline" onClick={this.onOfflineNode} icon="fas fa-power-off" isDisabled={(selNodes === 0 || hasOffline) || !hasRequestedPrivileges(user, ['node.status'])} t={t} key="makeNodeOffline" iconColor="#f46a6a" />
+                <ActionButton label="Offline" onClick={this.onOfflineNode} icon="fas fa-power-off" isDisabled={(selNodes === 0 || hasOffline || isLocalNode) || !hasRequestedPrivileges(user, ['node.status'])} t={t} key="makeNodeOffline" iconColor="#f46a6a" />
               </div>
               <DMTable
                 dispatch={dispatch}

@@ -42,7 +42,7 @@ function AlertAckItemRenderer({ data, field }) {
   function acknowledgeTime() {
     if (isAcknowledged) {
       if (data.severity === 'INFO' || data.severity === 'WARNING') {
-        return <DateItemRenderer data={data} field="timeStamp" />;
+        return <DateItemRenderer data={data} field="updatedTime" />;
       }
       return <DateItemRenderer data={data} field="acknowledgeTime" />;
     }

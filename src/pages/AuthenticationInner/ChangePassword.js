@@ -9,7 +9,7 @@ import logoName from '../../assets/images/name.png';
 import DMFieldText from '../../components/Shared/DMFieldText';
 import { FIELD_TYPE } from '../../constants/FieldsConstant';
 import { PASSWORD_REGEX } from '../../constants/ValidationConstants';
-import { validatePassword, isEmpty } from '../../utils/validationUtils';
+import { validatePassword, isEmpty, validatedNewAndCnfmPass } from '../../utils/validationUtils';
 import { getValue } from '../../utils/InputUtils';
 import { getCookie } from '../../utils/CookieUtils';
 import { APPLICATION_API_USER } from '../../constants/UserConstant';
@@ -36,9 +36,7 @@ class ChangePassword extends Component {
     const { user } = this.props;
     const { values } = user;
     const oldPassword = getValue('user.oldPassword', values);
-    const password = getValue('user.newPassword', values);
-    const cnfPassword = getValue('user.confirmPassword', values);
-    if (oldPassword !== '' && password !== '' && cnfPassword !== '' && password === cnfPassword) return true;
+    if (oldPassword !== '' && validatedNewAndCnfmPass(user)) return true;
   }
 
   onEnterCallBack() {

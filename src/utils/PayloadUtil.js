@@ -100,9 +100,9 @@ export function getVMConfigPayload(user) {
   const instanceDetails = [];
   const recoveryPlatform = getValue('ui.values.recoveryPlatform', values) || '';
   Object.keys(vms).forEach((key) => {
-    let folderPath = '';
     // Data require for vmware as target platform
-    folderPath = getValue(`${key}-vmConfig.general.folderPath`, values) || '';
+    let folderPath = getValue(`${key}-vmConfig.general.folderPath`, values);
+    const instanceID = getValue(`${key}-vmConfig.general.instanceID`, values) || '';
     if (typeof folderPath !== 'string') {
       const [index] = folderPath;
       folderPath = index;
@@ -153,9 +153,9 @@ export function getVMConfigPayload(user) {
       availZone = getValue(`${key}-vmConfig.general.availibility.zone`, values);
     }
     if (typeof id !== 'undefined' && id !== '') {
-      instanceDetails.push({ sourceMoref, id, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref });
+      instanceDetails.push({ sourceMoref, id, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref: hostMoref.value, datastoreMoref: datastoreMoref.value, numCPU, datacenterMoref });
     } else {
-      instanceDetails.push({ sourceMoref, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref });
+      instanceDetails.push({ sourceMoref, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref: hostMoref.value, datastoreMoref: datastoreMoref.value, numCPU, datacenterMoref });
     }
   });
   return instanceDetails;
@@ -179,13 +179,17 @@ export function getVMNetworkConfig(key, values) {
     const sgs = getValue(`${networkKey}-eth-${index}-securityGroups`, values) || '';
     const networkTier = getValue(`${networkKey}-eth-${index}-networkTier`, values) || '';
     let network = getValue(`${networkKey}-eth-${index}-network`, values) || '';
-    const networkId = network.value || '';
-    const adapterType = `${getValue(`${networkKey}-eth-${index}-adapterType`, values)}` || '';
-    const macAddress = `${getValue(`${networkKey}-eth-${index}-macAddress`, values)}` || '';
+    const adapterType = `${getValue(`${networkKey}-eth-${index}-adapterType`, values)}`;
+    const macAddress = `${getValue(`${networkKey}-eth-${index}-macAddress`, values)}`;
+    let networkPlatformID = '';
+    if (typeof network === 'object' && network.value) {
+      networkPlatformID = network.value;
+    } else {
+      networkPlatformID = network;
+    }
     let netmask = getValue(`${networkKey}-eth-${index}-netmask`, values) || '';
     let gateway = getValue(`${networkKey}-eth-${index}-gateway`, values) || '';
     let dns = getValue(`${networkKey}-eth-${index}-dnsserver`, values) || '';
-    const networkMoref = networkId || '';
     if (typeof isFromSource !== 'boolean') {
       isFromSource = false;
     }
@@ -218,9 +222,9 @@ export function getVMNetworkConfig(key, values) {
       }
     }
     if (typeof id !== 'undefined' && id !== '') {
-      networks.push({ id, isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone, adapterType, networkMoref, macAddress, netmask, gateway, dns });
+      networks.push({ id, isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone, adapterType, networkPlatformID, macAddress, netmask, gateway, dns });
     } else {
-      networks.push({ isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone, adapterType, networkMoref, macAddress, netmask, gateway, dns });
+      networks.push({ isPublicIP, subnet, privateIP, securityGroups: joinArray(sgs, ','), publicIP, networkTier, network, isFromSource, vpcId, availZone, adapterType, networkPlatformID, macAddress, netmask, gateway, dns });
     }
   }
 
@@ -385,11 +389,9 @@ export function getVMwareNetworkConfig(key, values) {
   const networks = [];
   for (let index = 0; index < eths.length; index += 1) {
     const network = getValue(`${networkKey}-eth-${index}-network`, values);
-    const networkId = network.value;
     const adapterType = `${getValue(`${networkKey}-eth-${index}-adapterType`, values)}`;
     const macAddress = `${getValue(`${networkKey}-eth-${index}-macAddress-value`, values)}`;
-    const networkMoref = networkId;
-    networks.push({ network: network.label, networkMoref, adapterType, macAddress });
+    networks.push({ network: network.label, adapterType, macAddress });
   }
   return networks;
 }

@@ -1,6 +1,6 @@
 export const REPORT_TYPES = {
   EXCEL_BLOBTYPE: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8',
-  HEADER_IMG_URL: '/docs/assets/images/docheader.png',
+  HEADER_IMG_URL: '/datamotiveHeader.png',
 };
 
 export const LIGHT_GREY = 'E3EFF7';
