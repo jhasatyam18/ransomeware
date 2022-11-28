@@ -122,7 +122,7 @@ export function getVMConfigPayload(user) {
     const sourceMoref = vms[key].moref;
     const id = getValue(`${key}-vmConfig.general.id`, values);
     let instanceType = '';
-    const insType = getValue(`${key}-vmConfig.general.instanceType`, values);
+    const insType = getValue(`${key}-vmConfig.general.instanceType`, values) || '';
     if (typeof insType === 'object' && insType.value) {
       instanceType = insType.value;
     } else {
@@ -153,9 +153,9 @@ export function getVMConfigPayload(user) {
       availZone = getValue(`${key}-vmConfig.general.availibility.zone`, values);
     }
     if (typeof id !== 'undefined' && id !== '') {
-      instanceDetails.push({ sourceMoref, id, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref: hostMoref.value, datastoreMoref: datastoreMoref.value, numCPU, datacenterMoref });
+      instanceDetails.push({ sourceMoref, id, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref });
     } else {
-      instanceDetails.push({ sourceMoref, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref: hostMoref.value, datastoreMoref: datastoreMoref.value, numCPU, datacenterMoref });
+      instanceDetails.push({ sourceMoref, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref });
     }
   });
   return instanceDetails;

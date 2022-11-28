@@ -848,7 +848,9 @@ export function setInstanceDetails(key, ins) {
     dispatch(valueChange(`${key}-vmConfig.general.id`, ins.id));
     dispatch(valueChange(`${key}-vmConfig.general.sourceMoref`, ins.sourceMoref));
     const insType = getMatchingInsType(values, ins);
-    dispatch(valueChange(`${key}-vmConfig.general.instanceType`, insType));
+    if (insType.value) {
+      dispatch(valueChange(`${key}-vmConfig.general.instanceType`, insType));
+    }
     dispatch(valueChange(`${key}-vmConfig.general.volumeType`, ins.volumeType));
     dispatch(valueChange(`${key}-vmConfig.general.volumeIOPS`, ins.volumeIOPS));
     dispatch(valueChange(`${key}-vmConfig.general.bootOrder`, ins.bootPriority));

@@ -103,6 +103,7 @@ export const EXCLUDE_KEYS_RECOVERY_CONFIGURATION = {
   IS_REQUIRED: 'isResetRequired',
   NETWORK_KEY: 'networkKey',
   BOOT_PRIORITY: 'bootPriority',
+  INSTANCE_ID: 'instanceID',
 };
 
 export const EXCLUDE_KEYS_CONSTANTS = {

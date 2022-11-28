@@ -41,7 +41,7 @@ function VMNetworkInfoItemRenderer(props) {
       return (
         <Row key={`${field.label}-${index}`}>
           <Col sm={6}>{t(field.label)}</Col>
-          {field.fieldValue ? <Col sm={7}>{field.fieldValue}</Col> : <Col sm={7}>{object[field.field]}</Col>}
+          {field.fieldValue ? <Col sm={6}>{field.fieldValue}</Col> : <Col sm={6}>{object[field.field]}</Col>}
         </Row>
       );
     }
