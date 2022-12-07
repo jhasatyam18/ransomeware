@@ -59,6 +59,15 @@ export function isPlatformTypeAzure(user) {
   return false;
 }
 
+export function isRecoveryTypeGCP(user) {
+  const { values } = user;
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values) || '';
+  if (recoveryPlatform !== '' && recoveryPlatform === PLATFORM_TYPES.GCP) {
+    return true;
+  }
+  return false;
+}
+
 export function getSitesOptions(user) {
   const { values } = user;
   const sites = getValue(STATIC_KEYS.UI_SITES, values);

@@ -36,7 +36,7 @@ export function getVMwareAdapterType() {
   };
 }
 
-export function setVmwareInitialData(url, virtualMachines) {
+export function setVmwareInitialData(url) {
   return (dispatch) => {
     callAPI(url)
       .then((json) => {
@@ -60,19 +60,6 @@ export function setVmwareInitialData(url, virtualMachines) {
           });
           dispatch(valueChange('ui.site.vms.data', convertedData));
         }
-
-        let selectedVMS = [];
-        const selectedvmWithname = [];
-        virtualMachines.forEach((pvm) => {
-          // for update vm id is required
-          const obj = {};
-          selectedVMS = [...selectedVMS, pvm.moref];
-          obj.key = pvm.moref;
-          obj.name = pvm.name;
-          selectedvmWithname.push(obj);
-        });
-        dispatch(valueChange('ui.site.vmware.selectedvms', selectedVMS));
-        dispatch(valueChange('ui.selectedvm.value', selectedvmWithname));
       },
       (err) => {
         dispatch(hideApplicationLoader(url));

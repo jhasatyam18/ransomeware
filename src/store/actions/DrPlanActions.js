@@ -625,7 +625,7 @@ export function setProtectionPlanVMsForUpdate(protectionPlan, isEventAction = fa
     if (PLATFORM_TYPES.VMware === protectedSite.platformDetails.platformType) {
       dispatch(valueChange('ui.values.protectionSiteID', protectedSite.id));
       const url = API_FETCH_VMWARE_INVENTORY.replace('<id>', protectedSite.id);
-      dispatch(setVmwareInitialData(url, virtualMachines));
+      dispatch(setVmwareInitialData(url));
     }
     let url = (isEventAction ? API_PROTECTION_PLAN_PROTECTED_VMS.replace('<moref>', vmMoref) : API_PROTECTION_PLAN_VMS.replace('<sid>', protectedSite.id));
     url = url.replace('<pid>', id);
@@ -636,6 +636,8 @@ export function setProtectionPlanVMsForUpdate(protectionPlan, isEventAction = fa
         } else {
           let data = json;
           let selectedVMS = {};
+          let selectedVMSVMware = [];
+          const selectedvmWithname = [];
           if (data === null) {
             data = [];
           }
@@ -656,10 +658,22 @@ export function setProtectionPlanVMsForUpdate(protectionPlan, isEventAction = fa
               }
               data.forEach((vm) => {
                 if (pvm.moref === vm.moref) {
+                  if (PLATFORM_TYPES.VMware === protectedSite.platformDetails.platformType) {
+                    // for update vm id is required
+                    const obj = {};
+                    selectedVMSVMware = [...selectedVMSVMware, pvm.moref];
+                    obj.key = pvm.moref;
+                    obj.name = pvm.name;
+                    selectedvmWithname.push(obj);
+                  }
                   selectedVMS = { ...selectedVMS, [vm.moref]: setVMDetails(vm, pvm) };
                 }
               });
             });
+          }
+          if (PLATFORM_TYPES.VMware === protectedSite.platformDetails.platformType) {
+            dispatch(valueChange('ui.selectedvm.value', selectedvmWithname));
+            dispatch(valueChange('ui.site.vmware.selectedvms', selectedVMSVMware));
           }
           dispatch(valueChange('ui.site.seletedVMs', selectedVMS));
           dispatch(setProtectionPlanVMConfig(selectedVMS, protectionPlan));
