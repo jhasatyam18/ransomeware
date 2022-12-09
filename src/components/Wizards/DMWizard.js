@@ -41,9 +41,12 @@ class DMWizard extends React.Component {
     this.ref = React.createRef();
   }
 
-  componentDidUpdate() {
-    const scrollEl = this.ref.current.getScrollElement();
-    scrollEl.scrollTop = 0;
+  componentDidUpdate(prevProps, prevState) {
+    const { currentStep } = this.state;
+    if (currentStep !== prevState.currentStep) {
+      const scrollEl = this.ref.current.getScrollElement();
+      scrollEl.scrollTop = 0;
+    }
   }
 
   onNext() {
