@@ -150,10 +150,6 @@ export function onProtectSiteChange({ value }) {
               convertedData.push(node);
             });
             dispatch(valueChange('ui.site.vms.data', convertedData));
-            // while creating pplan if we selected vm and then came back to change protection platform
-            // then to empty the selected vm's below code is written
-            dispatch(valueChange('ui.selectedvm.value', ''));
-            dispatch(valueChange('ui.site.vmware.selectedvms', ''));
             return;
           }
           dispatch(valueChange('ui.site.vms', data));
