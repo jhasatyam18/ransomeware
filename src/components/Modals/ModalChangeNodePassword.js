@@ -29,7 +29,7 @@ function ModalChangeNodePassword(props) {
     const { alerts } = props;
     const { selected } = alerts;
     const { nodeID } = options;
-    if (validatedNewAndCnfmPass(user)()) {
+    if (validatedNewAndCnfmPass(user)) {
       dispatch(changeSystemPassword(nodeID, selected));
     }
   }
