@@ -1,3 +1,4 @@
+import { onAzureResourceChange } from '../store/actions/AzureAction';
 import { API_FETCH_VMWARE_LOCATION } from '../constants/ApiConstants';
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMORY, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
@@ -498,25 +499,9 @@ export function getAzureVMConfig(vm) {
   const key = (typeof vm === 'string' ? vm : vm.moref);
   const config = {
     data: [
-      {
-        hasChildren: true,
-        title: 'General',
-        children: {
-          [`${key}-vmConfig.general.folderPath`]: { label: 'Resource Group', fieldInfo: 'info.protectionplan.resource.group.azure', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select Resource Group', shouldShow: true, options: (u) => getResourceTypeOptions(u) },
-          [`${key}-vmConfig.general.availibility.zone`]: { label: 'Availability Zone', fieldInfo: 'info.protectionplan.availibility.zone.azure', type: FIELD_TYPE.SELECT, errorMessage: 'Select Availability Zone', shouldShow: true, options: (u) => getAvailibilityZoneOptions(u) },
-          [`${key}-vmConfig.general.instanceType`]: { label: 'VM Size', fieldInfo: 'info.protectionplan.vmsize.azure', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
-          [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.volume.type.azure', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u), onChange: (user, dispatch) => onAwsStorageTypeChange(user, dispatch), disabled: (u, f) => shouldDisableStorageType(u, f) },
-          [`${key}-vmConfig.general.tags`]: { label: 'Tags', fieldInfo: 'info.protectionplan.tags.azure', type: STACK_COMPONENT_TAGS, validate: null, errorMessage: '', shouldShow: true },
-        },
-      },
-      {
-        hasChildren: true,
-        title: 'Network',
-        children: {
-          [`${key}-vmConfig.network.net1`]: { label: 'IP Address', fieldInfo: 'info.protectionplan.instance.network.aws', type: STACK_COMPONENT_NETWORK, validate: null, errorMessage: '', shouldShow: true, options: (u) => getInstanceTypeOptions(u), data: vm },
-        },
-      },
+      ...getAzureGeneralSettings(key, vm),
       ...getReplicationScript(key),
+      ...getRecoveryScript(key),
     ],
   };
   return config;
@@ -986,6 +971,30 @@ export function getVMwareGeneralSettings(key, vm) {
       title: 'Network',
       children: {
         [`${key}-vmConfig.network.net1`]: { label: '', type: STACK_COMPONENT_NETWORK, validate: null, errorMessage: '', shouldShow: true, options: (u) => getInstanceTypeOptions(u), data: vm },
+      },
+    },
+  ];
+  return data;
+}
+
+export function getAzureGeneralSettings(key, vm) {
+  const data = [
+    {
+      hasChildren: true,
+      title: 'General',
+      children: {
+        [`${key}-vmConfig.general.folderPath`]: { label: 'Resource Group', fieldInfo: 'info.protectionplan.resource.group.azure', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select Resource Group', shouldShow: true, options: (u) => getResourceTypeOptions(u), onChange: ({ fieldKey, user }) => onAzureResourceChange({ fieldKey, user }) },
+        [`${key}-vmConfig.general.availibility.zone`]: { label: 'Availability Zone', fieldInfo: 'info.protectionplan.availibility.zone.azure', type: FIELD_TYPE.SELECT, errorMessage: 'Select Availability Zone', shouldShow: true, options: (u) => getAvailibilityZoneOptions(u) },
+        [`${key}-vmConfig.general.instanceType`]: { label: 'VM Size', fieldInfo: 'info.protectionplan.vmsize.azure', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
+        [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.volume.type.azure', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u), onChange: (user, dispatch) => onAwsStorageTypeChange(user, dispatch), disabled: (u, f) => shouldDisableStorageType(u, f) },
+        [`${key}-vmConfig.general.tags`]: { label: 'Tags', fieldInfo: 'info.protectionplan.tags.azure', type: STACK_COMPONENT_TAGS, validate: null, errorMessage: '', shouldShow: true },
+      },
+    },
+    {
+      hasChildren: true,
+      title: 'Network',
+      children: {
+        [`${key}-vmConfig.network.net1`]: { label: 'IP Address', fieldInfo: 'info.protectionplan.instance.network.aws', type: STACK_COMPONENT_NETWORK, validate: null, errorMessage: '', shouldShow: true, options: (u) => getInstanceTypeOptions(u), data: vm },
       },
     },
   ];

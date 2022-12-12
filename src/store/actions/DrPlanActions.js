@@ -920,6 +920,7 @@ function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch, user) {
       if (ins.sourceMoref === vm.moref) {
         dispatch(setInstanceDetails(key, ins));
         dispatch(valueChange(`${key}-vmConfig.general.folderPath`, ins.folderPath));
+        dispatch(valueChange(`${key}-vmConfig.general.availibility.zone`, ins.availZone));
         if (ins.tags && ins.tags.length > 0) {
           const tagsData = [];
           ins.tags.forEach((tag) => {
@@ -1411,6 +1412,7 @@ export function setAzureVMRecoveryData(vmMoref) {
         dispatch(valueChange(`${key}-vmConfig.scripts.preScript`, ins.preScript));
         dispatch(valueChange(`${key}-vmConfig.scripts.postScript`, ins.postScript));
         dispatch(valueChange(`${key}-vmConfig.general.folderPath`, ins.folderPath));
+        dispatch(valueChange(`${key}-vmConfig.general.availibility.zone`, ins.availZone));
         if (ins.securityGroups && ins.securityGroups.length > 0) {
           const selSgs = ins.securityGroups.split(',') || '';
           dispatch(valueChange(`${key}-vmConfig.network.securityGroup`, selSgs));

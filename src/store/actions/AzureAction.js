@@ -1,3 +1,4 @@
+import { getValue } from '../../utils/InputUtils';
 import { STATIC_KEYS } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { API_AZURE_AVAILIBITY_ZONES } from '../../constants/ApiConstants';
@@ -23,5 +24,17 @@ export function fetchAvailibilityZonesForAzure() {
       (err) => {
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
+  };
+}
+
+export function onAzureResourceChange({ fieldKey, user }) {
+  return (dispatch) => {
+    const { values } = user;
+    const key = fieldKey.replace('general.folderPath', 'network.net1');
+    const net = getValue(key, values) || [];
+    net.forEach((el) => {
+      dispatch(valueChange(`${el.key}-subnet`, ''));
+      dispatch(valueChange(`${el.key}-securityGroups`, ''));
+    });
   };
 }

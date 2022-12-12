@@ -53,26 +53,26 @@ export const FIELDS = {
   'configureSite.platformDetails.storageAccount': {
     label: 'storage.account', description: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Storage Account is required', shouldShow: (user) => isPlatformTypeAzure(user), fieldInfo: 'info.site.storage.acc',
   },
-  'configureSite.platformDetails.TenantID': {
+  'configureSite.platformDetails.tenantId': {
     label: 'tenant.id', description: 'Tenant ID for Cloud Site(Azure)', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Tenant ID is required', shouldShow: (user) => isPlatformTypeAzure(user), fieldInfo: 'info.site.storage.tenant.id',
   },
-  'configureSite.platformDetails.ClientID': {
+  'configureSite.platformDetails.clientId': {
     label: 'client.id', description: 'Client ID for Cloud Site(Azure)', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Client ID is required', shouldShow: (user) => isPlatformTypeAzure(user), fieldInfo: 'info.site.storage.client.id',
   },
   'configureSite.platformDetails.port': {
     label: 'port', description: 'vCenter Server management port', defaultValue: 443, min: 1, max: 65536, type: FIELD_TYPE.NUMBER, errorMessage: 'Port value required, if different.', shouldShow: (user) => isPlatformTypeVMware(user), fieldInfo: 'info.site.port',
   },
   'configureSite.platformDetails.username': {
-    label: 'username', description: 'vCenter Server User Name', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Username required', shouldShow: (user) => isPlatformTypeVMware(user) || isPlatformTypeAzure(user), fieldInfo: 'info.site.vcenter.username', infoFunction: (user, fieldKey) => getFieldInfo({ user, fieldKey }),
+    label: 'username', description: 'vCenter Server User Name', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Username required', shouldShow: (user) => isPlatformTypeVMware(user), fieldInfo: 'info.site.vcenter.username', infoFunction: (user, fieldKey) => getFieldInfo({ user, fieldKey }),
   },
   'configureSite.platformDetails.password': {
-    label: 'password', description: 'vCenter Server User Password', type: FIELD_TYPE.PASSWORD, validate: (value, user) => isEmpty(value, user), errorMessage: 'Password required', shouldShow: (user) => isPlatformTypeVMware(user) || isPlatformTypeAzure(user), fieldInfo: 'info.site.vcenter.password', infoFunction: (user, fieldKey) => getFieldInfo({ user, fieldKey }),
+    label: 'password', description: 'vCenter Server User Password', type: FIELD_TYPE.PASSWORD, validate: (value, user) => isEmpty(value, user), errorMessage: 'Password required', shouldShow: (user) => isPlatformTypeVMware(user), fieldInfo: 'info.site.vcenter.password', infoFunction: (user, fieldKey) => getFieldInfo({ user, fieldKey }),
   },
   'configureSite.platformDetails.accessKey': {
     label: 'access.key', description: 'Access Key for Cloud Site(AWS)', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Access Key is required', shouldShow: (user) => isPlatformTypeAWS(user), fieldInfo: 'info.site.access.key',
   },
   'configureSite.platformDetails.secretKey': {
-    label: 'secret.key', description: 'Secret Key for Cloud Site(AWS)', type: FIELD_TYPE.PASSWORD, validate: (value, user) => isEmpty(value, user), shouldShow: (user) => isPlatformTypeAWS(user), fieldInfo: 'info.site.secrete.key',
+    label: 'secret.key', description: 'Secret Key for Cloud Site(AWS)', type: FIELD_TYPE.PASSWORD, validate: (value, user) => isEmpty(value, user), shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeAzure(user), fieldInfo: 'info.site.secrete.key',
   },
   // 'configureSite.platformDetails.serverIp': {
   //   label: 'datamotive.server.IP', description: 'Datamotive Management Server IP', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], errorMessage: 'Enter valid IP address', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user),
