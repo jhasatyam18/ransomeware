@@ -321,8 +321,7 @@ max-height: 55vh;
 }
 
 .paginator_input_div{
-  width: 55px;
-  background-color: $gray-600;
+  width: 50%;
   border-color: $gray-600;
   justify-content: center;
   align-items: center;
@@ -342,8 +341,7 @@ max-height: 55vh;
 }
 
 .dmaipaginator_totalpage{
-  width: 70px;
-  background-color: $gray-600;
+  width: 50%;
   border-color: $gray-600;
 }
 
@@ -356,4 +354,9 @@ max-height: 55vh;
 }
 .nic_modal_Width{
   width: 490px;
+}
+
+.input_div{
+  background-color: $gray-500;
+  max-width: 100px !important;
 }

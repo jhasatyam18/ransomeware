@@ -197,15 +197,15 @@ function DMAPIPaginator(props) {
     const { hasNext, hasPrev, totalPages } = pageInfo;
     return (
       <Row>
-        <Col className="padding-0 margin-0 display__flex__reverse dmapi_col">
+        <Col className="padding-0 margin-0 display__flex__reverse dmapi_col ">
           {renderFilter()}
         </Col>
-        <Col className="padding-0 margin-0 display__flex__reverse">
-          <ButtonGroup className="btn-group-sm padding-right-20">
+        <Col className="padding-0 margin-0 display__flex__reverse padding-right-20">
+          <ButtonGroup className="btn-group-sm">
             <Button disabled={!hasPrev} onClick={onBack}>
               <box-icon type="solid" name="chevron-left" size="xs" />
             </Button>
-            <div className="input-group">
+            <div className="input-group input_div">
               <input type="text" className="paginator_input  paginator_input_div  " id="tablecurrentpage" value={currentP} onChange={(e) => setCurrentPageValue(e)} onKeyPress={(e) => onKeyPress(e)} />
               <div className="dmaipaginator_totalpage input-group ">
                 <p className="paginator_input totalpag_text ">
