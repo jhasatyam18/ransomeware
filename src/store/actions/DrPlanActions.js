@@ -657,6 +657,9 @@ export function setProtectionPlanVMsForUpdate(protectionPlan, isEventAction = fa
                   selectedVMS = { ...selectedVMS, [vm.moref]: setVMDetails(vm, pvm) };
                 }
               });
+              // If the vm is deleted from the source and we haven't acknowledge the alert
+              // and goes to edit vm then we would not get the deleted vms info while fetching vm details from source and in recovery config we won't get the values so UI throws error
+              // so to carry forward deleted vms details we take that vms details from pplan and fill it
               if (!isPvmFound) {
                 selectedVMS = { ...selectedVMS, [pvm.moref]: setVMDetails(pvm, pvm) };
               }
