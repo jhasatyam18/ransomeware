@@ -198,6 +198,10 @@ export function validateVMConfiguration({ user, dispatch }) {
   const { values } = user;
   const vms = getValue('ui.site.seletedVMs', values);
   let fields = {};
+  if (Object.keys(vms).length === 0) {
+    dispatch(addMessage('Please Go back and select a vm for Protection Plan', MESSAGE_TYPES.ERROR));
+    return false;
+  }
   Object.keys(vms).forEach((vm) => {
     if (isRemovedOrRecoveredVM(vms[vm])) {
       return;
