@@ -13,6 +13,7 @@ class CloudTags extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.copyTags = this.copyTags.bind(this);
     this.addTags = this.addTags.bind(this);
+    this.addTagsOnKeyPress = this.addTagsOnKeyPress.bind(this);
   }
 
   componentDidMount() {
@@ -77,6 +78,12 @@ class CloudTags extends Component {
       const newTags = [...tags, tag];
       this.setState({ tagKey: '', tagValue: '', tags: newTags });
       dispatch(valueChange(vmKey, newTags));
+    }
+  }
+
+  addTagsOnKeyPress(e) {
+    if (e.key === 'Enter') {
+      this.addTags();
     }
   }
 
@@ -151,6 +158,7 @@ class CloudTags extends Component {
                   onChange={this.handleChange}
                   placeholder="Value"
                   autoComplete="off"
+                  onKeyPress={this.addTagsOnKeyPress}
                 />
               </Col>
             </FormGroup>

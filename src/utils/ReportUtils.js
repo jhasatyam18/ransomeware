@@ -98,7 +98,7 @@ export function systemOverview(doc, data) {
       ['Sites', `${sites}`],
       ['Protection Plans', `${protectionPlans}`],
       ['Protection Machines', `${vms}`],
-      ['Protected Storage', (storage > 1024 ? `${storage} TB` : `${storage} GB`)],
+      ['Protected Storage', getStorageWithUnit(storage)],
       ['Recovery Point Objective', formatTime(rpo)],
       [{ content: 'Replication Statistics', colSpan: 2, styles: { halign: 'center' } }],
       ['Completed', completed],

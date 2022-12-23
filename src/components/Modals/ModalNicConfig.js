@@ -16,7 +16,7 @@ import { FIELD_TYPE, MULTISELECT_ITEM_COMP } from '../../constants/FieldsConstan
 import { PLATFORM_TYPES, UI_WORKFLOW } from '../../constants/InputConstants';
 import { onAwsCopyNetConfigChange, onAwsSubnetChange, onAwsVPCChange, valueChange } from '../../store/actions';
 import { closeModal } from '../../store/actions/ModalActions';
-import { getAvailibilityZoneOptions, getAWSElasticIPOptions, getGCPExternalIPOptions, getGCPNetworkTierOptions, getGCPSubnetOptions, getNetworkOptions, getSecurityGroupOption, getSubnetOptions, getValue, getVMwareAdpaterOption, getVPCOptions, getWMwareNetworkOptions, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
+import { getAvailibilityZoneOptions, getAWSElasticIPOptions, getAzureExternalIPOptions, getAzureNetworkOptions, getAzureSecurityGroupOption, getAzureSubnetOptions, getGCPExternalIPOptions, getGCPNetworkTierOptions, getGCPSubnetOptions, getNetworkOptions, getSecurityGroupOption, getSubnetOptions, getValue, getVMwareAdpaterOption, getVPCOptions, getWMwareNetworkOptions, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { isEmpty, validateNicConfig, validateOptionalIPAddress } from '../../utils/validationUtils';
 /**
  * Component for network adapter config
@@ -273,7 +273,7 @@ class ModalNicConfig extends Component {
                   </Row>
                   <Row>
                     <Col sm={4}>
-                      {t('subnet')}
+                      {t('vmware.subnet')}
                     </Col>
                     <Col sm={8}>
                       <DMFieldText hideLabel dispatch={dispatch} fieldKey={`${networkKey}-netmask`} field={subnet} user={user} />
@@ -308,6 +308,38 @@ class ModalNicConfig extends Component {
     );
   }
 
+  renderAzureConfig() {
+    const { dispatch, user, options, t } = this.props;
+    const { networkKey } = options;
+    const networkField = { fieldInfo: 'info.protectionplan.network.azure.network', label: 'Virtual Network', description: '', type: FIELD_TYPE.SELECT, options: (u, f) => getAzureNetworkOptions(u, f), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select network', shouldShow: true };
+    const subnetField = { fieldInfo: 'info.protectionplan.network.azure.subnet', label: 'Subnet', description: '', type: FIELD_TYPE.SELECT, options: (u, f) => getAzureSubnetOptions(u, f), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select subnet', shouldShow: true };
+    const publicIP = { fieldInfo: 'info.protectionplan.network.azure.externalip', label: 'Public IP', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.SELECT, shouldShow: true, errorMessage: 'Select Public IP', options: (u, f) => getAzureExternalIPOptions(u, f), validate: (v, u) => isEmpty(v, u) };
+    const securityGroup = { label: 'Security  Groups', placeHolderText: 'Security group', description: '', type: FIELD_TYPE.SELECT, shouldShow: true, options: (u, k) => getAzureSecurityGroupOption(u, k), fieldInfo: 'info.protectionplan.network.azure.security.grp' };
+    const privateIPField = { fieldInfo: 'info.protectionplan.network.gcp.privateip', label: 'Private IP', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.TEXT, shouldShow: true, validate: (v, u) => validateOptionalIPAddress(v, u), errorMessage: 'Invalid ip address or ip is not in subnet cidr range' };
+
+    return (
+      <>
+        <Container>
+          <Card>
+            <CardBody>
+              <Form>
+                <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-network`} field={networkField} user={user} />
+                <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-subnet`} field={subnetField} user={user} />
+                <DMFieldText dispatch={dispatch} fieldKey={`${networkKey}-privateIP`} field={privateIPField} user={user} />
+                <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-publicIP`} field={publicIP} user={user} />
+                <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-securityGroups`} field={securityGroup} user={user} />
+              </Form>
+            </CardBody>
+          </Card>
+          <div className="modal-footer">
+            <button type="button" className="btn btn-secondary" onClick={this.onCancel}>{t('title.cancel')}</button>
+            <button type="button" className="btn btn-success" onClick={this.onSave}>{t('title.save')}</button>
+          </div>
+        </Container>
+      </>
+    );
+  }
+
   render() {
     const { user } = this.props;
     const { values } = user;
@@ -317,6 +349,8 @@ class ModalNicConfig extends Component {
         return this.renderGCPConfig();
       case PLATFORM_TYPES.VMware:
         return this.renderVMwareConfig();
+      case PLATFORM_TYPES.Azure:
+        return this.renderAzureConfig();
       default:
         return this.renderAWSConfig();
     }

@@ -23,7 +23,7 @@ function ReportSideBar(props) {
     fields.forEach((field) => {
       rFields.push(
         (
-          <Col sm={3}>
+          <Col sm={4}>
             <DMField dispatch={dispatch} user={user} fieldKey={field} key={`rpt-${field}`} />
           </Col>),
       );

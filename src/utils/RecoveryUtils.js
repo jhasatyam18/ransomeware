@@ -4,7 +4,7 @@ import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP } from '../cons
 import { MESSAGE_TYPES } from '../constants/MessageConstants';
 import { PLATFORM_TYPES, UI_WORKFLOW } from '../constants/InputConstants';
 import { isEmpty } from './validationUtils';
-import { getInstanceTypeOptions, getRecoveryScript, getReplicationScript, getValue, getVMwareGeneralSettings } from './InputUtils';
+import { getAzureGeneralSettings, getInstanceTypeOptions, getRecoveryScript, getReplicationScript, getValue, getVMwareGeneralSettings } from './InputUtils';
 
 export function createVMTestRecoveryConfig(vm, user, dispatch) {
   const { values } = user;
@@ -17,6 +17,8 @@ export function createVMTestRecoveryConfig(vm, user, dispatch) {
       return getGCPVMTestConfig(vm, workflow);
     case PLATFORM_TYPES.VMware:
       return getVMwareVMTestConfig(vm, workflow);
+    case PLATFORM_TYPES.Azure:
+      return getAzureVMTestConfig(vm, workflow);
     default:
       dispatch(addMessage('Invalid recovery platform', MESSAGE_TYPES.ERROR));
   }
@@ -53,7 +55,7 @@ function getGCPVMTestConfig(vm, workflow) {
         hasChildren: true,
         title: 'General',
         children: {
-          [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', fieldInfo: 'info.protectionplan.instance.type', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
+          [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', fieldInfo: 'info.protectionplan.instance.type', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
         },
       },
       {
@@ -78,6 +80,20 @@ function getVMwareVMTestConfig(vm, workflow) {
   const config = {
     data: [
       ...getVMwareGeneralSettings(key, vm),
+    ],
+  };
+  if (workflow === UI_WORKFLOW.REVERSE_PLAN) {
+    config.data.push(...getReplicationScript(key));
+  }
+  config.data.push(...getRecoveryScript(key));
+  return config;
+}
+
+function getAzureVMTestConfig(vm, workflow) {
+  const key = vm.moref;
+  const config = {
+    data: [
+      ...getAzureGeneralSettings(key, vm),
     ],
   };
   if (workflow === UI_WORKFLOW.REVERSE_PLAN) {

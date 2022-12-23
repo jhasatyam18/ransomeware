@@ -1,7 +1,7 @@
 // import { addMessage, clearMessages } from './MessageActions';
 import jsCookie from 'js-cookie';
 import * as Types from '../../constants/actionTypes';
-import { API_AUTHENTICATE, API_AWS_REGIONS, API_CHANGE_NODE_PASSWORD, API_CHANGE_PASSWORD, API_GCP_REGIONS, API_INFO, API_SCRIPTS, API_USERS, API_USER_PRIVILEGES, API_USER_SCRIPT } from '../../constants/ApiConstants';
+import { API_AUTHENTICATE, API_AWS_REGIONS, API_AZURE_REGIONS, API_CHANGE_NODE_PASSWORD, API_CHANGE_PASSWORD, API_GCP_REGIONS, API_INFO, API_SCRIPTS, API_USERS, API_USER_PRIVILEGES, API_USER_SCRIPT } from '../../constants/ApiConstants';
 import { APP_TYPE, PLATFORM_TYPES, STATIC_KEYS, VMWARE_OBJECT } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH } from '../../constants/RouterConstants';
@@ -9,7 +9,7 @@ import { APPLICATION_API_TOKEN, APPLICATION_API_USER, APPLICATION_API_USER_ID } 
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { getCookie, setCookie } from '../../utils/CookieUtils';
 import { onInit } from '../../utils/HistoryUtil';
-import { getValue, getVMwareLocationPath, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
+import { getMatchingInsType, getValue, getVMwareLocationPath, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { acknowledgeNodeAlert, getUnreadAlerts } from './AlertActions';
 import { fetchDRPlanById, fetchDrPlans } from './DrPlanActions';
@@ -174,31 +174,49 @@ export function onPlatformTypeChange({ value }) {
     if (value === PLATFORM_TYPES.AWS) {
       dispatch(fetchRegions(PLATFORM_TYPES.AWS));
       dispatch(fetchAvailibilityZones(PLATFORM_TYPES.AWS));
-    } else {
+    } else if (value === PLATFORM_TYPES.GCP) {
       dispatch(fetchRegions(PLATFORM_TYPES.GCP));
       dispatch(fetchAvailibilityZones(PLATFORM_TYPES.GCP));
+    } else {
+      dispatch(fetchRegions(PLATFORM_TYPES.Azure));
     }
   };
 }
 
 export function fetchRegions(TYPE) {
   return (dispatch) => {
-    const url = (PLATFORM_TYPES.AWS === TYPE ? API_AWS_REGIONS : API_GCP_REGIONS);
-    return callAPI(url)
-      .then((json) => {
-        if (json && json.hasError) {
-          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
-        } else {
-          let data = json;
-          if (data === null) {
-            data = [];
+    let url = '';
+    switch (TYPE) {
+      case PLATFORM_TYPES.AWS:
+        url = API_AWS_REGIONS;
+        break;
+      case PLATFORM_TYPES.GCP:
+        url = API_GCP_REGIONS;
+        break;
+      case PLATFORM_TYPES.Azure:
+        url = API_AZURE_REGIONS;
+        break;
+      default:
+        url = '';
+        break;
+    }
+    if (url !== '') {
+      return callAPI(url)
+        .then((json) => {
+          if (json && json.hasError) {
+            dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+          } else {
+            let data = json;
+            if (data === null) {
+              data = [];
+            }
+            dispatch(valueChange('ui.values.regions', data));
           }
-          dispatch(valueChange('ui.values.regions', data));
-        }
-      },
-      (err) => {
-        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-      });
+        },
+        (err) => {
+          dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+        });
+    }
   };
 }
 
@@ -593,7 +611,7 @@ export function loadTreeChildData(fieldKey, node, field) {
         paramURL = `${paramURL}&${urlParms[i]}=${paramKeyValue}`;
       }
     }
-    if (typeof pplan !== 'undefined' || pplan !== '') {
+    if (typeof pplan !== 'undefined' && pplan !== '') {
       paramURL += `&protectionplan=${pplan}`;
     }
     if (baseURLIDReplace) {
@@ -808,5 +826,47 @@ export function getStorageForVMware({ fieldKey, hostMoref }) {
         return new Promise((resolve) => resolve());
       },
     );
+  };
+}
+
+/**
+ * set the script for pplan
+ *
+ * @param {key,obj} options
+ */
+export function setProtectionPlanScript(key, obj) {
+  return (dispatch) => {
+    dispatch(valueChange(`${key}-protection.scripts.preScript`, obj.preScript));
+    dispatch(valueChange(`${key}-protection.scripts.postScript`, obj.postScript));
+  };
+}
+
+export function setInstanceDetails(key, ins) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    dispatch(valueChange(`${key}-vmConfig.general.id`, ins.id));
+    dispatch(valueChange(`${key}-vmConfig.general.sourceMoref`, ins.sourceMoref));
+    const insType = getMatchingInsType(values, ins);
+    if (insType.value) {
+      dispatch(valueChange(`${key}-vmConfig.general.instanceType`, insType));
+    }
+    dispatch(valueChange(`${key}-vmConfig.general.volumeType`, ins.volumeType));
+    dispatch(valueChange(`${key}-vmConfig.general.volumeIOPS`, ins.volumeIOPS));
+    dispatch(valueChange(`${key}-vmConfig.general.bootOrder`, ins.bootPriority));
+    dispatch(valueChange(`${key}-vmConfig.scripts.preScript`, ins.preScript));
+    dispatch(valueChange(`${key}-vmConfig.scripts.postScript`, ins.postScript));
+  };
+}
+
+export function setTags(key, obj) {
+  return (dispatch) => {
+    if (obj.tags && obj.tags.length > 0) {
+      const tagsData = [];
+      obj.tags.forEach((tag) => {
+        tagsData.push({ id: tag.id, key: tag.key, value: tag.value });
+      });
+      dispatch(valueChange(`${key}-vmConfig.general.tags`, tagsData));
+    }
   };
 }

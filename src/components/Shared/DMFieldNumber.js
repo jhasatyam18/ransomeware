@@ -32,6 +32,16 @@ class placeHolderNumber extends Component {
     }
   }
 
+  componentDidUpdate() {
+    const { user, fieldKey } = this.props;
+    const { values } = user;
+    const { value } = this.state;
+    const updatedValue = getValue(fieldKey, values) || '';
+    if (value !== updatedValue) {
+      this.setState({ value: updatedValue });
+    }
+  }
+
   handleChange = (e) => {
     const { field, fieldKey, dispatch, user } = this.props;
     let { min, max } = field;
