@@ -111,8 +111,8 @@ export function getResourceTypeOptions(user) {
   const array = [];
   resourceTypeOpt.map((res) => {
     const obj = {};
-    obj.label = res;
-    obj.value = res;
+    obj.label = res.name;
+    obj.value = res.value;
     array.push(obj);
   });
   return array;

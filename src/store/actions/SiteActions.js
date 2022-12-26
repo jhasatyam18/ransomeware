@@ -349,7 +349,7 @@ export function fetchNetworks(id, sourceNet = undefined, availZone) {
             });
           }
           dispatch(valueChange(STATIC_KEYS.UI_AVAILABILITY_ZONES, zones));
-          dispatch(valueChange(STATIC_KEYS.RESOURCE_GROUP, data.adapters));
+          dispatch(valueChange(STATIC_KEYS.RESOURCE_GROUP, data.resourceGroups));
           dispatch(valueChange(STATIC_KEYS.UI_NETWORKS, data.networks));
           if (PLATFORM_TYPES.Azure === recoveryPlateform && zones.length === 0) {
             dispatch(fetchAvailibilityZonesForAzure());
