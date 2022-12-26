@@ -6,7 +6,7 @@ import DMBreadCrumb from '../Common/DMBreadCrumb';
 import DMAPIPaginator from '../Table/DMAPIPaginator';
 import DMTable from '../Table/DMTable';
 import { addMessage } from '../../store/actions/MessageActions';
-import { alertsFetched } from '../../store/actions/AlertActions';
+import { alertsFetched, unreadAlertFetched } from '../../store/actions/AlertActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { API_FETCH_ALERTS, API_MARK_READ_ALL } from '../../constants/ApiConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
@@ -26,6 +26,7 @@ class Alerts extends Component {
     callAPI(API_MARK_READ_ALL, payload)
       .then(() => {
         this.setState({ initDone: true });
+        dispatch(unreadAlertFetched([]));
       },
       (err) => {
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
