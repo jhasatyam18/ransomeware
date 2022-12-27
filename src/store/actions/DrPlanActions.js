@@ -1409,6 +1409,7 @@ export function setAzureVMRecoveryData(vmMoref) {
         dispatch(valueChange(`${key}-vmConfig.general.instanceType`, insType));
         dispatch(valueChange(`${key}-vmConfig.general.volumeType`, ins.volumeType));
         dispatch(valueChange(`${key}-vmConfig.general.bootOrder`, ins.bootPriority));
+        dispatch(valueChange(`${key}-vmConfig.general.instanceID`, ins.instanceID));
         dispatch(valueChange(`${key}-vmConfig.scripts.preScript`, ins.preScript));
         dispatch(valueChange(`${key}-vmConfig.scripts.postScript`, ins.postScript));
         dispatch(valueChange(`${key}-vmConfig.general.folderPath`, ins.folderPath));
