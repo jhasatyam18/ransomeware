@@ -36,7 +36,7 @@ class placeHolderNumber extends Component {
     const { user, fieldKey } = this.props;
     const { values } = user;
     const { value } = this.state;
-    const updatedValue = getValue(fieldKey, values) || '';
+    const updatedValue = getValue(fieldKey, values) || 0;
     if (value !== updatedValue) {
       this.setState({ value: updatedValue });
     }

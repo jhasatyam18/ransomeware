@@ -107,7 +107,7 @@ export function getInstanceTypeOptions(user) {
 
 export function getResourceTypeOptions(user) {
   const { values } = user;
-  const resourceTypeOpt = getValue(STATIC_KEYS.RESOURCE_GROUP, values);
+  const resourceTypeOpt = getValue(STATIC_KEYS.RESOURCE_GROUP, values) || [];
   const array = [];
   resourceTypeOpt.map((res) => {
     const obj = {};

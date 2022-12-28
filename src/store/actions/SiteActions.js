@@ -1,6 +1,6 @@
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import * as Types from '../../constants/actionTypes';
-import { API_AWS_AVAILABILITY_ZONES, API_FETCH_VMWARE_INVENTORY, API_CREATE_SITES, API_DELETE_SITES, API_FETCH_SITES, API_FETCH_SITE_VMS, API_GCP_AVAILABILITY_ZONES, API_SITE_NETWORKS, API_SITE_NETWORKS_ZONE, API_AZURE_AVAILIBITY_ZONES } from '../../constants/ApiConstants';
+import { API_AWS_AVAILABILITY_ZONES, API_FETCH_VMWARE_INVENTORY, API_CREATE_SITES, API_DELETE_SITES, API_FETCH_SITES, API_FETCH_SITE_VMS, API_GCP_AVAILABILITY_ZONES, API_SITE_NETWORKS, API_AZURE_AVAILIBITY_ZONES } from '../../constants/ApiConstants';
 import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { closeModal } from './ModalActions';
@@ -162,7 +162,7 @@ export function onProtectSiteChange({ value }) {
   };
 }
 
-export function onRecoverSiteChange({ value, availZone }) {
+export function onRecoverSiteChange({ value }) {
   return (dispatch, getState) => {
     if (value === '') {
       dispatch(valueChange('ui.values.instances', []));
@@ -172,7 +172,7 @@ export function onRecoverSiteChange({ value, availZone }) {
     const { values } = user;
     const recoverySite = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${value}`)[0];
     const { platformType } = { ...recoverySite.platformDetails };
-    dispatch(fetchNetworks(value, undefined, availZone));
+    dispatch(fetchNetworks(value, undefined));
     dispatch(valueChange('ui.values.recoveryPlatform', platformType));
     dispatch(fetchRegions(platformType));
     dispatch(valueChange('ui.values.recoverySiteID', value));
@@ -293,16 +293,13 @@ export function handleSelectAllRecoveryVMs(value) {
   };
 }
 
-export function fetchNetworks(id, sourceNet = undefined, availZone) {
+export function fetchNetworks(id, sourceNet = undefined) {
   return (dispatch, getState) => {
     const { user } = getState();
     const { values } = user;
     const recoveryPlateform = getValue('ui.values.recoveryPlatform', values);
     dispatch(showApplicationLoader('FETCHING_SITE_NETWORK', 'Loading network info...'));
-    let url = API_SITE_NETWORKS.replace('<id>', id);
-    if (typeof availZone !== 'undefined' && availZone !== '') {
-      url += API_SITE_NETWORKS_ZONE.replace('<zone>', availZone);
-    }
+    const url = API_SITE_NETWORKS.replace('<id>', id);
     return callAPI(url)
       .then((json) => {
         dispatch(hideApplicationLoader('FETCHING_SITE_NETWORK'));
@@ -366,13 +363,11 @@ export function fetchNetworks(id, sourceNet = undefined, availZone) {
 export function postPlanSitesSelected() {
   return (dispatch, getState) => {
     const { user } = getState();
+    const recoveryID = getValue('drplan.recoverySite', user.values);
+    dispatch(onRecoverSiteChange({ value: recoveryID }));
     if (isPlanWithSamePlatform(user)) {
       const protectionID = getValue('ui.values.protectionSiteID', user.values);
       dispatch(fetchNetworks(protectionID, 'source_network'));
-    } else {
-      const recoveryID = getValue('ui.values.recoverySiteID', user.values);
-      const zone = getValue('ui.values.sites', user.values).filter((site) => `${site.id}` === `${recoveryID}`)[0].platformDetails.availZone;
-      dispatch(fetchNetworks(recoveryID, undefined, zone));
     }
   };
 }

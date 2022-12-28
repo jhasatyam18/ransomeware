@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Col, Popover, PopoverBody, Row } from 'reactstrap';
-import { fetchNetworks } from '../../../store/actions/SiteActions';
-import { getValue, isSamePlatformPlan } from '../../../utils/InputUtils';
-import { PLATFORM_TYPES, STATIC_KEYS } from '../../../constants/InputConstants';
+import { PLATFORM_TYPES } from '../../../constants/InputConstants';
 
 function VMNetworkInfoItemRenderer(props) {
-  const { t, data, drPlans, user, dispatch } = props;
+  const { t, data, drPlans } = props;
   const { recoverySite } = drPlans.protectionPlan;
   const key = `netowrk-popover-key-${data.id}`;
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -15,17 +13,6 @@ function VMNetworkInfoItemRenderer(props) {
     return '-';
   }
 
-  useEffect(() => {
-    const { values } = user;
-    const vpcOption = getValue(STATIC_KEYS.UI_VPC_TARGET, values) || [];
-    let availZone = '';
-    if (vpcOption.length === 0) {
-      if (!isSamePlatformPlan(drPlans.protectionPlan)) {
-        availZone = recoverySite.platformDetails.availZone;
-      }
-      dispatch(fetchNetworks(recoverySite.id, undefined, availZone));
-    }
-  }, []);
   const { networks } = data;
 
   const renderField = (field, obj, index) => {
@@ -41,14 +28,14 @@ function VMNetworkInfoItemRenderer(props) {
       return (
         <Row key={`${field.label}-${index}`}>
           <Col sm={6}>{t(field.label)}</Col>
-          {field.fieldValue ? <Col sm={6}>{field.fieldValue}</Col> : <Col sm={6}>{object[field.field]}</Col>}
+          <Col sm={6}>{object[field.field]}</Col>
         </Row>
       );
     }
     return null;
   };
 
-  const platformSpecificDetails = (n) => {
+  const platformSpecificDetails = () => {
     const fields = [];
     if (recoverySite.platformDetails.platformType === PLATFORM_TYPES.VMware) {
       const netowrk = { label: 'vmware.network', field: 'network' };
@@ -56,16 +43,7 @@ function VMNetworkInfoItemRenderer(props) {
       fields.push(netowrk, adapterType);
     }
     if (recoverySite.platformDetails.platformType === PLATFORM_TYPES.AWS || recoverySite.platformDetails.platformType === PLATFORM_TYPES.GCP) {
-      const { values } = user;
-      const opts = getValue(STATIC_KEYS.UI_VPC_TARGET, values) || [];
-      let vpcID = '';
-      opts.map((op) => {
-        if (op.id === n.vpcId) {
-          vpcID = op.id;
-        }
-      });
-      const vpc = { label: 'VPC', fieldValue: vpcID };
-      fields.push(vpc);
+      fields.push({ label: 'VPC', field: 'vpcId' });
     }
     return fields;
   };

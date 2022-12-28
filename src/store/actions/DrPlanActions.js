@@ -379,7 +379,7 @@ export function openMigrationWizard() {
       dispatch(onProtectionPlanChange({ value: id }));
       // set is test recovery flag to false
       if (platformDetails.platformType === PLATFORM_TYPES.Azure) {
-        dispatch(fetchNetworks(recoverySite.id, undefined, recoverySite.platformDetails.availZone));
+        dispatch(fetchNetworks(recoverySite.id, undefined));
       }
       dispatch(valueChange('recovery.dryrun', false));
       dispatch(valueChange('ui.workflow', UI_WORKFLOW.MIGRATION));
@@ -414,7 +414,7 @@ export function openRecoveryWizard() {
       dispatch(valueChange('recovery.dryrun', false));
       // to fetch instance type,availibility zone,volume type  so that we can show it to the ui in case of azure
       if (platformDetails.platformType === PLATFORM_TYPES.Azure) {
-        dispatch(fetchNetworks(recoverySite.id, undefined, recoverySite.platformDetails.availZone));
+        dispatch(fetchNetworks(recoverySite.id, undefined));
       }
       dispatch(openWizard(RECOVERY_WIZARDS.options, RECOVERY_WIZARDS.steps));
     }, 1000);
@@ -442,11 +442,7 @@ export function openTestRecoveryWizard(cleanUpTestRecoveries) {
       dispatch(valueChange('ui.values.recoverySiteID', recoverySite.id));
       dispatch(valueChange('recovery.dryrun', true));
       dispatch(valueChange('ui.workflow', UI_WORKFLOW.TEST_RECOVERY));
-      let availZone = '';
-      if (!isSamePlatformPlan(protectionPlan)) {
-        availZone = recoverySite.platformDetails.availZone;
-      }
-      const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined, availZone)), dispatch(fetchScript()), dispatch(fetchDrPlans('ui.values.drplan'))];
+      const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined)), dispatch(fetchScript()), dispatch(fetchDrPlans('ui.values.drplan'))];
       return Promise.all(apis).then(
         () => {
           const isCleanUpFlow = (typeof cleanUpTestRecoveries !== 'undefined' && cleanUpTestRecoveries === true);
@@ -515,11 +511,7 @@ export function openEditProtectionPlanWizard(plan, isEventAction = false, alert 
     dispatch(clearValues());
     const selectedPlan = (typeof plan === 'undefined' ? getSelectedPlanID(drPlans) : plan);
     const { recoverySite } = selectedPlan;
-    let availZone = '';
-    if (!isSamePlatformPlan(selectedPlan)) {
-      availZone = recoverySite.platformDetails.availZone;
-    }
-    const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined, availZone)), dispatch(fetchScript())];
+    const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined)), dispatch(fetchScript())];
     return Promise.all(apis).then(
       () => {
         dispatch(valueChange('ui.editplan.alert.id', (alert !== null ? alert.id : alert)));
@@ -551,11 +543,7 @@ export function setProtectionPlanDataForUpdate(selectedPlan, isEventAction = fal
       .then(
         () => {
           dispatch(hideApplicationLoader('UPDATE_PROTECTION_PLAN'));
-          let availZone = '';
-          if (!isSamePlatformPlan(selectedPlan)) {
-            availZone = selectedPlan.recoverySite.platformDetails.availZone;
-          }
-          dispatch(onRecoverSiteChange({ value: selectedPlan.recoverySite.id, availZone }));
+          dispatch(onRecoverSiteChange({ value: selectedPlan.recoverySite.id }));
           dispatch(openWizard(wiz.options, UPDATE_PROTECTION_PLAN_WIZARDS.steps));
           dispatch(valueChange('ui.workflow', UI_WORKFLOW.EDIT_PLAN));
           return new Promise((resolve) => resolve());
@@ -683,7 +671,7 @@ export function setProtectionPlanVMConfig(selectedVMS, protectionPlan) {
     if (isSamePlatformPlan(protectionPlan)) {
       dispatch(fetchNetworks(protectedSite.id, 'source_network'));
     } else {
-      dispatch(fetchNetworks(recoverySite.id, undefined, recoverySite.platformDetails.availZone));
+      dispatch(fetchNetworks(recoverySite.id, undefined));
     }
     dispatch(valueChange('drplan.id', protectionPlan.id));
     dispatch(valueChange('ui.edit.plan.remoteProtectionPlanId', protectionPlan.remoteProtectionPlanId));
@@ -1141,9 +1129,9 @@ export function openVMReconfigWizard(vmMoref, pPlan, selectedVMS, alerts) {
         dispatch(valueChange('ui.values.recoveryPlatform', pPlan.recoverySite.platformDetails.platformType));
         dispatch(setProtectionPlanVMConfig(selectedVMS, pPlan));
         if (isSamePlatformPlan(pPlan)) {
-          dispatch(onRecoverSiteChange({ value: pPlan.recoverySite.id, availZone: '' }));
+          dispatch(onRecoverSiteChange({ value: pPlan.recoverySite.id }));
         } else {
-          dispatch(onRecoverSiteChange({ value: pPlan.recoverySite.id, availZone: pPlan.recoverySite.platformDetails.availZone }));
+          dispatch(onRecoverSiteChange({ value: pPlan.recoverySite.id }));
         }
         const ops = PROTECTED_VM_RECONFIGURATION_WIZARD.options;
         ops.title = `Reconfigure ${selectedVMS[vmMoref].name}`;
@@ -1525,12 +1513,7 @@ function setReverseData(json) {
       dispatch(valueChange('ui.values.recoverySiteID', recoverySite.id));
       dispatch(valueChange('ui.recovery.plan', json));
       dispatch(valueChange('ui.workflow', UI_WORKFLOW.REVERSE_PLAN));
-
-      let availZone = '';
-      if (!isSamePlatformPlan(json)) {
-        availZone = recoverySite.platformDetails.availZone;
-      }
-      const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined, availZone)), dispatch(fetchScript()), dispatch(fetchDrPlans('ui.values.drplan'))];
+      const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined)), dispatch(fetchScript()), dispatch(fetchDrPlans('ui.values.drplan'))];
       return Promise.all(apis).then(
         () => {
           dispatch(fetchPlatformSpecificData(json));
@@ -1580,7 +1563,7 @@ export function setReverseConfig(protectionPlan) {
     if (isSamePlatformPlan(protectionPlan)) {
       dispatch(fetchNetworks(protectedSite.id, 'source_network'));
     } else {
-      dispatch(fetchNetworks(recoverySite.id, undefined, recoverySite.platformDetails.availZone));
+      dispatch(fetchNetworks(recoverySite.id, undefined));
     }
     dispatch(valueChange('drplan.id', protectionPlan.id));
     dispatch(valueChange(DRPLAN_CONFIG_STEP.REMOTEPPLAN_ID, protectionPlan.remoteProtectionPlanId));
