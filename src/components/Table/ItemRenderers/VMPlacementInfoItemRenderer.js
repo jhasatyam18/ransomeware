@@ -7,7 +7,7 @@ import { PLATFORM_TYPES } from '../../../constants/InputConstants';
 function VMPlacementInfoItemRenderer(props) {
   const { data, drPlans, t } = props;
   // only id is added so that key is unique
-  const key = `netowrk-popover-key-${data.id}`;
+  const key = `netowrk-placement-info-popover-key-${data.id}`;
   const { protectionPlan } = drPlans;
   const { recoverySite } = protectionPlan;
   const { platformType } = recoverySite.platformDetails;
