@@ -518,7 +518,6 @@ export function openEditProtectionPlanWizard(plan, isEventAction = false, alert 
         dispatch(valueChange('ui.alert.invoking.action', alert));
         dispatch(valueChange('ui.selected.protection.planID', selectedPlan.id));
         dispatch(valueChange('ui.selected.protection.plan', selectedPlan));
-
         dispatch(valueChange('drplan.recoverySite', selectedPlan.recoverySite.id));
         dispatch(valueChange('ui.values.recoveryPlatform', selectedPlan.recoverySite.platformDetails.platformType));
         dispatch(setProtectionPlanDataForUpdate(selectedPlan, isEventAction, event));
@@ -639,14 +638,19 @@ export function setProtectionPlanVMsForUpdate(protectionPlan, isEventAction = fa
             dispatch(valueChange('ui.site.vms', data));
             // set selected vms for plan update
             virtualMachines.forEach((pvm) => {
-              if (pvm.isDeleted) {
-                selectedVMS = { ...selectedVMS, [pvm.moref]: setVMDetails(pvm, pvm) };
-              }
+              let isPvmFound = false;
               data.forEach((vm) => {
                 if (pvm.moref === vm.moref) {
+                  isPvmFound = true;
                   selectedVMS = { ...selectedVMS, [vm.moref]: setVMDetails(vm, pvm) };
                 }
               });
+              // If the vm is deleted from the source and we haven't acknowledge the alert
+              // and goes to edit vm then we would not get the deleted vms info while fetching vm details from source and in recovery config we won't get the values so UI throws error
+              // so to carry forward deleted vms details we take that vms details from pplan and fill it
+              if (!isPvmFound) {
+                selectedVMS = { ...selectedVMS, [pvm.moref]: setVMDetails(pvm, pvm) };
+              }
             });
           }
           dispatch(valueChange('ui.site.seletedVMs', selectedVMS));
