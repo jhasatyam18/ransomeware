@@ -342,6 +342,19 @@ export function getAzureExternalIPOptions(user, fieldKey) {
       options.push({ label: op.name, value: op.name });
     }
   });
+  if (typeof fieldKey !== 'undefined' && fieldKey !== null && fieldKey !== '' && fieldKey !== '-') {
+    const networkKey = fieldKey.replace('-publicIP', '');
+    const associatedIPs = getValue(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, values) || {};
+    const keys = Object.keys(associatedIPs);
+    if (keys.length > 0) {
+      const vmIps = keys.filter((k) => associatedIPs[k].fieldKey === networkKey);
+      if (vmIps.length > 0) {
+        vmIps.forEach((op) => {
+          options.push({ label: associatedIPs[op].label, value: associatedIPs[op].value });
+        });
+      }
+    }
+  }
   return options;
 }
 

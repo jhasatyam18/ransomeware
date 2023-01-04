@@ -970,11 +970,7 @@ function setPublicIPWhileEdit(isPublicIP, publicip, networkKey, index) {
       }
     }
     if (publicIP !== '' && publicIP !== 'false' && publicIP !== 'true') {
-      const obj = {
-        id: publicIP,
-        name: publicIP,
-      };
-      dispatch(valueChange(STATIC_KEYS.UI_EDIT_RESERVE_IPS, [obj]));
+      dispatch(addAssociatedReverseIP({ ip: publicIP, id: publicIP, fieldKey: `${networkKey}-eth-${index}` }));
     }
     dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, publicIP));
   };
@@ -1428,13 +1424,8 @@ export function setAzureVMRecoveryData(vmMoref) {
             const subnet = getSubnetIDFromName(net.Subnet, values, network);
             dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, subnet));
             dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
-            let { publicIP } = net;
-            if (net.isPublicIP === true) {
-              publicIP = 'true';
-            } else if (net.isPublicIP === false) {
-              publicIP = 'false';
-            }
-            dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, publicIP));
+            // TODO: Code refactor required, all vm level data setting must happen through one function only.
+            dispatch(setPublicIPWhileEdit(net.isPublicIP, net.publicIP, networkKey, index));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkTier`, net.networkTier));
             dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, false));
             const sgs = (net.securityGroups ? net.securityGroups.split(',') : []);

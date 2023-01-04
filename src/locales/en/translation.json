@@ -411,6 +411,7 @@
   "info.protectionplan.network.azure.externalip":"Use a public IP address if you want to communicate with the virtual machine from outside the virtual network. Select 'Auto' for dynamic public IP or choose from the IP list for static Public IP.",
   "info.protectionplan.network.azure.security.grp":"A network security group contains security rules that allow or deny inbound network traffic to, or outbound network traffic from, the virtual machine",
   "info.protectionplan.vmsize.azure":" Select a VM size to support the workload that you want to run. The size that you choose then determines factors such as processing power, memory, and storage capacity",
+  "test.recovery.staticIP.warning": "If Static IP addresses were used in test recovery configuration then make sure the provided IP addresses are available.",
   "loading":"Loading...",
   "msg.resource.grp":"Please Select Resource Group",
   
