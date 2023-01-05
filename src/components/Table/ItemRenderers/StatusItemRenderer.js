@@ -26,22 +26,15 @@ function StatusItemRenderer({ data, field, t }) {
   }
 
   const renderPopOver = (hoverInfo, key) => {
-    let wid;
-    if (hoverInfo.length >= 50) {
-      wid = hoverInfo.length === 50 ? '370px' : '430px';
-    } else {
-      const num = 290 + hoverInfo.length;
-      wid = `${num}px`;
-    }
-
+    const wid = hoverInfo.length <= 50 ? '300px' : '380px';
     return (
-      <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: 'black', width: wid }}>
+      <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: 'black', width: wid, textAlign: hoverInfo.length <= 50 ? 'center' : 'left' }}>
         <PopoverBody>
           <SimpleBar style={{ maxHeight: '30vh' }}>
             {hoverInfo}
-            length
+            {/* length
             {' '}
-            {hoverInfo.length}
+            {hoverInfo.length} */}
           </SimpleBar>
         </PopoverBody>
       </Popover>
@@ -52,7 +45,8 @@ function StatusItemRenderer({ data, field, t }) {
     const { failureMessage, errorMessage } = data;
     const errMsg = (typeof failureMessage !== 'undefined' ? failureMessage : errorMessage);
     const msg = (typeof errMsg !== 'undefined' ? errMsg : '');
-    const hoverInfo = title || msg + msg;
+    const hoverInfo = title || msg;
+    //  hoverInfo = hoverInfo.length > 50 ? hoverInfo.slice(0, 50) : hoverInfo;
     return (
       <div>
         <Badge id={`status-${field}-${data.name}-${data.id}`} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} className={`font-size-13 badge-soft-${name}`} color={`${name}`} pill>
