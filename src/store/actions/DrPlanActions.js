@@ -16,8 +16,8 @@ import { clearValues, fetchScript, hideApplicationLoader, loadRecoveryLocationDa
 import { closeWizard, openWizard } from './WizardActions';
 import { closeModal, openModal } from './ModalActions';
 import { addAssociatedReverseIP } from './AwsActions';
-import { MIGRATION_WIZARDS, RECOVERY_WIZARDS, TEST_RECOVERY_WIZARDS, REVERSE_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS, PROTECTED_VM_RECONFIGURATION_WIZARD, CLEANUP_TEST_RECOVERY_WIZARDS } from '../../constants/WizardConstants';
-import { getValue, getVMMorefFromEvent, isSamePlatformPlan, getVMInstanceFromEvent, getMatchingInsType } from '../../utils/InputUtils';
+import { MIGRATION_WIZARDS, RECOVERY_WIZARDS, TEST_RECOVERY_WIZARDS, REVERSE_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS, PROTECTED_VM_RECONFIGURATION_WIZARD, CLEANUP_TEST_RECOVERY_WIZARDS, STEPS } from '../../constants/WizardConstants';
+import { getMatchingInsType, getValue, getVMMorefFromEvent, isSamePlatformPlan, getVMInstanceFromEvent } from '../../utils/InputUtils';
 import { PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
@@ -365,7 +365,7 @@ export function openMigrationWizard() {
   return (dispatch, getState) => {
     const { drPlans } = getState();
     const { protectionPlan } = drPlans;
-    const { id, recoverySite } = protectionPlan;
+    const { id, recoverySite, protectedSite } = protectionPlan;
     const { platformDetails } = recoverySite;
     dispatch(clearValues());
     setTimeout(() => {
@@ -383,7 +383,12 @@ export function openMigrationWizard() {
       }
       dispatch(valueChange('recovery.dryrun', false));
       dispatch(valueChange('ui.workflow', UI_WORKFLOW.MIGRATION));
-      dispatch(openWizard(MIGRATION_WIZARDS.options, MIGRATION_WIZARDS.steps));
+      let { steps } = MIGRATION_WIZARDS;
+      if (protectedSite.platformDetails.platformType === PLATFORM_TYPES.VMware && platformDetails.platformType === PLATFORM_TYPES.VMware) {
+        steps = removeStepsFromWizard(steps, STEPS.RECOVERY_CONFIG);
+      }
+
+      dispatch(openWizard(MIGRATION_WIZARDS.options, steps));
     }, 1000);
   };
 }
@@ -396,7 +401,7 @@ export function openRecoveryWizard() {
   return (dispatch, getState) => {
     const { drPlans } = getState();
     const { protectionPlan } = drPlans;
-    const { id, recoverySite } = protectionPlan;
+    const { id, recoverySite, protectedSite } = protectionPlan;
     const { platformDetails } = recoverySite;
     dispatch(clearValues());
     setTimeout(() => {
@@ -417,9 +422,26 @@ export function openRecoveryWizard() {
         dispatch(fetchNetworks(recoverySite.id, undefined));
       }
       dispatch(openWizard(RECOVERY_WIZARDS.options, RECOVERY_WIZARDS.steps));
+      let { steps } = RECOVERY_WIZARDS;
+      if (protectedSite.platformDetails.platformType === PLATFORM_TYPES.VMware && platformDetails.platformType === PLATFORM_TYPES.VMware) {
+        steps = removeStepsFromWizard(steps, STEPS.RECOVERY_CONFIG);
+      }
+
+      dispatch(openWizard(RECOVERY_WIZARDS.options, steps));
     }, 1000);
   };
 }
+
+function removeStepsFromWizard(steps, stepName) {
+  const res = [];
+  for (let i = 0; i < steps.length; i += 1) {
+    if (!steps[i].name || steps[i].name !== stepName) {
+      res.push(steps[i]);
+    }
+  }
+  return res;
+}
+
 export function openCleanupTestRecoveryWizard() {
   return (dispatch) => {
     dispatch(openTestRecoveryWizard(true));
@@ -699,7 +721,7 @@ export function setProtectionPlanVMConfig(selectedVMS, protectionPlan) {
     dispatch(valueChange('drplan.isEncryptionOnWire', protectionPlan.isEncryptionOnWire));
     dispatch(valueChange('drplan.isEncryptionOnRest', protectionPlan.isEncryptionOnRest));
     dispatch(valueChange('drplan.isCompression', protectionPlan.isCompression));
-    dispatch(valueChange('drplan.isDeDupe', protectionPlan.isDeDupe));
+    dispatch(valueChange('drplan.isDedupe', protectionPlan.isDeDupe));
     dispatch(valueChange('drplan.enableReverse', protectionPlan.enableReverse));
     dispatch(valueChange('drplan.replPostScript', protectionPlan.replPostScript));
     dispatch(valueChange('drplan.replPreScript', protectionPlan.replPreScript));

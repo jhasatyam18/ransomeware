@@ -31,6 +31,12 @@ export const VM_CONFIGURATION_STEP = 'VM_CONFIGURATION_STEP';
 export const RECOVERY_GENERAL_STEP_FIELDS = ['recovery.protectionplanID', 'recovery.dryrun'];
 export const MIGRATION_GENERAL_STEP_FIELDS = ['recovery.protectionplanID'];
 
+export const STEPS = {
+  VIRTUAL_MACHINE: 'VIRTUAL_MACHINE',
+  RECOVERY_CONFIG: 'RECOVERY_CONFIG',
+  SUMMARY: 'SUMMARY',
+};
+
 // Protection Plan
 export const CREATE_DR_PLAN_WIZARDS = {
   options: { title: 'Create Protection Plan', onFinish: onConfigureDRPlan },
@@ -49,18 +55,18 @@ export const RECOVERY_WIZARDS = {
   // { label: 'General', title: '', component: RECOVERY_GENERAL_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: RECOVERY_GENERAL_STEP_FIELDS },
   options: { title: 'Recovery', onFinish: startRecovery },
   steps: [
-    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateVMSelection(user, dispatch) },
-    { label: 'Recovery Configuration', title: '', component: RECOVERY_CONFIG, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), isAync: true },
-    { label: 'Summary', title: '', component: RECOVERY_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch) }],
+    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateVMSelection(user, dispatch), name: STEPS.VIRTUAL_MACHINE },
+    { label: 'Recovery Configuration', title: '', component: RECOVERY_CONFIG, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), isAync: true, name: STEPS.RECOVERY_CONFIG },
+    { label: 'Summary', title: '', component: RECOVERY_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch), name: STEPS.SUMMARY }],
 };
 
 // Migration Wizard
 export const MIGRATION_WIZARDS = {
   options: { title: 'Migrate', onFinish: startMigration },
   steps: [
-    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateVMSelection(user, dispatch) },
-    { label: 'Recovery Configuration', title: '', component: RECOVERY_CONFIG, validate: (user, dispatch) => validateMigrationVMs({ user, dispatch }), isAync: true },
-    { label: 'Summary', title: '', component: RECOVERY_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch) }],
+    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateVMSelection(user, dispatch), name: STEPS.VIRTUAL_MACHINE },
+    { label: 'Recovery Configuration', title: '', component: RECOVERY_CONFIG, validate: (user, dispatch) => validateMigrationVMs({ user, dispatch }), isAync: true, name: STEPS.RECOVERY_CONFIG },
+    { label: 'Summary', title: '', component: RECOVERY_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch), name: STEPS.SUMMARY }],
 };
 
 // Test Recovery Wizard

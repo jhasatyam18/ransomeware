@@ -125,3 +125,7 @@ export const RECOVERY_ENTITY_TYPES = {
   VIRTUALMACHINE: 'VIRTUALMACHINE',
   DISK: 'DISK',
 };
+
+export const NODE_TYPES = {
+  DEDUPE_SERVER: 'DedupeServer',
+};
