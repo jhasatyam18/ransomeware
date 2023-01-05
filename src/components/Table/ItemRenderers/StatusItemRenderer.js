@@ -25,24 +25,37 @@ function StatusItemRenderer({ data, field, t }) {
     resp = 'Partially Completed';
   }
 
-  const renderPopOver = (hoverInfo, key) => (
-    <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: 'black', width: '400px' }}>
-      <PopoverBody>
-        <SimpleBar style={{ minHeight: '10vh', maxHeight: '10vh' }}>
-          {hoverInfo}
-        </SimpleBar>
-      </PopoverBody>
-    </Popover>
-  );
+  const renderPopOver = (hoverInfo, key) => {
+    let wid;
+    if (hoverInfo.length >= 50) {
+      wid = hoverInfo.length === 50 ? '370px' : '430px';
+    } else {
+      const num = 290 + hoverInfo.length;
+      wid = `${num}px`;
+    }
+
+    return (
+      <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: 'black', width: wid }}>
+        <PopoverBody>
+          <SimpleBar style={{ maxHeight: '30vh' }}>
+            {hoverInfo}
+            length
+            {' '}
+            {hoverInfo.length}
+          </SimpleBar>
+        </PopoverBody>
+      </Popover>
+    );
+  };
 
   function statusRenderer({ name, title, icon }) {
     const { failureMessage, errorMessage } = data;
     const errMsg = (typeof failureMessage !== 'undefined' ? failureMessage : errorMessage);
     const msg = (typeof errMsg !== 'undefined' ? errMsg : '');
-    const hoverInfo = title || msg;
+    const hoverInfo = title || msg + msg;
     return (
-      <div id={`status-${data.name}-${data.totalChangedSize}-${data.id}`} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)}>
-        <Badge className={`font-size-13 badge-soft-${name}`} color={`${name}`} pill>
+      <div>
+        <Badge id={`status-${field}-${data.name}-${data.id}`} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} className={`font-size-13 badge-soft-${name}`} color={`${name}`} pill>
           {icon ? (
             <>
               <i className="fa fa-spinner fa-spin" />
@@ -50,7 +63,7 @@ function StatusItemRenderer({ data, field, t }) {
             </>
           ) : null}
           {resp}
-          {hoverInfo !== '' ? renderPopOver(hoverInfo, `status-${data.name}-${data.totalChangedSize}-${data.id}`) : null}
+          {hoverInfo !== '' ? renderPopOver(hoverInfo, `status-${field}-${data.name}-${data.id}`) : null}
         </Badge>
       </div>
     );
