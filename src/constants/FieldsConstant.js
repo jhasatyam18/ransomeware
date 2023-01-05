@@ -1,8 +1,7 @@
 import { getErrorMessage, getFieldInfo, getLabel } from '../utils/LocallUtils';
-import { onPlatformTypeChange } from '../store/actions';
+import { onPlatformTypeChange, onNodeTypeChange } from '../store/actions';
 import { onProtectionPlanChange } from '../store/actions/DrPlanActions';
 import { onProtectSiteChange, updateAvailabilityZones } from '../store/actions/SiteActions';
-
 import { onLimitChange, onTimeLimitChange } from '../store/actions/ThrottlingAction';
 import { getAvailibilityZoneOptions, enableNodeTypeVM, getDefaultRecoverySite, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getReportProtectionPlans, getSiteNodeOptions, getSitesOptions, getSubnetOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware, shouldShowNodeEncryptionKey, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort, getVMwareVMSelectionData, showInstallCloudPackageOption, isPlatformTypeAzure, isRecoveryTypeGCP } from '../utils/InputUtils';
 import { isEmpty, validateDrSiteSelection, validatePassword, validateReplicationInterval, validateReplicationValue } from '../utils/validationUtils';
@@ -162,7 +161,7 @@ export const FIELDS = {
   'node.password': {
     label: 'node.password', description: 'Enter node password', placeHolderText: 'Password', type: FIELD_TYPE.PASSWORD, errorMessage: 'Enter node password', shouldShow: true, validate: (value, user) => isEmpty(value, user), fieldInfo: 'info.node.password' },
   'node.nodeType': {
-    label: 'node.nodeType', description: 'Select node type.', placeHolderText: 'Node type', type: FIELD_TYPE.SELECT, errorMessage: 'Select node type', shouldShow: true, validate: (value, user) => isEmpty(value, user), options: (user) => getNodeTypeOptions(user), fieldInfo: 'info.node.type' },
+    label: 'node.nodeType', description: 'Select node type.', placeHolderText: 'Node type', type: FIELD_TYPE.SELECT, errorMessage: 'Select node type', shouldShow: true, validate: (value, user) => isEmpty(value, user), options: (user) => getNodeTypeOptions(user), fieldInfo: 'info.node.type', onChange: ({ value, fieldKey }) => onNodeTypeChange({ value, fieldKey }) },
   'node.platformType': {
     label: 'node.platformType', description: 'Select platform type.', placeHolderText: 'Platform type', type: FIELD_TYPE.SELECT, errorMessage: 'Select platform type', shouldShow: (user) => shouldShowNodePlatformType(user), validate: (value, user) => isEmpty(value, user), options: (user) => getPlatformTypeOptions(user), fieldInfo: 'info.node.platformType' },
   'node.managementPort': {

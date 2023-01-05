@@ -2,7 +2,7 @@
 import jsCookie from 'js-cookie';
 import * as Types from '../../constants/actionTypes';
 import { API_AUTHENTICATE, API_AWS_REGIONS, API_AZURE_REGIONS, API_CHANGE_NODE_PASSWORD, API_CHANGE_PASSWORD, API_GCP_REGIONS, API_INFO, API_SCRIPTS, API_USERS, API_USER_PRIVILEGES, API_USER_SCRIPT } from '../../constants/ApiConstants';
-import { APP_TYPE, PLATFORM_TYPES, STATIC_KEYS, VMWARE_OBJECT } from '../../constants/InputConstants';
+import { APP_TYPE, NODE_TYPES, PLATFORM_TYPES, STATIC_KEYS, VMWARE_OBJECT } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH } from '../../constants/RouterConstants';
 import { APPLICATION_API_TOKEN, APPLICATION_API_USER, APPLICATION_API_USER_ID } from '../../constants/UserConstant';
@@ -867,6 +867,17 @@ export function setTags(key, obj) {
         tagsData.push({ id: tag.id, key: tag.key, value: tag.value });
       });
       dispatch(valueChange(`${key}-vmConfig.general.tags`, tagsData));
+    }
+  };
+}
+
+export function onNodeTypeChange({ value, fieldKey }) {
+  return (dispatch) => {
+    const fKey = fieldKey.replace('nodeType', 'managementPort');
+    if (value === NODE_TYPES.DEDUPE_SERVER) {
+      dispatch(valueChange(fKey, 5005));
+    } else {
+      dispatch(valueChange(fKey, 5000));
     }
   };
 }

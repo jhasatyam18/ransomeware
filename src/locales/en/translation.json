@@ -419,7 +419,7 @@
   "info.vmware.subnet":"Subnet mask for VMware subnet",
   "info.vmware.network.gateway":"Add default network gateway",
   "info.vmware.primary.dns":"Add DNS servers (Comma separated) ",
-  "test.recovery.note":"Test recoveries allow you to validate your DR copy. It is recommended to test recover workloads in an isolated VPC or subnet or network to avoid conflicts or race conditions in DR environment. If there are recovery scripts which make changes to DR environment like updating DNS entries, configuring alarms, load balancers etc., it is recommended to omit their execution during Test recovery, to avoid unnecessary changes",
+  "test.recovery.note":"Test recoveries allow you to validate your replicated copy in target site. It is recommended to test recover workloads in an isolated VPC or subnet to avoid conflicts or race conditions in target environment. If there are recovery scripts which make changes like updating DNS entries etc., it is recommended to omit their execution during Test recovery to avoid unnecessary changes to the target environment",
   "msg.node.alert.success":"Action initiated successfully",
   "warning.vmware.ip.addr":"Please provide valid IP Address",
   "warning.vmware.netmask":"Please provide valid Subnet",
