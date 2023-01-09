@@ -172,8 +172,8 @@ export function onRecoverSiteChange({ value }) {
     const { values } = user;
     const recoverySite = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${value}`)[0];
     const { platformType } = { ...recoverySite.platformDetails };
-    dispatch(fetchNetworks(value, undefined));
     dispatch(valueChange('ui.values.recoveryPlatform', platformType));
+    dispatch(fetchNetworks(value, undefined));
     dispatch(fetchRegions(platformType));
     dispatch(valueChange('ui.values.recoverySiteID', value));
     if (PLATFORM_TYPES.VMware === platformType) {
