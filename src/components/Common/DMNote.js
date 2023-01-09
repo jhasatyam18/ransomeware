@@ -3,7 +3,7 @@ import { withTranslation } from 'react-i18next';
 import { Card, CardHeader, Col, Collapse, Row } from 'reactstrap';
 
 function DMNote(props) {
-  const { title, t, info, color, open } = props;
+  const { title, t, info, color, open, subText } = props;
   const [isOpen, setIopen] = useState(open);
   const noteText = t(info);
   const toggle = () => {
@@ -17,6 +17,18 @@ function DMNote(props) {
       </div>
     </div>
   );
+
+  const renderSubText = () => {
+    if (subText) {
+      return (
+        <div className="card_note_warning margin-top-5">
+          <i className="fas fa-exclamation-triangle" />
+          &nbsp;&nbsp;&nbsp;
+          {t(subText)}
+        </div>
+      );
+    }
+  };
 
   return (
     <div key={`dm-accordion-${title}`}>
@@ -34,6 +46,7 @@ function DMNote(props) {
                 <>
                   <Collapse isOpen={isOpen}>
                     {noteText}
+                    {renderSubText()}
                   </Collapse>
                 </>
               )}
