@@ -96,7 +96,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Deplyment Guide
+              User Guide
             
           </span>
         </div>
@@ -189,12 +189,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Deplyment Guide
+          User Guide
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="." class="md-nav__link md-nav__link--active">
-        Deplyment Guide
+        User Guide
       </a>
       
         
@@ -978,8 +978,8 @@ the recovery site. The protected virtual machines/instances can then be
 recovered as needed in the recovery site as native instances (E.g.,
 protected virtual machine is recovered as a native AWS EC2 instance or a
 GCP Compute instance).</p>
-<p>Current release of product has been tested on VMware &amp; AWS as Protected
-Site and VMware, AWS and GCP Cloud as Recovery Site.</p>
+<p>Current release of product has been tested on VMware, AWS and Azure as
+Protected Site and VMware, AWS, GCP and Azure Cloud as Recovery Site.</p>
 <p>This document provides information about how to install and configure
 Datamotive solution. It also provides a general overview of Datamotive
 solution and it’s different components.</p>
@@ -1004,7 +1004,7 @@ target infrastructure</p>
     provides user interface (UI), a CLI and RESTfull APIs for the IT
     administrators to perform Day0-DayN activities. The server also acts
     as replication node. It is shipped as an OVA for VMware environment
-    &amp; cloud native machine image for AWS &amp; GCP environments.
+    &amp; cloud native machine image for AWS, GCP &amp; Azure environments.
     <strong><em>Management server supports parallel replication &amp; recovery for
     smaller loads (Upto 20 Virtual Machines disks)</em></strong></p>
 </li>
@@ -1019,12 +1019,12 @@ target infrastructure</p>
     GCP: 128)<strong>.</strong> However, for optimum performance, Datamotive solution
     limits the capacity of each replication node to 20 parallel disks.
     It is shipped as an OVA for VMware environment &amp; cloud native
-    machine image for AWS or GCP environment. <strong><em>Datamotive solution
-    scales horizontally using the Replication Nodes</em></strong></p>
+    machine image for AWS, GCP &amp; Azure environment. <strong><em>Datamotive
+    solution scales horizontally using the Replication Nodes</em></strong></p>
 </li>
 <li>
 <p><strong>Datamotive Prep Node</strong> – a Windows virtual appliance deployed in
-    the recovery site infrastructure (VMware, AWS or GCP). This
+    the recovery site infrastructure (VMware, AWS, GCP or Azure). This
     appliance is powered-on and used only when Windows VMs are getting
     recovered or migrated. It is shipped as an OVA for VMware
     environment &amp; cloud native machine image for AWS or GCP environment.
@@ -1034,15 +1034,37 @@ target infrastructure</p>
 </li>
 <li>
 <p><strong>Datamotive DeDup Node</strong> – a virtual appliance deployed in the
-    recovery site (public cloud) infrastructure (AWS or GCP). It
+    recovery site (public cloud) infrastructure (AWS, GCP and Azure). It
     maintains the checksum &amp; data for data chunks transferred to this
     site. DeDup node provides an interface to check and provide data
-    chunks whenever queried. It is shipped as native cloud image for AWS
-    &amp; GCP environments.</p>
+    chunks whenever queried. It is shipped as native cloud image for
+    AWS, GCP and Azure environments.</p>
 </li>
 </ol>
 <p>Following diagram shows the deployment &amp; network topology of these nodes</p>
 <p><img src="./media/image4.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:6.88125in;height:3.39755in" /></p>
 <h3 id="what-can-you-do-with-datamotive">What can you do with Datamotive</h3>
 <p>Datamotive currently provides fully functional and intuitive GUI, APIs &amp;
@@ -1178,11 +1200,11 @@ the user interface and related options in detail.</p>
 <tbody>
 <tr class="odd">
 <td>Source Platforms</td>
-<td>VMware &amp; AWS</td>
+<td>VMware, AWS &amp; Azure</td>
 </tr>
 <tr class="even">
 <td>Target Platforms</td>
-<td>VMware, AWS &amp; GCP</td>
+<td>VMware, AWS , Azure &amp; GCP</td>
 </tr>
 <tr class="odd">
 <td>Workloads</td>
@@ -1225,6 +1247,10 @@ the user interface and related options in detail.</p>
 <td>GCP</td>
 <td>Machines</td>
 </tr>
+<tr class="odd">
+<td>Azure</td>
+<td>Virtual Machines</td>
+</tr>
 </tbody>
 </table>
 
@@ -1256,7 +1282,17 @@ the user interface and related options in detail.</p>
 <p>3.10.0-1127.19.1.el7.x86_64</p>
 <p>3.10.0-1127.18.2.el7.x86_64</p>
 <p>3.10.0-1127.13.1.el7.x86_64</p>
-<p>3.10.0-1127.el7.x86_64</p></td>
+<p>3.10.0-1127.el7.x86_64</p>
+<p>8 stream</p>
+<p>4.18.0-408.el8.x86_64 (ext4 filesystem)</p>
+<p>8.2 Kernel Versions:</p>
+<p>4.18.0-193.el8.x86_64</p>
+<p>4.18.0-193.28.1.el8_2.x86_64</p>
+<p>8.5 Kernel Versions:</p>
+<p>4.18.0-348.el8.x86_64</p>
+<p>4.18.0-348.23.1.el8_5.x86_64</p>
+<p>8.6 Kernel Versions:</p>
+<p>4.18.0-372.26.1.el8_6.x86_64</p></td>
 </tr>
 <tr class="even">
 <td>RHEL</td>
@@ -1273,7 +1309,15 @@ the user interface and related options in detail.</p>
 <p>3.10.0-1127.19.1.el7.x86_64</p>
 <p>3.10.0-1127.18.2.el7.x86_64</p>
 <p>3.10.0-1127.13.1.el7.x86_64</p>
-<p>3.10.0-1127.el7.x86_64</p></td>
+<p>3.10.0-1127.el7.x86_64</p>
+<p>8.2 Kernel Versions:</p>
+<p>4.18.0-193.el8.x86_64</p>
+<p>4.18.0-193.28.1.el8_2.x86_64</p>
+<p>8.5 Kernel Versions:</p>
+<p>4.18.0-348.el8.x86_64</p>
+<p>4.18.0-348.23.1.el8_5.x86_64</p>
+<p>8.6 Kernel Versions:</p>
+<p>4.18.0-372.26.1.el8_6.x86_64</p></td>
 </tr>
 <tr class="odd">
 <td>Ubuntu</td>
@@ -1350,7 +1394,29 @@ the user interface and related options in detail.</p>
 
 <h1 id="features">Features</h1>
 <h3 id="authentication">Authentication</h3>
-<p><img src="./media/image5.png" style="width:6.48125in;height:2.99722in"
+<p><img src="./media/image5.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.48125in;height:2.99722in"
 alt="Graphical user interface, application Description automatically generated" /></p>
 <blockquote>
 <p>Open the Datamotive UI through URL: \&lt; Datamotive_Service_IP >:5000</p>
@@ -1390,17 +1456,83 @@ change is must.</strong></p>
 <p>Click on change password button to set new password for the system.</p>
 </li>
 </ol>
-<p><img src="./media/image6.png" style="width:5in;height:4.10417in" /></p>
+<p><img src="./media/image6.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:5in;height:4.10417in" /></p>
 <h3 id="dashboard">Dashboard</h3>
 <p>The Dashboard provides you with an at-a-glance overview of the data
 protection status of your environment. The Dashboard contains the
 following features.</p>
-<p><img src="./media/image7.png" style="width:6.48125in;height:3.01875in"
+<p><img src="./media/image7.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.48125in;height:3.01875in"
 alt="Graphical user interface, application, Teams Description automatically generated" /></p>
 <p><strong>Title Windows</strong></p>
 <p>Title windows will give overall status on your configured and protected
 environment.</p>
-<p><img src="./media/image8.png" style="width:6.48125in;height:0.6625in" /></p>
+<p><img src="./media/image8.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.48125in;height:0.6625in" /></p>
 <table>
 <thead>
 <tr>
@@ -1430,11 +1562,55 @@ environment.</p>
 <p><strong>Alert Statistics</strong></p>
 <p>Active/Unacknowledged alerts which need a user action acknowledgement or
 action.</p>
-<p><img src="./media/image9.png" style="width:5.34308in;height:2.31221in"
+<p><img src="./media/image9.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:5.34308in;height:2.31221in"
 alt="Graphical user interface, application Description automatically generated" /></p>
 <p><strong>RPO and RTO Statistics</strong></p>
 <p>Current recovery time objective and recovery point objective.</p>
 <p><img src="./media/image10.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:6.27083in;height:1.0582in" /></p>
 <table>
 <thead>
@@ -1472,6 +1648,28 @@ style="width:6.27083in;height:1.0582in" /></p>
 <p>Replication statistics provides an overview of your protected
 environment replication jobs.</p>
 <p><img src="./media/image11.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:6.32292in;height:1.28125in" /></p>
 <table>
 <thead>
@@ -1505,7 +1703,29 @@ style="width:6.32292in;height:1.28125in" /></p>
 </table>
 <p><strong>Jobs</strong></p>
 <p>Jobs shows the recently started or completed task in the system.</p>
-<p><img src="./media/image12.png" style="width:5in;height:1.98958in" /></p>
+<p><img src="./media/image12.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:5in;height:1.98958in" /></p>
 <p><strong><br />
 </strong></p>
 <p><strong>Virtual Machine Protection Analysis</strong></p>
@@ -1516,34 +1736,144 @@ protection analysis, this wizard also provides the details for
 replication statistics of virtual machines which are in-sync and not
 in-sync.</p>
 <p><img src="./media/image13.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:6.08333in;height:2.3066in" /></p>
 <p><strong>Bandwidth Usage</strong></p>
 <p>Bandwidth usage provide the details network usage of the system for last
 12 hours.</p>
 <p>The bandwidth usage chart shows data downloaded and uploaded for last 12
 hours.</p>
-<p><img src="./media/image14.png" style="width:5in;height:2.75in" /></p>
+<p><img src="./media/image14.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:5in;height:2.75in" /></p>
 <p><strong><br />
 </strong></p>
 <p><strong>Site Connections</strong></p>
 <p>Provides connection details of configured sites in terms of data flow
 i.e., from which source site data replication is configured for target
 site.</p>
-<p><img src="./media/image15.png" style="width:6.06383in;height:2.375in" /></p>
+<p><img src="./media/image15.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.06383in;height:2.375in" /></p>
 <p><strong>Events</strong></p>
 <p>Events are records of user actions or system actions that occurred in
 the Datamotive system. The Events widget provides most recent 5 events
 generated in the system.</p>
 <p><img src="./media/image16.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:5.05764in;height:3.65625in" /></p>
 <p><strong>Nodes</strong></p>
 <p>This section displays all the nodes registered with the management node
 along with their status. This is a snapshot for how different nodes in
 Datamotive are working together.</p>
-<p><img src="./media/image17.png" style="width:6.5in;height:1.40625in" /></p>
+<p><img src="./media/image17.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.5in;height:1.40625in" /></p>
 <h3 id="nodes-configuration">Nodes Configuration</h3>
 <p>Nodes are entities where the Datamotive server is installed (Ex. AWS,
-GCP, VMWare, etc.). Datamotive Nodes are of different types like
+GCP, VMWare, Azure, etc.). Datamotive Nodes are of different types like
 Management, Replication, Dedup &amp; Win Prep. Each node has specific
 functionality.</p>
 <ol>
@@ -1607,6 +1937,28 @@ Local node will be configured.)</p>
 <p>To add new node -</p>
 <p>Click On <strong>“+ New</strong>” option as shown below -</p>
 <p><img src="./media/image18.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:6.46875in;height:2.80208in" /></p>
 <p>It consists of the below options-</p>
 <table>
@@ -1672,6 +2024,28 @@ Dedupe Server</p></td>
 </tbody>
 </table>
 <p><img src="./media/image19.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:6.41667in;height:4.01042in" /></p>
 <p><strong>(Note – Based on the selection of Type, further details need to be
 entered). Ex. In option, the management type is selected. It consists of
@@ -1707,6 +2081,28 @@ it 5003)</td>
 <td><p>Data will be encrypted using this key while transferring from one
 node to another node.</p>
 <p><img src="./media/image20.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:4.90208in;height:1.70417in" /></p>
 <p>The key for the node can be accessed in the remote management node,
 under the node configuration section.</p></td>
@@ -1714,13 +2110,57 @@ under the node configuration section.</p></td>
 </tbody>
 </table>
 
-<p><img src="./media/image21.png" style="width:6.53125in;height:4.625in" /></p>
+<p><img src="./media/image21.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.53125in;height:4.625in" /></p>
 <p>Once the details are entered click on Configure option.</p>
 <h3 id="sites-configuration">Sites configuration</h3>
 <p>Sites are infrastructure where the source or target workloads reside.
 Site consists of platform type and platform details. In the Datamotive
 UI, go to Configure tab on the left-hand side panel and select Sites.</p>
 <p><img src="./media/image22.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:6.45833in;height:1.61068in" /></p>
 <p>Site can be of following types:</p>
 <p>Protection - A protection site is the source of the protection plan
@@ -1754,7 +2194,7 @@ destination.</td>
 </tr>
 <tr class="odd">
 <td>Platform Type</td>
-<td>Select the Platform type - VMware/AWS/GCP</td>
+<td>Select the Platform type - VMware/AWS/GCP/Azure</td>
 </tr>
 <tr class="even">
 <td>Node</td>
@@ -1767,6 +2207,28 @@ change)</p></td>
 </table>
 
 <p><img src="./media/image23.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:5.87743in;height:3.58333in" /></p>
 <p>Platform Specific Parameters:</p>
 <table>
@@ -1833,11 +2295,63 @@ style="width:5.87743in;height:3.58333in" /></p>
 <td>Project ID</td>
 <td>Enter the project id from the GCP console</td>
 </tr>
+<tr>
+<td>Azure</td>
+<td>Region</td>
+<td>Select the desired region where the workloads will be replicated/recovered</td>
+</tr>
+<tr>
+<td></td>
+<td>Subscription ID</td>
+<td>Enter the Azure subscription ID</td>
+</tr>
+<tr>
+<td></td>
+<td>Storage Account</td>
+<td>Enter the Azure storage account used for target VM storage</td>
+</tr>
+<tr>
+<td></td>
+<td>Tenant ID</td>
+<td>Enter the Azure AD App Tenant ID</td>
+</tr>
+<tr>
+<td></td>
+<td>Client ID</td>
+<td>Enter the Azure AD App Client ID</td>
+</tr>
+<tr>
+<td></td>
+<td>Secret Key</td>
+<td>Enter the Azure AD App client secret key</td>
+</tr>
 </tbody>
 </table>
 <p>Click on configure to create the site and on successful creation, site
 will be listed in the list view.</p>
 <p><img src="./media/image24.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:6.33013in;height:2.23775in" /></p>
 <p>V Center Server IP</p>
 <p><strong>Edit Site</strong></p>
@@ -1845,12 +2359,56 @@ style="width:6.33013in;height:2.23775in" /></p>
 <p>Edit the input which need to be changed and click on configure to save
 the configuration.</p>
 <p><img src="./media/image25.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:6.39423in;height:4.41106in" /></p>
 <p><strong>Remove Site</strong></p>
 <p>Click on Remove button to delete one or more sites. On click of confirm,
 the sites will be deleted. Make sure that site isn’t referred in any
 Protection Plan before removing.</p>
-<p><img src="./media/image26.png" style="width:6.5in;height:1.71452in" /></p>
+<p><img src="./media/image26.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.5in;height:1.71452in" /></p>
 <h3 id="protection-plans">Protection Plans</h3>
 <p>Protection Plans are the core units for protecting the workloads.
 Protection Plans define source &amp; target sites, virtual machines to be
@@ -1893,12 +2451,56 @@ steps to configure protection plan.</p>
 </tr>
 </tbody>
 </table>
-<p><img src="./media/image27.png" style="width:6.5in;height:3.57087in" /></p>
+<p><img src="./media/image27.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.5in;height:3.57087in" /></p>
 <p><strong>Step 2: Virtual Machines</strong></p>
 <p>Select the virtual machines to be protected and click next. Use search &amp;
 pagination to find virtual machines.</p>
 <blockquote>
 <p><img src="./media/image28.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:5.98958in;height:3.73101in" /></p>
 </blockquote>
 <p><strong>Step 3: Recovery Configuration</strong></p>
@@ -1915,7 +2517,7 @@ option.</p>
 <thead>
 <tr>
 <th>Instance Type</th>
-<th>Instance type on cloud site - Example t2.micro on AWS or n1-standard-1 on GCP.</th>
+<th>Instance type on cloud site - Example t2.micro on AWS or n1-standard-1 on GCP</th>
 </tr>
 </thead>
 <tbody>
@@ -1934,6 +2536,28 @@ option.</p>
 </tbody>
 </table>
 <p><img src="./media/image29.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:6.20968in;height:3.20833in" /></p>
 <p>For VMware as target platform, the user has to provide selection for
 following fields</p>
@@ -1963,7 +2587,80 @@ following fields</p>
 </tr>
 </tbody>
 </table>
-<p><img src="./media/image30.png" style="width:6.5in;height:3.35903in" /></p>
+<p><img src="./media/image30.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.5in;height:3.35903in" /></p>
+<p>For Azure as target platform, the user has to provide selection for
+following fields</p>
+<table>
+<thead>
+<tr>
+<th>Resource Group</th>
+<th>Resource group in target Azure subscription</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Availability Zone</td>
+<td>Availability zone in which the VM will be deployed</td>
+</tr>
+<tr>
+<td>VM Size</td>
+<td>Virtual Machine size on Azure cloud – Example Standard_B2s</td>
+</tr>
+<tr>
+<td>Volume Type</td>
+<td>Virtual Machine volume type on Azure cloud – Example Premium SSD</td>
+</tr>
+<tr>
+<td>Tags</td>
+<td>Virtual Machine tags. Example – Tag Key – Name Tag value</td>
+</tr>
+</tbody>
+</table>
+<p><img src="./media/image31.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.5in;height:3.22431in" /></p>
 <p><strong>Network</strong></p>
 <p>For instance, network configuration click on config button, will open a
 network configuration popup window. Network configurations vary based on
@@ -2026,7 +2723,29 @@ traffic for the instance.</td>
 </tbody>
 </table>
 
-<p><img src="./media/image31.png"
+<p><img src="./media/image32.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:4.26042in;height:4.46875in" /></p>
 <p><strong>For GCP platform provided the following details</strong></p>
 <table>
@@ -2077,7 +2796,29 @@ applies</td>
 </tbody>
 </table>
 
-<p><img src="./media/image32.png" style="width:5in;height:4.59375in" /></p>
+<p><img src="./media/image33.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:5in;height:4.59375in" /></p>
 <p><strong>For VMware platform provided the following details</strong></p>
 <table>
 <thead>
@@ -2117,8 +2858,82 @@ applies</td>
 </tr>
 </tbody>
 </table>
-<p><img src="./media/image33.png"
+<p><img src="./media/image34.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:5.22545in;height:6.22554in" /></p>
+<p><strong>For Azure platform as recovery site, the following configuration
+options are provided-</strong></p>
+<table>
+<thead>
+<tr>
+<th>Virtual Network</th>
+<th>Virtual Network enables you to launch Azure VM into a virtual network that you've defined.</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Subnet</td>
+<td>Subnet ID which will assigned to the VM in this protection plan.</td>
+</tr>
+<tr>
+<td>Private IP</td>
+<td>Provide the internal IP address for the VM or leave blank for auto assignment. (Please ensure to specify Private IP in the same range as that of given Subnet and is unique too)</td>
+</tr>
+<tr>
+<td>Public IP</td>
+<td>Select any public IP from the pool or select auto for automatic assignment</td>
+</tr>
+<tr>
+<td>Security Groups</td>
+<td>Select the security groups all configure inbound and outbound traffic for the VM.</td>
+</tr>
+</tbody>
+</table>
+<p><img src="./media/image35.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:4.19354in;height:3.91711in"
+alt="Graphical user interface, application, Teams Description automatically generated" /></p>
 <p><strong>Step 4: Replication Scripts</strong></p>
 <p>Datamotive supports executing custom scripts at various levels to allow
 all the customizations users need for replication &amp; recovery workflows.
@@ -2195,7 +3010,29 @@ replication &amp; recovery operations.</p>
 </table>
 <p>Following screens show options where user can select/upload various
 scripts.</p>
-<p><img src="./media/image34.png" style="width:6.75in;height:3.14583in" /></p>
+<p><img src="./media/image36.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.75in;height:3.14583in" /></p>
 <p><strong>Scripts Input</strong></p>
 <p>Currently, Datamotive supports only binary for execution. The runtime
 available for scripts is Shell, Bash, Python 2.x &amp; GOLang. In future,
@@ -2229,7 +3066,29 @@ recovery scripts, Datamotive provides following parameters in the order.</p>
 is captured. If there are no errors in executing the script, Datamotive
 considers it to be successfully executed. If there are errors, the
 recovery is marked as Partially Completed.</p>
-<p><img src="./media/image35.png"
+<p><img src="./media/image37.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:6.61085in;height:3.44792in" /></p>
 <p><strong>Step 5: Boot Order</strong></p>
 <p>Using boot order configuration defines the boot delay and virtual
@@ -2238,7 +3097,29 @@ machine boot order.</p>
 the boot order</p>
 <p><strong>Boot Order</strong> : Order in which virtual machines will get recovered or
 migrated. Lower number will get recovered first</p>
-<p><img src="./media/image36.png"
+<p><img src="./media/image38.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:6.56146in;height:4.11458in" /></p>
 <p><strong>Step 6: Replication Configuration</strong></p>
 <p>Replication configuration allows user to specify the schedule for
@@ -2283,12 +3164,57 @@ recovery site to replicate back to its original source site.</td>
 </tbody>
 </table>
 
-<p><img src="./media/image37.png"
+<p><img src="./media/image39.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:6.38333in;height:3.98958in" /></p>
 <p><strong>Step 7: Scripts</strong></p>
 <p>As described in earlier scripts section, these are Replication &amp;
 Recovery scripts at Protection Plan level.</p>
-<p><img src="./media/image38.png" style="width:5in;height:2.48958in" /></p>
+<p><img src="./media/image40.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.5in;height:3.21667in"
+alt="A screenshot of a computer Description automatically generated with medium confidence" /></p>
 <p>The runtime available for scripts is Shell, Bash, Python 2.x &amp; GOLang.
 In future, binding for different languages will be provided. On
 invocation the recovery scripts, Datamotive provides following
@@ -2329,7 +3255,29 @@ VM logon password></p>
 <p>Review the summary for the protection plan and click finish to configure
 the protection plan. On successful configuration, replication jobs will
 start for the virtual machines selected for this protection plan.</p>
-<p><img src="./media/image39.png"
+<p><img src="./media/image41.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:6.30435in;height:3.92708in" /></p>
 <h4 id="protection-plan-actions">Protection Plan Actions</h4>
 <p>Action on protection plan is available through the protection plan list
@@ -2340,13 +3288,79 @@ protected site or recovery site. Certain actions are available only at
 one site as shown below</p>
 <p>Actions available through the protection plan details</p>
 <p><strong>Actions for source site</strong> <strong>Actions for recovery site</strong></p>
-<p><img src="./media/image40.png"
+<p><img src="./media/image42.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:2.28125in;height:2.28125in" />
-<img src="./media/image41.png"
+<img src="./media/image43.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:2.17975in;height:2.30208in" /></p>
 <p>Actions available through the protection plan data grid view on source
 site</p>
-<p><img src="./media/image42.png"
+<p><img src="./media/image44.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:6.26042in;height:0.83333in" /></p>
 <p><strong>New:</strong> Click to configure new protection plan.</p>
 <p><strong>Edit:</strong> Select protection plan from the list and click edit. Edit
@@ -2384,9 +3398,9 @@ no running jobs.</p>
 <p>After the Protection Plans are configured and replication of virtual
 machines is in-sync, user can trigger various recovery operations from
 the Datamotive Management Server on the recovery site. To initiate
-recovery or migration go to Home —> Configuration —> Protection Plan
--> Click on the protection plan on which recovery or migration
-operation need to perform.</p>
+recovery or migration go to Configuration —> Protection Plan -> Click
+on the protection plan on which recovery or migration operation need to
+perform.</p>
 <p>Click on the Actions button. All available operation will get listed.</p>
 <h3 id="test-recovery">Test Recovery</h3>
 <p><strong>Prerequisite</strong></p>
@@ -2396,20 +3410,64 @@ virtual machine and the sync status for that job should be In-sync.</p>
 <p>Select the virtual machines for the test recovery. Provide the
 credentials to execute the pre and post scripts. If there are no scripts
 for the virtual machine, then credentials are not mandatory.</p>
-<p><img src="./media/image43.png" style="width:6.5in;height:3.35208in" /></p>
+<p><img src="./media/image45.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.5in;height:3.35208in" /></p>
 <p>Credentials are not stored anywhere and only been used for the workflow.</p>
 <p>NOTE: For Windows recovery on AWS, Credentials are mandatory even if
 there are no scripts.</p>
 <p><strong>Step 2: Test Recovery Configuration</strong></p>
 <p>Configure test recovery instance for it’s compute, storage &amp; network to
 ensure a non-intrusive test recovery drill.</p>
-<p><img src="./media/image44.png" style="width:6.5in;height:3.40764in" /></p>
+<p><img src="./media/image46.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.5in;height:3.83056in" /></p>
 <p><strong>Step 3: Tools &amp; Scripts</strong></p>
 <ul>
 <li>
 <p><strong>Install System Agents:</strong> For AWS, install OS agents like EC2Launch
     and SSMAgents. For GCP, install google os-config and compute-engine
-    agents.</p>
+    agents. For Azure, install Azure VM agent</p>
 </li>
 <li>
 <p><strong>Install Cloud Packages</strong>: For AWS. install AWS Cloud SDK and for
@@ -2429,19 +3487,85 @@ ensure a non-intrusive test recovery drill.</p>
     execute them in Test Recovery cycles, you can skip this step.</p>
 </li>
 </ul>
-<p><img src="./media/image45.png" style="width:6.5in;height:3.34097in" /></p>
+<p><img src="./media/image47.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.5in;height:3.34097in" /></p>
 <p><strong>Step 3: Summary</strong></p>
-<p><img src="./media/image46.png" style="width:6.5in;height:1.05739in"
-alt="Graphical user interface, application Description automatically generated" /></p>
+<p><img src="./media/image48.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.5in;height:3.82847in" /></p>
 <p>Review the summary and click on finish to start the test recovery. This
 will start the test recovery jobs for the selected virtual machines and
-jobs can be monitored in the Home —> Jobs —> Recovery.</p>
-<p><img src="./media/image47.png" style="width:6.5in;height:3.39375in" /></p>
+jobs can be monitored in the Jobs —> Recovery.</p>
+<p><img src="./media/image49.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.5in;height:1.61319in" /></p>
 <p><strong>Test Recovery validation</strong></p>
-<p>Check the status of the virtual machine's recovery jobs in the Home —>
-Jobs —> Recovery.</p>
-<p>Check the Cloud Console (AWS and GCP) for the instances with the virtual
-machines name and their running status. AWS also has status checks.</p>
+<p>Check the status of the virtual machine's recovery jobs in the Jobs —>
+Recovery.</p>
+<p>Check the Cloud Console (AWS, Azure and GCP) for the instances with the
+virtual machines name and their running status. AWS also has status
+checks.</p>
 <p>On successful completion of recovery jobs, IP Address can be found for
 the new running instances.</p>
 <p>For Windows machines, download the RDP file by click the download button
@@ -2453,8 +3577,8 @@ remove the Test Recovered instance. Leaving test recovered instances
 running may lead to increased cloud cost.</em></strong></p>
 <h3 id="full-recovery">Full Recovery</h3>
 <p>To perform full recovery after disaster in the source site, open
-Management Application on Recovery Site and go to Home —> Configuration
-—> Protection Plan –> Click on the Protection plan.</p>
+Management Application on Recovery Site and go to Configuration —>
+Protection Plan –> Click on the Protection plan.</p>
 <p>Click on Action button and select <strong>Recovery</strong></p>
 <p><strong>Prerequisite:</strong></p>
 <p>At least one replication job has been completed successfully for the
@@ -2466,7 +3590,29 @@ machine, then credentials are not mandatory.</p>
 <p>Credentials are not stored anywhere and only been used for the workflow.</p>
 <p>NOTE: For Windows recovery on AWS, Credentials are mandatory even if
 there are no scripts.</p>
-<p><img src="./media/image48.png" style="width:6.48125in;height:4.03264in"
+<p><img src="./media/image50.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.48125in;height:4.03264in"
 alt="A screenshot of a computer Description automatically generated with medium confidence" /></p>
 <p><strong><br />
 </strong></p>
@@ -2475,37 +3621,147 @@ alt="A screenshot of a computer Description automatically generated with medium 
 <li>
 <p><strong>Install System Agents:</strong> For AWS, install OS agents like EC2Launch
     and SSMAgents. For GCP, install google os-config and compute-engine
-    agents.</p>
+    agents. For Azure, install Azure VM agent.</p>
 </li>
 <li>
 <p><strong>Install Cloud Packages</strong>: For AWS. install AWS Cloud SDK and for
     GCP, install GCP Cloud SDK.</p>
 </li>
 </ul>
-<p><img src="./media/image49.png" style="width:6.48125in;height:4.03611in"
+<p><img src="./media/image51.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.48125in;height:4.03611in"
 alt="Graphical user interface, application Description automatically generated" /></p>
 <p><strong>Step 3: Recovery Summary</strong></p>
 <p>Review the summary and click on finish to start the recovery. This will
 start the recovery jobs for the selected virtual machines and jobs can
-be monitored in the Home —> Jobs —> Recovery.</p>
+be monitored in the Jobs —> Recovery.</p>
 <p>NOTE: If the replication job is on-going at the time of Full Recovery,
 then the instance will be recovered from the last known good state.</p>
-<p><img src="./media/image50.png" style="width:6.5in;height:4.46528in" /></p>
-<p><img src="./media/image51.png" style="width:6.5in;height:1.83264in" />Recovery
-Job Status</p>
+<p><img src="./media/image52.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.5in;height:4.46528in" /></p>
+<p><img src="./media/image53.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.5in;height:1.83264in" />
+  Recovery Job Status</p>
 <h3 id="migration">Migration</h3>
 <p>Migration also follows the recovery workflow for the protected VMs. To
-migrate the workloads, go to Home —> Configuration —> Protection Plan
-à Click on the protection on which migration need to perform, on the
-Recovery site.</p>
+migrate the workloads, go to Configuration —> Protection Plan à Click
+on the protection on which migration need to perform, on the Recovery
+site.</p>
 <p>Click on actions buttons and select <strong>Migrate</strong></p>
 <p><strong>Prerequisite:</strong></p>
 <p>In case of migration, to make sure there is no loss of data, the virtual
 machine(s) should be in power off state and the last replication jobs
 should be successfully completed with zero changed data.</p>
-<p><img src="./media/image52.png" style="width:6.5in;height:1.28403in" /></p>
+<p><img src="./media/image54.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.5in;height:1.28403in" /></p>
 <p><strong>Step1: Select Virtual Machines</strong></p>
-<p><img src="./media/image53.png" style="width:6.48125in;height:4.04792in"
+<p><img src="./media/image55.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.48125in;height:4.04792in"
 alt="A screenshot of a computer Description automatically generated with medium confidence" /></p>
 <p>Select the virtual machines and provide the credentials if there are
 pre- or post-configured for these virtual machines.</p>
@@ -2515,7 +3771,7 @@ pre- or post-configured for these virtual machines.</p>
 <li>
 <p><strong>Install System Agents:</strong> For AWS, install OS agents like EC2Launch
     and SSMAgents. For GCP, install google os-config and compute-engine
-    agents.</p>
+    agents. For Azure, install Azure VM agent.</p>
 </li>
 <li>
 <p><strong>Install Cloud Packages</strong>: For AWS. install AWS Cloud SDK and for
@@ -2525,23 +3781,113 @@ pre- or post-configured for these virtual machines.</p>
 <p><strong>Step 3: Summary</strong></p>
 <p>Review the summary and click on finish to start the <strong>Migration</strong>. This
 will start the test migration jobs for the selected virtual machines and
-jobs can be monitored in the Home —> Jobs —> Recovery jobs.</p>
-<p><img src="./media/image54.png" style="width:6.48125in;height:4.03958in"
+jobs can be monitored in the Jobs —> Recovery jobs.</p>
+<p><img src="./media/image56.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.48125in;height:4.03958in"
 alt="A screenshot of a computer Description automatically generated" /></p>
-<p><img src="./media/image55.png" style="width:6.5in;height:0.85072in" /></p>
+<p><img src="./media/image57.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.5in;height:0.85072in" /></p>
 <p>Job's view after migration completed</p>
 <h3 id="reverse">Reverse</h3>
 <p>The Reverse protection plan or Re-protect option is available when the
 Virtual Machines needs to be replicated back to the original Source Site
 (Especially in case for Disaster Recovery) Currently reverse is
-supported from AWS to VMware &amp; AWS to AWS.</p>
+supported from AWS/VMware/Azure to AWS/VMware/Azure.</p>
 <p>Reverse option is available at protection plan level under the Actions
 option. The option is enabled only after the protection plan is fully
 recovered.</p>
-<p><img src="./media/image56.png" style="width:6.5in;height:1.93194in" /></p>
+<p><img src="./media/image58.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.5in;height:1.77361in"
+alt="Graphical user interface, text Description automatically generated" /></p>
 <p>After the reverse option is clicked, the pop-up for the reverse workflow
 opens -</p>
-<p><img src="./media/image57.png" style="width:6.5in;height:2.375in" /></p>
+<p><img src="./media/image59.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.5in;height:3.24514in"
+alt="A screenshot of a computer Description automatically generated with medium confidence" /></p>
 <p>Replication Type: The option allows you to configure the Replication
 Type. Following replication options are available to be configured.</p>
 <ol>
@@ -2580,7 +3926,30 @@ while reverse protecting them.</p>
 <p>Replication Interval: Configure desired replication interval for reverse
 protection</p>
 <p>As a next step, the Recovery Configuration wizard would appear –</p>
-<p><img src="./media/image58.png" style="width:6.5in;height:3.14583in" /></p>
+<p><img src="./media/image60.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.5in;height:3.25694in"
+alt="A screenshot of a computer Description automatically generated with medium confidence" /></p>
 <p>The step allows to configure recovery entity properties supported by the
 target platform. For example, the screenshot shows details for VMware
 platform where user can select</p>
@@ -2607,8 +3976,9 @@ and the when the config option is clicked the network and Subnet/Network
 Adapter</p>
 <p>The next step allows to reconfigure the scripts, so that all the
 automation can be done in target platform. The scripts function in the
-same way as that of forward recovery. Below table illustrates different
-types of scripts supported by Datamotive platform.</p>
+same way as that of forward recovery.</p>
+<p>Below table illustrates different types of scripts supported by
+Datamotive platform.</p>
 <table>
 <thead>
 <tr>
@@ -2669,27 +4039,165 @@ types of scripts supported by Datamotive platform.</p>
 </tr>
 </tbody>
 </table>
-<p>Once the Next option is clicked, the below wizard for Tools and Scripts
-appears –</p>
-<p><img src="./media/image59.png"
-style="width:6.64992in;height:3.01236in" /></p>
-<p>Tools Installation –</p>
-<p>Install system agents – Check the option to install system agents on the
-recovered VM</p>
-<p>Cleanup and Protection Plan configuration –</p>
-<p>Run Protection plan level scripts – This option will run the pplan level
-script</p>
-<p>When click on the Next option click on Next and the Summary wizard
-appears-</p>
-<p><img src="./media/image60.png" style="width:6.5in;height:2.89375in" /></p>
-<p>After checking the summary and clicking the Finish option. The reverse
-iteration is started and can be viewed in the jobs sections</p>
+<p>Once the Next option is clicked, the below wizard for configuring the
+boot order appears –</p>
+<p><img src="./media/image61.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.5in;height:3.25694in"
+alt="Graphical user interface, application Description automatically generated" /></p>
+<p>Using boot order configuration defines the boot delay and virtual
+machine boot order.</p>
+<p><strong>Boot Delay</strong> : Delay in seconds between virtual machines specified in
+the boot order</p>
+<p><strong>Boot Order</strong> : Order in which virtual machines will get recovered or
+migrated. Lower number will get recovered first</p>
+<p>On clicking Next button, options to set replication configuration is
+available-</p>
+<p><img src="./media/image62.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.5in;height:3.25903in" /></p>
+<p>Replication configuration allows user to specify the schedule for
+periodic replication of protected virtual machines. User can configure
+following parameters.</p>
+<table>
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 82%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Start Time</th>
+<th>Time from when protection plan replication will start.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Replication Interval</td>
+<td>Time interval in which the virtual machine’s changed data will be
+replicated</td>
+</tr>
+<tr class="even">
+<td>Encryption on Wire</td>
+<td>Data encryption while transferring from source to destination.</td>
+</tr>
+<tr class="odd">
+<td>Compression</td>
+<td>Data compression while transferring from source to destination</td>
+</tr>
+<tr class="even">
+<td>Dedup</td>
+<td><p>Enables the data deduplication.</p>
+<p>Note: Deduplication node should be pre-configured on recovery site
+before using this feature</p></td>
+</tr>
+<tr class="odd">
+<td>Differential Reverse Replication</td>
+<td>Enable this feature if you want to allow recovered machines from the
+recovery site to replicate back to its original source site.</td>
+</tr>
+</tbody>
+</table>
+
+<p>Clicking the Next button presents the options to set protection plan
+level scripts. As described earlier in the protection plan creation
+section, these are Replication &amp; Recovery scripts at Protection Plan
+level.</p>
+<p><img src="./media/image63.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.5in;height:3.25208in" /></p>
+<p>Next is the Summary which is the last step in the wizard to review the
+reverse configuration and click finish to reverse the protection plan.</p>
+<p><img src="./media/image64.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.5in;height:3.24306in" /></p>
+<p>On successful reversal, replication jobs will start for the virtual
+machines in the protection plan and can be viewed in the jobs sections</p>
 <h3 id="jobs">Jobs</h3>
 <p>Jobs are logs of every replication &amp; recovery action performed in the
 system. Datamotive maintains detailed information of each job executed
 by the system. Jobs provide a real time mechanism to view the currently
 executing operations in the system.</p>
-<p>Navigation: Home --> Jobs</p>
+<p>Navigation: Jobs</p>
 <p>You can use the Jobs page to monitor the overall status of replication
 and recovery jobs.</p>
 <h4 id="replication">Replication</h4>
@@ -2698,16 +4206,82 @@ completed, and failed replication iterations. The Replication job
 section has the following sub-section to show replication jobs base on
 the grouping criteria.</p>
 <h5 id="protection-plan">Protection Plan</h5>
-<p>Navigation: Home --> Jobs --> Select Protection Plan.</p>
+<p>Navigation: Jobs --> Select Protection Plan.</p>
 <p>Protection plan replication details provide a list of protection plans.
 Each protection plan has its associated virtual machine replication
 information.
-<img src="./media/image61.png" style="width:6.84218in;height:2.475in"
+<img src="./media/image65.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.84218in;height:2.475in"
 alt="Graphical user interface, application Description automatically generated" /></p>
-<p>click <img src="./media/image62.png"
+<p>click <img src="./media/image66.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:0.35756in;height:0.37544in" /> icon or title to view
 protection plan level details.</p>
-<p><img src="./media/image63.png" style="width:6.48125in;height:1.51111in"
+<p><img src="./media/image67.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.48125in;height:1.51111in"
 alt="Graphical user interface, application Description automatically generated" /></p>
 <table>
 <colgroup>
@@ -2777,7 +4351,29 @@ failed.</p></li>
 <h5 id="virtual-machines">Virtual Machines</h5>
 <p>Provides a list of replication details for each protected virtual
 machine.</p>
-<p><img src="./media/image64.png" style="width:6.48125in;height:1.81667in"
+<p><img src="./media/image68.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.48125in;height:1.81667in"
 alt="A screenshot of a computer Description automatically generated with medium confidence" /></p>
 <p>Note: For failed jobs, hover on the Sync Status column to get details of the
 status. Hover on the Replication Duration column to get Replication
@@ -2823,7 +4419,29 @@ start &amp; end time.</p>
 <h5 id="disks">Disks</h5>
 <p>Provide a list of replication details for each protected virtual machine
 disk/volume.</p>
-<p><img src="./media/image65.png" style="width:6.7903in;height:2.12653in"
+<p><img src="./media/image69.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.7903in;height:2.12653in"
 alt="Graphical user interface, text, application Description automatically generated" /></p>
 <table>
 <thead>
@@ -2867,13 +4485,79 @@ and failed recovery operations.</p>
 Each protection plan has its</p>
 <p>associated recovered (Full / Test) or migrated virtual machine
 information.</p>
-<p><img src="./media/image66.png" style="width:6.48125in;height:0.95486in"
+<p><img src="./media/image70.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.48125in;height:0.95486in"
 alt="Background pattern Description automatically generated" /></p>
 <p>click
-<img src="./media/image62.png" style="width:0.35756in;height:0.37544in"
+<img src="./media/image66.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:0.35756in;height:0.37544in"
 alt="A picture containing graphical user interface Description automatically generated" />
 icon or title to view protection plan level details.</p>
-<p><img src="./media/image67.png"
+<p><img src="./media/image71.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:6.97361in;height:2.22153in" /></p>
 <table>
 <thead>
@@ -2903,7 +4587,29 @@ style="width:6.97361in;height:2.22153in" /></p>
 </table>
 <h5 id="virtual-machines_1">Virtual Machines</h5>
 <p>Provides a list of recovered (Test/Full) or migrated virtual machines.</p>
-<p><img src="./media/image68.png" style="width:6.48125in;height:0.95972in"
+<p><img src="./media/image72.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.48125in;height:0.95972in"
 alt="Graphical user interface, application Description automatically generated" /></p>
 <table>
 <colgroup>
@@ -2992,7 +4698,29 @@ generated automatically when they occur. </p>
 </tbody>
 </table>
 <p>To see “Events”, go to “Monitor” option and click on “Events”
-<img src="./media/image69.png"
+<img src="./media/image73.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:6.47917in;height:1.83971in" /></p>
 <p>In events, the following information is displayed –</p>
 <table>
@@ -3052,7 +4780,29 @@ events and are tagged with the severity level they occur.</p>
 </tr>
 </tbody>
 </table>
-<p><img src="./media/image70.png"
+<p><img src="./media/image74.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:6.57292in;height:1.89206in" /></p>
 <p>In Alerts, the following information is displayed –</p>
 <table>
@@ -3098,7 +4848,29 @@ of the 2 tabs</p>
 </tr>
 </tbody>
 </table>
-<p><img src="./media/image71.png"
+<p><img src="./media/image75.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:6.69904in;height:3.12819in" /></p>
 <p>The info tab consists of the following –</p>
 <table>
@@ -3179,11 +4951,30 @@ by the system, the status of the Alert changes.</p>
 <p>Datamotive provides mechanism to generate Reports listing Nodes, Events,
 Alerts or Jobs in the system. To generate reports, go to “Monitor” Tab
 and click on “Reports” option-</p>
-<p><img src="./media/image72.png"
-style="width:6.83333in;height:2.18993in" /></p>
 <p>To generate a Report, click on “Filter” option.</p>
-<p><img src="./media/image73.png"
-style="width:7.11458in;height:3.21638in" /></p>
+<p><img src="./media/image76.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.5in;height:2.36442in" /></p>
 <ul>
 <li>
 <p>Click on the components which you want to include in the report.</p>
@@ -3198,27 +4989,115 @@ style="width:7.11458in;height:3.21638in" /></p>
     report to be generated.</p>
 </li>
 </ul>
-<p><img src="./media/image74.png"
-style="width:6.80163in;height:2.56512in" /></p>
+<p><img src="./media/image77.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.5in;height:1.75in"
+alt="Background pattern Description automatically generated" /></p>
 <ul>
-<li>Click on export button to export data to .PDF format.</li>
+<li>Click on export button to export data to .pdf or .xlsx format.</li>
 </ul>
 <h3 id="settings">Settings</h3>
 <p>To configure your environment, you can use settings section. Settings
 section will allow you to configure email, Bandwidth throttling, license
 and tech support.</p>
 <h4 id="license">License</h4>
-<p>Location: Home —> Settings —> License</p>
+<p>Location: Settings —> License</p>
 <p>License is required to perform the recovery and migrations operations.
 By default, system will provide a trial license which has a fixed number
 of migrations and recoveries allowed. Once you perform any migration or
 recovery operation the respective consumption will reflect in its
 associated consumption bar.</p>
-<p><img src="./media/image75.png" style="width:2.42678in;height:0.95821in"
+<p><img src="./media/image78.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:2.42678in;height:0.95821in"
 alt="Graphical user interface, text, application Description automatically generated" />
-<img src="./media/image76.png" style="width:2.18196in;height:0.97717in"
+<img src="./media/image79.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:2.18196in;height:0.97717in"
 alt="Graphical user interface, text, application Description automatically generated" /></p>
-<p><img src="./media/image77.png" style="width:7.00486in;height:1.73471in"
+<p><img src="./media/image80.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:7.00486in;height:1.73471in"
 alt="Graphical user interface, application, Teams Description automatically generated" /></p>
 <p><strong>License installation</strong></p>
 <ul>
@@ -3231,8 +5110,30 @@ alt="Graphical user interface, application, Teams Description automatically gene
     application.</p>
 </li>
 </ul>
-<p><img src="./media/image78.png" style="width:5.32225in;height:3.02046in"
-alt="A screenshot of a computer Description automatically generated with medium confidence" /></p>
+<p><img src="./media/image81.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+style="width:5.19727in;height:3.09336in" /></p>
 <ul>
 <li>
 <p>Along with node key provide the details requested by the support
@@ -3251,7 +5152,29 @@ alt="A screenshot of a computer Description automatically generated with medium 
     window will popup.</p>
 </li>
 </ul>
-<p><img src="./media/image79.png" style="width:6.22917in;height:2.91535in"
+<p><img src="./media/image82.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.22917in;height:2.91535in"
 alt="Graphical user interface, application Description automatically generated" /></p>
 <ul>
 <li>
@@ -3261,7 +5184,29 @@ alt="Graphical user interface, application Description automatically generated" 
 <p>Post successful validation the detail of the license is shown.</p>
 </li>
 </ul>
-<p><img src="./media/image80.png" style="width:6.22917in;height:2.90201in"
+<p><img src="./media/image83.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.22917in;height:2.90201in"
 alt="Graphical user interface, application Description automatically generated" /></p>
 <ul>
 <li>
@@ -3271,21 +5216,65 @@ alt="Graphical user interface, application Description automatically generated" 
 <p>New license will get install in the system.</p>
 </li>
 </ul>
-<p><img src="./media/image81.png" style="width:6.22917in;height:1.52566in"
+<p><img src="./media/image84.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.22917in;height:1.52566in"
 alt="Graphical user interface, application Description automatically generated" /></p>
 <ul>
 <li>If multiple license available in the system, click on the action
     button to active or deactivate the license.</li>
 </ul>
 <h4 id="scripts">Scripts</h4>
-<p>Location: Home —>Settings —>Scripts</p>
+<p>Location: Settings —>Scripts</p>
 <p>Datamotive supports executing custom scripts on recovery of individual
 virtual machine and complete protection plan as well. Datamotive
 supports both, Pre &amp; Post scripts. The scripts are executed on the
 Datamotive management node. <strong><em>To use scripts in protection plan, they
 need to be uploaded into Datamotive management server on both protected
 &amp; recovery site.</em></strong></p>
-<p><img src="./media/image82.png" style="width:6.375in;height:2.36406in" /></p>
+<p><img src="./media/image85.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.375in;height:2.36406in" /></p>
 <p>To configure new script, follow below steps.</p>
 <ul>
 <li>
@@ -3300,7 +5289,29 @@ need to be uploaded into Datamotive management server on both protected
 </li>
 </ul>
 <blockquote>
-<p><img src="./media/image83.png"
+<p><img src="./media/image86.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:6.82292in;height:2.53016in" /></p>
 </blockquote>
 <p>Following actions are available for a uploaded script.</p>
@@ -3313,7 +5324,7 @@ style="width:6.82292in;height:2.53016in" /></p>
 </li>
 </ul>
 <h4 id="email">Email</h4>
-<p>Location: Home —>Settings —> Email</p>
+<p>Location: Settings —> Email</p>
 <p>Email setting allow you to configure the email and recipients details so
 that Datamotive can send you the critical alerts details over the email.</p>
 <p>Configuration.</p>
@@ -3325,7 +5336,29 @@ that Datamotive can send you the critical alerts details over the email.</p>
 <p>Provide the required details and click <strong>Configure.</strong></p>
 </li>
 </ul>
-<p><img src="./media/image84.png" style="width:5.31184in;height:5.30142in"
+<p><img src="./media/image87.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:5.31184in;height:5.30142in"
 alt="Graphical user interface, application Description automatically generated" /></p>
 <table>
 <colgroup>
@@ -3371,12 +5404,56 @@ replicate on all the connected sites, then enable this option.</td>
 <li>Post email Configuration you can view the configured details along
     with <strong>Email Recipients</strong> section get enabled.</li>
 </ul>
-<p><img src="./media/image85.png" style="width:5.72917in;height:2.04784in"
+<p><img src="./media/image88.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:5.72917in;height:2.04784in"
 alt="Graphical user interface, application Description automatically generated" /></p>
 <ul>
 <li>To add new recipient, click on +New icon</li>
 </ul>
-<p><img src="./media/image86.png" style="width:5.30142in;height:2.60384in"
+<p><img src="./media/image89.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:5.30142in;height:2.60384in"
 alt="Graphical user interface, application, Teams Description automatically generated" /></p>
 <ul>
 <li>
@@ -3390,14 +5467,36 @@ alt="Graphical user interface, application, Teams Description automatically gene
     subscribed events.</p>
 </li>
 </ul>
-<p><img src="./media/image87.png" style="width:5.72917in;height:1.07303in"
+<p><img src="./media/image90.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:5.72917in;height:1.07303in"
 alt="Graphical user interface, application Description automatically generated" /></p>
 <ul>
 <li>Using action options, you can reconfigure the recipient's details or
     can delete them from the list.</li>
 </ul>
 <h4 id="roles">Roles</h4>
-<p>Location: Home —>Settings —>Roles</p>
+<p>Location: Settings —>Roles</p>
 <p>Privileges define rights to perform action on an entity of Datamotive.
 Whereas the role is a set of privileges. Roles are assigned to the user.
 By default, Datamotive generate following three roles.</p>
@@ -3415,19 +5514,85 @@ By default, Datamotive generate following three roles.</p>
     any operation.</p>
 </li>
 </ol>
-<p><img src="./media/image88.png"
+<p><img src="./media/image91.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:6.93925in;height:3.09375in" /></p>
 <p>On Left side grid all roles are listed. Click on the role to load its
 associated privileges and users.</p>
 <h4 id="users">Users</h4>
-<p>Location: Home —>Settings —>Users</p>
+<p>Location: Settings —>Users</p>
 <p>Users lists provide all registered users with their assign roles.</p>
-<p><img src="./media/image89.png"
+<p><img src="./media/image92.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:7.05208in;height:2.60046in" /></p>
 <h4 id="tech-support">Tech Support</h4>
-<p>Location: Home —>Settings —>Tech Support</p>
+<p>Location: Settings —>Tech Support</p>
 <p>Support bundle is useful to triage the any issue occurred in the system.</p>
-<p><img src="./media/image90.png" style="width:7.11958in;height:1.72537in"
+<p><img src="./media/image93.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:7.11958in;height:1.72537in"
 alt="Graphical user interface, text, application Description automatically generated" /></p>
 <p>To collect new support bundle, follow below steps.</p>
 <ol>
@@ -3440,7 +5605,29 @@ alt="Graphical user interface, text, application Description automatically gener
     generation is requested and click <strong>Generate Bundle</strong></p>
 </li>
 </ol>
-<p><img src="./media/image91.png" style="width:5.27017in;height:2.53093in"
+<p><img src="./media/image94.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:5.27017in;height:2.53093in"
 alt="Graphical user interface, application Description automatically generated" /></p>
 <ol>
 <li>
@@ -3458,7 +5645,29 @@ alt="Graphical user interface, application Description automatically generated" 
 <ol>
 <li>
 <p>Use Download icon to download the support
-    bundle<img src="./media/image92.png" style="width:1.91643in;height:1.16652in"
+    bundle<img src="./media/image95.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:1.91643in;height:1.16652in"
     alt="Graphical user interface, application Description automatically generated" /></p>
 </li>
 <li>
@@ -3468,13 +5677,35 @@ alt="Graphical user interface, application Description automatically generated" 
 </li>
 </ol>
 <h4 id="throttling">Throttling</h4>
-<p>Location: Home —>Settings —> Throttling</p>
+<p>Location: Settings —> Throttling</p>
 <p>Throttling allows you the configure the network usage as per
 requirement. By default, system will use networks full capacity to
 download or upload the replication data across the sites. If you want to
 restrict the bandwidth, use then bandwidth throttling configuration is
 required.</p>
-<p><img src="./media/image93.png"
+<p><img src="./media/image96.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:6.22917in;height:2.3125in" /></p>
 <p>Provide the below details and click configure to apply bandwidth
 throttling.</p>
@@ -3489,7 +5720,29 @@ throttling.</p>
 <th><p>Enable the option if bandwidth throttling is required.</p>
 <p>Once enable you can provide the bandwidth usage details by
 scrolling</p>
-<p><img src="./media/image94.png"
+<p><img src="./media/image97.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:4.36404in;height:0.99988in" /></p>
 <p>the usage bar or by entering the values in the usage field.</p></th>
 </tr>
@@ -3499,7 +5752,29 @@ style="width:4.36404in;height:0.99988in" /></p>
 <td>Enable Time Limit</td>
 <td><p>If time limit base usage configuration required, then enable the
 option.</p>
-<p><img src="./media/image95.png"
+<p><img src="./media/image98.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 style="width:3.94742in;height:0.86448in" /></p>
 <p>Once enable you can provide the bandwidth limits along with its
 <strong>start and end time</strong> specification over which time base
@@ -3513,13 +5788,57 @@ enable this option.</td>
 </tbody>
 </table>
 
-<p><img src="./media/image96.png" style="width:6.22917in;height:0.79558in"
+<p><img src="./media/image99.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.22917in;height:0.79558in"
 alt="Graphical user interface, application Description automatically generated" /></p>
 <ul>
 <li>If you want to configure each replication node bandwidth throttling,
     then click on</li>
 </ul>
-<p><img src="./media/image97.png" style="width:1.47898in;height:1.44774in"
+<p><img src="./media/image100.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:1.47898in;height:1.44774in"
 alt="Graphical user interface, application Description automatically generated" /></p>
 <ul>
 <li>
@@ -3531,7 +5850,29 @@ alt="Graphical user interface, application Description automatically generated" 
 </li>
 </ul>
 <blockquote>
-<p><img src="./media/image98.png" style="width:5.30142in;height:3.89535in"
+<p><img src="./media/image101.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:5.30142in;height:3.89535in"
 alt="Graphical user interface, application Description automatically generated" /></p>
 </blockquote>
 <ul>
@@ -3596,7 +5937,29 @@ uploaded to /tmp/ location, then the command would be –</p>
 Administrator</p>
 <p>After the successful upgrade of the server and the node, success message
 would be displayed as per the below snip-</p>
-<p><img src="./media/image99.png" style="width:6.5in;height:2.49583in" /></p>
+<p><img src="./media/image102.png"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ style="width:6.5in;height:2.49583in" /></p>
 <h1 id="support">Support</h1>
 <p>In case there are any issues or queries while using the solution, feel
 free to reach out to us @ <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#115;&#117;&#112;&#112;&#111;&#114;&#116;&#64;&#100;&#97;&#116;&#97;&#109;&#111;&#116;&#105;&#118;&#101;&#46;&#105;&#111;">&#115;&#117;&#112;&#112;&#111;&#114;&#116;&#64;&#100;&#97;&#116;&#97;&#109;&#111;&#116;&#105;&#118;&#101;&#46;&#105;&#111;</a>.</p>
