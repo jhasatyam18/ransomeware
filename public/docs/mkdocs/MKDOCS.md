@@ -1,6 +1,8 @@
 # Prerequisites
 
--   Install Mkdocs
+-   Install Mkdocs using command - pip install mkdocs
+
+-   Install material UI plugin for themes using command -  pip install mkdocs-material
 
 -   Generate Markdown file of the word document
 
