@@ -28,6 +28,8 @@ import TestRecoveryScriptStep from './Step/TestRecoveryScriptStep';
 import TestRecoveryCleanupSummary from './TestRecoveryCleanupSummary';
 
 class DMWizard extends React.Component {
+  ref;
+
   constructor() {
     super();
     this.state = { currentStep: 0, wizardSize: 'xl' };
@@ -36,6 +38,15 @@ class DMWizard extends React.Component {
     this.onBack = this.onBack.bind(this);
     this.onToggle = this.onToggle.bind(this);
     this.onFinish = this.onFinish.bind(this);
+    this.ref = React.createRef();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { currentStep } = this.state;
+    if (currentStep !== prevState.currentStep) {
+      const scrollEl = this.ref.current.getScrollElement();
+      scrollEl.scrollTop = 0;
+    }
   }
 
   onNext() {
@@ -192,7 +203,7 @@ class DMWizard extends React.Component {
                 <DMWSteps steps={steps} currentStep={currentStep} />
               </Col>
               <Col sm={9}>
-                <SimpleBar style={{ minHeight: '65vh', maxHeight: '65vh' }}>
+                <SimpleBar style={{ minHeight: '65vh', maxHeight: '65vh' }} ref={this.ref}>
                   {this.getStep(steps[currentStep].component)}
                 </SimpleBar>
               </Col>

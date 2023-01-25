@@ -4,12 +4,14 @@ import { connect } from 'react-redux';
 import { Popover, PopoverBody } from 'reactstrap';
 import { PLATFORM_TYPES } from '../../../constants/InputConstants';
 
-function VMVmwarePlacementInfoItemRenderer(props) {
+function VMPlacementInfoItemRenderer(props) {
   const { data, drPlans, t } = props;
-  const key = `netowrk-popover-key-${data.id - drPlans.size}`;
+  // only id is added so that key is unique
+  const key = `netowrk-placement-info-popover-key-${data.id}`;
   const { protectionPlan } = drPlans;
   const { recoverySite } = protectionPlan;
-  const { instanceType } = data;
+  const { platformType } = recoverySite.platformDetails;
+  const { folderPath, availZone } = data;
   let { hostMoref, datacenterMoref, datastoreMoref } = data;
   if (typeof hostMoref !== 'undefined') {
     hostMoref = hostMoref.split(':') || '';
@@ -27,18 +29,19 @@ function VMVmwarePlacementInfoItemRenderer(props) {
     datastoreMoref = i;
   }
   const [popoverOpen, setPopoverOpen] = useState(false);
-  const label = (recoverySite.platformDetails.platformType === PLATFORM_TYPES.VMware) ? datacenterMoref : instanceType;
+  const label = (platformType === PLATFORM_TYPES.VMware) ? datacenterMoref : folderPath;
   if (!data) {
     return '-';
   }
-  const renderNetworkDetails = () => (
+
+  const renderVMwareDetails = () => (
     <div key="nic">
       <div className="vmware_placement_info">
         <p className="vmware_placement_info_p">
           {' '}
           {t('title.hostname')}
         </p>
-        &nbsp;
+      &nbsp;
         <span>{hostMoref}</span>
       </div>
       <div className="vmware_placement_info">
@@ -46,11 +49,42 @@ function VMVmwarePlacementInfoItemRenderer(props) {
           {' '}
           {t('title.Datastore')}
         </p>
-        &nbsp;
+      &nbsp;
         <span>{datastoreMoref}</span>
       </div>
     </div>
   );
+
+  const renderAzureDetails = () => (
+    <div key="nic">
+      <div className="vmware_placement_info">
+        <p className="vmware_placement_info_p">
+          {' '}
+          {t('title.resource.grp')}
+        </p>
+    &nbsp;
+        <span>{folderPath}</span>
+      </div>
+      {availZone ? (
+        <div className="vmware_placement_info">
+          <p className="vmware_placement_info_p">
+            {' '}
+            {t('zone')}
+          </p>
+    &nbsp;
+          <span>{availZone}</span>
+        </div>
+      ) : ''}
+    </div>
+  );
+  const renderNetworkDetails = () => {
+    if (platformType === PLATFORM_TYPES.VMware) {
+      return renderVMwareDetails();
+    }
+    if (platformType === PLATFORM_TYPES.Azure) {
+      return renderAzureDetails();
+    }
+  };
 
   const renderPopOver = () => (
     <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: 'black', width: '250px' }}>
@@ -72,4 +106,4 @@ function mapStateToProps(state) {
   const { drPlans } = state;
   return { drPlans };
 }
-export default connect(mapStateToProps)(withTranslation()(VMVmwarePlacementInfoItemRenderer));
+export default connect(mapStateToProps)(withTranslation()(VMPlacementInfoItemRenderer));

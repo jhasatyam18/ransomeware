@@ -98,30 +98,31 @@ export function getVMConfigPayload(user) {
   const { values } = user;
   const vms = getValue('ui.site.seletedVMs', values);
   const instanceDetails = [];
-  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values) || '';
   Object.keys(vms).forEach((key) => {
-    let folderPath = '';
     // Data require for vmware as target platform
-    folderPath = getValue(`${key}-vmConfig.general.folderPath`, values);
+    let folderPath = getValue(`${key}-vmConfig.general.folderPath`, values);
     const instanceID = getValue(`${key}-vmConfig.general.instanceID`, values) || '';
-    if (folderPath && folderPath.length > 0) {
+    if (typeof folderPath !== 'string') {
       const [index] = folderPath;
       folderPath = index;
     }
-    const hostMoref = getValue(`${key}-vmConfig.general.hostMoref`, values);
-    const datastoreMoref = getValue(`${key}-vmConfig.general.dataStoreMoref`, values);
+    let hostMoref = getValue(`${key}-vmConfig.general.hostMoref`, values) || '';
+    hostMoref = hostMoref.value || '';
+    let datastoreMoref = getValue(`${key}-vmConfig.general.dataStoreMoref`, values) || '';
+    datastoreMoref = datastoreMoref.value || '';
     let numCPU = getValue(`${key}-vmConfig.general.numcpu`, values);
-    numCPU = parseInt(numCPU, 10);
-    const memory = getValue(`${key}-vmConfig.general-memory`, values);
-    const memoryunit = getValue(`${key}-vmConfig.general-unit`, values);
+    numCPU = parseInt(numCPU, 10) || 0;
+    const memory = getValue(`${key}-vmConfig.general-memory`, values) || '';
+    const memoryunit = getValue(`${key}-vmConfig.general-unit`, values) || '';
     const memoryMB = convertMemoryToMb(memory, memoryunit || 'GB');
-    const datacenterMoref = getValue('ui.site.vmware.datacenterMoref', values);
+    const datacenterMoref = getValue('ui.site.vmware.datacenterMoref', values) || '';
     const { name } = vms[key];
     const instanceName = name;
     const sourceMoref = vms[key].moref;
     const id = getValue(`${key}-vmConfig.general.id`, values);
     let instanceType = '';
-    const insType = getValue(`${key}-vmConfig.general.instanceType`, values);
+    const insType = getValue(`${key}-vmConfig.general.instanceType`, values) || '';
     if (typeof insType === 'object' && insType.value) {
       instanceType = insType.value;
     } else {
@@ -148,10 +149,13 @@ export function getVMConfigPayload(user) {
     const securityGroups = joinArray(sgs, ',');
     const preScript = getValue(`${key}-vmConfig.scripts.preScript`, values);
     const postScript = getValue(`${key}-vmConfig.scripts.postScript`, values);
+    if (PLATFORM_TYPES.Azure === recoveryPlatform) {
+      availZone = getValue(`${key}-vmConfig.general.availibility.zone`, values);
+    }
     if (typeof id !== 'undefined' && id !== '') {
-      instanceDetails.push({ sourceMoref, id, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref: hostMoref.value, datastoreMoref: datastoreMoref.value, numCPU, datacenterMoref });
+      instanceDetails.push({ sourceMoref, id, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref });
     } else {
-      instanceDetails.push({ sourceMoref, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref: hostMoref.value, datastoreMoref: datastoreMoref.value, numCPU, datacenterMoref });
+      instanceDetails.push({ sourceMoref, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref });
     }
   });
   return instanceDetails;
@@ -166,9 +170,9 @@ export function getVMNetworkConfig(key, values) {
   for (let index = 0; index < eths.length; index += 1) {
     const id = getValue(`${networkKey}-eth-${index}-id`, values);
     const vpcId = getValue(`${networkKey}-eth-${index}-vpcId`, values);
-    const isPublicIP = getValue(`${networkKey}-eth-${index}-isPublic`, values) || false;
-    let isFromSource = getValue(`${networkKey}-eth-${index}-isFromSource`, values);
-    const subnet = getValue(`${networkKey}-eth-${index}-subnet`, values);
+    let isPublicIP = getValue(`${networkKey}-eth-${index}-isPublic`, values) || false;
+    let isFromSource = getValue(`${networkKey}-eth-${index}-isFromSource`, values) || '';
+    let subnet = getValue(`${networkKey}-eth-${index}-subnet`, values) || '';
     const availZone = getValue(`${networkKey}-eth-${index}-availZone`, values);
     const privateIP = getValue(`${networkKey}-eth-${index}-privateIP`, values) || '';
     let publicIP = getValue(`${networkKey}-eth-${index}-publicIP`, values) || '';
@@ -177,7 +181,12 @@ export function getVMNetworkConfig(key, values) {
     let network = getValue(`${networkKey}-eth-${index}-network`, values) || '';
     const adapterType = `${getValue(`${networkKey}-eth-${index}-adapterType`, values)}`;
     const macAddress = `${getValue(`${networkKey}-eth-${index}-macAddress`, values)}`;
-    const networkPlatformID = getValue(`${networkKey}-eth-${index}-networkPlatformID`, values) || '';
+    let networkPlatformID = '';
+    if (typeof network === 'object' && network.value) {
+      networkPlatformID = network.value;
+    } else {
+      networkPlatformID = network;
+    }
     let netmask = getValue(`${networkKey}-eth-${index}-netmask`, values) || '';
     let gateway = getValue(`${networkKey}-eth-${index}-gateway`, values) || '';
     let dns = getValue(`${networkKey}-eth-${index}-dnsserver`, values) || '';
@@ -189,6 +198,18 @@ export function getVMNetworkConfig(key, values) {
     }
     if (network !== '' && recoveryPlatform === PLATFORM_TYPES.AWS) {
       publicIP = getAWSNetworkIDFromName(values, network) || publicIP;
+    }
+    if (recoveryPlatform === PLATFORM_TYPES.Azure) {
+      const netArr = network.split('/');
+      network = netArr[netArr.length - 1];
+      const subArr = subnet.split('/');
+      subnet = subArr[subArr.length - 1];
+      if (publicIP === 'true') {
+        isPublicIP = true;
+        publicIP = '';
+      } else if (publicIP === 'false') {
+        publicIP = '';
+      }
     }
     if (network !== '' && recoveryPlatform === PLATFORM_TYPES.VMware) {
       network = network.label;
@@ -269,8 +290,11 @@ export function getReversePlanPayload(user) {
 }
 
 function joinArray(data, delimiter) {
-  if (data && data.length > 0) {
+  if (data && typeof data === 'object' && data.length > 0) {
     return data.join(delimiter);
+  }
+  if (data && typeof data === 'string') {
+    return data;
   }
   return '';
 }

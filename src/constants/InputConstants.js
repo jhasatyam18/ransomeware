@@ -8,7 +8,7 @@ export const UI_WORKFLOW = {
 };
 
 export const PLATFORM_TYPES = {
-  VMware: 'VMware', GCP: 'GCP', AWS: 'AWS',
+  VMware: 'VMware', GCP: 'GCP', AWS: 'AWS', Azure: 'Azure',
 };
 
 export const REPLICATION_STATUS = {
@@ -80,6 +80,9 @@ export const STATIC_KEYS = {
   UI_WORKFLOW_TEST_RECOVERY: 'ui.workflow.test.recovery',
   UI_VMWARE_CONFIG_RESPONSES: 'ui.vmware.config.responses',
   UI_VOLUMETYPES: 'ui.values.volume.type',
+  RESOURCE_GROUP: 'ui.values.resource.type',
+  UI_NETWORKS: 'ui.values.network',
+  UI_EDIT_RESERVE_IPS: 'ui.values.edit.reserveips',
 };
 
 // Recovery time in minutes
@@ -100,6 +103,7 @@ export const EXCLUDE_KEYS_RECOVERY_CONFIGURATION = {
   IS_REQUIRED: 'isResetRequired',
   NETWORK_KEY: 'networkKey',
   BOOT_PRIORITY: 'bootPriority',
+  INSTANCE_ID: 'instanceID',
 };
 
 export const EXCLUDE_KEYS_CONSTANTS = {
@@ -120,4 +124,8 @@ export const VMWARE_OBJECT = {
 export const RECOVERY_ENTITY_TYPES = {
   VIRTUALMACHINE: 'VIRTUALMACHINE',
   DISK: 'DISK',
+};
+
+export const NODE_TYPES = {
+  DEDUPE_SERVER: 'DedupeServer',
 };

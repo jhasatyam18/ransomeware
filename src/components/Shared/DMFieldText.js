@@ -87,20 +87,36 @@ class DMFieldText extends Component {
   }
 
   renderError(hasError) {
-    const { fieldKey, field } = this.props;
+    const { fieldKey, field, user } = this.props;
+    let { errorMessage } = field;
+    const { errorFunction } = field;
+    if (errorFunction && typeof errorFunction === 'function') {
+      const res = errorFunction({ fieldKey, user });
+      if (res !== '') {
+        errorMessage = res;
+      }
+    }
     if (hasError) {
       return (
-        <small className="form-text app_danger" htmlFor={fieldKey}>{field.errorMessage}</small>
+        <small className="form-text app_danger" htmlFor={fieldKey}>{errorMessage}</small>
       );
     }
     return null;
   }
 
   renderLabel() {
-    const { t, hideLabel, field } = this.props;
-    const { label } = field;
+    const { t, hideLabel, field, user, fieldKey } = this.props;
+    const { label, labelFunction } = field;
     if (hideLabel) {
       return null;
+    }
+    if (typeof labelFunction !== 'undefined' && typeof labelFunction === 'function') {
+      const res = labelFunction({ user, fieldKey, label });
+      return (
+        <label htmlFor="horizontal-Input margin-top-10 padding-top=10" className="col-sm-4 col-form-Label">
+          {t(res)}
+        </label>
+      );
     }
     return (
       <label htmlFor="horizontal-Input margin-top-10 padding-top=10" className="col-sm-4 col-form-Label">
@@ -110,10 +126,17 @@ class DMFieldText extends Component {
   }
 
   renderTooltip() {
-    const { field } = this.props;
-    const { fieldInfo } = field;
+    const { field, fieldKey, user } = this.props;
+    let { fieldInfo } = field;
+    const { infoFunction } = field;
     if (typeof fieldInfo === 'undefined') {
       return null;
+    }
+    if (infoFunction && typeof infoFunction === 'function') {
+      const res = infoFunction(user, fieldKey);
+      if (res !== '') {
+        fieldInfo = res;
+      }
     }
     return (
       <DMToolTip tooltip={fieldInfo} />

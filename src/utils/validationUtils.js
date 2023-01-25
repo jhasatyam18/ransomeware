@@ -198,6 +198,10 @@ export function validateVMConfiguration({ user, dispatch }) {
   const { values } = user;
   const vms = getValue('ui.site.seletedVMs', values);
   let fields = {};
+  if (Object.keys(vms).length === 0) {
+    dispatch(addMessage('Please navigate back and select a virtual machine for protection', MESSAGE_TYPES.ERROR));
+    return false;
+  }
   Object.keys(vms).forEach((vm) => {
     if (isRemovedOrRecoveredVM(vms[vm])) {
       return;
@@ -227,13 +231,15 @@ export function validateNetworkConfig(user, dispatch) {
     case PLATFORM_TYPES.AWS:
       return validateAWSNetworks(user, dispatch);
     case PLATFORM_TYPES.GCP:
-      return validateGCPNetworks(user, dispatch);
+      return validateGCPNetwork(user, dispatch);
+    case PLATFORM_TYPES.Azure:
+      return validateAzureNetwork(user, dispatch);
     default:
       return validateVMware(user, dispatch);
   }
 }
 
-export function validateGCPNetworks(user, dispatch) {
+export function validateGCPNetwork(user, dispatch) {
   const { values } = user;
   const vms = getValue('ui.site.seletedVMs', values);
   const subnets = getValue(STATIC_KEYS.UI_SUBNETS, values);
@@ -396,6 +402,68 @@ export function validateVMware(user, dispatch) {
   return isClean;
 }
 
+export function validateAzureNetwork(user, dispatch) {
+  const { values } = user;
+  const vms = getValue('ui.site.seletedVMs', values);
+  const subnets = getValue(STATIC_KEYS.UI_SUBNETS, values);
+  let isClean = true;
+  let message = '';
+  // empty config
+  const ips = [];
+  Object.keys(vms).forEach((vm) => {
+    if (isRemovedOrRecoveredVM(vms[vm])) {
+      return;
+    }
+    const netConfigs = getVMNetworkConfig(`${vm}`, values);
+    const vpc = [];
+    const net = [];
+    const vmName = vms[vm].name;
+    if (netConfigs.length === 0) {
+      message = `${vmName}: Network configuration required`;
+      isClean = false;
+    } else {
+      for (let i = 0; i < netConfigs.length; i += 1) {
+        if (netConfigs[i].subnet === '') {
+          message = `${vmName}: Network configure missing for nic-${i}`;
+          isClean = false;
+        }
+        if (typeof netConfigs.privateIP !== 'undefined' && netConfigs.privateIP !== '') {
+          ips.push(netConfigs.privateIP);
+        }
+
+        for (let j = 0; j < subnets.length; j += 1) {
+          if (subnets[j].id === netConfigs[i].subnet) {
+            vpc.push(subnets[j].vpcID);
+          }
+        }
+        net.push(netConfigs[i].network);
+      }
+      // unique network check
+      const vpcSet = [...new Set(vpc)];
+      const netSet = [...new Set(net)];
+      // nics with different vpcid
+      if (vpcSet.length > 1) {
+        message = `${vmName}: All nics of an instance must belong to same VPC.`;
+        isClean = false;
+      }
+      if (netSet.length > 1) {
+        message = `${vmName}: All the virtual networks for a vm should be same.`;
+        isClean = false;
+      }
+    }
+  });
+  // duplicate ip check
+  const ipSet = [...new Set(ips)];
+  if (ipSet.length !== ips.length && message === '') {
+    message = 'Duplicate ip address not allowed';
+    isClean = false;
+  }
+  if (!isClean) {
+    dispatch(addMessage(message, MESSAGE_TYPES.ERROR));
+  }
+  return isClean;
+}
+
 export async function validateRecoveryVMs({ user, dispatch }) {
   const { values } = user;
 
@@ -528,6 +596,8 @@ export function validateNicConfig(dispatch, user, options) {
       return validateGCPNicConfig(dispatch, user, options);
     case PLATFORM_TYPES.VMware:
       return validateVMwareNicConfig(dispatch, user, options);
+    case PLATFORM_TYPES.Azure:
+      return validateAzureNicConfig(dispatch, user, options);
     default:
       return true;
   }
@@ -633,6 +703,27 @@ function validateIps(value) {
   return true;
 }
 
+function validateAzureNicConfig(dispatch, user, options) {
+  const { values } = user;
+  const { networkKey } = options;
+  const subnet = getValue(`${networkKey}-subnet`, values) || '';
+  const pubIP = getValue(`${networkKey}-publicIP`, values) || '';
+  const network = getValue(`${networkKey}-network`, values) || '';
+  if (network === '') {
+    dispatch(addMessage('Please select the network', MESSAGE_TYPES.ERROR));
+    return false;
+  }
+  if (subnet === '' || subnet === '-') {
+    dispatch(addMessage('Select network subnet', MESSAGE_TYPES.ERROR));
+    return false;
+  }
+
+  if (pubIP === '') {
+    dispatch(addMessage('Select Public ip config', MESSAGE_TYPES.ERROR));
+    return false;
+  }
+  return true;
+}
 function validateDNS(dns) {
   const Dns = dns.split(',');
   if (Dns.length > 0) {
@@ -646,6 +737,7 @@ function validateDNS(dns) {
   }
   return true;
 }
+
 function validateAWSNic(dispatch, user, options) {
   const { networkKey } = options;
   const { values, errors } = user;

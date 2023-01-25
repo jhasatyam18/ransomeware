@@ -5,6 +5,7 @@ import GCPNetworkConfig from './GCPNetworkConfig';
 import { PLATFORM_TYPES } from '../../constants/InputConstants';
 import { getValue } from '../../utils/InputUtils';
 import VMwareNetworkConfig from './VMwareNetworkConfig';
+import AzureNetworkConfig from './AzureNetworkConfig';
 
 class NetworkConfig extends Component {
   render() {
@@ -23,6 +24,10 @@ class NetworkConfig extends Component {
       case PLATFORM_TYPES.VMware:
         return (
           <VMwareNetworkConfig {...this.props} />
+        );
+      case PLATFORM_TYPES.Azure:
+        return (
+          <AzureNetworkConfig {...this.props} />
         );
       default:
         return (

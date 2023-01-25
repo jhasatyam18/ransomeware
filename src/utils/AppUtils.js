@@ -1,4 +1,6 @@
+import { STATIC_KEYS } from '../constants/InputConstants';
 import * as RPATH from '../constants/RouterConstants';
+import { getAzureNetworkOptions, getValue } from './InputUtils';
 
 const KEY_NAME = 'datamotive';
 let startValue = 1;
@@ -307,13 +309,21 @@ export function getAllObjectKeys(obj, prefix = '') {
  */
 
 export const changePageTitle = (t) => {
-  const location = window.location.pathname.slice(1).replace('/', '.');
-  const path = t(`title.${location}`);
-  if (path.indexOf('protection.plan/details') !== -1) {
+  const location = window.location.pathname.slice(1).replaceAll('/', '.');
+  let path = t(`title.${location}`);
+  path = path.split('.');
+  if (path.length === 1) {
+    path = path[path.length - 1];
+    document.title = `${path} | Datamotive`;
+    return;
+  }
+  path = path.join(' ');
+  if (path.indexOf('protection plan details') !== -1) {
     document.title = 'Protection Plans | Datamotive';
     return;
   }
-  document.title = `${path} | Datamotive`;
+
+  document.title = 'Datamotive';
 };
 
 export function getMemoryInfo(value) {
@@ -328,4 +338,37 @@ export function getMemoryInfo(value) {
   unit = units[unitIndex] || 'MB';
 
   return [val, unit];
+}
+
+export function getMatchingNetwork(val, user) {
+  let res = '';
+  const azureNetOpt = getAzureNetworkOptions(user);
+  azureNetOpt.forEach((opt) => {
+    if (opt.name === val) {
+      res = opt.value;
+    }
+  });
+  return res;
+}
+
+export function getNetworkIDFromName(val, values) {
+  let res = '';
+  const netArray = getValue(STATIC_KEYS.UI_NETWORK, values);
+  netArray.forEach((net) => {
+    if (net.name === val) {
+      res = net.id;
+    }
+  });
+  return res;
+}
+
+export function getSubnetIDFromName(val, values, netID) {
+  let res = '';
+  const netArray = getValue(STATIC_KEYS.UI_SUBNETS, values);
+  netArray.forEach((op) => {
+    if (netID === op.vpcID && op.name === val) {
+      res = op.id;
+    }
+  });
+  return res;
 }

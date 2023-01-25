@@ -1,5 +1,4 @@
 import VMInstanceItemRenderer from '../components/Table/ItemRenderers/VMInstanceItemRenderer';
-import VMVolumeTypeItemRenderer from '../components/Table/ItemRenderers/VMVmwarePlacementInfoItemRenderer';
 import { getRecoveryVMName } from '../utils/TableUtils';
 
 export const OS_TYPE_ITEM_RENDERER = 'OS_TYPE_ITEM_RENDERER';
@@ -36,6 +35,7 @@ export const ROLE_ITEM_RENDERER = 'ROLE_ITEM_RENDERER';
 export const VM_NETWORK_INFO_ITEM_RENDERER = 'VM_NETWORK_INFO_ITEM_RENDERER';
 export const SCRIPT_ITEM_RENDERER = 'SCRIPT_ITEM_RENDERER';
 export const PROTECTED_VM_ACTIONS_ITEM_ITEM_RENDERER = 'PROTECTED_VM_ACTIONS_ITEM_ITEM_RENDERER';
+export const VM_PLACEMENT_INFO_ITEM_RENDERER = 'VM_PLACEMENT_INFO_ITEM_RENDERER';
 export const SITE_LOCATION_ITEM_RENDERER = 'SITE_LOCATION_ITEM_RENDERER';
 export const RECOVERY_STATUS_RENDERER = 'RECOVERY_STATUS_RENDERER';
 
@@ -84,7 +84,7 @@ export const TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG = [
   { label: 'name', field: 'instanceName' },
   { label: 'Instance Type', field: 'instanceType', itemRenderer: VMInstanceItemRenderer },
   { label: 'Volume Type', field: 'volumeType' },
-  { label: 'Placement Info', field: '', itemRenderer: VMVolumeTypeItemRenderer },
+  { label: 'Placement Info', field: '', itemRenderer: VM_PLACEMENT_INFO_ITEM_RENDERER },
   { label: 'Network', field: 'instanceDetails', itemRenderer: VM_NETWORK_INFO_ITEM_RENDERER },
   { label: 'Boot Order', field: 'bootPriority' },
 ];

@@ -31,10 +31,13 @@ function ProtectionPlanVMConfig(props) {
 
   const renderRecoveryEntities = () => {
     let cols = TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG;
-    if (recoverySite.platformDetails.platformType === PLATFORM_TYPES.VMware) {
+    const { platformType } = recoverySite.platformDetails;
+    if (platformType === PLATFORM_TYPES.VMware) {
       const part1 = TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG.slice(0, TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG.length - 4);
       const part2 = TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG.slice(TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG.length - 3);
       cols = [...part1, ...part2];
+    } else if (platformType === PLATFORM_TYPES.Azure) {
+      cols = TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG;
     } else {
       const part1 = TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG.slice(0, TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG.length - 3);
       const part2 = TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG.slice(TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG.length - 2);

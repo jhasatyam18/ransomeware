@@ -1,11 +1,31 @@
 import React, { Component } from 'react';
 import { Card, CardBody, CardHeader, Col, Row } from 'reactstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { valueChange } from '../../store/actions';
 import DMAccordion from '../Shared/DMAccordion';
 import RecoveryStatusItemRenderer from '../Table/ItemRenderers/RecoveryStatusItemRenderer';
 import { createVMConfigStackObject, getValue } from '../../utils/InputUtils';
 import { isRemovedOrRecoveredVM } from '../../utils/validationUtils';
 
 class VMConfigurationStep extends Component {
+  constructor() {
+    super();
+    this.removeEntityFromPplan = this.removeEntityFromPplan.bind(this);
+  }
+
+  removeEntityFromPplan(vmmoref) {
+    const { user, dispatch } = this.props;
+    const { values } = user;
+    const selectedVMs = getValue('ui.site.seletedVMs', values);
+    Object.keys(selectedVMs).forEach((slvms) => {
+      if (slvms === vmmoref) {
+        delete selectedVMs[slvms];
+      }
+    });
+    dispatch(valueChange('ui.site.selectedVMs', selectedVMs));
+  }
+
   renderNonEditableVM(vm) {
     return (
       <div key={`dm-accordion-${vm.moref}`}>
@@ -18,7 +38,17 @@ class VMConfigurationStep extends Component {
                 </a>
               </Col>
               <Col sm={6} className="d-flex flex-row-reverse">
-                <RecoveryStatusItemRenderer data={vm} />
+                <Row>
+                  <Col sm={9}>
+                    {' '}
+                    <RecoveryStatusItemRenderer data={vm} />
+                  </Col>
+                  <Col sm={2}>
+                    <a href="#" style={{ color: 'white' }} onClick={() => this.removeEntityFromPplan(vm.moref)}>
+                      <FontAwesomeIcon size="lg" icon={faCircleXmark} />
+                    </a>
+                  </Col>
+                </Row>
               </Col>
             </Row>
           </CardHeader>
