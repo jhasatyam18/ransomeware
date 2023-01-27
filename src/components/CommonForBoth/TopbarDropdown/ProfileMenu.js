@@ -13,10 +13,14 @@ import { withTranslation } from 'react-i18next';
 
 // users
 import { logOutUser, initChangePassword } from '../../../store/actions';
+import { addMessage } from '../../../store/actions/MessageActions';
 import { openModal } from '../../../store/actions/ModalActions';
 import { MODAL_ABOUT } from '../../../constants/Modalconstant';
 import { APPLICATION_API_USER } from '../../../constants/UserConstant';
+import { API_LOGOUT } from '../../../constants/ApiConstants';
+import { MESSAGE_TYPES } from '../../../constants/MessageConstants';
 import { getCookie } from '../../../utils/CookieUtils';
+import { API_TYPES, callAPI, createPayload } from '../../../utils/ApiUtils';
 
 class ProfileMenu extends Component {
   constructor(props) {
@@ -32,7 +36,14 @@ class ProfileMenu extends Component {
 
   logout() {
     const { dispatch } = this.props;
-    dispatch(logOutUser());
+    const obj = createPayload(API_TYPES.POST, {});
+    callAPI(API_LOGOUT, obj).then(() => {
+      dispatch(logOutUser());
+    },
+    (err) => {
+      dispatch(logOutUser());
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
   }
 
   aboutModal() {

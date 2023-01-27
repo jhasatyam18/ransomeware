@@ -1,6 +1,7 @@
 export const API_AUTHENTICATE = 'api/v1/login';
-export const API_CHANGE_PASSWORD = 'api/v1/users/<id>';
-export const API_CHANGE_NODE_PASSWORD = 'api/v1/users/<id>?nodeID=<nodeid>';
+export const API_LOGOUT = 'api/v1/logout';
+export const API_CHANGE_PASSWORD = 'api/v1/users/<name>';
+export const API_CHANGE_NODE_PASSWORD = 'api/v1/users/<name>?nodeID=<nodeid>';
 export const API_INFO = 'api/v1/info';
 export const API_FETCH_SITES = 'api/v1/sites';
 export const API_FETCH_SITE_VMS = 'api/v1/sites/<id>/vms';
