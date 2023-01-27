@@ -43,6 +43,12 @@ export function callAPI(URL, obj = {}, token = null) {
         store.dispatch(clearMessages());
         store.dispatch(clearValues());
       }
+      if (response.status === 403) {
+        const data = {};
+        data.hasError = false;
+        data.status = response.status;
+        return data;
+      }
       if (response.status !== 204 && !response.ok) {
         return response.text()
           .then((err) => Promise.reject(getErrorText(err)));

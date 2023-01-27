@@ -40,13 +40,14 @@ export function login({ username, password, history }) {
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
-        setSessionInfo(json.token, username);
-        dispatch(getUserInfo());
-        if (password === 'admin') {
-          dispatch(saveApplicationToken(json.token));
+        // check password change is required
+        if (json.status && json.status === 403) {
+          setSessionInfo('', username);
           dispatch(initChangePassword(true, false));
           return;
         }
+        setSessionInfo(json.token, username);
+        dispatch(getUserInfo());
         dispatch(loginSuccess(json.token, username));
         dispatch(getInfo());
         if (history) {
@@ -344,9 +345,9 @@ export function changeUserPassword(oldPass, newPass) {
     const { user } = getState();
     const { token } = user;
     dispatch(showApplicationLoader('CHANGE_PASSWORD', 'Changing password...'));
-    const uID = getCookie(APPLICATION_API_USER_ID);
+    const name = getCookie(APPLICATION_API_USER) || '';
     const obj = createPayload(API_TYPES.PUT, { username: getCookie(APPLICATION_API_USER), oldPassword: oldPass, newPassword: newPass });
-    return callAPI(API_CHANGE_PASSWORD.replace('<id>', uID), obj, token).then((json) => {
+    return callAPI(API_CHANGE_PASSWORD.replace('<name>', name), obj, token).then((json) => {
       dispatch(hideApplicationLoader('CHANGE_PASSWORD'));
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
@@ -682,8 +683,8 @@ export function changeSystemPassword(nodeID, selectedAlerts) {
     const password = getValue('user.newPassword', values) || '';
     dispatch(showApplicationLoader('CHANGE_PASSWORD', 'Changing password...'));
     const obj = createPayload(API_TYPES.PUT, { newPassword: password });
-    const uID = getCookie(APPLICATION_API_USER_ID);
-    const URL = API_CHANGE_NODE_PASSWORD.replace('<id>', uID).replace('<nodeid>', nodeID);
+    const uName = getCookie(APPLICATION_API_USER);
+    const URL = API_CHANGE_NODE_PASSWORD.replace('<name>', uName).replace('<nodeid>', nodeID);
     return callAPI(URL, obj).then((json) => {
       dispatch(hideApplicationLoader('CHANGE_PASSWORD'));
       if (json.hasError) {
