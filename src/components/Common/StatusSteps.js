@@ -77,8 +77,6 @@ function StatusSteps(props) {
         <div className={`step_msg_div ${i === steps.length - 1 ? '' : 'progress_step_border'}`}>
           <p className="step_msg">
             {message}
-            {message}
-            {message}
           </p>
           <p className="step_time">
             {resp}
