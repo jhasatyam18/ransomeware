@@ -198,10 +198,6 @@
   flex-direction: row-reverse;
 }
 
-.vertical{
-    height: 35px;
-    border-left: 2px solid grey;
-    position:absolute;
-    left: 45%;
-    top:21px;
-   }
+.progress_step_border{
+  border-left: 1px solid grey; 
+}

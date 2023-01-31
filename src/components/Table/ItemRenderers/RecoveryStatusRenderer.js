@@ -12,7 +12,7 @@ function RecoveryStatusRenderer({ data, field, t }) {
     setToggle(!toggle);
   };
 
-  function renderCheckbox() {
+  function renderShowProgressCheck() {
     return (
       <>
         <div className="custom-control custom-checkbox">
@@ -29,16 +29,18 @@ function RecoveryStatusRenderer({ data, field, t }) {
       </>
     );
   }
-  const renderShowDetails = () => {
+  const renderShowProgress = () => {
     if (data.status !== JOB_COMPLETION_STATUS) {
       return (
         <>
-          <Col sm={3}>
-            {t('show.details')}
-          </Col>
-          <Col sm={3}>
-            {renderCheckbox()}
-          </Col>
+          <Row>
+            <Col sm={12}>
+              <div style={{ display: 'flex' }}>
+                <p style={{ paddingRight: '5px', display: 'inline' }}>{t('show.details')}</p>
+                {renderShowProgressCheck()}
+              </div>
+            </Col>
+          </Row>
         </>
       );
     }
@@ -47,12 +49,18 @@ function RecoveryStatusRenderer({ data, field, t }) {
   return (
     <>
       <Row>
-        <Col sm={3}>
-          <StatusItemRenderer data={data} field={field} />
+        <Col sm={6} className="status_renderer_Div">
+          <StatusItemRenderer data={data} field={field} noPopOver />
         </Col>
-        {renderShowDetails()}
+        <Col sm={6} className="show_details">
+          {renderShowProgress()}
+        </Col>
       </Row>
-      {toggle === true ? <StatusSteps data={data} apiURL={API_RESCOVERY_JOB_STATUS_STEPS} /> : null}
+      <Row className="padding-left-8">
+        <Col sm={12}>
+          {toggle === true ? <StatusSteps data={data} apiURL={API_RESCOVERY_JOB_STATUS_STEPS} /> : null}
+        </Col>
+      </Row>
     </>
   );
 }

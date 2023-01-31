@@ -19,25 +19,10 @@ function StatusSteps(props) {
   const [steps, setSteps] = useState([]);
   const { data } = props;
   let isUnmounting = false;
-  useEffect(() => {
-    fetchRunningJobsSteps();
-    const timerId = setInterval(() => {
-      fetchRunningJobsSteps();
-    }, MILI_SECONDS_TIME.TEN_THOUSAND);
 
-    return () => {
-      isUnmounting = true;
-      clearInterval(timerId);
-    };
-  }, []);
-
-  function fetchRunningJobsSteps() {
+  const fetchRunningJobsSteps = () => {
     const { dispatch, apiURL } = props;
-    let runningState = false;
-    if (steps.length > 0) {
-      runningState = steps.all((step) => step.status === JOB_IN_PROGRESS);
-    }
-    if (!runningState || steps.length === 0) {
+    if (data.status === 'running' || steps.length === 0) {
       const url = apiURL.replace('<id>', data.id);
       callAPI(url).then((json) => {
         if (isUnmounting) return;
@@ -51,57 +36,69 @@ function StatusSteps(props) {
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
     }
-  }
+  };
+
+  useEffect(() => {
+    fetchRunningJobsSteps();
+    const timerId = setInterval(() => {
+      fetchRunningJobsSteps();
+    }, MILI_SECONDS_TIME.TEN_THOUSAND);
+
+    return () => {
+      isUnmounting = true;
+      clearInterval(timerId);
+    };
+  }, []);
+
   if (typeof steps === 'undefined' || steps === null || steps.length === 0) {
     return null;
   }
 
-  const renderSteps = () => steps.map((st, i) => (
-    <Row className="padding-left-15">
-      <Col sm={12}>
-        {renderIndividualSteps(st, i)}
-      </Col>
-    </Row>
-  ));
-
-  function renderIcons(st) {
+  const renderIcon = (st) => {
     const { status } = st;
     if (status === JOB_COMPLETION_STATUS) {
-      return <FontAwesomeIcon size="lg" icon={faCheckCircle} className="text-success" />;
+      return <FontAwesomeIcon size="lg" icon={faCheckCircle} className="text-success recovery_step_icon" />;
     } if (status === JOB_FAILED) {
-      return <FontAwesomeIcon size="lg" icon={faCircleXmark} className="text-danger" />;
+      return <FontAwesomeIcon size="lg" icon={faCircleXmark} className="text-danger recovery_step_icon" />;
     } if (status === JOB_IN_PROGRESS) {
-      return <i className="fa fa-spinner fa-lg fa-spin text-info" />;
+      return <i className="fa fa-spinner fa-lg fa-spin text-info recovery_step_icon" />;
     }
-  }
+  };
 
-  function renderIndividualSteps(st, i) {
+  const renderSteps = (st, i) => {
     const { message, time } = st;
     const convertTedTime = time * 1000;
     const d = new Date(convertTedTime);
     const resp = `${d.toLocaleTimeString()}`;
-
+    // vertical
     return (
-      <Row className="margin-top-20">
-        <Col sm={1}>
-          <div>
-            {renderIcons(st)}
-          </div>
-          {i === steps.length - 1 ? '' : (
-            <div className="vertical" />
-          ) }
-        </Col>
-        <Col sm={10}>
-          <Row>{message}</Row>
-          <Row>{resp}</Row>
-        </Col>
-      </Row>
+      <div className="step_parent_div">
+        <div className="step_icon_div">{renderIcon(st)}</div>
+        <div className={`step_msg_div ${i === steps.length - 1 ? '' : 'progress_step_border'}`}>
+          <p className="step_msg">
+            {message}
+            {message}
+            {message}
+          </p>
+          <p className="step_time">
+            {resp}
+          </p>
+        </div>
+      </div>
     );
-  }
+  };
+
+  const renderProgress = () => steps.map((st, i) => (
+    <Row>
+      <Col sm={12}>
+        {renderSteps(st, i)}
+      </Col>
+    </Row>
+  ));
 
   return (
     <>
-      {renderSteps()}
+      {renderProgress()}
     </>
   );
 }

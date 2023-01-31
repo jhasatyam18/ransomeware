@@ -5,7 +5,7 @@ import { Badge, Popover, PopoverBody } from 'reactstrap';
 import { NODE_STATUS_ONLINE, NODE_STATUS_OFFLINE, JOB_RECOVERED, JOB_COMPLETION_STATUS, JOB_RUNNING_STATUS, JOB_IN_PROGRESS, JOB_FAILED, JOB_INIT_FAILED, JOB_IN_SYNC, JOB_COMPLETED_WITH_ERRORS, JOB_ONGOING, JOB_STOPPED, JOB_INIT_SUCCESS, JOB_INIT_PROGRESS, JOB_SYNC_FAILED, JOB_INIT_SYNC_PROGRESS, JOB_RESYNC_FAILED, JOB_RESYNC_IN_PROGRESS, JOB_RESYNC_SUCCESS, JOB_SYNC_IN_PROGRESS, JOB_INIT_SYNC_FAILED, JOB_MIGRATED, MIGRATION_INIT_FAILED } from '../../../constants/AppStatus';
 import 'boxicons';
 
-function StatusItemRenderer({ data, field, t }) {
+function StatusItemRenderer({ data, field, t, noPopOver }) {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const successStatus = [JOB_COMPLETION_STATUS, JOB_INIT_SUCCESS, NODE_STATUS_ONLINE, JOB_RESYNC_SUCCESS, JOB_IN_SYNC, JOB_RECOVERED, JOB_MIGRATED];
   const runningStatus = [JOB_RUNNING_STATUS, JOB_IN_PROGRESS];
@@ -27,6 +27,9 @@ function StatusItemRenderer({ data, field, t }) {
 
   const renderPopOver = (hoverInfo, key) => {
     const wid = hoverInfo.length <= 50 ? '300px' : '330px';
+    if (noPopOver) {
+      return null;
+    }
     return (
       <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: 'black', width: wid, textAlign: hoverInfo.length <= 50 ? 'center' : 'left' }}>
         <PopoverBody>
