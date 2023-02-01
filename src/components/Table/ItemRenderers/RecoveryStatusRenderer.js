@@ -16,7 +16,7 @@ function RecoveryStatusRenderer({ data, field, t }) {
   };
 
   const renderPopOver = (key) => (
-    <Popover placement="bottom" isOpen={popOver} target={key} style={{ backgroundColor: '#fff', width: '110px', textAlign: 'center', borderRadius: '5px' }}>
+    <Popover placement="bottom" isOpen={popOver && !toggle} target={key} style={{ backgroundColor: '#fff', width: '110px', textAlign: 'center', borderRadius: '5px' }}>
       <PopoverBody style={{ color: 'black' }}>
         {t('show.details')}
       </PopoverBody>
@@ -33,8 +33,8 @@ function RecoveryStatusRenderer({ data, field, t }) {
               icon={faListCheck}
               className="progress_list"
               onClick={handleCheckbox}
-              onMouseEnter={() => setpopOver(!popOver)}
-              onMouseLeave={() => setpopOver(!popOver)}
+              onMouseEnter={() => setpopOver(true)}
+              onMouseLeave={() => setpopOver(false)}
               id={key}
             />
             {renderPopOver(key)}
