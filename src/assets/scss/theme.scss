@@ -487,15 +487,17 @@ span.flatpickr-weekday {
   border-bottom: 1px solid $gray-300;
 }
 
-@media screen and (max-width: 1400px) {
- .status_renderer_Div{
-   min-width: 100% !important;
- }
- .show_details{
-   min-width: 100%;
-   padding: 5px 0 0 22px;
- }
-}
+
+
+// @media screen and (max-width: 1400px) {
+//  .status_renderer_Div{
+//    min-width: 100% !important;
+//  }
+//  .show_details{
+//    min-width: 100%;
+//    padding: 5px 0 0 22px;
+//  }
+// }
 
 .recovery_step_icon{
   font-size: 1.2em;
@@ -515,9 +517,9 @@ span.flatpickr-weekday {
 .step_msg_div{
   margin: 5px;
   position: relative;
-   left: -12px;
-    top: 18px;
-     height: 80%;
+  left: -12px;
+  top: 18px;
+  height: 80%;
 }
 
 .step_msg{
@@ -531,3 +533,14 @@ span.flatpickr-weekday {
   top:-29px;
   left:20px;
 }
+
+.progress_list{
+  position: relative;
+  top:2px;
+  left:5px;
+  color: $cyan;
+  margin-bottom: 19px;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+

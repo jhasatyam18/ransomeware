@@ -31,9 +31,9 @@ function StatusItemRenderer({ data, field, t, noPopOver }) {
       return null;
     }
     return (
-      <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: 'black', width: wid, textAlign: hoverInfo.length <= 50 ? 'center' : 'left' }}>
+      <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: '#fff', borderRadius: '8px', color: 'black', border: 'none', width: wid, textAlign: hoverInfo.length <= 50 ? 'center' : 'left' }}>
         <PopoverBody>
-          <SimpleBar style={{ maxHeight: '30vh' }}>
+          <SimpleBar style={{ maxHeight: '30v', color: 'black' }}>
             {hoverInfo}
           </SimpleBar>
         </PopoverBody>

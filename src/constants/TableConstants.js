@@ -110,7 +110,7 @@ export const PROTECTION_PLAN_RECOVERY_JOBS = [
   { label: 'Virtual Machine', field: 'vmName', allowFilter: true, checked: true },
   { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Recovery Type', field: 'recoveryType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER, allowFilter: true, checked: true },
-  { label: 'Job Status', field: 'status', itemRenderer: RECOVERY_STATUS_RENDERER, allowFilter: true, checked: true, width: '25%' },
+  { label: 'Job Status', field: 'status', itemRenderer: RECOVERY_STATUS_RENDERER, allowFilter: true, checked: true, width: '33%' },
   { label: 'IP Address', field: 'publicIP', itemRenderer: SSH_RDP_ITEM_RENDERER },
 ];
 
