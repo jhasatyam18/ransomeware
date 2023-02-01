@@ -128,11 +128,11 @@ export function fetchVMwareNetwork(url, fieldKey, reqField, entityKey) {
   return (dispatch, getState) => {
     const { user } = getState();
     const { values } = user;
-    let networKey = fieldKey.split('-vmConfig.general.hostMoref');
-    [networKey] = networKey;
+    const networKey = fieldKey.split('-vmConfig.general.hostMoref');
+    const [moref] = networKey;
     const responseData = getVMwareConfigDataForField(reqField, entityKey, values);
     if (responseData !== null) {
-      dispatch(valueChange(`${networKey}.general.network`, responseData));
+      dispatch(valueChange(`${moref}.general.network`, responseData));
       return;
     }
     dispatch(showApplicationLoader('vmware_network', 'Loading vmware Networks'));
@@ -148,7 +148,7 @@ export function fetchVMwareNetwork(url, fieldKey, reqField, entityKey) {
           val.value = d.id;
           res.push(val);
         });
-        dispatch(valueChange(`${networKey}.general.network`, res));
+        dispatch(valueChange(`${moref}.general.network`, res));
         if (reqField && entityKey) {
           dispatch(setVMwareAPIResponseData(reqField, entityKey, res));
         }
