@@ -10,6 +10,7 @@ import { callAPI } from '../../utils/ApiUtils';
 function DMAPIPaginator(props) {
   const emptyPageInfo = { limit: 100, currentPage: 0, hasNext: false, hasPrev: false, nextOffset: 0, pageRecords: 0, totalPages: 0, totalRecords: 0 };
   const [pageInfo, setPageInfo] = useState(emptyPageInfo);
+  const [currentP, setCurrentPage] = useState(emptyPageInfo.currentPage);
   const { apiUrl, storeFn, dispatch, columns, t, isParameterizedUrl, name } = props;
   const [isOpenFilterCol, toggleFilterCol] = useState(false);
   const [filterColumns, setFilterColumns] = useState([]);
@@ -64,6 +65,7 @@ function DMAPIPaginator(props) {
     let isUnmounting = false;
     if (!isUnmounting) {
       fetchData(0);
+      setCurrentPage(1);
       const cols = Array.from(columns);
       setFilterColumns(cols.filter((c) => c.allowFilter));
     }
@@ -75,16 +77,23 @@ function DMAPIPaginator(props) {
   const onNext = () => {
     const { nextOffset } = pageInfo;
     fetchData(nextOffset);
+    setCurrentPage((currentP + 1));
   };
 
   const onBack = () => {
     const { currentPage, limit } = pageInfo;
     fetchData((currentPage * limit) - (limit * 2));
+    setCurrentPage(currentP - 1);
   };
 
   const onSearch = () => {
     setPageInfo(emptyPageInfo);
-    fetchData(0);
+    if (currentP === '') {
+      fetchData(0);
+      setCurrentPage(1);
+    } else {
+      fetchData((currentP - 1) * 100);
+    }
   };
 
   const applyFilter = () => {
@@ -95,6 +104,22 @@ function DMAPIPaginator(props) {
   const onKeyPress = (e) => {
     if (e.key === 'Enter') {
       onSearch();
+    }
+  };
+
+  const setCurrentPageValue = (e) => {
+    const { totalPages } = pageInfo;
+    const numStr = ' 0123456789';
+    const valueStr = e.target.value[e.target.value.length - 1] || '';
+    const valInNum = parseInt(e.target.value, 10) || '';
+    if (numStr.indexOf(valueStr) !== -1) {
+      if (valInNum < 0) {
+        setCurrentPage(1);
+      } else if (valInNum > totalPages) {
+        setCurrentPage(totalPages);
+      } else {
+        setCurrentPage(valInNum);
+      }
     }
   };
 
@@ -169,24 +194,25 @@ function DMAPIPaginator(props) {
   };
 
   const renderData = () => {
-    const { hasNext, hasPrev, currentPage, totalPages } = pageInfo;
+    const { hasNext, hasPrev, totalPages } = pageInfo;
     return (
       <Row>
-        <Col className="padding-0 margin-0 display__flex__reverse dmapi_col">
+        <Col className="padding-0 margin-0 display__flex__reverse dmapi_col ">
           {renderFilter()}
         </Col>
-        <Col className="padding-0 margin-0 display__flex__reverse">
-          <ButtonGroup className="btn-group-sm padding-right-20">
+        <Col className="padding-0 margin-0 display__flex__reverse padding-right-20">
+          <ButtonGroup className="btn-group-sm">
             <Button disabled={!hasPrev} onClick={onBack}>
               <box-icon type="solid" name="chevron-left" size="xs" />
             </Button>
-            <Button>
-              {currentPage}
-              &nbsp;
-              /
-              &nbsp;
-              {totalPages}
-            </Button>
+            <div className="input-group input_div">
+              <input type="text" className="paginator_input  paginator_input_div  " id="tablecurrentpage" value={currentP} onChange={(e) => setCurrentPageValue(e)} onKeyPress={(e) => onKeyPress(e)} />
+              <div className="dmaipaginator_totalpage input-group ">
+                <p className="paginator_input totalpag_text ">
+                  {`/ ${totalPages}`}
+                </p>
+              </div>
+            </div>
             <Button disabled={!hasNext} onClick={onNext}>
               <box-icon type="solid" name="chevron-right" size="xs" />
             </Button>
