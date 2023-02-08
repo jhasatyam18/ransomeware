@@ -13,7 +13,7 @@ export const PPLAN_EVENTS = ['protectionplan.initfailed', 'protectionplan.update
 
 export const MILI_SECONDS_TIME = {
   TWO_THOUSAND: 2000,
-  TEN_THOUSAND: 20000,
+  TWENTY_SECONDS: 20000,
   ONE_THOUSAND: 1000,
 };
 export const MONITOR_NODE_AUTH = ['monitor.nodecredentialexpiringsoon', 'monitor.nodeauthentication'];

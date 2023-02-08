@@ -15,9 +15,10 @@ import { MILI_SECONDS_TIME } from '../../constants/EventConstant';
  * @param {*} props is an object of data , apiURL
  * @returns render recovery jobs status in steps
  */
-function StatusSteps(props) {
+function StepStatus(props) {
   const [steps, setSteps] = useState([]);
   const { data } = props;
+  const jobStatus = [JOB_COMPLETION_STATUS, JOB_FAILED];
   let isUnmounting = false;
 
   const fetchRunningJobsSteps = () => {
@@ -39,11 +40,21 @@ function StatusSteps(props) {
   };
 
   useEffect(() => {
-    fetchRunningJobsSteps();
-    const timerId = setInterval(() => {
+    const { dispatch } = props;
+    let timerId;
+    if (jobStatus.indexOf(data.status) !== -1) {
+      const parsedData = JSON.parse(data.step);
+      setSteps(parsedData);
+    } else {
       fetchRunningJobsSteps();
-    }, MILI_SECONDS_TIME.TEN_THOUSAND);
-
+      timerId = setInterval(() => {
+        try {
+          fetchRunningJobsSteps();
+        } catch (e) {
+          dispatch(addMessage(e, MESSAGE_TYPES.ERROR));
+        }
+      }, MILI_SECONDS_TIME.TWENTY_SECONDS);
+    }
     return () => {
       isUnmounting = true;
       clearInterval(timerId);
@@ -104,4 +115,4 @@ function mapStateToProps(state) {
   const { dispatch } = state;
   return { dispatch };
 }
-export default connect(mapStateToProps)(withTranslation()(StatusSteps));
+export default connect(mapStateToProps)(withTranslation()(StepStatus));

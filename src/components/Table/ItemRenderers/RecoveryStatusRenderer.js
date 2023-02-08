@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faListCheck } from '@fortawesome/free-solid-svg-icons';
 import { API_RESCOVERY_JOB_STATUS_STEPS } from '../../../constants/ApiConstants';
 import StatusItemRenderer from './StatusItemRenderer';
-import StatusSteps from '../../Common/StatusSteps';
+import StepStatus from '../../Common/StepStatus';
 
 function RecoveryStatusRenderer({ data, field, t }) {
   const [toggle, setToggle] = useState(false);
@@ -55,7 +55,7 @@ function RecoveryStatusRenderer({ data, field, t }) {
       </Row>
       <Row className="padding-left-8">
         <Col sm={12}>
-          {toggle === true ? <StatusSteps data={data} apiURL={API_RESCOVERY_JOB_STATUS_STEPS} /> : null}
+          {toggle === true ? <StepStatus data={data} apiURL={API_RESCOVERY_JOB_STATUS_STEPS} /> : null}
         </Col>
       </Row>
     </>
