@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Select from 'react-select';
+import Select, { components } from 'react-select';
 import {
   Col, FormFeedback, FormGroup, Label, Row,
 } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
+import SimpleBar from 'simplebar-react';
 import { PLATFORM_TYPES } from '../../constants/InputConstants';
 import DMToolTip from './DMToolTip';
 import { getValue } from '../../utils/InputUtils';
@@ -83,8 +84,9 @@ class DMSearchSelect extends Component {
         ...base,
         color: fontClr,
       }),
-      option: (base) => ({
+      option: (base, state) => ({
         ...base,
+        backgroundColor: state.isSelected ? '#2684FF' : bckClr,
         '&:hover': {
           backgroundColor: hoverColor,
           color: 'white',
@@ -128,6 +130,14 @@ class DMSearchSelect extends Component {
       return getValue(fieldKey, values);
     }
     return '';
+  }
+
+  MenuList(props) {
+    return (
+      <components.MenuList {...props}>
+        <SimpleBar style={{ maxHeight: '250px' }}>{props.children}</SimpleBar>
+      </components.MenuList>
+    );
   }
 
   renderError(hasError) {
@@ -187,7 +197,8 @@ class DMSearchSelect extends Component {
                   options={this.getOptions()}
                   onChange={this.handleChange}
                   value={this.getFieldValue()}
-                  style={{ width: '100%' }}
+                  components={{ MenuList: this.MenuList }}
+                  captureMenuScroll={false}
                 />
               </Col>
               <Col sm={1}>
