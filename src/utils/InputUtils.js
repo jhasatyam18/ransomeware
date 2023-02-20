@@ -929,6 +929,11 @@ export function getMatchingInsType(values, ins) {
       }
     });
   }
+  // If no data found then set value as received value
+  if (Object.keys(insType).length === 0) {
+    insType.label = ins.instanceType;
+    insType.value = ins.instanceType;
+  }
   return insType;
 }
 

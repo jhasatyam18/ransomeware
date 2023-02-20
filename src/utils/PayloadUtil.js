@@ -123,8 +123,8 @@ export function getVMConfigPayload(user) {
     const id = getValue(`${key}-vmConfig.general.id`, values);
     let instanceType = '';
     const insType = getValue(`${key}-vmConfig.general.instanceType`, values) || '';
-    if (typeof insType === 'object' && insType.value) {
-      instanceType = insType.value;
+    if (typeof insType === 'object') {
+      instanceType = (insType.value ? insType.value : '');
     } else {
       instanceType = insType;
     }
