@@ -47,7 +47,7 @@ export const FIELDS = {
 
   },
   'configureSite.platformDetails.hostname': {
-    label: 'vCenter.server.IP', description: 'vCenter Server IPv4 address', type: FIELD_TYPE.TEXT, errorMessage: 'Enter valid IP address', patterns: [IP_REGEX], shouldShow: (user) => isPlatformTypeVMware(user), fieldInfo: 'info.site.vcenterhost',
+    label: 'vCenter.server.IP', description: 'vCenter Server IP/Hostname', type: FIELD_TYPE.TEXT, errorMessage: 'Enter valid IP/hostname', patterns: [IP_REGEX, FQDN_REGEX], shouldShow: (user) => isPlatformTypeVMware(user), fieldInfo: 'info.site.vcenterhost',
   },
   'configureSite.platformDetails.storageAccount': {
     label: 'storage.account', description: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Storage Account is required', shouldShow: (user) => isPlatformTypeAzure(user), fieldInfo: 'info.site.storage.acc',

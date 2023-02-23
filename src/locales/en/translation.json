@@ -30,7 +30,7 @@
   "platform.name": "Platform Name ",
   "description": "Description ",
   "platform": "Platform ",
-  "vCenter.server.IP": "vCenter Server IP ",
+  "vCenter.server.IP": "vCenter Server",
   "port": "Port ",
   "username": "Username ",
   "password": "Password ",
