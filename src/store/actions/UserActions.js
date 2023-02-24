@@ -12,7 +12,7 @@ import { onInit } from '../../utils/HistoryUtil';
 import { getMatchingInsType, getValue, getVMwareLocationPath, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { acknowledgeNodeAlert, getUnreadAlerts } from './AlertActions';
-import { fetchDRPlanById, fetchDrPlans } from './DrPlanActions';
+import { fetchDRPlanById, fetchDrPlans, setVMGuestOSInfo } from './DrPlanActions';
 import { fetchEmailConfig, fetchEmailRecipients } from './EmailActions';
 import { fetchLicenses } from './LicenseActions';
 import { addMessage, clearMessages } from './MessageActions';
@@ -726,6 +726,7 @@ export function getVMwareVMSProps(vms) {
       } else {
         vmString = vms;
       }
+      dispatch(setVMGuestOSInfo(selectedVMS));
       dispatch(valueChange('ui.site.seletedVMs', selectedVMS));
       if (vmString && vmString.length > 0) {
         vmString = vmString.join(',');

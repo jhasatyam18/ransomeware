@@ -6,7 +6,7 @@ import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { closeModal } from './ModalActions';
 import { fetchRegions, hideApplicationLoader, loadRecoveryLocationData, showApplicationLoader, valueChange } from './UserActions';
 import { fetchByDelay } from '../../utils/SlowFetch';
-import { getValue, isPlanWithSamePlatform } from '../../utils/InputUtils';
+import { getMatchingOSType, getValue, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
 import { setRecoveryVMDetails } from './DrPlanActions';
 import { fetchAvailibilityZonesForAzure } from './AzureAction';
@@ -264,6 +264,8 @@ export function handleProtectVMSeletion(data, isSelected, primaryKey) {
         const newVMs = { ...selectedVMs, [data[primaryKey]]: data };
         dispatch(valueChange('ui.site.seletedVMs', newVMs));
         dispatch(setRecoveryVMDetails(data[primaryKey]));
+        // set guest os type of newly selected vm
+        dispatch(valueChange(`${data[primaryKey]}-vmConfig.general.guestOS`, getMatchingOSType(data.guestOS)));
       }
     } else if (selectedVMs[data[primaryKey]]) {
       const newVMs = selectedVMs;

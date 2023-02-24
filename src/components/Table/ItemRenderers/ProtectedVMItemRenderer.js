@@ -3,6 +3,7 @@ import { initReconfigureProtectedVM } from '../../../store/actions/DrPlanActions
 import { addMessage } from '../../../store/actions/MessageActions';
 import { MESSAGE_TYPES } from '../../../constants/MessageConstants';
 import { isVMRecovered } from '../../../utils/validationUtils';
+import { valueChange } from '../../../store/actions';
 
 function ProtectedVMItemRenderer({ data, dispatch }) {
   if (!data || isVMRecovered(data)) {
@@ -19,6 +20,7 @@ function ProtectedVMItemRenderer({ data, dispatch }) {
       dispatch(addMessage('Protection plan not identified for the virtual machine', MESSAGE_TYPES.ERROR));
       return;
     }
+    dispatch(valueChange(`${data.moref}-vmConfig.general.guestOS`, data.guestOS));
     dispatch(initReconfigureProtectedVM(pathArray[pathArray.length - 1], data.moref, null, null));
   };
 

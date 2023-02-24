@@ -59,12 +59,8 @@ export function getCreateDRPlanPayload(user, sites) {
   result.drplan.recoveryEntities.name = 'dummy';
   result.drplan.protectedEntities.VirtualMachines = [];
   Object.keys(vms).forEach((key) => {
-    const vm = vms[key];
+    const vm = setVMProperties(vms[key], values);
     vm.id = 0;
-    const preScript = getValue(`${key}-protection.scripts.preScript`, values);
-    const postScript = getValue(`${key}-protection.scripts.postScript`, values);
-    vm.preScript = preScript;
-    vm.postScript = postScript;
     result.drplan.protectedEntities.VirtualMachines.push(vm);
   });
   result.drplan.protectedEntities.Name = 'dummy';
@@ -368,11 +364,8 @@ export function getEditProtectionPlanPayload(user, sites) {
   result.drplan.status = getValue('ui.edit.plan.status', values);
   result.drplan.protectedEntities.VirtualMachines = [];
   Object.keys(vms).forEach((key) => {
-    const vm = vms[key];
-    const preScript = getValue(`${key}-protection.scripts.preScript`, values) || '';
-    const postScript = getValue(`${key}-protection.scripts.postScript`, values) || '';
-    vm.preScript = preScript;
-    vm.postScript = postScript;
+    let vm = vms[key];
+    vm = setVMProperties(vm, values);
     result.drplan.protectedEntities.VirtualMachines.push(vm);
   });
   result.drplan.protectedEntities.Name = 'dummy';
@@ -400,4 +393,20 @@ export function getRecoveryEntityType() {
   // setting VIRTUALMACHINE as default for now
   // TODO : MODIFY ONCE FCD or other entity ui support added
   return RECOVERY_ENTITY_TYPES.VIRTUALMACHINE;
+}
+
+function setVMProperties(vm, values) {
+  const vmConfig = vm;
+  // set scripts
+  const preScript = getValue(`${vm.moref}-protection.scripts.preScript`, values);
+  const postScript = getValue(`${vm.moref}-protection.scripts.postScript`, values);
+  vmConfig.preScript = preScript;
+  vmConfig.postScript = postScript;
+  // guest os
+  const guestOS = getValue(`${vm.moref}-vmConfig.general.guestOS`, values);
+  if (guestOS) {
+    // override the guest os value selected by user
+    vmConfig.guestOS = guestOS;
+  }
+  return vmConfig;
 }

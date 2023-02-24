@@ -17,7 +17,7 @@ import { closeWizard, openWizard } from './WizardActions';
 import { closeModal, openModal } from './ModalActions';
 import { addAssociatedReverseIP } from './AwsActions';
 import { MIGRATION_WIZARDS, RECOVERY_WIZARDS, TEST_RECOVERY_WIZARDS, REVERSE_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS, PROTECTED_VM_RECONFIGURATION_WIZARD, CLEANUP_TEST_RECOVERY_WIZARDS, STEPS } from '../../constants/WizardConstants';
-import { getMatchingInsType, getValue, getVMMorefFromEvent, isSamePlatformPlan, getVMInstanceFromEvent } from '../../utils/InputUtils';
+import { getMatchingInsType, getValue, getVMMorefFromEvent, isSamePlatformPlan, getVMInstanceFromEvent, getMatchingOSType } from '../../utils/InputUtils';
 import { PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
@@ -244,6 +244,7 @@ export function onProtectionPlanChange({ value, allowDeleted }) {
                     machine.isDisabled = true;
                   }
                 }
+                dispatch(valueChange(`${vm.moref}-vmConfig.general.guestOS`, vm.guestOS));
                 data.push(vm);
               }
             });
@@ -682,6 +683,16 @@ export function setProtectionPlanVMsForUpdate(protectionPlan, isEventAction = fa
       (err) => {
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
+  };
+}
+
+export function setVMGuestOSInfo(selectedVMs) {
+  return (dispatch) => {
+    Object.keys(selectedVMs).forEach((key) => {
+      if (selectedVMs[key]) {
+        dispatch(valueChange(`${selectedVMs[key].moref}-vmConfig.general.guestOS`, getMatchingOSType(selectedVMs[key].guestOS)));
+      }
+    });
   };
 }
 
@@ -1551,6 +1562,7 @@ function setReverseData(json) {
             });
           });
           dispatch(valueChange('ui.site.seletedVMs', selectedVMs));
+          dispatch(setVMGuestOSInfo(selectedVMs));
           // for giving selection of vm in wizard if vm selection is not their then remove this
           // dispatch(valueChange('ui.site.vms', data));
           dispatch(openWizard(REVERSE_WIZARDS.options, REVERSE_WIZARDS.steps));

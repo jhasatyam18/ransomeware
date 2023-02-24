@@ -129,3 +129,12 @@ export const RECOVERY_ENTITY_TYPES = {
 export const NODE_TYPES = {
   DEDUPE_SERVER: 'DedupeServer',
 };
+
+export const SUPPORTED_GUEST_OS = {
+  Windows: 'Windows',
+  Ubuntu: 'Ubuntu',
+  Centos: 'Centos',
+  Rhel: 'Rhel',
+  Suse: 'Suse',
+  Oracle: 'Oracle',
+};
