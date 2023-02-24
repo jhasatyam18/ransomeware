@@ -843,11 +843,13 @@ export function getDatastoreOptions(u, fieldKey) {
 
 export function getWMwareNetworkOptions(u, f) {
   const { values } = u;
-  let key = f.split('.');
-  key = key.splice(0, [key.length - 2]);
-  const str = key.join('');
-  const str2 = `${str}.general.network`;
-  const res = values[str2];
+  let netwrokInd = f.split('-');
+  netwrokInd = netwrokInd[netwrokInd.length - 2];
+  const splitKey = `-vmConfig.network.net1-eth-${netwrokInd}-network`;
+  const key = f.split(splitKey);
+  const [moref] = key;
+  const netOpt = `${moref}.general.network`;
+  const res = values[netOpt];
   return res;
 }
 
