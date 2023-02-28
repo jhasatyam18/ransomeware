@@ -43,8 +43,12 @@ function StepStatus(props) {
     const { dispatch } = props;
     let timerId;
     if (jobStatus.indexOf(data.status) !== -1) {
-      const parsedData = JSON.parse(data.step);
-      setSteps(parsedData);
+      try {
+        const parsedData = JSON.parse(data.step);
+        setSteps(parsedData);
+      } catch (e) {
+        setSteps([]);
+      }
     } else {
       fetchRunningJobsSteps();
       timerId = setInterval(() => {
@@ -104,6 +108,10 @@ function StepStatus(props) {
       </Col>
     </Row>
   ));
+
+  if (steps.length === 0) {
+    return null;
+  }
 
   return (
     <>
