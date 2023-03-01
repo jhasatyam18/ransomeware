@@ -1135,6 +1135,9 @@ export function initReconfigureProtectedVM(protectionPlanID, vmMoref = null, eve
       return;
     }
     dispatch(hideApplicationLoader('RECONFIGURE_VM'));
+    if (vms) {
+      dispatch(setVMGuestOSInfo(vms));
+    }
     dispatch(openVMReconfigWizard(moref, pPlan, vms, alerts));
   };
 }
