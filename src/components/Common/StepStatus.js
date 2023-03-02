@@ -43,7 +43,6 @@ function StepStatus(props) {
   };
 
   useEffect(() => {
-    const { dispatch } = props;
     if (jobStatus.indexOf(data.status) !== -1) {
       try {
         const parsedData = JSON.parse(data.step);
@@ -53,20 +52,25 @@ function StepStatus(props) {
       }
     } else {
       fetchRunningJobsSteps();
-      timerId = setInterval(() => {
-        try {
-          fetchRunningJobsSteps();
-        } catch (e) {
-          dispatch(addMessage(e, MESSAGE_TYPES.ERROR));
-          clearInterval(timerId);
-        }
-      }, MILI_SECONDS_TIME.TWENTY_THOUSAND_MS);
+      timerId = gitTimerTofetch();
     }
     return () => {
       isUnmounting = true;
       clearInterval(timerId);
     };
   }, []);
+
+  function gitTimerTofetch() {
+    const { dispatch } = props;
+    return setInterval(() => {
+      try {
+        fetchRunningJobsSteps();
+      } catch (e) {
+        dispatch(addMessage(e, MESSAGE_TYPES.ERROR));
+        clearInterval(timerId);
+      }
+    }, MILI_SECONDS_TIME.TWENTY_THOUSAND_MS);
+  }
 
   if (typeof steps === 'undefined' || steps === null || steps.length === 0) {
     return null;
