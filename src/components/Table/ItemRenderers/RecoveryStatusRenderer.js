@@ -10,7 +10,6 @@ import StepStatus from '../../Common/StepStatus';
 function RecoveryStatusRenderer({ data, field, t }) {
   const [toggle, setToggle] = useState(false);
   const [popOver, setpopOver] = useState(false);
-
   const handleCheckbox = () => {
     setToggle(!toggle);
   };
@@ -27,7 +26,7 @@ function RecoveryStatusRenderer({ data, field, t }) {
     return (
       <Row>
         <Col sm={12}>
-          <div style={{ display: 'flex', float: 'right' }}>
+          <div className="status_view_prog_icon">
             <FontAwesomeIcon
               size="lg"
               icon={faListCheck}

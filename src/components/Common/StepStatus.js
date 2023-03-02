@@ -20,10 +20,11 @@ function StepStatus(props) {
   const { data } = props;
   const jobStatus = [JOB_COMPLETION_STATUS, JOB_FAILED];
   let isUnmounting = false;
+  let timerId;
 
   const fetchRunningJobsSteps = () => {
     const { dispatch, apiURL } = props;
-    if (data.status === 'running' || steps.length === 0) {
+    if (data.status === 'running' || steps.length === 0 && typeof apiURL !== 'undefined') {
       const url = apiURL.replace('<id>', data.id);
       callAPI(url).then((json) => {
         if (isUnmounting) return;
@@ -36,12 +37,13 @@ function StepStatus(props) {
         if (isUnmounting) return;
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
+    } else {
+      clearInterval(timerId);
     }
   };
 
   useEffect(() => {
     const { dispatch } = props;
-    let timerId;
     if (jobStatus.indexOf(data.status) !== -1) {
       try {
         const parsedData = JSON.parse(data.step);
@@ -56,8 +58,9 @@ function StepStatus(props) {
           fetchRunningJobsSteps();
         } catch (e) {
           dispatch(addMessage(e, MESSAGE_TYPES.ERROR));
+          clearInterval(timerId);
         }
-      }, MILI_SECONDS_TIME.TWENTY_SECONDS);
+      }, MILI_SECONDS_TIME.TWENTY_THOUSAND_MS);
     }
     return () => {
       isUnmounting = true;
