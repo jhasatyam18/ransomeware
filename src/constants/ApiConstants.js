@@ -40,7 +40,7 @@ export const API_DASHBOARD_BANDWIDTH_USAGE = 'api/v1/bandwidth/usage';
 export const API_DASHBOARD_VIRTUAL_MACHINE_PROTECTION_ANALYSIS_PROTECTED_VMS = 'api/v1/dashboard/protectedvms';
 export const API_DASHBOARD_NODE_STATS = 'api/v1/dashboard/nodestats';
 export const API_DASHBOARD_UNACK_ALERTS = 'api/v1/dashboard/unackalerts';
-
+export const API_RESCOVERY_JOB_STATUS_STEPS = 'api/v1/jobs/recover/vms/<id>';
 // recovery
 export const API_RECOVER = 'api/v1/recover';
 export const API_TEST_RECOVERY_CLEANUP = 'api/v1/recover/cleanup';

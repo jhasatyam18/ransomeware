@@ -486,3 +486,52 @@ span.flatpickr-weekday {
   border-right: 1px solid $gray-300;
   border-bottom: 1px solid $gray-300;
 }
+
+.recovery_step_icon{
+  font-size: 1.2em;
+}
+
+.step_parent_div{
+  display: flex;
+  height: 100%;
+  font-size: 11px;
+}
+
+.step_icon_div{
+  position: relative;
+  top:5px
+}
+
+.step_msg_div{
+  margin: 5px;
+  position: relative;
+  left: -12px;
+  top: 18px;
+  height: 80%;
+}
+
+.step_msg{
+  position: relative;
+   top: -20px;
+   left: 20px;
+}
+
+.step_time{
+  position: relative;
+  top:-29px;
+  left:20px;
+}
+
+.progress_list{
+  position: relative;
+  top:2px;
+  left:5px;
+  color: $cyan;
+  margin-bottom: 19px;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+
+.status_view_prog_icon{
+  float: right;
+}
