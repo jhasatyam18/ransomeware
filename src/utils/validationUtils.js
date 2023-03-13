@@ -11,6 +11,7 @@ import { getRecoveryPayload, getReversePlanPayload, getVMNetworkConfig, getVMwar
 import { IP_REGEX } from '../constants/ValidationConstants';
 import { PLATFORM_TYPES, RECOVERY_STATUS, STATIC_KEYS, UI_WORKFLOW } from '../constants/InputConstants';
 import { createVMConfigStackObject, getValue, isAWSCopyNic, validateMacAddressForVMwareNetwork, excludeKeys } from './InputUtils';
+import { setVMGuestOSInfo } from '../store/actions/DrPlanActions';
 
 export function isRequired(value) {
   if (!value) {
@@ -144,6 +145,7 @@ export function validateDRPlanProtectData({ user, dispatch }) {
     dispatch(addMessage('Select virtual machine.', MESSAGE_TYPES.ERROR));
     return false;
   }
+  dispatch(setVMGuestOSInfo(vms));
   return true;
 }
 

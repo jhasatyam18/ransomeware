@@ -23,9 +23,23 @@ function OsTypeItemRenderer({ data }) {
       </div>
     );
   }
+  if (data.guestOS.toLowerCase().indexOf('suse') !== -1) {
+    return (
+      <div>
+        <i title={data.guestOS} className="fab fa-suse" />
+      </div>
+    );
+  }
+  if (data.guestOS.toLowerCase().indexOf('oracle') !== -1 || data.guestOS.toLowerCase().indexOf('debian') !== -1) {
+    return (
+      <div>
+        <i title={data.guestOS} className="fab fa-linux" />
+      </div>
+    );
+  }
   return (
     <div>
-      <i title={data.guestOS} className="fab fa-linux" />
+      -
     </div>
   );
 }

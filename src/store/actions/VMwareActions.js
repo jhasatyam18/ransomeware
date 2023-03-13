@@ -5,6 +5,7 @@ import { callAPI } from '../../utils/ApiUtils';
 import { addMessage } from './MessageActions';
 import { getComputeResources, getStorageForVMware, hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
 import { STATIC_KEYS } from '../../constants/InputConstants';
+import { setVMGuestOSInfo } from './DrPlanActions';
 
 // getStorageForVMware
 export function getVMwareAdapterType() {
@@ -175,6 +176,7 @@ export function fetchSelectedVmsProperty(siteId, vmString, selectedVMS) {
         json.forEach((vm) => {
           vms[vm.moref] = vm;
         });
+        dispatch(setVMGuestOSInfo(vms));
         dispatch(valueChange('ui.site.seletedVMs', vms));
       }
     },
