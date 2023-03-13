@@ -428,5 +428,6 @@
   "warning.vmware.dns":"Please provide valid DNS",
   "error.ackn.pplan.alert":"Virtual Machine info not available in the event.",
   "succes.ackn.alert":"Acknowledging alert.",
+  "show.details":"View Progress",
   "vmware.subnet":"Subnet Mask"
 }
