@@ -7,7 +7,7 @@ import DMTPaginator from '../Table/DMTPaginator';
 import { TABLE_FILTER_TEXT, TABLE_PROTECT_VM_VMWARE } from '../../constants/TableConstants';
 import { handleProtectVMSeletion } from '../../store/actions/SiteActions';
 import { getValue } from '../../utils/InputUtils';
-import { filterData } from '../../utils/AppUtils';
+import { filterData, moveSelectedItemsOnTop } from '../../utils/AppUtils';
 import { PLATFORM_TYPES } from '../../constants/InputConstants';
 import { FIELDS } from '../../constants/FieldsConstant';
 
@@ -32,7 +32,11 @@ class DRPlanProtectVMStep extends Component {
   }
 
   setDataForDisplay(data) {
-    this.setState({ dataToDisplay: data });
+    const { user } = this.props;
+    const { values } = user;
+    const selectedVMs = getValue('ui.site.seletedVMs', values);
+    const response = moveSelectedItemsOnTop(data, selectedVMs);
+    this.setState({ dataToDisplay: response });
   }
 
   render() {
