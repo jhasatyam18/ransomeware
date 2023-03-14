@@ -372,3 +372,24 @@ export function getSubnetIDFromName(val, values, netID) {
   });
   return res;
 }
+
+/**
+ * @param data :required data is an array for comparison
+ * @param selectedObjects : is an object
+ * @returns array
+ */
+
+export function moveSelectedItemsOnTop(data, selectedObjects) {
+  const response = [];
+  if (selectedObjects === '' || typeof selectedObjects !== 'object' && typeof data !== 'undefined') {
+    return data;
+  }
+  data.forEach((el) => {
+    if (typeof selectedObjects[el.moref] !== 'undefined') {
+      response.unshift(el);
+    } else {
+      response.push(el);
+    }
+  });
+  return response;
+}
