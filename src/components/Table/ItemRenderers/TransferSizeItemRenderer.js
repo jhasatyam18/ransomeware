@@ -31,7 +31,7 @@ function TransferSizeItemRenderer({ data, field }) {
   }
 
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-  const bytes = data[field] * 1024 * 1024;
+  const bytes = data[field];
   let i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
   try {
     if (Number.isNaN(i)) {
