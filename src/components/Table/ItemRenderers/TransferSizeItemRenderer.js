@@ -31,6 +31,7 @@ function TransferSizeItemRenderer({ data, field }) {
   }
 
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  // converted data to bytes
   const bytes = data[field];
   let i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
   try {
