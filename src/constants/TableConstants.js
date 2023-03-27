@@ -121,7 +121,7 @@ export const REPLICATION_VM_JOBS = [
   { label: 'Replication Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Job Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER, allowFilter: true, checked: true },
   { label: 'Sync Status', field: 'syncStatus', itemRenderer: STATUS_ITEM_RENDERER, allowFilter: true, checked: true },
-  { label: 'Sync Time', field: 'currenSnapshotTime', itemRenderer: DATE_ITEM_RENDERER, allowFilter: true, checked: true },
+  { label: 'Sync Time', field: 'currenSnapshotTime', itemRenderer: DATE_ITEM_RENDERER },
 ];
 
 // Table fields for recovery virtual machines
