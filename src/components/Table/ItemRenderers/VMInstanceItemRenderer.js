@@ -1,7 +1,7 @@
 import React from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { calculateChangedData } from '../../../utils/AppUtils';
+import { getMemoryInfo } from '../../../utils/AppUtils';
 import { PLATFORM_TYPES } from '../../../constants/InputConstants';
 
 function VMInstanceItemRenderer(props) {
@@ -14,7 +14,7 @@ function VMInstanceItemRenderer(props) {
   }
 
   const renderLabel = () => {
-    const memory = calculateChangedData(memoryMB);
+    const memory = getMemoryInfo(memoryMB);
     if (recoverySite.platformDetails.platformType === PLATFORM_TYPES.VMware) {
       return (
         <>
