@@ -372,3 +372,51 @@ export function getSubnetIDFromName(val, values, netID) {
   });
   return res;
 }
+
+/**
+ *
+ * @param {*} date
+ * @returns converted date in format of Hr:Min:Sec from nOw
+ */
+
+export function dateDiffInHrMinSecFromNow(date) {
+  const currentDate = new Date();
+  const dateDiff = Math.abs(currentDate - date);
+  const newDate = new Date(dateDiff);
+  let str = '';
+  const h = newDate.getUTCHours() || 0;
+  const m = newDate.getUTCMinutes() || 0;
+  const s = newDate.getUTCSeconds() || 0;
+  if (h > 0) {
+    str = `${h}H${m > 0 ? `:${m}M` : ''}${s > 0 ? `:${s}S` : ''}`;
+    return str;
+  }
+  if (m > 0) {
+    str = `${m}M${s > 0 ? `:${s}S` : ''}`;
+    return str;
+  } if (s > 0) {
+    str = `${s}S`;
+    return str;
+  }
+}
+
+/**
+ *
+ * @param {*} date
+ * @returns converts the difference of date in months and days format from now
+ */
+
+export function dateDiffInMonthDayFromnNow(date) {
+  const currentDate = new Date();
+  const dateDiff = Math.abs(currentDate - date);
+  const diffDays = Math.ceil(dateDiff / (1000 * 60 * 60 * 24)) || '';
+  const month = Math.round(diffDays / 30) || '';
+  const day = diffDays % 30 || 0;
+  let dayDiff = '';
+  if (month > 0) {
+    dayDiff = `${month} ${month > 1 ? 'Months' : 'Month'}${day > 0 ? `, ${day} ${day > 1 ? 'days' : 'day'}` : null}`;
+  } else {
+    dayDiff = `${day} ${day > 1 ? 'days' : 'day'}`;
+  }
+  return dayDiff;
+}

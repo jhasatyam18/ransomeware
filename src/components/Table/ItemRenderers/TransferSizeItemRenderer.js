@@ -1,12 +1,12 @@
 import React from 'react';
 import DMProgressBar from './DMProgressBar';
-import { JOB_RUNNING_STATUS, JOB_IN_PROGRESS } from '../../../constants/AppStatus';
+import { JOB_RUNNING_STATUS, JOB_IN_PROGRESS, PARTIALLY_COMPLETED } from '../../../constants/AppStatus';
 
 function TransferSizeItemRenderer({ data, field }) {
   let completed = 0;
   // progress bar for vm transfer size
   if (field === 'transferredSize') {
-    if (data.changedSize !== 0 && data.transferredSize !== 0 && (data.status === JOB_RUNNING_STATUS || data.status === JOB_IN_PROGRESS)) {
+    if (data.changedSize !== 0 && data.transferredSize !== 0 && (data.status === JOB_RUNNING_STATUS || data.status === JOB_IN_PROGRESS || data.status === PARTIALLY_COMPLETED)) {
       const changeBytes = data.changedSize * 1024 * 1024;
       const changeTransferBytes = data.transferredSize * 1024 * 1024;
       completed = Math.round(changeTransferBytes / changeBytes * 100);
@@ -15,7 +15,7 @@ function TransferSizeItemRenderer({ data, field }) {
 
   // progress bar for disk transfer size
   if (field === 'transferSize') {
-    if (data.changedSize !== 0 && data.changedTransfer !== 0 && (data.status === JOB_RUNNING_STATUS || data.status === JOB_IN_PROGRESS)) {
+    if (data.changedSize !== 0 && data.changedTransfer !== 0 && (data.status === JOB_RUNNING_STATUS || data.status === JOB_IN_PROGRESS || data.status === PARTIALLY_COMPLETED)) {
       const changeBytes = data.changedSize * 1024 * 1024;
       const changeTransferBytes = data.changedTransfer * 1024 * 1024;
       completed = Math.round(changeTransferBytes / changeBytes * 100);

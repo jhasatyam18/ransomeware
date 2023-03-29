@@ -22,6 +22,7 @@ export const NODE_STATUS_OFFLINE = 'offline';
 export const JOB_INIT_SYNC_FAILED = 'init-sync-failed';
 export const JOB_MIGRATED = 'migrated';
 export const STATUS_STARTED = 'Started';
+export const PARTIALLY_COMPLETED = 'partially-completed';
 
 export const RECOVERY_STATUS = {
   MIGRATED: 'Migrated',
