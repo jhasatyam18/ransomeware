@@ -10,7 +10,7 @@ function DateItemRenderer({ data, field }) {
   if (fieldsForTimeDiff.indexOf(field) !== -1) {
     const dayDiff = dateDiffInMonthDayFromnNow(d);
     const timeDiff = dateDiffInHrMinSecFromNow(d);
-    resp = `${dayDiff} - ${timeDiff}`;
+    resp = `${dayDiff}  ${timeDiff}`;
   } else {
     resp = `${d.toLocaleDateString()}-${d.toLocaleTimeString()}`;
   }

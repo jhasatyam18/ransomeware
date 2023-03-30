@@ -25,7 +25,7 @@ function TransferSizeItemRenderer({ data, field }) {
   if (completed > 0 && completed < 100) {
     return (
       <div>
-        <DMProgressBar completed={completed} />
+        <DMProgressBar completed={completed} id={data.id} />
       </div>
     );
   }
