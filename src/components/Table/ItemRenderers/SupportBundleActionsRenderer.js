@@ -11,7 +11,7 @@ function SupportBundleActionsRenderer({ data, dispatch }) {
 
   function renderDownload() {
     const downloadUrl = `${window.location.protocol}//${window.location.host}${data.bundleUrl}`;
-    if (data.status !== 'completed') {
+    if (data.status === 'failed') {
       return '';
     }
     return (
