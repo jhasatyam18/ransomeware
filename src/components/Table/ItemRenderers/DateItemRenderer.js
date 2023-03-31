@@ -18,19 +18,13 @@ function DateItemRenderer({ data, field }) {
     resp = '-';
     return (
       <>
-        <p>
-          {resp}
-        </p>
-
+        {resp}
       </>
     );
   }
   return (
     <>
-      <p style={{ textAlign: 'center' }}>
-        {resp}
-      </p>
-
+      {resp}
     </>
   );
 }
