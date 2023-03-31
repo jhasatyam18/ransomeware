@@ -409,13 +409,14 @@ export function dateDiffInHrMinSecFromNow(date) {
 export function dateDiffInMonthDayFromnNow(date) {
   const currentDate = new Date();
   const dateDiff = Math.abs(currentDate - date);
-  const diffDays = Math.ceil(dateDiff / (1000 * 60 * 60 * 24)) || '';
+  let diffDays = Math.ceil(dateDiff / (1000 * 60 * 60 * 24)) || '';
+  diffDays -= 1;
   const month = Math.round(diffDays / 30) || '';
   const day = diffDays % 30 || 0;
   let dayDiff = '';
   if (month > 0) {
     dayDiff = `${month} ${month > 1 ? 'Months' : 'Month'}${day > 0 ? `, ${day} ${day > 1 ? 'days' : 'day'}` : null}`;
-  } else {
+  } else if (day > 0) {
     dayDiff = `${day} ${day > 1 ? 'days' : 'day'}`;
   }
   return dayDiff;

@@ -41,18 +41,16 @@ function StatusItemRenderer({ data, field, t }) {
     const msg = (typeof errMsg !== 'undefined' ? errMsg : '');
     const hoverInfo = title || msg;
     return (
-      <div>
-        <Badge id={`status-${field}-${data.name}-${data.id}`} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} className={`font-size-13 badge-soft-${name}`} color={`${name}`} pill>
-          {icon ? (
-            <>
-              <i className="fa fa-spinner fa-spin" />
+      <Badge id={`status-${field}-${data.name}-${data.id}`} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} className={`font-size-13 badge-soft-${name}`} color={`${name}`} pill>
+        {icon ? (
+          <>
+            <i className="fa fa-spinner fa-spin" />
             &nbsp;&nbsp;
-            </>
-          ) : null}
-          {resp}
-          {hoverInfo !== '' ? renderPopOver(hoverInfo, `status-${field}-${data.name}-${data.id}`) : null}
-        </Badge>
-      </div>
+          </>
+        ) : null}
+        {resp}
+        {hoverInfo !== '' ? renderPopOver(hoverInfo, `status-${field}-${data.name}-${data.id}`) : null}
+      </Badge>
     );
   }
 

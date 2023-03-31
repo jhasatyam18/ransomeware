@@ -17,11 +17,21 @@ function DateItemRenderer({ data, field }) {
   if (data[field] === 0) {
     resp = '-';
     return (
-      <>{resp}</>
+      <>
+        <p>
+          {resp}
+        </p>
+
+      </>
     );
   }
   return (
-    <>{resp}</>
+    <>
+      <p style={{ textAlign: 'center' }}>
+        {resp}
+      </p>
+
+    </>
   );
 }
 

@@ -91,7 +91,7 @@ export const TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG = [
 export const REPLICATION_JOBS = [
   { label: 'Virtual Machine', field: 'vmName', allowFilter: true, checked: true },
   { label: 'Disk Id', field: 'diskId' },
-  { label: 'Iterations', field: 'iterationNumber' },
+  { label: 'Iteration', field: 'iterationNumber' },
   { label: 'Data Changed', field: 'changedSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Data Transferred', field: 'transferSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Replication Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
@@ -116,7 +116,7 @@ export const PROTECTION_PLAN_RECOVERY_JOBS = [
 
 export const REPLICATION_VM_JOBS = [
   { label: 'Virtual Machine', field: 'vmName', allowFilter: true, checked: true },
-  { label: 'Iterations', field: 'iterationNumber' },
+  { label: 'Iteration', field: 'iterationNumber' },
   { label: 'Changed', field: 'changedSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Transferred', field: 'transferredSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Replication Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
