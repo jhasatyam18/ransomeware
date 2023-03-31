@@ -121,7 +121,7 @@ export function moveNodesToOnline() {
  */
 export function offlineNode(id, name) {
   return (dispatch) => {
-    dispatch(showApplicationLoader(`${API_NODES}-${id}`, `Moving node ${name} to offline`));
+    dispatch(showApplicationLoader(`${API_NODES}-${id}`, `Marking node ${name} to offline`));
     const obj = createPayload(API_TYPES.POST, {});
     return callAPI(`${API_NODES}/${id}/offline`, obj)
       .then((json) => {
@@ -145,7 +145,7 @@ export function offlineNode(id, name) {
  */
 export function onlineNode(id, name) {
   return (dispatch) => {
-    dispatch(showApplicationLoader(`${API_NODES}-${id}`, `Moving node ${name} to online`));
+    dispatch(showApplicationLoader(`${API_NODES}-${id}`, `Marking node ${name} to online`));
     const obj = createPayload(API_TYPES.POST, {});
     return callAPI(`${API_NODES}/${id}/online`, obj)
       .then((json) => {
