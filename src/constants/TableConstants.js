@@ -122,7 +122,7 @@ export const REPLICATION_VM_JOBS = [
   { label: 'Replication Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Job Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER, allowFilter: true, checked: true },
   { label: 'Sync Status', field: 'syncStatus', itemRenderer: STATUS_ITEM_RENDERER, allowFilter: true, checked: true },
-  { label: 'Checkpoint', field: 'currenSnapshotTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Sync Time', field: 'currenSnapshotTime', itemRenderer: DATE_ITEM_RENDERER },
 ];
 
 // Table fields for recovery virtual machines
@@ -142,7 +142,7 @@ export const TABLE_PROTECTION_PLAN_REPLICATIONS = [
   { label: 'Data Reduction (%)', field: 'dataReductionRatio' },
   { label: 'Job Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
   { label: 'Sync Status', field: 'syncStatus', itemRenderer: STATUS_ITEM_RENDERER },
-  { label: 'Checkpoint', field: 'lastSyncTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Sync Time', field: 'lastSyncTime', itemRenderer: DATE_ITEM_RENDERER },
 ];
 
 // Table fields for protection plan
