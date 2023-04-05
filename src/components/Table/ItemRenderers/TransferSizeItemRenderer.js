@@ -1,10 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import DMProgressBar from './DMProgressBar';
 import { JOB_RUNNING_STATUS, JOB_IN_PROGRESS, PARTIALLY_COMPLETED } from '../../../constants/AppStatus';
 
 function TransferSizeItemRenderer({ data, field }) {
   let completed = 0;
+  const [size, setSize] = useState();
   // progress bar for vm transfer size
+  useEffect(() => {
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    // converted data to bytes
+    const bytes = data[field];
+    let i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
+    try {
+      if (Number.isNaN(i)) {
+        i = 0;
+      }
+      if (bytes === 0 && data.status === 'running') {
+        setSize('-');
+      } else {
+        setSize(`${Math.round(bytes / 1024 ** i, 2)}  ${sizes[i]}`);
+      }
+    } catch (error) {
+      setSize('-');
+    }
+  }, []);
+
   if (field === 'transferredSize') {
     if (data.changedSize !== 0 && data.transferredSize !== 0 && (data.status === JOB_RUNNING_STATUS || data.status === JOB_IN_PROGRESS || data.status === PARTIALLY_COMPLETED)) {
       const changeBytes = data.changedSize * 1024 * 1024;
@@ -25,28 +45,16 @@ function TransferSizeItemRenderer({ data, field }) {
   if (completed > 0 && completed < 100) {
     return (
       <div>
-        <DMProgressBar completed={completed} data={data} />
+        <DMProgressBar completed={completed} data={data} size={size} />
       </div>
     );
   }
 
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-  // converted data to bytes
-  const bytes = data[field];
-  let i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
-  try {
-    if (Number.isNaN(i)) {
-      i = 0;
-    }
-    if (bytes === 0 && data.status === 'running') return '-';
-    return (
-      <div>
-        {`${Math.round(bytes / 1024 ** i, 2)}  ${sizes[i]}`}
-      </div>
-    );
-  } catch (error) {
-    return '-';
-  }
+  return (
+    <div>
+      {size}
+    </div>
+  );
 }
 
 export default TransferSizeItemRenderer;

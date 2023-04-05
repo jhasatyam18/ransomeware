@@ -4,17 +4,19 @@ import { PARTIALLY_COMPLETED } from '../../../constants/AppStatus';
 
 const DMProgressBar = (props) => {
   const [popoverOpen, setPopoverOpen] = useState(false);
-  const { completed, data } = props;
+  const { completed, data, size } = props;
   const key = `transferred-rate-popover-${data.id}-${completed}`;
 
   const renderPopOver = () => (
-    <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: 'black', width: '165px', borderRadius: '5px' }}>
+    <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: 'black', width: '190px', borderRadius: '5px' }}>
       <PopoverBody>
-        Transeferred Data -
+        Transferred Data
         {' '}
         {completed}
-        {' '}
         %
+        (
+        {size}
+        )
       </PopoverBody>
     </Popover>
   );
