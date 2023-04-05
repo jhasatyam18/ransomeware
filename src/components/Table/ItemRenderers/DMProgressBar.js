@@ -33,7 +33,7 @@ const DMProgressBar = (props) => {
           %
         </div>
       </div>
-      {completed < 20 ? renderPopOver() : null}
+      { renderPopOver() }
     </>
   );
 };
