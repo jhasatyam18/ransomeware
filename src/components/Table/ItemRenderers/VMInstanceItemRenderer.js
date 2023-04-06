@@ -14,11 +14,12 @@ function VMInstanceItemRenderer(props) {
   }
 
   const renderLabel = () => {
-    const memory = getMemoryInfo(memoryMB);
+    let memory = getMemoryInfo(memoryMB);
+    memory = memory.join(' ');
     if (recoverySite.platformDetails.platformType === PLATFORM_TYPES.VMware) {
       return (
         <>
-          <span>{`${memory},`}</span>
+          <span>{`${memory} ,`}</span>
              &nbsp;
           <span>{`${numCPU} CPU`}</span>
         </>
