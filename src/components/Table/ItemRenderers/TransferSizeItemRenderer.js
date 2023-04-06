@@ -9,7 +9,10 @@ function TransferSizeItemRenderer({ data, field }) {
   useEffect(() => {
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
     // converted data to bytes
-    const bytes = data[field];
+    let bytes = data[field];
+    if (field === 'transferSize') {
+      bytes = data.changedTransfer;
+    }
     let i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
     try {
       if (Number.isNaN(i)) {
