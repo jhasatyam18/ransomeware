@@ -21,7 +21,7 @@ function VMInstanceItemRenderer(props) {
         <>
           <span>{`${memory} ,`}</span>
              &nbsp;
-          <span>{`${numCPU} CPU`}</span>
+          <span>{`${numCPU} VCPU`}</span>
         </>
       );
     }

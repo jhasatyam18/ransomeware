@@ -6,25 +6,33 @@ function TransferSizeItemRenderer({ data, field }) {
   let completed = 0;
   const [size, setSize] = useState();
   useEffect(() => {
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
     let bytes = data[field];
+    if (data.id === 172 && field === 'transferSize') {
+      setSize('');
+    }
     if (field === 'transferSize') {
       bytes = data.changedTransfer;
     }
+
+    const convertedData = calculateSize(bytes);
+    setSize(convertedData);
+  }, []);
+
+  function calculateSize(bytes) {
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
     let i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
     try {
       if (Number.isNaN(i)) {
         i = 0;
       }
       if (bytes === 0 && data.status === 'running') {
-        setSize('-');
-      } else {
-        setSize(`${Number.parseFloat((bytes / 1024 ** i).toFixed(2).replace(/[.,]00$/, ''))}  ${sizes[i]}`);
+        return '-';
       }
+      return `${Number.parseFloat((bytes / 1024 ** i).toFixed(2).replace(/[.,]00$/, ''))}  ${sizes[i]}`;
     } catch (error) {
-      setSize('-');
+      return '-';
     }
-  }, []);
+  }
 
   if (field === 'transferredSize') {
     if (data.changedSize !== 0 && data.transferredSize !== 0 && (data.status === JOB_RUNNING_STATUS || data.status === JOB_IN_PROGRESS || data.status === PARTIALLY_COMPLETED)) {
@@ -53,7 +61,7 @@ function TransferSizeItemRenderer({ data, field }) {
 
   return (
     <div>
-      {size}
+      {calculateSize(data[field])}
     </div>
   );
 }
