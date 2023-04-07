@@ -5,10 +5,8 @@ import { JOB_RUNNING_STATUS, JOB_IN_PROGRESS, PARTIALLY_COMPLETED } from '../../
 function TransferSizeItemRenderer({ data, field }) {
   let completed = 0;
   const [size, setSize] = useState();
-  // progress bar for vm transfer size
   useEffect(() => {
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-    // converted data to bytes
     let bytes = data[field];
     if (field === 'transferSize') {
       bytes = data.changedTransfer;
@@ -21,7 +19,7 @@ function TransferSizeItemRenderer({ data, field }) {
       if (bytes === 0 && data.status === 'running') {
         setSize('-');
       } else {
-        setSize(`${Math.round(bytes / 1024 ** i, 2)}  ${sizes[i]}`);
+        setSize(`${Number.parseFloat((bytes / 1024 ** i).toFixed(2).replace(/[.,]00$/, ''))}  ${sizes[i]}`);
       }
     } catch (error) {
       setSize('-');

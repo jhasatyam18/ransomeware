@@ -186,7 +186,7 @@ export function calculateChangedData(val) {
     const units = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
     const factor = 1024;
     let index = parseInt(Math.floor(Math.log(val) / Math.log(factor)), 10);
-    const result = Math.round(val / (factor ** index), 2);
+    const result = Math.parseFloat((val / (factor ** index)).toFixed(2).replace(/[.,]00$/, ''));
     if (index > 3) {
       index = 3;
     }
