@@ -320,9 +320,43 @@ max-height: 55vh;
   width: 100%;
 }
 
+.paginator_input_div{
+  width: 50%;
+  border-color: $gray-600;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.paginator_input{
+  display: flex;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: $gray-300;
+    border: none ;
+    background-color: $gray-500;
+    outline: none;
+    text-align: right;
+}
+
+.dmaipaginator_totalpage{
+  width: 50%;
+  border-color: $gray-600;
+}
+
+.totalpag_text{
+  position: relative;
+  top:8px;
+}
 .modal_node{
   width: 510px;
 }
 .nic_modal_Width{
   width: 490px;
+}
+
+.input_div{
+  background-color: $gray-500;
+  max-width: 100px !important;
 }

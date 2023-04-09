@@ -456,7 +456,7 @@ export function getGCPVMConfig(vm) {
         hasChildren: true,
         title: 'General',
         children: {
-          [`${key}-vmConfig.general.guestOS`]: { label: 'Guest OS', fieldInfo: 'info.protectionplan.resource.guest.os', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select guest operating system', shouldShow: true, options: (u) => getSupportedOSTypes(u) },
+          [`${key}-vmConfig.general.guestOS`]: { label: 'GuestOS Family', fieldInfo: 'info.protectionplan.resource.guest.os', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select guest operating system', shouldShow: true, options: (u) => getSupportedOSTypes(u) },
           [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', fieldInfo: 'info.protectionplan.instance.type', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
           [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.volume.type.gcp', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u), disabled: (u, f) => shouldDisableStorageType(u, f) },
           // [`${key}-vmConfig.general.bootOrder`]: { label: 'Boot Order', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select boot order.', shouldShow: true, options: (u) => geBootPriorityOptions(u) },
@@ -486,7 +486,7 @@ export function getAwsVMConfig(vm) {
         hasChildren: true,
         title: 'General',
         children: {
-          [`${key}-vmConfig.general.guestOS`]: { label: 'Guest OS', fieldInfo: 'info.protectionplan.resource.guest.os', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select guest operating system', shouldShow: true, options: (u) => getSupportedOSTypes(u) },
+          [`${key}-vmConfig.general.guestOS`]: { label: 'GuestOS Family', fieldInfo: 'info.protectionplan.resource.guest.os', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select guest operating system', shouldShow: true, options: (u) => getSupportedOSTypes(u) },
           [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', fieldInfo: 'info.protectionplan.instance.type', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
           [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.instance.volume.type.aws', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u), onChange: (user, dispatch) => onAwsStorageTypeChange(user, dispatch), disabled: (u, f) => shouldDisableStorageType(u, f) },
           [`${key}-vmConfig.general.volumeIOPS`]: { label: 'Volume IOPS', fieldInfo: 'info.protectionplan.instance.volume.iops.aws', type: FIELD_TYPE.NUMBER, errorMessage: 'Provide volume IOPS.', disabled: (u, f) => shouldEnableAWSIOPS(u, f), min: 0 },
@@ -941,14 +941,6 @@ export function getMatchingInsType(values, ins) {
   return insType;
 }
 
-export function convertKBtoUnit(data) {
-  const sizes = ['KB', 'MB', 'GB', 'TB'];
-  if (data === 0) return '-';
-  const i = parseInt(Math.floor(Math.log(data) / Math.log(1024)), 10);
-  if (i >= sizes.length) return '-';
-  return `${Math.round(data / 1024 ** i, 2)} ${sizes[i]}`;
-}
-
 export function showInstallCloudPackageOption(user) {
   const { values } = user;
   const recoveryType = getValue('ui.values.recoveryPlatform', values);
@@ -990,7 +982,7 @@ export function getVMwareGeneralSettings(key, vm) {
       hasChildren: true,
       title: 'Configurtion',
       children: {
-        [`${key}-vmConfig.general.guestOS`]: { label: 'Guest OS', fieldInfo: 'info.protectionplan.resource.guest.os', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select guest operating system', shouldShow: true, options: (u) => getSupportedOSTypes(u) },
+        [`${key}-vmConfig.general.guestOS`]: { label: 'GuestOS Family', fieldInfo: 'info.protectionplan.resource.guest.os', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select guest operating system', shouldShow: true, options: (u) => getSupportedOSTypes(u) },
         [`${key}-vmConfig.general.folderPath`]: { label: 'Location', description: '', type: STACK_COMPONENT_LOCATION, dataKey: 'ui.drplan.vms.location', isMultiSelect: false, errorMessage: 'Required virtual machine path', shouldShow: true, validate: (value, user) => isEmpty(value, user), fieldInfo: 'info.vmware.folder.location', getTreeData: ({ values, dataKey }) => getReacoveryLocationData({ values, dataKey }), baseURL: API_FETCH_VMWARE_LOCATION, baseURLIDReplace: '<id>:ui.values.recoverySiteID', urlParms: ['type', 'entity'], urlParmKey: ['static:Folder', 'object:value'], enableSelection: (node) => enableNodeDatastore(node) },
         [`${key}-vmConfig.general.hostMoref`]: { label: 'Compute', fieldInfo: 'info.vmware.compute', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select compute resourced.', shouldShow: true, options: (u, fieldKey) => getComputeResourceOptions(u, fieldKey), onChange: (user, dispatch) => getStorageForVMware(user, dispatch) },
         [`${key}-vmConfig.general.dataStoreMoref`]: { label: 'Storage', fieldInfo: 'info.vmware.storage', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select storage', shouldShow: true, options: (u, fieldKey) => getDatastoreOptions(u, fieldKey) },
@@ -1015,7 +1007,7 @@ export function getAzureGeneralSettings(key, vm) {
       hasChildren: true,
       title: 'General',
       children: {
-        [`${key}-vmConfig.general.guestOS`]: { label: 'Guest OS', fieldInfo: 'info.protectionplan.resource.guest.os', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select guest operating system', shouldShow: true, options: (u) => getSupportedOSTypes(u) },
+        [`${key}-vmConfig.general.guestOS`]: { label: 'GuestOS Family', fieldInfo: 'info.protectionplan.resource.guest.os', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select guest operating system', shouldShow: true, options: (u) => getSupportedOSTypes(u) },
         [`${key}-vmConfig.general.folderPath`]: { label: 'Resource Group', fieldInfo: 'info.protectionplan.resource.group.azure', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select Resource Group', shouldShow: true, options: (u) => getResourceTypeOptions(u), onChange: ({ fieldKey, user }) => onAzureResourceChange({ fieldKey, user }) },
         [`${key}-vmConfig.general.availibility.zone`]: { label: 'Availability Zone', fieldInfo: 'info.protectionplan.availibility.zone.azure', type: FIELD_TYPE.SELECT, errorMessage: 'Select Availability Zone', shouldShow: true, options: (u) => getAvailibilityZoneOptions(u) },
         [`${key}-vmConfig.general.instanceType`]: { label: 'VM Size', fieldInfo: 'info.protectionplan.vmsize.azure', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },

@@ -10,7 +10,7 @@ function SizeItemRenderer({ data, field }) {
   if (bytes === 0) return '0 Byte';
   return (
     <div>
-      {`${Math.round(bytes / 1024 ** i, 2)}  ${sizes[i]}`}
+      {`${parseFloat((bytes / 1024 ** i).toFixed(2))}  ${sizes[i]}`}
     </div>
   );
 }

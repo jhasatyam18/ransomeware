@@ -7,7 +7,6 @@ import {
   Table, Thead, Tr, Th, Tbody, Td,
 } from 'react-super-responsive-table';
 import { withTranslation } from 'react-i18next';
-// import SimpleBar from 'simplebar-react';
 import DMTableRow from './DMTableRows';
 
 class DMTable extends Component {

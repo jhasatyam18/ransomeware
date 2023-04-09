@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardTitle, Col, Row } from 'reactstrap';
-import { convertMinutesToDaysHourFormat } from '../../utils/AppUtils';
-import { convertKBtoUnit, getValue } from '../../utils/InputUtils';
+import { getValue } from '../../utils/InputUtils';
+import { convertMinutesToDaysHourFormat, getStorageWithUnit } from '../../utils/AppUtils';
 import { getFilteredObject } from '../../utils/PayloadUtil';
 
 class ReversePlanSummary extends Component {
@@ -40,7 +40,7 @@ class ReversePlanSummary extends Component {
         size += disk.size;
       });
     });
-    size = convertKBtoUnit(size);
+    size = getStorageWithUnit(size);
     return (
       <>
         <Card className="padding-20">
