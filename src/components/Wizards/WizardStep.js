@@ -13,7 +13,7 @@ class WizardStep extends Component {
         <CardBody className="modal-card-body">
           <Form>
             {
-              fields.map((field) => (<DMField dispatch={dispatch} user={user} fieldKey={field} />))
+              fields.map((field) => (<DMField disabled={field === 'drplan.enableReverse'} dispatch={dispatch} user={user} fieldKey={field} />))
             }
           </Form>
         </CardBody>
