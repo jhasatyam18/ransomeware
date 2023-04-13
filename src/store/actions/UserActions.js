@@ -335,6 +335,29 @@ export function saveApplicationToken(token) {
   };
 }
 
+/**
+ * updateValues : use to update batch object values in store
+ * Use this when a object can be form and need to append in the user -> values
+ * For single value change use valueChange
+ * @param {*} object
+ * @returns
+ */
+export function updateValues(valueObject) {
+  return {
+    type: Types.UPDATE_VALUES,
+    valueObject,
+  };
+}
+
+/**
+ * forceComponentUpdate : use for HOC to trigger required action
+ */
+export function forceComponentUpdate() {
+  return {
+    type: Types.DM_FORCE_UPDATE,
+  };
+}
+
 export function setSessionInfo(token, username) {
   setCookie(APPLICATION_API_TOKEN, token);
   setCookie(APPLICATION_API_USER, username);
@@ -490,7 +513,7 @@ export function onAwsCopyNetConfigChange({ value, fieldKey }) {
         // nic index
         const index = keys[keys.length - 2];
         const vmKey = `${keys[0]}-${keys[1]}`;
-        const selectedVMS = getValue('ui.site.seletedVMs', values);
+        const selectedVMS = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
         Object.keys(selectedVMS).forEach((key) => {
           if (vmKey === key) {
             const nics = selectedVMS[key].virtualNics;
@@ -727,8 +750,8 @@ export function getVMwareVMSProps(vms) {
       } else {
         vmString = vms;
       }
+      dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, selectedVMS));
       dispatch(setVMGuestOSInfo(selectedVMS));
-      dispatch(valueChange('ui.site.seletedVMs', selectedVMS));
       if (vmString && vmString.length > 0) {
         vmString = vmString.join(',');
         dispatch(fetchSelectedVmsProperty(siteId, vmString, selectedVMS));

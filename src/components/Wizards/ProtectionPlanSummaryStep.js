@@ -3,6 +3,7 @@ import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardTitle, Col, Row } from 'reactstrap';
 import DMTable from '../Table/DMTable';
 import { TABLE_ALERTS } from '../../constants/TableConstants';
+import { STATIC_KEYS } from '../../constants/InputConstants';
 import { convertMinutesToDaysHourFormat, getStorageWithUnit } from '../../utils/AppUtils';
 import { getValue } from '../../utils/InputUtils';
 
@@ -37,7 +38,7 @@ class ProtectionPlanSummaryStep extends Component {
     const replicationInterval = `Every ${convertMinutesToDaysHourFormat(getValue('drplan.replicationInterval', values))}`;
     const protectedSiteName = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${pSite}`)[0].name;
     const recoverySiteName = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${rSite}`)[0].name;
-    const selectedVMs = getValue('ui.site.seletedVMs', values);
+    const selectedVMs = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
     const replicationUnit = getValue('ui.values.replication.interval.type', values);
     let size = 0;
     Object.keys(selectedVMs).forEach((key) => {

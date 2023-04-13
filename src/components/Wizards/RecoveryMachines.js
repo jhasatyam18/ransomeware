@@ -4,8 +4,9 @@ import { withTranslation } from 'react-i18next';
 import DMTable from '../Table/DMTable';
 import DMTPaginator from '../Table/DMTPaginator';
 import DMField from '../Shared/DMField';
-import { TABLE_FILTER_TEXT, TABLE_RECOVERY_VMS } from '../../constants/TableConstants';
 import { handleProtectVMSeletion, handleSelectAllRecoveryVMs } from '../../store/actions/SiteActions';
+import { TABLE_FILTER_TEXT, TABLE_RECOVERY_VMS } from '../../constants/TableConstants';
+import { STATIC_KEYS } from '../../constants/InputConstants';
 import { getValue } from '../../utils/InputUtils';
 import { filterData } from '../../utils/AppUtils';
 
@@ -38,7 +39,7 @@ class RecoveryMachines extends Component {
     const { values } = user;
     const { hasFilterString, searchData, dataToDisplay } = this.state;
     const vms = getValue('ui.recovery.vms', values);
-    let selectedVMs = getValue('ui.site.seletedVMs', values);
+    let selectedVMs = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
     const data = (hasFilterString ? searchData : vms);
     if (!selectedVMs) {
       selectedVMs = {};

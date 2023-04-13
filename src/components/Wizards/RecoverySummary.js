@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import { Card, CardBody, CardTitle, Col, Row } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
 import DMTable from '../Table/DMTable';
-import { TABLE_PROTECT_VM_VMWARE } from '../../constants/TableConstants';
 import { getValue } from '../../utils/InputUtils';
 import { getStorageWithUnit } from '../../utils/AppUtils';
+import { STATIC_KEYS } from '../../constants/InputConstants';
+import { TABLE_PROTECT_VM_VMWARE } from '../../constants/TableConstants';
 
 class RecoverySummary extends Component {
   getRecoveryType() {
@@ -36,7 +37,7 @@ class RecoverySummary extends Component {
   render() {
     const { dispatch, user } = this.props;
     const { values } = user;
-    const selectedVMs = getValue('ui.site.seletedVMs', values);
+    const selectedVMs = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
     const protectionplanID = getValue('recovery.protectionplanID', values);
     const selectedDrPlan = getValue('ui.values.drplan', values).filter((plan) => `${plan.id}` === `${protectionplanID}`)[0];
     const data = [];

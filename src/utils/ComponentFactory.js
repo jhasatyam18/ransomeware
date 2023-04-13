@@ -178,7 +178,7 @@ export function getItemRendererComponent(render, data, field, user, dispatch) {
     case SITE_NAME_LINK_RENDERER:
       return <SiteLinkRenderer data={data} dispatch={dispatch} user={user} />;
     case RECOVERY_STATUS_RENDERER:
-      return <RecoveryStatusRenderer data={data} field={field} />;
+      return <RecoveryStatusRenderer data={data} field={field} dispatch={dispatch} user={user} />;
     default:
       return (<div> 404 </div>);
   }

@@ -5,7 +5,7 @@ export default function user(state = INITIAL_STATE.user, action) {
   switch (action.type) {
     case Types.APP_REFRESH:
       return {
-        ...state, context: { refresh: state.context.refresh + 1 },
+        ...state, context: { ...state.context, refresh: state.context.refresh + 1 },
       };
     case Types.AUTHENTICATE_USER_REQUEST:
       return {
@@ -75,6 +75,19 @@ export default function user(state = INITIAL_STATE.user, action) {
         ...state, privileges: action.privileges,
       };
     }
+    case Types.UPDATE_VALUES:
+      return {
+        ...state,
+        values: {
+          ...state.values,
+          ...action.valueObject,
+        },
+        context: { ...state.context, updateID: state.context.updateID + 1 },
+      };
+    case Types.DM_FORCE_UPDATE:
+      return {
+        ...state, context: { ...state.context, updateID: state.context.updateID + 1 },
+      };
     case Types.TREE_DATA: {
       return {
         ...state, values: { ...state.values, [action.key]: action.value },

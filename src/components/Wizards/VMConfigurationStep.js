@@ -7,6 +7,7 @@ import DMAccordion from '../Shared/DMAccordion';
 import RecoveryStatusItemRenderer from '../Table/ItemRenderers/RecoveryStatusItemRenderer';
 import { createVMConfigStackObject, getValue } from '../../utils/InputUtils';
 import { isRemovedOrRecoveredVM } from '../../utils/validationUtils';
+import { STATIC_KEYS } from '../../constants/InputConstants';
 
 class VMConfigurationStep extends Component {
   constructor() {
@@ -63,15 +64,16 @@ class VMConfigurationStep extends Component {
       return this.renderNonEditableVM(vm);
     }
     const config = createVMConfigStackObject(vm, user);
+    const key = (typeof vm === 'string' ? vm : vm.moref);
     return (
-      <DMAccordion title={vm.name} config={config} dispatch={dispatch} user={user} key={`accordion-vm-config-${vm.name}`} openByDefault={index === 0 ? 'true' : false} />
+      <DMAccordion title={vm.name} config={config} dispatch={dispatch} user={user} key={`accordion-vm-config-${vm.name}`} openByDefault={index === 0 ? 'true' : false} copyConfig={index === 0 ? 'true' : 'false'} sourceID={key} />
     );
   }
 
   renderNodes() {
     const { user } = this.props;
     const { values } = user;
-    const selectedVMs = getValue('ui.site.seletedVMs', values);
+    const selectedVMs = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
     return Object.keys(selectedVMs).map((key, index) => (
       this.renderVMConfig(selectedVMs[key], index)
     ));

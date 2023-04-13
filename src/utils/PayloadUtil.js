@@ -1,12 +1,14 @@
 import { PLATFORM_TYPES, RECOVERY_ENTITY_TYPES, STATIC_KEYS } from '../constants/InputConstants';
 import { FIELDS } from '../constants/FieldsConstant';
-import { getValue,
+import {
+  getValue,
   shouldShowNodePlatformType,
   shouldShowNodeManagementPort,
   shouldShowNodeReplicationPort,
   shouldShowNodeEncryptionKey,
   getAWSNetworkIDFromName,
-  convertMemoryToMb } from './InputUtils';
+  convertMemoryToMb,
+} from './InputUtils';
 
 export function getKeyStruct(filterKey, values) {
   const result = {};
@@ -50,7 +52,7 @@ export function getConfigureSitePayload(user) {
 
 export function getCreateDRPlanPayload(user, sites) {
   const { values } = user;
-  const vms = getValue('ui.site.seletedVMs', values);
+  const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   const result = getKeyStruct('drplan.', values);
   const rSite = sites.filter((site) => getFilteredObject(site, result.drplan.recoverySite, 'id'))[0];
   const pSite = sites.filter((site) => getFilteredObject(site, result.drplan.protectedSite, 'id'))[0];
@@ -77,7 +79,7 @@ export function getFilteredObject(data, keyToMatch, arrayFieldKey) {
 
 export function getRecoveryPayload(user, isMigration = false) {
   const { values } = user;
-  // const vms = getValue('ui.site.seletedVMs', values);
+  // const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   const result = getKeyStruct('recovery.', values);
   // Object.keys(vms).forEach((key) => {
   //   const { name } = vms[key];
@@ -92,7 +94,7 @@ export function getRecoveryPayload(user, isMigration = false) {
 
 export function getVMConfigPayload(user) {
   const { values } = user;
-  const vms = getValue('ui.site.seletedVMs', values);
+  const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   const instanceDetails = [];
   const recoveryPlatform = getValue('ui.values.recoveryPlatform', values) || '';
   Object.keys(vms).forEach((key) => {
@@ -109,7 +111,7 @@ export function getVMConfigPayload(user) {
     datastoreMoref = datastoreMoref.value || '';
     let numCPU = getValue(`${key}-vmConfig.general.numcpu`, values);
     numCPU = parseInt(numCPU, 10) || 0;
-    const memory = getValue(`${key}-vmConfig.general-memory`, values) || '';
+    const memory = getValue(`${key}-vmConfig.general-memory`, values) || 0;
     const memoryunit = getValue(`${key}-vmConfig.general-unit`, values) || '';
     const memoryMB = convertMemoryToMb(memory, memoryunit || 'GB');
     const datacenterMoref = getValue('ui.site.vmware.datacenterMoref', values) || '';
@@ -245,7 +247,7 @@ function getReplicationInterval(type, value) {
 
 function getRecoveryConfigVMDetails(user) {
   const { values } = user;
-  const vms = getValue('ui.site.seletedVMs', values);
+  const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   const machineDetails = [];
   let instanceConfig = [];
   instanceConfig = getVMConfigPayload(user);
@@ -350,7 +352,7 @@ function getTimeFromDate(value) {
 
 export function getEditProtectionPlanPayload(user, sites) {
   const { values } = user;
-  const vms = getValue('ui.site.seletedVMs', values);
+  const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   const result = getKeyStruct('drplan.', values);
   const rSite = sites.filter((site) => getFilteredObject(site, result.drplan.recoverySite, 'id'))[0];
   const pSite = sites.filter((site) => getFilteredObject(site, result.drplan.protectedSite, 'id'))[0];
@@ -393,6 +395,58 @@ export function getRecoveryEntityType() {
   // setting VIRTUALMACHINE as default for now
   // TODO : MODIFY ONCE FCD or other entity ui support added
   return RECOVERY_ENTITY_TYPES.VIRTUALMACHINE;
+}
+
+export function getSourceConfig(key, user) {
+  const { values } = user;
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+  let folderPath = '';
+  folderPath = getValue(`${key}-vmConfig.general.folderPath`, values) || '';
+  if (typeof folderPath === 'object' && folderPath.length > 0) {
+    const [index] = folderPath;
+    folderPath = index;
+  }
+  const hostMoref = getValue(`${key}-vmConfig.general.hostMoref`, values);
+  const datastoreMoref = getValue(`${key}-vmConfig.general.dataStoreMoref`, values);
+  let numCPU = getValue(`${key}-vmConfig.general.numcpu`, values) || 0;
+  numCPU = parseInt(numCPU, 10);
+  const memory = getValue(`${key}-vmConfig.general-memory`, values);
+  const memoryunit = getValue(`${key}-vmConfig.general-unit`, values);
+  const memoryMB = convertMemoryToMb(memory, memoryunit || 'GB');
+  const datacenterMoref = getValue('ui.site.vmware.datacenterMoref', values);
+  let instanceType = '';
+  const insType = getValue(`${key}-vmConfig.general.instanceType`, values);
+  if (typeof insType === 'object' && insType.value) {
+    instanceType = insType.value;
+  } else {
+    instanceType = insType;
+  }
+  const volumeType = getValue(`${key}-vmConfig.general.volumeType`, values);
+  let volumeIOPS = getValue(`${key}-vmConfig.general.volumeIOPS`, values) || 0;
+  if (volumeType === 'gp2') {
+    volumeIOPS = 0;
+  }
+  const tags = getValue(`${key}-vmConfig.general.tags`, values) || [];
+  const networks = getVMNetworkConfig(key, values);
+  let availZone = '';
+  if (networks.length > 0) {
+    availZone = networks[0].availZone;
+  }
+  let sgs = getValue(`${key}-vmConfig.network.securityGroup`, values);
+  if (recoveryPlatform === PLATFORM_TYPES.AWS) {
+    sgs = [];
+  }
+  if (recoveryPlatform === PLATFORM_TYPES.Azure) {
+    availZone = getValue(`${key}-vmConfig.general.availibility.zone`, values);
+  }
+  const securityGroup = joinArray(sgs, ',');
+  const preScript = getValue(`${key}-vmConfig.scripts.preScript`, values);
+  const postScript = getValue(`${key}-vmConfig.scripts.postScript`, values);
+  const repPreScript = getValue(`${key}-protection.scripts.preScript`, values) || '';
+  const repPostScript = getValue(`${key}-protection.scripts.postScript`, values) || '';
+  const genC = { instanceType, availZone, folderPath, volumeType, securityGroup, volumeIOPS, tags, memoryMB, hostMoref: hostMoref.value, datastoreMoref: datastoreMoref.value, numCPU, datacenterMoref };
+  const scripts = { preScript, postScript, repPostScript, repPreScript };
+  return { ...genC, networks, ...scripts };
 }
 
 function setVMProperties(vm, values) {

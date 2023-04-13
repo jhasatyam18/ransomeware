@@ -46,7 +46,7 @@ export function onAwsCopyNetConfigChange({ value, fieldKey }) {
         // nic index
         const index = keys[keys.length - 2];
         const vmKey = `${keys[0]}-${keys[1]}`;
-        const selectedVMS = getValue('ui.site.seletedVMs', values);
+        const selectedVMS = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
         Object.keys(selectedVMS).forEach((key) => {
           if (vmKey === key) {
             const nics = selectedVMS[key].virtualNics;
@@ -114,6 +114,18 @@ export function onAwsVPCChange({ value, fieldKey }) {
       dispatch(valueChange(`${networkKey}-network`, ''));
     }
   };
+}
+
+export function addAssociatedIPForAzure({ fieldKey, ip, id, values }) {
+  if (typeof ip === 'undefined' || ip === '' || typeof id === 'undefined' || id === '') {
+    return;
+  }
+  let ips = getValue(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, values) || {};
+  const hasKey = Object.keys(ips).filter((key) => ips[key].ip === ip);
+  if (hasKey.length === 0) {
+    ips = { ...ips, [ip]: { label: ip, value: id, fieldKey } };
+  }
+  return ip;
 }
 
 export function addAssociatedReverseIP({ fieldKey, ip, id }) {

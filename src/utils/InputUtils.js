@@ -739,7 +739,7 @@ export function shouldDisableStorageType(user) {
 }
 
 export function getSourceVMTags(vmKeyTag, values) {
-  const vms = getValue('ui.site.seletedVMs', values);
+  const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   const vmKey = vmKeyTag.replace('-vmConfig.general.tags', '');
   const vmObj = vms[vmKey];
   if (vmObj && vmObj.tags) {
@@ -988,7 +988,7 @@ export function getVMwareGeneralSettings(key, vm) {
   const data = [
     {
       hasChildren: true,
-      title: 'Configurtion',
+      title: 'General',
       children: {
         [`${key}-vmConfig.general.guestOS`]: { label: 'GuestOS Family', fieldInfo: 'info.protectionplan.resource.guest.os', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select guest operating system', shouldShow: true, options: (u) => getSupportedOSTypes(u) },
         [`${key}-vmConfig.general.folderPath`]: { label: 'Location', description: '', type: STACK_COMPONENT_LOCATION, dataKey: 'ui.drplan.vms.location', isMultiSelect: false, errorMessage: 'Required virtual machine path', shouldShow: true, validate: (value, user) => isEmpty(value, user), fieldInfo: 'info.vmware.folder.location', getTreeData: ({ values, dataKey }) => getReacoveryLocationData({ values, dataKey }), baseURL: API_FETCH_VMWARE_LOCATION, baseURLIDReplace: '<id>:ui.values.recoverySiteID', urlParms: ['type', 'entity'], urlParmKey: ['static:Folder', 'object:value'], enableSelection: (node) => enableNodeDatastore(node) },

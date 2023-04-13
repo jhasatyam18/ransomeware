@@ -6,7 +6,7 @@ import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { closeModal } from './ModalActions';
 import { fetchRegions, hideApplicationLoader, loadRecoveryLocationData, showApplicationLoader, valueChange } from './UserActions';
 import { fetchByDelay } from '../../utils/SlowFetch';
-import { getMatchingOSType, getValue, isPlanWithSamePlatform } from '../../utils/InputUtils';
+import { getMatchingOSType, getValue } from '../../utils/InputUtils';
 import { PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
 import { setRecoveryVMDetails } from './DrPlanActions';
 import { fetchAvailibilityZonesForAzure } from './AzureAction';
@@ -255,14 +255,14 @@ export function handleProtectVMSeletion(data, isSelected, primaryKey) {
   return (dispatch, getState) => {
     const { user } = getState();
     const { values } = user;
-    let selectedVMs = getValue('ui.site.seletedVMs', values);
+    let selectedVMs = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
     if (!selectedVMs) {
       selectedVMs = {};
     }
     if (isSelected) {
       if (!selectedVMs || selectedVMs.length === 0 || !selectedVMs[data[primaryKey]]) {
         const newVMs = { ...selectedVMs, [data[primaryKey]]: data };
-        dispatch(valueChange('ui.site.seletedVMs', newVMs));
+        dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, newVMs));
         dispatch(setRecoveryVMDetails(data[primaryKey]));
         // set guest os type of newly selected vm
         dispatch(valueChange(`${data[primaryKey]}-vmConfig.general.guestOS`, getMatchingOSType(data.guestOS)));
@@ -270,7 +270,7 @@ export function handleProtectVMSeletion(data, isSelected, primaryKey) {
     } else if (selectedVMs[data[primaryKey]]) {
       const newVMs = selectedVMs;
       delete newVMs[data[primaryKey]];
-      dispatch(valueChange('ui.site.seletedVMs', newVMs));
+      dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, newVMs));
     }
   };
 }
@@ -288,9 +288,9 @@ export function handleSelectAllRecoveryVMs(value) {
           dispatch(setRecoveryVMDetails(vm.moref));
         }
       });
-      dispatch(valueChange('ui.site.seletedVMs', selectedVMs));
+      dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, selectedVMs));
     } else {
-      dispatch(valueChange('ui.site.seletedVMs', selectedVMs));
+      dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, selectedVMs));
     }
   };
 }
@@ -365,9 +365,13 @@ export function fetchNetworks(id, sourceNet = undefined) {
 export function postPlanSitesSelected() {
   return (dispatch, getState) => {
     const { user } = getState();
+    const { values } = user;
     const recoveryID = getValue('drplan.recoverySite', user.values);
     dispatch(onRecoverSiteChange({ value: recoveryID }));
-    if (isPlanWithSamePlatform(user)) {
+    const recoverySite = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${recoveryID}`)[0];
+    const { platformType } = { ...recoverySite.platformDetails };
+    const targetPlatform = getValue('ui.values.protectionPlatform', values);
+    if (platformType === PLATFORM_TYPES.AWS && targetPlatform === PLATFORM_TYPES.AWS) {
       const protectionID = getValue('ui.values.protectionSiteID', user.values);
       dispatch(fetchNetworks(protectionID, 'source_network'));
     }

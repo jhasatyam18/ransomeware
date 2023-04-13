@@ -4,11 +4,11 @@ import { withTranslation } from 'react-i18next';
 import DMTree from '../Shared/DMTree';
 import DMTable from '../Table/DMTable';
 import DMTPaginator from '../Table/DMTPaginator';
+import { getValue } from '../../utils/InputUtils';
 import { TABLE_FILTER_TEXT, TABLE_PROTECT_VM_VMWARE } from '../../constants/TableConstants';
 import { handleProtectVMSeletion } from '../../store/actions/SiteActions';
-import { getValue } from '../../utils/InputUtils';
+import { PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
 import { filterData, moveSelectedItemsOnTop } from '../../utils/AppUtils';
-import { PLATFORM_TYPES } from '../../constants/InputConstants';
 import { FIELDS } from '../../constants/FieldsConstant';
 
 class DRPlanProtectVMStep extends Component {
@@ -45,7 +45,7 @@ class DRPlanProtectVMStep extends Component {
     const { hasFilterString, searchData, dataToDisplay } = this.state;
     const vms = getValue('ui.site.vms', values);
     const data = (hasFilterString ? searchData : vms);
-    let selectedVMs = getValue('ui.site.seletedVMs', values);
+    let selectedVMs = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
     const platfromType = getValue('ui.values.protectionPlatform', values);
     const field = FIELDS['drplan.vms'];
     const id = getValue('ui.values.protectionSiteID', values);

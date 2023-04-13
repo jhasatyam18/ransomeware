@@ -356,6 +356,21 @@ max-height: 55vh;
   width: 490px;
 }
 
+.remove_checkbox{
+  display: inline-block;
+}
+
+.remove_text{
+  color: #f1b44c;
+}
+
+.remove-sign_icon{
+  position: relative;
+  top: -4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-right: 4px;
+}
 .input_div{
   background-color: $gray-500;
   max-width: 100px !important;

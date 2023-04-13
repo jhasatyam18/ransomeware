@@ -176,8 +176,8 @@ export function fetchSelectedVmsProperty(siteId, vmString, selectedVMS) {
         json.forEach((vm) => {
           vms[vm.moref] = vm;
         });
+        dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, vms));
         dispatch(setVMGuestOSInfo(vms));
-        dispatch(valueChange('ui.site.seletedVMs', vms));
       }
     },
     (err) => {

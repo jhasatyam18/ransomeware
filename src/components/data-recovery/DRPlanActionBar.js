@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { STATUS_STARTED } from '../../constants/AppStatus';
-import { clearValues, fetchScript } from '../../store/actions';
+import { clearValues, fetchScript, valueChange } from '../../store/actions';
 import {
   drPlanStopStart, deletePlan, openRecoveryWizard, openMigrationWizard, openReverseWizard, openEditProtectionPlanWizard,
 } from '../../store/actions/DrPlanActions';
@@ -13,7 +13,7 @@ import { fetchSites } from '../../store/actions/SiteActions';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
 import { CREATE_DR_PLAN_WIZARDS } from '../../constants/WizardConstants';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
-import { PROTECTION_PLANS_STATUS } from '../../constants/InputConstants';
+import { PROTECTION_PLANS_STATUS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { isPlanRecovered } from '../../utils/validationUtils';
 
 class DRPlanActionBar extends Component {
@@ -33,6 +33,7 @@ class DRPlanActionBar extends Component {
     dispatch(clearValues());
     dispatch(fetchSites('ui.values.sites'));
     dispatch(fetchScript());
+    dispatch(valueChange('ui.workflow', UI_WORKFLOW.CREATE_PLAN));
     dispatch(openWizard(CREATE_DR_PLAN_WIZARDS.options, CREATE_DR_PLAN_WIZARDS.steps));
   }
 

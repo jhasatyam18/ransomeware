@@ -327,8 +327,8 @@ export const changePageTitle = (t) => {
 };
 
 export function getMemoryInfo(value) {
-  let val = 0;
-  let unit = 'MB';
+  let val = 1;
+  let unit = 'GB';
   if (typeof value === 'undefined' || value === 0) {
     return [val, unit];
   }

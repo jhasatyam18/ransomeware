@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
 import { Card, CardBody, CardHeader, Col, Collapse, Row } from 'reactstrap';
 import PropTypes from 'prop-types';
+import { withTranslation } from 'react-i18next';
 import DMStackView from './DMStackView';
+import CopyConfig from '../Common/CopyConfig';
+import { getValue } from '../../utils/InputUtils';
+import { STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 
 class DMAccordion extends Component {
   constructor() {
     super();
-    this.state = { isOpen: false, stackIndex: -1 };
+    this.state = { isOpen: false, stackIndex: -1, tableUpdateID: 0, reload: 0 };
     this.toggle = this.toggle.bind(this);
     this.toggleStack = this.toggleStack.bind(this);
   }
@@ -16,6 +20,17 @@ class DMAccordion extends Component {
     if (typeof openByDefault !== 'undefined' && openByDefault === 'true') {
       this.setState({ isOpen: true });
     }
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { user } = nextProps;
+    const { context } = user;
+    const { updateID = 0 } = context;
+    const { tableUpdateID = 0 } = prevState;
+    if (updateID !== 0 && tableUpdateID !== updateID) {
+      return ({ tableUpdateID: updateID, reload: 1 });
+    }
+    return null;
   }
 
   toggle() {
@@ -30,6 +45,16 @@ class DMAccordion extends Component {
     } else {
       this.setState({ stackIndex: index });
     }
+  }
+
+  resetReload() {
+    const { reload } = this.state;
+    if (reload === 0) {
+      return;
+    }
+    setTimeout(() => {
+      this.setState({ reload: 0 });
+    }, 200);
   }
 
   renderChild() {
@@ -47,20 +72,38 @@ class DMAccordion extends Component {
     const { isOpen } = this.state;
     return (
       <div className="wizard-header-options">
-        <div className="wizard-header-div">
-          {isOpen ? <box-icon name="chevron-down" color="white" onClick={this.toggle} style={{ height: 20 }} />
-            : <box-icon name="chevron-right" color="white" onClick={this.toggle} style={{ height: 20 }} /> }
+        <div className="wizard-header-div configured_icons">
+          {isOpen ? <box-icon name="chevron-down" color="white" onClick={this.toggle} style={{ height: 18, cursor: 'pointer' }} />
+            : <box-icon name="chevron-right" color="white" onClick={this.toggle} style={{ height: 18, cursor: 'pointer' }} /> }
         </div>
       </div>
     );
   }
 
+  renderCopyConfig() {
+    const { copyConfig, sourceID, user } = this.props;
+    const { values } = user;
+    const workflow = getValue('ui.workflow', values);
+    if (workflow === UI_WORKFLOW.CREATE_PLAN) {
+      const selectedVMs = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
+      if (typeof copyConfig !== 'undefined' && copyConfig === 'true' && selectedVMs && Object.keys(selectedVMs).length > 1) {
+        return (
+          <CopyConfig ID={sourceID} />
+        );
+      }
+    }
+  }
+
   render() {
-    const { isOpen } = this.state;
+    const { isOpen, reload } = this.state;
     const { title } = this.props;
+    if (reload > 0) {
+      this.resetReload();
+      return '';
+    }
     return (
-      <div key={`dm-accordion-${title}`}>
-        <Card className="margin-bottom-10">
+      <div key={`dm-accordion-${title}`} className="dmaccordian">
+        <Card className="margin-bottom-10 ">
           <CardHeader>
             <Row>
               <Col sm={6}>
@@ -76,6 +119,7 @@ class DMAccordion extends Component {
               <CardBody className="padding-left-0 paddings-right-0">
                 {this.renderChild()}
               </CardBody>
+              {this.renderCopyConfig()}
             </Collapse>
           </CardHeader>
         </Card>
@@ -89,4 +133,4 @@ const propTypes = {
 };
 
 DMAccordion.propTypes = propTypes;
-export default DMAccordion;
+export default (withTranslation()(DMAccordion));
