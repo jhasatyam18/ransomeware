@@ -4,13 +4,14 @@ import { connect } from 'react-redux';
 import { Card, CardBody, Col, Row } from 'reactstrap';
 import DMTable from '../Table/DMTable';
 import { TABLE_PROTECT_VM_VMWARE } from '../../constants/TableConstants';
+import { STATIC_KEYS } from '../../constants/InputConstants';
 import { getValue } from '../../utils/InputUtils';
 
 function TestRecoveryCleanupSummary(props) {
   function render() {
     const { dispatch, user, t } = props;
     const { values } = user;
-    const selectedVMs = getValue('ui.site.seletedVMs', values);
+    const selectedVMs = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
     const data = [];
     Object.keys(selectedVMs).forEach((key) => {
       data.push(selectedVMs[key]);

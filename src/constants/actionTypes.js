@@ -21,6 +21,8 @@ export const APP_USER_PRIVILEGES = 'APP_USER_PRIVILEGES';
 export const APP_USERS = 'APP_USERS';
 export const APP_REFRESH = 'APP_REFRESH';
 export const TREE_DATA = 'TREE_DATA';
+export const UPDATE_VALUES = 'UPDATE_VALUES';
+export const DM_FORCE_UPDATE = 'DM_FORCE_UPDATE';
 
 // Messages
 export const ADD_MESSAGE = 'ADD_MESSAGE';

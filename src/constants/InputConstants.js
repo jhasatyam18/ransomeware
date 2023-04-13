@@ -5,6 +5,7 @@ export const UI_WORKFLOW = {
   REVERSE_PLAN: 'REVERSE_PLAN',
   MIGRATION: 'MIGRATION_WIZARD',
   FULL_RECOVERY: 'FULL_RECOVERY',
+  LAST_TEST_RECOVERY_SUMMARY: 'LAST_TEST_RECOVERY_SUMMARY',
 };
 
 export const PLATFORM_TYPES = {
@@ -80,6 +81,7 @@ export const STATIC_KEYS = {
   UI_WORKFLOW_TEST_RECOVERY: 'ui.workflow.test.recovery',
   UI_VMWARE_CONFIG_RESPONSES: 'ui.vmware.config.responses',
   UI_VOLUMETYPES: 'ui.values.volume.type',
+  UI_SITE_SELECTED_VMS: 'ui.site.selectedVMs',
   RESOURCE_GROUP: 'ui.values.resource.type',
   UI_NETWORKS: 'ui.values.network',
   UI_EDIT_RESERVE_IPS: 'ui.values.edit.reserveips',
@@ -126,6 +128,13 @@ export const RECOVERY_ENTITY_TYPES = {
   DISK: 'DISK',
 };
 
+export const COPY_CONFIG = {
+  GENERAL_CONFIG: 'copy_gen_config',
+  NETWORK_CONFIG: 'copy_net_config',
+  REP_SCRIPT_CONFIG: 'copy_rep_script_config',
+  REC_SCRIPT_CONFIG: 'copy_rec_script_config',
+  ALL: 'ALL',
+};
 export const NODE_TYPES = {
   DEDUPE_SERVER: 'DedupeServer',
 };

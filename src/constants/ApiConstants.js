@@ -23,6 +23,7 @@ export const API_PROTECTION_PLAN_VMS = 'api/v1/sites/<sid>/vms?protectionplan=<p
 export const API_PROTECTION_PLAN_UPDATE = 'api/v1/protection/plans/<id>';
 export const API_PROTECTION_PLAN_PROTECTED_VMS = 'api/v1/protection/plans/<pid>?vmmoref=<moref>';
 export const API_EDIT_PROTECTED_VM = 'api/v1/protection/plans/<pid>/vm';
+export const API_LATEST_TEST_RECOVERY_PPLAN = 'api/v1/protection/plans/<id>?testconfig=true';
 
 // jobs
 export const API_REPLICATION_JOBS = 'api/v1/jobs/replication/disks';

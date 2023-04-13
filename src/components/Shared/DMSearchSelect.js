@@ -11,6 +11,7 @@ import DMToolTip from './DMToolTip';
 import { getValue } from '../../utils/InputUtils';
 import { valueChange } from '../../store/actions/UserActions';
 import { validateField } from '../../utils/validationUtils';
+import { getSearchSelectStyle } from '../../utils/ApiUtils';
 
 class DMSearchSelect extends Component {
   componentDidMount() {
@@ -37,7 +38,7 @@ class DMSearchSelect extends Component {
     const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
     if (recoveryPlatform === PLATFORM_TYPES.VMware && fieldValue) {
       if (typeof options === 'function') {
-        const optionValues = options(user, fieldKey);
+        const optionValues = options(user, fieldKey) || [];
         optionValues.map((val) => {
           if (val.value === fieldValue.value) {
             dispatch(valueChange(fieldKey, val));
@@ -48,51 +49,7 @@ class DMSearchSelect extends Component {
   }
 
   getStyles(hasError) {
-    const hoverColor = '#2a3042';
-    const bckClr = '#2e3548';
-    const fontClr = '#bfc8e2';
-    const borderClr = hasError ? '#f46a6a' : '#32394e';
-    return {
-      control: (base, state) => ({
-        ...base,
-        background: bckClr,
-        backgroundColor: bckClr,
-        borderColor: borderClr,
-        boxShadow: state.isFocused ? null : null,
-      }),
-      menu: (base) => ({
-        ...base,
-        borderRadius: 0,
-        marginTop: 0,
-        background: bckClr,
-        backgroundColor: bckClr,
-        zIndex: 9999,
-      }),
-      menuList: (base) => ({
-        ...base,
-        opacity: 1000,
-        padding: 0,
-        background: bckClr,
-        backgroundColor: bckClr,
-      }),
-      singleValue: (base) => ({
-        ...base,
-        padding: 0,
-        color: fontClr,
-      }),
-      input: (base) => ({
-        ...base,
-        color: fontClr,
-      }),
-      option: (base, state) => ({
-        ...base,
-        backgroundColor: state.isSelected ? '#2684FF' : bckClr,
-        '&:hover': {
-          backgroundColor: hoverColor,
-          color: 'white',
-        },
-      }),
-    };
+    return getSearchSelectStyle(hasError);
   }
 
   getOptions() {

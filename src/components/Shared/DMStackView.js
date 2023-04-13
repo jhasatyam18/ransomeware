@@ -6,21 +6,11 @@ import { getStackComponent } from '../../utils/ComponentFactory';
 class DMStackView extends Component {
   constructor() {
     super();
-    // this.state = { isOpen: false };
     this.toggle = this.toggle.bind(this);
   }
 
-  componentDidMount() {
-    const { openByDefault } = this.props;
-    if (typeof openByDefault !== 'undefined' && openByDefault === 'true') {
-      this.toggle();
-    }
-  }
-
   toggle() {
-    // const { isOpen } = this.state;
     const { onToggleStack, index } = this.props;
-    // this.setState({ isOpen: !isOpen });
     onToggleStack(index);
   }
 
@@ -37,7 +27,6 @@ class DMStackView extends Component {
   }
 
   renderChildren() {
-    // const { isOpen } = this.state;
     const { openStack } = this.props;
     const { configuration, dispatch, user } = this.props;
     if (openStack) {
