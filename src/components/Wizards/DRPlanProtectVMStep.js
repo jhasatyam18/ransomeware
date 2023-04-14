@@ -34,7 +34,7 @@ class DRPlanProtectVMStep extends Component {
   setDataForDisplay(data) {
     const { user } = this.props;
     const { values } = user;
-    const selectedVMs = getValue('ui.site.seletedVMs', values);
+    const selectedVMs = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
     const response = moveSelectedItemsOnTop(data, selectedVMs);
     this.setState({ dataToDisplay: response });
   }

@@ -2,7 +2,7 @@ import { onAzureResourceChange } from '../store/actions/AzureAction';
 import { API_FETCH_VMWARE_LOCATION } from '../constants/ApiConstants';
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMORY, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
-import { EXCLUDE_KEYS_CONSTANTS, EXCLUDE_KEYS_RECOVERY_CONFIGURATION, PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS, SUPPORTED_GUEST_OS } from '../constants/InputConstants';
+import { EXCLUDE_KEYS_CONSTANTS, EXCLUDE_KEYS_RECOVERY_CONFIGURATION, PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS, SUPPORTED_GUEST_OS, UI_WORKFLOW } from '../constants/InputConstants';
 import { NODE_STATUS_ONLINE } from '../constants/AppStatus';
 import { isEmpty, isMemoryValueValid } from './validationUtils';
 import { getStorageForVMware, onScriptChange } from '../store/actions';
@@ -1032,6 +1032,15 @@ export function getAzureGeneralSettings(key, vm) {
     },
   ];
   return data;
+}
+
+export function disableSiteSelection(user) {
+  const { values } = user;
+  const workflow = getValue('ui.workflow', values);
+  if (workflow === UI_WORKFLOW.EDIT_PLAN) {
+    return true;
+  }
+  return false;
 }
 
 export function getSupportedOSTypes() {

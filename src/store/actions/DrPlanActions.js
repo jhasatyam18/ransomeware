@@ -535,6 +535,7 @@ export function openEditProtectionPlanWizard(plan, isEventAction = false, alert 
     dispatch(clearValues());
     const selectedPlan = (typeof plan === 'undefined' ? getSelectedPlanID(drPlans) : plan);
     const { recoverySite } = selectedPlan;
+    dispatch(valueChange('ui.values.recoveryPlatform', recoverySite.platformDetails.platformType));
     const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined)), dispatch(fetchScript())];
     return Promise.all(apis).then(
       () => {
@@ -543,7 +544,7 @@ export function openEditProtectionPlanWizard(plan, isEventAction = false, alert 
         dispatch(valueChange('ui.selected.protection.planID', selectedPlan.id));
         dispatch(valueChange('ui.selected.protection.plan', selectedPlan));
         dispatch(valueChange('drplan.recoverySite', selectedPlan.recoverySite.id));
-        dispatch(valueChange('ui.values.recoveryPlatform', selectedPlan.recoverySite.platformDetails.platformType));
+        dispatch(valueChange('ui.workflow', UI_WORKFLOW.EDIT_PLAN));
         dispatch(setProtectionPlanDataForUpdate(selectedPlan, isEventAction, event));
         return new Promise((resolve) => resolve());
       },
@@ -704,13 +705,11 @@ export function setProtectionPlanVMConfig(selectedVMS, protectionPlan) {
     const { protectedEntities, recoveryEntities, protectedSite, recoverySite } = protectionPlan;
     const protectedSitePlatform = protectedSite.platformDetails.platformType;
     const recoverySitePlatform = recoverySite.platformDetails.platformType;
+    if (protectedSitePlatform === PLATFORM_TYPES.AWS && PLATFORM_TYPES.AWS === recoverySitePlatform) {
+      dispatch(fetchNetworks(protectedSite.id, 'source_network'));
+    }
     dispatch(valueChange('ui.values.protectionPlatform', protectedSitePlatform));
     dispatch(valueChange('ui.values.recoveryPlatform', recoverySitePlatform));
-    if (isSamePlatformPlan(protectionPlan)) {
-      dispatch(fetchNetworks(protectedSite.id, 'source_network'));
-    } else {
-      dispatch(fetchNetworks(recoverySite.id, undefined));
-    }
     dispatch(valueChange('drplan.id', protectionPlan.id));
     dispatch(valueChange('ui.edit.plan.remoteProtectionPlanId', protectionPlan.remoteProtectionPlanId));
     dispatch(valueChange('drplan.name', protectionPlan.name));
