@@ -1,4 +1,5 @@
 import React from 'react';
+import { JOB_IN_PROGRESS, JOB_FAILED } from '../../../constants/AppStatus';
 import { openModal } from '../../../store/actions/ModalActions';
 import { deleteSupportBundle } from '../../../store/actions/SupportActions';
 import { MODAL_CONFIRMATION_WARNING } from '../../../constants/Modalconstant';
@@ -11,7 +12,7 @@ function SupportBundleActionsRenderer({ data, dispatch }) {
 
   function renderDownload() {
     const downloadUrl = `${window.location.protocol}//${window.location.host}${data.bundleUrl}`;
-    if (data.status === 'failed') {
+    if (data.status === JOB_FAILED || data.status === JOB_IN_PROGRESS) {
       return '';
     }
     return (
