@@ -121,7 +121,7 @@ export function moveNodesToOnline() {
  */
 export function offlineNode(id, name) {
   return (dispatch) => {
-    dispatch(showApplicationLoader(`${API_NODES}-${id}`, `Moving node ${name} to offline`));
+    dispatch(showApplicationLoader(`${API_NODES}-${id}`, `Changing node ${name}'s status to offline`));
     const obj = createPayload(API_TYPES.POST, {});
     return callAPI(`${API_NODES}/${id}/offline`, obj)
       .then((json) => {
@@ -129,7 +129,7 @@ export function offlineNode(id, name) {
         if (json.hasError) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
-          dispatch(addMessage(`Node ${name} successfully moved to offline.`, MESSAGE_TYPES.INFO));
+          dispatch(addMessage(`Node ${name} status changed successfully to offline.`, MESSAGE_TYPES.INFO));
           dispatch(fetchNodes());
         }
       },
@@ -145,7 +145,7 @@ export function offlineNode(id, name) {
  */
 export function onlineNode(id, name) {
   return (dispatch) => {
-    dispatch(showApplicationLoader(`${API_NODES}-${id}`, `Moving node ${name} to online`));
+    dispatch(showApplicationLoader(`${API_NODES}-${id}`, `Changing node ${name}'s to online`));
     const obj = createPayload(API_TYPES.POST, {});
     return callAPI(`${API_NODES}/${id}/online`, obj)
       .then((json) => {
@@ -153,7 +153,7 @@ export function onlineNode(id, name) {
         if (json.hasError) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
-          dispatch(addMessage(`Node ${name} successfully moved to online`, MESSAGE_TYPES.INFO));
+          dispatch(addMessage(`Node ${name} status changed successfully to online`, MESSAGE_TYPES.INFO));
           dispatch(fetchNodes());
         }
       },
