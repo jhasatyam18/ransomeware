@@ -133,7 +133,7 @@ export function validateDRPlanProtectData({ user, dispatch }) {
   const vmwareVMS = getValue('ui.site.vmware.selectedvms', values);
   if (typeof vmwareVMS !== 'undefined' && vmwareVMS) {
     // Below code is to fetch the datacenter from the the source dev center and in case of test recovery we don't want it
-    const workFlow = getValue('ui.workflow', values) || '';
+    const workFlow = getValue(STATIC_KEYS.UI_WORKFLOW, values) || '';
     if (workFlow !== UI_WORKFLOW.TEST_RECOVERY) {
       const vmwareVMSKeys = Object.keys(vmwareVMS);
       if (!vmwareVMSKeys || vmwareVMSKeys.length === 0) {
@@ -155,7 +155,7 @@ export function validateDRPlanProtectData({ user, dispatch }) {
 
 export function validateInTargetDRPLanProtectedData({ user, dispatch }) {
   const { values } = user;
-  const vms = getValue('ui.site.seletedVMs', values);
+  const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   if (!vms || Object.keys(vms).length === 0) {
     dispatch(addMessage('Select virtual machine.', MESSAGE_TYPES.ERROR));
     return false;
@@ -410,7 +410,7 @@ export function validateVMware(user, dispatch) {
 
 export function validateAzureNetwork(user, dispatch) {
   const { values } = user;
-  const vms = getValue('ui.site.seletedVMs', values);
+  const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   const subnets = getValue(STATIC_KEYS.UI_SUBNETS, values);
   let isClean = true;
   let message = '';

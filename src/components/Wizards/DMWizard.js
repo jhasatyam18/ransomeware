@@ -46,7 +46,7 @@ class DMWizard extends React.Component {
     const { options } = wizard;
     const { workflow } = options;
     if (workflow) {
-      dispatch(valueChange('ui.workflow', workflow));
+      dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, workflow));
     }
   }
 

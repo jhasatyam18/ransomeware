@@ -40,7 +40,7 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
     </Popover>
   );
   const renderShowProgress = () => {
-    const key = `step-status-${field}-${data.vmName}-${data.id}`;
+    const key = `step-status-${field}-${data.id}`;
     return (
       <Row>
         <Col sm={12}>

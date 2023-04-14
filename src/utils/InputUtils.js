@@ -1028,7 +1028,7 @@ export function getAzureGeneralSettings(key, vm) {
 
 export function disableSiteSelection(user) {
   const { values } = user;
-  const workflow = getValue('ui.workflow', values);
+  const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
   if (workflow === UI_WORKFLOW.EDIT_PLAN) {
     return true;
   }

@@ -33,7 +33,7 @@ class DRPlanActionBar extends Component {
     dispatch(clearValues());
     dispatch(fetchSites('ui.values.sites'));
     dispatch(fetchScript());
-    dispatch(valueChange('ui.workflow', UI_WORKFLOW.CREATE_PLAN));
+    dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.CREATE_PLAN));
     dispatch(openWizard(CREATE_DR_PLAN_WIZARDS.options, CREATE_DR_PLAN_WIZARDS.steps));
   }
 
