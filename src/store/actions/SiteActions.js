@@ -7,7 +7,7 @@ import { closeModal } from './ModalActions';
 import { fetchRegions, hideApplicationLoader, loadRecoveryLocationData, showApplicationLoader, valueChange } from './UserActions';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { getMatchingOSType, getValue } from '../../utils/InputUtils';
-import { PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
+import { PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { setRecoveryVMDetails } from './DrPlanActions';
 import { fetchAvailibilityZonesForAzure } from './AzureAction';
 
@@ -173,7 +173,6 @@ export function onRecoverSiteChange({ value }) {
     const recoverySite = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${value}`)[0];
     const { platformType } = { ...recoverySite.platformDetails };
     dispatch(valueChange('ui.values.recoveryPlatform', platformType));
-    dispatch(fetchNetworks(value, undefined));
     dispatch(fetchRegions(platformType));
     dispatch(valueChange('ui.values.recoverySiteID', value));
     if (PLATFORM_TYPES.VMware === platformType) {
@@ -367,13 +366,17 @@ export function postPlanSitesSelected() {
     const { user } = getState();
     const { values } = user;
     const recoveryID = getValue('drplan.recoverySite', user.values);
-    dispatch(onRecoverSiteChange({ value: recoveryID }));
+    const protectionPlatform = getValue('ui.values.protectionPlatform', values);
     const recoverySite = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${recoveryID}`)[0];
     const { platformType } = { ...recoverySite.platformDetails };
-    const targetPlatform = getValue('ui.values.protectionPlatform', values);
-    if (platformType === PLATFORM_TYPES.AWS && targetPlatform === PLATFORM_TYPES.AWS) {
-      const protectionID = getValue('ui.values.protectionSiteID', user.values);
-      dispatch(fetchNetworks(protectionID, 'source_network'));
+    const flow = getValue('ui.workflow', user.values) || '';
+    dispatch(onRecoverSiteChange({ value: recoveryID }));
+    dispatch(fetchNetworks(recoveryID, undefined));
+    if (flow !== UI_WORKFLOW.EDIT_PLAN) {
+      if (protectionPlatform === PLATFORM_TYPES.AWS && platformType === PLATFORM_TYPES.AWS) {
+        const protectionID = getValue('ui.values.protectionSiteID', user.values);
+        dispatch(fetchNetworks(protectionID, 'source_network'));
+      }
     }
   };
 }
