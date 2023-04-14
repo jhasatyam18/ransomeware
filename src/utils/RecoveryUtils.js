@@ -2,7 +2,7 @@ import { addMessage } from '../store/actions/MessageActions';
 import { FIELD_TYPE } from '../constants/FieldsConstant';
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP } from '../constants/StackConstants';
 import { MESSAGE_TYPES } from '../constants/MessageConstants';
-import { COPY_CONFIG, PLATFORM_TYPES, UI_WORKFLOW } from '../constants/InputConstants';
+import { COPY_CONFIG, PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../constants/InputConstants';
 import { getInstanceTypeOptions, getAzureGeneralSettings, getRecoveryScript, getReplicationScript, getValue, getVMwareGeneralSettings, getNetworkOptions } from './InputUtils';
 import { isEmpty } from './validationUtils';
 import { getSourceConfig } from './PayloadUtil';
@@ -11,7 +11,7 @@ import { getMemoryInfo } from './AppUtils';
 export function createVMTestRecoveryConfig(vm, user, dispatch) {
   const { values } = user;
   const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
-  const workflow = getValue('ui.workflow', values);
+  const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
   switch (recoveryPlatform) {
     case PLATFORM_TYPES.AWS:
       return getAWSVMTestConfig(vm, workflow);
@@ -223,7 +223,7 @@ function getNetworkConfig({ sourceConfig, user, workFlow }) {
     recoveryPlatform = user.platformType;
     workflow = workFlow;
   } else {
-    workflow = getValue('ui.workflow', values);
+    workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
   }
   const { networks, availZone } = sourceConfig;
   const netWorkKeys = [];
@@ -311,7 +311,7 @@ function getRecoveryScriptInfo(sourceConfig) {
 function getRepScriptInfo(sourceConfig, user) {
   const { repPostScript, repPreScript } = sourceConfig;
   const { values } = user;
-  const workFlow = getValue('ui.workflow', values);
+  const workFlow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
   const keys = [
     { title: 'label.preScript', value: repPreScript },
     { title: 'label.postScript', value: repPostScript },

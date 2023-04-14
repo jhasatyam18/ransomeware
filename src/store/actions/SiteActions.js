@@ -369,7 +369,7 @@ export function postPlanSitesSelected() {
     const protectionPlatform = getValue('ui.values.protectionPlatform', values);
     const recoverySite = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${recoveryID}`)[0];
     const { platformType } = { ...recoverySite.platformDetails };
-    const flow = getValue('ui.workflow', user.values) || '';
+    const flow = getValue(STATIC_KEYS.UI_WORKFLOW, user.values) || '';
     dispatch(onRecoverSiteChange({ value: recoveryID }));
     dispatch(fetchNetworks(recoveryID, undefined));
     if (flow !== UI_WORKFLOW.EDIT_PLAN) {

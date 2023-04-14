@@ -124,7 +124,7 @@ class ModalNicConfig extends Component {
     const { dispatch, user, options } = this.props;
     const { networkKey } = options;
     const isAwsToAws = isPlanWithSamePlatform(user);
-    const uiWorkflow = getValue('ui.workflow', user.values);
+    const uiWorkflow = getValue(STATIC_KEYS.UI_WORKFLOW, user.values);
     if (isAwsToAws && uiWorkflow !== UI_WORKFLOW.TEST_RECOVERY) {
       const chkField = { label: 'Create From Source', description: '', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: false, onChange: (v, f) => onAwsCopyNetConfigChange(v, f), fieldInfo: 'info.aws.create.network.from.source' };
       return (
