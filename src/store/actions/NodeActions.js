@@ -129,7 +129,7 @@ export function offlineNode(id, name) {
         if (json.hasError) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
-          dispatch(addMessage(`Node ${name} successfully marked offline.`, MESSAGE_TYPES.INFO));
+          dispatch(addMessage(`Node ${name} status changed successfully to offline.`, MESSAGE_TYPES.INFO));
           dispatch(fetchNodes());
         }
       },
@@ -153,7 +153,7 @@ export function onlineNode(id, name) {
         if (json.hasError) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
-          dispatch(addMessage(`Node ${name} successfully marked online`, MESSAGE_TYPES.INFO));
+          dispatch(addMessage(`Node ${name} status changed successfully to online`, MESSAGE_TYPES.INFO));
           dispatch(fetchNodes());
         }
       },
