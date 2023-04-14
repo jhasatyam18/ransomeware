@@ -108,7 +108,7 @@ function setGeneralConfiguration(sourceConfig, targetVM, user, dispatch) {
 export function resetGeneralConfig({ user, targetVM }) {
   // getting the flow because if the flow is test-recovery then we only need to set the property which it has eg aws -> instance type ,vmware->everything editable
   const { values } = user;
-  const flow = getValue('ui.workflow', values);
+  const flow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
   const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
   const mem = getMemoryInfo();
   let generalConfig;

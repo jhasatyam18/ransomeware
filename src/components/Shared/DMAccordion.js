@@ -83,7 +83,7 @@ class DMAccordion extends Component {
   renderCopyConfig() {
     const { copyConfig, sourceID, user } = this.props;
     const { values } = user;
-    const workflow = getValue('ui.workflow', values);
+    const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
     if (workflow === UI_WORKFLOW.CREATE_PLAN) {
       const selectedVMs = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
       if (typeof copyConfig !== 'undefined' && copyConfig === 'true' && selectedVMs && Object.keys(selectedVMs).length > 1) {

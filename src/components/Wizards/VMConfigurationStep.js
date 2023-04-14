@@ -18,7 +18,7 @@ class VMConfigurationStep extends Component {
   removeEntityFromPplan(vmmoref) {
     const { user, dispatch } = this.props;
     const { values } = user;
-    const selectedVMs = getValue('ui.site.seletedVMs', values);
+    const selectedVMs = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
     Object.keys(selectedVMs).forEach((slvms) => {
       if (slvms === vmmoref) {
         delete selectedVMs[slvms];

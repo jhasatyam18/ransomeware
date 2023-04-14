@@ -383,7 +383,7 @@ export function openMigrationWizard() {
         dispatch(fetchNetworks(recoverySite.id, undefined));
       }
       dispatch(valueChange('recovery.dryrun', false));
-      dispatch(valueChange('ui.workflow', UI_WORKFLOW.MIGRATION));
+      dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.MIGRATION));
       let { steps } = MIGRATION_WIZARDS;
       if (protectedSite.platformDetails.platformType === PLATFORM_TYPES.VMware && platformDetails.platformType === PLATFORM_TYPES.VMware) {
         steps = removeStepsFromWizard(steps, STEPS.RECOVERY_CONFIG);
@@ -464,7 +464,7 @@ export function openTestRecoveryWizard(cleanUpTestRecoveries) {
       dispatch(valueChange('ui.values.recoveryPlatform', platformDetails.platformType));
       dispatch(valueChange('ui.values.recoverySiteID', recoverySite.id));
       dispatch(valueChange('recovery.dryrun', true));
-      dispatch(valueChange('ui.workflow', UI_WORKFLOW.TEST_RECOVERY));
+      dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.TEST_RECOVERY));
       dispatch(valueChange('ui.recovery.option', 'current'));
       const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined)), dispatch(fetchScript()), dispatch(fetchDrPlans('ui.values.drplan'))];
       return Promise.all(apis).then(
@@ -544,7 +544,7 @@ export function openEditProtectionPlanWizard(plan, isEventAction = false, alert 
         dispatch(valueChange('ui.selected.protection.planID', selectedPlan.id));
         dispatch(valueChange('ui.selected.protection.plan', selectedPlan));
         dispatch(valueChange('drplan.recoverySite', selectedPlan.recoverySite.id));
-        dispatch(valueChange('ui.workflow', UI_WORKFLOW.EDIT_PLAN));
+        dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.EDIT_PLAN));
         dispatch(setProtectionPlanDataForUpdate(selectedPlan, isEventAction, event));
         return new Promise((resolve) => resolve());
       },
@@ -569,7 +569,7 @@ export function setProtectionPlanDataForUpdate(selectedPlan, isEventAction = fal
           dispatch(hideApplicationLoader('UPDATE_PROTECTION_PLAN'));
           dispatch(onRecoverSiteChange({ value: selectedPlan.recoverySite.id }));
           dispatch(openWizard(wiz.options, UPDATE_PROTECTION_PLAN_WIZARDS.steps));
-          dispatch(valueChange('ui.workflow', UI_WORKFLOW.EDIT_PLAN));
+          dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.EDIT_PLAN));
           return new Promise((resolve) => resolve());
         },
         (err) => {
@@ -1247,7 +1247,7 @@ export function setAWSVMRecoveryData(vmMoref) {
     const { user } = getState();
     const { values } = user;
     const plan = getValue('ui.recovery.plan', values);
-    // const workflow = getValue('ui.workflow', values);
+    // const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
     if (typeof plan === 'undefined' || plan === '' || !plan) {
       return;
     }
@@ -1304,7 +1304,7 @@ export function setVMwareVMRecoveryData(vmMoref) {
     const { user } = getState();
     const { values } = user;
     const plan = getValue('ui.recovery.plan', values);
-    const workflow = getValue('ui.workflow', values);
+    const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
     if (typeof plan === 'undefined' || plan === '' || !plan) {
       return;
     }
@@ -1546,7 +1546,7 @@ function setReverseData(json) {
       dispatch(valueChange('ui.values.recoveryPlatform', platformDetails.platformType));
       dispatch(valueChange('ui.values.recoverySiteID', recoverySite.id));
       dispatch(valueChange('ui.recovery.plan', json));
-      dispatch(valueChange('ui.workflow', UI_WORKFLOW.REVERSE_PLAN));
+      dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.REVERSE_PLAN));
       const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined)), dispatch(fetchScript()), dispatch(fetchDrPlans('ui.values.drplan'))];
       return Promise.all(apis).then(
         () => {
@@ -1567,7 +1567,7 @@ function setReverseData(json) {
               }
             });
           });
-          dispatch(valueChange('ui.site.seletedVMs', selectedVMs));
+          dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, selectedVMs));
           dispatch(setVMGuestOSInfo(selectedVMs));
           // for giving selection of vm in wizard if vm selection is not their then remove this
           // dispatch(valueChange('ui.site.vms', data));

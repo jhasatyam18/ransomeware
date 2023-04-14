@@ -15,10 +15,14 @@ function TestRecoveryVMConfiguration(props) {
   const { user, dispatch, t } = props;
   const { values } = user;
   const option = getValue('ui.recovery.option', values);
+  const workFlow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
 
   useEffect(() => {
-    dispatch(fetchLastTestRecovery());
-    onRecoveryConfigOptChange(option);
+    if (workFlow === UI_WORKFLOW.TEST_RECOVERY) {
+      // to fetch last test recovery only in case of test recovery flow
+      dispatch(fetchLastTestRecovery());
+      onRecoveryConfigOptChange(option);
+    }
   }, []);
 
   const previousRecoveryConfig = getValue('ui.previous.recovery.config.test', values) || [];
@@ -41,7 +45,6 @@ function TestRecoveryVMConfiguration(props) {
     }
   }
 
-  const workFlow = getValue('ui.workflow', values);
   const renderVMConfig = (vm, index) => {
     const config = createVMTestRecoveryConfig(vm, user, dispatch);
     const key = (typeof vm === 'string' ? vm : vm.moref);
