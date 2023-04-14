@@ -237,7 +237,8 @@ class DRPlanDetails extends Component {
     const { protectedSite, recoverySite } = protectionPlan;
     const protectedSitePlatform = protectedSite.platformDetails.platformType;
     const isServerActionDisabled = (protectionPlan.recoveryStatus === RECOVERY_STATUS.RECOVERED || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED);
-    const isReverseActionDisabled = this.disableReverse(protectionPlan);
+    let isReverseActionDisabled = this.disableReverse(protectionPlan);
+    isReverseActionDisabled = true;
     let actions = [];
     if (platformType === protectedSitePlatform && localVMIP !== recoverySite.node.hostname) {
       actions.push({ label: 'start', action: startPlan, id: protectionPlan.id, disabled: this.disableStart(protectionPlan) });

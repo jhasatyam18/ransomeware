@@ -93,6 +93,7 @@ export const TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG = [
 export const REPLICATION_JOBS = [
   { label: 'Virtual Machine', field: 'vmName', allowFilter: true, checked: true },
   { label: 'Disk Id', field: 'diskId' },
+  { label: 'Iteration', field: 'iterationNumber' },
   { label: 'Data Changed', field: 'changedSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Data Transferred', field: 'transferSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Replication Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
@@ -117,12 +118,13 @@ export const PROTECTION_PLAN_RECOVERY_JOBS = [
 
 export const REPLICATION_VM_JOBS = [
   { label: 'Virtual Machine', field: 'vmName', allowFilter: true, checked: true },
-  { label: 'Iterations', field: 'iterationNumber' },
+  { label: 'Iteration', field: 'iterationNumber' },
   { label: 'Changed', field: 'changedSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Transferred', field: 'transferredSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Replication Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Job Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER, allowFilter: true, checked: true },
   { label: 'Sync Status', field: 'syncStatus', itemRenderer: STATUS_ITEM_RENDERER, allowFilter: true, checked: true },
+  { label: 'Sync Time', field: 'currenSnapshotTime', itemRenderer: DATE_ITEM_RENDERER },
 ];
 
 // Table fields for recovery virtual machines
@@ -142,6 +144,7 @@ export const TABLE_PROTECTION_PLAN_REPLICATIONS = [
   { label: 'Data Reduction (%)', field: 'dataReductionRatio' },
   { label: 'Job Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
   { label: 'Sync Status', field: 'syncStatus', itemRenderer: STATUS_ITEM_RENDERER },
+  { label: 'Sync Time', field: 'lastSyncTime', itemRenderer: DATE_ITEM_RENDERER },
 ];
 
 // Table fields for protection plan
