@@ -13,7 +13,7 @@ import { fetchSites } from '../../store/actions/SiteActions';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
 import { CREATE_DR_PLAN_WIZARDS } from '../../constants/WizardConstants';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
-import { PROTECTION_PLANS_STATUS, UI_WORKFLOW } from '../../constants/InputConstants';
+import { PROTECTION_PLANS_STATUS, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { isPlanRecovered } from '../../utils/validationUtils';
 
 class DRPlanActionBar extends Component {

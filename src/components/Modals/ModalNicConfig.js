@@ -13,7 +13,7 @@ import DMFieldSelect from '../Shared/DMFieldSelect';
 import DMFieldText from '../Shared/DMFieldText';
 import DMMultiSelect from '../Shared/DMMultiSelect';
 import { FIELD_TYPE, MULTISELECT_ITEM_COMP } from '../../constants/FieldsConstant';
-import { PLATFORM_TYPES, UI_WORKFLOW } from '../../constants/InputConstants';
+import { PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { onAwsCopyNetConfigChange, onAwsSubnetChange, onAwsVPCChange, valueChange } from '../../store/actions';
 import { closeModal } from '../../store/actions/ModalActions';
 import { getAvailibilityZoneOptions, getAWSElasticIPOptions, getAzureExternalIPOptions, getAzureNetworkOptions, getAzureSecurityGroupOption, getAzureSubnetOptions, getGCPExternalIPOptions, getGCPNetworkTierOptions, getGCPSubnetOptions, getNetworkOptions, getSecurityGroupOption, getSubnetOptions, getValue, getVMwareAdpaterOption, getVPCOptions, getWMwareNetworkOptions, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
