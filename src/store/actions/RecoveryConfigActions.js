@@ -173,6 +173,7 @@ function setNetworkConfig(sourceConfig, targetVM, user, dispatch) {
   const { networks = [] } = sourceConfig;
   const { availZone } = sourceConfig;
   const selectedVMs = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
+  const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
   const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
   const sourceVMConfig = selectedVMs[targetVM];
   let networkConfig = {};
@@ -180,10 +181,21 @@ function setNetworkConfig(sourceConfig, targetVM, user, dispatch) {
   const eths = getValue(`${networkKey}`, values) || [];
   const nics = sourceVMConfig.virtualNics || [];
   const key = `${targetVM}-vmConfig.network.net1`;
-  setNicsOnVM(dispatch, eths, nics, networkKey);
+  // for test recovery flow we need to add network based on source config
+  if (workflow === UI_WORKFLOW.TEST_RECOVERY) {
+    const e = [];
+    for (let index = 0; index < networks.length; index += 1) {
+      e.push({ key: `${networkKey}-eth-${index}`, ...networks[index] });
+    }
+    dispatch(valueChange(`${networkKey}`, e));
+  } else {
+    // set networks while creating new pplan
+    setNicsOnVM(dispatch, eths, nics, networkKey);
+  }
+
   if (networks && networks.length > 0 && sourceVMConfig) {
     if (nics && nics.length > 0) {
-      for (let index = 0; index < nics.length; index += 1) {
+      for (let index = 0; index < networks.length; index += 1) {
         if (typeof networks[index] !== 'undefined' && networks[index]) {
           const { vpcId = '', isPublicIP = '', Subnet = '', networkTier = '', isFromSource, securityGroups, adapterType, networkMoref, networkPlatformID } = networks[index];
           let { subnet, network, publicIP } = networks[index];
