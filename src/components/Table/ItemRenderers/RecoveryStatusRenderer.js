@@ -4,6 +4,11 @@ import { withTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faListCheck } from '@fortawesome/free-solid-svg-icons';
 import { connect } from 'react-redux';
+import { MESSAGE_TYPES } from '../../../constants/MessageConstants';
+import { addMessage } from '../../../store/actions/MessageActions';
+import { JOB_COMPLETION_STATUS, JOB_FAILED } from '../../../constants/AppStatus';
+import { MILI_SECONDS_TIME } from '../../../constants/EventConstant';
+import { callAPI } from '../../../utils/ApiUtils';
 import { UI_WORKFLOW } from '../../../constants/InputConstants';
 import { getRecoveryInfoForVM } from '../../../utils/RecoveryUtils';
 import { MODAL_SUMMARY } from '../../../constants/Modalconstant';
@@ -15,6 +20,8 @@ import StepStatus from '../../Common/StepStatus';
 function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
   const [toggle, setToggle] = useState(false);
   const [popOver, setpopOver] = useState(false);
+  const [jobdata, setjobdata] = useState(data);
+  const [steps, setSteps] = useState([]);
   const parsedConfiguration = data.config !== '' && typeof data.config !== 'undefined' ? JSON.parse(data.config) : undefined;
   const { values } = user;
   const COPY_CONFIG = [{ value: 'copy_gen_config', label: 'General' },
@@ -23,10 +30,53 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
     { value: 'copy_rec_script_config', label: 'Recovery Scripts' }];
   const configData = getRecoveryInfoForVM({ user, configToCopy: COPY_CONFIG, recoveryConfig: parsedConfiguration, values, workFlow: UI_WORKFLOW.LAST_TEST_RECOVERY_SUMMARY });
   const options = { title: 'Recovery Configuration', data: configData, css: 'modal-lg', showSummary: true };
+  let timerId;
+  const RecoveryStatus = [JOB_COMPLETION_STATUS, JOB_FAILED];
+
+  const fetchRunningJobsSteps = () => {
+    const url = API_RESCOVERY_JOB_STATUS_STEPS.replace('<id>', jobdata.id);
+    callAPI(url).then((json) => {
+      let step = [];
+      if (json.step !== '' && typeof json.step !== 'undefined') {
+        step = JSON.parse(json.step);
+      }
+      setSteps(step);
+      setjobdata(json);
+      if (RecoveryStatus.indexOf(json.status) !== -1) {
+        clearInterval(timerId);
+      }
+    }, (err) => {
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+  };
 
   const handleCheckbox = () => {
     setToggle(!toggle);
+    if (!toggle) {
+      if (RecoveryStatus.indexOf(jobdata.status) !== -1) {
+        try {
+          const parsedData = JSON.parse(jobdata.step);
+          setSteps(parsedData);
+        } catch (e) {
+          setSteps([]);
+        }
+      } else {
+        fetchRunningJobsSteps();
+        timerId = gitTimerTofetch();
+      }
+    }
   };
+
+  function gitTimerTofetch() {
+    return setInterval(() => {
+      try {
+        fetchRunningJobsSteps();
+      } catch (e) {
+        dispatch(addMessage(e, MESSAGE_TYPES.ERROR));
+        clearInterval(timerId);
+      }
+    }, MILI_SECONDS_TIME.TWENTY_THOUSAND_MS);
+  }
 
   const onClick = () => {
     dispatch(openModal(MODAL_SUMMARY, options));
@@ -65,7 +115,7 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
     <>
       <Row>
         <Col sm={4} className="status_renderer_Div">
-          <StatusItemRenderer data={data} field={field} noPopOver />
+          <StatusItemRenderer data={jobdata} field={field} noPopOver />
         </Col>
         <Col sm={4} className="show_details">
           {renderShowProgress()}
@@ -76,7 +126,7 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
       </Row>
       <Row className="padding-left-8">
         <Col sm={12}>
-          {toggle === true ? <StepStatus data={data} apiURL={API_RESCOVERY_JOB_STATUS_STEPS} /> : null}
+          {toggle === true ? <StepStatus steps={steps} /> : null}
         </Col>
       </Row>
     </>

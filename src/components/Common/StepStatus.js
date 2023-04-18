@@ -1,14 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { Col, Row } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { addMessage } from '../../store/actions/MessageActions';
-import { callAPI } from '../../utils/ApiUtils';
 import { JOB_COMPLETION_STATUS, JOB_FAILED, JOB_IN_PROGRESS } from '../../constants/AppStatus';
-import { MILI_SECONDS_TIME } from '../../constants/EventConstant';
 
 /**
  *
@@ -16,61 +12,7 @@ import { MILI_SECONDS_TIME } from '../../constants/EventConstant';
  * @returns render recovery jobs status in steps
  */
 function StepStatus(props) {
-  const [steps, setSteps] = useState([]);
-  const { data } = props;
-  const jobStatus = [JOB_COMPLETION_STATUS, JOB_FAILED];
-  let isUnmounting = false;
-  let timerId;
-
-  const fetchRunningJobsSteps = () => {
-    const { dispatch, apiURL } = props;
-    if (data.status === 'running' || steps.length === 0 && typeof apiURL !== 'undefined') {
-      const url = apiURL.replace('<id>', data.id);
-      callAPI(url).then((json) => {
-        if (isUnmounting) return;
-        let step = [];
-        if (json.step !== '' && typeof json.step !== 'undefined') {
-          step = JSON.parse(json.step);
-        }
-        setSteps(step);
-      }, (err) => {
-        if (isUnmounting) return;
-        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-      });
-    } else {
-      clearInterval(timerId);
-    }
-  };
-
-  useEffect(() => {
-    if (jobStatus.indexOf(data.status) !== -1) {
-      try {
-        const parsedData = JSON.parse(data.step);
-        setSteps(parsedData);
-      } catch (e) {
-        setSteps([]);
-      }
-    } else {
-      fetchRunningJobsSteps();
-      timerId = gitTimerTofetch();
-    }
-    return () => {
-      isUnmounting = true;
-      clearInterval(timerId);
-    };
-  }, []);
-
-  function gitTimerTofetch() {
-    const { dispatch } = props;
-    return setInterval(() => {
-      try {
-        fetchRunningJobsSteps();
-      } catch (e) {
-        dispatch(addMessage(e, MESSAGE_TYPES.ERROR));
-        clearInterval(timerId);
-      }
-    }, MILI_SECONDS_TIME.TWENTY_THOUSAND_MS);
-  }
+  const { steps } = props;
 
   if (typeof steps === 'undefined' || steps === null || steps.length === 0) {
     return null;
