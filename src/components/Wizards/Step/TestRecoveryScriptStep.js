@@ -17,7 +17,6 @@ function TestRecoveryScriptStep(props) {
         <hr />
         <CardTitle>{t('pplan.scripts')}</CardTitle>
         <Form>
-          <DMField dispatch={dispatch} user={user} fieldKey="recovery.cleanupTestRecoveries" />
           <DMField dispatch={dispatch} user={user} fieldKey="recovery.runPPlanScripts" />
         </Form>
       </CardBody>

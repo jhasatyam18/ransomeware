@@ -18,7 +18,7 @@ import StatusItemRenderer from './StatusItemRenderer';
 import StepStatus from '../../Common/StepStatus';
 
 function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
-  const [toggle, setToggle] = useState(false);
+  const [toggle, setToggle] = useState(data.step === '');
   const [popOver, setpopOver] = useState(false);
   const [jobdata, setjobdata] = useState(data);
   const [steps, setSteps] = useState([]);
@@ -99,7 +99,7 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
               size="lg"
               icon={faListCheck}
               className="progress_list"
-              onClick={handleCheckbox}
+              onClick={jobdata.step !== '' ? handleCheckbox : null}
               onMouseEnter={() => setpopOver(true)}
               onMouseLeave={() => setpopOver(false)}
               id={key}
@@ -115,7 +115,7 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
     <>
       <Row>
         <Col sm={4} className="status_renderer_Div">
-          <StatusItemRenderer data={jobdata} field={field} noPopOver />
+          <StatusItemRenderer data={jobdata} field={field} noPopOver={jobdata.step !== ''} />
         </Col>
         <Col sm={4} className="show_details">
           {renderShowProgress()}
