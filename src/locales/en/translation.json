@@ -239,7 +239,7 @@
   "cleanup.test.recoveries": "Cleanup",
   "run.protection.plan.scripts": "Run Protection Plan Level Scripts",
   "tools.installation": "Tools installation",
-  "pplan.scripts": "Cleanup and Protection Plan Configuration",
+  "pplan.scripts": "Protection Plan Configuration",
   "label.instance.tags": "Tags",
   "label.folderPath": "Location",
   "label.Resourcegrp": "Resource Group",
