@@ -17,7 +17,7 @@ function DMTree(props) {
   const [searchData, setSearchData] = useState([]);
   const [searchStr, setSearchStr] = useState('');
   const [apiData, setApiData] = useState([]);
-  const { data, user, dispatch, field, disabled, fieldKey, hideLabel, border, search, searchURL, showSelectedvmdata, selectedVMkey } = props;
+  const { data, user, dispatch, field, disabled, fieldKey, hideLabel, child, search, searchURL, showSelectedvmdata, selectedVMkey } = props;
   const { getTreeData, dataKey } = field;
   const { values } = user;
   const showSelectedData = getValue(selectedVMkey, values);
@@ -141,7 +141,7 @@ function DMTree(props) {
               <p>
                 Selected Vms
               </p>
-              {border ? (
+              {child ? (
                 <>
                   {showSelectedData.map((node) => (
                     <p>
@@ -176,7 +176,7 @@ function DMTree(props) {
   function render() {
     return (
       <div className="tree-parent">
-        <div className={border ? 'tree' : 'treestart'}>
+        <div className={child ? 'tree' : 'treestart'}>
           {renderLabel() }
           <Row>
             <Col sm={12}>
@@ -199,21 +199,17 @@ function DMTree(props) {
 
   function withScrollBar() {
     return (
+    /* child and search both the condition is for rendering scrollbar */
       <Row>
         <Col sm={12}>
           <Row>
-            {/* border and search both the condition is for rendering scrollbar */}
-            {border || !search ? (
-              <Col sm={showSelectedvmdata && showSelectedData.length > 0 ? 7 : 12}>
-                {render()}
-              </Col>
-            ) : (
-              <Col sm={showSelectedvmdata && showSelectedData.length > 0 ? 7 : 12}>
+            <Col sm={showSelectedvmdata && showSelectedData.length > 0 ? 7 : 12}>
+              {child || !search ? render() : (
                 <SimpleBar className="dmtree_scrollbar">
                   {render()}
                 </SimpleBar>
-              </Col>
-            )}
+              )}
+            </Col>
             {renderSelectedVMNode()}
           </Row>
         </Col>
