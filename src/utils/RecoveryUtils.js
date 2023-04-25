@@ -201,8 +201,6 @@ function getGeneralConfig({ sourceConfig, user, workFlow }) {
         { title: 'volume.type', value: volumeType },
         { title: 'volume.iops', value: volumeIOPS },
         { title: 'label.instance.tags', value: tagData },
-        { title: 'label.cpu.nums', value: numCPU },
-        { title: 'label.memory', value: memory },
         { title: 'label.network.tags', value: securityGroup },
         { title: 'label.available.zone', value: availZone },
       ];
@@ -271,20 +269,19 @@ function getNetworkConfig({ sourceConfig, user, workFlow }) {
         break;
       case PLATFORM_TYPES.VMware:
         keys = [
-          { title: 'label.vpc.id', value: vpcId }, { title: 'label.subnet', value: subnet },
-          { title: 'label.availZone', value: availZone }, { title: 'label.auto.publicIP', value: isPublicIP },
+          { title: 'label.network', value: network },
+          { title: 'label.adapter.type', value: adapterType },
+          { title: 'label.auto.publicIP', value: isPublicIP },
           { title: 'label.networkTier', value: networkTier },
-          { title: 'label.security.groups', value: securityGroups },
-          { title: 'label.adapter.type', value: adapterType }, { title: 'label.network', value: network },
         ];
         break;
       case PLATFORM_TYPES.Azure:
         keys = [
-          { title: 'label.vpc.id', value: vpcId }, { title: 'label.subnet', value: subnet },
-          { title: 'label.availZone', value: availZone }, { title: 'label.auto.publicIP', value: isPublicIP },
+          { title: 'label.network', value: network }, { title: 'label.adapter.type', value: adapterType },
+          { title: 'label.subnet', value: subnet }, { title: 'label.vpc.id', value: vpcId },
+          { title: 'label.auto.publicIP', value: isPublicIP },
           { title: 'label.networkTier', value: networkTier },
           { title: 'label.security.groups', value: securityGroups },
-          { title: 'label.adapter.type', value: adapterType }, { title: 'label.network', value: network },
         ];
         break;
       default:
