@@ -291,7 +291,7 @@
   "info.site.vcenter.username": "vCenter server username",
   "info.site.vcenter.password": "vCenter server password",
   "info.site.gcp.projectid": "The project ID is a unique identifier for a gcp project",
-  "info.site.storage.acc":"Azure Storage Account",
+  "info.site.storage.acc":"Provide Azure storage account from same region as site region.",
   "info.site.storage.tenant.id":"Tenant ID for Cloud Site(Azure)",
   "info.site.storage.client.id":"Client ID for Cloud Site(Azure)",
   "info.azure.configureSite.platformDetails.projectId":"Subscription ID for Cloud Site(Azure)",

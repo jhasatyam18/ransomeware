@@ -60,10 +60,10 @@ export function isPlatformTypeAzure(user) {
   return false;
 }
 
-export function isRecoveryTypeGCP(user) {
+export function showDifferentialReverseCheckbox(user) {
   const { values } = user;
   const recoveryPlatform = getValue('ui.values.recoveryPlatform', values) || '';
-  if (recoveryPlatform !== '' && recoveryPlatform === PLATFORM_TYPES.GCP) {
+  if (recoveryPlatform !== '' && recoveryPlatform === PLATFORM_TYPES.GCP || recoveryPlatform === PLATFORM_TYPES.VMware) {
     return true;
   }
   return false;
@@ -1060,4 +1060,13 @@ export function getMatchingOSType(value) {
   }
   // reset
   return res;
+}
+
+export function showDifferentialReverse(user) {
+  const { values } = user;
+  const protectionPlatform = getValue('ui.values.protectionPlatform', values) || '';
+  if (protectionPlatform === PLATFORM_TYPES.VMware) {
+    return false;
+  }
+  return true;
 }
