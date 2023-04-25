@@ -9,7 +9,7 @@ import DMTree from './DMTree';
 function TreeNode(props) {
   const { node, dispatch, user, fieldKey, field, disabled, showChildren, selectedVMkey } = props;
   const [showChild, setChildVisibility] = useState(showChildren || false);
-  const { isMultiSelect, enableSelection, dataKey } = field;
+  const { isMultiSelect, enableSelection, dataKey, highLightSelection } = field;
   const { values } = user;
   const { doneChildrenLoading, type } = node;
 
@@ -99,19 +99,34 @@ function TreeNode(props) {
     setChildVisibility(!showChild);
   };
 
+  const handleTextClick = (value) => {
+    const showInput = enableSelection(node);
+    if (showInput) {
+      handleChange({ target: { checked: value } });
+    } else {
+      handleCaretChenge();
+    }
+  };
+
   const renderCaret = () => {
     if (type === 'VirtualMachine') return null;
     if (showChild === false) {
       return (
-        <a href="#" onClick={() => handleCaretChenge()} className="dm-caret mr-2 ml-1">
-          <FontAwesomeIcon size="lg" icon={faFolder} />
-        </a>
+        <>
+          <box-icon name="chevron-right" color="white" onClick={handleCaretChenge} style={{ height: 20 }} />
+          <a href="#" onClick={() => handleCaretChenge()} className="mr-2 ">
+            <FontAwesomeIcon size="lg" icon={faFolder} />
+          </a>
+        </>
       );
     }
     return (
-      <a href="#" onClick={() => handleCaretChenge()} className="dm-caret mr-2 ml-1">
-        <FontAwesomeIcon size="lg" icon={faFolderOpen} />
-      </a>
+      <>
+        <box-icon name="chevron-down" color="white" onClick={handleCaretChenge} style={{ height: 20 }} />
+        <a href="#" onClick={() => handleCaretChenge()} className="mr-2 ">
+          <FontAwesomeIcon size="lg" icon={faFolderOpen} />
+        </a>
+      </>
     );
   };
 
@@ -130,22 +145,25 @@ function TreeNode(props) {
     }
   };
 
-  const renderNodeInfo = () => (
-    <>
-      <div className="treeDiv">
-        {renderInput()}
-        {renderCaret()}
-        <p className="tree_node_p">{node.title}</p>
-      </div>
-    </>
-  );
+  const renderNodeInfo = () => {
+    const value = getFieldValue() || false;
+    return (
+      <>
+        <div className={highLightSelection && value ? 'folderSelection treeDiv padding-top-4 padding-bottom-4' : 'treeDiv'}>
+          {renderInput()}
+          {renderCaret()}
+          <p className="tree_node_p" aria-hidden onClick={() => handleTextClick(!value)}>{node.title}</p>
+        </div>
+      </>
+    );
+  };
 
   const renderChild = () => {
     if (showChild === false) {
       return null;
     }
     return (
-      <DMTree data={node.children} selectedVMkey={selectedVMkey} field={field} fieldKey={fieldKey} hideLabel border />
+      <DMTree data={node.children} selectedVMkey={selectedVMkey} field={field} fieldKey={fieldKey} hideLabel child />
     );
   };
   return (
