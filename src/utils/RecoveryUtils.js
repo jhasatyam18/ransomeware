@@ -193,13 +193,9 @@ function getGeneralConfig({ sourceConfig, user, workFlow }) {
       break;
     case PLATFORM_TYPES.Azure:
       keys = [
-        { title: 'label.datacenter', value: datacenterMoref },
         { title: 'label.Resourcegrp', value: folderPath },
-        { title: 'label.compute.resource', value: hostMoref },
-        { title: 'label.storage', value: datastoreMoref },
         { title: 'vm.size', value: instanceType },
         { title: 'volume.type', value: volumeType },
-        { title: 'volume.iops', value: volumeIOPS },
         { title: 'label.instance.tags', value: tagData },
         { title: 'label.network.tags', value: securityGroup },
         { title: 'label.available.zone', value: availZone },
