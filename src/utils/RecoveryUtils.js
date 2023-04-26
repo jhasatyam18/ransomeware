@@ -260,7 +260,6 @@ function getNetworkConfig({ sourceConfig, user, workFlow }) {
           { title: 'label.network', value: network },
           { title: 'label.adapter.type', value: adapterType },
           { title: 'label.auto.publicIP', value: isPublicIP },
-          { title: 'label.networkTier', value: networkTier },
         ];
         break;
       case PLATFORM_TYPES.Azure:

@@ -27,9 +27,6 @@ export const FIELDS = {
   'configureSite.description': {
     label: 'description', description: 'Site description', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Site Description Required', shouldShow: true, fieldInfo: 'info.site.description',
   },
-  'configureSite.siteType': {
-    label: 'site.type', description: 'Site type whether Protection or Recovery', placeHolderText: 'Select Site', type: FIELD_TYPE.SELECT, options: [{ label: 'Protection', value: 'Protection' }, { label: 'Recover', value: 'Recovery' }], validate: (value, user) => isEmpty(value, user), errorMessage: 'Site type required', shouldShow: true, fieldInfo: 'info.site.type',
-  },
   'configureSite.platformDetails.platformType': {
     label: 'platform.type', description: 'Platform Type whether VMware or AWS or GCP', type: FIELD_TYPE.SELECT, options: [{ label: 'VMware', value: 'VMware' }, { label: 'AWS', value: 'AWS' }, { label: 'GCP', value: 'GCP' }, { label: 'Azure', value: 'Azure' }], validate: (value, user) => isEmpty(value, user), errorMessage: 'Platform Type required', shouldShow: true, onChange: (user, dispatch) => onPlatformTypeChange(user, dispatch), fieldInfo: 'info.site.platform.type',
   },
