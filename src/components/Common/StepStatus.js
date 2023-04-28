@@ -4,6 +4,7 @@ import { faCheckCircle, faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 import { Col, Row } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { DATA_GRID_SHORT_TEXT_LENGTH } from '../../constants/UserConstant';
 import { JOB_COMPLETION_STATUS, JOB_FAILED, JOB_IN_PROGRESS } from '../../constants/AppStatus';
 
 /**
@@ -13,9 +14,9 @@ import { JOB_COMPLETION_STATUS, JOB_FAILED, JOB_IN_PROGRESS } from '../../consta
  */
 function StepStatus(props) {
   const { steps, data } = props;
-  const shortFailureMsg = data.failureMessage ? data.failureMessage.substring(0, 30) : '';
+  const shortFailureMsg = data.failureMessage ? data.failureMessage.substring(0, DATA_GRID_SHORT_TEXT_LENGTH) : '';
   const [errormsg, setErrorMsg] = useState(`${shortFailureMsg}...`);
-  const [show, setshow] = useState('More');
+  const [show, setshow] = useState(false);
   if (typeof steps === 'undefined' || steps === null || steps.length === 0) {
     return null;
   }
@@ -32,12 +33,11 @@ function StepStatus(props) {
   };
 
   const showFullErrorText = () => {
-    if (show === 'More') {
+    setshow(!show);
+    if (!show) {
       setErrorMsg(data.failureMessage);
-      setshow('Less');
     } else {
-      setshow('More');
-      setErrorMsg(`${data.failureMessage.substring(0, 30)}...` || '');
+      setErrorMsg(`${data.failureMessage.substring(0, DATA_GRID_SHORT_TEXT_LENGTH)}...` || '');
     }
   };
 
@@ -60,7 +60,7 @@ function StepStatus(props) {
                 {`${errormsg}`}
                 {' '}
                   &nbsp;
-                <span style={{ color: '#556ee6' }}>{show}</span>
+                <span className="error_more_less">{show ? 'Less' : 'More'}</span>
               </p>
             ) : null}
           </p>
