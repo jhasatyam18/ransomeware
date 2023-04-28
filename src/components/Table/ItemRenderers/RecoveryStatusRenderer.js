@@ -115,7 +115,7 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
     <>
       <Row>
         <Col sm={4} className="status_renderer_Div">
-          <StatusItemRenderer data={jobdata} field={field} noPopOver={jobdata.step !== ''} />
+          <StatusItemRenderer data={jobdata} field={field} />
         </Col>
         <Col sm={4} className="show_details">
           {renderShowProgress()}
