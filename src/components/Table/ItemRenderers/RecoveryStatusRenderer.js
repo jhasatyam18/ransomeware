@@ -126,7 +126,7 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
       </Row>
       <Row className="padding-left-8">
         <Col sm={12}>
-          {toggle === true ? <StepStatus steps={steps} /> : null}
+          {toggle === true ? <StepStatus steps={steps} data={jobdata} /> : null}
         </Col>
       </Row>
     </>
