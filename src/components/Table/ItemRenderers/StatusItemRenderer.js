@@ -40,11 +40,11 @@ function StatusItemRenderer({ data, field, t, noPopOver }) {
     );
   };
 
-  function statusRenderer({ name, title, icon }) {
+  function statusRenderer({ name, icon }) {
     const { failureMessage, errorMessage } = data;
     const errMsg = (typeof failureMessage !== 'undefined' ? failureMessage : errorMessage);
     const msg = (typeof errMsg !== 'undefined' ? errMsg : '');
-    const hoverInfo = title || msg;
+    const hoverInfo = msg;
     let colorinfo = name;
     // if status is equal partially completed then mark syncstatus as warning status
     if (field === 'syncStatus' && data.status === PARTIALLY_COMPLETED) {
@@ -70,7 +70,7 @@ function StatusItemRenderer({ data, field, t, noPopOver }) {
 
   if (runningStatus.includes(status)) {
     resp = t('running');
-    return statusRenderer({ name: 'info', title: data.step, icon: true });
+    return statusRenderer({ name: 'info', icon: true });
   }
 
   if (errorStatus.includes(status)) {

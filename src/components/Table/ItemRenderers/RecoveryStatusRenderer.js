@@ -92,43 +92,41 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
   const renderShowProgress = () => {
     const key = `step-status-${field}-${data.id}`;
     return (
-      <Row>
-        <Col sm={12}>
-          <div className="status_view_prog_icon">
-            <FontAwesomeIcon
-              size="lg"
-              icon={faListCheck}
-              className="progress_list"
-              onClick={jobdata.step !== '' ? handleCheckbox : null}
-              onMouseEnter={() => setpopOver(true)}
-              onMouseLeave={() => setpopOver(false)}
-              id={key}
-              color={toggle === true ? '#bfc8e2' : '#50a5f1'}
-            />
-            {renderPopOver(key)}
-          </div>
-        </Col>
-      </Row>
+      <>
+        <FontAwesomeIcon
+          size="lg"
+          icon={faListCheck}
+          className="progress_list"
+          onClick={jobdata.step !== '' ? handleCheckbox : null}
+          onMouseEnter={() => setpopOver(true)}
+          onMouseLeave={() => setpopOver(false)}
+          id={key}
+          color={toggle === true ? '#bfc8e2' : '#50a5f1'}
+        />
+        {renderPopOver(key)}
+      </>
     );
   };
   return (
     <>
-      <Row>
-        <Col sm={4} className="status_renderer_Div">
-          <StatusItemRenderer data={jobdata} field={field} />
-        </Col>
-        <Col sm={4} className="show_details">
-          {renderShowProgress()}
-        </Col>
-        <Col sm={4}>
-          <i className="fas fa-info-circle info__icon test_summary_icon" aria-hidden="true" onClick={onClick} style={{ height: 20, cursor: 'pointer' }} />
-        </Col>
-      </Row>
-      <Row className="padding-left-8">
-        <Col sm={12}>
-          {toggle === true ? <StepStatus steps={steps} data={jobdata} /> : null}
-        </Col>
-      </Row>
+      <div className="rec_job_parent">
+        <Row className="width-100">
+          <Col sm={8}>
+            <StatusItemRenderer data={jobdata} field={field} />
+          </Col>
+          <Col sm={2} className="show_details">
+            {renderShowProgress()}
+          </Col>
+          <Col sm={2}>
+            <i className="fas fa-info-circle info__icon test_summary_icon" aria-hidden="true" onClick={onClick} style={{ height: 20, cursor: 'pointer' }} />
+          </Col>
+        </Row>
+        <Row className="padding-left-8">
+          <Col sm={12}>
+            {toggle === true ? <StepStatus steps={steps} data={jobdata} /> : null}
+          </Col>
+        </Row>
+      </div>
     </>
   );
 }

@@ -60,7 +60,7 @@ function StepStatus(props) {
                 {`${errormsg}`}
                 {' '}
                   &nbsp;
-                <span className="error_more_less">{show ? 'Less' : 'More'}</span>
+                <span className="link_color">{show ? 'Less' : 'More'}</span>
               </p>
             ) : null}
           </p>
