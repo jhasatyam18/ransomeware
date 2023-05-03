@@ -149,13 +149,6 @@ class Login extends Component {
                             Log In
                           </button>
                         </div>
-                        <div className="container login">
-                          <div className="row">
-                            <div className="col-sm-8 text-align sign-up">
-                              <a href="" className="text-align text-success margin-bottom-15">Forgot Password</a>
-                            </div>
-                          </div>
-                        </div>
                       </AvForm>
                     </div>
                   </CardBody>

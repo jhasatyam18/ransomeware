@@ -114,16 +114,21 @@ export function validateSteps(user, dispatch, fields, staticFields) {
   return isClean;
 }
 
-export function validateDrSiteSelection({ user, fieldKey }) {
-  const { values } = user;
+export function validateDrSiteSelection({ user, fieldKey, dispatch }) {
+  const { values, errors } = user;
   const fieldValue = getValue(fieldKey, values);
   const otherField = (fieldKey === 'drplan.protectedSite' ? 'drplan.recoverySite' : 'drplan.protectedSite');
   const otherFieldValue = getValue(otherField, values);
   if (!fieldValue) {
     return true;
   }
-  if (fieldValue === otherFieldValue) {
+  if (`${fieldValue}` === `${otherFieldValue}`) {
     return true;
+  }
+
+  // if both recoevry and protected site is diffrent then remove error from the other field
+  if (errors[otherField]) {
+    dispatch(removeErrorMessage(otherField));
   }
   return false;
 }
