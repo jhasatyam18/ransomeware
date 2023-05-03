@@ -1,3 +1,4 @@
+import { MAC_ADDRESS } from '../constants/ValidationConstants';
 import { onAzureResourceChange } from '../store/actions/AzureAction';
 import { API_FETCH_VMWARE_LOCATION } from '../constants/ApiConstants';
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMORY, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
@@ -883,7 +884,7 @@ export function convertMemoryToMb(memory, unit) {
 }
 
 export function validateMacAddressForVMwareNetwork(macAddress) {
-  const regex = /^([0-9a-fA-F]{2}[:-]){5}([0-9a-fA-F]{2})$/;
+  const regex = MAC_ADDRESS;
 
   const val = regex.test(macAddress);
   return val;

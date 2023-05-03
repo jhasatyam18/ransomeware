@@ -3,7 +3,6 @@ import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Card, CardBody, Col, Container, Form, Row } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
-import { IP_REGEX } from '../../constants/ValidationConstants';
 import { onGCPNetworkChange } from '../../store/actions/GcpActions';
 import { onAwsPublicIPChecked } from '../../store/actions/AwsActions';
 import DMSearchSelect from '../Shared/DMSearchSelect';
@@ -59,9 +58,10 @@ class ModalNicConfig extends Component {
       const sg = getValue(`${networkKey}-securityGroups`, values) || [];
       const isCopyConfiguration = isAWSCopyNic(`${networkKey}-subnet`, '-subnet', user);
       const pvtIP = getValue(`${networkKey}-privateIP`, values) || '';
+      const publicIP = getValue(`${networkKey}-publicIP`, values) || '';
       const network = getValue(`${networkKey}-network`, values);
       const networkTier = getValue(`${networkKey}-networkTier`, values);
-      this.setState({ oldConfig: { subnet, sg, isCopyConfiguration, pvtIP, network, networkTier, vpc, availZone } });
+      this.setState({ oldConfig: { subnet, sg, isCopyConfiguration, pvtIP, network, networkTier, vpc, availZone, publicIP } });
     }
     if (recoveryPlatform === PLATFORM_TYPES.GCP) {
       const network = getValue(`${networkKey}-network`, values);
@@ -80,6 +80,14 @@ class ModalNicConfig extends Component {
       const gateway = getValue(`${networkKey}-gateway`, values) || '';
       const dnsserver = getValue(`${networkKey}-dnsserver`, values) || '';
       this.setState({ oldConfig: { network, adapterType, publicIP, macAddress, netmask, gateway, dnsserver } });
+    }
+    if (recoveryPlatform === PLATFORM_TYPES.Azure) {
+      const network = getValue(`${networkKey}-network`, values);
+      const subnet = getValue(`${networkKey}-subnet`, values);
+      const privateIP = getValue(`${networkKey}-privateIP`, values);
+      const publicIP = getValue(`${networkKey}-publicIP`, values) || '';
+      const securityGroups = getValue(`${networkKey}-securityGroups`, values) || '';
+      this.setState({ oldConfig: { network, subnet, publicIP, privateIP, securityGroups } });
     }
   }
 
@@ -117,6 +125,14 @@ class ModalNicConfig extends Component {
       dispatch(valueChange(`${networkKey}-netmask`, netmask));
       dispatch(valueChange(`${networkKey}-gateway`, gateway));
       dispatch(valueChange(`${networkKey}-dnsserver`, dnsserver));
+    }
+    if (recoveryPlatform === PLATFORM_TYPES.Azure) {
+      const { network, subnet, privateIP, publicIP, securityGroups } = oldConfig;
+      dispatch(valueChange(`${networkKey}-network`, network));
+      dispatch(valueChange(`${networkKey}-subnet`, subnet));
+      dispatch(valueChange(`${networkKey}-privateIP`, privateIP));
+      dispatch(valueChange(`${networkKey}-publicIP`, publicIP));
+      dispatch(valueChange(`${networkKey}-securityGroups`, securityGroups));
     }
   }
 
@@ -217,12 +233,12 @@ class ModalNicConfig extends Component {
     const { networkKey } = options;
     const networkField = { label: '', description: '', type: FIELD_TYPE.SELECT_SEARCH, shouldShow: true, defaultValue: false, options: (u, f) => getWMwareNetworkOptions(u, f), fieldInfo: 'info.vmware.network' };
     const AdapterField = { label: '', description: '', type: FIELD_TYPE.SELECT, options: (u, f) => getVMwareAdpaterOption(u, f), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select Adapter Type', shouldShow: true, fieldInfo: 'info.vmware.adapter.type' };
-    const MacAddressField = { label: '', description: '', type: FIELD_TYPE.TEXT, options: (u, f) => getVPCOptions(u, f), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select Mac address', shouldShow: true, fieldInfo: 'info.vmware.mac.address' };
+    const MacAddressField = { label: '', description: '', type: FIELD_TYPE.TEXT, options: (u, f) => getVPCOptions(u, f), shouldShow: true, fieldInfo: 'info.vmware.mac.address' };
     const staticIP = { fieldInfo: 'info.protectionplan.network.vmware.staticip', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.SELECT, shouldShow: true, errorMessage: 'Configure static IP Address', validate: (v, u) => isEmpty(v, u) };
-    const ip = { label: '', description: '', type: FIELD_TYPE.TEXT, patterns: [IP_REGEX], validate: (value, u) => isEmpty(value, u), errorMessage: 'Please add IP address', shouldShow: true, fieldInfo: 'info.vmware.ip.addr' };
-    const subnet = { label: '', description: '', type: FIELD_TYPE.TEXT, validate: (value, u) => isEmpty(value, u), errorMessage: 'Please add Subnet', shouldShow: true, fieldInfo: 'info.vmware.subnet' };
-    const gateway = { label: '', description: '', type: FIELD_TYPE.TEXT, validate: (value, u) => isEmpty(value, u), errorMessage: 'Please add Gateway', shouldShow: true, fieldInfo: 'info.vmware.network.gateway' };
-    const dns = { label: '', description: '', type: FIELD_TYPE.TEXT, validate: (value, u) => isEmpty(value, u), errorMessage: 'Please add DNS', shouldShow: true, fieldInfo: 'info.vmware.primary.dns' };
+    const ip = { label: '', description: '', type: FIELD_TYPE.TEXT, validate: (value, u) => isEmpty(value, u), errorMessage: 'Please provide IP address', shouldShow: true, fieldInfo: 'info.vmware.ip.addr' };
+    const subnet = { label: '', description: '', type: FIELD_TYPE.TEXT, validate: (value, u) => isEmpty(value, u), errorMessage: 'Please provide Subnet', shouldShow: true, fieldInfo: 'info.vmware.subnet' };
+    const gateway = { label: '', description: '', type: FIELD_TYPE.TEXT, validate: (value, u) => isEmpty(value, u), errorMessage: 'Please provide Gateway', shouldShow: true, fieldInfo: 'info.vmware.network.gateway' };
+    const dns = { label: '', description: '', type: FIELD_TYPE.TEXT, validate: (value, u) => isEmpty(value, u), errorMessage: 'Please provide DNS', shouldShow: true, fieldInfo: 'info.vmware.primary.dns' };
     const staticip = getValue(`${networkKey}-isPublic`, values);
     return (
       <Container>

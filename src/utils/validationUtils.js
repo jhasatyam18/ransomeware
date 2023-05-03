@@ -22,7 +22,6 @@ export function isRequired(value) {
 
 export function validateField(field, fieldKey, value, dispatch, user) {
   const { patterns, validate, errorMessage } = field;
-  // const field = FIELDS[fieldKey];
   const { type } = field;
   const { errors } = user;
   if (patterns) {
@@ -648,7 +647,7 @@ function validateVMwareNicConfig(dispatch, user, options) {
   const { networkKey } = options;
   const network = getValue(`${networkKey}-network`, values) || '';
   const adapterType = getValue(`${networkKey}-adapterType`, values) || '';
-  const macAddress = getValue(`${networkKey}-macAddress-value`, values) || '';
+  const macAddress = getValue(`${networkKey}-macAddress`, values) || '';
   const staticip = getValue(`${networkKey}-isPublic`, values) || '';
   if (network === '' || network === '-') {
     dispatch(addMessage('Select network', MESSAGE_TYPES.ERROR));
@@ -661,7 +660,7 @@ function validateVMwareNicConfig(dispatch, user, options) {
   if (macAddress) {
     const validMac = validateMacAddressForVMwareNetwork(macAddress);
     if (!validMac) {
-      dispatch(addMessage('Please fill the right mac Address', MESSAGE_TYPES.ERROR));
+      dispatch(addMessage('Please provide valid mac Address', MESSAGE_TYPES.ERROR));
       return false;
     }
   }
