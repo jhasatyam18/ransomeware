@@ -82,6 +82,7 @@ class DMFieldSelect extends Component {
     if (typeof onChange === 'function') {
       dispatch(onChange({ value: e.target.value, dispatch, user, fieldKey }));
     }
+    validateField(field, fieldKey, e.target.value, dispatch, user);
   }
 
   renderOptions() {
@@ -99,10 +100,19 @@ class DMFieldSelect extends Component {
   }
 
   renderError(hasError) {
-    const { field, fieldKey } = this.props;
+    const { fieldKey, field, user } = this.props;
+    let { errorMessage } = field;
+    const { errorFunction } = field;
+    const { value } = this.state;
+    if (errorFunction && typeof errorFunction === 'function') {
+      const res = errorFunction({ fieldKey, user, value });
+      if (res !== '') {
+        errorMessage = res;
+      }
+    }
     if (hasError) {
       return (
-        <FormFeedback htmlFor={fieldKey}>{field.errorMessage}</FormFeedback>
+        <FormFeedback htmlFor={fieldKey}>{errorMessage}</FormFeedback>
       );
     }
     return null;

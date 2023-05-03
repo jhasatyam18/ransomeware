@@ -34,8 +34,9 @@ class DMFieldText extends Component {
   }
 
   handleChange = (e) => {
-    const { dispatch, fieldKey } = this.props;
+    const { dispatch, fieldKey, field, user } = this.props;
     dispatch(valueChange(fieldKey, e.target.value));
+    validateField(field, fieldKey, e.target.value, dispatch, user);
     // this.setState({
     //   value: e.target.value,
     // });
@@ -60,7 +61,7 @@ class DMFieldText extends Component {
     const { fieldKey, dispatch, user, field } = this.props;
     const value = this.getFieldValue();
     this.setState({ isFocused: false });
-    // dispatch(valueChange(fieldKey, value));
+    dispatch(valueChange(fieldKey, value.trim()));
     validateField(field, fieldKey, value, dispatch, user);
   }
 

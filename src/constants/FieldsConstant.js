@@ -4,7 +4,7 @@ import { onProtectionPlanChange } from '../store/actions/DrPlanActions';
 import { onProtectSiteChange, updateAvailabilityZones } from '../store/actions/SiteActions';
 import { onLimitChange, onTimeLimitChange } from '../store/actions/ThrottlingAction';
 import { getAvailibilityZoneOptions, enableNodeTypeVM, getDefaultRecoverySite, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getReportProtectionPlans, getSiteNodeOptions, getSitesOptions, getSubnetOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware, shouldShowNodeEncryptionKey, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort, getVMwareVMSelectionData, showInstallCloudPackageOption, isPlatformTypeAzure, showDifferentialReverseCheckbox, disableSiteSelection, showDifferentialReverse } from '../utils/InputUtils';
-import { isEmpty, validateDrSiteSelection, validatePassword, validateReplicationInterval, validateReplicationValue } from '../utils/validationUtils';
+import { errorMsgProtectedRecoverySite, isEmpty, validateDrSiteSelection, validatePassword, validateReplicationInterval, validateReplicationValue } from '../utils/validationUtils';
 import { STATIC_KEYS } from './InputConstants';
 import { EMAIL_REGEX, FQDN_REGEX, HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX, PASSWORD_REGEX } from './ValidationConstants';
 import { onScriptChange, loadTreeChildData } from '../store/actions/UserActions';
@@ -125,10 +125,10 @@ export const FIELDS = {
     label: 'throttle.bandwidth', description: 'Bandwidth throttling', type: FIELD_TYPE.NUMBER, errorMessage: 'Invalid value for throttle bandwidth', shouldShow: true,
   },
   'drplan.protectedSite': {
-    label: 'protect.site', description: 'Source/Protected Site', placeHolderText: 'Protect Site', type: FIELD_TYPE.SELECT, options: (user) => getSitesOptions(user), errorMessage: 'Select protection site. Protection and recovery sites cannot be same.', shouldShow: true, validate: (user) => validateDrSiteSelection(user), onChange: (user, dispatch) => onProtectSiteChange(user, dispatch), fieldInfo: 'info.protectionplan.protectedSite', disabled: (user) => disableSiteSelection(user),
+    label: 'protect.site', description: 'Source/Protected Site', placeHolderText: 'Protect Site', type: FIELD_TYPE.SELECT, options: (user) => getSitesOptions(user), errorMessage: 'Please select Protected Site', shouldShow: true, validate: (user) => validateDrSiteSelection(user), onChange: (user, dispatch) => onProtectSiteChange(user, dispatch), fieldInfo: 'info.protectionplan.protectedSite', disabled: (user) => disableSiteSelection(user), errorFunction: ({ user, value, fieldKey }) => errorMsgProtectedRecoverySite({ user, value, fieldKey }),
   },
   'drplan.recoverySite': {
-    label: 'recovery.site', description: 'Target/Recovery Site', placeHolderText: 'Recovery Site', type: FIELD_TYPE.SELECT, options: (user) => getSitesOptions(user), errorMessage: 'Select recovery site. Recovery and protection sites cannot be same.', shouldShow: true, validate: (user) => validateDrSiteSelection(user), fieldInfo: 'info.protectionplan.recoverySite', disabled: (user) => disableSiteSelection(user),
+    label: 'recovery.site', description: 'Target/Recovery Site', placeHolderText: 'Recovery Site', type: FIELD_TYPE.SELECT, options: (user) => getSitesOptions(user), errorMessage: 'Please select Recovery site', shouldShow: true, validate: (user) => validateDrSiteSelection(user), fieldInfo: 'info.protectionplan.recoverySite', disabled: (user) => disableSiteSelection(user), errorFunction: ({ user, value, fieldKey }) => errorMsgProtectedRecoverySite({ user, value, fieldKey }),
   },
   'drplan.recoveryEntities.name': { label: 'recoveryentitites.name', description: 'Name for Recovery Entities', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: null, errorMessage: '', shouldShow: false },
   'drplan.protectedEntities.Name': { label: 'protectedentities.name', description: 'Name for Protected Entities', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: null, errorMessage: '', shouldShow: false },
@@ -207,7 +207,7 @@ export const FIELDS = {
   // Reverse
   'reverse.name': { label: 'name', placeHolderText: 'Name', type: FIELD_TYPE.LABEL, shouldShow: true },
   'reverse.protectedSite': { label: 'protect.site', placeHolderText: 'Protect Site', type: FIELD_TYPE.LABEL, shouldShow: true },
-  'reverse.recoverySite': { label: 'recovery.site', placeHolderText: 'Recovery Site', type: FIELD_TYPE.SELECT, options: (user) => getSitesOptions(user), errorMessage: 'Select recovery site. Recovery and protection sites cannot be same.', shouldShow: true, validate: (user) => validateDrSiteSelection(user), defaultValue: (user) => getDefaultRecoverySite(user) },
+  'reverse.recoverySite': { label: 'recovery.site', placeHolderText: 'Recovery Site', type: FIELD_TYPE.SELECT, options: (user) => getSitesOptions(user), errorMessage: 'Select recovery site.', shouldShow: true, validate: (user) => validateDrSiteSelection(user), defaultValue: (user) => getDefaultRecoverySite(user), errorFunction: ({ user, value, fieldKey }) => errorMsgProtectedRecoverySite({ user, value, fieldKey }) },
   'reverse.replType': { label: 'reverse.replType', type: FIELD_TYPE.SELECT, errorMessage: 'Replication type required', shouldShow: (user) => showDifferentialReverse(user), validate: (value, user) => isEmpty(value, user), options: [{ label: 'Full Incremental', value: STATIC_KEYS.FULL_INCREMENTAL }, { label: 'Differential', value: STATIC_KEYS.DIFFERENTIAL }], defaultValue: STATIC_KEYS.DIFFERENTIAL },
   'reverse.interval': { label: 'replication.interval', placeHolderText: 'Replication Interval', type: FIELD_TYPE.LABEL, shouldShow: true },
   'reverse.suffix': { label: 'reverse.suffix', placeHolderText: 'Recovery Machines Suffix', type: FIELD_TYPE.TEXT, shouldShow: true, validate: (value, user) => isEmpty(value, user), errorMessage: 'Recovery machines suffix is required' },
