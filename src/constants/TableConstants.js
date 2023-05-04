@@ -45,6 +45,7 @@ export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
 
 export const TABLE_HEADER_SITES = [
   { label: 'site.name', field: 'name', itemRenderer: SITE_NAME_LINK_RENDERER },
+  { label: 'site.type', field: 'siteType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER },
   { label: 'description', field: 'description' },
   { label: 'platform', field: 'platformDetails.platformType' },
   { label: 'Location', itemRenderer: SITE_LOCATION_ITEM_RENDERER },
