@@ -68,7 +68,6 @@ class DMSearchSelect extends Component {
     const { fieldKey, dispatch, user, field } = this.props;
     const { values } = user;
     const val = getValue(fieldKey, values);
-    // dispatch(valueChange(fieldKey, val));
     validateField(field, fieldKey, val.value, dispatch, user);
   }
 

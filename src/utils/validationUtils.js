@@ -1009,7 +1009,7 @@ export function validatedNewAndCnfmPass(user) {
   return false;
 }
 
-export function errorMsgProtectedRecoverySite({ user, fieldKey, value }) {
+export function validatePlanSiteSelection({ user, fieldKey, value }) {
   const { values } = user;
   const otherField = (fieldKey === 'drplan.protectedSite' ? 'drplan.recoverySite' : 'drplan.protectedSite');
   const otherFieldValue = getValue(otherField, values) || '';
