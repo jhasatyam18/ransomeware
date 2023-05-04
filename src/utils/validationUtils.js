@@ -1014,14 +1014,7 @@ export function validatePlanSiteSelection({ user, fieldKey, value }) {
   const otherField = (fieldKey === 'drplan.protectedSite' ? 'drplan.recoverySite' : 'drplan.protectedSite');
   const otherFieldValue = getValue(otherField, values) || '';
   let res = '';
-  if (otherFieldValue === '' || value === '' || !value) {
-    if (fieldKey === 'drplan.recoverySite' || fieldKey === 'reverse.recoverySite') {
-      res = 'Please provide Recovery site';
-    } else {
-      res = 'Please provide Protected site';
-    }
-    return res;
-  } if (`${otherFieldValue}` === `${value}`) {
+  if (`${otherFieldValue}` === `${value}` && otherFieldValue !== '' && value !== '') {
     res = 'Protection and recovery sites cannot be same.';
     return res;
   }
