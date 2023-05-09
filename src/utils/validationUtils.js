@@ -125,7 +125,7 @@ export function validateDrSiteSelection({ user, fieldKey, value, dispatch }) {
     return true;
   }
 
-  // if both recoevry and protected site is diffrent then remove error from the other field
+  // if both recovery and protected site are diffrent then remove error from the other field
   if (errors[otherField] && otherFieldValue !== '') {
     dispatch(removeErrorMessage(otherField));
   }
@@ -1015,7 +1015,7 @@ export function validatePlanSiteSelection({ user, fieldKey, value }) {
   const otherFieldValue = getValue(otherField, values) || '';
   let res = '';
   if (`${otherFieldValue}` === `${value}` && otherFieldValue !== '' && value !== '') {
-    res = 'Protection and recovery sites cannot be same.';
+    res = i18n.t('error.same.site');
     return res;
   }
   return res;
