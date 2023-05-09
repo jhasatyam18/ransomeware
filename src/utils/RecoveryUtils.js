@@ -193,16 +193,10 @@ function getGeneralConfig({ sourceConfig, user, workFlow }) {
       break;
     case PLATFORM_TYPES.Azure:
       keys = [
-        { title: 'label.datacenter', value: datacenterMoref },
         { title: 'label.Resourcegrp', value: folderPath },
-        { title: 'label.compute.resource', value: hostMoref },
-        { title: 'label.storage', value: datastoreMoref },
         { title: 'vm.size', value: instanceType },
         { title: 'volume.type', value: volumeType },
-        { title: 'volume.iops', value: volumeIOPS },
         { title: 'label.instance.tags', value: tagData },
-        { title: 'label.cpu.nums', value: numCPU },
-        { title: 'label.memory', value: memory },
         { title: 'label.network.tags', value: securityGroup },
         { title: 'label.available.zone', value: availZone },
       ];
@@ -228,7 +222,7 @@ function getNetworkConfig({ sourceConfig, user, workFlow }) {
   const { networks, availZone } = sourceConfig;
   const netWorkKeys = [];
   networks.forEach((nw, index) => {
-    const { vpcId = '', Subnet = '', isPublicIP = '', networkTier = '', publicIP, privateIP, isFromSource, securityGroups, adapterType, networkMoref } = nw;
+    const { vpcId = '', Subnet = '', isPublicIP = '', networkTier = '', publicIP, privateIP, isFromSource, securityGroups, adapterType, networkMoref, macAddress, netmask, gateway, dns } = nw;
     let { subnet = '', network } = nw;
     if (subnet === '' && Subnet !== '') {
       subnet = Subnet;
@@ -247,10 +241,6 @@ function getNetworkConfig({ sourceConfig, user, workFlow }) {
           { title: 'label.network', value: networkMoref },
 
         ];
-        if (workflow !== UI_WORKFLOW.CREATE_PLAN) {
-          keys = [...keys, { title: 'Private IP', value: privateIP },
-            { title: 'Public IP', value: publicIP }];
-        }
         break;
       case PLATFORM_TYPES.GCP:
         const networkOption = getNetworkOptions(user);
@@ -264,31 +254,33 @@ function getNetworkConfig({ sourceConfig, user, workFlow }) {
           { title: 'label.subnet', value: subnet },
           { title: 'label.networkTier', value: networkTier },
         ];
-        if (workflow !== UI_WORKFLOW.CREATE_PLAN) {
-          keys = [...keys, { title: 'Private IP', value: privateIP },
-            { title: 'Public IP', value: publicIP }];
-        }
         break;
       case PLATFORM_TYPES.VMware:
         keys = [
-          { title: 'label.vpc.id', value: vpcId }, { title: 'label.subnet', value: subnet },
-          { title: 'label.availZone', value: availZone }, { title: 'label.auto.publicIP', value: isPublicIP },
-          { title: 'label.networkTier', value: networkTier },
-          { title: 'label.security.groups', value: securityGroups },
-          { title: 'label.adapter.type', value: adapterType }, { title: 'label.network', value: network },
+          { title: 'label.network', value: network },
+          { title: 'label.adapter.type', value: adapterType },
+          { title: 'label.auto.publicIP', value: isPublicIP },
         ];
         break;
       case PLATFORM_TYPES.Azure:
         keys = [
-          { title: 'label.vpc.id', value: vpcId }, { title: 'label.subnet', value: subnet },
-          { title: 'label.availZone', value: availZone }, { title: 'label.auto.publicIP', value: isPublicIP },
-          { title: 'label.networkTier', value: networkTier },
+          { title: 'label.network', value: network },
+          { title: 'label.subnet', value: subnet },
+          { title: 'label.auto.publicIP', value: isPublicIP },
           { title: 'label.security.groups', value: securityGroups },
-          { title: 'label.adapter.type', value: adapterType }, { title: 'label.network', value: network },
         ];
         break;
       default:
         break;
+    }
+    if (workflow !== UI_WORKFLOW.CREATE_PLAN) {
+      keys = [...keys, { title: 'Private IP', value: privateIP },
+        { title: 'Mac Address', value: macAddress },
+        { title: 'Public IP', value: publicIP },
+        { title: 'Netmask', value: netmask },
+        { title: 'Gateway', value: gateway },
+        { title: 'DNS', value: dns },
+      ];
     }
     const nic = { title: `Nic-${index}`, values: keys };
     netWorkKeys.push(nic);

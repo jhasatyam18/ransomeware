@@ -243,78 +243,80 @@ class ModalNicConfig extends Component {
     return (
       <Container>
         <Card className="nic_modal_Width">
-          <CardBody>
-            <Form>
-              <Row>
-                <Col sm={4}>
-                  {t('title.network.name')}
-                </Col>
-                <Col sm={8}>
-                  <DMSearchSelect hideLabel user={user} dispatch={dispatch} fieldKey={`${networkKey}-network`} field={networkField} />
-                </Col>
-              </Row>
-              <Row>
-                <Col sm={4}>
-                  {t('title.adapter.type')}
-                </Col>
-                <Col sm={8}>
-                  <DMFieldSelect hideLabel dispatch={dispatch} fieldKey={`${networkKey}-adapterType`} field={AdapterField} user={user} />
-                </Col>
-              </Row>
-              <Row>
-                <Col sm={4}>
-                  {t('title.mac.address')}
-                </Col>
-                <Col sm={8}>
-                  <DMFieldText hideLabel dispatch={dispatch} fieldKey={`${networkKey}-macAddress`} field={MacAddressField} user={user} />
-                </Col>
-              </Row>
-              <Row style={{ marginTop: '10px' }}>
-                <Col sm={4}>
-                  {t('title.staticip')}
-                </Col>
-                <Col sm={6}>
-                  <DMFieldCheckbox hideLabel dispatch={dispatch} fieldKey={`${networkKey}-isPublic`} field={staticIP} user={user} />
-                </Col>
-              </Row>
-              {staticip ? (
-                <>
-                  <Row className="margin-top-15">
-                    <Col sm={4}>
-                      {t('title.ip')}
-                    </Col>
-                    <Col sm={8}>
-                      <DMFieldText hideLabel dispatch={dispatch} fieldKey={`${networkKey}-publicIP`} field={ip} user={user} />
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col sm={4}>
-                      {t('vmware.subnet')}
-                    </Col>
-                    <Col sm={8}>
-                      <DMFieldText hideLabel dispatch={dispatch} fieldKey={`${networkKey}-netmask`} field={subnet} user={user} />
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col sm={4}>
-                      {t('gateway')}
-                    </Col>
-                    <Col sm={8}>
-                      <DMFieldText hideLabel dispatch={dispatch} fieldKey={`${networkKey}-gateway`} field={gateway} user={user} />
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col sm={4}>
-                      {t('dns')}
-                    </Col>
-                    <Col sm={8}>
-                      <DMFieldText hideLabel dispatch={dispatch} fieldKey={`${networkKey}-dnsserver`} field={dns} user={user} />
-                    </Col>
-                  </Row>
-                </>
-              ) : null}
-            </Form>
-          </CardBody>
+          <SimpleBar style={{ maxHeight: '400px', minHeight: '220px' }}>
+            <CardBody>
+              <Form>
+                <Row>
+                  <Col sm={4}>
+                    {t('title.network.name')}
+                  </Col>
+                  <Col sm={8}>
+                    <DMSearchSelect hideLabel user={user} dispatch={dispatch} fieldKey={`${networkKey}-network`} field={networkField} />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col sm={4}>
+                    {t('title.adapter.type')}
+                  </Col>
+                  <Col sm={8}>
+                    <DMFieldSelect hideLabel dispatch={dispatch} fieldKey={`${networkKey}-adapterType`} field={AdapterField} user={user} />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col sm={4}>
+                    {t('title.mac.address')}
+                  </Col>
+                  <Col sm={8}>
+                    <DMFieldText hideLabel dispatch={dispatch} fieldKey={`${networkKey}-macAddress`} field={MacAddressField} user={user} />
+                  </Col>
+                </Row>
+                <Row style={{ marginTop: '10px' }}>
+                  <Col sm={4}>
+                    {t('title.staticip')}
+                  </Col>
+                  <Col sm={6}>
+                    <DMFieldCheckbox hideLabel dispatch={dispatch} fieldKey={`${networkKey}-isPublic`} field={staticIP} user={user} />
+                  </Col>
+                </Row>
+                {staticip ? (
+                  <>
+                    <Row className="margin-top-15">
+                      <Col sm={4}>
+                        {t('title.ip')}
+                      </Col>
+                      <Col sm={8}>
+                        <DMFieldText hideLabel dispatch={dispatch} fieldKey={`${networkKey}-publicIP`} field={ip} user={user} />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col sm={4}>
+                        {t('vmware.subnet')}
+                      </Col>
+                      <Col sm={8}>
+                        <DMFieldText hideLabel dispatch={dispatch} fieldKey={`${networkKey}-netmask`} field={subnet} user={user} />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col sm={4}>
+                        {t('gateway')}
+                      </Col>
+                      <Col sm={8}>
+                        <DMFieldText hideLabel dispatch={dispatch} fieldKey={`${networkKey}-gateway`} field={gateway} user={user} />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col sm={4}>
+                        {t('dns')}
+                      </Col>
+                      <Col sm={8}>
+                        <DMFieldText hideLabel dispatch={dispatch} fieldKey={`${networkKey}-dnsserver`} field={dns} user={user} />
+                      </Col>
+                    </Row>
+                  </>
+                ) : null}
+              </Form>
+            </CardBody>
+          </SimpleBar>
         </Card>
         <div className="modal-footer">
           <button type="button" className="btn btn-secondary" onClick={this.onCancel}>Cancel</button>
