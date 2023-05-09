@@ -113,16 +113,20 @@ export function validateSteps(user, dispatch, fields, staticFields) {
   return isClean;
 }
 
-export function validateDrSiteSelection({ user, fieldKey }) {
-  const { values } = user;
-  const fieldValue = getValue(fieldKey, values);
+export function validateDrSiteSelection({ user, fieldKey, value, dispatch }) {
+  const { values, errors } = user;
   const otherField = (fieldKey === 'drplan.protectedSite' ? 'drplan.recoverySite' : 'drplan.protectedSite');
-  const otherFieldValue = getValue(otherField, values);
-  if (!fieldValue) {
+  const otherFieldValue = getValue(otherField, values) || '';
+  if (!value) {
     return true;
   }
-  if (fieldValue === otherFieldValue) {
+  if (`${value}` === `${otherFieldValue}`) {
     return true;
+  }
+
+  // if both recovery and protected site are diffrent then remove error from the other field
+  if (errors[otherField] && otherFieldValue !== '') {
+    dispatch(removeErrorMessage(otherField));
   }
   return false;
 }
@@ -1002,4 +1006,16 @@ export function validatedNewAndCnfmPass(user) {
   const cnfmError = errors['user.confirmPassword'] || '';
   if (password !== '' && cnfPassword !== '' && passError === '' && cnfmError === '' && password === cnfPassword) return true;
   return false;
+}
+
+export function validatePlanSiteSelection({ user, fieldKey, value }) {
+  const { values } = user;
+  const otherField = (fieldKey === 'drplan.protectedSite' ? 'drplan.recoverySite' : 'drplan.protectedSite');
+  const otherFieldValue = getValue(otherField, values) || '';
+  let res = '';
+  if (`${otherFieldValue}` === `${value}` && otherFieldValue !== '' && value !== '') {
+    res = i18n.t('error.same.site');
+    return res;
+  }
+  return res;
 }
