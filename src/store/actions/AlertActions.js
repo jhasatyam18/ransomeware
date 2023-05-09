@@ -202,7 +202,7 @@ export function initEditPlanAction(event, alert) {
 
 export function takeActionOnVMAlert(alert) {
   return (dispatch) => {
-    dispatch(showApplicationLoader('VM_ACTION', 'Taking action on VM alert'));
+    dispatch(showApplicationLoader('VM_ACTION', i18n.t('message.take.vm.action')));
     const url = API_ALERT_TAKE_VM_ACTION.replace('<id>', alert.id);
     const payload = createPayload(API_TYPES.POST, alert);
     return callAPI(url, payload)
