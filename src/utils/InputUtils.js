@@ -70,13 +70,34 @@ export function showDifferentialReverseCheckbox(user) {
   return false;
 }
 
-export function getSitesOptions(user) {
+export function getProtectedSitesOptions(user) {
   const { values } = user;
   const sites = getValue(STATIC_KEYS.UI_SITES, values);
   const result = [];
   if (sites) {
     sites.reduce((previous, next) => {
-      previous.push({ label: next.name, value: next.id });
+      const { node } = next;
+      const { isLocalNode } = node;
+      if (isLocalNode) {
+        previous.push({ label: next.name, value: next.id });
+      }
+      return previous;
+    }, result);
+  }
+  return result;
+}
+
+export function getRecoverySitesOptions(user) {
+  const { values } = user;
+  const sites = getValue(STATIC_KEYS.UI_SITES, values);
+  const result = [];
+  if (sites) {
+    sites.reduce((previous, next) => {
+      const { node } = next;
+      const { isLocalNode } = node;
+      if (!isLocalNode) {
+        previous.push({ label: next.name, value: next.id });
+      }
       return previous;
     }, result);
   }

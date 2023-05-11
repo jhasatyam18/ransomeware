@@ -61,6 +61,7 @@ function setGeneralConfiguration(sourceConfig, targetVM, user, dispatch) {
   const memory = getMemoryInfo(memoryMB);
   const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
   const tagsData = [];
+  let generalConfig = {};
   if (securityGroup === '' && securityGroups !== '') {
     securityGroup = securityGroups;
   }
@@ -73,6 +74,11 @@ function setGeneralConfiguration(sourceConfig, targetVM, user, dispatch) {
     instanceType = '';
     folderPath = [folderPath];
     fetchByDelay(dispatch, setVMwareTargetData, 2000, [`${targetVM}-vmConfig.general`, datacenterMoref, hostMoref]);
+    generalConfig = {
+      [`${targetVM}-vmConfig.general.numcpu`]: numCPU || 2,
+      [`${targetVM}-vmConfig.general-memory`]: parseInt(memory[0], 10) || 2,
+      [`${targetVM}-vmConfig.general-unit`]: memory[1] || '',
+    };
   } else {
     instanceType = { label: instanceType, value: instanceType };
   }
@@ -80,15 +86,13 @@ function setGeneralConfiguration(sourceConfig, targetVM, user, dispatch) {
   if (securityGroup) {
     networkTags = securityGroup.split(',');
   }
-  const generalConfig = {
+  generalConfig = {
+    ...generalConfig,
     [`${targetVM}-vmConfig.general.instanceType`]: instanceType || '',
     [`${targetVM}-vmConfig.general.volumeType`]: volumeType || '',
     [`${targetVM}-vmConfig.general.hostMoref`]: { label: hostMoref, value: hostMoref },
     [`${targetVM}-vmConfig.general.dataStoreMoref`]: { label: datastoreMoref, value: datastoreMoref },
     [`${targetVM}-vmConfig.general.datacenterMoref`]: datacenterMoref || '',
-    [`${targetVM}-vmConfig.general.numcpu`]: numCPU || 2,
-    [`${targetVM}-vmConfig.general-memory`]: parseInt(memory[0], 10) || 2,
-    [`${targetVM}-vmConfig.general-unit`]: memory[1] || '',
     [`${targetVM}-vmConfig.general.folderPath`]: folderPath || '',
     [`${targetVM}-vmConfig.general.volumeType`]: volumeType || '',
     [`${targetVM}-vmConfig.general.volumeIOPS`]: volumeIOPS || 0,
