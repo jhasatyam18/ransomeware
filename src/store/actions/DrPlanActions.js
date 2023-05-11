@@ -1550,6 +1550,11 @@ function setReverseData(json) {
         dispatch(valueChange('reverse.replType', STATIC_KEYS.FULL_INCREMENTAL));
       }
       dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.REVERSE_PLAN));
+      if (json.enableReverse) {
+        dispatch(valueChange('reverse.replType', STATIC_KEYS.DIFFERENTIAL));
+      } else {
+        dispatch(valueChange('reverse.replType', STATIC_KEYS.FULL_INCREMENTAL));
+      }
       const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined)), dispatch(fetchScript()), dispatch(fetchDrPlans('ui.values.drplan'))];
       return Promise.all(apis).then(
         () => {

@@ -25,12 +25,12 @@ function StatusItemRenderer({ data, field, t, noPopOver }) {
   let resp = status.charAt(0).toUpperCase() + status.slice(1);
 
   const renderPopOver = (hoverInfo, key) => {
-    const wid = hoverInfo.length <= 50 ? '300px' : '430px';
+    const wid = hoverInfo.length <= 50 ? '200px' : '250px';
     if (noPopOver) {
       return null;
     }
     return (
-      <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: '#fff', borderRadius: '8px', color: 'black', border: 'none', width: wid, textAlign: hoverInfo.length <= 50 ? 'center' : 'left' }}>
+      <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: '#fff', borderRadius: '8px', color: 'black', border: 'none', width: wid, textAlign: 'left' }}>
         <PopoverBody>
           <SimpleBar style={{ maxHeight: '100px', minHeight: '30px', color: 'black' }}>
             {hoverInfo}
