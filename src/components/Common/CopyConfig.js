@@ -200,7 +200,7 @@ function CopyVMConfig(props) {
       <Collapse isOpen={isOpen}>
         <Row className="padding-top-10">
           <Col sm={6} className="margin-left-5">
-            Select VM Configuration
+            Select Virtual Machine
           </Col>
           <Col sm={5} className="margin-left-2">Select Configuration</Col>
           <Col sm={6} className="padding-top-10">{renderSource()}</Col>
