@@ -463,5 +463,6 @@
   "succes.ackn.alert":"Acknowledging alert.",
   "show.details":"View Progress",
   "vmware.subnet":"Subnet Mask",
+  "message.take.vm.action":"Taking action on VM alert",
   "error.same.site":"Protection and recovery sites cannot be same."
 }
