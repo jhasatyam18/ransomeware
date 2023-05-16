@@ -381,7 +381,7 @@ span.flatpickr-weekday {
 
 .login-icon{
   position: absolute;
-  bottom: 110px;
+  bottom: 88px;
   right: 40px;
 }
 
@@ -485,4 +485,148 @@ span.flatpickr-weekday {
   border-top: 1px solid $gray-300;
   border-right: 1px solid $gray-300;
   border-bottom: 1px solid $gray-300;
+}
+
+.summary-container {
+  width: calc(100% - 10px);
+  padding: 20px 20px;
+}
+
+
+.summary__view {
+  border: 1px solid #2a3042;
+  margin: 0px;
+  transition:visibility 1s linear,opacity 0.3s linear;
+  .key {
+    background-color: #2a3042;
+    border-bottom: 1px solid $gray-400 !important;
+    padding-left: 10px;
+    padding-top: 10px;
+  }
+  .child {
+    padding-left: 40px;
+  }
+  .value {
+    background-color: #32394e;
+    border-bottom: 1px solid $gray-400 !important;
+    padding-top: 10px;
+    padding-left: 15px;
+  }
+}
+
+.summary_card {
+  background-color: #32394e !important;
+  padding: 1px;
+  margin: 5px;
+}
+.summary_card__title {
+  padding-top: 5px;
+  padding: 10px 0px 0px 20px;
+}
+
+.test_rec_config{
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+}
+
+@keyframes slideInFromTop {
+  0% {
+   transform: translateX(5%);
+   opacity: 0.4;
+  }
+  100% {
+  transform: translateX(0);
+  opacity: 1;
+  }
+}
+
+@keyframes visibles {
+  0%{
+   transform: translateX(-10%);
+   opacity: 0;
+  }100%{
+   transform: translateX(0);
+   opacity: 1;
+  }
+}
+
+.remove_configured_vm {  
+  animation: 0.20s linear 0s 1 slideInFromTop ;
+}
+
+.configured_icons{
+  animation: 0.30s linear 0s 1 visibles;
+}
+
+@keyframes accordianAnimation {
+  0%{
+   opacity: 0.4;
+  }100%{
+   opacity: 1;
+  }
+}
+
+
+.dmaccordian{
+  animation: 0.50s linear 0s 1 accordianAnimation;
+}
+
+
+@media screen and (max-width: 1200px) {
+  .test_rec_config{
+     display: block;
+     width: 100%;
+  }
+}
+.recovery_step_icon{
+  font-size: 1.2em;
+}
+
+.step_parent_div{
+  display: flex;
+  height: 100%;
+  font-size: 11px;
+}
+
+.step_icon_div{
+  position: relative;
+  top:5px
+}
+
+.step_msg_div{
+  margin: 5px;
+  position: relative;
+  left: -12px;
+  top: 18px;
+  height: 80%;
+}
+
+.step_msg{
+  position: relative;
+   top: -20px;
+   left: 20px;
+}
+
+.step_time{
+  position: relative;
+  top:-29px;
+  left:20px;
+}
+
+.progress_list{
+  position: relative;
+  top:2px;
+  left:5px;
+  margin-bottom: 19px;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+
+.status_view_prog_icon{
+  float: right;
+}
+
+.test_summary_icon{
+  color: #50a5f1;
 }

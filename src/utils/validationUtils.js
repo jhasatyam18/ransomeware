@@ -22,7 +22,6 @@ export function isRequired(value) {
 
 export function validateField(field, fieldKey, value, dispatch, user) {
   const { patterns, validate, errorMessage } = field;
-  // const field = FIELDS[fieldKey];
   const { type } = field;
   const { errors } = user;
   if (patterns) {
@@ -60,6 +59,10 @@ export function validateField(field, fieldKey, value, dispatch, user) {
 
 export function isEmpty({ value }) {
   return (typeof value === 'undefined' || typeof value === 'string' && value.trim() === '' || value === null);
+}
+
+export function isEmptyNum({ value }) {
+  return (typeof value === 'number' && value === 0);
 }
 
 export function isMemoryValueValid({ user, fieldKey }) {
@@ -110,16 +113,20 @@ export function validateSteps(user, dispatch, fields, staticFields) {
   return isClean;
 }
 
-export function validateDrSiteSelection({ user, fieldKey }) {
-  const { values } = user;
-  const fieldValue = getValue(fieldKey, values);
+export function validateDrSiteSelection({ user, fieldKey, value, dispatch }) {
+  const { values, errors } = user;
   const otherField = (fieldKey === 'drplan.protectedSite' ? 'drplan.recoverySite' : 'drplan.protectedSite');
-  const otherFieldValue = getValue(otherField, values);
-  if (!fieldValue) {
+  const otherFieldValue = getValue(otherField, values) || '';
+  if (!value) {
     return true;
   }
-  if (fieldValue === otherFieldValue) {
+  if (`${value}` === `${otherFieldValue}`) {
     return true;
+  }
+
+  // if both recovery and protected site are diffrent then remove error from the other field
+  if (errors[otherField] && otherFieldValue !== '') {
+    dispatch(removeErrorMessage(otherField));
   }
   return false;
 }
@@ -129,7 +136,7 @@ export function validateDRPlanProtectData({ user, dispatch }) {
   const vmwareVMS = getValue('ui.site.vmware.selectedvms', values);
   if (typeof vmwareVMS !== 'undefined' && vmwareVMS) {
     // Below code is to fetch the datacenter from the the source dev center and in case of test recovery we don't want it
-    const workFlow = getValue('ui.workflow', values) || '';
+    const workFlow = getValue(STATIC_KEYS.UI_WORKFLOW, values) || '';
     if (workFlow !== UI_WORKFLOW.TEST_RECOVERY) {
       const vmwareVMSKeys = Object.keys(vmwareVMS);
       if (!vmwareVMSKeys || vmwareVMSKeys.length === 0) {
@@ -140,7 +147,7 @@ export function validateDRPlanProtectData({ user, dispatch }) {
       return true;
     }
   }
-  const vms = getValue('ui.site.seletedVMs', values);
+  const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   if (!vms || Object.keys(vms).length === 0) {
     dispatch(addMessage('Select virtual machine.', MESSAGE_TYPES.ERROR));
     return false;
@@ -151,7 +158,7 @@ export function validateDRPlanProtectData({ user, dispatch }) {
 
 export function validateInTargetDRPLanProtectedData({ user, dispatch }) {
   const { values } = user;
-  const vms = getValue('ui.site.seletedVMs', values);
+  const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   if (!vms || Object.keys(vms).length === 0) {
     dispatch(addMessage('Select virtual machine.', MESSAGE_TYPES.ERROR));
     return false;
@@ -169,7 +176,7 @@ export async function validateMigrationVMs({ user, dispatch }) {
   const initialCheckPass = validateVMConfiguration({ user, dispatch });
   if (initialCheckPass) {
     try {
-      const vms = getValue('ui.site.seletedVMs', values);
+      const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
       const autoMigrate = getValue('ui.automate.migration', values);
       if (autoMigrate) {
         return true;
@@ -198,7 +205,7 @@ export async function validateMigrationVMs({ user, dispatch }) {
 
 export function validateVMConfiguration({ user, dispatch }) {
   const { values } = user;
-  const vms = getValue('ui.site.seletedVMs', values);
+  const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   let fields = {};
   if (Object.keys(vms).length === 0) {
     dispatch(addMessage('Please navigate back and select a virtual machine for protection', MESSAGE_TYPES.ERROR));
@@ -243,7 +250,7 @@ export function validateNetworkConfig(user, dispatch) {
 
 export function validateGCPNetwork(user, dispatch) {
   const { values } = user;
-  const vms = getValue('ui.site.seletedVMs', values);
+  const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   const subnets = getValue(STATIC_KEYS.UI_SUBNETS, values);
   let isClean = true;
   let message = '';
@@ -299,7 +306,7 @@ export function validateGCPNetwork(user, dispatch) {
 
 export function validateAWSNetworks(user, dispatch) {
   const { values } = user;
-  const vms = getValue('ui.site.seletedVMs', values);
+  const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   // const subnets = getValue(STATIC_KEYS.UI_SUBNETS, values);
   const elasticIPs = [];
   let isClean = true;
@@ -375,7 +382,7 @@ export function validateAWSNetworks(user, dispatch) {
 
 export function validateVMware(user, dispatch) {
   const { values } = user;
-  const vms = getValue('ui.site.seletedVMs', values);
+  const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   let isClean = true;
   let message = '';
   Object.keys(vms).forEach((vm) => {
@@ -406,7 +413,7 @@ export function validateVMware(user, dispatch) {
 
 export function validateAzureNetwork(user, dispatch) {
   const { values } = user;
-  const vms = getValue('ui.site.seletedVMs', values);
+  const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   const subnets = getValue(STATIC_KEYS.UI_SUBNETS, values);
   let isClean = true;
   let message = '';
@@ -473,7 +480,7 @@ export async function validateRecoveryVMs({ user, dispatch }) {
 
   if (initialCheckPass) {
     try {
-      const vms = getValue('ui.site.seletedVMs', values);
+      const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
       if (vms) {
         const payload = getRecoveryPayload(user);
         const obj = createPayload(API_TYPES.POST, { ...payload.recovery });
@@ -644,7 +651,7 @@ function validateVMwareNicConfig(dispatch, user, options) {
   const { networkKey } = options;
   const network = getValue(`${networkKey}-network`, values) || '';
   const adapterType = getValue(`${networkKey}-adapterType`, values) || '';
-  const macAddress = getValue(`${networkKey}-macAddress-value`, values) || '';
+  const macAddress = getValue(`${networkKey}-macAddress`, values) || '';
   const staticip = getValue(`${networkKey}-isPublic`, values) || '';
   if (network === '' || network === '-') {
     dispatch(addMessage('Select network', MESSAGE_TYPES.ERROR));
@@ -657,7 +664,7 @@ function validateVMwareNicConfig(dispatch, user, options) {
   if (macAddress) {
     const validMac = validateMacAddressForVMwareNetwork(macAddress);
     if (!validMac) {
-      dispatch(addMessage('Please fill the right mac Address', MESSAGE_TYPES.ERROR));
+      dispatch(addMessage('Please provide valid mac Address', MESSAGE_TYPES.ERROR));
       return false;
     }
   }
@@ -915,7 +922,7 @@ function showValidationInfo(response = [], dispatch) {
 
 export function validateVMSelection(user, dispatch) {
   const { values } = user;
-  const vms = getValue('ui.site.seletedVMs', values);
+  const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   if (typeof vms === 'undefined' || Object.keys(vms).length === 0) {
     dispatch(addMessage('Select virtual machines', MESSAGE_TYPES.ERROR));
     return false;
@@ -999,4 +1006,16 @@ export function validatedNewAndCnfmPass(user) {
   const cnfmError = errors['user.confirmPassword'] || '';
   if (password !== '' && cnfPassword !== '' && passError === '' && cnfmError === '' && password === cnfPassword) return true;
   return false;
+}
+
+export function validatePlanSiteSelection({ user, fieldKey, value }) {
+  const { values } = user;
+  const otherField = (fieldKey === 'drplan.protectedSite' ? 'drplan.recoverySite' : 'drplan.protectedSite');
+  const otherFieldValue = getValue(otherField, values) || '';
+  let res = '';
+  if (`${otherFieldValue}` === `${value}` && otherFieldValue !== '' && value !== '') {
+    res = i18n.t('error.same.site');
+    return res;
+  }
+  return res;
 }

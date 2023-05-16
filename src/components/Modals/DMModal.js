@@ -17,7 +17,9 @@ import ModalLicense from './ModalLicense';
 import ModalBandwidthConfig from './ModalBandwidthConfig';
 import ModalScripts from './ModalScripts';
 import ModalLocationTree from './ModalLocationTree';
+import ModalShowSummary from './ModalShowSummary';
 import ModalChangeNodePassword from './ModalChangeNodePassword';
+import ModalShowResetedVms from './ModalShowResetVm';
 
 class DMModal extends Component {
   constructor() {
@@ -63,8 +65,12 @@ class DMModal extends Component {
           return <ModalScripts options={options} />;
         case MODALS.MODAL_LOCATION_CONFIG:
           return <ModalLocationTree dispatch={dispatch} user={user} options={options} fieldKey={options.fieldKey} />;
+        case MODALS.MODAL_SUMMARY:
+          return <ModalShowSummary dispatch={dispatch} options={options} />;
         case MODALS.MODAL_NODE_PASSWORD_CHANGE:
           return <ModalChangeNodePassword dispatch={dispatch} user={user} options={options} fieldKey={options.fieldKey} />;
+        case MODALS.MODAL_SHOW_RESETED_VMS:
+          return <ModalShowResetedVms dispatch={dispatch} user={user} options={options} />;
         default:
           return (<div>404</div>);
       }

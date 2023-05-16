@@ -186,7 +186,7 @@ export function calculateChangedData(val) {
     const units = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
     const factor = 1024;
     let index = parseInt(Math.floor(Math.log(val) / Math.log(factor)), 10);
-    const result = Math.parseFloat((val / (factor ** index)).toFixed(2).replace(/[.,]00$/, ''));
+    const result = parseFloat((val / (factor ** index)).toFixed(2).replace(/[.,]00$/, ''));
     if (index > 3) {
       index = 3;
     }
@@ -327,8 +327,8 @@ export const changePageTitle = (t) => {
 };
 
 export function getMemoryInfo(value) {
-  let val = 0;
-  let unit = 'MB';
+  let val = 1;
+  let unit = 'GB';
   if (typeof value === 'undefined' || value === 0) {
     return [val, unit];
   }
@@ -371,4 +371,25 @@ export function getSubnetIDFromName(val, values, netID) {
     }
   });
   return res;
+}
+
+/**
+ * @param data :required data is an array for comparison
+ * @param selectedObjects : is an object
+ * @returns array
+ */
+
+export function moveSelectedItemsOnTop(data, selectedObjects) {
+  const response = [];
+  if (selectedObjects === '' || typeof selectedObjects !== 'object' && typeof data !== 'undefined') {
+    return data;
+  }
+  data.forEach((el) => {
+    if (typeof selectedObjects[el.moref] !== 'undefined') {
+      response.unshift(el);
+    } else {
+      response.push(el);
+    }
+  });
+  return response;
 }

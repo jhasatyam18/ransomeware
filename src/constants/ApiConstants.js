@@ -23,6 +23,7 @@ export const API_PROTECTION_PLAN_VMS = 'api/v1/sites/<sid>/vms?protectionplan=<p
 export const API_PROTECTION_PLAN_UPDATE = 'api/v1/protection/plans/<id>';
 export const API_PROTECTION_PLAN_PROTECTED_VMS = 'api/v1/protection/plans/<pid>?vmmoref=<moref>';
 export const API_EDIT_PROTECTED_VM = 'api/v1/protection/plans/<pid>/vm';
+export const API_LATEST_TEST_RECOVERY_PPLAN = 'api/v1/protection/plans/<id>?testconfig=true';
 
 // jobs
 export const API_REPLICATION_JOBS = 'api/v1/jobs/replication/disks';
@@ -40,7 +41,7 @@ export const API_DASHBOARD_BANDWIDTH_USAGE = 'api/v1/bandwidth/usage';
 export const API_DASHBOARD_VIRTUAL_MACHINE_PROTECTION_ANALYSIS_PROTECTED_VMS = 'api/v1/dashboard/protectedvms';
 export const API_DASHBOARD_NODE_STATS = 'api/v1/dashboard/nodestats';
 export const API_DASHBOARD_UNACK_ALERTS = 'api/v1/dashboard/unackalerts';
-
+export const API_RESCOVERY_JOB_STATUS_STEPS = 'api/v1/jobs/recover/vms/<id>';
 // recovery
 export const API_RECOVER = 'api/v1/recover';
 export const API_TEST_RECOVERY_CLEANUP = 'api/v1/recover/cleanup';

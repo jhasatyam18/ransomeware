@@ -3,7 +3,7 @@ import 'boxicons';
 import { JOB_COMPLETION_STATUS } from '../../../constants/AppStatus';
 
 function DateItemRenderer({ data, field }) {
-  const fieldArray = ['currenSnapshotTime', 'lastSyncTime'];
+  const fieldArray = ['currentSnapshotTime', 'lastSyncTime'];
   const time = data[field] * 1000;
   const d = new Date(time);
   let resp = '';

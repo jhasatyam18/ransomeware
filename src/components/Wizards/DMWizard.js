@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Modal, Row, Col } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
-import { clearValues } from '../../store/actions';
+import { clearValues, valueChange } from '../../store/actions';
 import { closeWizard } from '../../store/actions/WizardActions';
 import { DRPLAN_PROTECT_STEP, DRPLAN_RECOVERY_STEP, PROTECTION_PLAN_SUMMARY_STEP, RECOVERY_PROTECT_VM_STEP, RECOVERY_SUMMARY, MIGRATION_GENERAL_STEP, DRPLAN_VM_CONFIG_STEP, WIZARD_STEP, RECOVERY_GENERAL_STEP, REVERSE_CONFIG_STEP, REVERSE_SUMMARY, RECOVERY_CONFIG, DRPLAN_BOOT_ORDER_STEP, VM_ALERTS_STEP, VM_CONFIGURATION_STEP, DRPLAN_SCRIPT_STEP, TEST_RECOVERY_CONFIG_STEP, TEST_RECOVERY_CONFIG_SCRIPTS, TEST_RECOVERY_CLEANUP_SUMMARY } from '../../constants/WizardConstants';
 import Pages404 from '../../pages/Page-404';
@@ -26,6 +26,7 @@ import DRPlanScriptStep from './DRPlanScriptStep';
 import TestRecoveryVMConfiguration from './Step/TestRecoveryVMConfiguration';
 import TestRecoveryScriptStep from './Step/TestRecoveryScriptStep';
 import TestRecoveryCleanupSummary from './TestRecoveryCleanupSummary';
+import { STATIC_KEYS } from '../../constants/InputConstants';
 
 class DMWizard extends React.Component {
   ref;
@@ -39,6 +40,15 @@ class DMWizard extends React.Component {
     this.onToggle = this.onToggle.bind(this);
     this.onFinish = this.onFinish.bind(this);
     this.ref = React.createRef();
+  }
+
+  componentDidMount() {
+    const { dispatch, wizard } = this.props;
+    const { options } = wizard;
+    const { workflow } = options;
+    if (workflow) {
+      dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, workflow));
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {

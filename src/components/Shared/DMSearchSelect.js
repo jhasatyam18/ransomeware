@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Select, { components } from 'react-select';
 import {
-  Col, FormFeedback, FormGroup, Label, Row,
+  Col, FormGroup, Label, Row,
 } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
 import SimpleBar from 'simplebar-react';
@@ -11,6 +11,7 @@ import DMToolTip from './DMToolTip';
 import { getValue } from '../../utils/InputUtils';
 import { valueChange } from '../../store/actions/UserActions';
 import { validateField } from '../../utils/validationUtils';
+import { getSearchSelectStyle } from '../../utils/ApiUtils';
 
 class DMSearchSelect extends Component {
   componentDidMount() {
@@ -37,7 +38,7 @@ class DMSearchSelect extends Component {
     const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
     if (recoveryPlatform === PLATFORM_TYPES.VMware && fieldValue) {
       if (typeof options === 'function') {
-        const optionValues = options(user, fieldKey);
+        const optionValues = options(user, fieldKey) || [];
         optionValues.map((val) => {
           if (val.value === fieldValue.value) {
             dispatch(valueChange(fieldKey, val));
@@ -48,51 +49,7 @@ class DMSearchSelect extends Component {
   }
 
   getStyles(hasError) {
-    const hoverColor = '#2a3042';
-    const bckClr = '#2e3548';
-    const fontClr = '#bfc8e2';
-    const borderClr = hasError ? '#f46a6a' : '#32394e';
-    return {
-      control: (base, state) => ({
-        ...base,
-        background: bckClr,
-        backgroundColor: bckClr,
-        borderColor: borderClr,
-        boxShadow: state.isFocused ? null : null,
-      }),
-      menu: (base) => ({
-        ...base,
-        borderRadius: 0,
-        marginTop: 0,
-        background: bckClr,
-        backgroundColor: bckClr,
-        zIndex: 9999,
-      }),
-      menuList: (base) => ({
-        ...base,
-        opacity: 1000,
-        padding: 0,
-        background: bckClr,
-        backgroundColor: bckClr,
-      }),
-      singleValue: (base) => ({
-        ...base,
-        padding: 0,
-        color: fontClr,
-      }),
-      input: (base) => ({
-        ...base,
-        color: fontClr,
-      }),
-      option: (base, state) => ({
-        ...base,
-        backgroundColor: state.isSelected ? '#2684FF' : bckClr,
-        '&:hover': {
-          backgroundColor: hoverColor,
-          color: 'white',
-        },
-      }),
-    };
+    return getSearchSelectStyle(hasError);
   }
 
   getOptions() {
@@ -109,9 +66,9 @@ class DMSearchSelect extends Component {
 
   onBlur = () => {
     const { fieldKey, dispatch, user, field } = this.props;
-    const { value } = this.state;
-    dispatch(valueChange(fieldKey, value));
-    validateField(field, fieldKey, value, dispatch, user);
+    const { values } = user;
+    const val = getValue(fieldKey, values);
+    validateField(field, fieldKey, val.value, dispatch, user);
   }
 
   handleChange = (selectedOption) => {
@@ -121,6 +78,7 @@ class DMSearchSelect extends Component {
     if (typeof onChange === 'function') {
       dispatch(onChange({ value: selectedOption.value, dispatch, user, fieldKey }));
     }
+    validateField(field, fieldKey, selectedOption.value, dispatch, user);
   }
 
   getFieldValue() {
@@ -141,10 +99,20 @@ class DMSearchSelect extends Component {
   }
 
   renderError(hasError) {
-    const { field, fieldKey } = this.props;
+    const { fieldKey, field, user } = this.props;
+    let { errorMessage } = field;
+    const { errorFunction } = field;
+    const { values } = user;
+    const val = getValue(fieldKey, values);
+    if (errorFunction && typeof errorFunction === 'function') {
+      const res = errorFunction({ fieldKey, user, value: val.value });
+      if (res !== '') {
+        errorMessage = res;
+      }
+    }
     if (hasError) {
       return (
-        <FormFeedback htmlFor={fieldKey}>{field.errorMessage}</FormFeedback>
+        <small className="form-text app_danger" htmlFor={fieldKey}>{errorMessage}</small>
       );
     }
     return null;
@@ -199,13 +167,14 @@ class DMSearchSelect extends Component {
                   value={this.getFieldValue()}
                   components={{ MenuList: this.MenuList }}
                   captureMenuScroll={false}
+                  onBlur={this.onBlur}
                 />
+                {this.renderError(hasErrors)}
               </Col>
               <Col sm={1}>
                 {this.renderTooltip()}
               </Col>
             </Row>
-            {this.renderError(hasErrors)}
           </Col>
         </FormGroup>
       </>

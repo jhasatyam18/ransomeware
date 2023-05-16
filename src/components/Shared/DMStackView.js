@@ -6,21 +6,11 @@ import { getStackComponent } from '../../utils/ComponentFactory';
 class DMStackView extends Component {
   constructor() {
     super();
-    // this.state = { isOpen: false };
     this.toggle = this.toggle.bind(this);
   }
 
-  componentDidMount() {
-    const { openByDefault } = this.props;
-    if (typeof openByDefault !== 'undefined' && openByDefault === 'true') {
-      this.toggle();
-    }
-  }
-
   toggle() {
-    // const { isOpen } = this.state;
     const { onToggleStack, index } = this.props;
-    // this.setState({ isOpen: !isOpen });
     onToggleStack(index);
   }
 
@@ -29,15 +19,14 @@ class DMStackView extends Component {
     return (
       <div className="wizard-header-options">
         <div className="wizard-header-div">
-          {openStack ? <box-icon name="chevron-down" color="white" onClick={this.toggle} style={{ height: 20 }} />
-            : <box-icon name="chevron-right" color="white" onClick={this.toggle} style={{ height: 20 }} />}
+          {openStack ? <box-icon name="chevron-down" color="white" onClick={this.toggle} style={{ height: 20, cursor: 'pointer' }} />
+            : <box-icon name="chevron-right" color="white" onClick={this.toggle} style={{ height: 20, cursor: 'pointer' }} />}
         </div>
       </div>
     );
   }
 
   renderChildren() {
-    // const { isOpen } = this.state;
     const { openStack } = this.props;
     const { configuration, dispatch, user } = this.props;
     if (openStack) {
@@ -72,7 +61,9 @@ class DMStackView extends Component {
           {this.renderIcon()}
         </Col>
         <Col sm={10} className="padding-left-0">
-          {title}
+          <span aria-hidden style={{ cursor: 'pointer' }} onClick={this.toggle}>
+            {title}
+          </span>
         </Col>
       </Row>
     );

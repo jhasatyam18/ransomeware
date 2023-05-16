@@ -64,46 +64,7 @@ label {
   margin:0;
   padding:5px 0 0px;
   position:relative;
-  left: -15px;
-}
-.tree li::before, .tree li::after {
-  content:'';
-  left:-15px;//imp
-  position:absolute;
-  right:auto
-}
-.tree li::before {
-  border-left:1px double rgb(252, 248, 248);
-  bottom:5px;
-  height:100%;
-  top:0;
-  width:1px
-}
-.tree li::after {
-  border-top:1px double rgb(252, 248, 248);
-  height:30px;
-  top:13px;
-  width:16px
-}
-.tree li span {
-  border:1px double rgb(252, 248, 248);
-  display:inline-block;
-  padding:3px 8px;
-  text-decoration:none
-}
-.tree li.parent_li>span {
-  cursor:pointer
-}
-.tree>ul>li::before, .tree>ul>li::after {
-  border:0
-}
-.tree li:last-child::before {
-  height:13px;//imp
-}
-.tree li.parent_li>span:hover, .tree li.parent_li>span:hover+ul li span {
-  background:#eee;
-  border:1px solid #eceff4;
-  color:rgb(247, 242, 242)
+  left: -25px;
 }
 
 .tree_node_p{
@@ -250,14 +211,14 @@ padding-left:10px;
 }
 
 .dmtree_scrollbar{
-  max-height: 100vh; 
-  min-height: 100vh; 
+  max-height: 53vh; 
+  min-height: 53vh; 
   background: #2e3548
 }
 
 .dmtree-selectedvm-scrollbar{
-  max-height: 92vh;
-  min-height: 92vh
+  max-height: 46vh;
+  min-height: 46vh
 }
 
 .icon_font{
@@ -356,7 +317,38 @@ max-height: 55vh;
   width: 490px;
 }
 
+.remove_checkbox{
+  display: inline-block;
+}
+
+.remove_text{
+  color: #f1b44c;
+}
+
+.remove-sign_icon{
+  position: relative;
+  top: -4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-right: 4px;
+}
 .input_div{
   background-color: $gray-500;
   max-width: 100px !important;
+}
+
+
+.folderSelection{
+  background-color: $card-bg;
+  border-radius: 3px;
+}
+
+.link_color{
+  color: $blue;
+  cursor: pointer;
+}
+
+.rec_job_parent{
+  min-width: 240px;
+
 }
