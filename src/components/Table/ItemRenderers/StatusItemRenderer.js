@@ -12,9 +12,11 @@ function StatusItemRenderer({ data, field, t, noPopOver }) {
   const errorStatus = [JOB_FAILED, JOB_STOPPED, JOB_INIT_FAILED, JOB_SYNC_FAILED, NODE_STATUS_OFFLINE, JOB_RESYNC_FAILED, JOB_INIT_SYNC_FAILED, MIGRATION_INIT_FAILED];
   const progressStatus = [JOB_INIT_PROGRESS, JOB_INIT_SYNC_PROGRESS, JOB_RESYNC_IN_PROGRESS, JOB_SYNC_IN_PROGRESS];
   const warningStatus = [PARTIALLY_COMPLETED, JOB_EXCEEDED_INTERVAL];
+
   if (!data) {
     return '-';
   }
+
   let status = data[field];
   status = status.toLowerCase();
 
@@ -25,12 +27,11 @@ function StatusItemRenderer({ data, field, t, noPopOver }) {
   let resp = status.charAt(0).toUpperCase() + status.slice(1);
 
   const renderPopOver = (hoverInfo, key) => {
-    const wid = hoverInfo.length <= 50 ? '200px' : '250px';
     if (noPopOver) {
       return null;
     }
     return (
-      <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: '#fff', borderRadius: '8px', color: 'black', border: 'none', width: wid, textAlign: 'left' }}>
+      <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: '#fff', borderRadius: '8px', color: 'black', border: 'none', width: '280px', textAlign: hoverInfo.length <= 50 ? 'center' : 'left' }}>
         <PopoverBody>
           <SimpleBar style={{ maxHeight: '100px', minHeight: '30px', color: 'black' }}>
             {hoverInfo}
