@@ -201,23 +201,31 @@ function setNetworkConfig(sourceConfig, targetVM, user, dispatch) {
     if (nics && nics.length > 0) {
       for (let index = 0; index < networks.length; index += 1) {
         if (typeof networks[index] !== 'undefined' && networks[index]) {
-          const { vpcId = '', isPublicIP = '', Subnet = '', networkTier = '', isFromSource, securityGroups, adapterType, networkMoref, networkPlatformID } = networks[index];
-          let { subnet, network, publicIP } = networks[index];
+          const { vpcId = '', Subnet = '', networkTier = '', isFromSource, securityGroups, adapterType, networkMoref, networkPlatformID } = networks[index];
+          let { subnet, network, publicIP, isPublicIP = '' } = networks[index];
           const sgs = (securityGroups ? securityGroups.split(',') : []);
           if (typeof subnet === 'undefined' || subnet === '' && Subnet !== '') {
             subnet = Subnet;
           }
           if (recoveryPlatform === PLATFORM_TYPES.VMware) {
             network = { label: network, value: networkPlatformID };
+            isPublicIP = false;
+            publicIP = '';
           } else if (recoveryPlatform === PLATFORM_TYPES.Azure) {
             network = getNetworkIDFromName(network, values);
             subnet = getSubnetIDFromName(subnet, values, network);
-            const { publicIp } = setPublicIPWhileEdit(isPublicIP, publicIP, networkKey, index, values);
-            publicIP = publicIp;
+            const { publicIp, ips } = setPublicIPWhileEdit(isPublicIP, publicIP, networkKey, index, values);
+            dispatch(valueChange(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, ips));
+            if (publicIp === 'true' || publicIp === 'false') {
+              publicIP = publicIp;
+            } else {
+              publicIP = 'false';
+            }
           } else if (recoveryPlatform === PLATFORM_TYPES.AWS) {
             network = publicIP;
           }
-          const nwCon = setNetworkConfigValues({ key, index, vpcId, subnet, availZone, isPublicIP, network, networkTier, isFromSource, sgs, adapterType, networkMoref });
+          const nwCon = setNetworkConfigValues({ key, index, vpcId, subnet, availZone, isPublicIP, publicIP, network, networkTier, isFromSource, sgs, adapterType, networkMoref });
+
           networkConfig = { ...networkConfig, ...nwCon };
         }
       }
@@ -235,7 +243,7 @@ function setNetworkConfig(sourceConfig, targetVM, user, dispatch) {
  * @returns object network config
  */
 
-export function setNetworkConfigValues({ key, index, vpcId, subnet, availZone, isPublicIP, network, networkTier, isFromSource, sgs, adapterType, networkMoref }) {
+export function setNetworkConfigValues({ key, index, vpcId, subnet, availZone, publicIP, isPublicIP, network, networkTier, isFromSource, sgs, adapterType, networkMoref }) {
   const nwCon = {
     [`${key}-eth-${index}-vpcId`]: vpcId || '',
     [`${key}-eth-${index}-subnet`]: subnet || '',
@@ -247,6 +255,7 @@ export function setNetworkConfigValues({ key, index, vpcId, subnet, availZone, i
     [`${key}-eth-${index}-securityGroups`]: sgs || '',
     [`${key}-eth-${index}-adapterType`]: adapterType || '',
     [`${key}-eth-${index}-networkMoref`]: networkMoref || '',
+    [`${key}-eth-${index}-publicIP`]: publicIP || '',
   };
   return nwCon;
 }
