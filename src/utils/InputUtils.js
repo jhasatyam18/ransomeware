@@ -600,15 +600,6 @@ export function shouldShowNodeReplicationPort(user) {
   return false;
 }
 
-export function shouldShowNodeEncryptionKey(user) {
-  const { values } = user;
-  const nodeType = getValue('node.nodeType', values);
-  if (nodeType === 'Management' || nodeType === 'Replication') {
-    return true;
-  }
-  return false;
-}
-
 export function getEventOptions() {
   return [
     { label: 'Recovery', value: 'Recovery' },

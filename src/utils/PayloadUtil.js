@@ -5,7 +5,6 @@ import {
   shouldShowNodePlatformType,
   shouldShowNodeManagementPort,
   shouldShowNodeReplicationPort,
-  shouldShowNodeEncryptionKey,
   getAWSNetworkIDFromName,
   convertMemoryToMb,
 } from './InputUtils';
@@ -309,9 +308,6 @@ export function getNodePayload(user) {
   if (!shouldShowNodeReplicationPort(user)) {
     node.node.replicationCtrlPort = 0;
     node.node.replicationDataPort = 0;
-  }
-  if (!shouldShowNodeEncryptionKey(user)) {
-    node.node.encryptionKey = '';
   }
   return node;
 }
