@@ -182,7 +182,6 @@ export const TABLE_NODES = [
   { label: 'Platform Type ', field: 'platformType' },
   { label: 'Ports', field: 'managementPort', itemRenderer: SERVER_PORT_ITEM_RENDERER },
   { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
-  { label: 'Key', field: 'status', itemRenderer: NODE_ACTION_RENDERER },
 ];
 
 // Table fields for support bundle
