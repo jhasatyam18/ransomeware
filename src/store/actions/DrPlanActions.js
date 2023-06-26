@@ -1150,6 +1150,7 @@ export function openVMReconfigWizard(vmMoref, pPlan, selectedVMS, alerts) {
     dispatch(valueChange('ui.vm.reconfigure.vm.plan.id', pPlan.id));
     dispatch(valueChange('ui.vm.reconfigure.vm.moref', vmMoref));
     dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, selectedVMS));
+    dispatch(valueChange('ui.values.recoveryPlatform', pPlan.recoverySite.platformDetails.platformType));
     let { steps } = PROTECTED_VM_RECONFIGURATION_WIZARD;
     if (typeof alerts === 'undefined' || alerts === null || alerts.length === 0) {
       steps = [steps[1]];
@@ -1163,7 +1164,6 @@ export function openVMReconfigWizard(vmMoref, pPlan, selectedVMS, alerts) {
         dispatch(valueChange('ui.selected.protection.planID', pPlan.id));
         dispatch(valueChange('ui.selected.protection.plan', pPlan));
         dispatch(valueChange('drplan.recoverySite', pPlan.recoverySite.id));
-        dispatch(valueChange('ui.values.recoveryPlatform', pPlan.recoverySite.platformDetails.platformType));
         dispatch(setProtectionPlanVMConfig(selectedVMS, pPlan));
         if (isSamePlatformPlan(pPlan)) {
           dispatch(onRecoverSiteChange({ value: pPlan.recoverySite.id }));
