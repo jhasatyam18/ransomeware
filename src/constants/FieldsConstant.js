@@ -37,7 +37,7 @@ export const FIELDS = {
     label: 'site.node', type: FIELD_TYPE.SELECT, options: (user) => getSiteNodeOptions(user), validate: (value, user) => isEmpty(value, user), errorMessage: 'Select node', shouldShow: true, fieldInfo: 'info.site.node',
   },
   'configureSite.platformDetails.region': {
-    label: 'region', description: 'Cloud Site Region where Management Server is deployed and Protection needs to be done', type: FIELD_TYPE.SELECT, errorMessage: 'Region required', shouldShow: (user) => !isPlatformTypeVMware(user), options: (user) => getRegionOptions(user), onChange: (user, dispatch) => updateAvailabilityZones(user, dispatch), fieldInfo: 'info.site.region',
+    label: 'region', description: 'Cloud Site Region where Management Server is deployed and Protection needs to be done', type: FIELD_TYPE.SELECT, errorMessage: 'Region required', validate: (value, user) => isEmpty(value, user), shouldShow: (user) => !isPlatformTypeVMware(user), options: (user) => getRegionOptions(user), onChange: (user, dispatch) => updateAvailabilityZones(user, dispatch), fieldInfo: 'info.site.region',
   },
   'configureSite.platformDetails.availZone': {
     label: 'zone', description: 'Availability Zone for Cloud Site where Management Server is deployed and Protection needs to be done', type: FIELD_TYPE.SELECT, patterns: [HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX], errorMessage: 'Zone required', shouldShow: (user) => isPlatformTypeAWS(user) || isPlatformTypeGCP(user), options: (user) => getAvailibilityZoneOptions(user), fieldInfo: 'info.site.availZone',
