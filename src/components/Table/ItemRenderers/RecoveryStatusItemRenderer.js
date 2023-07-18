@@ -2,6 +2,7 @@ import React from 'react';
 import { Badge } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
 import { MIGRATION_INIT_FAILED } from '../../../constants/AppStatus';
+import { AUTO_MIGRATION_FAILED } from '../../../constants/AppStatus';
 
 function RecoveryStatusItemRenderer(props) {
   const { t, data } = props;
