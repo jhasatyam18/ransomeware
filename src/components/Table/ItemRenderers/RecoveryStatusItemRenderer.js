@@ -35,7 +35,7 @@ function RecoveryStatusItemRenderer(props) {
     if (typeof data.recoveryStatus === 'undefined') {
       return null;
     }
-    const color = (data.recoveryStatus === MIGRATION_INIT_FAILED || AUTO_MIGRATION_FAILED ? 'danger' : 'success');
+    const color = (data.recoveryStatus === MIGRATION_INIT_FAILED || data.recoveryStatus === AUTO_MIGRATION_FAILED ? 'danger' : 'success');
     return (
       <div>
         <Badge className={`font-size-13 badge-soft-${color}`} pill>
