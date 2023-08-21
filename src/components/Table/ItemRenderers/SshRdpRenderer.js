@@ -2,12 +2,18 @@ import React from 'react';
 import { JOB_COMPLETION_STATUS } from '../../../constants/AppStatus';
 
 function SshRdpRenderer({ data }) {
+  let ip = '';
+  if (data.publicIP !== '') {
+    ip = data.publicIP;
+  } else if (data.privateIP !== '') {
+    ip = data.privateIP;
+  }
   function renderRDP() {
-    const d = `charset=utf-8,${encodeURIComponent(`full address:s:${data.publicIP}`)}`;
+    const d = `charset=utf-8,${encodeURIComponent(`full address:s:${ip}`)}`;
     return (
       <div className="row">
         <div className="col-sm-8">
-          {data.publicIP}
+          {ip}
         </div>
         <div className="col-sm-4">
           <a download={`${data.vmName}.rdp`} href={`data:${d}`} title="Download rdp file.">
@@ -21,18 +27,18 @@ function SshRdpRenderer({ data }) {
   function renderPublicIP() {
     return (
       <div>
-        {data.publicIP}
+        {ip}
       </div>
     );
   }
 
-  if (data && data.vmName && data.status === JOB_COMPLETION_STATUS && data.publicIP && data.guestOS) {
+  if (data && data.vmName && data.status === JOB_COMPLETION_STATUS && ip && data.guestOS) {
     if (data.guestOS.toLowerCase().indexOf('window') !== -1) {
       return renderRDP();
     }
     return renderPublicIP();
   }
-  const ip = (typeof data.publicIP !== 'undefined' ? data.publicIP : '-');
+
   return (
     <div>
       {ip}
