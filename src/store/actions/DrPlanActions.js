@@ -1,3 +1,4 @@
+import i18n from 'i18next';
 import { getMemoryInfo, getNetworkIDFromName, getSubnetIDFromName } from '../../utils/AppUtils';
 import { DRPLAN_CONFIG_STEP } from '../../constants/DrplanConstants';
 import { changedVMRecoveryConfigurations } from '../../utils/validationUtils';
@@ -286,8 +287,9 @@ export function onReverseProtectionPlanChange(ID) {
 export function startRecovery() {
   return (dispatch, getState) => {
     const { user } = getState();
-    const values = user;
-    const payload = getRecoveryPayload(values);
+    const { values } = user;
+    const payload = getRecoveryPayload(user);
+    const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
     const obj = createPayload(API_TYPES.POST, { ...payload.recovery });
     dispatch(showApplicationLoader('RECOVERY-API-EXECUTION', 'Initiating Recovery'));
     return callAPI(API_RECOVER, obj).then((json) => {
@@ -297,7 +299,13 @@ export function startRecovery() {
       } else {
         dispatch(closeWizard());
         dispatch(clearValues());
-        dispatch(addMessage('Recovery Initiated Successfully.', MESSAGE_TYPES.SUCCESS));
+        let msg = '';
+        if (workflow === UI_WORKFLOW.TEST_RECOVERY) {
+          msg = i18n.t('test.recovery.loader.msg');
+        } else {
+          msg = i18n.t('recovery.loader.msg');
+        }
+        dispatch(addMessage(msg, MESSAGE_TYPES.SUCCESS));
       }
     },
     (err) => {

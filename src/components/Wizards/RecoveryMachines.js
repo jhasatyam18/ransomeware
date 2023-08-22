@@ -6,7 +6,7 @@ import DMTPaginator from '../Table/DMTPaginator';
 import DMField from '../Shared/DMField';
 import { handleProtectVMSeletion, handleSelectAllRecoveryVMs } from '../../store/actions/SiteActions';
 import { TABLE_FILTER_TEXT, TABLE_RECOVERY_VMS } from '../../constants/TableConstants';
-import { STATIC_KEYS } from '../../constants/InputConstants';
+import { STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { getValue } from '../../utils/InputUtils';
 import { filterData } from '../../utils/AppUtils';
 
@@ -45,6 +45,13 @@ class RecoveryMachines extends Component {
       selectedVMs = {};
     }
     const isMigrationWorkflow = getValue('ui.isMigration.workflow', values);
+    const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
+    let columns = [];
+    if (workflow === UI_WORKFLOW.CLEANUP_TEST_RECOVERY) {
+      columns = TABLE_RECOVERY_VMS.filter((col) => col.label !== 'Username' && col.label !== 'Password');
+    } else {
+      columns = TABLE_RECOVERY_VMS;
+    }
     return (
       <Container fluid className="padding-10">
         <br />
@@ -61,14 +68,14 @@ class RecoveryMachines extends Component {
               setData={this.setDataForDisplay}
               showFilter="true"
               onFilter={this.onFilter}
-              columns={TABLE_RECOVERY_VMS}
+              columns={columns}
               filterHelpText={TABLE_FILTER_TEXT.TABLE_RECOVERY_VMS}
             />
           </Col>
         </Row>
         <DMTable
           dispatch={dispatch}
-          columns={TABLE_RECOVERY_VMS}
+          columns={columns}
           data={dataToDisplay}
           isSelectable
           onSelect={handleProtectVMSeletion}
