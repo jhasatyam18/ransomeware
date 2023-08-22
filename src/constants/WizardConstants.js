@@ -84,8 +84,8 @@ export const TEST_RECOVERY_WIZARDS = {
 export const REVERSE_WIZARDS = {
   options: { title: 'Reverse Protection Plan', onFinish: startReversePlan },
   steps: [
+    { label: 'Recovery Configuration', title: '', component: TEST_RECOVERY_CONFIG_STEP, validate: (user, dispatch) => validateVMConfiguration({ user, dispatch }) },
     { label: 'Reverse Plan', title: '', component: REVERSE_CONFIG_STEP, validate: (user, dispatch) => validateReversePlan({ user, dispatch }), isAync: true },
-    { label: 'Recovery Configuration', title: '', component: TEST_RECOVERY_CONFIG_STEP, validate: (user, dispatch) => validateReversePlan({ user, dispatch }), isAync: true },
     { label: 'Boot Order', title: '', component: DRPLAN_BOOT_ORDER_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
     { label: 'Replication Configuration', title: '', component: WIZARD_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: DRPLAN_PROTECTION_CONFIG_STEP_FIELDS },
     { label: 'Scripts', title: '', component: DRPLAN_SCRIPT_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
