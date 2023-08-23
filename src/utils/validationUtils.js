@@ -553,7 +553,28 @@ export async function validateReversePlan({ user, dispatch }) {
     return true;
   }
   if (response.failedEntities.length !== 0) {
-    dispatch(addMessage(`[${response.failedEntities.join(', ')}] The last replication job has failed or snapshots across the sites are not in sync. Please select full incremental for replication type.`, MESSAGE_TYPES.ERROR, true));
+    const { failedEntities } = response;
+    const failureObj = {};
+    const errorMsg = [];
+    failedEntities.forEach((element) => {
+      const { failedEntity } = element;
+      const { failureMessage } = element;
+      if (typeof failureObj[failureMessage] === 'undefined') {
+        failureObj[failureMessage] = [failedEntity];
+      } else {
+        failureObj[failureMessage].push(failedEntity);
+      }
+    });
+    if (Object.keys(failureObj).length !== 0) {
+      Object.keys(failureObj).forEach((key, index) => {
+        if (index !== (Object.keys(failureObj).length - 1)) {
+          errorMsg.push(`${key} for ${failureObj[key].join(', ')}; `);
+        } else {
+          errorMsg.push(`${key} for ${failureObj[key].join(', ')}`);
+        }
+      });
+    }
+    dispatch(addMessage(i18n.t('error.reverse.validation', { error: errorMsg.join('') }), MESSAGE_TYPES.ERROR, true));
   }
   return false;
 }

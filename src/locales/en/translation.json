@@ -465,6 +465,7 @@
   "vmware.subnet":"Subnet Mask",
   "message.take.vm.action":"Taking action on VM alert",
   "error.same.site":"Protection and recovery sites cannot be same.",
+  "error.reverse.validation":"Differential reverse replication is not possible for this protection plan as {{error}} . Please select full incremental for replication type.",
 
   "test.recovery.loader.msg":"Test Recovery Initiated Successfully.",
   "recovery.loader.msg":"Recovery Initiated Successfully."
