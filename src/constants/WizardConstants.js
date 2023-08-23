@@ -58,7 +58,7 @@ export const RECOVERY_WIZARDS = {
   options: { title: 'Recovery', onFinish: startRecovery },
   steps: [
     { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateVMSelection(user, dispatch), name: STEPS.VIRTUAL_MACHINE },
-    { label: 'Recovery Configuration', title: '', component: RECOVERY_CONFIG, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), isAync: true, name: STEPS.RECOVERY_CONFIG },
+    { label: 'Recovery Configuration', title: '', component: RECOVERY_CONFIG, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), isAsync: true, name: STEPS.RECOVERY_CONFIG },
     { label: 'Summary', title: '', component: RECOVERY_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch), name: STEPS.SUMMARY }],
 };
 
@@ -67,7 +67,7 @@ export const MIGRATION_WIZARDS = {
   options: { title: 'Migrate', onFinish: startMigration },
   steps: [
     { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateVMSelection(user, dispatch), name: STEPS.VIRTUAL_MACHINE },
-    { label: 'Recovery Configuration', title: '', component: RECOVERY_CONFIG, validate: (user, dispatch) => validateMigrationVMs({ user, dispatch }), isAync: true, name: STEPS.RECOVERY_CONFIG },
+    { label: 'Recovery Configuration', title: '', component: RECOVERY_CONFIG, validate: (user, dispatch) => validateMigrationVMs({ user, dispatch }), isAsync: true, name: STEPS.RECOVERY_CONFIG },
     { label: 'Summary', title: '', component: RECOVERY_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch), name: STEPS.SUMMARY }],
 };
 
@@ -76,7 +76,7 @@ export const TEST_RECOVERY_WIZARDS = {
   options: { title: 'Test Recovery', onFinish: startRecovery },
   steps: [
     { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateDRPlanProtectData({ user, dispatch }) },
-    { label: 'Test Recovery Configuration', title: '', component: TEST_RECOVERY_CONFIG_STEP, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), isAync: true },
+    { label: 'Test Recovery Configuration', title: '', component: TEST_RECOVERY_CONFIG_STEP, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), isAsync: true },
     { label: 'Tools and Scripts', title: '', component: TEST_RECOVERY_CONFIG_SCRIPTS, validate: (user, dispatch) => noValidate(user, dispatch) },
     { label: 'Summary', title: '', component: RECOVERY_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch) }],
 };
@@ -90,7 +90,7 @@ export const REVERSE_WIZARDS = {
     { label: 'Boot Order', title: '', component: DRPLAN_BOOT_ORDER_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
     { label: 'Replication Configuration', title: '', component: WIZARD_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: DRPLAN_PROTECTION_CONFIG_STEP_FIELDS },
     { label: 'Scripts', title: '', component: DRPLAN_SCRIPT_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
-    { label: 'Summary', title: '', component: REVERSE_SUMMARY, validate: (user, dispatch) => validateReversePlan({ user, dispatch }), isAync: true }],
+    { label: 'Summary', title: '', component: REVERSE_SUMMARY, validate: (user, dispatch) => validateReversePlan({ user, dispatch }), isAsync: true }],
 };
 
 // Protection Plan update
