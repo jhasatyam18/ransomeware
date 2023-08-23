@@ -3,9 +3,9 @@ import { JOB_COMPLETION_STATUS } from '../../../constants/AppStatus';
 
 function SshRdpRenderer({ data }) {
   let ip = '';
-  if (data.publicIP !== '') {
+  if (data.publicIP !== '' && typeof data.publicIP !== 'undefined') {
     ip = data.publicIP;
-  } else if (data.privateIP !== '') {
+  } else if (data.privateIP !== '' && typeof data.privateIP !== 'undefined') {
     ip = data.privateIP;
   }
   function renderRDP() {
