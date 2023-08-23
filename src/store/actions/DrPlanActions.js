@@ -353,6 +353,7 @@ export function startReversePlan() {
         dispatch(closeWizard());
         dispatch(clearValues());
         dispatch(addMessage('Reverse Protection Plan Configured Successfully.', MESSAGE_TYPES.SUCCESS));
+        dispatch(refresh());
       }
     },
     (err) => {

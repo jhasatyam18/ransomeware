@@ -1062,8 +1062,21 @@ export function getMatchingOSType(value) {
 
 export function showDifferentialReverse(user) {
   const { values } = user;
+  const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
   const protectionPlatform = getValue('ui.values.protectionPlatform', values) || '';
+  if (workflow !== UI_WORKFLOW.REVERSE_PLAN) {
+    return false;
+  }
   if (protectionPlatform === PLATFORM_TYPES.VMware) {
+    return false;
+  }
+  return true;
+}
+
+export function showRevPrefix(user) {
+  const { values } = user;
+  const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
+  if (workflow !== UI_WORKFLOW.REVERSE_PLAN) {
     return false;
   }
   return true;

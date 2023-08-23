@@ -539,45 +539,23 @@ export function validateReplicationValue({ user }) {
 }
 
 export async function validateReversePlan({ user, dispatch }) {
-  const initialCheckPass = validateReverseData({ user, dispatch });
-  if (initialCheckPass) {
-    try {
-      const drplan = getReversePlanPayload(user);
-      const obj = createPayload(API_TYPES.POST, { ...drplan });
-      const url = API_VALIDATE_REVERSE_PLAN.replace('<id>', drplan.id);
-      dispatch(showApplicationLoader('VALIDATING_REVERSE_PLAN', 'Validating reverse plan.'));
-      const response = await callAPI(url, obj);
-      dispatch(hideApplicationLoader('VALIDATING_REVERSE_PLAN'));
-      if (!response.isRecoverySiteOnline) {
-        dispatch(addMessage('Recovery site is not reachable. Please select a different recovery site.', MESSAGE_TYPES.ERROR, true));
-        return false;
-      }
-      if (response.failedEntities === null) {
-        return true;
-      }
-      if (response.failedEntities.length !== 0) {
-        dispatch(addMessage(`[${response.failedEntities.join(', ')}] The last replication job has failed or snapshots across the sites are not in sync. Please select full incremental for replication type.`, MESSAGE_TYPES.ERROR, true));
-      }
-      return false;
-    } catch (err) {
-      dispatch(hideApplicationLoader('VALIDATING_REVERSE_PLAN'));
-      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-      return false;
-    }
-  } else {
+  const drplan = getReversePlanPayload(user);
+  const obj = createPayload(API_TYPES.POST, { ...drplan });
+  const url = API_VALIDATE_REVERSE_PLAN.replace('<id>', drplan.id);
+  dispatch(showApplicationLoader('VALIDATING_REVERSE_PLAN', 'Validating reverse plan.'));
+  const response = await callAPI(url, obj);
+  dispatch(hideApplicationLoader('VALIDATING_REVERSE_PLAN'));
+  if (!response.isRecoverySiteOnline) {
+    dispatch(addMessage('Recovery site is not reachable. Please select a different recovery site.', MESSAGE_TYPES.ERROR, true));
     return false;
   }
-}
-
-export function validateReverseData({ user, dispatch }) {
-  const { values } = user;
-  const sufixField = FIELDS['reverse.suffix'];
-  const repltypeField = FIELDS['reverse.replType'];
-  const recoverySiteField = FIELDS['reverse.recoverySite'];
-  if (!validateField(recoverySiteField, 'reverse.recoverySite', getValue('reverse.recoverySite', values), dispatch, user) || !validateField(repltypeField, 'reverse.replType', getValue('reverse.replType', values), dispatch, user) || !validateField(sufixField, 'reverse.suffix', getValue('reverse.suffix', values), dispatch, user)) {
-    return false;
+  if (response.failedEntities === null) {
+    return true;
   }
-  return true;
+  if (response.failedEntities.length !== 0) {
+    dispatch(addMessage(`[${response.failedEntities.join(', ')}] The last replication job has failed or snapshots across the sites are not in sync. Please select full incremental for replication type.`, MESSAGE_TYPES.ERROR, true));
+  }
+  return false;
 }
 
 export function validateOptionalIPAddress({ value }) {
