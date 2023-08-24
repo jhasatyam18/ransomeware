@@ -10,7 +10,7 @@ function VMSizeItemRenderer(props) {
   const { virtualDisks = [] } = data;
   if (virtualDisks !== null) {
     virtualDisks.forEach((disk) => {
-      if (!disk.isDeleted) {
+      if (typeof disk.isDeleted !== 'undefined' && !disk.isDeleted && typeof disk.size !== 'undefined') {
         size += disk.size;
       }
     });

@@ -49,7 +49,7 @@ class RecoverySummary extends Component {
     Object.keys(selectedVMs).forEach((key) => {
       data.push(selectedVMs[key]);
       selectedVMs[key].virtualDisks.forEach((disk) => {
-        if (!disk.isDeleted) {
+        if (typeof disk.isDeleted !== 'undefined' && !disk.isDeleted && typeof disk.size !== 'undefined') {
           size += disk.size;
         }
       });
