@@ -37,7 +37,9 @@ class ReversePlanSummary extends Component {
     let size = 0;
     Object.keys(selectedVMs).forEach((key) => {
       selectedVMs[key].virtualDisks.forEach((disk) => {
-        size += disk.size;
+        if (!disk.isDeleted) {
+          size += disk.size;
+        }
       });
     });
     size = getStorageWithUnit(size);
