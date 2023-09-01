@@ -1005,14 +1005,10 @@ function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch, user) {
 export function setPublicIPWhileEdit(isPublicIP, publicip, networkKey, index, values) {
   let publicIp = publicip || '';
   let ips = {};
-  if (isPublicIP === true) {
-    if (publicIp === '') {
-      publicIp = 'true';
-    }
-  } else if (isPublicIP === false) {
-    if (publicIp === '') {
-      publicIp = 'false';
-    }
+  if (isPublicIP) {
+    publicIp = 'true';
+  } else {
+    publicIp = 'false';
   }
   if (publicIp !== '' && publicIp !== 'false' && publicIp !== 'true') {
     ips = addAssociatedIPForAzure({ ip: publicIp, id: publicIp, fieldKey: `${networkKey}-eth-${index}`, values });
