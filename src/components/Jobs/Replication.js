@@ -21,6 +21,24 @@ class Replication extends Component {
   }
 
   componentDidMount() {
+    this.fetchReplicationJobs();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { user, jobs } = this.props;
+    const { refresh } = user.context;
+    const prevRefresh = prevProps.user.context.refresh;
+    const { replicationType } = jobs;
+    if (refresh !== prevRefresh && replicationType === REPLICATION_JOB_TYPE.PLAN) {
+      this.fetchReplicationJobs();
+    }
+  }
+
+  componentWillUnmount() {
+    this.state = null;
+  }
+
+  fetchReplicationJobs() {
     const { protectionplanID, dispatch } = this.props;
     const url = (protectionplanID === 0 ? API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS : `${API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS}?protectionplanid=${protectionplanID}`);
     callAPI(url).then((json) => {
@@ -33,10 +51,6 @@ class Replication extends Component {
     (err) => {
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
-  }
-
-  componentWillUnmount() {
-    this.state = null;
   }
 
   changeJobType(type) {
