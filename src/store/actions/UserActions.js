@@ -1,11 +1,10 @@
 // import { addMessage, clearMessages } from './MessageActions';
-import jsCookie from 'js-cookie';
 import * as Types from '../../constants/actionTypes';
 import { API_AUTHENTICATE, API_AWS_REGIONS, API_AZURE_REGIONS, API_CHANGE_NODE_PASSWORD, API_CHANGE_PASSWORD, API_GCP_REGIONS, API_INFO, API_SCRIPTS, API_USERS, API_USER_PRIVILEGES, API_USER_SCRIPT } from '../../constants/ApiConstants';
 import { APP_TYPE, NODE_TYPES, PLATFORM_TYPES, STATIC_KEYS, VMWARE_OBJECT } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH } from '../../constants/RouterConstants';
-import { APPLICATION_API_TOKEN, APPLICATION_API_USER, APPLICATION_API_USER_ID } from '../../constants/UserConstant';
+import { APPLICATION_API_USER } from '../../constants/UserConstant';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { getCookie, setCookie } from '../../utils/CookieUtils';
 import { onInit } from '../../utils/HistoryUtil';
@@ -48,7 +47,7 @@ export function login({ username, password, history }) {
         }
         setSessionInfo(json.token, username);
         dispatch(getUserInfo());
-        dispatch(loginSuccess(json.token, username));
+        dispatch(loginSuccess('', username));
         dispatch(getInfo());
         if (history) {
           onInit(history);
@@ -81,7 +80,6 @@ export function loginFailed() {
 }
 
 export function logOutUser() {
-  jsCookie.remove(APPLICATION_API_TOKEN);
   return {
     type: Types.AUTHENTICATE_USER_FAILED,
   };
@@ -131,7 +129,7 @@ export function getInfo(history) {
     dispatch(clearMessages());
     return callAPI(API_INFO).then((json) => {
       if (json.hasError) {
-        setCookie(APPLICATION_API_TOKEN, json.token, '');
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
         dispatch(loginSuccess(json.token, getCookie(APPLICATION_API_USER)));
         const appType = json.serviceType === 'Client' ? APP_TYPE.CLIENT : APP_TYPE.SERVER;
@@ -359,7 +357,6 @@ export function forceComponentUpdate() {
 }
 
 export function setSessionInfo(token, username) {
-  setCookie(APPLICATION_API_TOKEN, token);
   setCookie(APPLICATION_API_USER, username);
 }
 
@@ -425,7 +422,7 @@ export function getUserInfo() {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
         if (json && json.length >= 1) {
-          setCookie(APPLICATION_API_USER_ID, json[0].id);
+          // setCookie(APPLICATION_API_USER_ID, json[0].id);
           dispatch(getUserPrivileges(json[0].id));
           return;
         }
