@@ -1019,7 +1019,7 @@ export function validatePlanSiteSelection({ user, fieldKey, value }) {
   return res;
 }
 
-export const showRevereseWarningText = (user) => {
+export const showReverseWarningText = (user) => {
   const { values } = user;
   const sites = getValue('ui.values.sites', values);
   const enableReverse = getValue('drplan.enableReverse', values) || '';
