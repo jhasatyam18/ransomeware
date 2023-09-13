@@ -41,11 +41,11 @@ export function login({ username, password, history }) {
       } else {
         // check password change is required
         if (json.status && json.status === 403) {
-          setSessionInfo('', username);
+          setSessionInfo(username);
           dispatch(initChangePassword(true, false));
           return;
         }
-        setSessionInfo(json.token, username);
+        setSessionInfo(username);
         dispatch(getUserInfo());
         dispatch(loginSuccess('', username));
         dispatch(getInfo());
@@ -356,7 +356,7 @@ export function forceComponentUpdate() {
   };
 }
 
-export function setSessionInfo(token, username) {
+export function setSessionInfo(username) {
   setCookie(APPLICATION_API_USER, username);
 }
 
