@@ -1060,7 +1060,7 @@ export function getMatchingOSType(value) {
   return res;
 }
 
-export function showReplTypeReverse(user) {
+export function showReverseReplType(user) {
   const { values } = user;
   const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
   if (workflow !== UI_WORKFLOW.REVERSE_PLAN) {

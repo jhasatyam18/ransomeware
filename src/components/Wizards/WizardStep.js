@@ -20,14 +20,12 @@ function WizardStep(props) {
   const showVmwareRevereseWarningText = () => {
     const enableReverse = getValue('drplan.enableReverse', values) || '';
     const rSiteId = getValue('drplan.recoverySite', values);
-    const pSiteId = getValue('drplan.recoverySite', values);
+    const pSiteId = getValue('drplan.protectedSite', values);
     const rSite = sites.filter((site) => getFilteredObject(site, rSiteId, 'id'))[0];
     const pSite = sites.filter((site) => getFilteredObject(site, pSiteId, 'id'))[0];
     const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values) || '';
     if (enableReverse && enableReverseField) {
-      if (workflow === UI_WORKFLOW.REVERSE_PLAN && typeof pSite !== 'undefined' && pSite.platformDetails.platformType === PLATFORM_TYPES.VMware) {
-        return true;
-      } if (typeof rSite !== 'undefined' && rSite.platformDetails.platformType === PLATFORM_TYPES.VMware) {
+      if (workflow === UI_WORKFLOW.REVERSE_PLAN && typeof pSite !== 'undefined' && pSite.platformDetails.platformType === PLATFORM_TYPES.VMware || typeof rSite !== 'undefined' && rSite.platformDetails.platformType === PLATFORM_TYPES.VMware) {
         return true;
       }
     }
