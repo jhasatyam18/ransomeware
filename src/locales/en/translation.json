@@ -468,5 +468,6 @@
   "error.reverse.validation":"Differential reverse replication is not possible for this protection plan as {{error}} . Please select full incremental for replication type.",
 
   "test.recovery.loader.msg":"Test Recovery Initiated Successfully.",
-  "recovery.loader.msg":"Recovery Initiated Successfully."
+  "recovery.loader.msg":"Recovery Initiated Successfully.",
+  "vmware.diff.rev.warning":"For VMware platform, differential reverse replication is supported only for the data disks. For the boot disk, full data will be replicated on reverse."
 }
