@@ -1,10 +1,11 @@
+import i18n from 'i18next';
 import { getErrorMessage, getFieldInfo, getLabel } from '../utils/LocallUtils';
 import { onPlatformTypeChange, onNodeTypeChange } from '../store/actions';
 import { onProtectionPlanChange } from '../store/actions/DrPlanActions';
 import { onProtectSiteChange, updateAvailabilityZones } from '../store/actions/SiteActions';
 import { onLimitChange, onTimeLimitChange } from '../store/actions/ThrottlingAction';
 import { getAvailibilityZoneOptions, enableNodeTypeVM, getDefaultRecoverySite, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getReportProtectionPlans, getSiteNodeOptions, getSubnetOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort, getVMwareVMSelectionData, showInstallCloudPackageOption, isPlatformTypeAzure, showDifferentialReverseCheckbox, disableSiteSelection, getSitesOptions, showRevPrefix, showReverseReplType } from '../utils/InputUtils';
-import { validatePlanSiteSelection, isEmpty, validateDrSiteSelection, validatePassword, validateReplicationInterval, validateReplicationValue } from '../utils/validationUtils';
+import { validatePlanSiteSelection, isEmpty, validateDrSiteSelection, validatePassword, validateReplicationInterval, validateReplicationValue, showRevereseWarningText } from '../utils/validationUtils';
 import { STATIC_KEYS } from './InputConstants';
 import { EMAIL_REGEX, FQDN_REGEX, HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX, PASSWORD_REGEX } from './ValidationConstants';
 import { onScriptChange, loadTreeChildData } from '../store/actions/UserActions';
@@ -17,7 +18,7 @@ export const TIME_PICKER_COMP = 'TIME_PICKER';
 export const STACK_VIEW_COMPONENT = 'STACK_VIEW_COMPONENT';
 export const PROTECTION_REPLICATION_JOBS = 'PROTECTION_REPLICATION_JOBS';
 export const FIELD_TYPE = {
-  CHECKBOX: 'CHECKBOX', TEXT: 'TEXT', SELECT: 'SELECT', SELECT_SEARCH: 'SELECT_SEARCH', NUMBER: 'NUMBER', PASSWORD: 'PASSWORD', CUSTOM: 'CUSTOM', RADIO: 'RADIO', RANGE: 'RANGE', TREE: 'TREE',
+  CHECKBOX: 'CHECKBOX', TEXT: 'TEXT', SELECT: 'SELECT', SELECT_SEARCH: 'SELECT_SEARCH', NUMBER: 'NUMBER', PASSWORD: 'PASSWORD', CUSTOM: 'CUSTOM', RADIO: 'RADIO', RANGE: 'RANGE', TREE: 'TREE', TEXTLABEL: 'TEXTLABEL',
 };
 export const FIELDS = {
 
@@ -100,6 +101,7 @@ export const FIELDS = {
   'drplan.isCompression': { label: 'Compression', description: 'Enable Compression', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: true, fieldInfo: 'info.protectionplan.isCompression' },
   'drplan.isDedupe': { label: 'Dedupe', description: 'Enable De-Duplication', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: false, fieldInfo: 'info.protectionplan.isDedupe' },
   'drplan.enableReverse': { label: 'Differential Reverse Replication', description: 'Enable For Reverse', type: FIELD_TYPE.CHECKBOX, shouldShow: (user) => showDifferentialReverseCheckbox(user), defaultValue: false, fieldInfo: 'info.protectionplan.enable.reverse' },
+  'drplan.reverseWarningText': { type: FIELD_TYPE.TEXTLABEL, shouldShow: (user, fieldKey) => showRevereseWarningText(user, fieldKey), text: i18n.t('vmware.diff.rev.warning') },
   'drplan.replPreScript': { label: 'Pre Script', description: 'Pre Script to execute before Replication', placeHolderText: 'Pre Script to execute before Replication', type: FIELD_TYPE.SELECT, options: (user) => getPreScriptsOptions(user), errorMessage: 'Select replication pre script', shouldShow: true, fieldInfo: 'info.protectionplan.replPreScript', onChange: (user, dispatch) => onScriptChange(user, dispatch) },
   'drplan.replPostScript': { label: 'Post Script', description: 'Post Script to execute post Replication', placeHolderText: 'Post Script to execute post Replication', type: FIELD_TYPE.SELECT, options: (user) => getPostScriptsOptions(user), errorMessage: 'Select replication post script', shouldShow: true, fieldInfo: 'info.protectionplan.replPostScript', onChange: (user, dispatch) => onScriptChange(user, dispatch) },
   'drplan.preScript': { label: 'Pre Script', description: 'Pre Script to execute before Recovery', placeHolderText: 'Pre Script to execute before Recovery', type: FIELD_TYPE.SELECT, options: (user) => getPreScriptsOptions(user), errorMessage: 'Select recovery pre script', shouldShow: true, onChange: (user, dispatch) => onScriptChange(user, dispatch) },

@@ -7,7 +7,7 @@ import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
 import { MESSAGE_TYPES } from '../constants/MessageConstants';
 import { API_TYPES, callAPI, createPayload } from './ApiUtils';
 import { API_VALIDATE_MIGRATION, API_VALIDATE_RECOVERY, API_VALIDATE_REVERSE_PLAN } from '../constants/ApiConstants';
-import { getRecoveryPayload, getReversePlanPayload, getVMNetworkConfig, getVMwareNetworkConfig } from './PayloadUtil';
+import { getFilteredObject, getRecoveryPayload, getReversePlanPayload, getVMNetworkConfig, getVMwareNetworkConfig } from './PayloadUtil';
 import { IP_REGEX } from '../constants/ValidationConstants';
 import { PLATFORM_TYPES, RECOVERY_STATUS, STATIC_KEYS, UI_WORKFLOW } from '../constants/InputConstants';
 import { createVMConfigStackObject, getValue, isAWSCopyNic, validateMacAddressForVMwareNetwork, excludeKeys } from './InputUtils';
@@ -1018,3 +1018,20 @@ export function validatePlanSiteSelection({ user, fieldKey, value }) {
   }
   return res;
 }
+
+export const showRevereseWarningText = (user) => {
+  const { values } = user;
+  const sites = getValue('ui.values.sites', values);
+  const enableReverse = getValue('drplan.enableReverse', values) || '';
+  const rSiteId = getValue('drplan.recoverySite', values);
+  const pSiteId = getValue('drplan.protectedSite', values);
+  const rSite = sites.filter((site) => getFilteredObject(site, rSiteId, 'id'))[0];
+  const pSite = sites.filter((site) => getFilteredObject(site, pSiteId, 'id'))[0];
+  const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values) || '';
+  if (enableReverse) {
+    if ((workflow === UI_WORKFLOW.REVERSE_PLAN && typeof pSite !== 'undefined' && pSite.platformDetails.platformType === PLATFORM_TYPES.VMware) || (typeof rSite !== 'undefined' && rSite.platformDetails.platformType === PLATFORM_TYPES.VMware)) {
+      return true;
+    }
+  }
+  return false;
+};
