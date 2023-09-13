@@ -546,7 +546,7 @@ export async function validateReversePlan({ user, dispatch }) {
   const response = await callAPI(url, obj);
   dispatch(hideApplicationLoader('VALIDATING_REVERSE_PLAN'));
   if (!response.isRecoverySiteOnline) {
-    dispatch(addMessage('Recovery site is not reachable. Please select a different recovery site.', MESSAGE_TYPES.ERROR, true));
+    dispatch(addMessage('Recovery site is not reachable. Please select a different recovery site.', MESSAGE_TYPES.ERROR));
     return false;
   }
   if (response.failedEntities === null) {
@@ -574,7 +574,7 @@ export async function validateReversePlan({ user, dispatch }) {
         }
       });
     }
-    dispatch(addMessage(i18n.t('error.reverse.validation', { error: errorMsg.join('') }), MESSAGE_TYPES.ERROR, true));
+    dispatch(addMessage(i18n.t('error.reverse.validation', { error: errorMsg.join('') }), MESSAGE_TYPES.ERROR));
   }
   return false;
 }

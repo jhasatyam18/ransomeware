@@ -37,11 +37,11 @@ export function callAPI(URL, obj = {}, token = null) {
   return fetch(getUrlPath(URL), opts)
     .then((response) => {
       if (response.status === 401) {
+        store.dispatch(clearValues());
         store.dispatch(logOutUser());
         store.dispatch(closeModal());
         store.dispatch(closeWizard());
         store.dispatch(clearMessages());
-        store.dispatch(clearValues());
       }
       if (response.status === 403) {
         const data = {};
