@@ -64,10 +64,10 @@ export function isPlatformTypeAzure(user) {
 export function showDifferentialReverseCheckbox(user) {
   const { values } = user;
   const recoveryPlatform = getValue('ui.values.recoveryPlatform', values) || '';
-  if (recoveryPlatform !== '' && recoveryPlatform === PLATFORM_TYPES.GCP || recoveryPlatform === PLATFORM_TYPES.VMware) {
-    return true;
+  if (recoveryPlatform !== '' && recoveryPlatform === PLATFORM_TYPES.GCP) {
+    return false;
   }
-  return false;
+  return true;
 }
 
 export function getSitesOptions(user, fieldKey) {
@@ -1060,16 +1060,13 @@ export function getMatchingOSType(value) {
   return res;
 }
 
-export function showDifferentialReverse(user) {
+export function showReplTypeReverese(user) {
   const { values } = user;
   const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
-  const protectionPlatform = getValue('ui.values.protectionPlatform', values) || '';
   if (workflow !== UI_WORKFLOW.REVERSE_PLAN) {
     return false;
   }
-  if (protectionPlatform === PLATFORM_TYPES.VMware) {
-    return false;
-  }
+
   return true;
 }
 
