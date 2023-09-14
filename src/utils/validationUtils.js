@@ -1023,15 +1023,17 @@ export const showReverseWarningText = (user) => {
   const { values } = user;
   const sites = getValue('ui.values.sites', values);
   const enableReverse = getValue('drplan.enableReverse', values) || '';
-  const rSiteId = getValue('drplan.recoverySite', values);
-  const pSiteId = getValue('drplan.protectedSite', values);
+  const rSiteId = getValue('drplan.recoverySite', values) || '';
+  const pSiteId = getValue('drplan.protectedSite', values) || '';
   const rSite = sites.filter((site) => getFilteredObject(site, rSiteId, 'id'))[0];
   const pSite = sites.filter((site) => getFilteredObject(site, pSiteId, 'id'))[0];
+  const revReplType = getValue('reverse.replType', values) || '';
   const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values) || '';
-  if (enableReverse) {
-    if ((workflow === UI_WORKFLOW.REVERSE_PLAN && typeof pSite !== 'undefined' && pSite.platformDetails.platformType === PLATFORM_TYPES.VMware) || (typeof rSite !== 'undefined' && rSite.platformDetails.platformType === PLATFORM_TYPES.VMware)) {
-      return true;
-    }
+  if (workflow === UI_WORKFLOW.REVERSE_PLAN && revReplType === STATIC_KEYS.DIFFERENTIAL && typeof pSite === 'object' && pSite.platformDetails.platformType === PLATFORM_TYPES.VMware) {
+    return true;
+  }
+  if (enableReverse && typeof rSite === 'object' && rSite.platformDetails.platformType === PLATFORM_TYPES.VMware) {
+    return true;
   }
   return false;
 };
