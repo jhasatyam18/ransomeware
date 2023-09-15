@@ -661,8 +661,8 @@ export function shouldShowBandwidthConfig(user) {
 
 export function shouldEnableAWSIOPS(user, fieldKey) {
   const { values } = user;
-  const keys = fieldKey.split('.');
-  const iopsKey = `${keys.slice(0, keys.length - 1).join('.')}.volumeType`;
+  const keys = fieldKey.split('.volumeIOPS');
+  const iopsKey = `${keys[0]}.volumeType`;
   const storageType = getValue(iopsKey, values);
   if (storageType === 'gp2') {
     return true;
