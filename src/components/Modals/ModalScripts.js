@@ -8,7 +8,6 @@ import { fetchScript, hideApplicationLoader, refreshApplication, showApplication
 import { API_USER_SCRIPT } from '../../constants/ApiConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { getUrlPath } from '../../utils/ApiUtils';
-import { getApplicationToken } from '../../utils/CookieUtils';
 
 function ModalScripts(props) {
   const { t, dispatch, options } = props;
@@ -87,7 +86,6 @@ function ModalScripts(props) {
       }
       fetch(url, {
         method: ((typeof data !== 'undefined' && !isWizardUpload()) ? 'PUT' : 'POST'),
-        headers: { Authorization: getApplicationToken() },
         body: formData,
       }).then((response) => {
         if (response.ok) {

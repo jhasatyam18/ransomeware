@@ -1,7 +1,6 @@
 import { clearMessages } from '../store/actions/MessageActions';
 import store from '../store/index';
 import { clearValues, logOutUser } from '../store/actions';
-import { getApplicationToken } from './CookieUtils';
 import { closeModal } from '../store/actions/ModalActions';
 import { closeWizard } from '../store/actions/WizardActions';
 
@@ -29,11 +28,8 @@ export function getUrlPath(URL) {
   return `${window.location.origin}/${URL}`;
 }
 
-export function callAPI(URL, obj = {}, token = null) {
-  const opts = {
-    headers: { 'Content-Type': 'application/json', Authorization: (token && token !== null ? `Bearer ${token}` : getApplicationToken()) },
-    ...obj,
-  };
+export function callAPI(URL, obj = {}) {
+  const opts = { headers: { 'Content-Type': 'application/json' }, ...obj };
   return fetch(getUrlPath(URL), opts)
     .then((response) => {
       if (response.status === 401) {
