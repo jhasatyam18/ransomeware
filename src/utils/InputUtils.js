@@ -218,7 +218,7 @@ export function getSecurityGroupOption(user, fieldKey) {
 
 export function getAzureSecurityGroupOption(user, fieldKey) {
   const { values } = user;
-  const vmMoref = fieldKey.split('.');
+  const vmMoref = fieldKey.split('.network.net1-eth-');
   const resourceGrpKey = getValue(`${vmMoref[0]}.general.folderPath`, values);
   const opts = getValue(STATIC_KEYS.UI_SECURITY_GROUPS, values) || [];
   const options = [];
@@ -302,7 +302,7 @@ export function getNetworkOptions(user) {
 
 export function getAzureNetworkOptions(user, fieldKey) {
   const { values } = user;
-  const vmMoref = fieldKey.split('.');
+  const vmMoref = fieldKey.split('.network.net1-eth-');
   const resourceGrpKey = getValue(`${vmMoref[0]}.general.folderPath`, values);
   let opts = getValue(STATIC_KEYS.UI_NETWORKS, values) || [];
   opts = opts.filter((sub) => {
@@ -339,7 +339,7 @@ export function getGCPExternalIPOptions(user) {
 export function getAzureExternalIPOptions(user, fieldKey) {
   const { values } = user;
   const options = [];
-  const vmMoref = fieldKey.split('.');
+  const vmMoref = fieldKey.split('.network.net1-eth-');
   const resourceGrpKey = getValue(`${vmMoref[0]}.general.folderPath`, values);
   options.push({ label: 'None', value: false });
   options.push({ label: 'Auto', value: true });
@@ -661,8 +661,8 @@ export function shouldShowBandwidthConfig(user) {
 
 export function shouldEnableAWSIOPS(user, fieldKey) {
   const { values } = user;
-  const keys = fieldKey.split('.');
-  const iopsKey = `${keys.slice(0, keys.length - 1).join('.')}.volumeType`;
+  const keys = fieldKey.split('.volumeIOPS');
+  const iopsKey = `${keys[0]}.volumeType`;
   const storageType = getValue(iopsKey, values);
   if (storageType === 'gp2') {
     return true;

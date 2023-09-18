@@ -5,8 +5,8 @@ import { valueChange } from './UserActions';
 export function onAwsStorageTypeChange({ value, fieldKey }) {
   return (dispatch) => {
     if (value === 'gp2') {
-      const keys = fieldKey.split('.');
-      const iopsKey = `${keys.slice(0, keys.length - 1).join('.')}.volumeIOPS`;
+      const keys = fieldKey.split('.volumeType');
+      const iopsKey = `${keys[0]}.volumeIOPS`;
       dispatch(valueChange(iopsKey, '0'));
     }
   };
@@ -103,7 +103,7 @@ export function onAwsSubnetChange({ value, fieldKey }) {
 export function onAwsVPCChange({ value, fieldKey }) {
   return (dispatch) => {
     if (value) {
-      const key = fieldKey.split('-');
+      const key = fieldKey.split('-vpcId');
       const networkKey = key.slice(0, key.length - 1).join('-');
       dispatch(valueChange(`${networkKey}-isFromSource`, false));
       dispatch(valueChange(`${networkKey}-subnet`, ''));
