@@ -63,18 +63,18 @@ export const API_GCP_AVAILABILITY_ZONES = 'gcp_zones.json';
 export const API_AZURE_AVAILIBITY_ZONES = 'azure_availibility_zones.json';
 
 // events
-export const API_FETCH_EVENTS = 'api/v1/event';
-export const API_FETCH_EVENT_BY_ID = 'api/v1/event/<id>';
+export const API_FETCH_EVENTS = 'api/v1/events';
+export const API_FETCH_EVENT_BY_ID = 'api/v1/events/<id>';
 
 // alerts
-export const API_FETCH_ALERTS = 'api/v1/alert';
-export const API_MARK_READ_ALL = 'api/v1/alert/read';
-export const API_FETCH_UNREAD_ALERTS = 'api/v1/alert/unread';
-export const API_ACKNOWLEDGE_ALERT = 'api/v1/alert/acknowledge/<id>';
-export const API_ACKNOWLEDGE_NODE_ALERT = 'api/v1/alert/acknowledge/?id=<alertid>';
-export const API_ALERT_TAKE_VM_ACTION = 'api/v1/alert/action/<id>/vm';
-export const API_VM_ALERTS = 'api/v1/alert?vmmoref=<moref>&ack=0';
-export const API_NODE_ALERTS = 'api/v1/alert?nodeID=<id>&ack=0&alertID=<alertid>';
+export const API_FETCH_ALERTS = 'api/v1/alerts';
+export const API_MARK_READ_ALL = 'api/v1/alerts/read';
+export const API_FETCH_UNREAD_ALERTS = 'api/v1/alerts/unread';
+export const API_ACKNOWLEDGE_ALERT = 'api/v1/alerts/acknowledge/<id>';
+export const API_ACKNOWLEDGE_NODE_ALERT = 'api/v1/alerts/acknowledge/?id=<alertid>';
+export const API_ALERT_TAKE_VM_ACTION = 'api/v1/alerts/action/<id>/vm';
+export const API_VM_ALERTS = 'api/v1/alerts?vmmoref=<moref>&ack=0';
+export const API_NODE_ALERTS = 'api/v1/alerts?nodeID=<id>&ack=0&alertID=<alertid>';
 
 // sb
 export const API_DELETE_SUPPORT_BUNDLE = 'api/v1/support/bundle/<id>';
