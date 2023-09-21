@@ -1,4 +1,4 @@
-import { STATIC_KEYS } from '../constants/InputConstants';
+import { PLATFORM_TYPES, STATIC_KEYS } from '../constants/InputConstants';
 import * as RPATH from '../constants/RouterConstants';
 import { getAzureNetworkOptions, getValue } from './InputUtils';
 
@@ -392,4 +392,14 @@ export function moveSelectedItemsOnTop(data, selectedObjects) {
     }
   });
   return response;
+}
+
+export function showinstallCloudPkgWarningText(user) {
+  const { values } = user;
+
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+  if (recoveryPlatform === PLATFORM_TYPES.VMware) {
+    return true;
+  }
+  return false;
 }

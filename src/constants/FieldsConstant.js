@@ -1,5 +1,7 @@
+import i18n from 'i18next';
+import { showinstallCloudPkgWarningText } from '../utils/AppUtils';
 import { getErrorMessage, getFieldInfo, getLabel } from '../utils/LocallUtils';
-import { onPlatformTypeChange, onNodeTypeChange } from '../store/actions';
+import { onPlatformTypeChange, onNodeTypeChange, installSystemAgent } from '../store/actions';
 import { onProtectionPlanChange } from '../store/actions/DrPlanActions';
 import { onProtectSiteChange, updateAvailabilityZones } from '../store/actions/SiteActions';
 import { onLimitChange, onTimeLimitChange } from '../store/actions/ThrottlingAction';
@@ -17,7 +19,7 @@ export const TIME_PICKER_COMP = 'TIME_PICKER';
 export const STACK_VIEW_COMPONENT = 'STACK_VIEW_COMPONENT';
 export const PROTECTION_REPLICATION_JOBS = 'PROTECTION_REPLICATION_JOBS';
 export const FIELD_TYPE = {
-  CHECKBOX: 'CHECKBOX', TEXT: 'TEXT', SELECT: 'SELECT', SELECT_SEARCH: 'SELECT_SEARCH', NUMBER: 'NUMBER', PASSWORD: 'PASSWORD', CUSTOM: 'CUSTOM', RADIO: 'RADIO', RANGE: 'RANGE', TREE: 'TREE',
+  CHECKBOX: 'CHECKBOX', TEXT: 'TEXT', SELECT: 'SELECT', SELECT_SEARCH: 'SELECT_SEARCH', NUMBER: 'NUMBER', PASSWORD: 'PASSWORD', CUSTOM: 'CUSTOM', RADIO: 'RADIO', RANGE: 'RANGE', TREE: 'TREE', STATICTEXT: 'STATICTEXT',
 };
 export const FIELDS = {
 
@@ -97,7 +99,7 @@ export const FIELDS = {
   'drplan.subnet': { label: 'Subnet', description: 'Subnets where Protected Entity will be recovered', placeHolderText: 'Subnet', type: FIELD_TYPE.SELECT, options: (user) => getSubnetOptions(user), errorMessage: 'Select subnet', shouldShow: true, validate: null },
   'drplan.isEncryptionOnWire': { label: 'Encryption On Wire', description: 'Encryption On Wire', type: FIELD_TYPE.CHECKBOX, shouldShow: true, fieldInfo: 'info.protectionplan.encryption.wire' },
   // 'drplan.isEncryptionOnRest': { label: 'Encryption At Rest', description: 'Encryption On Rest', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
-  'drplan.isCompression': { label: 'Compression', description: 'Enable Compression', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: true, fieldInfo: 'info.protectionplan.isCompression' },
+  'drplan.isCompression': { label: 'Compression', description: 'Enable Compression', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: false, fieldInfo: 'info.protectionplan.isCompression' },
   'drplan.isDedupe': { label: 'Dedupe', description: 'Enable De-Duplication', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: false, fieldInfo: 'info.protectionplan.isDedupe' },
   'drplan.enableDifferentialReverse': { label: 'Differential Reverse Replication', description: 'Enable For Reverse', type: FIELD_TYPE.CHECKBOX, shouldShow: (user) => !(showDifferentialReverseCheckbox(user)), defaultValue: false, fieldInfo: 'info.protectionplan.enable.reverse' },
   'drplan.replPreScript': { label: 'Pre Script', description: 'Pre Script to execute before Replication', placeHolderText: 'Pre Script to execute before Replication', type: FIELD_TYPE.SELECT, options: (user) => getPreScriptsOptions(user), errorMessage: 'Select replication pre script', shouldShow: true, fieldInfo: 'info.protectionplan.replPreScript', onChange: (user, dispatch) => onScriptChange(user, dispatch) },
@@ -137,8 +139,9 @@ export const FIELDS = {
   // 'recovery.winUser': { label: 'machine.username', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: null, errorMessage: '', shouldShow: true },
   // 'recovery.winPassword': { label: 'machine.password', placeHolderText: '', type: FIELD_TYPE.PASSWORD, validate: null, errorMessage: '', shouldShow: true },
   'recovery.vmNames': { label: 'recovery.names', description: 'List of VM names which are needed to recover', placeHolderText: '', type: FIELD_TYPE.PASSWORD, validate: null, errorMessage: '', shouldShow: false },
-  'recovery.installSystemAgent': { label: 'recovery.installSystemAgent', description: 'Install System Agents', placeHolderText: '', type: FIELD_TYPE.CHECKBOX, validate: null, errorMessage: '', shouldShow: true, defaultValue: false, fieldInfo: 'info.recovery.system.agent' },
+  'recovery.installSystemAgent': { label: 'recovery.installSystemAgent', description: 'Install System Agents', placeHolderText: '', type: FIELD_TYPE.CHECKBOX, validate: null, errorMessage: '', shouldShow: true, defaultValue: (fieldKey) => installSystemAgent(fieldKey), fieldInfo: 'info.recovery.system.agent' },
   'recovery.installCloudPkg': { label: 'recovery.installCloudPkg', description: 'Install Cloud Packages', placeHolderText: '', type: FIELD_TYPE.CHECKBOX, validate: null, errorMessage: '', shouldShow: (u) => showInstallCloudPackageOption(u), defaultValue: false, fieldInfo: 'info.recovery.install.cloud.packages' },
+  'ui.installCloudPkg.warning': { type: FIELD_TYPE.STATICTEXT, shouldShow: (user) => showinstallCloudPkgWarningText(user), text: i18n.t('recover.cloud.agent.warning') },
   'ui.values.replication.interval.type': {
     label: 'Unit', description: 'Replication interval i.e time gap after which next iteration will start after previous one is completed/failed', placeHolderText: 'Select replication unit', type: FIELD_TYPE.SELECT, options: [{ label: 'Days', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_DAY }, { label: 'Hours', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_HOUR }, { label: 'Minutes', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_MIN }], validate: (value, user) => isEmpty(value, user), errorMessage: 'Invalid replication interval.', shouldShow: true, defaultValue: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_MIN,
   },
@@ -226,4 +229,5 @@ export const FIELDS = {
   'ui.automate.migration': { label: 'auto.migration', type: FIELD_TYPE.CHECKBOX, shouldShow: true, fieldInfo: 'info.auto.migration', default: false },
   'ui.new.password': { label: 'New Password', placeHolderText: 'Enter new password', type: FIELD_TYPE.PASSWORD, patterns: [PASSWORD_REGEX], errorMessage: 'Password should have atleast 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character and be at least 8 characters long.', shouldShow: true },
   'ui.cnfm.password': { label: 'Confirm Password', placeHolderText: 'Confirm password', type: FIELD_TYPE.PASSWORD, validate: (v, u) => validatePassword(v, u), errorMessage: 'New password and confirm password does not match', shouldShow: true },
+
 };

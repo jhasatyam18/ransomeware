@@ -468,5 +468,6 @@
   "error.reverse.validation":"Differential reverse replication is not possible for this protection plan as {{error}} . Please select full incremental for replication type.",
 
   "test.recovery.loader.msg":"Test Recovery Initiated Successfully.",
-  "recovery.loader.msg":"Recovery Initiated Successfully."
+  "recovery.loader.msg":"Recovery Initiated Successfully.",
+  "recover.cloud.agent.warning":"Recommendation: For Recovery in VMware, VM needs to have vmware tools so that Datamotive solution could identify the IP for the VM after it comes up. Uncheck only if vmware-tools are already installed on protected VM"
 }

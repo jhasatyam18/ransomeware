@@ -1,6 +1,9 @@
+import { PLATFORM_TYPES } from '../../constants/InputConstants';
+import { getValue } from '../../utils/InputUtils';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { CHANGE_SIDEBAR_TYPE } from '../../constants/actionTypes';
 import { addMessage } from './MessageActions';
+import { valueChange } from './UserActions';
 
 export function updateSitebarType(sidebarType, isMobile) {
   return {
@@ -56,4 +59,15 @@ export function changeLeftSidebarType(sidebarType, isMobile) {
 function changeBodyAttribute(attribute, value) {
   if (document.body) document.body.setAttribute(attribute, value);
   return true;
+}
+
+export function installSystemAgent(fieldkey) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+    if (recoveryPlatform === PLATFORM_TYPES.VMware) {
+      dispatch(valueChange(fieldkey, true));
+    }
+  };
 }
