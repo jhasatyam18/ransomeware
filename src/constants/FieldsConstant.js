@@ -1,7 +1,7 @@
 import i18n from 'i18next';
 import { showinstallCloudPkgWarningText } from '../utils/AppUtils';
 import { getErrorMessage, getFieldInfo, getLabel } from '../utils/LocallUtils';
-import { onPlatformTypeChange, onNodeTypeChange, installSystemAgent } from '../store/actions';
+import { onPlatformTypeChange, onNodeTypeChange } from '../store/actions';
 import { onProtectionPlanChange } from '../store/actions/DrPlanActions';
 import { onProtectSiteChange, updateAvailabilityZones } from '../store/actions/SiteActions';
 import { onLimitChange, onTimeLimitChange } from '../store/actions/ThrottlingAction';
@@ -139,7 +139,7 @@ export const FIELDS = {
   // 'recovery.winUser': { label: 'machine.username', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: null, errorMessage: '', shouldShow: true },
   // 'recovery.winPassword': { label: 'machine.password', placeHolderText: '', type: FIELD_TYPE.PASSWORD, validate: null, errorMessage: '', shouldShow: true },
   'recovery.vmNames': { label: 'recovery.names', description: 'List of VM names which are needed to recover', placeHolderText: '', type: FIELD_TYPE.PASSWORD, validate: null, errorMessage: '', shouldShow: false },
-  'recovery.installSystemAgent': { label: 'recovery.installSystemAgent', description: 'Install System Agents', placeHolderText: '', type: FIELD_TYPE.CHECKBOX, validate: null, errorMessage: '', shouldShow: true, defaultValue: (fieldKey) => installSystemAgent(fieldKey), fieldInfo: 'info.recovery.system.agent' },
+  'recovery.installSystemAgent': { label: 'recovery.installSystemAgent', description: 'Install System Agents', placeHolderText: '', type: FIELD_TYPE.CHECKBOX, validate: null, errorMessage: '', shouldShow: true, defaultValue: false, fieldInfo: 'info.recovery.system.agent' },
   'recovery.installCloudPkg': { label: 'recovery.installCloudPkg', description: 'Install Cloud Packages', placeHolderText: '', type: FIELD_TYPE.CHECKBOX, validate: null, errorMessage: '', shouldShow: (u) => showInstallCloudPackageOption(u), defaultValue: false, fieldInfo: 'info.recovery.install.cloud.packages' },
   'ui.installCloudPkg.warning': { type: FIELD_TYPE.STATICTEXT, shouldShow: (user) => showinstallCloudPkgWarningText(user), text: i18n.t('recover.cloud.agent.warning') },
   'ui.values.replication.interval.type': {

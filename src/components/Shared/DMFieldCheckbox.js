@@ -10,14 +10,11 @@ import { valueChange } from '../../store/actions';
 
 class DMFieldCheckbox extends Component {
   componentDidMount() {
-    const { fieldKey, dispatch, field } = this.props;
-    const { defaultValue } = field;
-    if (typeof defaultValue === 'function') {
-      dispatch(defaultValue(fieldKey));
-    } else if (typeof defaultValue !== 'undefined') {
-      dispatch(valueChange(fieldKey, defaultValue));
-    } else {
-      dispatch(valueChange(fieldKey, false));
+    const { fieldKey, defaultValue, dispatch } = this.props;
+    let v = this.getCheckboxValue();
+    if (typeof v !== 'boolean') {
+      v = (typeof defaultValue !== 'undefined' ? defaultValue : false);
+      dispatch(valueChange(fieldKey, v));
     }
   }
 
