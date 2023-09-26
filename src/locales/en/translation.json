@@ -469,5 +469,5 @@
 
   "test.recovery.loader.msg":"Test Recovery Initiated Successfully.",
   "recovery.loader.msg":"Recovery Initiated Successfully.",
-  "recover.cloud.agent.warning":"VMware tools are required for IP Customization or post recovery scripts to pass the VM IP. Please check the pre-requisite for VMware tools."
+  "recover.cloud.agent.warning":"VMware tools are required for IP Customization and post recovery scripts to detect and pass the virtual machine IP address. Please check the pre-requisite for VMware tools in user documentation."
 }
