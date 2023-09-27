@@ -118,6 +118,14 @@
   }
 }
 
+.platform-header{
+  height: $header-height;
+  box-shadow: none !important;
+  color: $header-item-color;
+  color: white;
+  font-size: 17px;
+
+}
 .header-profile-user {
   height: 36px;
   width: 36px;

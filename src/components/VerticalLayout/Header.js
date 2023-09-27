@@ -115,7 +115,7 @@ function Header(props) {
     }
     return (
       <div className="dropdown d-none d-lg-inline-block ml-1">
-        <button type="button" className="btn header-item noti-icon waves-effect">
+        <button type="button" className="btn platform-header noti-icon waves-effect">
           {` ${type} ${appZone}`}
         </button>
       </div>

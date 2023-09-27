@@ -308,22 +308,14 @@ export function getAllObjectKeys(obj, prefix = '') {
  * @returns document title
  */
 
-export const changePageTitle = (t) => {
-  const location = window.location.pathname.slice(1).replaceAll('/', '.');
-  let path = t(`title.${location}`);
-  path = path.split('.');
-  if (path.length === 1) {
-    path = path[path.length - 1];
-    document.title = `${path} | Datamotive`;
-    return;
-  }
-  path = path.join(' ');
-  if (path.indexOf('protection plan details') !== -1) {
-    document.title = 'Protection Plans | Datamotive';
-    return;
-  }
+export const changePageTitle = (user) => {
+  const { platformType } = user;
 
-  document.title = 'Datamotive';
+  if (typeof platformType !== 'undefined' && platformType !== '') {
+    document.title = `${platformType} | Datamotive`;
+  } else {
+    document.title = 'Datamotive';
+  }
 };
 
 export function getMemoryInfo(value) {
