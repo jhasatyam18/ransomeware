@@ -29,9 +29,8 @@ export function getUrlPath(URL) {
 }
 
 export function callAPI(URL, obj = {}) {
-  const encodedurl = encodeURI(URL);
   const opts = { headers: { 'Content-Type': 'application/json' }, ...obj };
-  return fetch(getUrlPath(encodedurl), opts)
+  return fetch(getUrlPath(URL), opts)
     .then((response) => {
       if (response.status === 401) {
         store.dispatch(clearValues());
