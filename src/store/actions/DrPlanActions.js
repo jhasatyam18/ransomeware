@@ -18,7 +18,7 @@ import { closeWizard, openWizard } from './WizardActions';
 import { closeModal, openModal } from './ModalActions';
 import { addAssociatedIPForAzure, addAssociatedReverseIP } from './AwsActions';
 import { MIGRATION_WIZARDS, RECOVERY_WIZARDS, TEST_RECOVERY_WIZARDS, REVERSE_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS, PROTECTED_VM_RECONFIGURATION_WIZARD, CLEANUP_TEST_RECOVERY_WIZARDS, STEPS } from '../../constants/WizardConstants';
-import { getMatchingInsType, getValue, getVMMorefFromEvent, isSamePlatformPlan, getVMInstanceFromEvent, getMatchingOSType } from '../../utils/InputUtils';
+import { getMatchingInsType, getValue, getVMMorefFromEvent, isSamePlatformPlan, getVMInstanceFromEvent, getMatchingOSType, getMatchingFirmwareType } from '../../utils/InputUtils';
 import { PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
@@ -246,6 +246,7 @@ export function onProtectionPlanChange({ value, allowDeleted }) {
                   }
                 }
                 dispatch(valueChange(`${vm.moref}-vmConfig.general.guestOS`, vm.guestOS));
+                dispatch(valueChange(`${vm.moref}-vmConfig.general.firmwareType`, vm.firmwareType));
                 data.push(vm);
               }
             });
@@ -703,6 +704,7 @@ export function setVMGuestOSInfo(selectedVMs) {
     Object.keys(selectedVMs).forEach((key) => {
       if (selectedVMs[key]) {
         dispatch(valueChange(`${selectedVMs[key].moref}-vmConfig.general.guestOS`, getMatchingOSType(selectedVMs[key].guestOS)));
+        dispatch(valueChange(`${selectedVMs[key].moref}-vmConfig.general.firmwareType`, getMatchingFirmwareType(selectedVMs[key].firmwareType)));
       }
     });
   };

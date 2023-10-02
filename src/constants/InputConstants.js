@@ -139,6 +139,9 @@ export const COPY_CONFIG = {
 };
 export const NODE_TYPES = {
   DEDUPE_SERVER: 'DedupeServer',
+  Replication: 'Replication',
+  PrepNode: 'PrepNode',
+  DedupeServer: 'DedupeServer',
 };
 
 export const SUPPORTED_GUEST_OS = {
@@ -148,4 +151,14 @@ export const SUPPORTED_GUEST_OS = {
   Rhel: 'Rhel',
   Suse: 'Suse',
   Oracle: 'Oracle',
+};
+
+export const SUPPORTED_FIRMWARE = {
+  BIOS: 'bios',
+  UEFI: 'uefi',
+};
+
+export const NODE_STATUS = {
+  Online: 'online',
+  Offline: 'offline',
 };

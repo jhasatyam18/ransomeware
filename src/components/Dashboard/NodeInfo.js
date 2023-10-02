@@ -7,6 +7,7 @@ import { API_DASHBOARD_NODE_STATS } from '../../constants/ApiConstants';
 import { addMessage } from '../../store/actions/MessageActions';
 import { callAPI } from '../../utils/ApiUtils';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
+import { NODE_STATUS, NODE_TYPES } from '../../constants/InputConstants';
 
 function NodeInfo(props) {
   const { dispatch, t } = props;
@@ -46,11 +47,12 @@ function NodeInfo(props) {
   const renderOverallState = () => {
     let badgeColor = '';
     let OverallStatus = '';
-
-    if (nodes.every((val) => val.status === 'online')) {
+    // before setting node status exclude prep nodes
+    const filterNodes = nodes.filter((node) => node.type !== NODE_TYPES.PrepNode);
+    if (filterNodes.every((val) => val.status === NODE_STATUS.Online)) {
       badgeColor = 'success';
       OverallStatus = 'online';
-    } else if (nodes.every((val) => val.status === 'offline')) {
+    } else if (filterNodes.every((val) => val.status === NODE_STATUS.Offline)) {
       badgeColor = 'danger';
       OverallStatus = 'offline';
     } else {
