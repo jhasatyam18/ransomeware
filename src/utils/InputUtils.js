@@ -1086,10 +1086,10 @@ export function getMatchingFirmwareType(value) {
     });
   }
   if (value.toLowerCase().indexOf('bios') !== -1) {
-    res = SUPPORTED_FIRMWARE.Bios;
+    res = SUPPORTED_FIRMWARE.BIOS;
   }
   if (value.toLowerCase().indexOf('uefi') !== -1) {
-    res = SUPPORTED_FIRMWARE.Uefi;
+    res = SUPPORTED_FIRMWARE.UEFI;
   }
   // reset
   return res;

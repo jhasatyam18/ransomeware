@@ -206,7 +206,8 @@ export async function validateMigrationVMs({ user, dispatch }) {
 export function validateVMConfiguration({ user, dispatch }) {
   const { values } = user;
   const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
-  let fields = {};
+  // let fields = {};
+  const vmName = [];
   if (Object.keys(vms).length === 0) {
     dispatch(addMessage('Please navigate back and select a virtual machine for protection', MESSAGE_TYPES.ERROR));
     return false;
@@ -217,16 +218,20 @@ export function validateVMConfiguration({ user, dispatch }) {
     }
     const vmConfig = createVMConfigStackObject(vm, user);
     const { data } = vmConfig;
+    let fields = {};
     data.forEach((item) => {
       const { children } = item;
       Object.keys(children).forEach((key) => {
         fields = { ...fields, [key]: children[key] };
       });
     });
+    const response = validateSteps(user, dispatch, Object.keys(fields), fields);
+    if (!response) {
+      vmName.push(vms[vm].name);
+    }
   });
-  const response = validateSteps(user, dispatch, Object.keys(fields), fields);
-  if (!response) {
-    dispatch(addMessage('Check node configuration. One or more required field data is not provided.', MESSAGE_TYPES.ERROR));
+  if (vmName.length > 0) {
+    dispatch(addMessage(`Check node configuration of ${vmName.join(', ')} vm  One or more required field data is not provided.`, MESSAGE_TYPES.ERROR));
     return false;
   }
   // validate Network

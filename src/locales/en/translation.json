@@ -195,7 +195,7 @@
   "create.sites.tooltip": "Minimum two sites are required. One for the protection and other for recovery",
   "configure.nodes": "Configure Nodes",
   "configure.nodes.tooltip": "Minimum two management nodes are required",
-  "protect.workloads": "Protect Workloads",
+  "protect.workloads.tooltip": "1 or more DR plans or move groups.",
   "users": "Users",
   "roles": "Roles",
   "privileges": "Privileges",

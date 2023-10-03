@@ -104,7 +104,7 @@ export const RECOVERY_JOBS = [
   { label: 'Virtual Machine', field: 'vmName', allowFilter: true, checked: true },
   { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Recovery Type', field: 'recoveryType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER, allowFilter: true, checked: true },
-  { label: 'Job Status', field: 'status', itemRenderer: RECOVERY_STATUS_RENDERER, allowFilter: true, checked: true },
+  { label: 'Job Status', field: 'status', itemRenderer: RECOVERY_STATUS_RENDERER, allowFilter: true, checked: true, width: '2.5' },
   { label: 'IP Address', field: 'publicIP', itemRenderer: SSH_RDP_ITEM_RENDERER },
 ];
 

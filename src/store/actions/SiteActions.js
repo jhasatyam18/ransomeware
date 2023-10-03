@@ -58,7 +58,7 @@ export function confiureSite(payload, isEdit = false) {
   return (dispatch) => {
     let url = API_CREATE_SITES;
     if (isEdit) {
-      url = `${url}\\${payload.id}`;
+      url = `${url}/${payload.id}`;
     }
     const obj = createPayload(isEdit ? API_TYPES.PUT : API_TYPES.POST, { ...payload.configureSite });
     dispatch(showApplicationLoader('configuring-new-site', 'Configuring Site...'));
