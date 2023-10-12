@@ -61,7 +61,7 @@ export function getCreateDRPlanPayload(user, sites) {
   result.drplan.protectedEntities.VirtualMachines = [];
   Object.keys(vms).forEach((key) => {
     const vm = setVMProperties(vms[key], values);
-    vm.id = 0;
+    vm.id = '0';
     result.drplan.protectedEntities.VirtualMachines.push(vm);
   });
   result.drplan.protectedEntities.Name = 'dummy';

@@ -550,7 +550,6 @@ export async function validateReversePlan({ user, dispatch }) {
     const url = API_VALIDATE_REVERSE_PLAN.replace('<id>', drplan.id);
     dispatch(showApplicationLoader('VALIDATING_REVERSE_PLAN', 'Validating reverse plan.'));
     const response = await callAPI(url, obj);
-    dispatch(hideApplicationLoader('VALIDATING_REVERSE_PLAN'));
     if (!response.isRecoverySiteOnline) {
       dispatch(addMessage('Recovery site is not reachable. Please select a different recovery site.', MESSAGE_TYPES.ERROR));
       return false;
@@ -584,9 +583,10 @@ export async function validateReversePlan({ user, dispatch }) {
     }
     return false;
   } catch (err) {
-    dispatch(hideApplicationLoader('VALIDATING_REVERSE_PLAN'));
     dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     return false;
+  } finally {
+    dispatch(hideApplicationLoader('VALIDATING_REVERSE_PLAN'));
   }
 }
 
