@@ -743,7 +743,7 @@ export function setProtectionPlanVMConfig(selectedVMS, protectionPlan) {
     dispatch(valueChange('drplan.isEncryptionOnRest', protectionPlan.isEncryptionOnRest));
     dispatch(valueChange('drplan.isCompression', protectionPlan.isCompression));
     dispatch(valueChange('drplan.isDedupe', protectionPlan.isDeDupe));
-    dispatch(valueChange('drplan.enableReverse', protectionPlan.enableReverse));
+    dispatch(valueChange('drplan.enableDifferentialReverse', protectionPlan.enableDifferentialReverse));
     dispatch(valueChange('drplan.replPostScript', protectionPlan.replPostScript));
     dispatch(valueChange('drplan.replPreScript', protectionPlan.replPreScript));
     const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
@@ -1553,9 +1553,9 @@ function setReverseData(json) {
       dispatch(valueChange('ui.values.recoverySiteID', recoverySite.id));
       dispatch(valueChange('ui.recovery.plan', json));
       dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.REVERSE_PLAN));
-      if (!json.enableReverse) {
+      if (!json.enableDifferentialReverse) {
         dispatch(valueChange('reverse.replType', STATIC_KEYS.FULL_INCREMENTAL));
-      } else if (json.enableReverse) {
+      } else if (json.enableDifferentialReverse) {
         dispatch(valueChange('reverse.replType', STATIC_KEYS.DIFFERENTIAL));
       }
       const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined)), dispatch(fetchScript()), dispatch(fetchDrPlans('ui.values.drplan'))];
@@ -1634,7 +1634,7 @@ export function setReverseConfig(protectionPlan) {
     dispatch(valueChange('drplan.isEncryptionOnWireOnRest', protectionPlan.isEncryptionOnRest));
     dispatch(valueChange('drplan.isCompression', protectionPlan.isCompression));
     dispatch(valueChange('drplan.isDeDupe', protectionPlan.isDeDupe));
-    dispatch(valueChange('drplan.enableReverse', protectionPlan.enableReverse));
+    dispatch(valueChange('drplan.enableDifferentialReverse', protectionPlan.enableDifferentialReverse));
     dispatch(valueChange('drplan.replPostScript', protectionPlan.replPostScript));
     dispatch(valueChange('drplan.replPreScript', protectionPlan.replPreScript));
   };

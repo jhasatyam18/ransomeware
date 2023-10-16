@@ -546,7 +546,7 @@ export async function validateReversePlan({ user, dispatch }) {
   const response = await callAPI(url, obj);
   dispatch(hideApplicationLoader('VALIDATING_REVERSE_PLAN'));
   if (!response.isRecoverySiteOnline) {
-    dispatch(addMessage('Recovery site is not reachable. Please select a different recovery site.', MESSAGE_TYPES.ERROR, true));
+    dispatch(addMessage('Recovery site is not reachable. Please select a different recovery site.', MESSAGE_TYPES.ERROR));
     return false;
   }
   if (response.failedEntities === null) {
@@ -574,7 +574,7 @@ export async function validateReversePlan({ user, dispatch }) {
         }
       });
     }
-    dispatch(addMessage(i18n.t('error.reverse.validation', { error: errorMsg.join('') }), MESSAGE_TYPES.ERROR, true));
+    dispatch(addMessage(i18n.t('error.reverse.validation', { error: errorMsg.join('') }), MESSAGE_TYPES.ERROR));
   }
   return false;
 }
@@ -1022,7 +1022,7 @@ export function validatePlanSiteSelection({ user, fieldKey, value }) {
 export const showReverseWarningText = (user) => {
   const { values } = user;
   const sites = getValue('ui.values.sites', values);
-  const enableReverse = getValue('drplan.enableReverse', values) || '';
+  const enableReverse = getValue('drplan.enableDifferentialReverse', values) || '';
   const rSiteId = getValue('drplan.recoverySite', values) || '';
   const pSiteId = getValue('drplan.protectedSite', values) || '';
   const rSite = sites.filter((site) => getFilteredObject(site, rSiteId, 'id'))[0];

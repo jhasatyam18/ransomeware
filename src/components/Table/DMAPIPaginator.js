@@ -33,11 +33,12 @@ function DMAPIPaginator(props) {
       url = `${url}offset=${offset}&limit=${pageInfo.limit}`;
     }
     if (searchStr !== '') {
-      // include search value and field in the API
+      // include encoded search value and field in the API
+      const encodedSearchStr = encodeURIComponent(searchStr);
       const applicableCols = filterColumns.filter((f) => f.checked === true);
       if (applicableCols.length > 0) {
         const searchFields = applicableCols.map((m) => m.field).join(',');
-        url = `${url}&searchstr=${searchStr}&searchcol=${searchFields}`;
+        url = `${url}&searchstr=${encodedSearchStr}&searchcol=${searchFields}`;
       }
     }
     return url;
