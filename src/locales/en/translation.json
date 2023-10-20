@@ -469,5 +469,7 @@
 
   "test.recovery.loader.msg":"Test Recovery Initiated Successfully.",
   "recovery.loader.msg":"Recovery Initiated Successfully.",
-  "vmware.diff.rev.warning":"For VMware platform, differential reverse replication is supported only for the data disks. For the boot disk, full data will be replicated on reverse."
+  "vmware.diff.rev.warning":"For VMware platform, differential reverse replication is supported only for the data disks. For the boot disk, full data will be replicated on reverse.",
+  "recovery.discard.warning.msg":"Latest replication for VM ps-ubuntu-testpsrev has not completed, it will be recovered from the last known good state. This operation might take time",
+  "reovery.discard.warning.txt":"Latest replication for the below mentioned VM/s has not completed, it will be recovered from the last known good state."
 }

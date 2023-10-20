@@ -261,7 +261,8 @@ function getRecoveryConfigVMDetails(user) {
         instanceDetails = ins;
       }
     });
-    machineDetails.push({ instanceDetails, vmMoref: moref, vmName: name, username: (userName && userName !== '' ? userName : ''), password: (password && password !== '' ? password : '') });
+    const discardPartialChanges = getValue('recovery.discardPartialChanges', values);
+    machineDetails.push({ instanceDetails, vmMoref: moref, vmName: name, username: (userName && userName !== '' ? userName : ''), password: (password && password !== '' ? password : ''), discardPartialChanges });
   });
   return machineDetails;
 }

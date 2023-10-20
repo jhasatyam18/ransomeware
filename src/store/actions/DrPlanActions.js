@@ -416,6 +416,7 @@ export function openRecoveryWizard() {
     dispatch(clearValues());
     setTimeout(() => {
       dispatch(valueChange('ui.values.recoveryPlatform', platformDetails.platformType));
+      dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.RECOVERY));
       dispatch(fetchDrPlans('ui.values.drplan'));
       // set recovery plan id
       dispatch(valueChange('recovery.protectionplanID', id));
@@ -427,6 +428,7 @@ export function openRecoveryWizard() {
       dispatch(valueChange('ui.isMigration.workflow', false));
       // set is test recovery flag to false
       dispatch(valueChange('recovery.dryrun', false));
+      dispatch(valueChange('recovery.discardPartialChanges', false));
       // to fetch instance type,availibility zone,volume type  so that we can show it to the ui in case of azure
       if (platformDetails.platformType === PLATFORM_TYPES.Azure) {
         dispatch(fetchNetworks(recoverySite.id, undefined));
