@@ -121,8 +121,8 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
   return (
     <>
       <div className="rec_job_parent">
-        <Row className="width-100">
-          <Col sm={8}>
+        <Row>
+          <Col sm={7}>
             <StatusItemRenderer data={jobdata} field={field} />
           </Col>
           <Col sm={2} className="show_details">
@@ -132,7 +132,7 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
             <i className="fas fa-info-circle info__icon test_summary_icon" aria-hidden="true" onClick={onClick} style={{ height: 20, cursor: 'pointer' }} />
           </Col>
         </Row>
-        <Row className="padding-left-8">
+        <Row className=" padding-left-2">
           <Col sm={12}>
             {toggle === true ? <StepStatus steps={steps} data={jobdata} /> : null}
           </Col>

@@ -206,7 +206,8 @@ export async function validateMigrationVMs({ user, dispatch }) {
 export function validateVMConfiguration({ user, dispatch }) {
   const { values } = user;
   const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
-  let fields = {};
+  // let fields = {};
+  const vmName = [];
   if (Object.keys(vms).length === 0) {
     dispatch(addMessage('Please navigate back and select a virtual machine for protection', MESSAGE_TYPES.ERROR));
     return false;
@@ -217,16 +218,20 @@ export function validateVMConfiguration({ user, dispatch }) {
     }
     const vmConfig = createVMConfigStackObject(vm, user);
     const { data } = vmConfig;
+    let fields = {};
     data.forEach((item) => {
       const { children } = item;
       Object.keys(children).forEach((key) => {
         fields = { ...fields, [key]: children[key] };
       });
     });
+    const response = validateSteps(user, dispatch, Object.keys(fields), fields);
+    if (!response) {
+      vmName.push(vms[vm].name);
+    }
   });
-  const response = validateSteps(user, dispatch, Object.keys(fields), fields);
-  if (!response) {
-    dispatch(addMessage('Check node configuration. One or more required field data is not provided.', MESSAGE_TYPES.ERROR));
+  if (vmName.length > 0) {
+    dispatch(addMessage(`Check node configuration of ${vmName.join(', ')} vm  One or more required field data is not provided.`, MESSAGE_TYPES.ERROR));
     return false;
   }
   // validate Network
@@ -539,44 +544,50 @@ export function validateReplicationValue({ user }) {
 }
 
 export async function validateReversePlan({ user, dispatch }) {
-  const drplan = getReversePlanPayload(user);
-  const obj = createPayload(API_TYPES.POST, { ...drplan });
-  const url = API_VALIDATE_REVERSE_PLAN.replace('<id>', drplan.id);
-  dispatch(showApplicationLoader('VALIDATING_REVERSE_PLAN', 'Validating reverse plan.'));
-  const response = await callAPI(url, obj);
-  dispatch(hideApplicationLoader('VALIDATING_REVERSE_PLAN'));
-  if (!response.isRecoverySiteOnline) {
-    dispatch(addMessage('Recovery site is not reachable. Please select a different recovery site.', MESSAGE_TYPES.ERROR));
-    return false;
-  }
-  if (response.failedEntities === null) {
-    return true;
-  }
-  if (response.failedEntities.length !== 0) {
-    const { failedEntities } = response;
-    const failureObj = {};
-    const errorMsg = [];
-    failedEntities.forEach((element) => {
-      const { failedEntity } = element;
-      const { failureMessage } = element;
-      if (typeof failureObj[failureMessage] === 'undefined') {
-        failureObj[failureMessage] = [failedEntity];
-      } else {
-        failureObj[failureMessage].push(failedEntity);
-      }
-    });
-    if (Object.keys(failureObj).length !== 0) {
-      Object.keys(failureObj).forEach((key, index) => {
-        if (index !== (Object.keys(failureObj).length - 1)) {
-          errorMsg.push(`${key} for ${failureObj[key].join(', ')}; `);
+  try {
+    const drplan = getReversePlanPayload(user);
+    const obj = createPayload(API_TYPES.POST, { ...drplan });
+    const url = API_VALIDATE_REVERSE_PLAN.replace('<id>', drplan.id);
+    dispatch(showApplicationLoader('VALIDATING_REVERSE_PLAN', 'Validating reverse plan.'));
+    const response = await callAPI(url, obj);
+    if (!response.isRecoverySiteOnline) {
+      dispatch(addMessage('Recovery site is not reachable. Please select a different recovery site.', MESSAGE_TYPES.ERROR));
+      return false;
+    }
+    if (response.failedEntities === null) {
+      return true;
+    }
+    if (response.failedEntities.length !== 0) {
+      const { failedEntities } = response;
+      const failureObj = {};
+      const errorMsg = [];
+      failedEntities.forEach((element) => {
+        const { failedEntity } = element;
+        const { failureMessage } = element;
+        if (typeof failureObj[failureMessage] === 'undefined') {
+          failureObj[failureMessage] = [failedEntity];
         } else {
-          errorMsg.push(`${key} for ${failureObj[key].join(', ')}`);
+          failureObj[failureMessage].push(failedEntity);
         }
       });
+      if (Object.keys(failureObj).length !== 0) {
+        Object.keys(failureObj).forEach((key, index) => {
+          if (index !== (Object.keys(failureObj).length - 1)) {
+            errorMsg.push(`${key} for ${failureObj[key].join(', ')}; `);
+          } else {
+            errorMsg.push(`${key} for ${failureObj[key].join(', ')}`);
+          }
+        });
+      }
+      dispatch(addMessage(i18n.t('error.reverse.validation', { error: errorMsg.join('') }), MESSAGE_TYPES.ERROR));
     }
-    dispatch(addMessage(i18n.t('error.reverse.validation', { error: errorMsg.join('') }), MESSAGE_TYPES.ERROR));
+    return false;
+  } catch (err) {
+    dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    return false;
+  } finally {
+    dispatch(hideApplicationLoader('VALIDATING_REVERSE_PLAN'));
   }
-  return false;
 }
 
 export function validateOptionalIPAddress({ value }) {
