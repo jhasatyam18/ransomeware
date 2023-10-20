@@ -300,16 +300,9 @@ export function getNetworkOptions(user) {
   return options;
 }
 
-export function getAzureNetworkOptions(user, fieldKey) {
+export function getAzureNetworkOptions(user) {
   const { values } = user;
-  const vmMoref = fieldKey.split('.network.net1-eth-');
-  const resourceGrpKey = getValue(`${vmMoref[0]}.general.folderPath`, values);
-  let opts = getValue(STATIC_KEYS.UI_NETWORKS, values) || [];
-  opts = opts.filter((sub) => {
-    if (sub.vpcID === resourceGrpKey) {
-      return sub;
-    }
-  });
+  const opts = getValue(STATIC_KEYS.UI_NETWORKS, values) || [];
   const options = [];
   opts.forEach((op) => {
     const network = op.id;
