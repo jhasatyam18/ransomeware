@@ -100,7 +100,9 @@ export function getVMConfigPayload(user) {
     // Data require for vmware as target platform
     let folderPath = getValue(`${key}-vmConfig.general.folderPath`, values);
     const instanceID = getValue(`${key}-vmConfig.general.instanceID`, values) || '';
-    if (typeof folderPath !== 'string') {
+    if (typeof folderPath === 'object') {
+      folderPath = folderPath.value;
+    } else {
       const [index] = folderPath;
       folderPath = index;
     }
@@ -197,7 +199,11 @@ export function getVMNetworkConfig(key, values) {
       publicIP = getAWSNetworkIDFromName(values, network) || publicIP;
     }
     if (recoveryPlatform === PLATFORM_TYPES.Azure) {
-      const netArr = network.split('/');
+      let netArr = [];
+      if (typeof network === 'object') {
+        netArr = network.value;
+      }
+      netArr = netArr.split('/');
       network = netArr[netArr.length - 1];
       const subArr = subnet.split('/');
       subnet = subArr[subArr.length - 1];
@@ -398,9 +404,13 @@ export function getSourceConfig(key, user) {
   const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
   let folderPath = '';
   folderPath = getValue(`${key}-vmConfig.general.folderPath`, values) || '';
-  if (typeof folderPath === 'object' && folderPath.length > 0) {
-    const [index] = folderPath;
-    folderPath = index;
+  if (typeof folderPath === 'object') {
+    if (folderPath.length > 0) {
+      const [index] = folderPath;
+      folderPath = index;
+    } else if (typeof folderPath.value !== 'undefined') {
+      folderPath = folderPath.label;
+    }
   }
   const hostMoref = getValue(`${key}-vmConfig.general.hostMoref`, values);
   const datastoreMoref = getValue(`${key}-vmConfig.general.dataStoreMoref`, values);

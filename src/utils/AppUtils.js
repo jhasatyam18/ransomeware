@@ -343,20 +343,21 @@ export function getMatchingNetwork(val, user) {
   return res;
 }
 
-export function getNetworkIDFromName(val, values) {
-  let res = '';
+export function getNetworkIDFromName(name, values) {
+  let value = '';
   const netArray = getValue(STATIC_KEYS.UI_NETWORK, values);
   netArray.forEach((net) => {
-    if (net.name === val) {
-      res = net.id;
+    if (net.name === name) {
+      value = net.id;
     }
   });
-  return res;
+  return { label: name, value };
 }
 
-export function getSubnetIDFromName(val, values, netID) {
+export function getSubnetIDFromName(val, values, network) {
   let res = '';
   const netArray = getValue(STATIC_KEYS.UI_SUBNETS, values);
+  const netID = network ? network.value : '';
   netArray.forEach((op) => {
     if (netID === op.vpcID && op.name === val) {
       res = op.id;

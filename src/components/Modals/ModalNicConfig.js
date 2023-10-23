@@ -329,7 +329,7 @@ class ModalNicConfig extends Component {
   renderAzureConfig() {
     const { dispatch, user, options, t } = this.props;
     const { networkKey } = options;
-    const networkField = { fieldInfo: 'info.protectionplan.network.azure.network', label: 'Virtual Network', description: '', type: FIELD_TYPE.SELECT, options: (u, f) => getAzureNetworkOptions(u, f), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select network', shouldShow: true };
+    const networkField = { fieldInfo: 'info.protectionplan.network.azure.network', label: 'Virtual Network', description: '', type: FIELD_TYPE.SELECT_SEARCH, options: (u, f) => getAzureNetworkOptions(u, f), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select network', shouldShow: true };
     const subnetField = { fieldInfo: 'info.protectionplan.network.azure.subnet', label: 'Subnet', description: '', type: FIELD_TYPE.SELECT, options: (u, f) => getAzureSubnetOptions(u, f), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select subnet', shouldShow: true };
     const publicIP = { fieldInfo: 'info.protectionplan.network.azure.externalip', label: 'Public IP', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.SELECT, shouldShow: true, errorMessage: 'Select Public IP', options: (u, f) => getAzureExternalIPOptions(u, f), validate: (v, u) => isEmpty(v, u) };
     const securityGroup = { label: 'Security  Groups', placeHolderText: 'Security group', description: '', type: FIELD_TYPE.SELECT, shouldShow: true, options: (u, k) => getAzureSecurityGroupOption(u, k), fieldInfo: 'info.protectionplan.network.azure.security.grp' };
@@ -341,7 +341,7 @@ class ModalNicConfig extends Component {
           <Card>
             <CardBody>
               <Form>
-                <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-network`} field={networkField} user={user} />
+                <DMSearchSelect dispatch={dispatch} fieldKey={`${networkKey}-network`} field={networkField} user={user} />
                 <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-subnet`} field={subnetField} user={user} />
                 <DMFieldText dispatch={dispatch} fieldKey={`${networkKey}-privateIP`} field={privateIPField} user={user} />
                 <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-publicIP`} field={publicIP} user={user} />
