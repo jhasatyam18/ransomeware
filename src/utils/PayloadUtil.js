@@ -101,11 +101,14 @@ export function getVMConfigPayload(user) {
     let folderPath = getValue(`${key}-vmConfig.general.folderPath`, values);
     const instanceID = getValue(`${key}-vmConfig.general.instanceID`, values) || '';
     if (typeof folderPath === 'object') {
-      folderPath = folderPath.value;
-    } else {
-      const [index] = folderPath;
-      folderPath = index;
+      if (folderPath.length > 0) {
+        const [index] = folderPath;
+        folderPath = index;
+      } else {
+        folderPath = folderPath.value;
+      }
     }
+
     let hostMoref = getValue(`${key}-vmConfig.general.hostMoref`, values) || '';
     hostMoref = hostMoref.value || '';
     let datastoreMoref = getValue(`${key}-vmConfig.general.dataStoreMoref`, values) || '';
