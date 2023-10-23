@@ -207,9 +207,13 @@ export function getVMNetworkConfig(key, values) {
         netArr = network.value;
       }
       netArr = netArr.split('/');
-      network = netArr[netArr.length - 1];
+      const networkName = netArr[netArr.length - 1];
+      const resource = netArr[4];
+      network = `${resource}:${networkName}`;
       const subArr = subnet.split('/');
-      subnet = subArr[subArr.length - 1];
+      const subnetResource = subArr[4];
+      const subnetName = subArr[subArr.length - 1];
+      subnet = `${subnetResource}:${subnetName}`;
       if (publicIP === 'true') {
         isPublicIP = true;
         publicIP = '';

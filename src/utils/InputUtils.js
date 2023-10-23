@@ -220,10 +220,12 @@ export function getAzureSecurityGroupOption(user) {
   const { values } = user;
   const opts = getValue(STATIC_KEYS.UI_SECURITY_GROUPS, values) || [];
   const options = [];
-  // const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
   opts.forEach((op) => {
-    const name = (op.name && op.name !== '' ? op.name : op.id);
-    options.push({ label: name, value: op.name });
+    const { name } = op;
+    const nameArr = name.split(':');
+    const resource = nameArr[0];
+    const securityGrp = nameArr[1];
+    options.push({ label: `${securityGrp} (${resource})`, value: op.name });
   });
   return options || [];
 }
@@ -277,8 +279,11 @@ export function getAzureSubnetOptions(user, fieldKey) {
   const options = [];
   opts.forEach((op) => {
     if (netID === op.vpcID) {
-      const name = `${op.name}-${op.cidr}`;
-      options.push({ label: name, value: op.id });
+      const { name, cidr } = op;
+      const nameArr = name.split(':');
+      const resource = nameArr[0];
+      const subnetName = nameArr[1];
+      options.push({ label: `${subnetName}-${cidr} (${resource})`, value: op.id });
     }
   });
   return options;
@@ -304,11 +309,13 @@ export function getAzureNetworkOptions(user) {
   const opts = getValue(STATIC_KEYS.UI_NETWORKS, values) || [];
   const options = [];
   opts.forEach((op) => {
-    const network = op.id;
-    const name = network.split(/[\s/]+/).pop();
+    let { name } = op;
+    name = name.split(':');
+    const resourceGrp = name[0];
+    const netName = name[1];
     const exist = options.find((item) => item.label === name);
     if (!exist) {
-      options.push({ label: name, value: op.id });
+      options.push({ label: `${netName} ( ${resourceGrp})`, value: op.id });
     }
   });
   return options;
@@ -335,7 +342,11 @@ export function getAzureExternalIPOptions(user, fieldKey) {
   options.push({ label: 'Auto', value: true });
   const ips = getValue(STATIC_KEYS.UI_RESERVE_IPS, values) || [];
   ips.forEach((op) => {
-    options.push({ label: op.name, value: op.name });
+    const { name } = op;
+    const nameArr = name.split(':');
+    const resource = nameArr[0];
+    const ip = nameArr[1];
+    options.push({ label: `${ip} (${resource})`, value: op.name });
   });
   if (typeof fieldKey !== 'undefined' && fieldKey !== null && fieldKey !== '' && fieldKey !== '-') {
     const networkKey = fieldKey.replace('-publicIP', '');
@@ -998,7 +1009,7 @@ export function getAzureGeneralSettings(key, vm) {
       children: {
         [`${key}-vmConfig.general.guestOS`]: { label: 'GuestOS Family', fieldInfo: 'info.protectionplan.resource.guest.os', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select guest operating system', shouldShow: true, options: (u) => getSupportedOSTypes(u) },
         [`${key}-vmConfig.general.firmwareType`]: { label: 'Firmware Type', fieldInfo: 'info.protectionplan.resource.firmware', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select Firmware Type', shouldShow: true, options: (u) => getFirmwareTypes(u) },
-        [`${key}-vmConfig.general.folderPath`]: { label: 'Resource Group', fieldInfo: 'info.protectionplan.resource.group.azure', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select Resource Group', shouldShow: true, options: (u) => getResourceTypeOptions(u), onChange: ({ fieldKey, user }) => onAzureResourceChange({ fieldKey, user }) },
+        [`${key}-vmConfig.general.folderPath`]: { label: 'Resource Group', fieldInfo: 'info.protectionplan.resource.group.azure', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select Resource Group', shouldShow: true, options: (u) => getResourceTypeOptions(u) },
         [`${key}-vmConfig.general.availibility.zone`]: { label: 'Availability Zone', fieldInfo: 'info.protectionplan.availibility.zone.azure', type: FIELD_TYPE.SELECT, errorMessage: 'Select Availability Zone', shouldShow: true, options: (u) => getAvailibilityZoneOptions(u) },
         [`${key}-vmConfig.general.instanceType`]: { label: 'VM Size', fieldInfo: 'info.protectionplan.vmsize.azure', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
         [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.volume.type.azure', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u), onChange: (user, dispatch) => onAwsStorageTypeChange(user, dispatch), disabled: (u, f) => shouldDisableStorageType(u, f) },
