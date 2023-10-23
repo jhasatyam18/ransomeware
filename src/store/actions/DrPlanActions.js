@@ -363,6 +363,7 @@ export function startReversePlan() {
         dispatch(clearValues());
         dispatch(addMessage('Reverse Protection Plan Configured Successfully.', MESSAGE_TYPES.SUCCESS));
         dispatch(refresh());
+        dispatch(valueChange('drplan.details.activeTab', '3'));
       }
     },
     (err) => {
