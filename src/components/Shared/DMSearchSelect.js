@@ -154,6 +154,7 @@ class DMSearchSelect extends Component {
     return (
       <>
         <FormGroup className={css}>
+          {this.renderLabel()}
           <Col sm={hideLabel ? 12 : 8}>
             <Row>
               <Col sm={11}>

@@ -26,16 +26,3 @@ export function fetchAvailibilityZonesForAzure() {
       });
   };
 }
-
-export function onAzureResourceChange({ fieldKey, user }) {
-  return (dispatch) => {
-    const { values } = user;
-    const key = fieldKey.replace('general.folderPath', 'network.net1');
-    const net = getValue(key, values) || [];
-    net.forEach((el) => {
-      dispatch(valueChange(`${el.key}-network`, ''));
-      dispatch(valueChange(`${el.key}-subnet`, ''));
-      dispatch(valueChange(`${el.key}-securityGroups`, ''));
-    });
-  };
-}

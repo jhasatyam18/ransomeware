@@ -100,10 +100,15 @@ export function getVMConfigPayload(user) {
     // Data require for vmware as target platform
     let folderPath = getValue(`${key}-vmConfig.general.folderPath`, values);
     const instanceID = getValue(`${key}-vmConfig.general.instanceID`, values) || '';
-    if (typeof folderPath !== 'string') {
-      const [index] = folderPath;
-      folderPath = index;
+    if (typeof folderPath === 'object') {
+      if (folderPath.length > 0) {
+        const [index] = folderPath;
+        folderPath = index;
+      } else {
+        folderPath = folderPath.value;
+      }
     }
+
     let hostMoref = getValue(`${key}-vmConfig.general.hostMoref`, values) || '';
     hostMoref = hostMoref.value || '';
     let datastoreMoref = getValue(`${key}-vmConfig.general.dataStoreMoref`, values) || '';
@@ -197,10 +202,18 @@ export function getVMNetworkConfig(key, values) {
       publicIP = getAWSNetworkIDFromName(values, network) || publicIP;
     }
     if (recoveryPlatform === PLATFORM_TYPES.Azure) {
-      const netArr = network.split('/');
-      network = netArr[netArr.length - 1];
+      let netArr = '';
+      if (typeof network === 'object') {
+        netArr = network.value;
+      }
+      netArr = netArr.split('/');
+      const networkName = netArr[netArr.length - 1];
+      const resource = netArr[4];
+      network = `${resource}:${networkName}`;
       const subArr = subnet.split('/');
-      subnet = subArr[subArr.length - 1];
+      const subnetResource = subArr[4];
+      const subnetName = subArr[subArr.length - 1];
+      subnet = `${subnetResource}:${subnetName}`;
       if (publicIP === 'true') {
         isPublicIP = true;
         publicIP = '';
@@ -398,9 +411,13 @@ export function getSourceConfig(key, user) {
   const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
   let folderPath = '';
   folderPath = getValue(`${key}-vmConfig.general.folderPath`, values) || '';
-  if (typeof folderPath === 'object' && folderPath.length > 0) {
-    const [index] = folderPath;
-    folderPath = index;
+  if (typeof folderPath === 'object') {
+    if (folderPath.length > 0) {
+      const [index] = folderPath;
+      folderPath = index;
+    } else if (typeof folderPath.value !== 'undefined') {
+      folderPath = folderPath.label;
+    }
   }
   const hostMoref = getValue(`${key}-vmConfig.general.hostMoref`, values);
   const datastoreMoref = getValue(`${key}-vmConfig.general.dataStoreMoref`, values);

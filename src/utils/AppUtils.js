@@ -343,20 +343,27 @@ export function getMatchingNetwork(val, user) {
   return res;
 }
 
-export function getNetworkIDFromName(val, values) {
-  let res = '';
+export function getNetworkIDFromName(netVal, values) {
+  let value = '';
+  let label = '';
   const netArray = getValue(STATIC_KEYS.UI_NETWORK, values);
   netArray.forEach((net) => {
-    if (net.name === val) {
-      res = net.id;
+    let { name } = net;
+    name = name.split(':');
+    const resourceGrp = name[0];
+    const netName = name[1];
+    if (`${resourceGrp}:${netName}` === netVal) {
+      value = net.id;
+      label = `${netName} (${resourceGrp})`;
     }
   });
-  return res;
+  return { label, value };
 }
 
-export function getSubnetIDFromName(val, values, netID) {
+export function getSubnetIDFromName(val, values, network) {
   let res = '';
   const netArray = getValue(STATIC_KEYS.UI_SUBNETS, values);
+  const netID = network ? network.value : '';
   netArray.forEach((op) => {
     if (netID === op.vpcID && op.name === val) {
       res = op.id;

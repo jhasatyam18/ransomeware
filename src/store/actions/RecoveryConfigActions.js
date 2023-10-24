@@ -80,6 +80,7 @@ function setGeneralConfiguration(sourceConfig, targetVM, user, dispatch) {
       [`${targetVM}-vmConfig.general-unit`]: memory[1] || '',
     };
   } else {
+    folderPath = { label: folderPath, value: folderPath };
     instanceType = { label: instanceType, value: instanceType };
   }
   let networkTags = [];

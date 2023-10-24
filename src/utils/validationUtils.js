@@ -838,24 +838,47 @@ function validateAWSNic(dispatch, user, options) {
   return true;
 }
 
-export function validateReplicationInterval({ value, dispatch }) {
+export function validateReplicationInterval({ value, dispatch, user }) {
   try {
+    const { values } = user;
+
+    const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+
     if (Number.isNaN(value, 2)) {
       dispatch(addMessage('Select replication interval', MESSAGE_TYPES.ERROR));
+
       return true;
     }
+
     if (value <= 0) {
       dispatch(addMessage('Select replication interval', MESSAGE_TYPES.ERROR));
+
       return true;
     }
-    if (value < 10) {
-      dispatch(addMessage('Minimum replication interval is 10 minutes', MESSAGE_TYPES.ERROR));
+
+    // aws vmware and azure min replication interval is 1 minutes
+
+    if (recoveryPlatform !== PLATFORM_TYPES.GCP) {
+      if (value < 1) {
+        dispatch(addMessage(`Minimum replication interval is 1 minute for platform ${recoveryPlatform}`, MESSAGE_TYPES.ERROR));
+
+        return true;
+      }
+    }
+
+    // GCP min replication interval is 10 minutes
+
+    if (recoveryPlatform === PLATFORM_TYPES.GCP && value < 10) {
+      dispatch(addMessage(`Minimum replication interval is 10 minute for platform ${recoveryPlatform}`, MESSAGE_TYPES.ERROR));
+
       return true;
     }
   } catch (err) {
     dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+
     return true;
   }
+
   return false;
 }
 
