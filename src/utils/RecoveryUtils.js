@@ -263,11 +263,38 @@ function getNetworkConfig({ sourceConfig, user, workFlow }) {
         ];
         break;
       case PLATFORM_TYPES.Azure:
+        let networkLabel = '';
+        let subnetLabel = '';
+        let securityLabel = '';
+        if (network !== '') {
+          networkLabel = network.split(':');
+          if (networkLabel.length === 2) {
+            [, networkLabel] = networkLabel;
+          } else {
+            [networkLabel] = networkLabel;
+          }
+        }
+        if (subnet !== '') {
+          subnetLabel = subnet.split(':');
+          if (subnetLabel.length === 2) {
+            [, subnetLabel] = subnetLabel;
+          } else {
+            [subnetLabel] = subnetLabel;
+          }
+        }
+        if (securityGroups !== '') {
+          securityLabel = securityGroups.split(':');
+          if (securityLabel.length === 2) {
+            [, securityLabel] = securityLabel;
+          } else {
+            [securityLabel] = securityLabel;
+          }
+        }
         keys = [
-          { title: 'label.network', value: network },
-          { title: 'label.subnet', value: subnet },
+          { title: 'label.network', value: networkLabel || '' },
+          { title: 'label.subnet', value: subnetLabel || '' },
           { title: 'label.auto.publicIP', value: isPublicIP },
-          { title: 'label.security.groups', value: securityGroups },
+          { title: 'label.security.groups', value: securityLabel || '' },
         ];
         break;
       default:

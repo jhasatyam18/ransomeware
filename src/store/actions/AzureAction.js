@@ -1,4 +1,3 @@
-import { getValue } from '../../utils/InputUtils';
 import { STATIC_KEYS } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { API_AZURE_AVAILIBITY_ZONES } from '../../constants/ApiConstants';

@@ -346,15 +346,24 @@ export function getMatchingNetwork(val, user) {
 export function getNetworkIDFromName(netVal, values) {
   let value = '';
   let label = '';
+  let networkVal = '';
   const netArray = getValue(STATIC_KEYS.UI_NETWORK, values);
   netArray.forEach((net) => {
     let { name } = net;
-    name = name.split(':');
-    const resourceGrp = name[0];
-    const netName = name[1];
-    if (`${resourceGrp}:${netName}` === netVal) {
-      value = net.id;
-      label = `${netName} (${resourceGrp})`;
+    if (typeof name !== 'undefined' && name !== '') {
+      name = name.split(':');
+      if (name.length === 2) {
+        const resourceGrp = name[0];
+        const netName = name[1];
+        label = `${netName} (${resourceGrp})`;
+        networkVal = `${resourceGrp}:${netName}`;
+      } else {
+        [label] = name;
+        networkVal = label;
+      }
+      if (networkVal.toLocaleLowerCase() === netVal.toLowerCase()) {
+        value = net.id;
+      }
     }
   });
   return { label, value };
@@ -365,7 +374,8 @@ export function getSubnetIDFromName(val, values, network) {
   const netArray = getValue(STATIC_KEYS.UI_SUBNETS, values);
   const netID = network ? network.value : '';
   netArray.forEach((op) => {
-    if (netID === op.vpcID && op.name === val) {
+    const { vpcID, name } = op;
+    if (netID === vpcID && name.toLocaleLowerCase() === val.toLocaleLowerCase()) {
       res = op.id;
     }
   });

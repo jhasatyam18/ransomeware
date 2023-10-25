@@ -204,7 +204,7 @@ function setNetworkConfig(sourceConfig, targetVM, user, dispatch) {
         if (typeof networks[index] !== 'undefined' && networks[index]) {
           const { vpcId = '', Subnet = '', networkTier = '', isFromSource, securityGroups, adapterType, networkMoref, networkPlatformID } = networks[index];
           let { subnet, network, publicIP, isPublicIP = '' } = networks[index];
-          const sgs = (securityGroups ? securityGroups.split(',') : []);
+          let sgs = (securityGroups ? securityGroups.split(',') : []);
           if (typeof subnet === 'undefined' || subnet === '' && Subnet !== '') {
             subnet = Subnet;
           }
@@ -213,14 +213,26 @@ function setNetworkConfig(sourceConfig, targetVM, user, dispatch) {
             isPublicIP = false;
             publicIP = '';
           } else if (recoveryPlatform === PLATFORM_TYPES.Azure) {
+            const { publicIp } = setPublicIPWhileEdit(isPublicIP, publicIP, networkKey, index, values, dispatch);
             network = getNetworkIDFromName(network, values);
             subnet = getSubnetIDFromName(subnet, values, network);
-            const { publicIp, ips } = setPublicIPWhileEdit(isPublicIP, publicIP, networkKey, index, values);
-            dispatch(valueChange(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, ips));
             if (publicIp === 'true' || publicIp === 'false') {
               publicIP = publicIp;
             } else {
               publicIP = 'false';
+            }
+
+            if (typeof securityGroups !== 'undefined' && securityGroups !== '') {
+              const securityGrpArr = securityGroups.split(':');
+              let label = '';
+              if (securityGrpArr.length === 2) {
+                const resourceGrp = securityGrpArr[0];
+                const securityName = securityGrpArr[1];
+                label = `${securityName} (${resourceGrp})`;
+              } else {
+                [label] = securityGrpArr;
+              }
+              sgs = { label, value: securityGroups };
             }
           } else if (recoveryPlatform === PLATFORM_TYPES.AWS) {
             network = publicIP;

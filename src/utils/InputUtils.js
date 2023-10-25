@@ -1,5 +1,4 @@
 import { MAC_ADDRESS } from '../constants/ValidationConstants';
-import { onAzureResourceChange } from '../store/actions/AzureAction';
 import { API_FETCH_VMWARE_LOCATION } from '../constants/ApiConstants';
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMORY, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
@@ -222,10 +221,18 @@ export function getAzureSecurityGroupOption(user) {
   const options = [];
   opts.forEach((op) => {
     const { name } = op;
-    const nameArr = name.split(':');
-    const resource = nameArr[0];
-    const securityGrp = nameArr[1];
-    options.push({ label: `${securityGrp} (${resource})`, value: op.name });
+    if (typeof name !== 'undefined' && name !== '') {
+      const nameArr = name.split(':');
+      let label = '';
+      if (nameArr.length === 2) {
+        const resource = nameArr[0];
+        const securityGrp = nameArr[1];
+        label = `${securityGrp} (${resource})`;
+      } else {
+        [label] = nameArr;
+      }
+      options.push({ label, value: op.name });
+    }
   });
   return options || [];
 }
@@ -278,12 +285,18 @@ export function getAzureSubnetOptions(user, fieldKey) {
   }
   const options = [];
   opts.forEach((op) => {
-    if (netID === op.vpcID) {
-      const { name, cidr } = op;
+    const { vpcID, name, cidr } = op;
+    if (typeof vpcID !== 'undefined' && netID === vpcID && typeof name !== 'undefined' && name !== '') {
+      let label = '';
       const nameArr = name.split(':');
-      const resource = nameArr[0];
-      const subnetName = nameArr[1];
-      options.push({ label: `${subnetName}-${cidr} (${resource})`, value: op.id });
+      if (nameArr.length === 2) {
+        const resource = nameArr[0];
+        const subnetName = nameArr[1];
+        label = `${subnetName}-${cidr} (${resource})`;
+      } else {
+        [label] = name;
+      }
+      options.push({ label, value: op.id });
     }
   });
   return options;
@@ -310,12 +323,21 @@ export function getAzureNetworkOptions(user) {
   const options = [];
   opts.forEach((op) => {
     let { name } = op;
-    name = name.split(':');
-    const resourceGrp = name[0];
-    const netName = name[1];
+    let label = '';
+    if (typeof name !== 'undefined' && name !== '') {
+      name = name.split(':') || [];
+      if (name.length === 2) {
+        const resourceGrp = name[0];
+        const netName = name[1];
+        label = `${netName} ( ${resourceGrp})`;
+      } else {
+        [label] = name;
+      }
+    }
+
     const exist = options.find((item) => item.label === name);
     if (!exist) {
-      options.push({ label: `${netName} ( ${resourceGrp})`, value: op.id });
+      options.push({ label, value: op.id });
     }
   });
   return options;
@@ -346,14 +368,15 @@ export function getAzureExternalIPOptions(user, fieldKey) {
     const nameArr = name.split(':');
     const resource = nameArr[0];
     const ip = nameArr[1];
-    options.push({ label: `${ip} (${resource})`, value: op.name });
+    options.push({ label: `${ip} (${resource})`, value: op.name.toLowerCase() });
   });
   if (typeof fieldKey !== 'undefined' && fieldKey !== null && fieldKey !== '' && fieldKey !== '-') {
     const networkKey = fieldKey.replace('-publicIP', '');
+    const publicIP = getValue(fieldKey, values);
     const associatedIPs = getValue(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, values) || {};
     const keys = Object.keys(associatedIPs);
     if (keys.length > 0) {
-      const vmIps = keys.filter((k) => associatedIPs[k].fieldKey === networkKey);
+      const vmIps = keys.filter((k) => associatedIPs[k].fieldKey === networkKey && associatedIPs[k].value === publicIP);
       if (vmIps.length > 0) {
         vmIps.forEach((op) => {
           options.push({ label: associatedIPs[op].label, value: associatedIPs[op].value });
