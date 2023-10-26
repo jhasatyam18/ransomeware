@@ -1,3 +1,4 @@
+import { getLabelWithResourceGrp } from '../../utils/AppUtils';
 import { getValue, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { STATIC_KEYS } from '../../constants/InputConstants';
 import { valueChange } from './UserActions';
@@ -117,15 +118,18 @@ export function onAwsVPCChange({ value, fieldKey }) {
 }
 
 export function addAssociatedIPForAzure({ fieldKey, ip, id, values }) {
-  if (typeof ip === 'undefined' || ip === '' || typeof id === 'undefined' || id === '') {
-    return;
-  }
-  let ips = getValue(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, values) || {};
-  const hasKey = Object.keys(ips).filter((key) => ips[key].ip === ip);
-  if (hasKey.length === 0) {
-    ips = { ...ips, [ip]: { label: ip, value: id, fieldKey } };
-  }
-  return ip;
+  return (dispatch) => {
+    if (typeof ip === 'undefined' || ip === '' || typeof id === 'undefined' || id === '') {
+      return;
+    }
+    let ips = getValue(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, values) || {};
+    const hasKey = Object.keys(ips).filter((key) => ips[key].ip === ip);
+    if (hasKey.length === 0) {
+      const ipLabel = getLabelWithResourceGrp(ip);
+      ips = { ...ips, [ip]: { label: ipLabel, value: id, fieldKey } };
+      dispatch(valueChange(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, ips));
+    }
+  };
 }
 
 export function addAssociatedReverseIP({ fieldKey, ip, id }) {

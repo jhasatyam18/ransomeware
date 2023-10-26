@@ -348,13 +348,12 @@ export function getNetworkIDFromName(netVal, values) {
   let label = '';
   const netArray = getValue(STATIC_KEYS.UI_NETWORK, values);
   netArray.forEach((net) => {
-    let { name } = net;
-    name = name.split(':');
-    const resourceGrp = name[0];
-    const netName = name[1];
-    if (`${resourceGrp}:${netName}` === netVal) {
-      value = net.id;
-      label = `${netName} (${resourceGrp})`;
+    const { name } = net;
+    if (typeof name !== 'undefined' && name !== '') {
+      label = getLabelWithResourceGrp(name);
+      if (name.toLocaleLowerCase() === netVal.toLowerCase()) {
+        value = net.id;
+      }
     }
   });
   return { label, value };
@@ -365,7 +364,8 @@ export function getSubnetIDFromName(val, values, network) {
   const netArray = getValue(STATIC_KEYS.UI_SUBNETS, values);
   const netID = network ? network.value : '';
   netArray.forEach((op) => {
-    if (netID === op.vpcID && op.name === val) {
+    const { vpcID, name } = op;
+    if (netID === vpcID && name.toLocaleLowerCase() === val.toLocaleLowerCase()) {
       res = op.id;
     }
   });
@@ -391,4 +391,23 @@ export function moveSelectedItemsOnTop(data, selectedObjects) {
     }
   });
   return response;
+}
+
+/**
+ * @param val :required data is a string which has resource grp name and the name of the nnet,securitygrp,subne etc.
+ * @returns label with resource group
+ */
+
+export function getLabelWithResourceGrp(val) {
+  let valArray = '';
+  let label = '';
+  valArray = val.split(':') || [];
+  if (valArray.length === 2) {
+    const resourceGrp = valArray[0];
+    const netName = valArray[1];
+    label = `${netName} ( ${resourceGrp})`;
+  } else {
+    [label] = valArray;
+  }
+  return label;
 }

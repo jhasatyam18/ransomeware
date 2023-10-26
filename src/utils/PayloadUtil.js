@@ -178,7 +178,7 @@ export function getVMNetworkConfig(key, values) {
     const availZone = getValue(`${networkKey}-eth-${index}-availZone`, values);
     const privateIP = getValue(`${networkKey}-eth-${index}-privateIP`, values) || '';
     let publicIP = getValue(`${networkKey}-eth-${index}-publicIP`, values) || '';
-    const sgs = getValue(`${networkKey}-eth-${index}-securityGroups`, values) || '';
+    let sgs = getValue(`${networkKey}-eth-${index}-securityGroups`, values) || '';
     const networkTier = getValue(`${networkKey}-eth-${index}-networkTier`, values) || '';
     let network = getValue(`${networkKey}-eth-${index}-network`, values) || '';
     const adapterType = `${getValue(`${networkKey}-eth-${index}-adapterType`, values)}`;
@@ -219,6 +219,9 @@ export function getVMNetworkConfig(key, values) {
         publicIP = '';
       } else if (publicIP === 'false') {
         publicIP = '';
+      }
+      if (sgs !== '' && typeof sgs === 'object') {
+        sgs = sgs.value;
       }
     }
     if (network !== '' && recoveryPlatform === PLATFORM_TYPES.VMware) {

@@ -1,5 +1,5 @@
 import i18n from 'i18next';
-import { getMemoryInfo, getNetworkIDFromName, getSubnetIDFromName } from '../../utils/AppUtils';
+import { getMemoryInfo, getNetworkIDFromName, getSubnetIDFromName, getLabelWithResourceGrp } from '../../utils/AppUtils';
 import { DRPLAN_CONFIG_STEP } from '../../constants/DrplanConstants';
 import { changedVMRecoveryConfigurations } from '../../utils/validationUtils';
 import { MILI_SECONDS_TIME, MONITORING_DISK_CHANGES } from '../../constants/EventConstant';
@@ -971,17 +971,20 @@ function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch, user) {
         if (ins.networks && ins.networks.length > 0) {
           ins.networks.forEach((net, index) => {
             dispatch(valueChange(`${networkKey}-eth-${index}-id`, net.id));
+            const { publicIp } = setPublicIPWhileEdit(net.isPublicIP, net.publicIP, networkKey, index, values, dispatch);
             const network = getNetworkIDFromName(net.network, values);
             dispatch(valueChange(`${networkKey}-eth-${index}-network`, network));
             const subnet = getSubnetIDFromName(net.Subnet, values, network);
             dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, subnet));
             dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
-            const { ips, publicIp } = setPublicIPWhileEdit(net.isPublicIP, net.publicIP, networkKey, index, values);
-            dispatch(valueChange(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, ips));
             dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, publicIp));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkTier`, net.networkTier));
             dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, false));
-            const sgs = (net.securityGroups ? net.securityGroups.split(',') : []);
+            let sgs = '';
+            if (net.securityGroups && net.securityGroups !== '') {
+              const securityLabel = getLabelWithResourceGrp(net.securityGroups);
+              sgs = { label: securityLabel, value: net.securityGroups };
+            }
             dispatch(valueChange(`${networkKey}-eth-${index}-securityGroups`, sgs));
             eths.push({ key: `${networkKey}-eth-${index}`, isPublicIP: false, publicIP: '', privateIP: '', subnet: '', securityGroup: sgs });
           });
@@ -1004,18 +1007,19 @@ function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch, user) {
   });
 }
 
-export function setPublicIPWhileEdit(isPublicIP, publicip, networkKey, index, values) {
-  let publicIp = publicip || '';
-  let ips = {};
+export function setPublicIPWhileEdit(isPublicIP, publicip, networkKey, index, values, dispatch) {
+  let publicIp = '';
   if (isPublicIP) {
     publicIp = 'true';
+  } else if (publicip !== '') {
+    publicIp = publicip;
   } else {
     publicIp = 'false';
   }
   if (publicIp !== '' && publicIp !== 'false' && publicIp !== 'true') {
-    ips = addAssociatedIPForAzure({ ip: publicIp, id: publicIp, fieldKey: `${networkKey}-eth-${index}`, values });
+    dispatch(addAssociatedIPForAzure({ ip: publicIp, id: publicIp, fieldKey: `${networkKey}-eth-${index}`, values }));
   }
-  return { publicIp, ips };
+  return { publicIp };
 }
 
 export function getVirtualMachineAlerts(moref, alertID) {
@@ -1464,18 +1468,22 @@ export function setAzureVMRecoveryData(vmMoref) {
         if (ins.networks && ins.networks.length > 0) {
           ins.networks.forEach((net, index) => {
             dispatch(valueChange(`${networkKey}-eth-${index}-id`, net.id));
+            // TODO: Code refactor required, all vm level data setting must happen through one function only.
+            const { publicIp } = setPublicIPWhileEdit(net.isPublicIP, net.publicIP, networkKey, index, values, dispatch);
             const network = getNetworkIDFromName(net.network, values);
             dispatch(valueChange(`${networkKey}-eth-${index}-network`, network));
             const subnet = getSubnetIDFromName(net.Subnet, values, network);
             dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, subnet));
             dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
-            // TODO: Code refactor required, all vm level data setting must happen through one function only.
-            const { ips, publicIp } = setPublicIPWhileEdit(net.isPublicIP, net.publicIP, networkKey, index, values);
-            dispatch(valueChange(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, ips));
             dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, publicIp));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkTier`, net.networkTier));
             dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, false));
-            const sgs = (net.securityGroups ? net.securityGroups.split(',') : []);
+            let sgs = '';
+            let securityLabel = '';
+            if (net.securityGroups && net.securityGroups !== '') {
+              securityLabel = getLabelWithResourceGrp(net.securityGroups);
+              sgs = { label: securityLabel, value: net.securityGroups };
+            }
             dispatch(valueChange(`${networkKey}-eth-${index}-securityGroups`, sgs));
             eths.push({ key: `${networkKey}-eth-${index}`, isPublicIP: false, publicIP: '', privateIP: '', subnet: '', securityGroup: sgs });
           });

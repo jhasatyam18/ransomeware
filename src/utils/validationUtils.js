@@ -424,6 +424,7 @@ export function validateAzureNetwork(user, dispatch) {
   let message = '';
   // empty config
   const ips = [];
+  const publicIP = [];
   Object.keys(vms).forEach((vm) => {
     if (isRemovedOrRecoveredVM(vms[vm])) {
       return;
@@ -441,10 +442,12 @@ export function validateAzureNetwork(user, dispatch) {
           message = `${vmName}: Network configure missing for nic-${i}`;
           isClean = false;
         }
-        if (typeof netConfigs.privateIP !== 'undefined' && netConfigs.privateIP !== '') {
-          ips.push(netConfigs.privateIP);
+        if (typeof netConfigs[i].privateIP !== 'undefined' && netConfigs[i].privateIP !== '') {
+          ips.push(netConfigs[i].privateIP);
         }
-
+        if (typeof netConfigs[i].publicIP !== 'undefined' && netConfigs[i].publicIP !== '') {
+          publicIP.push(netConfigs[i].publicIP);
+        }
         for (let j = 0; j < subnets.length; j += 1) {
           if (subnets[j].id === netConfigs[i].subnet) {
             vpc.push(subnets[j].vpcID);
@@ -466,10 +469,15 @@ export function validateAzureNetwork(user, dispatch) {
       }
     }
   });
-  // duplicate ip check
+
   const ipSet = [...new Set(ips)];
+  const publicIpSet = [...new Set(publicIP)];
   if (ipSet.length !== ips.length && message === '') {
     message = 'Duplicate ip address not allowed';
+    isClean = false;
+  }
+  if (publicIpSet.length !== publicIP.length && message === '') {
+    message = 'Duplicate Public ip address not allowed';
     isClean = false;
   }
   if (!isClean) {
