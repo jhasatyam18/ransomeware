@@ -196,6 +196,7 @@
   "configure.nodes": "Configure Nodes",
   "configure.nodes.tooltip": "Minimum two management nodes are required",
   "protect.workloads": "Protect Workloads",
+  "protect.workloads.tooltip": "1 or more DR plans or move groups.",
   "users": "Users",
   "roles": "Roles",
   "privileges": "Privileges",
@@ -444,6 +445,7 @@
   "info.protectionplan.network.azure.security.grp":"A network security group contains security rules that allow or deny inbound network traffic to, or outbound network traffic from, the virtual machine",
   "info.protectionplan.vmsize.azure":" Select a VM size to support the workload that you want to run. The size that you choose then determines factors such as processing power, memory, and storage capacity",
   "info.protectionplan.resource.guest.os":"Instance operating system. Auto detected based on the corresponding protected instance.",
+  "info.protectionplan.resource.firmware":"firmwareType: Select 'bios' for traditional systems or 'uefi' for modern interfaces.",
   "test.recovery.staticIP.warning": "If Static IP addresses were used in test recovery configuration then make sure the provided IP addresses are available.",
   "loading":"Loading...",
   "msg.resource.grp":"Please Select Resource Group",
@@ -470,6 +472,7 @@
   "test.recovery.loader.msg":"Test Recovery Initiated Successfully.",
   "recovery.loader.msg":"Recovery Initiated Successfully.",
   "vmware.diff.rev.warning":"For VMware platform, differential reverse replication is supported only for the data disks. For the boot disk, full data will be replicated on reverse.",
-  "recovery.discard.warning.msg":"Latest replication for VM ps-ubuntu-testpsrev has not completed, it will be recovered from the last known good state. This operation might take time",
+  "recovery.discard.warning.msg":"Latest replication for VM vmName has not completed, it will be recovered from the last known good state. This operation might take time",
   "reovery.discard.warning.txt":"Latest replication for the below mentioned VM/s has not completed, it will be recovered from the last known good state."
+                                
 }

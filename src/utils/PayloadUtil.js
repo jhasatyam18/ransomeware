@@ -61,7 +61,7 @@ export function getCreateDRPlanPayload(user, sites) {
   result.drplan.protectedEntities.VirtualMachines = [];
   Object.keys(vms).forEach((key) => {
     const vm = setVMProperties(vms[key], values);
-    vm.id = 0;
+    vm.id = '0';
     result.drplan.protectedEntities.VirtualMachines.push(vm);
   });
   result.drplan.protectedEntities.Name = 'dummy';
@@ -455,9 +455,13 @@ function setVMProperties(vm, values) {
   vmConfig.postScript = postScript;
   // guest os
   const guestOS = getValue(`${vm.moref}-vmConfig.general.guestOS`, values);
+  const firmwareType = getValue(`${vm.moref}-vmConfig.general.firmwareType`, values);
   if (guestOS) {
     // override the guest os value selected by user
     vmConfig.guestOS = guestOS;
+  }
+  if (firmwareType) {
+    vmConfig.firmwareType = firmwareType;
   }
   return vmConfig;
 }
