@@ -7,6 +7,7 @@ import { NODE_STATUS_ONLINE } from '../constants/AppStatus';
 import { isEmpty, isMemoryValueValid } from './validationUtils';
 import { getStorageForVMware, onScriptChange } from '../store/actions';
 import { onAwsStorageTypeChange } from '../store/actions/AwsActions';
+import { getLabelWithResourceGrp } from './AppUtils';
 
 export function getValue(key, values) {
   const ret = values[key];
@@ -222,15 +223,7 @@ export function getAzureSecurityGroupOption(user) {
   opts.forEach((op) => {
     const { name } = op;
     if (typeof name !== 'undefined' && name !== '') {
-      const nameArr = name.split(':');
-      let label = '';
-      if (nameArr.length === 2) {
-        const resource = nameArr[0];
-        const securityGrp = nameArr[1];
-        label = `${securityGrp} (${resource})`;
-      } else {
-        [label] = nameArr;
-      }
+      const label = getLabelWithResourceGrp(name);
       options.push({ label, value: op.name });
     }
   });
@@ -322,22 +315,14 @@ export function getAzureNetworkOptions(user) {
   const opts = getValue(STATIC_KEYS.UI_NETWORKS, values) || [];
   const options = [];
   opts.forEach((op) => {
-    let { name } = op;
+    const { name } = op;
     let label = '';
     if (typeof name !== 'undefined' && name !== '') {
-      name = name.split(':') || [];
-      if (name.length === 2) {
-        const resourceGrp = name[0];
-        const netName = name[1];
-        label = `${netName} ( ${resourceGrp})`;
-      } else {
-        [label] = name;
+      label = getLabelWithResourceGrp(name);
+      const exist = options.find((item) => item.label === name);
+      if (!exist) {
+        options.push({ label, value: op.id });
       }
-    }
-
-    const exist = options.find((item) => item.label === name);
-    if (!exist) {
-      options.push({ label, value: op.id });
     }
   });
   return options;
@@ -365,10 +350,8 @@ export function getAzureExternalIPOptions(user, fieldKey) {
   const ips = getValue(STATIC_KEYS.UI_RESERVE_IPS, values) || [];
   ips.forEach((op) => {
     const { name } = op;
-    const nameArr = name.split(':');
-    const resource = nameArr[0];
-    const ip = nameArr[1];
-    options.push({ label: `${ip} (${resource})`, value: op.name.toLowerCase() });
+    const ipLabel = getLabelWithResourceGrp(name);
+    options.push({ label: ipLabel, value: op.name.toLowerCase() });
   });
   if (typeof fieldKey !== 'undefined' && fieldKey !== null && fieldKey !== '' && fieldKey !== '-') {
     const networkKey = fieldKey.replace('-publicIP', '');

@@ -6,7 +6,7 @@ import { addMessage } from './MessageActions';
 import { updateValues, valueChange } from './UserActions';
 import { setPublicIPWhileEdit } from './DrPlanActions';
 import { getSourceConfig } from '../../utils/PayloadUtil';
-import { getMemoryInfo, getNetworkIDFromName, getSubnetIDFromName } from '../../utils/AppUtils';
+import { getLabelWithResourceGrp, getMemoryInfo, getNetworkIDFromName, getSubnetIDFromName } from '../../utils/AppUtils';
 import { getValue } from '../../utils/InputUtils';
 import { COPY_CONFIG, PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { APP_SET_TIMEOUT } from '../../constants/UserConstant';
@@ -223,15 +223,7 @@ function setNetworkConfig(sourceConfig, targetVM, user, dispatch) {
             }
 
             if (typeof securityGroups !== 'undefined' && securityGroups !== '') {
-              const securityGrpArr = securityGroups.split(':');
-              let label = '';
-              if (securityGrpArr.length === 2) {
-                const resourceGrp = securityGrpArr[0];
-                const securityName = securityGrpArr[1];
-                label = `${securityName} (${resourceGrp})`;
-              } else {
-                [label] = securityGrpArr;
-              }
+              const label = getLabelWithResourceGrp(securityGroups);
               sgs = { label, value: securityGroups };
             }
           } else if (recoveryPlatform === PLATFORM_TYPES.AWS) {

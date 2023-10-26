@@ -1,5 +1,5 @@
 import i18n from 'i18next';
-import { getMemoryInfo, getNetworkIDFromName, getSubnetIDFromName } from '../../utils/AppUtils';
+import { getMemoryInfo, getNetworkIDFromName, getSubnetIDFromName, getLabelWithResourceGrp } from '../../utils/AppUtils';
 import { DRPLAN_CONFIG_STEP } from '../../constants/DrplanConstants';
 import { changedVMRecoveryConfigurations } from '../../utils/validationUtils';
 import { MILI_SECONDS_TIME, MONITORING_DISK_CHANGES } from '../../constants/EventConstant';
@@ -982,16 +982,7 @@ function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch, user) {
             dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, false));
             let sgs = '';
             if (net.securityGroups && net.securityGroups !== '') {
-              const securityGrpArr = net.securityGroups.split(':');
-              let securityLabel = '';
-              if (securityGrpArr.length === 2) {
-                const resourceGrp = securityGrpArr[0];
-                const securityName = securityGrpArr[1];
-                securityLabel = `${securityName} (${resourceGrp})`;
-              } else {
-                [securityLabel] = securityGrpArr;
-              }
-
+              const securityLabel = getLabelWithResourceGrp(net.securityGroups);
               sgs = { label: securityLabel, value: net.securityGroups };
             }
             dispatch(valueChange(`${networkKey}-eth-${index}-securityGroups`, sgs));
@@ -1490,14 +1481,7 @@ export function setAzureVMRecoveryData(vmMoref) {
             let sgs = '';
             let securityLabel = '';
             if (net.securityGroups && net.securityGroups !== '') {
-              const securityGrpArr = net.securityGroups.split(':');
-              if (securityGrpArr.length === 2) {
-                const resourceGrp = securityGrpArr[0];
-                const securityName = securityGrpArr[1];
-                securityLabel = `${securityName} (${resourceGrp})`;
-              } else {
-                [securityLabel] = securityGrpArr;
-              }
+              securityLabel = getLabelWithResourceGrp(net.securityGroups);
               sgs = { label: securityLabel, value: net.securityGroups };
             }
             dispatch(valueChange(`${networkKey}-eth-${index}-securityGroups`, sgs));

@@ -6,7 +6,7 @@ import { COPY_CONFIG, PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../consta
 import { getInstanceTypeOptions, getAzureGeneralSettings, getRecoveryScript, getReplicationScript, getValue, getVMwareGeneralSettings, getNetworkOptions } from './InputUtils';
 import { isEmpty } from './validationUtils';
 import { getSourceConfig } from './PayloadUtil';
-import { getMemoryInfo } from './AppUtils';
+import { getMemoryInfo, getLabelWithResourceGrp } from './AppUtils';
 
 export function createVMTestRecoveryConfig(vm, user, dispatch) {
   const { values } = user;
@@ -267,28 +267,13 @@ function getNetworkConfig({ sourceConfig, user, workFlow }) {
         let subnetLabel = '';
         let securityLabel = '';
         if (network !== '') {
-          networkLabel = network.split(':');
-          if (networkLabel.length === 2) {
-            [, networkLabel] = networkLabel;
-          } else {
-            [networkLabel] = networkLabel;
-          }
+          networkLabel = getLabelWithResourceGrp(network);
         }
         if (subnet !== '') {
-          subnetLabel = subnet.split(':');
-          if (subnetLabel.length === 2) {
-            [, subnetLabel] = subnetLabel;
-          } else {
-            [subnetLabel] = subnetLabel;
-          }
+          subnetLabel = getLabelWithResourceGrp(subnet);
         }
         if (securityGroups !== '') {
-          securityLabel = securityGroups.split(':');
-          if (securityLabel.length === 2) {
-            [, securityLabel] = securityLabel;
-          } else {
-            [securityLabel] = securityLabel;
-          }
+          securityLabel = getLabelWithResourceGrp(securityGroups);
         }
         keys = [
           { title: 'label.network', value: networkLabel || '' },
