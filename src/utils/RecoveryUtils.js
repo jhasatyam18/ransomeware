@@ -222,8 +222,8 @@ function getNetworkConfig({ sourceConfig, user, workFlow }) {
   const { networks, availZone } = sourceConfig;
   const netWorkKeys = [];
   networks.forEach((nw, index) => {
-    const { vpcId = '', Subnet = '', isPublicIP = '', networkTier = '', publicIP, privateIP, isFromSource, securityGroups, adapterType, networkMoref, macAddress, netmask, gateway, dns } = nw;
-    let { subnet = '', network } = nw;
+    const { vpcId = '', Subnet = '', isPublicIP = '', networkTier = '', privateIP, isFromSource, securityGroups, adapterType, networkMoref, macAddress, netmask, gateway, dns } = nw;
+    let { subnet = '', network, publicIP } = nw;
     if (subnet === '' && Subnet !== '') {
       subnet = Subnet;
     }
@@ -275,10 +275,12 @@ function getNetworkConfig({ sourceConfig, user, workFlow }) {
         if (securityGroups !== '') {
           securityLabel = getLabelWithResourceGrp(securityGroups);
         }
+        if (publicIP !== '') {
+          publicIP = getLabelWithResourceGrp(publicIP);
+        }
         keys = [
           { title: 'label.network', value: networkLabel || '' },
           { title: 'label.subnet', value: subnetLabel || '' },
-          { title: 'label.auto.publicIP', value: isPublicIP },
           { title: 'label.security.groups', value: securityLabel || '' },
         ];
         break;

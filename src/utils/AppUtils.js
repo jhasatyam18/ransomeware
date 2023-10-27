@@ -350,8 +350,8 @@ export function getNetworkIDFromName(netVal, values) {
   netArray.forEach((net) => {
     const { name } = net;
     if (typeof name !== 'undefined' && name !== '') {
-      label = getLabelWithResourceGrp(name);
       if (name.toLocaleLowerCase() === netVal.toLowerCase()) {
+        label = getLabelWithResourceGrp(name);
         value = net.id;
       }
     }
