@@ -398,8 +398,8 @@
   "title.mac.address":"Mac Address",
   "title.hostname":"Hostname",
   "title.Datastore":"Datastore",
-  "title.machines.recovery":"Select Virtual Machine for recovery",
-  "title.machines.migration":"Select Virtual Machine for migration",
+  "title.machines.recovery":"Select workloads for Recovery.",
+  "title.machines.migration":"Select workloads for Migration.",
   "title.resource.grp":"Resource Group",
   "title.staticip":"Configure Guest Network",
   "title.ip":" IP address",
@@ -471,6 +471,6 @@
 
   "test.recovery.loader.msg":"Test Recovery Initiated Successfully.",
   "recovery.loader.msg":"Recovery Initiated Successfully.",
-  "title.cleanup.test.recovery":"Select Virtual Machine For Cleanup Test Recovery",
-  "title.test.recovery":"Select Virtual Machine For Test Recovery"
+  "title.cleanup.test.recovery":"Select Workloads for Test Recovery Cleanup.",
+  "title.test.recovery":"Select workloads for Test Recovery."
 }
