@@ -405,7 +405,7 @@ export function getLabelWithResourceGrp(val) {
   if (valArray.length === 2) {
     const resourceGrp = valArray[0];
     const netName = valArray[1];
-    label = `${netName} ( ${resourceGrp})`;
+    label = `${netName} (${resourceGrp})`;
   } else {
     [label] = valArray;
   }
