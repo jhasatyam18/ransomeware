@@ -346,7 +346,7 @@ export function getMatchingNetwork(val, user) {
 export function getNetworkIDFromName(netVal, values) {
   let value = '';
   let label = '';
-  const netArray = getValue(STATIC_KEYS.UI_NETWORK, values);
+  const netArray = getValue(STATIC_KEYS.UI_NETWORK, values) || [];
   netArray.forEach((net) => {
     const { name } = net;
     if (typeof name !== 'undefined' && name !== '') {
@@ -361,7 +361,7 @@ export function getNetworkIDFromName(netVal, values) {
 
 export function getSubnetIDFromName(val, values, network) {
   let res = '';
-  const netArray = getValue(STATIC_KEYS.UI_SUBNETS, values);
+  const netArray = getValue(STATIC_KEYS.UI_SUBNETS, values) || [];
   const netID = network ? network.value : '';
   netArray.forEach((op) => {
     const { vpcID, name } = op;
