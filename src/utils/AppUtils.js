@@ -346,12 +346,12 @@ export function getMatchingNetwork(val, user) {
 export function getNetworkIDFromName(netVal, values) {
   let value = '';
   let label = '';
-  const netArray = getValue(STATIC_KEYS.UI_NETWORK, values);
+  const netArray = getValue(STATIC_KEYS.UI_NETWORK, values) || [];
   netArray.forEach((net) => {
     const { name } = net;
     if (typeof name !== 'undefined' && name !== '') {
-      label = getLabelWithResourceGrp(name);
       if (name.toLocaleLowerCase() === netVal.toLowerCase()) {
+        label = getLabelWithResourceGrp(name);
         value = net.id;
       }
     }
@@ -361,7 +361,7 @@ export function getNetworkIDFromName(netVal, values) {
 
 export function getSubnetIDFromName(val, values, network) {
   let res = '';
-  const netArray = getValue(STATIC_KEYS.UI_SUBNETS, values);
+  const netArray = getValue(STATIC_KEYS.UI_SUBNETS, values) || [];
   const netID = network ? network.value : '';
   netArray.forEach((op) => {
     const { vpcID, name } = op;
@@ -394,18 +394,17 @@ export function moveSelectedItemsOnTop(data, selectedObjects) {
 }
 
 /**
- * @param val :required data is a string which has resource grp name and the name of the nnet,securitygrp,subne etc.
- * @returns label with resource group
+ * @param val :required val is a string which has resource grp name and the name of the network,securitygrp,subne etc.
+ * @returns label with resource group in bracketed format
  */
 
 export function getLabelWithResourceGrp(val) {
-  let valArray = '';
+  const valArray = val.split(':') || [];
   let label = '';
-  valArray = val.split(':') || [];
   if (valArray.length === 2) {
     const resourceGrp = valArray[0];
-    const netName = valArray[1];
-    label = `${netName} ( ${resourceGrp})`;
+    const name = valArray[1];
+    label = `${name} (${resourceGrp})`;
   } else {
     [label] = valArray;
   }

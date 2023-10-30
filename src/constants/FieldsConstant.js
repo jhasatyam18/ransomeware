@@ -168,10 +168,10 @@ export const FIELDS = {
     label: 'node.managementPort', description: 'Node management port', defaultValue: 5000, min: 1, max: 65536, type: FIELD_TYPE.NUMBER, errorMessage: 'Port value required', shouldShow: (user) => shouldShowNodeManagementPort(user), fieldInfo: 'info.node.mgmt.port',
   },
   'node.replicationDataPort': {
-    label: 'node.replicationDataPort', description: 'Node replication data port', defaultValue: 5001, min: 1, max: 65536, type: FIELD_TYPE.NUMBER, errorMessage: 'Port value required', shouldShow: (user) => shouldShowNodeReplicationPort(user), fieldInfo: 'info.node.replicationCtrlPort',
+    label: 'node.replicationDataPort', description: 'Node replication data port', defaultValue: 5001, min: 1, max: 65536, type: FIELD_TYPE.NUMBER, errorMessage: 'Port value required', shouldShow: (user) => shouldShowNodeReplicationPort(user), fieldInfo: 'info.node.replicationDataPort',
   },
   'node.replicationCtrlPort': {
-    label: 'node.replicationCtrlPort', description: 'Node replication https port', defaultValue: 5003, min: 1, max: 65536, type: FIELD_TYPE.NUMBER, errorMessage: 'Port value required', shouldShow: (user) => shouldShowNodeReplicationPort(user), fieldInfo: 'info.node.replicationDataPort',
+    label: 'node.replicationCtrlPort', description: 'Node replication https port', defaultValue: 5003, min: 1, max: 65536, type: FIELD_TYPE.NUMBER, errorMessage: 'Port value required', shouldShow: (user) => shouldShowNodeReplicationPort(user), fieldInfo: 'info.node.replicationCtrlPort',
   },
   'node.encryptionKey': {
     label: 'node.encryptionKey', description: 'Node encryption key', placeHolderText: 'encryption key', type: FIELD_TYPE.TEXT, errorMessage: 'Enter encryption key for the node', shouldShow: false, fieldInfo: 'info.node.encryption.key' },
