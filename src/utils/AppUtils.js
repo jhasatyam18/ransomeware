@@ -394,18 +394,17 @@ export function moveSelectedItemsOnTop(data, selectedObjects) {
 }
 
 /**
- * @param val :required data is a string which has resource grp name and the name of the nnet,securitygrp,subne etc.
- * @returns label with resource group
+ * @param val :required val is a string which has resource grp name and the name of the network,securitygrp,subne etc.
+ * @returns label with resource group in bracketed format
  */
 
 export function getLabelWithResourceGrp(val) {
-  let valArray = '';
+  const valArray = val.split(':') || [];
   let label = '';
-  valArray = val.split(':') || [];
   if (valArray.length === 2) {
     const resourceGrp = valArray[0];
-    const netName = valArray[1];
-    label = `${netName} (${resourceGrp})`;
+    const name = valArray[1];
+    label = `${name} (${resourceGrp})`;
   } else {
     [label] = valArray;
   }
