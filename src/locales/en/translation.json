@@ -398,8 +398,8 @@
   "title.mac.address":"Mac Address",
   "title.hostname":"Hostname",
   "title.Datastore":"Datastore",
-  "title.machines.recovery":"Select Virtual Machine for recovery",
-  "title.machines.migration":"Select Virtual Machine for migration",
+  "title.machines.recovery":"Select workloads for Recovery.",
+  "title.machines.migration":"Select workloads for Migration.",
   "title.resource.grp":"Resource Group",
   "title.staticip":"Configure Guest Network",
   "title.ip":" IP address",
@@ -473,6 +473,7 @@
   "recovery.loader.msg":"Recovery Initiated Successfully.",
   "vmware.diff.rev.warning":"For VMware platform, differential reverse replication is supported only for the data disks. For the boot disk, full data will be replicated on reverse.",
   "recovery.discard.warning.msg":"Latest replication for VM vmName has not completed, it will be recovered from the last known good state. This operation might take time",
-  "reovery.discard.warning.txt":"Latest replication for the below mentioned VM/s has not completed, it will be recovered from the last known good state."
-                                
+  "reovery.discard.warning.txt":"Latest replication for the below mentioned VM/s has not completed, it will be recovered from the last known good state.",
+  "title.cleanup.test.recovery":"Select Workloads for Test Recovery Cleanup.",
+  "title.test.recovery":"Select workloads for Test Recovery."
 }

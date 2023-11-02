@@ -1,5 +1,4 @@
 import { MAC_ADDRESS } from '../constants/ValidationConstants';
-import { onAzureResourceChange } from '../store/actions/AzureAction';
 import { API_FETCH_VMWARE_LOCATION } from '../constants/ApiConstants';
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMORY, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
@@ -8,6 +7,7 @@ import { NODE_STATUS_ONLINE } from '../constants/AppStatus';
 import { isEmpty, isMemoryValueValid } from './validationUtils';
 import { getStorageForVMware, onScriptChange } from '../store/actions';
 import { onAwsStorageTypeChange } from '../store/actions/AwsActions';
+import { getLabelWithResourceGrp } from './AppUtils';
 
 export function getValue(key, values) {
   const ret = values[key];
@@ -216,17 +216,15 @@ export function getSecurityGroupOption(user, fieldKey) {
   return options || [];
 }
 
-export function getAzureSecurityGroupOption(user, fieldKey) {
+export function getAzureSecurityGroupOption(user) {
   const { values } = user;
-  const vmMoref = fieldKey.split('.network.net1-eth-');
-  const resourceGrpKey = getValue(`${vmMoref[0]}.general.folderPath`, values);
   const opts = getValue(STATIC_KEYS.UI_SECURITY_GROUPS, values) || [];
   const options = [];
-  // const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
   opts.forEach((op) => {
-    const name = (op.name && op.name !== '' ? op.name : op.id);
-    if (op.vpcID === resourceGrpKey) {
-      options.push({ label: name, value: op.name });
+    const { name } = op;
+    if (typeof name !== 'undefined' && name !== '') {
+      const label = getLabelWithResourceGrp(name);
+      options.push({ label, value: op.name });
     }
   });
   return options || [];
@@ -274,12 +272,24 @@ export function getAzureSubnetOptions(user, fieldKey) {
   const { values } = user;
   const opts = getValue(STATIC_KEYS.UI_SUBNETS, values) || [];
   const networkFieldKey = fieldKey.replace('-subnet', '-network');
-  const netID = getValue(networkFieldKey, values);
+  let netID = getValue(networkFieldKey, values) || '';
+  if (typeof netID === 'object') {
+    netID = netID.value;
+  }
   const options = [];
   opts.forEach((op) => {
-    if (netID === op.vpcID) {
-      const name = `${op.name}-${op.cidr}`;
-      options.push({ label: name, value: op.id });
+    const { vpcID, name, cidr } = op;
+    if (typeof vpcID !== 'undefined' && netID === vpcID && typeof name !== 'undefined' && name !== '') {
+      let label = '';
+      const nameArr = name.split(':');
+      if (nameArr.length === 2) {
+        const resource = nameArr[0];
+        const subnetName = nameArr[1];
+        label = `${subnetName}-${cidr} (${resource})`;
+      } else {
+        [label] = name;
+      }
+      options.push({ label, value: op.id });
     }
   });
   return options;
@@ -300,23 +310,19 @@ export function getNetworkOptions(user) {
   return options;
 }
 
-export function getAzureNetworkOptions(user, fieldKey) {
+export function getAzureNetworkOptions(user) {
   const { values } = user;
-  const vmMoref = fieldKey.split('.network.net1-eth-');
-  const resourceGrpKey = getValue(`${vmMoref[0]}.general.folderPath`, values);
-  let opts = getValue(STATIC_KEYS.UI_NETWORKS, values) || [];
-  opts = opts.filter((sub) => {
-    if (sub.vpcID === resourceGrpKey) {
-      return sub;
-    }
-  });
+  const opts = getValue(STATIC_KEYS.UI_NETWORKS, values) || [];
   const options = [];
   opts.forEach((op) => {
-    const network = op.id;
-    const name = network.split(/[\s/]+/).pop();
-    const exist = options.find((item) => item.label === name);
-    if (!exist) {
-      options.push({ label: name, value: op.id });
+    const { name } = op;
+    let label = '';
+    if (typeof name !== 'undefined' && name !== '') {
+      label = getLabelWithResourceGrp(name);
+      const exist = options.find((item) => item.label === name);
+      if (!exist) {
+        options.push({ label, value: op.id });
+      }
     }
   });
   return options;
@@ -339,22 +345,21 @@ export function getGCPExternalIPOptions(user) {
 export function getAzureExternalIPOptions(user, fieldKey) {
   const { values } = user;
   const options = [];
-  const vmMoref = fieldKey.split('.network.net1-eth-');
-  const resourceGrpKey = getValue(`${vmMoref[0]}.general.folderPath`, values);
   options.push({ label: 'None', value: false });
   options.push({ label: 'Auto', value: true });
   const ips = getValue(STATIC_KEYS.UI_RESERVE_IPS, values) || [];
   ips.forEach((op) => {
-    if (op.vpcID === resourceGrpKey) {
-      options.push({ label: op.name, value: op.name });
-    }
+    const { name } = op;
+    const ipLabel = getLabelWithResourceGrp(name);
+    options.push({ label: ipLabel, value: op.name.toLowerCase() });
   });
   if (typeof fieldKey !== 'undefined' && fieldKey !== null && fieldKey !== '' && fieldKey !== '-') {
     const networkKey = fieldKey.replace('-publicIP', '');
+    const publicIP = getValue(fieldKey, values);
     const associatedIPs = getValue(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, values) || {};
     const keys = Object.keys(associatedIPs);
     if (keys.length > 0) {
-      const vmIps = keys.filter((k) => associatedIPs[k].fieldKey === networkKey);
+      const vmIps = keys.filter((k) => associatedIPs[k].fieldKey === networkKey && associatedIPs[k].value === publicIP);
       if (vmIps.length > 0) {
         vmIps.forEach((op) => {
           options.push({ label: associatedIPs[op].label, value: associatedIPs[op].value });
@@ -1010,7 +1015,7 @@ export function getAzureGeneralSettings(key, vm) {
       children: {
         [`${key}-vmConfig.general.guestOS`]: { label: 'GuestOS Family', fieldInfo: 'info.protectionplan.resource.guest.os', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select guest operating system', shouldShow: true, options: (u) => getSupportedOSTypes(u) },
         [`${key}-vmConfig.general.firmwareType`]: { label: 'Firmware Type', fieldInfo: 'info.protectionplan.resource.firmware', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select Firmware Type', shouldShow: true, options: (u) => getFirmwareTypes(u) },
-        [`${key}-vmConfig.general.folderPath`]: { label: 'Resource Group', fieldInfo: 'info.protectionplan.resource.group.azure', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select Resource Group', shouldShow: true, options: (u) => getResourceTypeOptions(u), onChange: ({ fieldKey, user }) => onAzureResourceChange({ fieldKey, user }) },
+        [`${key}-vmConfig.general.folderPath`]: { label: 'Resource Group', fieldInfo: 'info.protectionplan.resource.group.azure', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select Resource Group', shouldShow: true, options: (u) => getResourceTypeOptions(u) },
         [`${key}-vmConfig.general.availibility.zone`]: { label: 'Availability Zone', fieldInfo: 'info.protectionplan.availibility.zone.azure', type: FIELD_TYPE.SELECT, errorMessage: 'Select Availability Zone', shouldShow: true, options: (u) => getAvailibilityZoneOptions(u) },
         [`${key}-vmConfig.general.instanceType`]: { label: 'VM Size', fieldInfo: 'info.protectionplan.vmsize.azure', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
         [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.volume.type.azure', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u), onChange: (user, dispatch) => onAwsStorageTypeChange(user, dispatch), disabled: (u, f) => shouldDisableStorageType(u, f) },

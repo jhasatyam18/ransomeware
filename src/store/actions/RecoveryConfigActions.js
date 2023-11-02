@@ -6,7 +6,7 @@ import { addMessage } from './MessageActions';
 import { updateValues, valueChange } from './UserActions';
 import { setPublicIPWhileEdit } from './DrPlanActions';
 import { getSourceConfig } from '../../utils/PayloadUtil';
-import { getMemoryInfo, getNetworkIDFromName, getSubnetIDFromName } from '../../utils/AppUtils';
+import { getLabelWithResourceGrp, getMemoryInfo, getNetworkIDFromName, getSubnetIDFromName } from '../../utils/AppUtils';
 import { getValue } from '../../utils/InputUtils';
 import { COPY_CONFIG, PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { APP_SET_TIMEOUT } from '../../constants/UserConstant';
@@ -80,6 +80,7 @@ function setGeneralConfiguration(sourceConfig, targetVM, user, dispatch) {
       [`${targetVM}-vmConfig.general-unit`]: memory[1] || '',
     };
   } else {
+    folderPath = { label: folderPath, value: folderPath };
     instanceType = { label: instanceType, value: instanceType };
   }
   let networkTags = [];
@@ -203,7 +204,7 @@ function setNetworkConfig(sourceConfig, targetVM, user, dispatch) {
         if (typeof networks[index] !== 'undefined' && networks[index]) {
           const { vpcId = '', Subnet = '', networkTier = '', isFromSource, securityGroups, adapterType, networkMoref, networkPlatformID } = networks[index];
           let { subnet, network, publicIP, isPublicIP = '' } = networks[index];
-          const sgs = (securityGroups ? securityGroups.split(',') : []);
+          let sgs = (securityGroups ? securityGroups.split(',') : []);
           if (typeof subnet === 'undefined' || subnet === '' && Subnet !== '') {
             subnet = Subnet;
           }
@@ -212,14 +213,18 @@ function setNetworkConfig(sourceConfig, targetVM, user, dispatch) {
             isPublicIP = false;
             publicIP = '';
           } else if (recoveryPlatform === PLATFORM_TYPES.Azure) {
+            const { publicIp } = setPublicIPWhileEdit(isPublicIP, publicIP, networkKey, index, values, dispatch);
             network = getNetworkIDFromName(network, values);
             subnet = getSubnetIDFromName(subnet, values, network);
-            const { publicIp, ips } = setPublicIPWhileEdit(isPublicIP, publicIP, networkKey, index, values);
-            dispatch(valueChange(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, ips));
             if (publicIp === 'true' || publicIp === 'false') {
               publicIP = publicIp;
             } else {
               publicIP = 'false';
+            }
+
+            if (typeof securityGroups !== 'undefined' && securityGroups !== '') {
+              const label = getLabelWithResourceGrp(securityGroups);
+              sgs = { label, value: securityGroups };
             }
           } else if (recoveryPlatform === PLATFORM_TYPES.AWS) {
             network = publicIP;
