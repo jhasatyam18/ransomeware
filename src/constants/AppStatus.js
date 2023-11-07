@@ -5,7 +5,7 @@ export const JOB_FAILED = 'failed';
 export const MIGRATION_INIT_FAILED = 'migration_init_failed';
 export const JOB_STOPPED = 'stopped';
 export const JOB_IN_SYNC = 'in-sync';
-export const JOB_ONGOING = 'exceeded-interval';
+export const JOB_EXCEEDED_INTERVAL = 'exceeded-interval';
 export const JOB_RECOVERED = 'recovered';
 export const JOB_COMPLETED_WITH_ERRORS = 'completed with errors';
 export const JOB_INIT_FAILED = 'init-failed';
@@ -22,6 +22,7 @@ export const NODE_STATUS_OFFLINE = 'offline';
 export const JOB_INIT_SYNC_FAILED = 'init-sync-failed';
 export const JOB_MIGRATED = 'migrated';
 export const STATUS_STARTED = 'Started';
+export const PARTIALLY_COMPLETED = 'partially-completed';
 
 export const RECOVERY_STATUS = {
   MIGRATED: 'Migrated',

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Select, { components } from 'react-select';
 import {
-  Col, FormFeedback, FormGroup, Label, Row,
+  Col, FormGroup, Label, Row,
 } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
 import SimpleBar from 'simplebar-react';
@@ -66,9 +66,9 @@ class DMSearchSelect extends Component {
 
   onBlur = () => {
     const { fieldKey, dispatch, user, field } = this.props;
-    const { value } = this.state;
-    dispatch(valueChange(fieldKey, value));
-    validateField(field, fieldKey, value, dispatch, user);
+    const { values } = user;
+    const val = getValue(fieldKey, values);
+    validateField(field, fieldKey, val.value, dispatch, user);
   }
 
   handleChange = (selectedOption) => {
@@ -78,6 +78,7 @@ class DMSearchSelect extends Component {
     if (typeof onChange === 'function') {
       dispatch(onChange({ value: selectedOption.value, dispatch, user, fieldKey }));
     }
+    validateField(field, fieldKey, selectedOption.value, dispatch, user);
   }
 
   getFieldValue() {
@@ -98,10 +99,20 @@ class DMSearchSelect extends Component {
   }
 
   renderError(hasError) {
-    const { field, fieldKey } = this.props;
+    const { fieldKey, field, user } = this.props;
+    let { errorMessage } = field;
+    const { errorFunction } = field;
+    const { values } = user;
+    const val = getValue(fieldKey, values);
+    if (errorFunction && typeof errorFunction === 'function') {
+      const res = errorFunction({ fieldKey, user, value: val.value });
+      if (res !== '') {
+        errorMessage = res;
+      }
+    }
     if (hasError) {
       return (
-        <FormFeedback htmlFor={fieldKey}>{field.errorMessage}</FormFeedback>
+        <small className="form-text app_danger" htmlFor={fieldKey}>{errorMessage}</small>
       );
     }
     return null;
@@ -156,13 +167,14 @@ class DMSearchSelect extends Component {
                   value={this.getFieldValue()}
                   components={{ MenuList: this.MenuList }}
                   captureMenuScroll={false}
+                  onBlur={this.onBlur}
                 />
+                {this.renderError(hasErrors)}
               </Col>
               <Col sm={1}>
                 {this.renderTooltip()}
               </Col>
             </Row>
-            {this.renderError(hasErrors)}
           </Col>
         </FormGroup>
       </>
