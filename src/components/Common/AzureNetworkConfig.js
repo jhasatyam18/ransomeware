@@ -45,7 +45,10 @@ class AzureNetworkConfig extends Component {
     return getNetworks.map((nic, index) => {
       const key = `${nic.key}-${index}`;
       const info = getNetInfo(networkKey, index, values);
-      const network = info.network || '';
+      let network = info.network || '';
+      if (typeof network === 'object') {
+        network = network.value;
+      }
       const title = `Network: ${network.split(/[\s/]+/).pop()}, Subnet: ${info.subnet}, Public IP : ${info.publicIP}, Private IP: ${info.privateIP}`;
       return (
         <tr key={key}>

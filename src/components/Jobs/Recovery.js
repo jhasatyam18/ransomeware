@@ -21,6 +21,24 @@ class Recovery extends Component {
   }
 
   componentDidMount() {
+    this.fetchRecoveryJobs();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { user, jobs } = this.props;
+    const { refresh } = user.context;
+    const prevRefresh = prevProps.user.context.refresh;
+    const { recoveryType } = jobs;
+    if (refresh !== prevRefresh && recoveryType === RECOVERY_JOB_TYPE.PLAN) {
+      this.fetchRecoveryJobs();
+    }
+  }
+
+  componentWillUnmount() {
+    this.state = null;
+  }
+
+  fetchRecoveryJobs() {
     const { protectionplanID, dispatch } = this.props;
     const url = (protectionplanID === 0 ? API_PROTECTION_PLAN_RECOVERY_JOBS_STATUS : `${API_PROTECTION_PLAN_RECOVERY_JOBS_STATUS}?protectionplanid=${protectionplanID}`);
     callAPI(url).then((json) => {
@@ -33,10 +51,6 @@ class Recovery extends Component {
     (err) => {
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
-  }
-
-  componentWillUnmount() {
-    this.state = null;
   }
 
   changeJobType(type) {

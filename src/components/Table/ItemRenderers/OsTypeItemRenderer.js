@@ -23,7 +23,7 @@ function OsTypeItemRenderer({ data }) {
       </div>
     );
   }
-  if (data.guestOS.toLowerCase().indexOf('red hat') !== -1) {
+  if (data.guestOS.toLowerCase().indexOf('red hat') !== -1 || data.guestOS.toLowerCase().indexOf('rhel') !== -1) {
     return (
       <div>
         <i title={data.guestOS} className="fab fa-redhat" />

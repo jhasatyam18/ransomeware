@@ -8,7 +8,6 @@ import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { addMessage } from '../../store/actions/MessageActions';
 import { closeModal } from '../../store/actions/ModalActions';
 import { API_TYPES, callAPI, createPayload, getUrlPath } from '../../utils/ApiUtils';
-import { getApplicationToken } from '../../utils/CookieUtils';
 
 class ModalLicense extends Component {
   constructor() {
@@ -102,7 +101,6 @@ class ModalLicense extends Component {
     const url = getUrlPath(API_LICENSE_UPLOAD);
     fetch(url, {
       method: 'POST',
-      headers: { Authorization: getApplicationToken() },
       body: formData,
     }).then((res) => {
       if (res.ok) {

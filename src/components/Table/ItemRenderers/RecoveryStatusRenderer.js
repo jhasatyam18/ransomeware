@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Col, Popover, PopoverBody, Row } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -30,8 +30,13 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
     { value: 'copy_rec_script_config', label: 'Recovery Scripts' }];
   const configData = getRecoveryInfoForVM({ user, configToCopy: COPY_CONFIG, recoveryConfig: parsedConfiguration, values, workFlow: UI_WORKFLOW.LAST_TEST_RECOVERY_SUMMARY });
   const options = { title: 'Recovery Configuration', data: configData, css: 'modal-lg', showSummary: true };
-  let timerId;
+  const timerId = useRef();
   const RecoveryStatus = [JOB_COMPLETION_STATUS, JOB_FAILED];
+
+  useEffect(() => () => {
+    // while the step component is openeed and we went on other page then also the timer should get cleared
+    clearInterval(timerId.current);
+  }, []);
 
   const fetchRunningJobsSteps = () => {
     const url = API_RESCOVERY_JOB_STATUS_STEPS.replace('<id>', jobdata.id);
@@ -43,7 +48,7 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
       setSteps(step);
       setjobdata(json);
       if (RecoveryStatus.indexOf(json.status) !== -1) {
-        clearInterval(timerId);
+        clearInterval(timerId.current);
       }
     }, (err) => {
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
@@ -62,8 +67,14 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
         }
       } else {
         fetchRunningJobsSteps();
-        timerId = gitTimerTofetch();
+        if (typeof timerId.current === 'undefined') {
+          timerId.current = gitTimerTofetch();
+        }
       }
+    } else {
+      // if the step component is hidden then clear the timer
+      clearInterval(timerId.current);
+      timerId.current = undefined;
     }
   };
 
@@ -73,7 +84,7 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
         fetchRunningJobsSteps();
       } catch (e) {
         dispatch(addMessage(e, MESSAGE_TYPES.ERROR));
-        clearInterval(timerId);
+        clearInterval(timerId.current);
       }
     }, MILI_SECONDS_TIME.TWENTY_THOUSAND_MS);
   }
@@ -110,8 +121,8 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
   return (
     <>
       <div className="rec_job_parent">
-        <Row className="width-100">
-          <Col sm={8}>
+        <Row>
+          <Col sm={7}>
             <StatusItemRenderer data={jobdata} field={field} />
           </Col>
           <Col sm={2} className="show_details">
@@ -121,7 +132,7 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
             <i className="fas fa-info-circle info__icon test_summary_icon" aria-hidden="true" onClick={onClick} style={{ height: 20, cursor: 'pointer' }} />
           </Col>
         </Row>
-        <Row className="padding-left-8">
+        <Row className=" padding-left-2">
           <Col sm={12}>
             {toggle === true ? <StepStatus steps={steps} data={jobdata} /> : null}
           </Col>

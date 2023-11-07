@@ -308,22 +308,14 @@ export function getAllObjectKeys(obj, prefix = '') {
  * @returns document title
  */
 
-export const changePageTitle = (t) => {
-  const location = window.location.pathname.slice(1).replaceAll('/', '.');
-  let path = t(`title.${location}`);
-  path = path.split('.');
-  if (path.length === 1) {
-    path = path[path.length - 1];
-    document.title = `${path} | Datamotive`;
-    return;
-  }
-  path = path.join(' ');
-  if (path.indexOf('protection plan details') !== -1) {
-    document.title = 'Protection Plans | Datamotive';
-    return;
-  }
+export const changePageTitle = (user) => {
+  const { platformType } = user;
 
-  document.title = 'Datamotive';
+  if (typeof platformType !== 'undefined' && platformType !== '') {
+    document.title = `${platformType} | Datamotive`;
+  } else {
+    document.title = 'Datamotive';
+  }
 };
 
 export function getMemoryInfo(value) {
@@ -351,22 +343,29 @@ export function getMatchingNetwork(val, user) {
   return res;
 }
 
-export function getNetworkIDFromName(val, values) {
-  let res = '';
-  const netArray = getValue(STATIC_KEYS.UI_NETWORK, values);
+export function getNetworkIDFromName(netVal, values) {
+  let value = '';
+  let label = '';
+  const netArray = getValue(STATIC_KEYS.UI_NETWORK, values) || [];
   netArray.forEach((net) => {
-    if (net.name === val) {
-      res = net.id;
+    const { name } = net;
+    if (typeof name !== 'undefined' && name !== '') {
+      if (name.toLocaleLowerCase() === netVal.toLowerCase()) {
+        label = getLabelWithResourceGrp(name);
+        value = net.id;
+      }
     }
   });
-  return res;
+  return { label, value };
 }
 
-export function getSubnetIDFromName(val, values, netID) {
+export function getSubnetIDFromName(val, values, network) {
   let res = '';
-  const netArray = getValue(STATIC_KEYS.UI_SUBNETS, values);
+  const netArray = getValue(STATIC_KEYS.UI_SUBNETS, values) || [];
+  const netID = network ? network.value : '';
   netArray.forEach((op) => {
-    if (netID === op.vpcID && op.name === val) {
+    const { vpcID, name } = op;
+    if (netID === vpcID && name.toLocaleLowerCase() === val.toLocaleLowerCase()) {
       res = op.id;
     }
   });
@@ -392,4 +391,22 @@ export function moveSelectedItemsOnTop(data, selectedObjects) {
     }
   });
   return response;
+}
+
+/**
+ * @param val :required val is a string which has resource grp name and the name of the network,securitygrp,subne etc.
+ * @returns label with resource group in bracketed format
+ */
+
+export function getLabelWithResourceGrp(val) {
+  const valArray = val.split(':') || [];
+  let label = '';
+  if (valArray.length === 2) {
+    const resourceGrp = valArray[0];
+    const name = valArray[1];
+    label = `${name} (${resourceGrp})`;
+  } else {
+    [label] = valArray;
+  }
+  return label;
 }
