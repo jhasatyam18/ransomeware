@@ -15,6 +15,7 @@ class RecoveryConfig extends Component {
     const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
     const option = getValue('recovery.discardPartialChanges', values);
     const vmNotCompletedReplication = getValue('recovery.discard.warning.vms', values);
+    const showOptionToDiscard = (workflow === UI_WORKFLOW.RECOVERY && vmNotCompletedReplication.length > 0 && recoveryPlatform === PLATFORM_TYPES.VMware);
     const onChange = (value) => {
       dispatch(valueChange('recovery.discardPartialChanges', value));
     };
@@ -51,7 +52,7 @@ class RecoveryConfig extends Component {
           </CardBody>
         </Card>
         {
-            workflow === UI_WORKFLOW.RECOVERY && vmNotCompletedReplication.length > 0 ? (
+            showOptionToDiscard ? (
               <Card className="padding-20">
                 <CardTitle>{t('Recovery Mode')}</CardTitle>
                 {renderWarningText()}
