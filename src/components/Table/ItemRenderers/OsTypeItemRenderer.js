@@ -9,6 +9,13 @@ function OsTypeItemRenderer({ data }) {
       </div>
     );
   }
+  if (data.guestOS.toLowerCase().indexOf('ubuntu') !== -1) {
+    return (
+      <div>
+        <i title={data.guestOS} className="fab fa-ubuntu" />
+      </div>
+    );
+  }
   if (data.guestOS.toLowerCase().indexOf('centos') !== -1) {
     return (
       <div>

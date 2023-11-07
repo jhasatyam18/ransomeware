@@ -82,6 +82,7 @@ class DMFieldSelect extends Component {
     if (typeof onChange === 'function') {
       dispatch(onChange({ value: e.target.value, dispatch, user, fieldKey }));
     }
+    validateField(field, fieldKey, e.target.value, dispatch, user);
   }
 
   renderOptions() {
@@ -99,10 +100,19 @@ class DMFieldSelect extends Component {
   }
 
   renderError(hasError) {
-    const { field, fieldKey } = this.props;
+    const { fieldKey, field, user } = this.props;
+    let { errorMessage } = field;
+    const { errorFunction } = field;
+    const { value } = this.state;
+    if (errorFunction && typeof errorFunction === 'function') {
+      const res = errorFunction({ fieldKey, user, value });
+      if (res !== '') {
+        errorMessage = res;
+      }
+    }
     if (hasError) {
       return (
-        <FormFeedback htmlFor={fieldKey}>{field.errorMessage}</FormFeedback>
+        <FormFeedback htmlFor={fieldKey}>{errorMessage}</FormFeedback>
       );
     }
     return null;
@@ -150,16 +160,16 @@ class DMFieldSelect extends Component {
           <Col sm={hideLabel ? 12 : 8}>
             <Row>
               <Col sm={11}>
-                <Input type="select" id={fieldKey} onSelect={this.handleChange} className="form-control form-control-sm custom-select" onChange={this.handleChange} value={value} invalid={hasErrors} disabled={shouldDisabled}>
+                <Input type="select" id={fieldKey} onSelect={this.handleChange} className="form-control form-control-sm custom-select" onChange={this.handleChange} value={value} invalid={hasErrors} disabled={shouldDisabled} onBlur={this.onBlur}>
                   <option key={`${fieldKey}-default`} value="">  </option>
                   {this.renderOptions()}
                 </Input>
+                {this.renderError(hasErrors)}
               </Col>
               <Col sm={1}>
                 {this.renderTooltip()}
               </Col>
             </Row>
-            {this.renderError(hasErrors)}
           </Col>
         </FormGroup>
       </>

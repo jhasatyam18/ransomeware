@@ -5,3 +5,8 @@ export const FQDN_REGEX = /^(?!:\/\/)(?=.{1,255}$)((.{1,63}\.){1,127}(?![0-9]*$)
 export const PASSWORD_REGEX = /^(?=(.*[0-9]))(?=.*[@#$%^&*()\\[\]{}\-_+=~`|:;"'<>,./?])(?=.*[a-z])(?=(.*[A-Z]))(?=(.*)).{8,}/;
 export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const DNS_REGEX = /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+/;
+
+// [0-9A-F] is set that is repeated two times. After the set there's : or - and
+// the group ([0-9A-F]{2}[:-]) is repeated 5 times which gives us ex: 00:50:56:09:f2.
+// Then again same character set [0-9A-F] that is repeated 2 times ex : 00:50:56:09:f2:36
+export const MAC_ADDRESS = /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/;

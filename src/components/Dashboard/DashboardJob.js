@@ -79,7 +79,7 @@ function DashBoardJob(props) {
       <Media className="padding-10">
         <div className="mr-4">
           <h5 className="font-size-16">
-            <i className={`bx ${css} font-size-14`} />
+            <i className={`${css} font-size-14`} />
           </h5>
         </div>
         <Media body>
@@ -98,13 +98,15 @@ function DashBoardJob(props) {
     const { status } = data;
     switch (status) {
       case appStatus.JOB_COMPLETION_STATUS:
-        return renderData(data, 'app_success bxs-check-circle');
+        return renderData(data, 'app_success bx bxs-check-circle');
       case appStatus.JOB_RUNNING_STATUS:
-        return renderData(data, 'app_primary bxs-right-arrow-circle bx-fade-right');
+        return renderData(data, 'app_primary bx bxs-right-arrow-circle bx-fade-right');
       case appStatus.JOB_FAILED:
-        return renderData(data, 'app_danger bxs-x-circle');
+        return renderData(data, 'app_danger bx bxs-x-circle');
       case appStatus.JOB_IN_PROGRESS:
-        return renderData(data, 'app_primary bxs-right-arrow-circle bx-fade-right');
+        return renderData(data, 'app_primary bx bxs-right-arrow-circle bx-fade-right');
+      case appStatus.PARTIALLY_COMPLETED:
+        return renderData(data, 'app_warning fas fa-exclamation-triangle');
       default:
         return renderData(data, 'app_secondary bx-info-circle');
     }

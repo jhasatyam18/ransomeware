@@ -2,7 +2,7 @@ import React from 'react';
 import 'boxicons';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { convertKBtoUnit } from '../../../utils/InputUtils';
+import { getStorageWithUnit } from '../../../utils/AppUtils';
 
 function VMSizeItemRenderer(props) {
   let size = 0;
@@ -15,7 +15,7 @@ function VMSizeItemRenderer(props) {
       }
     });
   }
-  size = convertKBtoUnit(size);
+  size = getStorageWithUnit(size);
   return (
     <div>
       {size}

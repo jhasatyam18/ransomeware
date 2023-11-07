@@ -1,3 +1,4 @@
+import { MAC_ADDRESS } from '../constants/ValidationConstants';
 import { onAzureResourceChange } from '../store/actions/AzureAction';
 import { API_FETCH_VMWARE_LOCATION } from '../constants/ApiConstants';
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMORY, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
@@ -60,22 +61,43 @@ export function isPlatformTypeAzure(user) {
   return false;
 }
 
-export function isRecoveryTypeGCP(user) {
+export function showDifferentialReverseCheckbox(user) {
   const { values } = user;
   const recoveryPlatform = getValue('ui.values.recoveryPlatform', values) || '';
-  if (recoveryPlatform !== '' && recoveryPlatform === PLATFORM_TYPES.GCP) {
+  if (recoveryPlatform !== '' && recoveryPlatform === PLATFORM_TYPES.GCP || recoveryPlatform === PLATFORM_TYPES.VMware) {
     return true;
   }
   return false;
 }
 
-export function getSitesOptions(user) {
+export function getProtectedSitesOptions(user) {
   const { values } = user;
   const sites = getValue(STATIC_KEYS.UI_SITES, values);
   const result = [];
   if (sites) {
     sites.reduce((previous, next) => {
-      previous.push({ label: next.name, value: next.id });
+      const { node } = next;
+      const { isLocalNode } = node;
+      if (isLocalNode) {
+        previous.push({ label: next.name, value: next.id });
+      }
+      return previous;
+    }, result);
+  }
+  return result;
+}
+
+export function getRecoverySitesOptions(user) {
+  const { values } = user;
+  const sites = getValue(STATIC_KEYS.UI_SITES, values);
+  const result = [];
+  if (sites) {
+    sites.reduce((previous, next) => {
+      const { node } = next;
+      const { isLocalNode } = node;
+      if (!isLocalNode) {
+        previous.push({ label: next.name, value: next.id });
+      }
       return previous;
     }, result);
   }
@@ -883,7 +905,7 @@ export function convertMemoryToMb(memory, unit) {
 }
 
 export function validateMacAddressForVMwareNetwork(macAddress) {
-  const regex = /^([0-9a-fA-F]{2}[:-]){5}([0-9a-fA-F]{2})$/;
+  const regex = MAC_ADDRESS;
 
   const val = regex.test(macAddress);
   return val;
@@ -939,14 +961,6 @@ export function getMatchingInsType(values, ins) {
     insType.value = ins.instanceType;
   }
   return insType;
-}
-
-export function convertKBtoUnit(data) {
-  const sizes = ['KB', 'MB', 'GB', 'TB'];
-  if (data === 0) return '-';
-  const i = parseInt(Math.floor(Math.log(data) / Math.log(1024)), 10);
-  if (i >= sizes.length) return '-';
-  return `${Math.round(data / 1024 ** i, 2)} ${sizes[i]}`;
 }
 
 export function showInstallCloudPackageOption(user) {
@@ -1068,4 +1082,13 @@ export function getMatchingOSType(value) {
   }
   // reset
   return res;
+}
+
+export function showDifferentialReverse(user) {
+  const { values } = user;
+  const protectionPlatform = getValue('ui.values.protectionPlatform', values) || '';
+  if (protectionPlatform === PLATFORM_TYPES.VMware) {
+    return false;
+  }
+  return true;
 }
