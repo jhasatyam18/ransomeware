@@ -34,6 +34,7 @@ class DRPlanActionBar extends Component {
     dispatch(fetchSites('ui.values.sites'));
     dispatch(fetchScript());
     dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.CREATE_PLAN));
+    dispatch(valueChange('drplan.isCompression', true));
     dispatch(openWizard(CREATE_DR_PLAN_WIZARDS.options, CREATE_DR_PLAN_WIZARDS.steps));
   }
 

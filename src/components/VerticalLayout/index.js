@@ -61,9 +61,9 @@ class Layout extends Component {
   }
 
   renderRoutes() {
-    const { sites, dispatch, user, drPlans, t } = this.props;
+    const { sites, dispatch, user, drPlans } = this.props;
     const { privileges = [] } = user;
-    changePageTitle(t);
+    changePageTitle(user);
     if (privileges.length === 0) {
       return null;
     }

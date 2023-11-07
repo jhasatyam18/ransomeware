@@ -163,7 +163,7 @@ class DRPlanDetails extends Component {
       { label: 'Encryption On Wire', field: 'isEncryptionOnWire' },
       { label: 'Compression', field: 'isCompression' },
       { label: 'Dedupe', field: 'isDeDupe' },
-      { label: 'Differential Reverse Replication', field: 'enableReverse' },
+      { label: 'Differential Reverse Replication', field: 'enableDifferentialReverse' },
 
       { label: 'Start Time', field: 'startTime', value: `${sd.toLocaleDateString()}-${sd.toLocaleTimeString()}` },
       { label: 'Replication Pre Script', field: 'replPreScript' },

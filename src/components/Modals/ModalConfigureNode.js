@@ -46,6 +46,7 @@ class ModalConfigureNode extends Component {
 
   renderForm() {
     const { user, dispatch, options } = this.props;
+    const { values } = user;
     let isUpdate = '';
     if (options) {
       isUpdate = options.isUpdate;
@@ -56,9 +57,14 @@ class ModalConfigureNode extends Component {
     fields.forEach((field) => {
       let shouldDisable = false;
       if (typeof isUpdate !== 'undefined') {
-        const allowedFields = ['username', 'password', 'managementPort', 'replicationPort', 'encryptionKey', 'hostname'];
+        const allowedFields = ['username', 'password', 'hostname'];
+        const ports = ['replicationDataPort', 'replicationCtrlPort', 'managementPort'];
         const fName = field.split('.')[1];
+        const isLocalNode = values['node.isLocalNode'];
         shouldDisable = isUpdate && !(allowedFields.indexOf(fName) !== -1);
+        if (!isLocalNode && ports.indexOf(fName) !== -1) {
+          shouldDisable = false;
+        }
       }
       renderFields.push((<DMField dispatch={dispatch} user={user} fieldKey={field} key={`node-${field}`} disabled={shouldDisable} />));
     });

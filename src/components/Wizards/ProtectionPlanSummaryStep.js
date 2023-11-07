@@ -44,7 +44,9 @@ class ProtectionPlanSummaryStep extends Component {
     Object.keys(selectedVMs).forEach((key) => {
       if (typeof selectedVMs[key].virtualDisks !== 'undefined' && selectedVMs[key].virtualDisks !== null) {
         selectedVMs[key].virtualDisks.forEach((disk) => {
-          size += disk.size;
+          if (typeof disk.isDeleted !== 'undefined' && !disk.isDeleted && typeof disk.size !== 'undefined') {
+            size += disk.size;
+          }
         });
       }
     });

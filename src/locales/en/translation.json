@@ -196,6 +196,7 @@
   "configure.nodes": "Configure Nodes",
   "configure.nodes.tooltip": "Minimum two management nodes are required",
   "protect.workloads": "Protect Workloads",
+  "protect.workloads.tooltip": "1 or more DR plans or move groups.",
   "users": "Users",
   "roles": "Roles",
   "privileges": "Privileges",
@@ -397,8 +398,8 @@
   "title.mac.address":"Mac Address",
   "title.hostname":"Hostname",
   "title.Datastore":"Datastore",
-  "title.machines.recovery":"Select Virtual Machine for recovery",
-  "title.machines.migration":"Select Virtual Machine for migration",
+  "title.machines.recovery":"Select workloads for Recovery.",
+  "title.machines.migration":"Select workloads for Migration.",
   "title.resource.grp":"Resource Group",
   "title.staticip":"Configure Guest Network",
   "title.ip":" IP address",
@@ -444,6 +445,7 @@
   "info.protectionplan.network.azure.security.grp":"A network security group contains security rules that allow or deny inbound network traffic to, or outbound network traffic from, the virtual machine",
   "info.protectionplan.vmsize.azure":" Select a VM size to support the workload that you want to run. The size that you choose then determines factors such as processing power, memory, and storage capacity",
   "info.protectionplan.resource.guest.os":"Instance operating system. Auto detected based on the corresponding protected instance.",
+  "info.protectionplan.resource.firmware":"firmwareType: Select 'bios' for traditional systems or 'uefi' for modern interfaces.",
   "test.recovery.staticIP.warning": "If Static IP addresses were used in test recovery configuration then make sure the provided IP addresses are available.",
   "loading":"Loading...",
   "msg.resource.grp":"Please Select Resource Group",
@@ -464,5 +466,11 @@
   "show.details":"View Progress",
   "vmware.subnet":"Subnet Mask",
   "message.take.vm.action":"Taking action on VM alert",
-  "error.same.site":"Protection and recovery sites cannot be same."
+  "error.same.site":"Protection and recovery sites cannot be same.",
+  "error.reverse.validation":"Differential reverse replication is not possible for this protection plan as {{error}} . Please select full incremental for replication type.",
+
+  "test.recovery.loader.msg":"Test Recovery Initiated Successfully.",
+  "recovery.loader.msg":"Recovery Initiated Successfully.",
+  "title.cleanup.test.recovery":"Select Workloads for Test Recovery Cleanup.",
+  "title.test.recovery":"Select workloads for Test Recovery."
 }

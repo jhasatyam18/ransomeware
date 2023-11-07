@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Modal, Row, Col } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
+import { MESSAGE_TYPES } from '../../constants/MessageConstants';
+import { addMessage } from '../../store/actions/MessageActions';
 import { clearValues, valueChange } from '../../store/actions';
 import { closeWizard } from '../../store/actions/WizardActions';
 import { DRPLAN_PROTECT_STEP, DRPLAN_RECOVERY_STEP, PROTECTION_PLAN_SUMMARY_STEP, RECOVERY_PROTECT_VM_STEP, RECOVERY_SUMMARY, MIGRATION_GENERAL_STEP, DRPLAN_VM_CONFIG_STEP, WIZARD_STEP, RECOVERY_GENERAL_STEP, REVERSE_CONFIG_STEP, REVERSE_SUMMARY, RECOVERY_CONFIG, DRPLAN_BOOT_ORDER_STEP, VM_ALERTS_STEP, VM_CONFIGURATION_STEP, DRPLAN_SCRIPT_STEP, TEST_RECOVERY_CONFIG_STEP, TEST_RECOVERY_CONFIG_SCRIPTS, TEST_RECOVERY_CLEANUP_SUMMARY } from '../../constants/WizardConstants';
@@ -64,9 +66,9 @@ class DMWizard extends React.Component {
     const { steps } = wizard;
     const { currentStep } = this.state;
     if (!(currentStep >= steps.length - 1)) {
-      const { validate, isAync, postAction } = steps[currentStep];
+      const { validate, isAsync, postAction } = steps[currentStep];
       const isValidated = validate(user, dispatch, steps[currentStep].fields);
-      if (isAync) {
+      if (isAsync) {
         isValidated.then((response) => {
           if (response) {
             if (typeof postAction !== 'undefined') {
@@ -76,7 +78,7 @@ class DMWizard extends React.Component {
           }
         });
       }
-      if (isValidated && typeof isAync === 'undefined') {
+      if (isValidated && typeof isAsync === 'undefined') {
         if (typeof postAction !== 'undefined') {
           dispatch(postAction());
         }
@@ -97,8 +99,18 @@ class DMWizard extends React.Component {
     const { steps, options } = wizard;
     const { onFinish } = options;
     const { currentStep } = this.state;
-    const { validate } = steps[currentStep];
-    if (validate(user, dispatch, steps[currentStep].fields)) {
+    const { validate, isAsync } = steps[currentStep];
+    const isValidated = validate(user, dispatch, steps[currentStep].fields);
+    if (isAsync) {
+      isValidated.then((response) => {
+        if (response) {
+          dispatch(onFinish());
+        }
+      },
+      (err) => {
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+    } else if (isValidated) {
       dispatch(onFinish());
     }
   }

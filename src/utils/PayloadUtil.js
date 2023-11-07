@@ -5,7 +5,6 @@ import {
   shouldShowNodePlatformType,
   shouldShowNodeManagementPort,
   shouldShowNodeReplicationPort,
-  shouldShowNodeEncryptionKey,
   getAWSNetworkIDFromName,
   convertMemoryToMb,
 } from './InputUtils';
@@ -62,7 +61,7 @@ export function getCreateDRPlanPayload(user, sites) {
   result.drplan.protectedEntities.VirtualMachines = [];
   Object.keys(vms).forEach((key) => {
     const vm = setVMProperties(vms[key], values);
-    vm.id = 0;
+    vm.id = '0';
     result.drplan.protectedEntities.VirtualMachines.push(vm);
   });
   result.drplan.protectedEntities.Name = 'dummy';
@@ -101,10 +100,15 @@ export function getVMConfigPayload(user) {
     // Data require for vmware as target platform
     let folderPath = getValue(`${key}-vmConfig.general.folderPath`, values);
     const instanceID = getValue(`${key}-vmConfig.general.instanceID`, values) || '';
-    if (typeof folderPath !== 'string') {
-      const [index] = folderPath;
-      folderPath = index;
+    if (typeof folderPath === 'object') {
+      if (folderPath.length > 0) {
+        const [index] = folderPath;
+        folderPath = index;
+      } else {
+        folderPath = folderPath.value;
+      }
     }
+
     let hostMoref = getValue(`${key}-vmConfig.general.hostMoref`, values) || '';
     hostMoref = hostMoref.value || '';
     let datastoreMoref = getValue(`${key}-vmConfig.general.dataStoreMoref`, values) || '';
@@ -174,7 +178,7 @@ export function getVMNetworkConfig(key, values) {
     const availZone = getValue(`${networkKey}-eth-${index}-availZone`, values);
     const privateIP = getValue(`${networkKey}-eth-${index}-privateIP`, values) || '';
     let publicIP = getValue(`${networkKey}-eth-${index}-publicIP`, values) || '';
-    const sgs = getValue(`${networkKey}-eth-${index}-securityGroups`, values) || '';
+    let sgs = getValue(`${networkKey}-eth-${index}-securityGroups`, values) || '';
     const networkTier = getValue(`${networkKey}-eth-${index}-networkTier`, values) || '';
     let network = getValue(`${networkKey}-eth-${index}-network`, values) || '';
     const adapterType = `${getValue(`${networkKey}-eth-${index}-adapterType`, values)}`;
@@ -198,15 +202,26 @@ export function getVMNetworkConfig(key, values) {
       publicIP = getAWSNetworkIDFromName(values, network) || publicIP;
     }
     if (recoveryPlatform === PLATFORM_TYPES.Azure) {
-      const netArr = network.split('/');
-      network = netArr[netArr.length - 1];
+      let netArr = '';
+      if (typeof network === 'object') {
+        netArr = network.value;
+      }
+      netArr = netArr.split('/');
+      const networkName = netArr[netArr.length - 1];
+      const resource = netArr[4];
+      network = `${resource}:${networkName}`;
       const subArr = subnet.split('/');
-      subnet = subArr[subArr.length - 1];
+      const subnetResource = subArr[4];
+      const subnetName = subArr[subArr.length - 1];
+      subnet = `${subnetResource}:${subnetName}`;
       if (publicIP === 'true') {
         isPublicIP = true;
         publicIP = '';
       } else if (publicIP === 'false') {
         publicIP = '';
+      }
+      if (sgs !== '' && typeof sgs === 'object') {
+        sgs = sgs.value;
       }
     }
     if (network !== '' && recoveryPlatform === PLATFORM_TYPES.VMware) {
@@ -310,9 +325,6 @@ export function getNodePayload(user) {
     node.node.replicationCtrlPort = 0;
     node.node.replicationDataPort = 0;
   }
-  if (!shouldShowNodeEncryptionKey(user)) {
-    node.node.encryptionKey = '';
-  }
   return node;
 }
 
@@ -402,9 +414,13 @@ export function getSourceConfig(key, user) {
   const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
   let folderPath = '';
   folderPath = getValue(`${key}-vmConfig.general.folderPath`, values) || '';
-  if (typeof folderPath === 'object' && folderPath.length > 0) {
-    const [index] = folderPath;
-    folderPath = index;
+  if (typeof folderPath === 'object') {
+    if (folderPath.length > 0) {
+      const [index] = folderPath;
+      folderPath = index;
+    } else if (typeof folderPath.value !== 'undefined') {
+      folderPath = folderPath.label;
+    }
   }
   const hostMoref = getValue(`${key}-vmConfig.general.hostMoref`, values);
   const datastoreMoref = getValue(`${key}-vmConfig.general.dataStoreMoref`, values);
@@ -458,9 +474,13 @@ function setVMProperties(vm, values) {
   vmConfig.postScript = postScript;
   // guest os
   const guestOS = getValue(`${vm.moref}-vmConfig.general.guestOS`, values);
+  const firmwareType = getValue(`${vm.moref}-vmConfig.general.firmwareType`, values);
   if (guestOS) {
     // override the guest os value selected by user
     vmConfig.guestOS = guestOS;
+  }
+  if (firmwareType) {
+    vmConfig.firmwareType = firmwareType;
   }
   return vmConfig;
 }
