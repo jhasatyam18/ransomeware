@@ -7,7 +7,7 @@ import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
 import { MESSAGE_TYPES } from '../constants/MessageConstants';
 import { API_TYPES, callAPI, createPayload } from './ApiUtils';
 import { API_VALIDATE_MIGRATION, API_VALIDATE_RECOVERY, API_VALIDATE_REVERSE_PLAN } from '../constants/ApiConstants';
-import { getFilteredObject, getRecoveryPayload, getReversePlanPayload, getVMNetworkConfig, getVMwareNetworkConfig } from './PayloadUtil';
+import { getRecoveryPayload, getReversePlanPayload, getVMNetworkConfig, getVMwareNetworkConfig } from './PayloadUtil';
 import { IP_REGEX } from '../constants/ValidationConstants';
 import { PLATFORM_TYPES, RECOVERY_STATUS, STATIC_KEYS, UI_WORKFLOW } from '../constants/InputConstants';
 import { createVMConfigStackObject, getValue, isAWSCopyNic, validateMacAddressForVMwareNetwork, excludeKeys } from './InputUtils';
@@ -1078,18 +1078,15 @@ export function validatePlanSiteSelection({ user, fieldKey, value }) {
 
 export const showReverseWarningText = (user) => {
   const { values } = user;
-  const sites = getValue('ui.values.sites', values);
   const enableReverse = getValue('drplan.enableDifferentialReverse', values) || '';
-  const rSiteId = getValue('drplan.recoverySite', values) || '';
-  const pSiteId = getValue('drplan.protectedSite', values) || '';
-  const rSite = sites.filter((site) => getFilteredObject(site, rSiteId, 'id'))[0];
-  const pSite = sites.filter((site) => getFilteredObject(site, pSiteId, 'id'))[0];
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values) || '';
+  const protectionPlatform = getValue('ui.values.protectionPlatform', values) || '';
   const revReplType = getValue('reverse.replType', values) || '';
   const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values) || '';
-  if (workflow === UI_WORKFLOW.REVERSE_PLAN && revReplType === STATIC_KEYS.DIFFERENTIAL && typeof pSite === 'object' && pSite.platformDetails.platformType === PLATFORM_TYPES.VMware) {
+  if (workflow === UI_WORKFLOW.REVERSE_PLAN && revReplType === STATIC_KEYS.DIFFERENTIAL && protectionPlatform === PLATFORM_TYPES.VMware) {
     return true;
   }
-  if (enableReverse && typeof rSite === 'object' && rSite.platformDetails.platformType === PLATFORM_TYPES.VMware) {
+  if (enableReverse && recoveryPlatform === PLATFORM_TYPES.VMware) {
     return true;
   }
   return false;
