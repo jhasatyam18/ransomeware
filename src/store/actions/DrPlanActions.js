@@ -247,6 +247,7 @@ export function onProtectionPlanChange({ value, allowDeleted }) {
                 }
                 dispatch(valueChange(`${vm.moref}-vmConfig.general.guestOS`, vm.guestOS));
                 dispatch(valueChange(`${vm.moref}-vmConfig.general.firmwareType`, vm.firmwareType));
+                dispatch(valueChange(`${vm.moref}-vmConfig.general.encryptionKey`, vm.encryptionKey));
                 data.push(vm);
               }
             });
@@ -705,6 +706,7 @@ export function setVMGuestOSInfo(selectedVMs) {
       if (selectedVMs[key]) {
         dispatch(valueChange(`${selectedVMs[key].moref}-vmConfig.general.guestOS`, getMatchingOSType(selectedVMs[key].guestOS)));
         dispatch(valueChange(`${selectedVMs[key].moref}-vmConfig.general.firmwareType`, getMatchingFirmwareType(selectedVMs[key].firmwareType)));
+        dispatch(valueChange(`${selectedVMs[key].moref}-vmConfig.general.encryptionKey`, selectedVMs[key].encryptionKey));
       }
     });
   };

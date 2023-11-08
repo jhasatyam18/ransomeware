@@ -470,6 +470,7 @@ function setVMProperties(vm, values) {
   // set scripts
   const preScript = getValue(`${vm.moref}-protection.scripts.preScript`, values);
   const postScript = getValue(`${vm.moref}-protection.scripts.postScript`, values);
+  const encryptionKey = getValue(`${vm.moref}-vmConfig.general.encryptionKey`, values) || '';
   vmConfig.preScript = preScript;
   vmConfig.postScript = postScript;
   // guest os
@@ -481,6 +482,10 @@ function setVMProperties(vm, values) {
   }
   if (firmwareType) {
     vmConfig.firmwareType = firmwareType;
+  }
+  // set for new VM only
+  if (encryptionKey && vmConfig.id === '') {
+    vmConfig.encryptionKey = encryptionKey;
   }
   return vmConfig;
 }
