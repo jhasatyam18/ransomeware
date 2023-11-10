@@ -706,7 +706,6 @@ export function setVMGuestOSInfo(selectedVMs) {
       if (selectedVMs[key]) {
         dispatch(valueChange(`${selectedVMs[key].moref}-vmConfig.general.guestOS`, getMatchingOSType(selectedVMs[key].guestOS)));
         dispatch(valueChange(`${selectedVMs[key].moref}-vmConfig.general.firmwareType`, getMatchingFirmwareType(selectedVMs[key].firmwareType)));
-        dispatch(valueChange(`${selectedVMs[key].moref}-vmConfig.general.encryptionKey`, selectedVMs[key].encryptionKey));
       }
     });
   };
@@ -1275,6 +1274,7 @@ export function setAWSVMRecoveryData(vmMoref) {
         dispatch(valueChange(`${key}-vmConfig.general.instanceType`, { label: ins.instanceType, value: ins.instanceType }));
         dispatch(valueChange(`${key}-vmConfig.general.volumeType`, ins.volumeType));
         dispatch(valueChange(`${key}-vmConfig.general.volumeIOPS`, ins.volumeIOPS));
+        dispatch(valueChange(`${key}-vmConfig.general.encryptionKey`, ins.encryptionKey));
         dispatch(valueChange(`${key}-vmConfig.general.bootOrder`, ins.bootPriority));
         dispatch(valueChange(`${key}-vmConfig.general.instanceID`, ins.instanceID));
         dispatch(valueChange(`${key}-vmConfig.scripts.preScript`, ins.preScript));

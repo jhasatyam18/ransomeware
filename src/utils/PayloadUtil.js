@@ -154,10 +154,11 @@ export function getVMConfigPayload(user) {
     if (PLATFORM_TYPES.Azure === recoveryPlatform) {
       availZone = getValue(`${key}-vmConfig.general.availibility.zone`, values);
     }
+    const encryptionKey = getValue(`${key}-vmConfig.general.encryptionKey`, values) || '';
     if (typeof id !== 'undefined' && id !== '') {
-      instanceDetails.push({ sourceMoref, id, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref });
+      instanceDetails.push({ sourceMoref, id, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, encryptionKey });
     } else {
-      instanceDetails.push({ sourceMoref, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref });
+      instanceDetails.push({ sourceMoref, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, encryptionKey });
     }
   });
   return instanceDetails;
@@ -442,6 +443,7 @@ export function getSourceConfig(key, user) {
   if (volumeType === 'gp2') {
     volumeIOPS = 0;
   }
+  const encryptionKey = getValue(`${key}-vmConfig.general.encryptionKey`, values) || '';
   const tags = getValue(`${key}-vmConfig.general.tags`, values) || [];
   const networks = getVMNetworkConfig(key, values);
   let availZone = '';
@@ -460,7 +462,7 @@ export function getSourceConfig(key, user) {
   const postScript = getValue(`${key}-vmConfig.scripts.postScript`, values);
   const repPreScript = getValue(`${key}-protection.scripts.preScript`, values) || '';
   const repPostScript = getValue(`${key}-protection.scripts.postScript`, values) || '';
-  const genC = { instanceType, availZone, folderPath, volumeType, securityGroup, volumeIOPS, tags, memoryMB, hostMoref: hostMoref.value, datastoreMoref: datastoreMoref.value, numCPU, datacenterMoref };
+  const genC = { instanceType, availZone, folderPath, volumeType, securityGroup, volumeIOPS, tags, memoryMB, hostMoref: hostMoref.value, datastoreMoref: datastoreMoref.value, numCPU, datacenterMoref, encryptionKey };
   const scripts = { preScript, postScript, repPostScript, repPreScript };
   return { ...genC, networks, ...scripts };
 }
@@ -470,7 +472,6 @@ function setVMProperties(vm, values) {
   // set scripts
   const preScript = getValue(`${vm.moref}-protection.scripts.preScript`, values);
   const postScript = getValue(`${vm.moref}-protection.scripts.postScript`, values);
-  const encryptionKey = getValue(`${vm.moref}-vmConfig.general.encryptionKey`, values) || '';
   vmConfig.preScript = preScript;
   vmConfig.postScript = postScript;
   // guest os
@@ -482,10 +483,6 @@ function setVMProperties(vm, values) {
   }
   if (firmwareType) {
     vmConfig.firmwareType = firmwareType;
-  }
-  // set for new VM only
-  if (encryptionKey && vmConfig.id === '') {
-    vmConfig.encryptionKey = encryptionKey;
   }
   return vmConfig;
 }

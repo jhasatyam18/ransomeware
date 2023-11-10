@@ -517,7 +517,7 @@ export function getAwsVMConfig(vm) {
           [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', fieldInfo: 'info.protectionplan.instance.type', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
           [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.instance.volume.type.aws', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u), onChange: (user, dispatch) => onAwsStorageTypeChange(user, dispatch), disabled: (u, f) => shouldDisableStorageType(u, f) },
           [`${key}-vmConfig.general.volumeIOPS`]: { label: 'Volume IOPS', fieldInfo: 'info.protectionplan.instance.volume.iops.aws', type: FIELD_TYPE.NUMBER, errorMessage: 'Provide volume IOPS.', disabled: (u, f) => shouldEnableAWSIOPS(u, f), min: 0 },
-          [`${key}-vmConfig.general.encryptionKey`]: { label: 'Encrypt Disks', fieldInfo: 'info.protectionplan.instance.volume.encrypt', type: FIELD_TYPE.SELECT, errorMessage: '', disabled: (u, f) => shouldEnableAWSEncryption(u, f), validate: null, options: (u) => getEncryptionKeyOptions(u) },
+          [`${key}-vmConfig.general.encryptionKey`]: { label: 'Encryption KMS Key', fieldInfo: 'info.protectionplan.instance.volume.encrypt', type: FIELD_TYPE.SELECT, errorMessage: '', disabled: (u, f) => shouldEnableAWSEncryption(u, f), validate: null, options: (u) => getEncryptionKeyOptions(u), shouldShow: (user) => shouldShowAWSKMS(user) },
           [`${key}-vmConfig.general.tags`]: { label: 'Tags', fieldInfo: 'info.protectionplan.instance.tags.aws', type: STACK_COMPONENT_TAGS, validate: null, errorMessage: '', shouldShow: true },
         },
       },
@@ -694,8 +694,19 @@ export function shouldEnableAWSIOPS(user, fieldKey) {
   return false;
 }
 
+export function shouldShowAWSKMS(user) {
+  const { values } = user;
+  const sourcePlatform = getValue('ui.values.protectionPlatform', values);
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+  return sourcePlatform === PLATFORM_TYPES.AWS && sourcePlatform === recoveryPlatform;
+}
+
 export function shouldEnableAWSEncryption(user, fieldKey) {
   const { values } = user;
+  const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
+  if (workflow === UI_WORKFLOW.REVERSE_PLAN) {
+    return false;
+  }
   const keys = fieldKey.split('-vmConfig.general.encryptionKey');
   const selectedVMs = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   let disabled = false;

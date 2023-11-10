@@ -55,7 +55,7 @@ export function copyInstanceConfiguration({ sourceVM, targetVMs, configToCopy, s
 }
 
 function setGeneralConfiguration(sourceConfig, targetVM, user, dispatch) {
-  const { volumeType, volumeIOPS, tags, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, availZone, securityGroups = '' } = sourceConfig;
+  const { volumeType, volumeIOPS, tags, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, availZone, securityGroups = '', encryptionKey } = sourceConfig;
   let { instanceType, folderPath, securityGroup = '' } = sourceConfig;
   const { values } = user;
   const memory = getMemoryInfo(memoryMB);
@@ -97,6 +97,7 @@ function setGeneralConfiguration(sourceConfig, targetVM, user, dispatch) {
     [`${targetVM}-vmConfig.general.folderPath`]: folderPath || '',
     [`${targetVM}-vmConfig.general.volumeType`]: volumeType || '',
     [`${targetVM}-vmConfig.general.volumeIOPS`]: volumeIOPS || 0,
+    [`${targetVM}-vmConfig.general.encryptionKey`]: encryptionKey || '',
     [`${targetVM}-vmConfig.general.tags`]: tagsData || '',
     [`${targetVM}-vmConfig.general.availibility.zone`]: availZone || '',
     [`${targetVM}-vmConfig.network.securityGroup`]: networkTags || '',
@@ -165,6 +166,7 @@ export function resetGeneralConfig({ user, targetVM }) {
       [`${targetVM}-vmConfig.general.folderPath`]: '',
       [`${targetVM}-vmConfig.general.volumeType`]: '',
       [`${targetVM}-vmConfig.general.volumeIOPS`]: 0,
+      [`${targetVM}-vmConfig.general.encryptionKey`]: '',
       [`${targetVM}-vmConfig.general.tags`]: '',
       [`${targetVM}-vmConfig.general.availibility.zone`]: '',
       [`${targetVM}-vmConfig.network.securityGroup`]: '',
