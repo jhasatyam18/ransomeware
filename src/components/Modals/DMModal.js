@@ -20,6 +20,7 @@ import ModalLocationTree from './ModalLocationTree';
 import ModalShowSummary from './ModalShowSummary';
 import ModalChangeNodePassword from './ModalChangeNodePassword';
 import ModalShowResetedVms from './ModalShowResetVm';
+import ModalReplicationPriority from './ModalReplicationPriority';
 
 class DMModal extends Component {
   constructor() {
@@ -71,6 +72,8 @@ class DMModal extends Component {
           return <ModalChangeNodePassword dispatch={dispatch} user={user} options={options} fieldKey={options.fieldKey} />;
         case MODALS.MODAL_SHOW_RESETED_VMS:
           return <ModalShowResetedVms dispatch={dispatch} user={user} options={options} />;
+        case MODALS.MODAL_REPLICATION_PRIORITY:
+          return <ModalReplicationPriority dispatch={dispatch} user={user} />;
         default:
           return (<div>404</div>);
       }
@@ -81,13 +84,13 @@ class DMModal extends Component {
   render() {
     const { modal } = this.props;
     const { show, options } = modal;
-    const { css } = options;
+    const { css, size } = options;
     if (!show) {
       return null;
     }
     return (
       <>
-        <Modal isOpen centered scrollable className={css}>
+        <Modal isOpen centered scrollable className={css} size={size}>
           <div className="modal-header">
             <h5 className="modal-title mt-0" id="DMMODAL">
               {' '}

@@ -137,6 +137,7 @@ export function getVMConfigPayload(user) {
     }
     const tags = getValue(`${key}-vmConfig.general.tags`, values) || [];
     const bootPriority = parseInt(getValue(`${key}-vmConfig.general.bootOrder`, values), 10);
+    const replicationPriority = parseInt(getValue(`${key}-vmConfig.general.replicationPriority`, values), 10) || 3;
     // const isPublicIP = (getValue(`${key}-vmConfig.network.net1`, values) === 'public');
     // const privateIP = (isPublicIP ? '' : getValue(`${key}-vmConfig.network.net1-manual-ip`, values));
     const networks = getVMNetworkConfig(key, values);
@@ -155,9 +156,9 @@ export function getVMConfigPayload(user) {
       availZone = getValue(`${key}-vmConfig.general.availibility.zone`, values);
     }
     if (typeof id !== 'undefined' && id !== '') {
-      instanceDetails.push({ sourceMoref, id, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref });
+      instanceDetails.push({ sourceMoref, id, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, replicationPriority });
     } else {
-      instanceDetails.push({ sourceMoref, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref });
+      instanceDetails.push({ sourceMoref, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, replicationPriority });
     }
   });
   return instanceDetails;
