@@ -89,7 +89,7 @@ export const REVERSE_WIZARDS = {
     { label: 'Reverse Plan', title: '', component: REVERSE_CONFIG_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: REVERSE_RECOVERY_CONFIGURATION_STEP },
     { label: 'Recovery Configuration', title: '', component: TEST_RECOVERY_CONFIG_STEP, validate: (user, dispatch) => validateVMConfiguration({ user, dispatch }) },
     { label: 'Boot Order', title: '', component: DRPLAN_BOOT_ORDER_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
-    { label: 'Replication Configuration', title: '', component: WIZARD_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: DRPLAN_PROTECTION_CONFIG_STEP_FIELDS },
+    { label: 'Replication Configuration', title: '', component: REPLICATION_CONFIGURATION_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: DRPLAN_PROTECTION_CONFIG_STEP_FIELDS },
     { label: 'Scripts', title: '', component: DRPLAN_SCRIPT_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
     { label: 'Summary', title: '', component: REVERSE_SUMMARY, validate: (user, dispatch) => validateReversePlan({ user, dispatch }), isAsync: true }],
 };

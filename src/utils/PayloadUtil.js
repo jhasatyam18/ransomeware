@@ -61,7 +61,9 @@ export function getCreateDRPlanPayload(user, sites) {
   result.drplan.protectedEntities.VirtualMachines = [];
   Object.keys(vms).forEach((key) => {
     const vm = setVMProperties(vms[key], values);
+    const replicationPriority = parseInt(getValue(`${key}-vmConfig.general.replicationPriority`, values), 10) || 0;
     vm.id = '0';
+    vm.replicationPriority = replicationPriority;
     result.drplan.protectedEntities.VirtualMachines.push(vm);
   });
   result.drplan.protectedEntities.Name = 'dummy';
@@ -137,7 +139,6 @@ export function getVMConfigPayload(user) {
     }
     const tags = getValue(`${key}-vmConfig.general.tags`, values) || [];
     const bootPriority = parseInt(getValue(`${key}-vmConfig.general.bootOrder`, values), 10);
-    const replicationPriority = parseInt(getValue(`${key}-vmConfig.general.replicationPriority`, values), 10) || 3;
     // const isPublicIP = (getValue(`${key}-vmConfig.network.net1`, values) === 'public');
     // const privateIP = (isPublicIP ? '' : getValue(`${key}-vmConfig.network.net1-manual-ip`, values));
     const networks = getVMNetworkConfig(key, values);
@@ -156,9 +157,9 @@ export function getVMConfigPayload(user) {
       availZone = getValue(`${key}-vmConfig.general.availibility.zone`, values);
     }
     if (typeof id !== 'undefined' && id !== '') {
-      instanceDetails.push({ sourceMoref, id, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, replicationPriority });
+      instanceDetails.push({ sourceMoref, id, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref });
     } else {
-      instanceDetails.push({ sourceMoref, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, replicationPriority });
+      instanceDetails.push({ sourceMoref, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref });
     }
   });
   return instanceDetails;
@@ -287,6 +288,7 @@ export function getReversePlanPayload(user) {
   const sites = getValue('ui.values.sites', values);
   const drplan = getValue('ui.reverse.drPlan', values);
   const selectedRSite = getValue('reverse.recoverySite', values);
+  const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   const rSite = sites.filter((site) => getFilteredObject(site, selectedRSite, 'id'))[0];
   const replType = getValue('reverse.replType', values);
   const recoverySufffix = getValue('reverse.suffix', values);
@@ -295,6 +297,11 @@ export function getReversePlanPayload(user) {
   } else {
     drplan.isDifferential = false;
   }
+  drplan.protectedEntities.VirtualMachines = [];
+  Object.keys(vms).forEach((key) => {
+    const vm = setVMProperties(vms[key], values);
+    drplan.protectedEntities.VirtualMachines.push(vm);
+  });
   drplan.recoverySite = rSite;
   drplan.recoveryEntities.suffix = recoverySufffix;
   drplan.recoveryEntities.instanceDetails = getVMConfigPayload(user);
@@ -380,7 +387,9 @@ export function getEditProtectionPlanPayload(user, sites) {
   result.drplan.protectedEntities.VirtualMachines = [];
   Object.keys(vms).forEach((key) => {
     let vm = vms[key];
+    const replicationPriority = parseInt(getValue(`${key}-vmConfig.general.replicationPriority`, values), 10) || 0;
     vm = setVMProperties(vm, values);
+    vm.replicationPriority = replicationPriority;
     result.drplan.protectedEntities.VirtualMachines.push(vm);
   });
   result.drplan.protectedEntities.Name = 'dummy';
@@ -483,5 +492,7 @@ function setVMProperties(vm, values) {
   if (firmwareType) {
     vmConfig.firmwareType = firmwareType;
   }
+  const replicationPriority = parseInt(getValue(`${vm.moref}-vmConfig.general.replicationPriority`, values), 10) || 0;
+  vmConfig.replicationPriority = replicationPriority;
   return vmConfig;
 }

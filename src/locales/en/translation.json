@@ -264,6 +264,7 @@
   "label.networkTier": "Network Tier",
   "label.publicIP": "Public IP",
   "title.copy.config": "Apply to other virtual machines",
+  "title.advance,config":"Advance Configuration",
   "label.select.vms": "Select Virtual Machines",
   "label.compute.resource": "Compute Resource",
   "label.cpu.nums": "CPU",

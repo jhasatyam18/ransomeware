@@ -777,6 +777,8 @@ function setAWSVMDetails(selectedVMS, protectionPlan, dispatch) {
     virtualMachines.forEach((pvm) => {
       if (vm.moref === pvm.moref) {
         dispatch(setProtectionPlanScript(key, pvm));
+        // setreplication priority while editing protection plan
+        dispatch(valueChange(`${key}-vmConfig.general.replicationPriority`, pvm.replicationPriority));
       }
     });
     instanceDetails.forEach((ins) => {
@@ -1274,7 +1276,6 @@ export function setAWSVMRecoveryData(vmMoref) {
         dispatch(valueChange(`${key}-vmConfig.general.volumeType`, ins.volumeType));
         dispatch(valueChange(`${key}-vmConfig.general.volumeIOPS`, ins.volumeIOPS));
         dispatch(valueChange(`${key}-vmConfig.general.bootOrder`, ins.bootPriority));
-        dispatch(valueChange(`${key}-vmConfig.general.replicationPriority`, ins.replicationPriority));
         dispatch(valueChange(`${key}-vmConfig.general.instanceID`, ins.instanceID));
         dispatch(valueChange(`${key}-vmConfig.scripts.preScript`, ins.preScript));
         dispatch(valueChange(`${key}-vmConfig.scripts.postScript`, ins.postScript));
@@ -1585,6 +1586,10 @@ function setReverseData(json) {
               if (vm.moref === rE.sourceMoref) {
                 // data.push(vm);
                 selectedVMs = { ...selectedVMs, [vm.moref]: vm };
+                // set replication priority of vms
+                if (platformDetails.platformType === PLATFORM_TYPES.AWS) {
+                  dispatch(valueChange(`${vm.moref}-vmConfig.general.replicationPriority`, vm.replicationPriority));
+                }
                 dispatch(setRecoveryVMDetails(vm.moref));
               }
             });

@@ -6,11 +6,11 @@ import { FIELD_TYPE } from '../../../constants/FieldsConstant';
 import DMFieldSelect from '../../Shared/DMFieldSelect';
 
 function ReplicationPriorityItemRenderer({ data, user, dispatch }) {
-  const bootOrder = { type: FIELD_TYPE.SELECT, validate: (value) => isEmpty(value, user), errorMessage: 'Select boot order', shouldShow: true, options: (u) => geBootPriorityOptions(u), defaultValue: 3 };
+  const replicationPriority = { type: FIELD_TYPE.SELECT, validate: (value) => isEmpty(value, user), errorMessage: 'Select Replication Priority order', shouldShow: true, options: (u) => geBootPriorityOptions(u), defaultValue: 3 };
   if (dispatch && data) {
     return (
       <div>
-        <DMFieldSelect dispatch={dispatch} fieldKey={`${data.moref}-vmConfig.general.replicationPriority`} user={user} field={bootOrder} hideLabel="true" />
+        <DMFieldSelect dispatch={dispatch} fieldKey={`${data.moref}-vmConfig.general.replicationPriority`} user={user} field={replicationPriority} hideLabel="true" />
       </div>
     );
   }
