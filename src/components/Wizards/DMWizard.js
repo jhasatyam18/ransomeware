@@ -29,7 +29,7 @@ import TestRecoveryVMConfiguration from './Step/TestRecoveryVMConfiguration';
 import TestRecoveryScriptStep from './Step/TestRecoveryScriptStep';
 import TestRecoveryCleanupSummary from './TestRecoveryCleanupSummary';
 import { STATIC_KEYS } from '../../constants/InputConstants';
-import ReplicationConfigurationStep from './ReplicationConfirationStep';
+import ReplicationConfigurationStep from './ReplicationConfigurationStep';
 
 class DMWizard extends React.Component {
   ref;
