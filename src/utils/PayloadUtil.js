@@ -61,9 +61,7 @@ export function getCreateDRPlanPayload(user, sites) {
   result.drplan.protectedEntities.VirtualMachines = [];
   Object.keys(vms).forEach((key) => {
     const vm = setVMProperties(vms[key], values);
-    const replicationPriority = parseInt(getValue(`${key}-vmConfig.general.replicationPriority`, values), 10) || 0;
     vm.id = '0';
-    vm.replicationPriority = replicationPriority;
     result.drplan.protectedEntities.VirtualMachines.push(vm);
   });
   result.drplan.protectedEntities.Name = 'dummy';
@@ -387,9 +385,7 @@ export function getEditProtectionPlanPayload(user, sites) {
   result.drplan.protectedEntities.VirtualMachines = [];
   Object.keys(vms).forEach((key) => {
     let vm = vms[key];
-    const replicationPriority = parseInt(getValue(`${key}-vmConfig.general.replicationPriority`, values), 10) || 0;
     vm = setVMProperties(vm, values);
-    vm.replicationPriority = replicationPriority;
     result.drplan.protectedEntities.VirtualMachines.push(vm);
   });
   result.drplan.protectedEntities.Name = 'dummy';
