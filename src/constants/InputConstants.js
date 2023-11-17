@@ -88,6 +88,7 @@ export const STATIC_KEYS = {
   UI_NETWORKS: 'ui.values.network',
   UI_EDIT_RESERVE_IPS: 'ui.values.edit.reserveips',
   UI_WORKFLOW: 'ui.workflow',
+  UI_REPLICATIONJOBS_BY_PPLAN_ID: 'ui.replicationjobs.by.pplanid',
 };
 
 // Recovery time in minutes

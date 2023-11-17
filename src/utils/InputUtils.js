@@ -3,7 +3,7 @@ import { API_FETCH_VMWARE_LOCATION } from '../constants/ApiConstants';
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMORY, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
 import { EXCLUDE_KEYS_CONSTANTS, EXCLUDE_KEYS_RECOVERY_CONFIGURATION, PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS, SUPPORTED_FIRMWARE, SUPPORTED_GUEST_OS, UI_WORKFLOW } from '../constants/InputConstants';
-import { NODE_STATUS_ONLINE } from '../constants/AppStatus';
+import { JOB_INIT_FAILED, NODE_STATUS_ONLINE } from '../constants/AppStatus';
 import { isEmpty, isMemoryValueValid } from './validationUtils';
 import { getStorageForVMware, onScriptChange } from '../store/actions';
 import { onAwsStorageTypeChange } from '../store/actions/AwsActions';
@@ -709,14 +709,31 @@ export function shouldEnableAWSEncryption(user, fieldKey) {
   }
   const keys = fieldKey.split('-vmConfig.general.encryptionKey');
   const selectedVMs = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
+  // get the replication job fetch from pplan id from the store
+  const replJobs = getValue(STATIC_KEYS.UI_REPLICATIONJOBS_BY_PPLAN_ID, values);
   let disabled = false;
   if (keys.length > 1) {
+    // get the vm moref in vmID
     const vmID = keys[0];
-    Object.keys(selectedVMs).map((key) => {
-      if (selectedVMs[key].moref === vmID && selectedVMs[key].id !== '') {
+    if (typeof selectedVMs[vmID] !== 'undefined') {
+      if (selectedVMs[vmID].id !== '') {
         disabled = true;
       }
-    });
+      if (replJobs.length > 0) {
+        for (let i = 0; i < replJobs.length; i += 1) {
+          const repl = replJobs[i];
+          if (selectedVMs[vmID].moref === repl.vmMoref) {
+            // if sync status is init-failed then only enable encryption option
+            if (repl.syncStatus === JOB_INIT_FAILED) {
+              disabled = false;
+            }
+            break;
+          }
+        }
+      }
+    } else {
+      disabled = true;
+    }
   }
   return disabled;
 }
