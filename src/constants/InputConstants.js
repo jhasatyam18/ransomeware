@@ -69,6 +69,7 @@ export const STATIC_KEYS = {
   UI_SCRIPT_PRE: 'ui.values.scripts.pre',
   UI_SCRIPT_POST: 'ui.values.scripts.post',
   UI_SECURITY_GROUPS: 'ui.values.securityGroups',
+  UI_ENCRYPTION_KEYS: 'ui.values.encryptionKeys',
   UI_SUBNETS: 'ui.values.subnets',
   UI_NETWORK: 'ui.values.network',
   UI_SITE_NODES: 'ui.values.nodes',
@@ -87,6 +88,7 @@ export const STATIC_KEYS = {
   UI_NETWORKS: 'ui.values.network',
   UI_EDIT_RESERVE_IPS: 'ui.values.edit.reserveips',
   UI_WORKFLOW: 'ui.workflow',
+  UI_REPLICATIONJOBS_BY_PPLAN_ID: 'ui.replicationjobs.by.pplanid',
 };
 
 // Recovery time in minutes

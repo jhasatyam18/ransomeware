@@ -1,10 +1,10 @@
 import * as Types from '../../constants/actionTypes';
-import { API_PROTECTION_PLAN_RECOVERY_JOBS_STATUS, API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS } from '../../constants/ApiConstants';
-import { RECOVERY_JOB_TYPE, REPLICATION_JOB_TYPE } from '../../constants/InputConstants';
+import { API_PROTECTION_PLAN_RECOVERY_JOBS_STATUS, API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS, API_PROTECTTION_PLAN_REPLICATION_VM_JOBS } from '../../constants/ApiConstants';
+import { RECOVERY_JOB_TYPE, REPLICATION_JOB_TYPE, STATIC_KEYS } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { callAPI } from '../../utils/ApiUtils';
 import { addMessage } from './MessageActions';
-import { hideApplicationLoader, showApplicationLoader } from './UserActions';
+import { hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
 
 export function setReplicationJobs(replication) {
   return {
@@ -93,5 +93,22 @@ export function changeRecoveryJobType(jobType) {
 export function resetJobs() {
   return {
     type: Types.RESET_JOBS,
+  };
+}
+
+export function fetchReplicationJobsByPplanId(pplanID) {
+  return (dispatch) => {
+    let url = API_PROTECTTION_PLAN_REPLICATION_VM_JOBS;
+    url = url.replace('<id>', pplanID);
+    return callAPI(url).then((json) => {
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        dispatch(valueChange(STATIC_KEYS.UI_REPLICATIONJOBS_BY_PPLAN_ID, json.records));
+      }
+    },
+    (err) => {
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
   };
 }

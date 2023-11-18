@@ -3,7 +3,7 @@ import { API_FETCH_VMWARE_LOCATION } from '../constants/ApiConstants';
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMORY, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
 import { EXCLUDE_KEYS_CONSTANTS, EXCLUDE_KEYS_RECOVERY_CONFIGURATION, PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS, SUPPORTED_FIRMWARE, SUPPORTED_GUEST_OS, UI_WORKFLOW } from '../constants/InputConstants';
-import { NODE_STATUS_ONLINE } from '../constants/AppStatus';
+import { JOB_INIT_FAILED, NODE_STATUS_ONLINE } from '../constants/AppStatus';
 import { isEmpty, isMemoryValueValid } from './validationUtils';
 import { getStorageForVMware, onScriptChange } from '../store/actions';
 import { onAwsStorageTypeChange } from '../store/actions/AwsActions';
@@ -114,6 +114,19 @@ export function getInstanceTypeOptions(user) {
   const result = [];
   if (instanceTypes) {
     instanceTypes.reduce((previous, next) => {
+      previous.push({ label: next.label, value: next.value });
+      return previous;
+    }, result);
+  }
+  return result;
+}
+
+export function getEncryptionKeyOptions(user) {
+  const { values } = user;
+  const keys = getValue(STATIC_KEYS.UI_ENCRYPTION_KEYS, values);
+  const result = [];
+  if (keys) {
+    keys.reduce((previous, next) => {
       previous.push({ label: next.label, value: next.value });
       return previous;
     }, result);
@@ -504,6 +517,7 @@ export function getAwsVMConfig(vm) {
           [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', fieldInfo: 'info.protectionplan.instance.type', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
           [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.instance.volume.type.aws', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u), onChange: (user, dispatch) => onAwsStorageTypeChange(user, dispatch), disabled: (u, f) => shouldDisableStorageType(u, f) },
           [`${key}-vmConfig.general.volumeIOPS`]: { label: 'Volume IOPS', fieldInfo: 'info.protectionplan.instance.volume.iops.aws', type: FIELD_TYPE.NUMBER, errorMessage: 'Provide volume IOPS.', disabled: (u, f) => shouldEnableAWSIOPS(u, f), min: 0 },
+          [`${key}-vmConfig.general.encryptionKey`]: { label: 'Encryption KMS Key', fieldInfo: 'info.protectionplan.instance.volume.encrypt', type: FIELD_TYPE.SELECT, errorMessage: '', disabled: (u, f) => shouldEnableAWSEncryption(u, f), validate: null, options: (u) => getEncryptionKeyOptions(u), shouldShow: (user) => shouldShowAWSKMS(user) },
           [`${key}-vmConfig.general.tags`]: { label: 'Tags', fieldInfo: 'info.protectionplan.instance.tags.aws', type: STACK_COMPONENT_TAGS, validate: null, errorMessage: '', shouldShow: true },
         },
       },
@@ -678,6 +692,50 @@ export function shouldEnableAWSIOPS(user, fieldKey) {
     return true;
   }
   return false;
+}
+
+export function shouldShowAWSKMS(user) {
+  const { values } = user;
+  const sourcePlatform = getValue('ui.values.protectionPlatform', values);
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+  return sourcePlatform === PLATFORM_TYPES.AWS && sourcePlatform === recoveryPlatform;
+}
+
+export function shouldEnableAWSEncryption(user, fieldKey) {
+  const { values } = user;
+  const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
+  if (workflow === UI_WORKFLOW.REVERSE_PLAN) {
+    return false;
+  }
+  const keys = fieldKey.split('-vmConfig.general.encryptionKey');
+  const selectedVMs = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
+  // get the replication job fetch from pplan id from the store
+  const replJobs = getValue(STATIC_KEYS.UI_REPLICATIONJOBS_BY_PPLAN_ID, values);
+  let disabled = false;
+  if (keys.length > 1) {
+    // get the vm moref in vmID
+    const vmID = keys[0];
+    if (typeof selectedVMs[vmID] !== 'undefined') {
+      if (selectedVMs[vmID].id !== '') {
+        disabled = true;
+      }
+      if (replJobs.length > 0) {
+        for (let i = 0; i < replJobs.length; i += 1) {
+          const repl = replJobs[i];
+          if (selectedVMs[vmID].moref === repl.vmMoref) {
+            // if sync status is init-failed then only enable encryption option
+            if (repl.syncStatus === JOB_INIT_FAILED) {
+              disabled = false;
+            }
+            break;
+          }
+        }
+      }
+    } else {
+      disabled = true;
+    }
+  }
+  return disabled;
 }
 
 export function getAWSNetworkIDFromName(values, name) {

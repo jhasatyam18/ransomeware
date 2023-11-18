@@ -347,6 +347,16 @@ export function fetchNetworks(id, sourceNet = undefined) {
               }
             });
           }
+          // for aws encryption keys
+          if (data.encryptionKeys && data.encryptionKeys.length > 0) {
+            const keys = [];
+            data.encryptionKeys.forEach((key) => {
+              if (key.encryptionArn !== '' && typeof key.encryptionArn !== 'undefined') {
+                keys.push({ label: key.name, value: key.encryptionArn });
+              }
+            });
+            dispatch(valueChange(STATIC_KEYS.UI_ENCRYPTION_KEYS, keys));
+          }
           dispatch(valueChange(STATIC_KEYS.UI_AVAILABILITY_ZONES, zones));
           dispatch(valueChange(STATIC_KEYS.RESOURCE_GROUP, data.resourceGroups));
           dispatch(valueChange(STATIC_KEYS.UI_NETWORKS, data.networks));

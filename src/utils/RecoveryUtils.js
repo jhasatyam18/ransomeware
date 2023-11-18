@@ -3,7 +3,7 @@ import { FIELD_TYPE } from '../constants/FieldsConstant';
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP } from '../constants/StackConstants';
 import { MESSAGE_TYPES } from '../constants/MessageConstants';
 import { COPY_CONFIG, PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../constants/InputConstants';
-import { getInstanceTypeOptions, getAzureGeneralSettings, getRecoveryScript, getReplicationScript, getValue, getVMwareGeneralSettings, getNetworkOptions } from './InputUtils';
+import { getInstanceTypeOptions, getAzureGeneralSettings, getRecoveryScript, getReplicationScript, getValue, getVMwareGeneralSettings, getNetworkOptions, getEncryptionKeyOptions, shouldEnableAWSEncryption } from './InputUtils';
 import { isEmpty } from './validationUtils';
 import { getSourceConfig } from './PayloadUtil';
 import { getMemoryInfo, getLabelWithResourceGrp } from './AppUtils';
@@ -44,6 +44,8 @@ function getAWSVMTestConfig(vm, workflow) {
   }] };
   if (workflow === UI_WORKFLOW.REVERSE_PLAN) {
     config.data.push(...getReplicationScript(key));
+    // add key selection in case of reverse plan
+    config.data[0].children[`${key}-vmConfig.general.encryptionKey`] = { label: 'Encryption KMS Key', fieldInfo: 'info.protectionplan.instance.volume.encrypt', type: FIELD_TYPE.SELECT, errorMessage: '', disabled: (u, f) => shouldEnableAWSEncryption(u, f), validate: null, options: (u) => getEncryptionKeyOptions(u) };
   }
   config.data.push(...getRecoveryScript(key));
   return config;
