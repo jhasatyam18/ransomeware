@@ -287,6 +287,7 @@ export function getReversePlanPayload(user) {
   const sites = getValue('ui.values.sites', values);
   const drplan = getValue('ui.reverse.drPlan', values);
   const selectedRSite = getValue('reverse.recoverySite', values);
+  const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   const rSite = sites.filter((site) => getFilteredObject(site, selectedRSite, 'id'))[0];
   const replType = getValue('reverse.replType', values);
   const recoverySufffix = getValue('reverse.suffix', values);
@@ -295,6 +296,11 @@ export function getReversePlanPayload(user) {
   } else {
     drplan.isDifferential = false;
   }
+  drplan.protectedEntities.VirtualMachines = [];
+  Object.keys(vms).forEach((key) => {
+    const vm = setVMProperties(vms[key], values);
+    drplan.protectedEntities.VirtualMachines.push(vm);
+  });
   drplan.recoverySite = rSite;
   drplan.recoveryEntities.suffix = recoverySufffix;
   drplan.recoveryEntities.instanceDetails = getVMConfigPayload(user);
@@ -484,5 +490,7 @@ function setVMProperties(vm, values) {
   if (firmwareType) {
     vmConfig.firmwareType = firmwareType;
   }
+  const replicationPriority = parseInt(getValue(`${vm.moref}-vmConfig.general.replicationPriority`, values), 10) || 0;
+  vmConfig.replicationPriority = replicationPriority;
   return vmConfig;
 }
