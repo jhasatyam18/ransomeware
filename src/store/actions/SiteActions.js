@@ -309,6 +309,11 @@ export function fetchNetworks(id, sourceNet = undefined) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
           const data = json;
+          if (typeof sourceNet !== 'undefined') {
+            dispatch(valueChange(STATIC_KEYS.UI_SECURITY_GROUPS_SOURCE, (data.securityGroups ? data.securityGroups : [])));
+            dispatch(valueChange(STATIC_KEYS.UI_SUBNETS__SOURCE, (data.subnets ? data.subnets : [])));
+            return;
+          }
           if (data.instanceTypes) {
             const insTypes = [];
             data.instanceTypes.forEach((t) => {
@@ -319,11 +324,6 @@ export function fetchNetworks(id, sourceNet = undefined) {
           let ips = getValue(STATIC_KEYS.UI_EDIT_RESERVE_IPS, values) || [];
           const address = data.ipAddress || [];
           ips = [...ips, ...address];
-          if (typeof sourceNet !== 'undefined') {
-            dispatch(valueChange(STATIC_KEYS.UI_SECURITY_GROUPS_SOURCE, (data.securityGroups ? data.securityGroups : [])));
-            dispatch(valueChange(STATIC_KEYS.UI_SUBNETS__SOURCE, (data.subnets ? data.subnets : [])));
-            return;
-          }
           dispatch(valueChange(STATIC_KEYS.UI_SECURITY_GROUPS, (data.securityGroups ? data.securityGroups : [])));
           dispatch(valueChange(STATIC_KEYS.UI_SUBNETS, (data.subnets ? data.subnets : [])));
           dispatch(valueChange(STATIC_KEYS.UI_RESERVE_IPS, (data.ipAddress ? ips : [])));

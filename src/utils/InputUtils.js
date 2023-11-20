@@ -3,7 +3,7 @@ import { API_FETCH_VMWARE_LOCATION } from '../constants/ApiConstants';
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMORY, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
 import { EXCLUDE_KEYS_CONSTANTS, EXCLUDE_KEYS_RECOVERY_CONFIGURATION, PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS, SUPPORTED_FIRMWARE, SUPPORTED_GUEST_OS, UI_WORKFLOW } from '../constants/InputConstants';
-import { JOB_INIT_FAILED, NODE_STATUS_ONLINE } from '../constants/AppStatus';
+import { JOB_INIT_FAILED, JOB_INIT_SYNC_FAILED, NODE_STATUS_ONLINE } from '../constants/AppStatus';
 import { isEmpty, isMemoryValueValid } from './validationUtils';
 import { getStorageForVMware, onScriptChange } from '../store/actions';
 import { onAwsStorageTypeChange } from '../store/actions/AwsActions';
@@ -723,8 +723,8 @@ export function shouldEnableAWSEncryption(user, fieldKey) {
         for (let i = 0; i < replJobs.length; i += 1) {
           const repl = replJobs[i];
           if (selectedVMs[vmID].moref === repl.vmMoref) {
-            // if sync status is init-failed then only enable encryption option
-            if (repl.syncStatus === JOB_INIT_FAILED) {
+            // if sync status is init-failed or init-resyc-failed and transferredSize is zero then only enable encryption option
+            if (repl.syncStatus === JOB_INIT_FAILED || (repl.syncStatus === JOB_INIT_SYNC_FAILED && repl.transferredSize === 0)) {
               disabled = false;
             }
             break;

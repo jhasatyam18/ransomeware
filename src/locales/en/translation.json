@@ -448,6 +448,7 @@
   "info.protectionplan.resource.guest.os":"Instance operating system. Auto detected based on the corresponding protected instance.",
   "info.protectionplan.resource.firmware":"firmwareType: Select 'bios' for traditional systems or 'uefi' for modern interfaces.",
   "info.protectionplan.instance.volume.encrypt": "The AWS Key Management Service (KMS) is a comprehensive solution for creating and managing encryption keys to secure your data. Important Note: Once encryption is enabled for an instance, it cannot be reversed. Additionally, disk encryption on the target depends on the source disks being encrypted.",
+  "info.protectionplan.enable.replication.scheduling":"replication schedule",
   "test.recovery.staticIP.warning": "If Static IP addresses were used in test recovery configuration then make sure the provided IP addresses are available.",
   "loading":"Loading...",
   "msg.resource.grp":"Please Select Resource Group",
