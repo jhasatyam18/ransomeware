@@ -19,6 +19,7 @@ class RecoveryConfig extends Component {
             <Form className="form_w">
               <DMField dispatch={dispatch} user={user} fieldKey="recovery.installSystemAgent" />
               {recoveryPlatform !== PLATFORM_TYPES.VMware ? <DMField dispatch={dispatch} user={user} fieldKey="recovery.installCloudPkg" /> : null}
+              <DMField dispatch={dispatch} user={user} fieldKey="recovery.removeFromAD" />
             </Form>
           </CardBody>
         </Card>
