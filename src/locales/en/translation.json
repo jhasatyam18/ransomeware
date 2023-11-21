@@ -144,6 +144,7 @@
   "reverse.suffix": "Recovery Machines Suffix",
   "recovery.installSystemAgent" : "Install System Agents",
   "recovery.installCloudPkg" : "Install Cloud Packages",
+  "recovery.removeFromAD" : "Disable Active Directory Auto-Join",
   "datamotive.nodes": "Nodes",
   "bootOrder": "Boot Order",
   "settings.license": "License",  
@@ -355,6 +356,7 @@
 
   "info.recovery.system.agent": "For AWS, install OS agents like EC2Launch and SSMAgents. For GCP, install google os-config and compute-engine agents. For Azure, install azure vm agent",
   "info.recovery.install.cloud.packages": "For AWS. install AWS Cloud SDK and for GCP, install GCP Cloud SDK",
+  "info.recovery.remove.windows.ad": "Restricts the recovered Windows VM to join Active Directory Domain on first boot if it was configured with Active Directory Domain on source",
   "info.protectionplan.network.gcp.externalip": "An external IP address associated with this instance. Select an unused static IP address or choose 'Ephemeral' to use an IP from a shared ephemeral IP address pool.",
   "info.protectionplan.network.gcp.privateip": "Leave blank to assign an address from the network range or provide ip from the network range",
   "info.protectionplan.network.gcp.subnet": "Subnet used to allocate ip address to the instance.",
