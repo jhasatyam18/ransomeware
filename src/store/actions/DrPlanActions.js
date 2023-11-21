@@ -753,6 +753,7 @@ export function setProtectionPlanVMConfig(selectedVMS, protectionPlan) {
     dispatch(valueChange('drplan.isCompression', protectionPlan.isCompression));
     dispatch(valueChange('drplan.isDedupe', protectionPlan.isDeDupe));
     dispatch(valueChange('drplan.enableDifferentialReverse', protectionPlan.enableDifferentialReverse));
+    dispatch(valueChange('drplan.enablePPlanLevelScheduling', protectionPlan.enablePPlanLevelScheduling));
     dispatch(valueChange('drplan.replPostScript', protectionPlan.replPostScript));
     dispatch(valueChange('drplan.replPreScript', protectionPlan.replPreScript));
     const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
@@ -1664,6 +1665,7 @@ export function setReverseConfig(protectionPlan) {
     dispatch(valueChange('drplan.isCompression', protectionPlan.isCompression));
     dispatch(valueChange('drplan.isDeDupe', protectionPlan.isDeDupe));
     dispatch(valueChange('drplan.enableDifferentialReverse', protectionPlan.enableDifferentialReverse));
+    dispatch(valueChange('drplan.enablePPlanLevelScheduling', protectionPlan.enablePPlanLevelScheduling));
     dispatch(valueChange('drplan.replPostScript', protectionPlan.replPostScript));
     dispatch(valueChange('drplan.replPreScript', protectionPlan.replPreScript));
   };

@@ -296,6 +296,11 @@ export function getReversePlanPayload(user) {
   } else {
     drplan.isDifferential = false;
   }
+  drplan.isDedupe = getValue('drplan.isDedupe', values);
+  drplan.isCompression = getValue('drplan.isCompression', values);
+  drplan.isEncryptionOnWire = getValue('drplan.isEncryptionOnWire', values);
+  drplan.enableDifferentialReverse = getValue('drplan.enableDifferentialReverse', values);
+  drplan.enablePPlanLevelScheduling = getValue('drplan.enablePPlanLevelScheduling', values);
   drplan.protectedEntities.VirtualMachines = [];
   Object.keys(vms).forEach((key) => {
     const vm = setVMProperties(vms[key], values);
