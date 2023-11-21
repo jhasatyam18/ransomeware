@@ -327,7 +327,7 @@
   "info.protectionplan.encryption.wire": "Wire encryption enables confidentiality and security while transferring data between two sites.",
   "info.protectionplan.isCompression": "Compressing data can save storage capacity, speed up data transfer, and decrease costs for storage hardware and network bandwidth.",
   "info.protectionplan.isDedupe": "Deduplication eliminate duplicate copies of repeating data over the network. Useful while moving data out from any cloud environment to trim egress cost.",
-  "info.protectionplan.enable.reverse": "Allow reverse replication of virtual machine if protected virtual machines were recovered in recovery site",
+  "info.protectionplan.enable.reverse": "Allow differential replication of recovered virtual machines when replicating back to original source",
   "info.protectionplan.startTime": "Time from when the protection plan will start virtual machine replication",
   "info.protectionplan.replPreScript": "Protection plan replication pre script, will get executed before any virtual machine snapshots are created.",
   "info.protectionplan.replPostScript": "Protection plan replication post script will get execute dafter all selected virtual machines snapshots are completed.",
