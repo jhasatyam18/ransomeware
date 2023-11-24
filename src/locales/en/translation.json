@@ -354,7 +354,7 @@
   "info.throttling.time.limit.start": "Start time for the time based throttling",
   "info.throttling.time.limit.end": "End time for the time based throttling",
 
-  "info.recovery.system.agent": "For AWS, install OS agents like EC2Launch and SSMAgents. For GCP, install google os-config and compute-engine agents. For VMware install VMare-tools. For Azure, install azure vm agent",
+  "info.recovery.system.agent": "For AWS, install OS agents like EC2Launch and SSMAgents (Supported for Windows operating system only). For GCP, install google os-config and compute-engine agents. For VMware install VMware-tools (Supported for Windows operating system only). For Azure, install Azure VM Agent",
   "info.recovery.install.cloud.packages": "For AWS. install AWS Cloud SDK and for GCP, install GCP Cloud SDK",
   "info.recovery.remove.windows.ad": "Restricts the recovered VM/s to join Active Directory Domain on first boot if it was configured with Active Directory Domain on source",
   "info.protectionplan.network.gcp.externalip": "An external IP address associated with this instance. Select an unused static IP address or choose 'Ephemeral' to use an IP from a shared ephemeral IP address pool.",
