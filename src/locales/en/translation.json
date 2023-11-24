@@ -340,7 +340,7 @@
   "info.protectionplan.scriptInput": "Script input parameters",
   "info.replication.interval": "Frequency of replication.",
 
-  "info.script.description":"Description for the Script",
+  "info.script.description":"Summarize your script's purpose and key features briefly.",
   "info.script.password":"Datamotive UI login password",
 
   "info.email.address": "Email address, this email address will be used to send the email notifications",
