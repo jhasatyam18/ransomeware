@@ -41,21 +41,31 @@ class RecoveryMachines extends Component {
     const vms = getValue('ui.recovery.vms', values);
     let selectedVMs = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
     const data = (hasFilterString ? searchData : vms);
+    let title = '';
     if (!selectedVMs) {
       selectedVMs = {};
     }
     const isMigrationWorkflow = getValue('ui.isMigration.workflow', values);
-    const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
+    const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values) || '';
     let columns = [];
     if (workflow === UI_WORKFLOW.CLEANUP_TEST_RECOVERY) {
       columns = TABLE_RECOVERY_VMS.filter((col) => col.label !== 'Username' && col.label !== 'Password');
     } else {
       columns = TABLE_RECOVERY_VMS;
     }
+    if (isMigrationWorkflow) {
+      title = t('title.machines.migration');
+    } else if (workflow === UI_WORKFLOW.CLEANUP_TEST_RECOVERY) {
+      title = t('title.cleanup.test.recovery');
+    } else if (workflow === UI_WORKFLOW.TEST_RECOVERY) {
+      title = t('title.test.recovery');
+    } else {
+      title = t('title.machines.recovery');
+    }
     return (
       <Container fluid className="padding-10">
         <br />
-        <Label>{isMigrationWorkflow ? t('title.machines.migration') : t('title.machines.recovery')}</Label>
+        <Label>{title}</Label>
         <br />
         <Row>
           <Col sm={12} className="padding-left-30">

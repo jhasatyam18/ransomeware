@@ -61,7 +61,7 @@ export function getCreateDRPlanPayload(user, sites) {
   result.drplan.protectedEntities.VirtualMachines = [];
   Object.keys(vms).forEach((key) => {
     const vm = setVMProperties(vms[key], values);
-    vm.id = 0;
+    vm.id = '0';
     result.drplan.protectedEntities.VirtualMachines.push(vm);
   });
   result.drplan.protectedEntities.Name = 'dummy';
@@ -100,10 +100,15 @@ export function getVMConfigPayload(user) {
     // Data require for vmware as target platform
     let folderPath = getValue(`${key}-vmConfig.general.folderPath`, values);
     const instanceID = getValue(`${key}-vmConfig.general.instanceID`, values) || '';
-    if (typeof folderPath !== 'string') {
-      const [index] = folderPath;
-      folderPath = index;
+    if (typeof folderPath === 'object') {
+      if (folderPath.length > 0) {
+        const [index] = folderPath;
+        folderPath = index;
+      } else {
+        folderPath = folderPath.value;
+      }
     }
+
     let hostMoref = getValue(`${key}-vmConfig.general.hostMoref`, values) || '';
     hostMoref = hostMoref.value || '';
     let datastoreMoref = getValue(`${key}-vmConfig.general.dataStoreMoref`, values) || '';
@@ -149,10 +154,11 @@ export function getVMConfigPayload(user) {
     if (PLATFORM_TYPES.Azure === recoveryPlatform) {
       availZone = getValue(`${key}-vmConfig.general.availibility.zone`, values);
     }
+    const encryptionKey = getValue(`${key}-vmConfig.general.encryptionKey`, values) || '';
     if (typeof id !== 'undefined' && id !== '') {
-      instanceDetails.push({ sourceMoref, id, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref });
+      instanceDetails.push({ sourceMoref, id, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, encryptionKey });
     } else {
-      instanceDetails.push({ sourceMoref, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref });
+      instanceDetails.push({ sourceMoref, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, encryptionKey });
     }
   });
   return instanceDetails;
@@ -173,7 +179,7 @@ export function getVMNetworkConfig(key, values) {
     const availZone = getValue(`${networkKey}-eth-${index}-availZone`, values);
     const privateIP = getValue(`${networkKey}-eth-${index}-privateIP`, values) || '';
     let publicIP = getValue(`${networkKey}-eth-${index}-publicIP`, values) || '';
-    const sgs = getValue(`${networkKey}-eth-${index}-securityGroups`, values) || '';
+    let sgs = getValue(`${networkKey}-eth-${index}-securityGroups`, values) || '';
     const networkTier = getValue(`${networkKey}-eth-${index}-networkTier`, values) || '';
     let network = getValue(`${networkKey}-eth-${index}-network`, values) || '';
     const adapterType = `${getValue(`${networkKey}-eth-${index}-adapterType`, values)}`;
@@ -197,15 +203,26 @@ export function getVMNetworkConfig(key, values) {
       publicIP = getAWSNetworkIDFromName(values, network) || publicIP;
     }
     if (recoveryPlatform === PLATFORM_TYPES.Azure) {
-      const netArr = network.split('/');
-      network = netArr[netArr.length - 1];
+      let netArr = '';
+      if (typeof network === 'object') {
+        netArr = network.value;
+      }
+      netArr = netArr.split('/');
+      const networkName = netArr[netArr.length - 1];
+      const resource = netArr[4];
+      network = `${resource}:${networkName}`;
       const subArr = subnet.split('/');
-      subnet = subArr[subArr.length - 1];
+      const subnetResource = subArr[4];
+      const subnetName = subArr[subArr.length - 1];
+      subnet = `${subnetResource}:${subnetName}`;
       if (publicIP === 'true') {
         isPublicIP = true;
         publicIP = '';
       } else if (publicIP === 'false') {
         publicIP = '';
+      }
+      if (sgs !== '' && typeof sgs === 'object') {
+        sgs = sgs.value;
       }
     }
     if (network !== '' && recoveryPlatform === PLATFORM_TYPES.VMware) {
@@ -270,6 +287,7 @@ export function getReversePlanPayload(user) {
   const sites = getValue('ui.values.sites', values);
   const drplan = getValue('ui.reverse.drPlan', values);
   const selectedRSite = getValue('reverse.recoverySite', values);
+  const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   const rSite = sites.filter((site) => getFilteredObject(site, selectedRSite, 'id'))[0];
   const replType = getValue('reverse.replType', values);
   const recoverySufffix = getValue('reverse.suffix', values);
@@ -278,6 +296,16 @@ export function getReversePlanPayload(user) {
   } else {
     drplan.isDifferential = false;
   }
+  drplan.isDedupe = getValue('drplan.isDedupe', values);
+  drplan.isCompression = getValue('drplan.isCompression', values);
+  drplan.isEncryptionOnWire = getValue('drplan.isEncryptionOnWire', values);
+  drplan.enableDifferentialReverse = getValue('drplan.enableDifferentialReverse', values);
+  drplan.enablePPlanLevelScheduling = getValue('drplan.enablePPlanLevelScheduling', values);
+  drplan.protectedEntities.VirtualMachines = [];
+  Object.keys(vms).forEach((key) => {
+    const vm = setVMProperties(vms[key], values);
+    drplan.protectedEntities.VirtualMachines.push(vm);
+  });
   drplan.recoverySite = rSite;
   drplan.recoveryEntities.suffix = recoverySufffix;
   drplan.recoveryEntities.instanceDetails = getVMConfigPayload(user);
@@ -398,9 +426,13 @@ export function getSourceConfig(key, user) {
   const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
   let folderPath = '';
   folderPath = getValue(`${key}-vmConfig.general.folderPath`, values) || '';
-  if (typeof folderPath === 'object' && folderPath.length > 0) {
-    const [index] = folderPath;
-    folderPath = index;
+  if (typeof folderPath === 'object') {
+    if (folderPath.length > 0) {
+      const [index] = folderPath;
+      folderPath = index;
+    } else if (typeof folderPath.value !== 'undefined') {
+      folderPath = folderPath.label;
+    }
   }
   const hostMoref = getValue(`${key}-vmConfig.general.hostMoref`, values);
   const datastoreMoref = getValue(`${key}-vmConfig.general.dataStoreMoref`, values);
@@ -422,6 +454,7 @@ export function getSourceConfig(key, user) {
   if (volumeType === 'gp2') {
     volumeIOPS = 0;
   }
+  const encryptionKey = getValue(`${key}-vmConfig.general.encryptionKey`, values) || '';
   const tags = getValue(`${key}-vmConfig.general.tags`, values) || [];
   const networks = getVMNetworkConfig(key, values);
   let availZone = '';
@@ -440,7 +473,7 @@ export function getSourceConfig(key, user) {
   const postScript = getValue(`${key}-vmConfig.scripts.postScript`, values);
   const repPreScript = getValue(`${key}-protection.scripts.preScript`, values) || '';
   const repPostScript = getValue(`${key}-protection.scripts.postScript`, values) || '';
-  const genC = { instanceType, availZone, folderPath, volumeType, securityGroup, volumeIOPS, tags, memoryMB, hostMoref: hostMoref.value, datastoreMoref: datastoreMoref.value, numCPU, datacenterMoref };
+  const genC = { instanceType, availZone, folderPath, volumeType, securityGroup, volumeIOPS, tags, memoryMB, hostMoref: hostMoref.value, datastoreMoref: datastoreMoref.value, numCPU, datacenterMoref, encryptionKey };
   const scripts = { preScript, postScript, repPostScript, repPreScript };
   return { ...genC, networks, ...scripts };
 }
@@ -454,9 +487,15 @@ function setVMProperties(vm, values) {
   vmConfig.postScript = postScript;
   // guest os
   const guestOS = getValue(`${vm.moref}-vmConfig.general.guestOS`, values);
+  const firmwareType = getValue(`${vm.moref}-vmConfig.general.firmwareType`, values);
   if (guestOS) {
     // override the guest os value selected by user
     vmConfig.guestOS = guestOS;
   }
+  if (firmwareType) {
+    vmConfig.firmwareType = firmwareType;
+  }
+  const replicationPriority = parseInt(getValue(`${vm.moref}-vmConfig.general.replicationPriority`, values), 10) || 0;
+  vmConfig.replicationPriority = replicationPriority;
   return vmConfig;
 }

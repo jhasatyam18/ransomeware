@@ -1,5 +1,5 @@
 import i18n from 'i18next';
-import { getMemoryInfo, getNetworkIDFromName, getSubnetIDFromName } from '../../utils/AppUtils';
+import { getMemoryInfo, getNetworkIDFromName, getSubnetIDFromName, getLabelWithResourceGrp } from '../../utils/AppUtils';
 import { DRPLAN_CONFIG_STEP } from '../../constants/DrplanConstants';
 import { changedVMRecoveryConfigurations } from '../../utils/validationUtils';
 import { MILI_SECONDS_TIME, MONITORING_DISK_CHANGES } from '../../constants/EventConstant';
@@ -18,13 +18,14 @@ import { closeWizard, openWizard } from './WizardActions';
 import { closeModal, openModal } from './ModalActions';
 import { addAssociatedIPForAzure, addAssociatedReverseIP } from './AwsActions';
 import { MIGRATION_WIZARDS, RECOVERY_WIZARDS, TEST_RECOVERY_WIZARDS, REVERSE_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS, PROTECTED_VM_RECONFIGURATION_WIZARD, CLEANUP_TEST_RECOVERY_WIZARDS, STEPS } from '../../constants/WizardConstants';
-import { getMatchingInsType, getValue, getVMMorefFromEvent, isSamePlatformPlan, getVMInstanceFromEvent, getMatchingOSType } from '../../utils/InputUtils';
+import { getMatchingInsType, getValue, getVMMorefFromEvent, isSamePlatformPlan, getVMInstanceFromEvent, getMatchingOSType, getMatchingFirmwareType } from '../../utils/InputUtils';
 import { PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
 import { setVmwareInitialData, setVMwareTargetData } from './VMwareActions';
 import { setCookie } from '../../utils/CookieUtils';
 import { APPLICATION_GETTING_STARTED_COMPLETED } from '../../constants/UserConstant';
+import { fetchReplicationJobsByPplanId } from './JobActions';
 
 export function fetchDrPlans(key) {
   return (dispatch) => {
@@ -246,6 +247,8 @@ export function onProtectionPlanChange({ value, allowDeleted }) {
                   }
                 }
                 dispatch(valueChange(`${vm.moref}-vmConfig.general.guestOS`, vm.guestOS));
+                dispatch(valueChange(`${vm.moref}-vmConfig.general.firmwareType`, vm.firmwareType));
+                dispatch(valueChange(`${vm.moref}-vmConfig.general.encryptionKey`, vm.encryptionKey));
                 data.push(vm);
               }
             });
@@ -484,6 +487,7 @@ export function openTestRecoveryWizard(cleanUpTestRecoveries) {
             dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.CLEANUP_TEST_RECOVERY));
             dispatch(openWizard(CLEANUP_TEST_RECOVERY_WIZARDS.options, CLEANUP_TEST_RECOVERY_WIZARDS.steps));
           } else {
+            dispatch(valueChange('recovery.removeFromAD', true));
             dispatch(openWizard(TEST_RECOVERY_WIZARDS.options, TEST_RECOVERY_WIZARDS.steps));
           }
           dispatch(onProtectionPlanChange({ value: protectionPlan.id, allowDeleted: isCleanUpFlow }));
@@ -544,17 +548,21 @@ export function openEditProtectionPlanWizard(plan, isEventAction = false, alert 
     const { drPlans } = getState();
     dispatch(clearValues());
     const selectedPlan = (typeof plan === 'undefined' ? getSelectedPlanID(drPlans) : plan);
-    const { recoverySite } = selectedPlan;
+    const { recoverySite, id, protectedSite } = selectedPlan;
     dispatch(valueChange('ui.values.recoveryPlatform', recoverySite.platformDetails.platformType));
     const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined)), dispatch(fetchScript())];
     return Promise.all(apis).then(
       () => {
         dispatch(valueChange('ui.editplan.alert.id', (alert !== null ? alert.id : alert)));
         dispatch(valueChange('ui.alert.invoking.action', alert));
-        dispatch(valueChange('ui.selected.protection.planID', selectedPlan.id));
+        dispatch(valueChange('ui.selected.protection.planID', id));
         dispatch(valueChange('ui.selected.protection.plan', selectedPlan));
         dispatch(valueChange('drplan.recoverySite', selectedPlan.recoverySite.id));
         dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.EDIT_PLAN));
+        // fetch replication job by protection plan id and store it's value to enable encryption option while doing edit based on vm's last sync status
+        if (recoverySite.platformDetails.platformType === PLATFORM_TYPES.AWS && protectedSite.platformDetails.platformType === PLATFORM_TYPES.AWS) {
+          dispatch(fetchReplicationJobsByPplanId(id));
+        }
         dispatch(setProtectionPlanDataForUpdate(selectedPlan, isEventAction, event));
         return new Promise((resolve) => resolve());
       },
@@ -703,6 +711,7 @@ export function setVMGuestOSInfo(selectedVMs) {
     Object.keys(selectedVMs).forEach((key) => {
       if (selectedVMs[key]) {
         dispatch(valueChange(`${selectedVMs[key].moref}-vmConfig.general.guestOS`, getMatchingOSType(selectedVMs[key].guestOS)));
+        dispatch(valueChange(`${selectedVMs[key].moref}-vmConfig.general.firmwareType`, getMatchingFirmwareType(selectedVMs[key].firmwareType)));
       }
     });
   };
@@ -744,6 +753,7 @@ export function setProtectionPlanVMConfig(selectedVMS, protectionPlan) {
     dispatch(valueChange('drplan.isCompression', protectionPlan.isCompression));
     dispatch(valueChange('drplan.isDedupe', protectionPlan.isDeDupe));
     dispatch(valueChange('drplan.enableDifferentialReverse', protectionPlan.enableDifferentialReverse));
+    dispatch(valueChange('drplan.enablePPlanLevelScheduling', protectionPlan.enablePPlanLevelScheduling));
     dispatch(valueChange('drplan.replPostScript', protectionPlan.replPostScript));
     dispatch(valueChange('drplan.replPreScript', protectionPlan.replPreScript));
     const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
@@ -775,6 +785,8 @@ function setAWSVMDetails(selectedVMS, protectionPlan, dispatch) {
     virtualMachines.forEach((pvm) => {
       if (vm.moref === pvm.moref) {
         dispatch(setProtectionPlanScript(key, pvm));
+        // setreplication priority while editing protection plan
+        dispatch(valueChange(`${key}-vmConfig.general.replicationPriority`, pvm.replicationPriority));
       }
     });
     instanceDetails.forEach((ins) => {
@@ -954,7 +966,7 @@ function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch, user) {
     instanceDetails.forEach((ins) => {
       if (ins.sourceMoref === vm.moref) {
         dispatch(setInstanceDetails(key, ins));
-        dispatch(valueChange(`${key}-vmConfig.general.folderPath`, ins.folderPath));
+        dispatch(valueChange(`${key}-vmConfig.general.folderPath`, { label: ins.folderPath, value: ins.folderPath }));
         dispatch(valueChange(`${key}-vmConfig.general.availibility.zone`, ins.availZone));
         if (ins.tags && ins.tags.length > 0) {
           const tagsData = [];
@@ -969,17 +981,20 @@ function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch, user) {
         if (ins.networks && ins.networks.length > 0) {
           ins.networks.forEach((net, index) => {
             dispatch(valueChange(`${networkKey}-eth-${index}-id`, net.id));
+            const { publicIp } = setPublicIPWhileEdit(net.isPublicIP, net.publicIP, networkKey, index, values, dispatch);
             const network = getNetworkIDFromName(net.network, values);
             dispatch(valueChange(`${networkKey}-eth-${index}-network`, network));
             const subnet = getSubnetIDFromName(net.Subnet, values, network);
             dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, subnet));
             dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
-            const { ips, publicIp } = setPublicIPWhileEdit(net.isPublicIP, net.publicIP, networkKey, index, values);
-            dispatch(valueChange(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, ips));
             dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, publicIp));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkTier`, net.networkTier));
             dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, false));
-            const sgs = (net.securityGroups ? net.securityGroups.split(',') : []);
+            let sgs = '';
+            if (net.securityGroups && net.securityGroups !== '') {
+              const securityLabel = getLabelWithResourceGrp(net.securityGroups);
+              sgs = { label: securityLabel, value: net.securityGroups };
+            }
             dispatch(valueChange(`${networkKey}-eth-${index}-securityGroups`, sgs));
             eths.push({ key: `${networkKey}-eth-${index}`, isPublicIP: false, publicIP: '', privateIP: '', subnet: '', securityGroup: sgs });
           });
@@ -1002,18 +1017,19 @@ function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch, user) {
   });
 }
 
-export function setPublicIPWhileEdit(isPublicIP, publicip, networkKey, index, values) {
-  let publicIp = publicip || '';
-  let ips = {};
+export function setPublicIPWhileEdit(isPublicIP, publicip, networkKey, index, values, dispatch) {
+  let publicIp = '';
   if (isPublicIP) {
     publicIp = 'true';
+  } else if (publicip !== '') {
+    publicIp = publicip;
   } else {
     publicIp = 'false';
   }
   if (publicIp !== '' && publicIp !== 'false' && publicIp !== 'true') {
-    ips = addAssociatedIPForAzure({ ip: publicIp, id: publicIp, fieldKey: `${networkKey}-eth-${index}`, values });
+    dispatch(addAssociatedIPForAzure({ ip: publicIp, id: publicIp, fieldKey: `${networkKey}-eth-${index}`, values }));
   }
-  return { publicIp, ips };
+  return { publicIp };
 }
 
 export function getVirtualMachineAlerts(moref, alertID) {
@@ -1105,6 +1121,11 @@ export function initReconfigureProtectedVM(protectionPlanID, vmMoref = null, eve
     let pPlan = '';
     if (protectionPlanID !== null) {
       pPlan = await fetchProtection(protectionPlanID);
+      // while doing single vm edit if source and target both are AWS then need to fetch replication job to enable encryption option based on latest job status
+      const { recoverySite, id, protectedSite } = pPlan;
+      if (recoverySite.platformDetails.platformType === PLATFORM_TYPES.AWS && protectedSite.platformDetails.platformType === PLATFORM_TYPES.AWS) {
+        dispatch(fetchReplicationJobsByPplanId(id));
+      }
     } else if (event !== null) {
       const parts = event.impactedObjectURNs.split(',');
       const urn = parts[0].split(':');
@@ -1267,6 +1288,7 @@ export function setAWSVMRecoveryData(vmMoref) {
         dispatch(valueChange(`${key}-vmConfig.general.instanceType`, { label: ins.instanceType, value: ins.instanceType }));
         dispatch(valueChange(`${key}-vmConfig.general.volumeType`, ins.volumeType));
         dispatch(valueChange(`${key}-vmConfig.general.volumeIOPS`, ins.volumeIOPS));
+        dispatch(valueChange(`${key}-vmConfig.general.encryptionKey`, ins.encryptionKey));
         dispatch(valueChange(`${key}-vmConfig.general.bootOrder`, ins.bootPriority));
         dispatch(valueChange(`${key}-vmConfig.general.instanceID`, ins.instanceID));
         dispatch(valueChange(`${key}-vmConfig.scripts.preScript`, ins.preScript));
@@ -1443,7 +1465,7 @@ export function setAzureVMRecoveryData(vmMoref) {
         dispatch(valueChange(`${key}-vmConfig.general.instanceID`, ins.instanceID));
         dispatch(valueChange(`${key}-vmConfig.scripts.preScript`, ins.preScript));
         dispatch(valueChange(`${key}-vmConfig.scripts.postScript`, ins.postScript));
-        dispatch(valueChange(`${key}-vmConfig.general.folderPath`, ins.folderPath));
+        dispatch(valueChange(`${key}-vmConfig.general.folderPath`, { label: ins.folderPath, value: ins.folderPath }));
         dispatch(valueChange(`${key}-vmConfig.general.availibility.zone`, ins.availZone));
         if (ins.securityGroups && ins.securityGroups.length > 0) {
           const selSgs = ins.securityGroups.split(',') || '';
@@ -1462,18 +1484,22 @@ export function setAzureVMRecoveryData(vmMoref) {
         if (ins.networks && ins.networks.length > 0) {
           ins.networks.forEach((net, index) => {
             dispatch(valueChange(`${networkKey}-eth-${index}-id`, net.id));
+            // TODO: Code refactor required, all vm level data setting must happen through one function only.
+            const { publicIp } = setPublicIPWhileEdit(net.isPublicIP, net.publicIP, networkKey, index, values, dispatch);
             const network = getNetworkIDFromName(net.network, values);
             dispatch(valueChange(`${networkKey}-eth-${index}-network`, network));
             const subnet = getSubnetIDFromName(net.Subnet, values, network);
             dispatch(valueChange(`${networkKey}-eth-${index}-subnet`, subnet));
             dispatch(valueChange(`${networkKey}-eth-${index}-privateIP`, net.privateIP));
-            // TODO: Code refactor required, all vm level data setting must happen through one function only.
-            const { ips, publicIp } = setPublicIPWhileEdit(net.isPublicIP, net.publicIP, networkKey, index, values);
-            dispatch(valueChange(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, ips));
             dispatch(valueChange(`${networkKey}-eth-${index}-publicIP`, publicIp));
             dispatch(valueChange(`${networkKey}-eth-${index}-networkTier`, net.networkTier));
             dispatch(valueChange(`${networkKey}-eth-${index}-isPublic`, false));
-            const sgs = (net.securityGroups ? net.securityGroups.split(',') : []);
+            let sgs = '';
+            let securityLabel = '';
+            if (net.securityGroups && net.securityGroups !== '') {
+              securityLabel = getLabelWithResourceGrp(net.securityGroups);
+              sgs = { label: securityLabel, value: net.securityGroups };
+            }
             dispatch(valueChange(`${networkKey}-eth-${index}-securityGroups`, sgs));
             eths.push({ key: `${networkKey}-eth-${index}`, isPublicIP: false, publicIP: '', privateIP: '', subnet: '', securityGroup: sgs });
           });
@@ -1574,6 +1600,10 @@ function setReverseData(json) {
               if (vm.moref === rE.sourceMoref) {
                 // data.push(vm);
                 selectedVMs = { ...selectedVMs, [vm.moref]: vm };
+                // set replication priority of vms
+                if (platformDetails.platformType === PLATFORM_TYPES.AWS) {
+                  dispatch(valueChange(`${vm.moref}-vmConfig.general.replicationPriority`, vm.replicationPriority));
+                }
                 dispatch(setRecoveryVMDetails(vm.moref));
               }
             });
@@ -1635,6 +1665,7 @@ export function setReverseConfig(protectionPlan) {
     dispatch(valueChange('drplan.isCompression', protectionPlan.isCompression));
     dispatch(valueChange('drplan.isDeDupe', protectionPlan.isDeDupe));
     dispatch(valueChange('drplan.enableDifferentialReverse', protectionPlan.enableDifferentialReverse));
+    dispatch(valueChange('drplan.enablePPlanLevelScheduling', protectionPlan.enablePPlanLevelScheduling));
     dispatch(valueChange('drplan.replPostScript', protectionPlan.replPostScript));
     dispatch(valueChange('drplan.replPreScript', protectionPlan.replPreScript));
   };

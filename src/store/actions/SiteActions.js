@@ -6,7 +6,7 @@ import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { closeModal } from './ModalActions';
 import { fetchRegions, hideApplicationLoader, loadRecoveryLocationData, showApplicationLoader, valueChange } from './UserActions';
 import { fetchByDelay } from '../../utils/SlowFetch';
-import { getMatchingOSType, getValue } from '../../utils/InputUtils';
+import { getMatchingFirmwareType, getMatchingOSType, getValue } from '../../utils/InputUtils';
 import { PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { setRecoveryVMDetails } from './DrPlanActions';
 import { fetchAvailibilityZonesForAzure } from './AzureAction';
@@ -58,7 +58,7 @@ export function confiureSite(payload, isEdit = false) {
   return (dispatch) => {
     let url = API_CREATE_SITES;
     if (isEdit) {
-      url = `${url}\\${payload.id}`;
+      url = `${url}/${payload.id}`;
     }
     const obj = createPayload(isEdit ? API_TYPES.PUT : API_TYPES.POST, { ...payload.configureSite });
     dispatch(showApplicationLoader('configuring-new-site', 'Configuring Site...'));
@@ -265,6 +265,7 @@ export function handleProtectVMSeletion(data, isSelected, primaryKey) {
         dispatch(setRecoveryVMDetails(data[primaryKey]));
         // set guest os type of newly selected vm
         dispatch(valueChange(`${data[primaryKey]}-vmConfig.general.guestOS`, getMatchingOSType(data.guestOS)));
+        dispatch(valueChange(`${data[primaryKey]}-vmConfig.general.firmwareType`, getMatchingFirmwareType(data.firmwareType)));
       }
     } else if (selectedVMs[data[primaryKey]]) {
       const newVMs = selectedVMs;
@@ -308,6 +309,11 @@ export function fetchNetworks(id, sourceNet = undefined) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
           const data = json;
+          if (typeof sourceNet !== 'undefined') {
+            dispatch(valueChange(STATIC_KEYS.UI_SECURITY_GROUPS_SOURCE, (data.securityGroups ? data.securityGroups : [])));
+            dispatch(valueChange(STATIC_KEYS.UI_SUBNETS__SOURCE, (data.subnets ? data.subnets : [])));
+            return;
+          }
           if (data.instanceTypes) {
             const insTypes = [];
             data.instanceTypes.forEach((t) => {
@@ -318,11 +324,6 @@ export function fetchNetworks(id, sourceNet = undefined) {
           let ips = getValue(STATIC_KEYS.UI_EDIT_RESERVE_IPS, values) || [];
           const address = data.ipAddress || [];
           ips = [...ips, ...address];
-          if (typeof sourceNet !== 'undefined') {
-            dispatch(valueChange(STATIC_KEYS.UI_SECURITY_GROUPS_SOURCE, (data.securityGroups ? data.securityGroups : [])));
-            dispatch(valueChange(STATIC_KEYS.UI_SUBNETS__SOURCE, (data.subnets ? data.subnets : [])));
-            return;
-          }
           dispatch(valueChange(STATIC_KEYS.UI_SECURITY_GROUPS, (data.securityGroups ? data.securityGroups : [])));
           dispatch(valueChange(STATIC_KEYS.UI_SUBNETS, (data.subnets ? data.subnets : [])));
           dispatch(valueChange(STATIC_KEYS.UI_RESERVE_IPS, (data.ipAddress ? ips : [])));
@@ -345,6 +346,16 @@ export function fetchNetworks(id, sourceNet = undefined) {
                 }
               }
             });
+          }
+          // for aws encryption keys
+          if (data.encryptionKeys && data.encryptionKeys.length > 0) {
+            const keys = [];
+            data.encryptionKeys.forEach((key) => {
+              if (key.encryptionArn !== '' && typeof key.encryptionArn !== 'undefined') {
+                keys.push({ label: key.name, value: key.encryptionArn });
+              }
+            });
+            dispatch(valueChange(STATIC_KEYS.UI_ENCRYPTION_KEYS, keys));
           }
           dispatch(valueChange(STATIC_KEYS.UI_AVAILABILITY_ZONES, zones));
           dispatch(valueChange(STATIC_KEYS.RESOURCE_GROUP, data.resourceGroups));

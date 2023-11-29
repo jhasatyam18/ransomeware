@@ -6,7 +6,7 @@ import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { addMessage } from '../../store/actions/MessageActions';
 import { clearValues, valueChange } from '../../store/actions';
 import { closeWizard } from '../../store/actions/WizardActions';
-import { DRPLAN_PROTECT_STEP, DRPLAN_RECOVERY_STEP, PROTECTION_PLAN_SUMMARY_STEP, RECOVERY_PROTECT_VM_STEP, RECOVERY_SUMMARY, MIGRATION_GENERAL_STEP, DRPLAN_VM_CONFIG_STEP, WIZARD_STEP, RECOVERY_GENERAL_STEP, REVERSE_CONFIG_STEP, REVERSE_SUMMARY, RECOVERY_CONFIG, DRPLAN_BOOT_ORDER_STEP, VM_ALERTS_STEP, VM_CONFIGURATION_STEP, DRPLAN_SCRIPT_STEP, TEST_RECOVERY_CONFIG_STEP, TEST_RECOVERY_CONFIG_SCRIPTS, TEST_RECOVERY_CLEANUP_SUMMARY } from '../../constants/WizardConstants';
+import { DRPLAN_PROTECT_STEP, DRPLAN_RECOVERY_STEP, PROTECTION_PLAN_SUMMARY_STEP, RECOVERY_PROTECT_VM_STEP, RECOVERY_SUMMARY, MIGRATION_GENERAL_STEP, DRPLAN_VM_CONFIG_STEP, WIZARD_STEP, RECOVERY_GENERAL_STEP, REVERSE_CONFIG_STEP, REVERSE_SUMMARY, RECOVERY_CONFIG, DRPLAN_BOOT_ORDER_STEP, VM_ALERTS_STEP, VM_CONFIGURATION_STEP, DRPLAN_SCRIPT_STEP, TEST_RECOVERY_CONFIG_STEP, TEST_RECOVERY_CONFIG_SCRIPTS, TEST_RECOVERY_CLEANUP_SUMMARY, REPLICATION_CONFIGURATION_STEP } from '../../constants/WizardConstants';
 import Pages404 from '../../pages/Page-404';
 import DRPlanRecoveryConfigStep from './DRPlanRecoveryConfigStep';
 import DRPlanProtectVMStep from './DRPlanProtectVMStep';
@@ -29,6 +29,7 @@ import TestRecoveryVMConfiguration from './Step/TestRecoveryVMConfiguration';
 import TestRecoveryScriptStep from './Step/TestRecoveryScriptStep';
 import TestRecoveryCleanupSummary from './TestRecoveryCleanupSummary';
 import { STATIC_KEYS } from '../../constants/InputConstants';
+import ReplicationConfigurationStep from './ReplicationConfigurationStep';
 
 class DMWizard extends React.Component {
   ref;
@@ -174,6 +175,8 @@ class DMWizard extends React.Component {
         return <TestRecoveryScriptStep />;
       case TEST_RECOVERY_CLEANUP_SUMMARY:
         return <TestRecoveryCleanupSummary />;
+      case REPLICATION_CONFIGURATION_STEP:
+        return <ReplicationConfigurationStep {...this.props} fields={steps[currentStep].fields} />;
       default:
         return <Pages404 />;
     }

@@ -6,7 +6,7 @@ import { addMessage } from './MessageActions';
 import { updateValues, valueChange } from './UserActions';
 import { setPublicIPWhileEdit } from './DrPlanActions';
 import { getSourceConfig } from '../../utils/PayloadUtil';
-import { getMemoryInfo, getNetworkIDFromName, getSubnetIDFromName } from '../../utils/AppUtils';
+import { getLabelWithResourceGrp, getMemoryInfo, getNetworkIDFromName, getSubnetIDFromName } from '../../utils/AppUtils';
 import { getValue } from '../../utils/InputUtils';
 import { COPY_CONFIG, PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { APP_SET_TIMEOUT } from '../../constants/UserConstant';
@@ -55,7 +55,7 @@ export function copyInstanceConfiguration({ sourceVM, targetVMs, configToCopy, s
 }
 
 function setGeneralConfiguration(sourceConfig, targetVM, user, dispatch) {
-  const { volumeType, volumeIOPS, tags, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, availZone, securityGroups = '' } = sourceConfig;
+  const { volumeType, volumeIOPS, tags, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, availZone, securityGroups = '', encryptionKey } = sourceConfig;
   let { instanceType, folderPath, securityGroup = '' } = sourceConfig;
   const { values } = user;
   const memory = getMemoryInfo(memoryMB);
@@ -80,6 +80,7 @@ function setGeneralConfiguration(sourceConfig, targetVM, user, dispatch) {
       [`${targetVM}-vmConfig.general-unit`]: memory[1] || '',
     };
   } else {
+    folderPath = { label: folderPath, value: folderPath };
     instanceType = { label: instanceType, value: instanceType };
   }
   let networkTags = [];
@@ -96,6 +97,7 @@ function setGeneralConfiguration(sourceConfig, targetVM, user, dispatch) {
     [`${targetVM}-vmConfig.general.folderPath`]: folderPath || '',
     [`${targetVM}-vmConfig.general.volumeType`]: volumeType || '',
     [`${targetVM}-vmConfig.general.volumeIOPS`]: volumeIOPS || 0,
+    [`${targetVM}-vmConfig.general.encryptionKey`]: encryptionKey || '',
     [`${targetVM}-vmConfig.general.tags`]: tagsData || '',
     [`${targetVM}-vmConfig.general.availibility.zone`]: availZone || '',
     [`${targetVM}-vmConfig.network.securityGroup`]: networkTags || '',
@@ -164,6 +166,7 @@ export function resetGeneralConfig({ user, targetVM }) {
       [`${targetVM}-vmConfig.general.folderPath`]: '',
       [`${targetVM}-vmConfig.general.volumeType`]: '',
       [`${targetVM}-vmConfig.general.volumeIOPS`]: 0,
+      [`${targetVM}-vmConfig.general.encryptionKey`]: '',
       [`${targetVM}-vmConfig.general.tags`]: '',
       [`${targetVM}-vmConfig.general.availibility.zone`]: '',
       [`${targetVM}-vmConfig.network.securityGroup`]: '',
@@ -203,7 +206,7 @@ function setNetworkConfig(sourceConfig, targetVM, user, dispatch) {
         if (typeof networks[index] !== 'undefined' && networks[index]) {
           const { vpcId = '', Subnet = '', networkTier = '', isFromSource, securityGroups, adapterType, networkMoref, networkPlatformID } = networks[index];
           let { subnet, network, publicIP, isPublicIP = '' } = networks[index];
-          const sgs = (securityGroups ? securityGroups.split(',') : []);
+          let sgs = (securityGroups ? securityGroups.split(',') : []);
           if (typeof subnet === 'undefined' || subnet === '' && Subnet !== '') {
             subnet = Subnet;
           }
@@ -212,14 +215,18 @@ function setNetworkConfig(sourceConfig, targetVM, user, dispatch) {
             isPublicIP = false;
             publicIP = '';
           } else if (recoveryPlatform === PLATFORM_TYPES.Azure) {
+            const { publicIp } = setPublicIPWhileEdit(isPublicIP, publicIP, networkKey, index, values, dispatch);
             network = getNetworkIDFromName(network, values);
             subnet = getSubnetIDFromName(subnet, values, network);
-            const { publicIp, ips } = setPublicIPWhileEdit(isPublicIP, publicIP, networkKey, index, values);
-            dispatch(valueChange(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, ips));
             if (publicIp === 'true' || publicIp === 'false') {
               publicIP = publicIp;
             } else {
               publicIP = 'false';
+            }
+
+            if (typeof securityGroups !== 'undefined' && securityGroups !== '') {
+              const label = getLabelWithResourceGrp(securityGroups);
+              sgs = { label, value: securityGroups };
             }
           } else if (recoveryPlatform === PLATFORM_TYPES.AWS) {
             network = publicIP;

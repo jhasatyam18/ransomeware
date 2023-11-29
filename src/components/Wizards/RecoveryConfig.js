@@ -16,6 +16,7 @@ class RecoveryConfig extends Component {
               <DMField dispatch={dispatch} user={user} fieldKey="recovery.installSystemAgent" />
               <DMField dispatch={dispatch} user={user} fieldKey="recovery.installCloudPkg" />
               <DMField dispatch={dispatch} user={user} fieldKey="ui.installCloudPkg.warning" />
+              <DMField dispatch={dispatch} user={user} fieldKey="recovery.removeFromAD" />
             </Form>
           </CardBody>
         </Card>

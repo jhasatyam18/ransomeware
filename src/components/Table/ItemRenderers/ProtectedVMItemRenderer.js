@@ -21,6 +21,7 @@ function ProtectedVMItemRenderer({ data, dispatch }) {
       return;
     }
     dispatch(valueChange(`${data.moref}-vmConfig.general.guestOS`, data.guestOS));
+    dispatch(valueChange(`${data.moref}-vmConfig.general.firmwareType`, data.firmwareType));
     dispatch(initReconfigureProtectedVM(pathArray[pathArray.length - 1], data.moref, null, null));
   };
 

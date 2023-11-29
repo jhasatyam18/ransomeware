@@ -1,13 +1,13 @@
 import { MAC_ADDRESS } from '../constants/ValidationConstants';
-import { onAzureResourceChange } from '../store/actions/AzureAction';
 import { API_FETCH_VMWARE_LOCATION } from '../constants/ApiConstants';
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMORY, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
-import { EXCLUDE_KEYS_CONSTANTS, EXCLUDE_KEYS_RECOVERY_CONFIGURATION, PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS, SUPPORTED_GUEST_OS, UI_WORKFLOW } from '../constants/InputConstants';
-import { NODE_STATUS_ONLINE } from '../constants/AppStatus';
+import { EXCLUDE_KEYS_CONSTANTS, EXCLUDE_KEYS_RECOVERY_CONFIGURATION, PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS, SUPPORTED_FIRMWARE, SUPPORTED_GUEST_OS, UI_WORKFLOW } from '../constants/InputConstants';
+import { JOB_INIT_FAILED, JOB_INIT_SYNC_FAILED, NODE_STATUS_ONLINE } from '../constants/AppStatus';
 import { isEmpty, isMemoryValueValid } from './validationUtils';
 import { getStorageForVMware, onScriptChange } from '../store/actions';
 import { onAwsStorageTypeChange } from '../store/actions/AwsActions';
+import { getLabelWithResourceGrp } from './AppUtils';
 
 export function getValue(key, values) {
   const ret = values[key];
@@ -121,6 +121,19 @@ export function getInstanceTypeOptions(user) {
   return result;
 }
 
+export function getEncryptionKeyOptions(user) {
+  const { values } = user;
+  const keys = getValue(STATIC_KEYS.UI_ENCRYPTION_KEYS, values);
+  const result = [];
+  if (keys) {
+    keys.reduce((previous, next) => {
+      previous.push({ label: next.label, value: next.value });
+      return previous;
+    }, result);
+  }
+  return result;
+}
+
 export function getResourceTypeOptions(user) {
   const { values } = user;
   const resourceTypeOpt = getValue(STATIC_KEYS.RESOURCE_GROUP, values) || [];
@@ -216,17 +229,15 @@ export function getSecurityGroupOption(user, fieldKey) {
   return options || [];
 }
 
-export function getAzureSecurityGroupOption(user, fieldKey) {
+export function getAzureSecurityGroupOption(user) {
   const { values } = user;
-  const vmMoref = fieldKey.split('.network.net1-eth-');
-  const resourceGrpKey = getValue(`${vmMoref[0]}.general.folderPath`, values);
   const opts = getValue(STATIC_KEYS.UI_SECURITY_GROUPS, values) || [];
   const options = [];
-  // const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
   opts.forEach((op) => {
-    const name = (op.name && op.name !== '' ? op.name : op.id);
-    if (op.vpcID === resourceGrpKey) {
-      options.push({ label: name, value: op.name });
+    const { name } = op;
+    if (typeof name !== 'undefined' && name !== '') {
+      const label = getLabelWithResourceGrp(name);
+      options.push({ label, value: op.name });
     }
   });
   return options || [];
@@ -274,12 +285,24 @@ export function getAzureSubnetOptions(user, fieldKey) {
   const { values } = user;
   const opts = getValue(STATIC_KEYS.UI_SUBNETS, values) || [];
   const networkFieldKey = fieldKey.replace('-subnet', '-network');
-  const netID = getValue(networkFieldKey, values);
+  let netID = getValue(networkFieldKey, values) || '';
+  if (typeof netID === 'object') {
+    netID = netID.value;
+  }
   const options = [];
   opts.forEach((op) => {
-    if (netID === op.vpcID) {
-      const name = `${op.name}-${op.cidr}`;
-      options.push({ label: name, value: op.id });
+    const { vpcID, name, cidr } = op;
+    if (typeof vpcID !== 'undefined' && netID === vpcID && typeof name !== 'undefined' && name !== '') {
+      let label = '';
+      const nameArr = name.split(':');
+      if (nameArr.length === 2) {
+        const resource = nameArr[0];
+        const subnetName = nameArr[1];
+        label = `${subnetName}-${cidr} (${resource})`;
+      } else {
+        [label] = name;
+      }
+      options.push({ label, value: op.id });
     }
   });
   return options;
@@ -300,23 +323,19 @@ export function getNetworkOptions(user) {
   return options;
 }
 
-export function getAzureNetworkOptions(user, fieldKey) {
+export function getAzureNetworkOptions(user) {
   const { values } = user;
-  const vmMoref = fieldKey.split('.network.net1-eth-');
-  const resourceGrpKey = getValue(`${vmMoref[0]}.general.folderPath`, values);
-  let opts = getValue(STATIC_KEYS.UI_NETWORKS, values) || [];
-  opts = opts.filter((sub) => {
-    if (sub.vpcID === resourceGrpKey) {
-      return sub;
-    }
-  });
+  const opts = getValue(STATIC_KEYS.UI_NETWORKS, values) || [];
   const options = [];
   opts.forEach((op) => {
-    const network = op.id;
-    const name = network.split(/[\s/]+/).pop();
-    const exist = options.find((item) => item.label === name);
-    if (!exist) {
-      options.push({ label: name, value: op.id });
+    const { name } = op;
+    let label = '';
+    if (typeof name !== 'undefined' && name !== '') {
+      label = getLabelWithResourceGrp(name);
+      const exist = options.find((item) => item.label === name);
+      if (!exist) {
+        options.push({ label, value: op.id });
+      }
     }
   });
   return options;
@@ -339,22 +358,21 @@ export function getGCPExternalIPOptions(user) {
 export function getAzureExternalIPOptions(user, fieldKey) {
   const { values } = user;
   const options = [];
-  const vmMoref = fieldKey.split('.network.net1-eth-');
-  const resourceGrpKey = getValue(`${vmMoref[0]}.general.folderPath`, values);
   options.push({ label: 'None', value: false });
   options.push({ label: 'Auto', value: true });
   const ips = getValue(STATIC_KEYS.UI_RESERVE_IPS, values) || [];
   ips.forEach((op) => {
-    if (op.vpcID === resourceGrpKey) {
-      options.push({ label: op.name, value: op.name });
-    }
+    const { name } = op;
+    const ipLabel = getLabelWithResourceGrp(name);
+    options.push({ label: ipLabel, value: op.name.toLowerCase() });
   });
   if (typeof fieldKey !== 'undefined' && fieldKey !== null && fieldKey !== '' && fieldKey !== '-') {
     const networkKey = fieldKey.replace('-publicIP', '');
+    const publicIP = getValue(fieldKey, values);
     const associatedIPs = getValue(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, values) || {};
     const keys = Object.keys(associatedIPs);
     if (keys.length > 0) {
-      const vmIps = keys.filter((k) => associatedIPs[k].fieldKey === networkKey);
+      const vmIps = keys.filter((k) => associatedIPs[k].fieldKey === networkKey && associatedIPs[k].value === publicIP);
       if (vmIps.length > 0) {
         vmIps.forEach((op) => {
           options.push({ label: associatedIPs[op].label, value: associatedIPs[op].value });
@@ -464,6 +482,7 @@ export function getGCPVMConfig(vm) {
         title: 'General',
         children: {
           [`${key}-vmConfig.general.guestOS`]: { label: 'GuestOS Family', fieldInfo: 'info.protectionplan.resource.guest.os', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select guest operating system', shouldShow: true, options: (u) => getSupportedOSTypes(u) },
+          [`${key}-vmConfig.general.firmwareType`]: { label: 'Firmware Type', fieldInfo: 'info.protectionplan.resource.firmware', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select Firmware Type', shouldShow: true, options: (u) => getFirmwareTypes(u) },
           [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', fieldInfo: 'info.protectionplan.instance.type', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
           [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.volume.type.gcp', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u), disabled: (u, f) => shouldDisableStorageType(u, f) },
           // [`${key}-vmConfig.general.bootOrder`]: { label: 'Boot Order', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select boot order.', shouldShow: true, options: (u) => geBootPriorityOptions(u) },
@@ -494,9 +513,11 @@ export function getAwsVMConfig(vm) {
         title: 'General',
         children: {
           [`${key}-vmConfig.general.guestOS`]: { label: 'GuestOS Family', fieldInfo: 'info.protectionplan.resource.guest.os', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select guest operating system', shouldShow: true, options: (u) => getSupportedOSTypes(u) },
+          [`${key}-vmConfig.general.firmwareType`]: { label: 'Firmware Type', fieldInfo: 'info.protectionplan.resource.firmware', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select Firmware type', shouldShow: true, options: (u) => getFirmwareTypes(u) },
           [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', fieldInfo: 'info.protectionplan.instance.type', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
           [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.instance.volume.type.aws', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u), onChange: (user, dispatch) => onAwsStorageTypeChange(user, dispatch), disabled: (u, f) => shouldDisableStorageType(u, f) },
           [`${key}-vmConfig.general.volumeIOPS`]: { label: 'Volume IOPS', fieldInfo: 'info.protectionplan.instance.volume.iops.aws', type: FIELD_TYPE.NUMBER, errorMessage: 'Provide volume IOPS.', disabled: (u, f) => shouldEnableAWSIOPS(u, f), min: 0 },
+          [`${key}-vmConfig.general.encryptionKey`]: { label: 'Encryption KMS Key', fieldInfo: 'info.protectionplan.instance.volume.encrypt', type: FIELD_TYPE.SELECT, errorMessage: '', disabled: (u, f) => shouldEnableAWSEncryption(u, f), validate: null, options: (u) => getEncryptionKeyOptions(u), shouldShow: (user) => shouldShowAWSKMS(user) },
           [`${key}-vmConfig.general.tags`]: { label: 'Tags', fieldInfo: 'info.protectionplan.instance.tags.aws', type: STACK_COMPONENT_TAGS, validate: null, errorMessage: '', shouldShow: true },
         },
       },
@@ -671,6 +692,50 @@ export function shouldEnableAWSIOPS(user, fieldKey) {
     return true;
   }
   return false;
+}
+
+export function shouldShowAWSKMS(user) {
+  const { values } = user;
+  const sourcePlatform = getValue('ui.values.protectionPlatform', values);
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+  return sourcePlatform === PLATFORM_TYPES.AWS && sourcePlatform === recoveryPlatform;
+}
+
+export function shouldEnableAWSEncryption(user, fieldKey) {
+  const { values } = user;
+  const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
+  if (workflow === UI_WORKFLOW.REVERSE_PLAN) {
+    return false;
+  }
+  const keys = fieldKey.split('-vmConfig.general.encryptionKey');
+  const selectedVMs = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
+  // get the replication job fetch from pplan id from the store
+  const replJobs = getValue(STATIC_KEYS.UI_REPLICATIONJOBS_BY_PPLAN_ID, values);
+  let disabled = false;
+  if (keys.length > 1) {
+    // get the vm moref in vmID
+    const vmID = keys[0];
+    if (typeof selectedVMs[vmID] !== 'undefined') {
+      if (selectedVMs[vmID].id !== '') {
+        disabled = true;
+      }
+      if (replJobs.length > 0) {
+        for (let i = 0; i < replJobs.length; i += 1) {
+          const repl = replJobs[i];
+          if (selectedVMs[vmID].moref === repl.vmMoref) {
+            // if sync status is init-failed or init-resyc-failed and transferredSize is zero then only enable encryption option
+            if (repl.syncStatus === JOB_INIT_FAILED || (repl.syncStatus === JOB_INIT_SYNC_FAILED && repl.transferredSize === 0)) {
+              disabled = false;
+            }
+            break;
+          }
+        }
+      }
+    } else {
+      disabled = true;
+    }
+  }
+  return disabled;
 }
 
 export function getAWSNetworkIDFromName(values, name) {
@@ -981,6 +1046,7 @@ export function getVMwareGeneralSettings(key, vm) {
       title: 'General',
       children: {
         [`${key}-vmConfig.general.guestOS`]: { label: 'GuestOS Family', fieldInfo: 'info.protectionplan.resource.guest.os', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select guest operating system', shouldShow: true, options: (u) => getSupportedOSTypes(u) },
+        [`${key}-vmConfig.general.firmwareType`]: { label: 'Firmware Type', fieldInfo: 'info.protectionplan.resource.firmware', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select Firmware Type', shouldShow: true, options: (u) => getFirmwareTypes(u) },
         [`${key}-vmConfig.general.folderPath`]: { label: 'Location', description: '', type: STACK_COMPONENT_LOCATION, dataKey: 'ui.drplan.vms.location', isMultiSelect: false, errorMessage: 'Required virtual machine path', shouldShow: true, validate: (value, user) => isEmpty(value, user), fieldInfo: 'info.vmware.folder.location', getTreeData: ({ values, dataKey }) => getReacoveryLocationData({ values, dataKey }), baseURL: API_FETCH_VMWARE_LOCATION, baseURLIDReplace: '<id>:ui.values.recoverySiteID', urlParms: ['type', 'entity'], urlParmKey: ['static:Folder', 'object:value'], highLightSelection: true, enableSelection: (node) => enableNodeDatastore(node) },
         [`${key}-vmConfig.general.hostMoref`]: { label: 'Compute', fieldInfo: 'info.vmware.compute', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select compute resourced.', shouldShow: true, options: (u, fieldKey) => getComputeResourceOptions(u, fieldKey), onChange: (user, dispatch) => getStorageForVMware(user, dispatch) },
         [`${key}-vmConfig.general.dataStoreMoref`]: { label: 'Storage', fieldInfo: 'info.vmware.storage', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select storage', shouldShow: true, options: (u, fieldKey) => getDatastoreOptions(u, fieldKey) },
@@ -1006,7 +1072,8 @@ export function getAzureGeneralSettings(key, vm) {
       title: 'General',
       children: {
         [`${key}-vmConfig.general.guestOS`]: { label: 'GuestOS Family', fieldInfo: 'info.protectionplan.resource.guest.os', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select guest operating system', shouldShow: true, options: (u) => getSupportedOSTypes(u) },
-        [`${key}-vmConfig.general.folderPath`]: { label: 'Resource Group', fieldInfo: 'info.protectionplan.resource.group.azure', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select Resource Group', shouldShow: true, options: (u) => getResourceTypeOptions(u), onChange: ({ fieldKey, user }) => onAzureResourceChange({ fieldKey, user }) },
+        [`${key}-vmConfig.general.firmwareType`]: { label: 'Firmware Type', fieldInfo: 'info.protectionplan.resource.firmware', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select Firmware Type', shouldShow: true, options: (u) => getFirmwareTypes(u) },
+        [`${key}-vmConfig.general.folderPath`]: { label: 'Resource Group', fieldInfo: 'info.protectionplan.resource.group.azure', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select Resource Group', shouldShow: true, options: (u) => getResourceTypeOptions(u) },
         [`${key}-vmConfig.general.availibility.zone`]: { label: 'Availability Zone', fieldInfo: 'info.protectionplan.availibility.zone.azure', type: FIELD_TYPE.SELECT, errorMessage: 'Select Availability Zone', shouldShow: true, options: (u) => getAvailibilityZoneOptions(u) },
         [`${key}-vmConfig.general.instanceType`]: { label: 'VM Size', fieldInfo: 'info.protectionplan.vmsize.azure', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
         [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.volume.type.azure', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u), onChange: (user, dispatch) => onAwsStorageTypeChange(user, dispatch), disabled: (u, f) => shouldDisableStorageType(u, f) },
@@ -1044,6 +1111,17 @@ export function getSupportedOSTypes() {
   return osList;
 }
 
+export function getFirmwareTypes() {
+  const frmList = [];
+  Object.keys(SUPPORTED_FIRMWARE).forEach((key) => {
+    const obj = {};
+    obj.label = key;
+    obj.value = SUPPORTED_FIRMWARE[key];
+    frmList.push(obj);
+  });
+  return frmList;
+}
+
 export function getMatchingOSType(value) {
   let res = '';
   if (value) {
@@ -1055,6 +1133,26 @@ export function getMatchingOSType(value) {
   }
   if (value.toLowerCase().indexOf('red hat') !== -1) {
     res = SUPPORTED_GUEST_OS.Rhel;
+  }
+  // reset
+  return res;
+}
+
+// get matching firmware type
+export function getMatchingFirmwareType(value) {
+  let res = '';
+  if (value) {
+    Object.keys(SUPPORTED_FIRMWARE).forEach((key) => {
+      if (value.toLowerCase().indexOf(SUPPORTED_FIRMWARE[key].toLowerCase()) !== -1) {
+        res = SUPPORTED_FIRMWARE[key];
+      }
+    });
+  }
+  if (value.toLowerCase().indexOf('bios') !== -1) {
+    res = SUPPORTED_FIRMWARE.BIOS;
+  }
+  if (value.toLowerCase().indexOf('uefi') !== -1) {
+    res = SUPPORTED_FIRMWARE.UEFI;
   }
   // reset
   return res;
