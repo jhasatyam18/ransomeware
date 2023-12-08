@@ -5,8 +5,8 @@ import { onPlatformTypeChange, onNodeTypeChange } from '../store/actions';
 import { onProtectionPlanChange } from '../store/actions/DrPlanActions';
 import { onProtectSiteChange, updateAvailabilityZones } from '../store/actions/SiteActions';
 import { onLimitChange, onTimeLimitChange } from '../store/actions/ThrottlingAction';
-import { getAvailibilityZoneOptions, enableNodeTypeVM, getDefaultRecoverySite, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getReportProtectionPlans, getSiteNodeOptions, getSubnetOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort, getVMwareVMSelectionData, showInstallCloudPackageOption, isPlatformTypeAzure, showDifferentialReverseCheckbox, disableSiteSelection, showDifferentialReverse, getSitesOptions, showRevPrefix } from '../utils/InputUtils';
-import { validatePlanSiteSelection, isEmpty, validateDrSiteSelection, validatePassword, validateReplicationInterval, validateReplicationValue } from '../utils/validationUtils';
+import { getAvailibilityZoneOptions, enableNodeTypeVM, getDefaultRecoverySite, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getReportProtectionPlans, getSiteNodeOptions, getSubnetOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort, getVMwareVMSelectionData, showInstallCloudPackageOption, isPlatformTypeAzure, showDifferentialReverseCheckbox, disableSiteSelection, getSitesOptions, showRevPrefix, showReverseReplType } from '../utils/InputUtils';
+import { validatePlanSiteSelection, isEmpty, validateDrSiteSelection, validatePassword, validateReplicationInterval, validateReplicationValue, showReverseWarningText } from '../utils/validationUtils';
 import { STATIC_KEYS } from './InputConstants';
 import { EMAIL_REGEX, FQDN_REGEX, HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX, PASSWORD_REGEX } from './ValidationConstants';
 import { onScriptChange, loadTreeChildData } from '../store/actions/UserActions';
@@ -20,7 +20,7 @@ export const TIME_PICKER_COMP = 'TIME_PICKER';
 export const STACK_VIEW_COMPONENT = 'STACK_VIEW_COMPONENT';
 export const PROTECTION_REPLICATION_JOBS = 'PROTECTION_REPLICATION_JOBS';
 export const FIELD_TYPE = {
-  CHECKBOX: 'CHECKBOX', TEXT: 'TEXT', SELECT: 'SELECT', SELECT_SEARCH: 'SELECT_SEARCH', NUMBER: 'NUMBER', PASSWORD: 'PASSWORD', CUSTOM: 'CUSTOM', RADIO: 'RADIO', RANGE: 'RANGE', TREE: 'TREE', STATICTEXT: 'STATICTEXT',
+  CHECKBOX: 'CHECKBOX', TEXT: 'TEXT', SELECT: 'SELECT', SELECT_SEARCH: 'SELECT_SEARCH', NUMBER: 'NUMBER', PASSWORD: 'PASSWORD', CUSTOM: 'CUSTOM', RADIO: 'RADIO', RANGE: 'RANGE', TREE: 'TREE', STATICTEXT: 'STATICTEXT', TEXTLABEL: 'TEXTLABEL',
 };
 export const FIELDS = {
 
@@ -102,7 +102,8 @@ export const FIELDS = {
   // 'drplan.isEncryptionOnRest': { label: 'Encryption At Rest', description: 'Encryption On Rest', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
   'drplan.isCompression': { label: 'Compression', description: 'Enable Compression', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: true, fieldInfo: 'info.protectionplan.isCompression' },
   'drplan.isDedupe': { label: 'Dedupe', description: 'Enable De-Duplication', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: false, fieldInfo: 'info.protectionplan.isDedupe' },
-  'drplan.enableDifferentialReverse': { label: 'Differential Reverse Replication', description: 'Enable For Reverse', type: FIELD_TYPE.CHECKBOX, shouldShow: (user) => !(showDifferentialReverseCheckbox(user)), defaultValue: false, fieldInfo: 'info.protectionplan.enable.reverse' },
+  'drplan.reverseWarningText': { type: FIELD_TYPE.TEXTLABEL, shouldShow: (user, fieldKey) => showReverseWarningText(user, fieldKey), text: i18n.t('vmware.diff.rev.warning') },
+  'drplan.enableDifferentialReverse': { label: 'Differential Reverse Replication', description: 'Enable For Reverse', type: FIELD_TYPE.CHECKBOX, shouldShow: (user) => showDifferentialReverseCheckbox(user), defaultValue: false, fieldInfo: 'info.protectionplan.enable.reverse' },
   'drplan.enablePPlanLevelScheduling': { label: 'Synchronize All VM Replications', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: false, fieldInfo: 'info.protectionplan.enable.replication.scheduling' },
   'drplan.replPreScript': { label: 'Pre Script', description: 'Pre Script to execute before Replication', placeHolderText: 'Pre Script to execute before Replication', type: FIELD_TYPE.SELECT, options: (user) => getPreScriptsOptions(user), errorMessage: 'Select replication pre script', shouldShow: true, fieldInfo: 'info.protectionplan.replPreScript', onChange: (user, dispatch) => onScriptChange(user, dispatch) },
   'drplan.replPostScript': { label: 'Post Script', description: 'Post Script to execute post Replication', placeHolderText: 'Post Script to execute post Replication', type: FIELD_TYPE.SELECT, options: (user) => getPostScriptsOptions(user), errorMessage: 'Select replication post script', shouldShow: true, fieldInfo: 'info.protectionplan.replPostScript', onChange: (user, dispatch) => onScriptChange(user, dispatch) },
@@ -214,7 +215,7 @@ export const FIELDS = {
   'reverse.name': { label: 'name', placeHolderText: 'Name', type: FIELD_TYPE.LABEL, shouldShow: true },
   'reverse.protectedSite': { label: 'protect.site', placeHolderText: 'Protect Site', type: FIELD_TYPE.LABEL, shouldShow: true },
   'reverse.recoverySite': { label: 'recovery.site', placeHolderText: 'Recovery Site', type: FIELD_TYPE.SELECT, options: (user, fieldKey) => getSitesOptions(user, fieldKey), errorMessage: 'Select recovery site.', shouldShow: true, validate: (user) => validateDrSiteSelection(user), defaultValue: (user) => getDefaultRecoverySite(user), errorFunction: ({ user, value, fieldKey }) => validatePlanSiteSelection({ user, value, fieldKey }) },
-  'reverse.replType': { label: 'reverse.replType', type: FIELD_TYPE.SELECT, errorMessage: 'Replication type required', shouldShow: (user) => showDifferentialReverse(user), validate: (value, user) => isEmpty(value, user), options: [{ label: 'Full Incremental', value: STATIC_KEYS.FULL_INCREMENTAL }, { label: 'Differential', value: STATIC_KEYS.DIFFERENTIAL }], defaultValue: STATIC_KEYS.DIFFERENTIAL },
+  'reverse.replType': { label: 'reverse.replType', type: FIELD_TYPE.SELECT, errorMessage: 'Replication type required', shouldShow: (user) => showReverseReplType(user), validate: (value, user) => isEmpty(value, user), options: [{ label: 'Full Incremental', value: STATIC_KEYS.FULL_INCREMENTAL }, { label: 'Differential', value: STATIC_KEYS.DIFFERENTIAL }], defaultValue: STATIC_KEYS.DIFFERENTIAL },
   'reverse.interval': { label: 'replication.interval', placeHolderText: 'Replication Interval', type: FIELD_TYPE.LABEL, shouldShow: true },
   'reverse.suffix': { label: 'reverse.suffix', placeHolderText: 'Recovery Machines Suffix', type: FIELD_TYPE.TEXT, shouldShow: (user) => showRevPrefix(user), validate: (value, user) => isEmpty(value, user), errorMessage: 'Recovery machines suffix is required' },
   // Throttling

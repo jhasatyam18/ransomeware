@@ -12,7 +12,7 @@ export const DRPLAN_BOOT_ORDER_STEP = 'DRPLAN_BOOT_ORDER_STEP';
 export const DRPLAN_SCRIPT_STEP = 'DRPLAN_SCRIPT_STEP';
 export const DRPLAN_VM_CONFIG_STEP = 'DRPLAN_VM_CONFIG_STEP';
 export const DRPLAN_GENERAL_SETTINGS_STEP_FIELDS = ['drplan.name', 'drplan.protectedSite', 'drplan.recoverySite'];
-export const DRPLAN_PROTECTION_CONFIG_STEP_FIELDS = ['drplan.startTime', 'drplan.replicationInterval', 'reverse.replType', 'reverse.suffix', 'drplan.isEncryptionOnWire', 'drplan.isCompression', 'drplan.isDedupe', 'drplan.enableDifferentialReverse', 'drplan.enablePPlanLevelScheduling'];
+export const DRPLAN_PROTECTION_CONFIG_STEP_FIELDS = ['drplan.startTime', 'drplan.replicationInterval', 'reverse.replType', 'reverse.suffix', 'drplan.isEncryptionOnWire', 'drplan.isCompression', 'drplan.isDedupe', 'drplan.enableDifferentialReverse', 'drplan.enablePPlanLevelScheduling', 'drplan.reverseWarningText'];
 export const DRPLAN_SCRIPTS_CONFIG_STEP_FIELDS = ['drplan.replPreScript', 'drplan.replPostScript', 'drplan.preScript', 'drplan.postScript', 'drplan.scriptTimeout'];
 // export const DRPLAN_RECOVERY_CONFIG_AWS_STEP_FIELDS = ['drplan.recoveryEntities.instanceDetails.amiID', 'drplan.recoveryEntities.instanceDetails.instanceType', 'drplan.recoveryEntities.instanceDetails.availabilityZone', 'drplan.recoveryEntities.instanceDetails.volumeType'];
 export const RECOVERY_SUMMARY = 'RECOVERY_SUMMARY';
@@ -58,8 +58,8 @@ export const RECOVERY_WIZARDS = {
   // { label: 'General', title: '', component: RECOVERY_GENERAL_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: RECOVERY_GENERAL_STEP_FIELDS },
   options: { title: 'Recovery', onFinish: startRecovery },
   steps: [
-    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateVMSelection(user, dispatch), name: STEPS.VIRTUAL_MACHINE },
-    { label: 'Recovery Configuration', title: '', component: RECOVERY_CONFIG, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), isAsync: true, name: STEPS.RECOVERY_CONFIG },
+    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), isAsync: true, name: STEPS.VIRTUAL_MACHINE },
+    { label: 'Recovery Configuration', title: '', component: RECOVERY_CONFIG, validate: (user, dispatch) => noValidate(user, dispatch), name: STEPS.RECOVERY_CONFIG },
     { label: 'Summary', title: '', component: RECOVERY_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch), name: STEPS.SUMMARY }],
 };
 

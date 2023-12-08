@@ -419,6 +419,7 @@ export function openRecoveryWizard() {
     dispatch(clearValues());
     setTimeout(() => {
       dispatch(valueChange('ui.values.recoveryPlatform', platformDetails.platformType));
+      dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.RECOVERY));
       dispatch(fetchDrPlans('ui.values.drplan'));
       // set recovery plan id
       dispatch(valueChange('recovery.protectionplanID', id));
@@ -430,6 +431,7 @@ export function openRecoveryWizard() {
       dispatch(valueChange('ui.isMigration.workflow', false));
       // set is test recovery flag to false
       dispatch(valueChange('recovery.dryrun', false));
+      dispatch(valueChange('recovery.discardPartialChanges', false));
       // to fetch instance type,availibility zone,volume type  so that we can show it to the ui in case of azure
       if (platformDetails.platformType === PLATFORM_TYPES.Azure) {
         dispatch(fetchNetworks(recoverySite.id, undefined));
@@ -1579,9 +1581,9 @@ function setReverseData(json) {
       dispatch(valueChange('ui.values.recoverySiteID', recoverySite.id));
       dispatch(valueChange('ui.recovery.plan', json));
       dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.REVERSE_PLAN));
-      if (protectedSitePlatform === PLATFORM_TYPES.VMware || !json.enableDifferentialReverse) {
+      if (!json.enableDifferentialReverse) {
         dispatch(valueChange('reverse.replType', STATIC_KEYS.FULL_INCREMENTAL));
-      } else if (json.enableDifferentialReverse) {
+      } else {
         dispatch(valueChange('reverse.replType', STATIC_KEYS.DIFFERENTIAL));
       }
       const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined)), dispatch(fetchScript()), dispatch(fetchDrPlans('ui.values.drplan'))];

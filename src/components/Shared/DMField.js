@@ -11,6 +11,7 @@ import DMFieldLabel from './DMFieldLabel';
 import DMFieldRange from './DMFieldRange';
 import DMTree from './DMTree';
 import DMSearchSelect from './DMSearchSelect';
+import DMFieldWarningLabel from './DMFieldWarningLabel';
 import DMFieldStaticText from './DMfieldStaticText';
 // Import Images
 
@@ -38,6 +39,8 @@ class DMField extends Component {
         return <DMTree dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} hideLabel={hideLabel} />;
       case FIELD_TYPE.CUSTOM:
         return getFieldComponents(dispatch, fieldKey, user, COMPONENT, hideLabel);
+      case FIELD_TYPE.TEXTLABEL:
+        return <DMFieldWarningLabel dispatch={dispatch} fieldKey={fieldKey} user={user} disabled={disabled} hideLabel={hideLabel} field={field} />;
       case FIELD_TYPE.STATICTEXT:
         return <DMFieldStaticText dispatch={dispatch} user={user} fieldKey={fieldKey} field={field} />;
       default:

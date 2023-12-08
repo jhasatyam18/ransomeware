@@ -489,31 +489,46 @@ export function validateAzureNetwork(user, dispatch) {
 export async function validateRecoveryVMs({ user, dispatch }) {
   const { values } = user;
 
-  const initialCheckPass = validateVMConfiguration({ user, dispatch });
+  const isVMSelected = validateVMSelection(user, dispatch);
 
-  if (initialCheckPass) {
-    try {
-      const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
-      if (vms) {
-        const payload = getRecoveryPayload(user);
-        const obj = createPayload(API_TYPES.POST, { ...payload.recovery });
-        dispatch(showApplicationLoader('VALIDATING_RECOVERY_MACHINES', 'Validating virtual machines.'));
-        const response = await callAPI(API_VALIDATE_RECOVERY, obj);
-        dispatch(hideApplicationLoader('VALIDATING_RECOVERY_MACHINES'));
-        if (response.length > 0) {
-          return showValidationInfo(response, dispatch);
+  if (isVMSelected) {
+    const initialCheckPass = validateVMConfiguration({ user, dispatch });
+
+    if (initialCheckPass) {
+      try {
+        const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
+        if (vms) {
+          const payload = getRecoveryPayload(user);
+          const obj = createPayload(API_TYPES.POST, { ...payload.recovery });
+          dispatch(showApplicationLoader('VALIDATING_RECOVERY_MACHINES', 'Validating virtual machines.'));
+          const response = await callAPI(API_VALIDATE_RECOVERY, obj);
+          dispatch(hideApplicationLoader('VALIDATING_RECOVERY_MACHINES'));
+          if (response.length > 0) {
+            let warningMsg = i18n.t('recovery.discard.warning.msg');
+            const warningVMS = [];
+            response.forEach((res) => {
+              const { message, vmName } = res;
+              warningMsg = warningMsg.replace('vmName', vmName);
+              if (message === warningMsg) {
+                warningVMS.push(vmName);
+              }
+            });
+            dispatch(valueChange('recovery.discard.warning.vms', warningVMS));
+            return showValidationInfo(response, dispatch);
+          }
+          return true;
         }
-        return true;
+      } catch (err) {
+        dispatch(hideApplicationLoader('VALIDATING_RECOVERY_MACHINES'));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+        return false;
       }
-    } catch (err) {
-      dispatch(hideApplicationLoader('VALIDATING_RECOVERY_MACHINES'));
-      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    } else {
       return false;
     }
-  } else {
-    return false;
+    return true;
   }
-  return true;
+  return false;
 }
 
 export function validateForm(formKey, user, dispatch) {
@@ -1060,3 +1075,19 @@ export function validatePlanSiteSelection({ user, fieldKey, value }) {
   }
   return res;
 }
+
+export const showReverseWarningText = (user) => {
+  const { values } = user;
+  const enableReverse = getValue('drplan.enableDifferentialReverse', values) || '';
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values) || '';
+  const protectionPlatform = getValue('ui.values.protectionPlatform', values) || '';
+  const revReplType = getValue('reverse.replType', values) || '';
+  const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values) || '';
+  if (workflow === UI_WORKFLOW.REVERSE_PLAN && revReplType === STATIC_KEYS.DIFFERENTIAL && protectionPlatform === PLATFORM_TYPES.VMware) {
+    return true;
+  }
+  if (enableReverse && recoveryPlatform === PLATFORM_TYPES.VMware) {
+    return true;
+  }
+  return false;
+};
