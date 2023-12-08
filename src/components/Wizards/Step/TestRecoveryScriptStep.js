@@ -13,6 +13,8 @@ function TestRecoveryScriptStep(props) {
         <Form className="form_w">
           <DMField dispatch={dispatch} user={user} fieldKey="recovery.installSystemAgent" />
           <DMField dispatch={dispatch} user={user} fieldKey="recovery.installCloudPkg" />
+          <DMField dispatch={dispatch} user={user} fieldKey="ui.installCloudPkg.warning" />
+          <DMField dispatch={dispatch} user={user} fieldKey="recovery.removeFromAD" />
         </Form>
         <hr />
         <CardTitle>{t('pplan.scripts')}</CardTitle>

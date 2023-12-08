@@ -171,6 +171,7 @@ class DRPlanDetails extends Component {
       { label: 'Recovery Pre Script', field: 'preScript' },
       { label: 'Recovery Post Script', field: 'postScript' },
 
+      { label: 'Synchronize All VM Replications', field: 'enablePPlanLevelScheduling' },
       { label: 'Script Timeout (Seconds)', field: 'scriptTimeout' },
       { label: 'Boot Delay (Seconds)', field: 'bootDelay' },
     ];

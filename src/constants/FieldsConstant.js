@@ -1,4 +1,5 @@
 import i18n from 'i18next';
+import { showinstallCloudPkgWarningText } from '../utils/AppUtils';
 import { getErrorMessage, getFieldInfo, getLabel } from '../utils/LocallUtils';
 import { onPlatformTypeChange, onNodeTypeChange } from '../store/actions';
 import { onProtectionPlanChange } from '../store/actions/DrPlanActions';
@@ -9,6 +10,7 @@ import { validatePlanSiteSelection, isEmpty, validateDrSiteSelection, validatePa
 import { STATIC_KEYS } from './InputConstants';
 import { EMAIL_REGEX, FQDN_REGEX, HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX, PASSWORD_REGEX } from './ValidationConstants';
 import { onScriptChange, loadTreeChildData } from '../store/actions/UserActions';
+import { NOTE_TEXT } from './DMNoteConstant';
 
 export const CONFIURE_SITE_GROUP = ['configureSite.platformDetails.type', 'configureSite.platformDetails.platformName'];
 export const REPLICATION_INTERVAL_COMP = 'REPLICATION_INTERVAL_COMP';
@@ -18,7 +20,7 @@ export const TIME_PICKER_COMP = 'TIME_PICKER';
 export const STACK_VIEW_COMPONENT = 'STACK_VIEW_COMPONENT';
 export const PROTECTION_REPLICATION_JOBS = 'PROTECTION_REPLICATION_JOBS';
 export const FIELD_TYPE = {
-  CHECKBOX: 'CHECKBOX', TEXT: 'TEXT', SELECT: 'SELECT', SELECT_SEARCH: 'SELECT_SEARCH', NUMBER: 'NUMBER', PASSWORD: 'PASSWORD', CUSTOM: 'CUSTOM', RADIO: 'RADIO', RANGE: 'RANGE', TREE: 'TREE', TEXTLABEL: 'TEXTLABEL',
+  CHECKBOX: 'CHECKBOX', TEXT: 'TEXT', SELECT: 'SELECT', SELECT_SEARCH: 'SELECT_SEARCH', NUMBER: 'NUMBER', PASSWORD: 'PASSWORD', CUSTOM: 'CUSTOM', RADIO: 'RADIO', RANGE: 'RANGE', TREE: 'TREE', STATICTEXT: 'STATICTEXT', TEXTLABEL: 'TEXTLABEL',
 };
 export const FIELDS = {
 
@@ -102,6 +104,7 @@ export const FIELDS = {
   'drplan.isDedupe': { label: 'Dedupe', description: 'Enable De-Duplication', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: false, fieldInfo: 'info.protectionplan.isDedupe' },
   'drplan.reverseWarningText': { type: FIELD_TYPE.TEXTLABEL, shouldShow: (user, fieldKey) => showReverseWarningText(user, fieldKey), text: i18n.t('vmware.diff.rev.warning') },
   'drplan.enableDifferentialReverse': { label: 'Differential Reverse Replication', description: 'Enable For Reverse', type: FIELD_TYPE.CHECKBOX, shouldShow: (user) => showDifferentialReverseCheckbox(user), defaultValue: false, fieldInfo: 'info.protectionplan.enable.reverse' },
+  'drplan.enablePPlanLevelScheduling': { label: 'Synchronize All VM Replications', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: false, fieldInfo: 'info.protectionplan.enable.replication.scheduling' },
   'drplan.replPreScript': { label: 'Pre Script', description: 'Pre Script to execute before Replication', placeHolderText: 'Pre Script to execute before Replication', type: FIELD_TYPE.SELECT, options: (user) => getPreScriptsOptions(user), errorMessage: 'Select replication pre script', shouldShow: true, fieldInfo: 'info.protectionplan.replPreScript', onChange: (user, dispatch) => onScriptChange(user, dispatch) },
   'drplan.replPostScript': { label: 'Post Script', description: 'Post Script to execute post Replication', placeHolderText: 'Post Script to execute post Replication', type: FIELD_TYPE.SELECT, options: (user) => getPostScriptsOptions(user), errorMessage: 'Select replication post script', shouldShow: true, fieldInfo: 'info.protectionplan.replPostScript', onChange: (user, dispatch) => onScriptChange(user, dispatch) },
   'drplan.preScript': { label: 'Pre Script', description: 'Pre Script to execute before Recovery', placeHolderText: 'Pre Script to execute before Recovery', type: FIELD_TYPE.SELECT, options: (user) => getPreScriptsOptions(user), errorMessage: 'Select recovery pre script', shouldShow: true, onChange: (user, dispatch) => onScriptChange(user, dispatch) },
@@ -141,6 +144,8 @@ export const FIELDS = {
   'recovery.vmNames': { label: 'recovery.names', description: 'List of VM names which are needed to recover', placeHolderText: '', type: FIELD_TYPE.PASSWORD, validate: null, errorMessage: '', shouldShow: false },
   'recovery.installSystemAgent': { label: 'recovery.installSystemAgent', description: 'Install System Agents', placeHolderText: '', type: FIELD_TYPE.CHECKBOX, validate: null, errorMessage: '', shouldShow: true, defaultValue: false, fieldInfo: 'info.recovery.system.agent' },
   'recovery.installCloudPkg': { label: 'recovery.installCloudPkg', description: 'Install Cloud Packages', placeHolderText: '', type: FIELD_TYPE.CHECKBOX, validate: null, errorMessage: '', shouldShow: (u) => showInstallCloudPackageOption(u), defaultValue: false, fieldInfo: 'info.recovery.install.cloud.packages' },
+  'ui.installCloudPkg.warning': { type: FIELD_TYPE.STATICTEXT, shouldShow: (user) => showinstallCloudPkgWarningText(user), text: i18n.t('recover.cloud.agent.warning'), icon: 'fas fa-exclamation-triangle', textType: NOTE_TEXT.WARNING },
+  'recovery.removeFromAD': { label: 'recovery.removeFromAD', description: 'Remove From Windows AD', placeHolderText: '', type: FIELD_TYPE.CHECKBOX, validate: null, errorMessage: '', shouldShow: true, defaultValue: false, fieldInfo: 'info.recovery.remove.windows.ad' },
   'ui.values.replication.interval.type': {
     label: 'Unit', description: 'Replication interval i.e time gap after which next iteration will start after previous one is completed/failed', placeHolderText: 'Select replication unit', type: FIELD_TYPE.SELECT, options: [{ label: 'Days', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_DAY }, { label: 'Hours', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_HOUR }, { label: 'Minutes', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_MIN }], validate: (value, user) => isEmpty(value, user), errorMessage: 'Invalid replication interval.', shouldShow: true, defaultValue: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_MIN,
   },
@@ -228,4 +233,5 @@ export const FIELDS = {
   'ui.automate.migration': { label: 'auto.migration', type: FIELD_TYPE.CHECKBOX, shouldShow: true, fieldInfo: 'info.auto.migration', default: false },
   'ui.new.password': { label: 'New Password', placeHolderText: 'Enter new password', type: FIELD_TYPE.PASSWORD, patterns: [PASSWORD_REGEX], errorMessage: 'Password should have atleast 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character and be at least 8 characters long.', shouldShow: true },
   'ui.cnfm.password': { label: 'Confirm Password', placeHolderText: 'Confirm password', type: FIELD_TYPE.PASSWORD, validate: (v, u) => validatePassword(v, u), errorMessage: 'New password and confirm password does not match', shouldShow: true },
+
 };

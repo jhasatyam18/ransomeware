@@ -25,6 +25,7 @@ import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
 import { setVmwareInitialData, setVMwareTargetData } from './VMwareActions';
 import { setCookie } from '../../utils/CookieUtils';
 import { APPLICATION_GETTING_STARTED_COMPLETED } from '../../constants/UserConstant';
+import { fetchReplicationJobsByPplanId } from './JobActions';
 
 export function fetchDrPlans(key) {
   return (dispatch) => {
@@ -247,6 +248,7 @@ export function onProtectionPlanChange({ value, allowDeleted }) {
                 }
                 dispatch(valueChange(`${vm.moref}-vmConfig.general.guestOS`, vm.guestOS));
                 dispatch(valueChange(`${vm.moref}-vmConfig.general.firmwareType`, vm.firmwareType));
+                dispatch(valueChange(`${vm.moref}-vmConfig.general.encryptionKey`, vm.encryptionKey));
                 data.push(vm);
               }
             });
@@ -487,6 +489,7 @@ export function openTestRecoveryWizard(cleanUpTestRecoveries) {
             dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.CLEANUP_TEST_RECOVERY));
             dispatch(openWizard(CLEANUP_TEST_RECOVERY_WIZARDS.options, CLEANUP_TEST_RECOVERY_WIZARDS.steps));
           } else {
+            dispatch(valueChange('recovery.removeFromAD', true));
             dispatch(openWizard(TEST_RECOVERY_WIZARDS.options, TEST_RECOVERY_WIZARDS.steps));
           }
           dispatch(onProtectionPlanChange({ value: protectionPlan.id, allowDeleted: isCleanUpFlow }));
@@ -547,17 +550,21 @@ export function openEditProtectionPlanWizard(plan, isEventAction = false, alert 
     const { drPlans } = getState();
     dispatch(clearValues());
     const selectedPlan = (typeof plan === 'undefined' ? getSelectedPlanID(drPlans) : plan);
-    const { recoverySite } = selectedPlan;
+    const { recoverySite, id, protectedSite } = selectedPlan;
     dispatch(valueChange('ui.values.recoveryPlatform', recoverySite.platformDetails.platformType));
     const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined)), dispatch(fetchScript())];
     return Promise.all(apis).then(
       () => {
         dispatch(valueChange('ui.editplan.alert.id', (alert !== null ? alert.id : alert)));
         dispatch(valueChange('ui.alert.invoking.action', alert));
-        dispatch(valueChange('ui.selected.protection.planID', selectedPlan.id));
+        dispatch(valueChange('ui.selected.protection.planID', id));
         dispatch(valueChange('ui.selected.protection.plan', selectedPlan));
         dispatch(valueChange('drplan.recoverySite', selectedPlan.recoverySite.id));
         dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.EDIT_PLAN));
+        // fetch replication job by protection plan id and store it's value to enable encryption option while doing edit based on vm's last sync status
+        if (recoverySite.platformDetails.platformType === PLATFORM_TYPES.AWS && protectedSite.platformDetails.platformType === PLATFORM_TYPES.AWS) {
+          dispatch(fetchReplicationJobsByPplanId(id));
+        }
         dispatch(setProtectionPlanDataForUpdate(selectedPlan, isEventAction, event));
         return new Promise((resolve) => resolve());
       },
@@ -748,6 +755,7 @@ export function setProtectionPlanVMConfig(selectedVMS, protectionPlan) {
     dispatch(valueChange('drplan.isCompression', protectionPlan.isCompression));
     dispatch(valueChange('drplan.isDedupe', protectionPlan.isDeDupe));
     dispatch(valueChange('drplan.enableDifferentialReverse', protectionPlan.enableDifferentialReverse));
+    dispatch(valueChange('drplan.enablePPlanLevelScheduling', protectionPlan.enablePPlanLevelScheduling));
     dispatch(valueChange('drplan.replPostScript', protectionPlan.replPostScript));
     dispatch(valueChange('drplan.replPreScript', protectionPlan.replPreScript));
     const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
@@ -779,6 +787,8 @@ function setAWSVMDetails(selectedVMS, protectionPlan, dispatch) {
     virtualMachines.forEach((pvm) => {
       if (vm.moref === pvm.moref) {
         dispatch(setProtectionPlanScript(key, pvm));
+        // setreplication priority while editing protection plan
+        dispatch(valueChange(`${key}-vmConfig.general.replicationPriority`, pvm.replicationPriority));
       }
     });
     instanceDetails.forEach((ins) => {
@@ -1113,6 +1123,11 @@ export function initReconfigureProtectedVM(protectionPlanID, vmMoref = null, eve
     let pPlan = '';
     if (protectionPlanID !== null) {
       pPlan = await fetchProtection(protectionPlanID);
+      // while doing single vm edit if source and target both are AWS then need to fetch replication job to enable encryption option based on latest job status
+      const { recoverySite, id, protectedSite } = pPlan;
+      if (recoverySite.platformDetails.platformType === PLATFORM_TYPES.AWS && protectedSite.platformDetails.platformType === PLATFORM_TYPES.AWS) {
+        dispatch(fetchReplicationJobsByPplanId(id));
+      }
     } else if (event !== null) {
       const parts = event.impactedObjectURNs.split(',');
       const urn = parts[0].split(':');
@@ -1275,6 +1290,7 @@ export function setAWSVMRecoveryData(vmMoref) {
         dispatch(valueChange(`${key}-vmConfig.general.instanceType`, { label: ins.instanceType, value: ins.instanceType }));
         dispatch(valueChange(`${key}-vmConfig.general.volumeType`, ins.volumeType));
         dispatch(valueChange(`${key}-vmConfig.general.volumeIOPS`, ins.volumeIOPS));
+        dispatch(valueChange(`${key}-vmConfig.general.encryptionKey`, ins.encryptionKey));
         dispatch(valueChange(`${key}-vmConfig.general.bootOrder`, ins.bootPriority));
         dispatch(valueChange(`${key}-vmConfig.general.instanceID`, ins.instanceID));
         dispatch(valueChange(`${key}-vmConfig.scripts.preScript`, ins.preScript));
@@ -1586,6 +1602,10 @@ function setReverseData(json) {
               if (vm.moref === rE.sourceMoref) {
                 // data.push(vm);
                 selectedVMs = { ...selectedVMs, [vm.moref]: vm };
+                // set replication priority of vms
+                if (platformDetails.platformType === PLATFORM_TYPES.AWS) {
+                  dispatch(valueChange(`${vm.moref}-vmConfig.general.replicationPriority`, vm.replicationPriority));
+                }
                 dispatch(setRecoveryVMDetails(vm.moref));
               }
             });
@@ -1647,6 +1667,7 @@ export function setReverseConfig(protectionPlan) {
     dispatch(valueChange('drplan.isCompression', protectionPlan.isCompression));
     dispatch(valueChange('drplan.isDeDupe', protectionPlan.isDeDupe));
     dispatch(valueChange('drplan.enableDifferentialReverse', protectionPlan.enableDifferentialReverse));
+    dispatch(valueChange('drplan.enablePPlanLevelScheduling', protectionPlan.enablePPlanLevelScheduling));
     dispatch(valueChange('drplan.replPostScript', protectionPlan.replPostScript));
     dispatch(valueChange('drplan.replPreScript', protectionPlan.replPreScript));
   };
