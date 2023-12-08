@@ -481,5 +481,8 @@
   "reovery.discard.warning.txt":"Latest replication for the below mentioned VM/s has not completed, it will be recovered from the last known good state.",
   "recover.cloud.agent.warning":"VMware tools are required for IP Customization and post recovery scripts to detect and pass the virtual machine IP address. Please check the pre-requisite for VMware tools in user documentation.",
   "title.cleanup.test.recovery":"Select Workloads for Test Recovery Cleanup.",
-  "title.test.recovery":"Select workloads for Test Recovery."
+  "title.test.recovery":"Select workloads for Test Recovery.",
+  "title.differntial.preserve.current":"Preserve Current State (Recovery operation might exceed the RTO)",
+  "title.differential.discard.partial.changes":"Discard Partial Replicated Changes"
+
 }

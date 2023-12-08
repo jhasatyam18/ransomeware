@@ -23,11 +23,11 @@ class RecoveryConfig extends Component {
       <>
         <div>
           <input type="radio" id="cure" name="option" value="current" checked={!option} onChange={() => onChange(false)} />
-          <label htmlFor="current" style={{ cursor: 'pointer', position: 'relative', top: '-2px', left: '5px' }} aria-hidden="true" onClick={() => onChange(false)}>Preserve Current State (Recovery operation might exceed the RTO)</label>
+          <label htmlFor="current" style={{ cursor: 'pointer', position: 'relative', top: '-2px', left: '5px' }} aria-hidden="true" onClick={() => onChange(false)}>{t('title.differntial.preserve.current')}</label>
         </div>
         <div>
           <input type="radio" id="previous" name="option" value="previous" checked={option} onChange={() => onChange(true)} />
-          <label htmlFor="previous" style={{ cursor: 'pointer', position: 'relative', top: '-2px', left: '5px' }} aria-hidden="true" onClick={() => onChange(true)}>Discard Partial Replicated Changes</label>
+          <label htmlFor="previous" style={{ cursor: 'pointer', position: 'relative', top: '-2px', left: '5px' }} aria-hidden="true" onClick={() => onChange(true)}>{t('title.differential.discard.partial.changes')}</label>
 
         </div>
       </>
@@ -35,7 +35,7 @@ class RecoveryConfig extends Component {
 
     const renderWarningText = () => (
       <div className="margin-top-5 card_note_warning ">
-        <p style={{ width: '800px', paddingLeft: '20px' }}>{t('reovery.discard.warning.txt')}</p>
+        <p className="rev_diff_warning">{t('reovery.discard.warning.txt')}</p>
         { vmNotCompletedReplication.map((el) => <li style={{ width: '800px', paddingLeft: '22px', position: 'relative', top: '-10px' }}>{el}</li>)}
 
       </div>
