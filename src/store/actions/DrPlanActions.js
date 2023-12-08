@@ -1567,7 +1567,7 @@ function setReverseData(json) {
       dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.REVERSE_PLAN));
       if (!json.enableDifferentialReverse) {
         dispatch(valueChange('reverse.replType', STATIC_KEYS.FULL_INCREMENTAL));
-      } else if (json.enableDifferentialReverse) {
+      } else {
         dispatch(valueChange('reverse.replType', STATIC_KEYS.DIFFERENTIAL));
       }
       const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined)), dispatch(fetchScript()), dispatch(fetchDrPlans('ui.values.drplan'))];
