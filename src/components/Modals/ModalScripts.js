@@ -8,6 +8,7 @@ import { fetchScript, hideApplicationLoader, refreshApplication, showApplication
 import { API_USER_SCRIPT } from '../../constants/ApiConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { getUrlPath } from '../../utils/ApiUtils';
+import DMToolTip from '../Shared/DMToolTip';
 
 function ModalScripts(props) {
   const { t, dispatch, options } = props;
@@ -21,6 +22,11 @@ function ModalScripts(props) {
   const [isPreOnly, setPreOnly] = useState(false);
   const [isPostOnly, setPostOnly] = useState(false);
 
+  function renderTooltip(fieldInfo) {
+    return (
+      <DMToolTip tooltip={fieldInfo} />
+    );
+  }
   useEffect(() => {
     let isUnmounting = false;
     if (!isUnmounting) {
@@ -40,7 +46,7 @@ function ModalScripts(props) {
         setType(data.scriptType);
       }
       if (data && typeof data.fieldKey !== 'undefined') {
-      // handle case insensitive text
+        // handle case insensitive text
         const key = data.fieldKey.toLowerCase();
         const isPre = key.indexOf('prescript') !== -1;
         setPreOnly(isPre);
@@ -161,20 +167,27 @@ function ModalScripts(props) {
 
         </FormGroup>
         <FormGroup className="row mb-4 form-group">
-          <label htmlFor="horizontal-Input margin-top-10 padding-top=10" className="col-sm-4 col-form-Label">
-            {t('description')}
-          </label>
-          <Col sm={8}>
+          <Col sm={4}>
+            <label htmlFor="horizontal-Input margin-top-10 padding-top=10" className="form-check-label">
+              {t('description')}
+            </label>
+          </Col>
+          <Col sm={7}>
             <div>
               <input type="TEXT" className="form-control" id="scriptDescription" value={description} onChange={(e) => setDescription(e.target.value)} />
             </div>
           </Col>
+          <Col sm={1}>
+            {renderTooltip('info.script.description')}
+          </Col>
         </FormGroup>
         <FormGroup className="row mb-4 form-group">
-          <label htmlFor="horizontal-Input margin-top-10 padding-top=10" className="col-sm-4 col-form-Label">
-            {t('login.password')}
-          </label>
-          <Col sm={8}>
+          <Col sm={4}>
+            <label htmlFor="horizontal-Input margin-top-10 padding-top=10" className="form-check-label">
+              {t('login.password')}
+            </label>
+          </Col>
+          <Col sm={7}>
             <div>
               <input
                 invalid={hasErrors}
@@ -190,6 +203,9 @@ function ModalScripts(props) {
                 {errors[0]}
               </small>
             ) : null}
+          </Col>
+          <Col sm={1}>
+            {renderTooltip('info.script.password')}
           </Col>
         </FormGroup>
       </Form>
