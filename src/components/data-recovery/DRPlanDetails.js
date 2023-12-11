@@ -2,6 +2,8 @@ import classnames from 'classnames';
 import React, { Component, Suspense } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardTitle, Col, Container, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
+import { getValue } from '../../utils/InputUtils';
+import { valueChange } from '../../store/actions';
 import Loader from '../Shared/Loader';
 import { PLATFORM_TYPES, RECOVERY_STATUS, REPLICATION_STATUS, PROTECTION_PLANS_STATUS } from '../../constants/InputConstants';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
@@ -21,7 +23,6 @@ const Recovery = React.lazy(() => import('../Jobs/Recovery'));
 class DRPlanDetails extends Component {
   constructor() {
     super();
-    this.state = { activeTab: '1' };
     this.disableEdit = this.disableEdit.bind(this);
   }
 
@@ -34,11 +35,11 @@ class DRPlanDetails extends Component {
   }
 
   toggleTab(tab) {
-    const { activeTab } = this.state;
+    const { dispatch, user } = this.props;
+    const { values } = user;
+    const activeTab = getValue('drplan.details.activeTab', values);
     if (activeTab !== tab) {
-      this.setState({
-        activeTab: tab,
-      });
+      dispatch(valueChange('drplan.details.activeTab', tab));
     }
   }
 
@@ -261,10 +262,10 @@ class DRPlanDetails extends Component {
 
   renderRecoveryJobs() {
     const { drPlans, t, user } = this.props;
-    const { localVMIP } = user;
+    const { localVMIP, values } = user;
     const { protectionPlan } = drPlans;
     const { recoverySite } = protectionPlan;
-    const { activeTab } = this.state;
+    const activeTab = getValue('drplan.details.activeTab', values);
     if (localVMIP === recoverySite.node.hostname) {
       return (
         <NavItem>
@@ -278,9 +279,10 @@ class DRPlanDetails extends Component {
   }
 
   render() {
-    const { drPlans, dispatch, t } = this.props;
+    const { drPlans, dispatch, t, user } = this.props;
+    const { values } = user;
     const { protectionPlan } = drPlans;
-    const { activeTab } = this.state;
+    const activeTab = getValue('drplan.details.activeTab', values) || '1';
     if (!protectionPlan || Object.keys(protectionPlan).length === 0) {
       return null;
     }
