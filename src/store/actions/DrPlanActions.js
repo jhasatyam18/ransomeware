@@ -1141,6 +1141,10 @@ export function initReconfigureProtectedVM(protectionPlanID, vmMoref = null, eve
         return;
       }
       // get protectection Plan details
+      if (pPlan === false) {
+        dispatch(hideApplicationLoader('RECONFIGURE_VM'));
+        return;
+      }
       if (vmMoref === null) {
         const { protectedSite } = pPlan;
         if (protectedSite.platformDetails.platformType === PLATFORM_TYPES.AWS) {
@@ -1361,7 +1365,7 @@ export function setVMwareVMRecoveryData(vmMoref) {
           dispatch(valueChange(`${key}-vmConfig.general-memory`, parseInt(memory[0], 10)));
           dispatch(valueChange(`${key}-vmConfig.general-unit`, memory[1]));
           // Only for edit test recovery flow to get the options for folder path,compute resources
-          fetchByDelay(dispatch, setVMwareTargetData, MILI_SECONDS_TIME.TWO_THOUSAND, [`${key}-vmConfig.general`, ins.datacenterMoref, ins.hostMoref]);
+          fetchByDelay(dispatch, setVMwareTargetData, MILI_SECONDS_TIME.ONE_HUNDRED_MS, [`${key}-vmConfig.general`, ins.datacenterMoref, ins.hostMoref]);
         } else {
         // For full Recovery Flow
           dispatch(valueChange(`${key}-vmConfig.general-memory`, ins.memoryMB));

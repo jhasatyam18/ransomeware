@@ -12,7 +12,7 @@ export const MONITORING_DISK_CHANGES = {
 export const PPLAN_EVENTS = ['protectionplan.initfailed', 'protectionplan.updatefailed'];
 
 export const MILI_SECONDS_TIME = {
-  TWO_THOUSAND: 2000,
+  ONE_HUNDRED_MS: 100,
   TWENTY_THOUSAND_MS: 20000,
   ONE_THOUSAND: 1000,
 };
