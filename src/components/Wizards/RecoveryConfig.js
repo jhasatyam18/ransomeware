@@ -16,9 +16,9 @@ class RecoveryConfig extends Component {
     const protectectionPlatform = getValue('ui.values.protectionPlatform', values);
     const option = getValue('recovery.discardPartialChanges', values);
     const vmNotCompletedReplication = getValue('recovery.discard.warning.vms', values) || [];
-    const showOptionToDiscard = (workflow === UI_WORKFLOW.RECOVERY && vmNotCompletedReplication.length > 0 && recoveryPlatform === PLATFORM_TYPES.VMware);
+    const showOptionToDiscard = (workflow === UI_WORKFLOW.RECOVERY && recoveryPlatform === PLATFORM_TYPES.VMware);
     const showInstallOption = protectectionPlatform === recoveryPlatform && recoveryPlatform === PLATFORM_TYPES.VMware;
-
+    const disableOption = vmNotCompletedReplication.length === 0;
     const onChange = (value) => {
       dispatch(valueChange('recovery.discardPartialChanges', value));
     };
@@ -26,11 +26,11 @@ class RecoveryConfig extends Component {
     const renderOptionToDiscard = () => (
       <>
         <div>
-          <input type="radio" id="cure" name="option" value="current" checked={!option} disabled={!showOptionToDiscard} onChange={() => onChange(false)} />
+          <input type="radio" id="cure" name="option" value="current" checked={!option} disabled={disableOption} onChange={() => onChange(false)} />
           <label htmlFor="current" style={{ cursor: 'pointer', position: 'relative', top: '-2px', left: '5px' }} aria-hidden="true" onClick={() => onChange(false)}>{t('title.differntial.preserve.current')}</label>
         </div>
         <div>
-          <input type="radio" id="previous" name="option" value="previous" disabled={!showOptionToDiscard} checked={option} onChange={() => onChange(true)} />
+          <input type="radio" id="previous" name="option" value="previous" disabled={disableOption} checked={option} onChange={() => onChange(true)} />
           <label htmlFor="previous" style={{ cursor: 'pointer', position: 'relative', top: '-2px', left: '5px' }} aria-hidden="true" onClick={() => onChange(true)}>{t('title.differential.discard.partial.changes')}</label>
         </div>
       </>
@@ -63,15 +63,17 @@ class RecoveryConfig extends Component {
             </CardBody>
           </Card>
         ) : null}
-        <Card className="padding-20">
-          <CardTitle>{t('Recovery Mode')}</CardTitle>
-          {renderWarningText()}
-          <CardBody className="recovey_warn_text ">
-            <Form className="form_w">
-              {renderOptionToDiscard()}
-            </Form>
-          </CardBody>
-        </Card>
+        {showOptionToDiscard ? (
+          <Card className="padding-20">
+            <CardTitle>{t('Recovery Mode')}</CardTitle>
+            {renderWarningText()}
+            <CardBody className="recovey_warn_text ">
+              <Form className="form_w">
+                {renderOptionToDiscard()}
+              </Form>
+            </CardBody>
+          </Card>
+        ) : null}
       </>
     );
   }
