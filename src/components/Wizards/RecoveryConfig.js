@@ -17,7 +17,7 @@ class RecoveryConfig extends Component {
     const option = getValue('recovery.discardPartialChanges', values);
     const vmNotCompletedReplication = getValue('recovery.discard.warning.vms', values) || [];
     const showOptionToDiscard = (workflow === UI_WORKFLOW.RECOVERY && vmNotCompletedReplication.length > 0 && recoveryPlatform === PLATFORM_TYPES.VMware);
-    const showInstallOption = protectectionPlatform !== recoveryPlatform && recoveryPlatform === PLATFORM_TYPES.VMware;
+    const showInstallOption = protectectionPlatform === recoveryPlatform && recoveryPlatform === PLATFORM_TYPES.VMware;
 
     const onChange = (value) => {
       dispatch(valueChange('recovery.discardPartialChanges', value));
@@ -50,7 +50,7 @@ class RecoveryConfig extends Component {
 
     return (
       <>
-        {showInstallOption ? (
+        {!showInstallOption ? (
           <Card className="padding-20">
             <CardTitle>{t('Tools Installation')}</CardTitle>
             <CardBody>
