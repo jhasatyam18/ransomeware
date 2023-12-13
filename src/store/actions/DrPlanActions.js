@@ -426,6 +426,7 @@ export function openRecoveryWizard() {
       dispatch(valueChange('recovery.protectionplanID', id));
       dispatch(valueChange('ui.recovery.plan', protectionPlan));
       dispatch(valueChange('ui.values.recoveryPlatform', platformDetails.platformType));
+      dispatch(valueChange('ui.values.protectionPlatform', protectedSite.platformDetails.platformType));
       // fetch VMs for drPlan
       dispatch(onProtectionPlanChange({ value: id }));
       // set is migration flag to false
@@ -438,12 +439,6 @@ export function openRecoveryWizard() {
         dispatch(fetchNetworks(recoverySite.id, undefined));
       }
       dispatch(openWizard(RECOVERY_WIZARDS.options, RECOVERY_WIZARDS.steps));
-      let { steps } = RECOVERY_WIZARDS;
-      if (protectedSite.platformDetails.platformType === PLATFORM_TYPES.VMware && platformDetails.platformType === PLATFORM_TYPES.VMware) {
-        steps = removeStepsFromWizard(steps, STEPS.RECOVERY_CONFIG);
-      }
-
-      dispatch(openWizard(RECOVERY_WIZARDS.options, steps));
     }, 1000);
   };
 }
