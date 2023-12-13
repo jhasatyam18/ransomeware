@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Card, CardBody, CardTitle, Form } from 'reactstrap';
+import { Card, CardBody, CardTitle, Col, Form, Row } from 'reactstrap';
 import { valueChange } from '../../store/actions';
 import { PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { getValue } from '../../utils/InputUtils';
@@ -23,14 +23,18 @@ class RecoveryConfig extends Component {
 
     const renderOptionToDiscard = () => (
       <>
-        <div>
-          <input type="radio" id="cure" name="option" value="current" checked={!option} onChange={() => onChange(false)} />
-          <label htmlFor="current" style={{ cursor: 'pointer', position: 'relative', top: '-2px', left: '5px' }} aria-hidden="true" onClick={() => onChange(false)}>{t('title.differntial.preserve.current')}</label>
-        </div>
-        <div className="padding-left-30">
-          <input type="radio" id="previous" name="option" value="previous" checked={option} onChange={() => onChange(true)} />
-          <label htmlFor="previous" style={{ cursor: 'pointer', position: 'relative', top: '-2px', left: '5px' }} aria-hidden="true" onClick={() => onChange(true)}>{t('title.differential.discard.partial.changes')}</label>
-        </div>
+        <Row className="recovey_warn_text padding-top-10">
+          <Col sm={12}>
+            {' '}
+            <input type="radio" id="cure" name="option" value="current" checked={!option} onChange={() => onChange(false)} />
+            <label htmlFor="current" style={{ cursor: 'pointer', position: 'relative', top: '-2px', left: '5px' }} aria-hidden="true" onClick={() => onChange(false)}>{t('title.differntial.preserve.current')}</label>
+          </Col>
+          <Col sm={12}>
+            <input type="radio" id="previous" name="option" value="previous" checked={option} onChange={() => onChange(true)} />
+            <label htmlFor="previous" style={{ cursor: 'pointer', position: 'relative', top: '-2px', left: '5px' }} aria-hidden="true" onClick={() => onChange(true)}>{t('title.differential.discard.partial.changes')}</label>
+          </Col>
+        </Row>
+
       </>
     );
 
@@ -41,7 +45,7 @@ class RecoveryConfig extends Component {
       return (
         <div className="margin-top-5 card_note_warning ">
           <p className="rev_diff_warning">{t('reovery.discard.warning.txt')}</p>
-          { vmNotCompletedReplication.map((el) => <li style={{ width: '800px', paddingLeft: '22px', position: 'relative', top: '-10px' }}>{el}</li>)}
+          { vmNotCompletedReplication.map((el) => <li style={{ width: '800px', paddingLeft: '15px', position: 'relative', top: '-10px' }}>{el}</li>)}
         </div>
       );
     };
@@ -62,9 +66,8 @@ class RecoveryConfig extends Component {
               <>
                 <CardTitle>{t('Recovery Mode')}</CardTitle>
                 {renderWarningText()}
-                <Form className="form_w recovey_warn_text">
-                  {renderOptionToDiscard()}
-                </Form>
+
+                {renderOptionToDiscard()}
               </>
             ) : null}
           </CardBody>
