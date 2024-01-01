@@ -500,3 +500,25 @@ function setVMProperties(vm, values) {
   vmConfig.replicationPriority = replicationPriority;
   return vmConfig;
 }
+
+export function getConfigureIDPPayload(user, settings) {
+  const { values } = user;
+  const { idp } = settings;
+  const { roleMaps = [] } = idp;
+  const payload = getKeyStruct('configureIDP', values);
+  // role mapping
+  const roles = getValue('configureIDP.roleMaps', values);
+  const roleMap = [];
+  for (let index = 0; index < roles.length; index += 1) {
+    const role = roles[index];
+    // check if role is already mapped with id
+    const oldRole = roleMaps.filter((r) => r.adRole === role.key);
+    if (oldRole.length > 0) {
+      roleMap.push({ adRole: role.key, dmRole: role.value, id: oldRole[0].id });
+    } else {
+      roleMap.push({ adRole: role.key, dmRole: role.value });
+    }
+  }
+  payload.configureIDP.roleMaps = roleMap;
+  return payload;
+}

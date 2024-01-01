@@ -113,3 +113,9 @@ export const API_USER_PRIVILEGES = 'api/v1/users/<id>/privileges';
 
 // scripts
 export const API_USER_SCRIPT = 'api/v1/script';
+
+// SAML
+export const API_SAML = 'login/saml';
+export const API_SAML_METADATA = 'saml/metadata';
+export const API_IDP = 'api/v1/idp';
+export const API_UPLOAD_IDP_CONFIG = 'api/v1/idp/upload';

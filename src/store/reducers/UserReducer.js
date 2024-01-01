@@ -43,6 +43,14 @@ export default function user(state = INITIAL_STATE.user, action) {
           [action.key]: action.value,
         },
       };
+    case Types.VALUE_CHANGES:
+      return {
+        ...state,
+        values: {
+          ...state.values,
+          ...action.values,
+        },
+      };
     case Types.ADD_ERROR_MESSAGE:
       return {
         ...state,

@@ -1,7 +1,7 @@
 // import { addMessage, clearMessages } from './MessageActions';
 import * as Types from '../../constants/actionTypes';
 import { API_AUTHENTICATE, API_AWS_REGIONS, API_AZURE_REGIONS, API_CHANGE_NODE_PASSWORD, API_CHANGE_PASSWORD, API_GCP_REGIONS, API_INFO, API_SCRIPTS, API_USERS, API_USER_PRIVILEGES, API_USER_SCRIPT } from '../../constants/ApiConstants';
-import { APP_TYPE, NODE_TYPES, PLATFORM_TYPES, STATIC_KEYS, VMWARE_OBJECT } from '../../constants/InputConstants';
+import { APP_TYPE, NODE_TYPES, PLATFORM_TYPES, SAML, STATIC_KEYS, VMWARE_OBJECT } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH } from '../../constants/RouterConstants';
 import { APPLICATION_API_USER } from '../../constants/UserConstant';
@@ -90,6 +90,13 @@ export function valueChange(key, value) {
     type: Types.VALUE_CHANGE,
     key,
     value,
+  };
+}
+
+export function valueChanges(values) {
+  return {
+    type: Types.VALUE_CHANGES,
+    values,
   };
 }
 
@@ -409,12 +416,11 @@ export function setPrivileges(privileges) {
 
 export function getUserInfo() {
   return (dispatch) => {
-    const username = getCookie(APPLICATION_API_USER);
-    if (typeof username === 'undefined') {
-      dispatch(logOutUser());
-      return;
+    let username = getCookie(APPLICATION_API_USER);
+    if (username === '' || typeof username === 'undefined') {
+      username = SAML.DEFAULT_USERNAME;
     }
-    const url = `${API_USERS}?name=${username}`;
+    const url = `${API_USERS}?username=${username}`;
     dispatch(showApplicationLoader(url, 'Loading...'));
     return callAPI(url).then((json) => {
       dispatch(hideApplicationLoader(url));
@@ -422,8 +428,12 @@ export function getUserInfo() {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
         if (json && json.length >= 1) {
-          // setCookie(APPLICATION_API_USER_ID, json[0].id);
-          dispatch(getUserPrivileges(json[0].id));
+          setCookie(APPLICATION_API_USER, json[0].username);
+          if (json[0].id === '' || typeof json[0].id === 'undefined' || json[0].id === 0) {
+            dispatch(getUserPrivileges(SAML.DEFAULT_USER_ID));
+          } else {
+            dispatch(getUserPrivileges(json[0].id));
+          }
           return;
         }
         dispatch(addMessage('Failed to fetch user details', MESSAGE_TYPES.ERROR));

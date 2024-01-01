@@ -381,7 +381,7 @@ span.flatpickr-weekday {
 
 .login-icon{
   position: absolute;
-  bottom: 88px;
+  bottom: 190px;
   right: 40px;
 }
 
@@ -634,4 +634,13 @@ span.flatpickr-weekday {
 .recovey_warn_text{
   display: flex;
   width: 100%;
+}
+
+// Helper scss
+.text-center {
+  text-align: center;
+}
+
+.horizontal-line {
+  border-bottom: $horizontal-line-height $horizontal-line-style $horizontal-line-color;
 }

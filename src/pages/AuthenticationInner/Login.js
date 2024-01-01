@@ -13,6 +13,8 @@ import ChangePassword from './ChangePassword';
 import logo from '../../assets/images/logo.png';
 import logoName from '../../assets/images/name.png';
 import { getInfo, login } from '../../store/actions';
+import { API_SAML } from '../../constants/ApiConstants';
+import saml from '../../assets/images/saml.svg';
 
 class Login extends Component {
   constructor() {
@@ -21,6 +23,7 @@ class Login extends Component {
     this.onSubmit = this.onSubmit.bind(this);
     this.togglePassword = this.togglePassword.bind(this);
     this.showPassword = this.showPassword.bind(this);
+    this.onActiveDirectoryLogin = this.onActiveDirectoryLogin.bind(this);
   }
 
   componentDidMount() {
@@ -42,6 +45,12 @@ class Login extends Component {
     const { dispatch, history } = this.props;
     const { userName, password } = this.state;
     dispatch(login({ username: userName, password, history }));
+  }
+
+  // function to open saml login page in same tab
+  onActiveDirectoryLogin = (e) => {
+    e.preventDefault();
+    window.open(`https://${window.location.host}/${API_SAML}`, '_self');
   }
 
   togglePassword() {
@@ -120,7 +129,6 @@ class Login extends Component {
                             id="userName"
                             onChange={this.handleChange}
                             autoComplete="off"
-                            autoFocus="autoFocus"
                             required
                           />
                         </div>
@@ -149,13 +157,27 @@ class Login extends Component {
                             Log In
                           </button>
                         </div>
-                        {/* <div className="container login">
-                          <div className="row">
-                            <div className="col-sm-8 text-align sign-up">
-                              <a href="" className="text-align text-success margin-bottom-15">Forgot Password</a>
-                            </div>
+                        <div className="mt-3 text-center muted">
+                          <hr />
+                          <div>
+                            Or Sign In With
                           </div>
-                        </div> */}
+                        </div>
+                        <div className="mt-3">
+                          <button
+                            className="btn btn-secondary btn-block waves-effect waves-light"
+                            type="button"
+                            onClick={this.onActiveDirectoryLogin}
+                          >
+                            <img
+                              src={saml}
+                              alt=""
+                              className="rounded-circle"
+                              height="22"
+                            />
+                            Active Directory
+                          </button>
+                        </div>
                       </AvForm>
                     </div>
                   </CardBody>
