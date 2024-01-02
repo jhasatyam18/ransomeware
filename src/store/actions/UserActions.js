@@ -6,7 +6,7 @@ import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH } from '../../constants/RouterConstants';
 import { APPLICATION_API_USER } from '../../constants/UserConstant';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
-import { getCookie, setCookie } from '../../utils/CookieUtils';
+import { getCookie, setCookie, removeCookie } from '../../utils/CookieUtils';
 import { onInit } from '../../utils/HistoryUtil';
 import { getMatchingInsType, getValue, getVMwareLocationPath, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { fetchByDelay } from '../../utils/SlowFetch';
@@ -82,6 +82,13 @@ export function loginFailed() {
 export function logOutUser() {
   return {
     type: Types.AUTHENTICATE_USER_FAILED,
+  };
+}
+
+export function removeCookies() {
+  return () => {
+    setCookie(APPLICATION_API_USER, '');
+    removeCookie(APPLICATION_API_USER);
   };
 }
 
@@ -379,6 +386,7 @@ export function changeUserPassword(oldPass, newPass) {
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
+        dispatch(removeCookies());
         dispatch(logOutUser());
         window.location.reload();
       }
@@ -437,6 +445,7 @@ export function getUserInfo() {
           return;
         }
         dispatch(addMessage('Failed to fetch user details', MESSAGE_TYPES.ERROR));
+        dispatch(removeCookies());
         dispatch(logOutUser());
       }
     },
