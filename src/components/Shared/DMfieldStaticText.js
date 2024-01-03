@@ -4,7 +4,7 @@ import { NOTE_TEXT } from '../../constants/DMNoteConstant';
 
 function DMFieldStaticText(props) {
   const { field, user, fieldKey } = props;
-  const { shouldShow, text, icon, textType } = field;
+  const { shouldShow, text, icon, textType, className } = field;
   const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user, fieldKey) : shouldShow);
   if (!showField) return null;
   let css = '';
@@ -18,13 +18,11 @@ function DMFieldStaticText(props) {
   const renderText = () => {
     if (text) {
       return (
-        <span className={`${css} `}>
-          <p>
-            <i className={`${icon}`} />
+        <p className={`${css} ${className || ''}`}>
+          <i className={`${icon}`} />
             &nbsp;&nbsp;
-            {text}
-          </p>
-        </span>
+          {text}
+        </p>
       );
     }
   };

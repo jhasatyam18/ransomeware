@@ -36,3 +36,15 @@
 .card_note_error{
   color:$red;
 }
+
+.card_node{
+  position: relative;
+  top: -5px;
+  font-size: 11px;
+  line-height: 145%;
+}
+
+.rec_warn_text{
+  position: relative;
+  top: -12px;
+}

@@ -514,6 +514,7 @@ export async function validateRecoveryVMs({ user, dispatch }) {
               }
             });
             dispatch(valueChange('recovery.discard.warning.vms', warningVMS));
+            dispatch(valueChange('recovery.discardPartialChanges', true));
             return showValidationInfo(response, dispatch);
           }
           return true;
