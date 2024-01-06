@@ -12,15 +12,16 @@ import { Link } from 'react-router-dom';
 import { withTranslation } from 'react-i18next';
 
 // users
-import { logOutUser, initChangePassword } from '../../../store/actions';
+import { logOutUser, initChangePassword, removeCookies } from '../../../store/actions';
 import { addMessage } from '../../../store/actions/MessageActions';
 import { openModal } from '../../../store/actions/ModalActions';
 import { MODAL_ABOUT } from '../../../constants/Modalconstant';
 import { APPLICATION_API_USER } from '../../../constants/UserConstant';
-import { API_LOGOUT } from '../../../constants/ApiConstants';
+import { API_LOGOUT, API_SAML_LOGOUT } from '../../../constants/ApiConstants';
 import { MESSAGE_TYPES } from '../../../constants/MessageConstants';
 import { getCookie } from '../../../utils/CookieUtils';
 import { API_TYPES, callAPI, createPayload } from '../../../utils/ApiUtils';
+import { fetchByDelay } from '../../../utils/SlowFetch';
 
 class ProfileMenu extends Component {
   constructor(props) {
@@ -35,10 +36,18 @@ class ProfileMenu extends Component {
   }
 
   logout() {
-    const { dispatch } = this.props;
+    const { dispatch, user } = this.props;
     const obj = createPayload(API_TYPES.POST, {});
+    const { id = 0 } = user;
+    // check if the user is logged in using SAML
+    // if yes, then redirect to the SAML logout page
+    if (id === 0) {
+      window.open(`https://${window.location.host}/${API_SAML_LOGOUT}`, '_self');
+      return;
+    }
     callAPI(API_LOGOUT, obj).then(() => {
-      dispatch(logOutUser());
+      dispatch(removeCookies());
+      fetchByDelay(dispatch, logOutUser, 100);
     },
     (err) => {
       dispatch(logOutUser());

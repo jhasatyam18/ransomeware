@@ -4,7 +4,7 @@ import { API_AUTHENTICATE, API_AWS_REGIONS, API_AZURE_REGIONS, API_CHANGE_NODE_P
 import { APP_TYPE, NODE_TYPES, PLATFORM_TYPES, SAML, STATIC_KEYS, VMWARE_OBJECT } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH } from '../../constants/RouterConstants';
-import { APPLICATION_API_USER } from '../../constants/UserConstant';
+import { APPLICATION_API_USER, APPLICATION_AUTHORIZATION, APPLICATION_UID } from '../../constants/UserConstant';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { getCookie, setCookie, removeCookie } from '../../utils/CookieUtils';
 import { onInit } from '../../utils/HistoryUtil';
@@ -88,7 +88,11 @@ export function logOutUser() {
 export function removeCookies() {
   return () => {
     setCookie(APPLICATION_API_USER, '');
+    setCookie(APPLICATION_UID, '');
+    setCookie(APPLICATION_AUTHORIZATION, '');
     removeCookie(APPLICATION_API_USER);
+    removeCookie(APPLICATION_UID);
+    removeCookie(APPLICATION_AUTHORIZATION);
   };
 }
 
@@ -425,7 +429,8 @@ export function setPrivileges(privileges) {
 export function getUserInfo() {
   return (dispatch) => {
     let username = getCookie(APPLICATION_API_USER);
-    if (username === '' || typeof username === 'undefined') {
+    const uid = getCookie(APPLICATION_UID);
+    if (username === '' || typeof username === 'undefined' || (typeof uid !== 'undefined' && uid === '0')) {
       username = SAML.DEFAULT_USERNAME;
     }
     const url = `${API_USERS}?username=${username}`;
@@ -437,6 +442,7 @@ export function getUserInfo() {
       } else {
         if (json && json.length >= 1) {
           setCookie(APPLICATION_API_USER, json[0].username);
+          setCookie(APPLICATION_UID, json[0].id);
           if (json[0].id === '' || typeof json[0].id === 'undefined' || json[0].id === 0) {
             dispatch(getUserPrivileges(SAML.DEFAULT_USER_ID));
           } else {
