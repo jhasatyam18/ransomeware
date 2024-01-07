@@ -247,7 +247,7 @@ export function onProtectionPlanChange({ value, allowDeleted }) {
                   }
                 }
                 dispatch(valueChange(`${vm.moref}-vmConfig.general.guestOS`, vm.guestOS));
-                dispatch(valueChange(`${vm.moref}-vmConfig.general.firmwareType`, vm.firmwareType));
+                dispatch(valueChange(`${vm.moref}-vmConfig.general.firmwareType`, getMatchingFirmwareType(vm.firmwareType)));
                 dispatch(valueChange(`${vm.moref}-vmConfig.general.encryptionKey`, vm.encryptionKey));
                 data.push(vm);
               }

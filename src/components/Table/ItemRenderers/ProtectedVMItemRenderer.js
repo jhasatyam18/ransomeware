@@ -4,6 +4,7 @@ import { addMessage } from '../../../store/actions/MessageActions';
 import { MESSAGE_TYPES } from '../../../constants/MessageConstants';
 import { isVMRecovered } from '../../../utils/validationUtils';
 import { valueChange } from '../../../store/actions';
+import { getMatchingFirmwareType } from '../../../utils/InputUtils';
 
 function ProtectedVMItemRenderer({ data, dispatch }) {
   if (!data || isVMRecovered(data)) {
@@ -21,7 +22,7 @@ function ProtectedVMItemRenderer({ data, dispatch }) {
       return;
     }
     dispatch(valueChange(`${data.moref}-vmConfig.general.guestOS`, data.guestOS));
-    dispatch(valueChange(`${data.moref}-vmConfig.general.firmwareType`, data.firmwareType));
+    dispatch(valueChange(`${data.moref}-vmConfig.general.firmwareType`, getMatchingFirmwareType(data.firmwareType)));
     dispatch(initReconfigureProtectedVM(pathArray[pathArray.length - 1], data.moref, null, null));
   };
 

@@ -1158,6 +1158,18 @@ export function getMatchingFirmwareType(value) {
       }
     });
   }
+  if (res !== '') {
+    return res;
+  }
+  if (value.toLowerCase().indexOf('uefi_secure_vTPM') !== -1) {
+    return SUPPORTED_FIRMWARE.UEFISecurevTPM;
+  }
+  if (value.toLowerCase().indexOf('uefi_vTPM') !== -1) {
+    return SUPPORTED_FIRMWARE.UEFIvTPM;
+  }
+  if (value.toLowerCase().indexOf('uefi_secure') !== -1) {
+    return SUPPORTED_FIRMWARE.UEFISecure;
+  }
   if (value.toLowerCase().indexOf('bios') !== -1) {
     res = SUPPORTED_FIRMWARE.BIOS;
   }

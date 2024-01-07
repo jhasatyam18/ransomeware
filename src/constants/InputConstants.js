@@ -159,6 +159,9 @@ export const SUPPORTED_GUEST_OS = {
 export const SUPPORTED_FIRMWARE = {
   BIOS: 'bios',
   UEFI: 'uefi',
+  UEFISecure: 'uefi_secure',
+  UEFIvTPM: 'uefi_vTPM',
+  UEFISecurevTPM: 'uefi_secure_vTPM',
 };
 
 export const NODE_STATUS = {
