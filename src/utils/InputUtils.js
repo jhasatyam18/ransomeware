@@ -1190,3 +1190,15 @@ export function getDatamotiveRoles(user) {
   rListOptions.push({ label: '', value: '' });
   return rListOptions;
 }
+
+export function userRoleOptions(user) {
+  const { roles } = user;
+  const result = [];
+  if (roles) {
+    roles.reduce((previous, next) => {
+      previous.push({ label: next.name, value: next.name });
+      return previous;
+    }, result);
+  }
+  return result;
+}

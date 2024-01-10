@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom';
 import { withTranslation } from 'react-i18next';
 
 // users
-import { logOutUser, initChangePassword, removeCookies } from '../../../store/actions';
+import { initChangePassword, logOutUser, removeCookies } from '../../../store/actions';
 import { addMessage } from '../../../store/actions/MessageActions';
 import { openModal } from '../../../store/actions/ModalActions';
 import { MODAL_ABOUT } from '../../../constants/Modalconstant';

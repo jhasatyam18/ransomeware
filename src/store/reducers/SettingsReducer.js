@@ -21,6 +21,8 @@ export default function settings(state = INITIAL_STATE.settings, action) {
       return { ...state, licenses: action.licenses };
     case Types.FETCH_IDP:
       return { ...state, idp: action.data };
+    case Types.SET_SELECTED_USERS:
+      return { ...state, selectedUsers: action.selectedUsers };
     default:
       return state;
   }

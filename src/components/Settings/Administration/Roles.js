@@ -6,59 +6,41 @@ import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import classnames from 'classnames';
 import DMBreadCrumb from '../../Common/DMBreadCrumb';
-import { hideApplicationLoader, showApplicationLoader } from '../../../store/actions';
-import { addMessage } from '../../../store/actions/MessageActions';
-import { MESSAGE_TYPES } from '../../../constants/MessageConstants';
-import { API_ROLES } from '../../../constants/ApiConstants';
-import { callAPI } from '../../../utils/ApiUtils';
+import { fetchUsers } from '../../../store/actions';
+import { fetchRoles } from '../../../store/actions/RolesAction';
 
 function Roles(props) {
-  const { dispatch, t } = props;
-  const [roles, setRoles] = useState([]);
+  const { dispatch, t, user } = props;
+  const { users, roles } = user;
   const [activeRoleID, setActiveRoleID] = useState(1);
   const [activeTab, setActiveTab] = useState('1');
-  const [privileges, setPrivileges] = useState([]);
   const [roleUsers, setRoleUsers] = useState([]);
+  const [privileges, setPrivileges] = useState([]);
+  const DefaultPrivileges = roles.length > 0 ? roles[0].privileges : [];
+  const DefaultRoleUser = users.length > 0 ? users.filter((el) => el.role.idu === 1) : [];
+
+  const fetchUserByRole = (id) => {
+    const filteredUser = users.filter((el) => el.role.idu === id);
+    setRoleUsers(filteredUser);
+  };
 
   const setSelectedRoleData = (id) => {
     roles.forEach((role) => {
       if (role.id === id) {
         setActiveRoleID(id);
         setPrivileges(role.privileges);
-        setRoleUsers(role.users);
+        fetchUserByRole(id);
       }
-    });
-  };
-
-  const fetchRoles = () => {
-    dispatch(showApplicationLoader(API_ROLES, 'loading roles'));
-    callAPI(API_ROLES).then((json) => {
-      dispatch(hideApplicationLoader(API_ROLES));
-      if (json.hasError) {
-        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
-      } else {
-        setRoles(json);
-        if (json && json.length > 0) {
-          const role = json[0];
-          if (role) {
-            setActiveRoleID(role.id);
-            setPrivileges(role.privileges);
-            setRoleUsers(role.users);
-          }
-        }
-      }
-    },
-    (err) => {
-      dispatch(hideApplicationLoader(API_ROLES));
-      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
   };
 
   useEffect(() => {
     let isUnmounting = false;
     if (!isUnmounting) {
-      fetchRoles();
+      dispatch(fetchUsers());
+      dispatch(fetchRoles());
     }
+
     return () => {
       isUnmounting = true;
     };
@@ -87,7 +69,16 @@ function Roles(props) {
           <Th>{t('username')}</Th>
           <Th>{t('description')}</Th>
         </Tr>
-        {roleUsers.map((u) => (
+        {roleUsers.length > 0 ? roleUsers.map((u) => (
+          <Tr key={`user-${u.id}`}>
+            <Td>
+              {u.username}
+            </Td>
+            <Td>
+              {u.description}
+            </Td>
+          </Tr>
+        )) : DefaultRoleUser.map((u) => (
           <Tr key={`user-${u.id}`}>
             <Td>
               {u.username}
@@ -104,7 +95,13 @@ function Roles(props) {
   const renderPrivileges = () => (
     <Table className="table table-bordered">
       <Tbody>
-        {privileges.map((u) => (
+        {privileges.length > 0 ? privileges.map((u) => (
+          <Tr key={`privilege-${u.id}`}>
+            <Td>
+              {u.name}
+            </Td>
+          </Tr>
+        )) : DefaultPrivileges.map((u) => (
           <Tr key={`privilege-${u.id}`}>
             <Td>
               {u.name}
@@ -168,7 +165,7 @@ function Roles(props) {
 }
 
 function mapStateToProps(state) {
-  const { user } = state;
-  return { user };
+  const { user, settings } = state;
+  return { user, settings };
 }
 export default connect(mapStateToProps)(withTranslation()(Roles));

@@ -238,6 +238,8 @@ export const TABLE_LICENSES = [
 
 export const TABLE_USERS = [
   { label: 'Username', field: 'username' },
+  { label: 'Full Name', field: 'fullName' },
+  { label: 'Email', field: 'email' },
   { label: 'Description', field: 'description' },
   { label: 'Role', field: 'role', itemRenderer: ROLE_ITEM_RENDERER },
 ];
