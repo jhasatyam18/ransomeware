@@ -6,6 +6,7 @@ import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH } from '../../constants/RouterConstants';
 import { APPLICATION_API_USER } from '../../constants/UserConstant';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
+import { decrypt } from '../../utils/EncryptionUtils';
 import { getCookie, setCookie } from '../../utils/CookieUtils';
 import { onInit } from '../../utils/HistoryUtil';
 import { getMatchingInsType, getValue, getVMwareLocationPath, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
@@ -23,6 +24,7 @@ import { fetchBandwidthConfig, fetchBandwidthReplNodes } from './ThrottlingActio
 import { MODAL_USER_SCRIPT } from '../../constants/Modalconstant';
 import { fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
 import { fetchSelectedVmsProperty, fetchVMwareComputeResource, fetchVMwareNetwork, getVMwareConfigDataForField, setVMwareAPIResponseData } from './VMwareActions';
+import { string } from 'prop-types';
 
 export function refreshApplication() {
   return {
@@ -438,7 +440,10 @@ export function getUserInfo() {
 }
 
 export function getUserPrivileges(id) {
-  return (dispatch) => {
+  return (dispatch, state) => {
+    const { user } = state();
+    const { license } = user;
+    const { nodeKey } = license;
     const url = API_USER_PRIVILEGES.replace('<id>', id);
     dispatch(showApplicationLoader(API_USER_PRIVILEGES, 'Loading...'));
     return callAPI(url).then((json) => {
@@ -446,7 +451,10 @@ export function getUserPrivileges(id) {
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
-        dispatch(setPrivileges(json));
+        // decrypt the privileges
+        let data = decrypt(json.privileges[0], nodeKey);
+        data = string.join(data, '');
+        dispatch(setPrivileges(data));
       }
     },
     (err) => {
