@@ -21,6 +21,8 @@ import ModalShowSummary from './ModalShowSummary';
 import ModalChangeNodePassword from './ModalChangeNodePassword';
 import ModalShowResetedVms from './ModalShowResetVm';
 import ModalReplicationPriority from './ModalReplicationPriority';
+import ModalConfigureUser from './ModalConfigureUser';
+import ModalResetCredentials from './ModalResetCredentials';
 
 class DMModal extends Component {
   constructor() {
@@ -74,6 +76,10 @@ class DMModal extends Component {
           return <ModalShowResetedVms dispatch={dispatch} user={user} options={options} />;
         case MODALS.MODAL_REPLICATION_PRIORITY:
           return <ModalReplicationPriority dispatch={dispatch} user={user} />;
+        case MODALS.MODAL_ADD_NEW_USER:
+          return <ModalConfigureUser dispatch={dispatch} user={user} {...this.props} />;
+        case MODALS.MODAL_RESET_CREDENTIALS:
+          return <ModalResetCredentials dispatch={dispatch} user={user} {...this.props} />;
         default:
           return (<div>404</div>);
       }

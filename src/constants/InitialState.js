@@ -12,6 +12,8 @@ const INITIAL_STATE = {
     isAuthenticated: false,
     token: '',
     userName: '',
+    userRole: '',
+    isSystemDefault: false,
     isValidating: false,
     values: {},
     errors: {},
@@ -21,6 +23,8 @@ const INITIAL_STATE = {
     privileges: [],
     license: { applicationKey: '', version: '-' },
     tree: { treeKey: '' },
+    roles: [],
+    users: [],
   },
   sites: { sites: [], selectedSites: [] },
   drPlans: { plans: [], selectedPlans: [], recoveryPlan: {} },
@@ -36,7 +40,7 @@ const INITIAL_STATE = {
   },
   events: { data: [], selected: {}, filteredData: [] },
   alerts: { data: [], selected: {}, associatedEvent: {}, unread: [], filteredData: [] },
-  settings: { bundles: [], nodes: [], selectedNodes: [], emailConfig: null, emailRecipients: [], licenses: [], replNodes: [] },
+  settings: { bundles: [], nodes: [], selectedNodes: [], emailConfig: null, emailRecipients: [], licenses: [], replNodes: [], selectedUsers: [] },
   reports: { criteria: {}, result: {} },
 };
 

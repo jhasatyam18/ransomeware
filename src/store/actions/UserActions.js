@@ -1,9 +1,9 @@
 // import { addMessage, clearMessages } from './MessageActions';
 import * as Types from '../../constants/actionTypes';
-import { API_AUTHENTICATE, API_AWS_REGIONS, API_AZURE_REGIONS, API_CHANGE_NODE_PASSWORD, API_CHANGE_PASSWORD, API_GCP_REGIONS, API_INFO, API_SCRIPTS, API_USERS, API_USER_PRIVILEGES, API_USER_SCRIPT } from '../../constants/ApiConstants';
+import { API_ADD_USER, API_AUTHENTICATE, API_AWS_REGIONS, API_AZURE_REGIONS, API_CHANGE_NODE_PASSWORD, API_CHANGE_PASSWORD, API_GCP_REGIONS, API_INFO, API_SCRIPTS, API_USERS, API_USER_PRIVILEGES, API_USER_SCRIPT } from '../../constants/ApiConstants';
 import { APP_TYPE, NODE_TYPES, PLATFORM_TYPES, STATIC_KEYS, VMWARE_OBJECT } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH } from '../../constants/RouterConstants';
+import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH, USER_SETTINGS_PATH } from '../../constants/RouterConstants';
 import { APPLICATION_API_USER } from '../../constants/UserConstant';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { decrypt } from '../../utils/EncryptionUtils';
@@ -221,6 +221,105 @@ export function fetchRegions(TYPE) {
   };
 }
 
+export function fetchUsersData(data) {
+  return {
+    type: Types.FETCH_USERS,
+    data,
+  };
+}
+
+export function setSelectedUsers(selectedUsers) {
+  return {
+    type: Types.SET_SELECTED_USERS,
+    selectedUsers,
+  };
+}
+
+export function fetchUsers() {
+  return (dispatch) => {
+    dispatch(showApplicationLoader(API_USERS, 'loading users'));
+    return callAPI(API_USERS)
+      .then((json) => {
+        dispatch(hideApplicationLoader(API_USERS));
+        if (json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          dispatch(fetchUsersData(json));
+        }
+      },
+      (err) => {
+        dispatch(hideApplicationLoader(API_USERS));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  };
+}
+
+export function removeUser(id) {
+  return (dispatch) => {
+    dispatch(showApplicationLoader(`${API_USERS}-${id}`, 'Removing User'));
+    const obj = createPayload(API_TYPES.DELETE, {});
+    return callAPI(`${API_USERS}/${id}`, obj)
+      .then((json) => {
+        dispatch(hideApplicationLoader(`${API_USERS}-${id}`));
+        if (json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          dispatch(addMessage('User deleted successfully', MESSAGE_TYPES.INFO));
+          dispatch(fetchUsers());
+          dispatch(setSelectedUsers([]));
+          dispatch(closeModal());
+        }
+      },
+      (err) => {
+        dispatch(hideApplicationLoader(`${API_USERS}-${id}`));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  };
+}
+
+export function configureUser(payload, isUpdate = false) {
+  return (dispatch) => {
+    let url = API_ADD_USER;
+    if (isUpdate) {
+      url = `${url}/${payload.id}`;
+    }
+    const obj = createPayload(isUpdate ? API_TYPES.PUT : API_TYPES.POST, { ...payload.configureUser });
+    dispatch(showApplicationLoader('configuring-user', 'Configuring User...'));
+    return callAPI(url, obj).then((json) => {
+      dispatch(hideApplicationLoader('configuring-user'));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        dispatch(addMessage('User configuration successful', MESSAGE_TYPES.SUCCESS));
+        dispatch(fetchUsers());
+        dispatch(clearValues());
+        dispatch(closeModal());
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('configuring-user'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+  };
+}
+
+export function handleUserTableSelection(data, isSelected, primaryKey) {
+  return (dispatch, getState) => {
+    const { settings } = getState();
+    const { selectedUsers } = settings;
+    if (isSelected) {
+      if (!selectedUsers || selectedUsers.length === 0 || !selectedUsers[data[primaryKey]]) {
+        const newUsers = { ...selectedUsers, [data[primaryKey]]: data };
+        dispatch(setSelectedUsers(newUsers));
+      }
+    } else if (selectedUsers[data[primaryKey]]) {
+      const newUsers = selectedUsers;
+      delete newUsers[data[primaryKey]];
+      dispatch(setSelectedUsers(newUsers));
+    }
+  };
+}
+
 export function refresh() {
   return (dispatch) => {
     const { location } = window;
@@ -262,6 +361,9 @@ export function refresh() {
       case THROTTLING_SETTINGS_PATH:
         dispatch(fetchBandwidthConfig());
         dispatch(fetchBandwidthReplNodes());
+        break;
+      case USER_SETTINGS_PATH:
+        dispatch(fetchUsers());
         break;
       default:
         dispatch(detailPathChecks(pathname));
@@ -367,9 +469,9 @@ export function changeUserPassword(oldPass, newPass) {
     const { user } = getState();
     const { token } = user;
     dispatch(showApplicationLoader('CHANGE_PASSWORD', 'Changing password...'));
-    const name = getCookie(APPLICATION_API_USER) || '';
-    const obj = createPayload(API_TYPES.PUT, { username: getCookie(APPLICATION_API_USER), oldPassword: oldPass, newPassword: newPass });
-    return callAPI(API_CHANGE_PASSWORD.replace('<name>', name), obj, token).then((json) => {
+    // const name = getCookie(APPLICATION_API_USER) || '';
+    const obj = createPayload(API_TYPES.POST, { username: getCookie(APPLICATION_API_USER), oldPassword: oldPass, newPassword: newPass });
+    return callAPI(API_CHANGE_PASSWORD, obj, token).then((json) => {
       dispatch(hideApplicationLoader('CHANGE_PASSWORD'));
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
@@ -409,6 +511,13 @@ export function setPrivileges(privileges) {
   };
 }
 
+export function setUserDetails(data) {
+  return {
+    type: Types.SET_USER_DETAILS,
+    data,
+  };
+}
+
 export function getUserInfo() {
   return (dispatch) => {
     const username = getCookie(APPLICATION_API_USER);
@@ -425,7 +534,9 @@ export function getUserInfo() {
       } else {
         if (json && json.length >= 1) {
           // setCookie(APPLICATION_API_USER_ID, json[0].id);
-          dispatch(getUserPrivileges(json[0].id));
+          const newJson = json.filter((res) => res.username.toLocaleLowerCase() === username.toLocaleLowerCase());
+          dispatch(getUserPrivileges(newJson[0].id));
+          dispatch(setUserDetails(newJson[0]));
           return;
         }
         dispatch(addMessage('Failed to fetch user details', MESSAGE_TYPES.ERROR));

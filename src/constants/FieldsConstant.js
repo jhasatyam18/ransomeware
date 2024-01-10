@@ -6,7 +6,7 @@ import { onPlatformTypeChange, onNodeTypeChange } from '../store/actions';
 import { onProtectionPlanChange } from '../store/actions/DrPlanActions';
 import { onProtectSiteChange, updateAvailabilityZones } from '../store/actions/SiteActions';
 import { onLimitChange, onTimeLimitChange } from '../store/actions/ThrottlingAction';
-import { getAvailibilityZoneOptions, enableNodeTypeVM, getDefaultRecoverySite, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getReportProtectionPlans, getSiteNodeOptions, getSubnetOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort, getVMwareVMSelectionData, showInstallCloudPackageOption, isPlatformTypeAzure, showDifferentialReverseCheckbox, disableSiteSelection, getSitesOptions, showRevPrefix, showReverseReplType } from '../utils/InputUtils';
+import { getAvailibilityZoneOptions, enableNodeTypeVM, getDefaultRecoverySite, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getReportProtectionPlans, getSiteNodeOptions, getSubnetOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort, getVMwareVMSelectionData, showInstallCloudPackageOption, isPlatformTypeAzure, showDifferentialReverseCheckbox, disableSiteSelection, getSitesOptions, showRevPrefix, showReverseReplType, userRoleOptions } from '../utils/InputUtils';
 import { validatePlanSiteSelection, isEmpty, validateDrSiteSelection, validatePassword, validateReplicationInterval, validateReplicationValue, showReverseWarningText } from '../utils/validationUtils';
 import { STATIC_KEYS } from './InputConstants';
 import { EMAIL_REGEX, FQDN_REGEX, HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX, PASSWORD_REGEX } from './ValidationConstants';
@@ -234,5 +234,25 @@ export const FIELDS = {
   'ui.automate.migration': { label: 'auto.migration', type: FIELD_TYPE.CHECKBOX, shouldShow: true, fieldInfo: 'info.auto.migration', default: false },
   'ui.new.password': { label: 'New Password', placeHolderText: 'Enter new password', type: FIELD_TYPE.PASSWORD, patterns: [PASSWORD_REGEX], errorMessage: 'Password should have atleast 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character and be at least 8 characters long.', shouldShow: true },
   'ui.cnfm.password': { label: 'Confirm Password', placeHolderText: 'Confirm password', type: FIELD_TYPE.PASSWORD, validate: (v, u) => validatePassword(v, u), errorMessage: 'New password and confirm password does not match', shouldShow: true },
-
+  'configureUser.username': {
+    label: 'username', placeHolderText: 'Username', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Username required', shouldShow: true, fieldInfo: 'info.user.name',
+  },
+  'configureUser.password': {
+    label: 'password', placeHolderText: 'Enter Password', type: FIELD_TYPE.PASSWORD, patterns: [PASSWORD_REGEX], errorMessage: 'Password should have atleast 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character and be at least 8 characters long.', shouldShow: true, fieldInfo: 'info.user.password',
+  },
+  'configureUser.fullName': {
+    label: 'user.fullname', placeHolderText: 'Fullname', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Full Name required', shouldShow: true, fieldInfo: 'info.user.fullname',
+  },
+  'configureUser.email': {
+    label: 'email', placeHolderText: 'Email', type: FIELD_TYPE.TEXT, shouldShow: true, fieldInfo: 'info.user.email',
+  },
+  'configureUser.description': {
+    label: 'description', placeHolderText: 'Description', type: FIELD_TYPE.TEXT, shouldShow: true, fieldInfo: 'info.user.description',
+  },
+  'configureUser.role': {
+    label: 'user.role', placeHolderText: 'Select Role', type: FIELD_TYPE.SELECT, options: (user) => userRoleOptions(user), validate: (value, user) => isEmpty(value, user), errorMessage: 'User Role required', shouldShow: true, fieldInfo: 'info.user.role',
+  },
+  'reset.oldPassword': {
+    label: 'password', placeHolderText: 'Enter Password', type: FIELD_TYPE.PASSWORD, patterns: [PASSWORD_REGEX], errorMessage: 'Password should have atleast 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character and be at least 8 characters long.', shouldShow: true, fieldInfo: 'info.reset.password',
+  },
 };

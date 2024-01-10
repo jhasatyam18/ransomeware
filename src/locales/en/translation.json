@@ -486,6 +486,21 @@
   "title.cleanup.test.recovery":"Select Workloads for Test Recovery Cleanup.",
   "title.test.recovery":"Select workloads for Test Recovery.",
   "title.differntial.preserve.current":"Preserve Current State (Recovery operation might exceed the RTO)",
-  "title.differential.discard.partial.changes":"Discard Partial Replicated Changes"
-
+  "title.differential.discard.partial.changes":"Discard Partial Replicated Changes",
+  "user.fullname":"Full Name",
+  "user.role":"Role",
+  "info.user.name":"Enter unique username",
+  "info.user.password":"Enter user password",
+  "info.user.fullname":"Enter user full name",
+  "info.user.email":"Enter user email address",
+  "info.user.description":"Enter user description",
+  "info.user.role":"Select role for user",
+  "info.reset.password":"Enter your password",
+  "close":"Close",
+  "reset":"Reset",
+  "reset.credentials":"Reset Password",
+  "configure.user":"Configure User",
+  "reconfigure.user":"Reconfigure User",
+  "confirmation":"Confirmation",
+  "temporaryPassword":"Temporary Password"
 }

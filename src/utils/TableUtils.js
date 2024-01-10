@@ -17,3 +17,17 @@ export function getRecoveryVMName(text) {
   }
   return text;
 }
+
+export function showUserActions(selectedUsers) {
+  if (typeof selectedUsers === 'undefined') {
+    return true;
+  }
+  const selectedUserKey = Object.keys(selectedUsers);
+  if ((typeof selectedUserKey === 'undefined') || (typeof selectedUsers[selectedUserKey] === 'undefined')) {
+    return true;
+  }
+  if (selectedUsers[selectedUserKey].isSystemDefault) {
+    return false;
+  }
+  return true;
+}

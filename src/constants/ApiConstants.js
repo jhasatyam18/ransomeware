@@ -1,6 +1,7 @@
 export const API_AUTHENTICATE = 'api/v1/login';
 export const API_LOGOUT = 'api/v1/logout';
-export const API_CHANGE_PASSWORD = 'api/v1/users/<name>';
+// export const API_CHANGE_PASSWORD = 'api/v1/users/<name>';v1/credentials/reset
+export const API_CHANGE_PASSWORD = 'api/v1/credentials/reset';
 export const API_CHANGE_NODE_PASSWORD = 'api/v1/users/<name>?nodeID=<nodeid>';
 export const API_INFO = 'api/v1/info';
 export const API_FETCH_SITES = 'api/v1/sites';
@@ -108,8 +109,10 @@ export const API_THROTTLING_USAGE = 'api/v1/bandwidth/usage';
 
 // users
 export const API_USERS = 'api/v1/users';
+export const API_ADD_USER = 'api/v1/users';
 export const API_ROLES = 'api/v1/roles';
 export const API_USER_PRIVILEGES = 'api/v1/users/<id>/privileges';
+export const API_USER_RESET = 'api/v1/users/<id>/reset';
 
 // scripts
 export const API_USER_SCRIPT = 'api/v1/script';
