@@ -9,6 +9,8 @@ const INITIAL_STATE = {
     context: { refresh: 0, updateID: 0 },
     passwordChangeReq: false,
     allowCancel: false,
+    passwordResetReq: false,
+    allowReset: false,
     isAuthenticated: false,
     token: '',
     userName: '',

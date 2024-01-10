@@ -429,6 +429,13 @@ export function initChangePassword(passwordChangeReq, allowCancel) {
     allowCancel,
   };
 }
+export function initResetPassword(passwordResetReq, allowReset) {
+  return {
+    type: Types.APP_USER_RESET_PASSWORD,
+    passwordResetReq,
+    allowReset,
+  };
+}
 
 export function saveApplicationToken(token) {
   return {
@@ -501,6 +508,25 @@ export function removeNicConfig(networkKey, index) {
       });
       dispatch(valueChange(networkKey, newNicCards));
     }
+  };
+}
+
+export function resetCredetials(payload) {
+  return (dispatch) => {
+    dispatch(showApplicationLoader('CHANGE_PASSWORD', 'Changing password...'));
+    const obj = createPayload(API_TYPES.POST, { ...payload });
+    return callAPI(API_CHANGE_PASSWORD, obj).then((json) => {
+      dispatch(hideApplicationLoader('CHANGE_PASSWORD'));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        window.location.reload();
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('CHANGE_PASSWORD'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
   };
 }
 

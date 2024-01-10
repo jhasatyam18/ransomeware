@@ -93,6 +93,10 @@ export default function user(state = INITIAL_STATE.user, action) {
         ...state, values: { ...state.values, [action.key]: action.value },
       };
     }
+    case Types.APP_USER_RESET_PASSWORD:
+      return {
+        ...state, passwordResetReq: action.passwordResetReq, allowReset: action.allowReset,
+      };
     case Types.SET_USER_DETAILS: {
       return {
         ...state, id: action.data.id, userRole: action.data.role.name,

@@ -12,7 +12,8 @@ import ChangePassword from './ChangePassword';
 // import images
 import logo from '../../assets/images/logo.png';
 import logoName from '../../assets/images/name.png';
-import { getInfo, login } from '../../store/actions';
+import { getInfo, initResetPassword, login } from '../../store/actions';
+import ResetPassword from './ResetPassword';
 
 class Login extends Component {
   constructor() {
@@ -35,6 +36,11 @@ class Login extends Component {
     this.setState({
       [e.target.id]: e.target.value,
     });
+  }
+
+  handleReset = () => {
+    const { dispatch } = this.props;
+    dispatch(initResetPassword(true, true));
   }
 
   onSubmit(e) {
@@ -65,9 +71,12 @@ class Login extends Component {
   render() {
     const { type } = this.state;
     const { user } = this.props;
-    const { passwordChangeReq } = user;
+    const { passwordChangeReq, passwordResetReq } = user;
     if (passwordChangeReq) {
       return (<ChangePassword {...this.props} />);
+    }
+    if (passwordResetReq) {
+      return (<ResetPassword {...this.props} />);
     }
     return (
       <>
@@ -120,42 +129,48 @@ class Login extends Component {
                             id="userName"
                             onChange={this.handleChange}
                             autoComplete="off"
-                            autoFocus="autoFocus"
+                            // autoFocus="autoFocus"
                             required
                           />
                         </div>
-
-                        <div className="form-group">
-                          <AvField
-                            name="password"
-                            value=""
-                            className="form-control"
-                            placeholder="Password"
-                            type={type}
-                            id="password"
-                            autoComplete="off"
-                            onChange={this.handleChange}
-                            required
-                          />
-                          {this.showPassword()}
-                        </div>
-
-                        <div className="mt-3">
-                          <button
-                            className="btn btn-success btn-block waves-effect waves-light"
-                            type="submit"
-                            onClick={this.onSubmit}
-                          >
-                            Log In
-                          </button>
-                        </div>
-                        {/* <div className="container login">
+                        <Row>
+                          <Col sm={12}>
+                            <div className="form-group">
+                              <AvField
+                                name="password"
+                                value=""
+                                className="form-control"
+                                placeholder="Password"
+                                type={type}
+                                id="password"
+                                autoComplete="off"
+                                onChange={this.handleChange}
+                                required
+                              />
+                            </div>
+                          </Col>
+                          <Col sm={12} className="login-show-password">{this.showPassword()}</Col>
+                        </Row>
+                        <Row>
+                          <Col sm={12}>
+                            <div className="mt-3">
+                              <button
+                                className="btn btn-success btn-block waves-effect waves-light"
+                                type="submit"
+                                onClick={this.onSubmit}
+                              >
+                                Log In
+                              </button>
+                            </div>
+                          </Col>
+                        </Row>
+                        <div className="container login">
                           <div className="row">
                             <div className="col-sm-8 text-align sign-up">
-                              <a href="" className="text-align text-success margin-bottom-15">Forgot Password</a>
+                              <Link to="#" onClick={this.handleReset} className="text-align text-success margin-bottom-15 ">Forgot Password</Link>
                             </div>
                           </div>
-                        </div> */}
+                        </div>
                       </AvForm>
                     </div>
                   </CardBody>
