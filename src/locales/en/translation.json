@@ -506,7 +506,7 @@
   "title.configure": "configure",
   "title.alert": "Alert",
   "title.no.role.mapping": "No role mapping found",
-  "title.ad.role": "SAML_2 Role Name",
+  "title.ad.role": "Identity Provider",
   "title.dm.role": "Datamotive Role Name",
   "info.remove.idp.config": "Are you sure want to remove the identity provider configuration?",
   "info.idp.name": "Identity provider name",

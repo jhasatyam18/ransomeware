@@ -246,7 +246,7 @@ export const FIELDS = {
     label: 'username', placeHolderText: 'Username', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Username required', shouldShow: true, fieldInfo: 'info.user.name',
   },
   'configureUser.password': {
-    label: 'password', placeHolderText: 'Enter Password', type: FIELD_TYPE.PASSWORD, patterns: [PASSWORD_REGEX], errorMessage: 'Password should have atleast 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character and be at least 8 characters long.', shouldShow: true, fieldInfo: 'info.user.password',
+    label: 'password', placeHolderText: 'Enter Password', type: FIELD_TYPE.PASSWORD, patterns: [PASSWORD_REGEX], errorMessage: 'Password should have atleast 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character and be at least 8 characters and at most 32 characters long.', shouldShow: true, fieldInfo: 'info.user.password',
   },
   'configureUser.fullName': {
     label: 'user.fullname', placeHolderText: 'Fullname', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Full Name required', shouldShow: true, fieldInfo: 'info.user.fullname',

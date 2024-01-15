@@ -117,7 +117,7 @@ function IdentityProvider(props) {
             </Col>
             <Col sm={8} className="padding-left-15">
               <label htmlFor="fileUploadSAML" className="label">
-                <i className="fa fa-upload" size="lg" />
+                <div className="idp-upload"><i className="fa fa-upload" size="lg" /></div>
               </label>
               <Input type="file" id="fileUploadSAML" name="fileUploadSAML" style={{ visibility: 'none', display: 'none' }} onSelect={onFileChange} onChange={onFileChange} />
               <p>{name === '' ? null : name}</p>
@@ -215,12 +215,12 @@ function IdentityProvider(props) {
     }
     const summaryFields = [
       { label: 'saml.configuration', value: '', isParent: true },
-      { label: 'tile.name', value: idp.name || '' },
+      { label: 'title.name', value: idp.name || '' },
       { label: 'title.metadataurl', value: idp.metadataURL || '-' },
       { label: 'title.metadata.file', value: idp.metadataFile || '-' },
       { label: 'saml.attr.claims', value: '', isParent: true },
       { label: 'title.email', value: idp.attributes.email || '-' },
-      { label: 'tile.name', value: idp.attributes.name || '-' },
+      { label: 'title.name', value: idp.attributes.name || '-' },
       { label: 'title.role', value: idp.attributes.role || '-' },
       { label: 'title.role.mapping', isParent: true },
     ];
