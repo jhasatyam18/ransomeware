@@ -549,5 +549,9 @@
   "configure.user":"Configure User",
   "reconfigure.user":"Reconfigure User",
   "confirmation":"Confirmation",
-  "temporaryPassword":"Temporary Password"
+  "temporaryPassword":"Temporary Password",
+  "forgot.password":"Forgot Password",
+  "auth.login":"Log In",
+  "auth.signinWith":"Or Sign In With",
+  "auth.activeDirectory":"Active Directory"
 }

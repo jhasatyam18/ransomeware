@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 
+import { withTranslation } from 'react-i18next';
 // Redux
 import { Link, withRouter } from 'react-router-dom';
 
@@ -79,7 +80,7 @@ class Login extends Component {
 
   render() {
     const { type } = this.state;
-    const { user } = this.props;
+    const { user, t } = this.props;
     const { passwordChangeReq, passwordResetReq } = user;
     if (passwordChangeReq) {
       return (<ChangePassword {...this.props} />);
@@ -163,13 +164,16 @@ class Login extends Component {
                             type="submit"
                             onClick={this.onSubmit}
                           >
-                            Log In
+                            {t('auth.login')}
                           </button>
+                        </div>
+                        <div className="forgot-container">
+                          <Link to="#" onClick={this.handleReset} className="text-success">{t('forgot.password')}</Link>
                         </div>
                         <div className="mt-3 text-center muted">
                           <hr />
                           <div>
-                            Or Sign In With
+                            {t('auth.signinWith')}
                           </div>
                         </div>
                         <div className="mt-3">
@@ -184,15 +188,8 @@ class Login extends Component {
                               className="rounded-circle"
                               height="22"
                             />
-                            Active Directory
+                            {t('auth.activeDirectory')}
                           </button>
-                        </div>
-                        <div className="container login">
-                          <div className="row">
-                            <div className="col-sm-8 text-align sign-up">
-                              <Link to="#" onClick={this.handleReset} className="text-align text-success margin-bottom-15 ">Forgot Password</Link>
-                            </div>
-                          </div>
                         </div>
                       </AvForm>
                     </div>
@@ -207,4 +204,4 @@ class Login extends Component {
   }
 }
 
-export default (withRouter(Login));
+export default (withTranslation())(withRouter(Login));
