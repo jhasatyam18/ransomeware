@@ -30,8 +30,8 @@ const ModalResetCredentials = (props) => {
   const onResetCredetials = () => {
     const payload = getKeyStruct('reset.', values);
     const url = API_USER_RESET;
-    const obj = createPayload(API_TYPES.PUT, { username: getCookie(APPLICATION_API_USER), ...payload.reset });
     dispatch(showApplicationLoader('reseting-credentials', 'Reseting Credentials...'));
+    const obj = createPayload(API_TYPES.PUT, { username: getCookie(APPLICATION_API_USER), ...payload.reset });
     return callAPI(url.replace('<id>', options.id), obj).then((json) => {
       dispatch(hideApplicationLoader('reseting-credentials'));
       if (json.hasError) {
@@ -42,7 +42,7 @@ const ModalResetCredentials = (props) => {
       }
     },
     (err) => {
-      dispatch(hideApplicationLoader('configuring-user'));
+      dispatch(hideApplicationLoader('reseting-credentials'));
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
   };

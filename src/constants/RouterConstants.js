@@ -26,3 +26,4 @@ export const SCRIPTS_PATH = '/settings/scripts';
 export const JOBS_PATH = '/jobs/*';
 export const JOBS_REPLICATION_PATH = '/jobs/replication';
 export const JOBS_RECOVERY_PATH = '/jobs/recovery';
+export const IDENTITY_PROVIDER = '/settings/identityProvider';

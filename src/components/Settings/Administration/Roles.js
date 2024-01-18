@@ -17,10 +17,10 @@ function Roles(props) {
   const [roleUsers, setRoleUsers] = useState([]);
   const [privileges, setPrivileges] = useState([]);
   const DefaultPrivileges = roles.length > 0 ? roles[0].privileges : [];
-  const DefaultRoleUser = users.length > 0 ? users.filter((el) => el.role.idu === 1) : [];
+  const DefaultRoleUser = users.length > 0 ? users.filter((el) => el.role.id === 1) : [];
 
   const fetchUserByRole = (id) => {
-    const filteredUser = users.filter((el) => el.role.idu === id);
+    const filteredUser = users.filter((el) => el.role.id === id);
     setRoleUsers(filteredUser);
   };
 

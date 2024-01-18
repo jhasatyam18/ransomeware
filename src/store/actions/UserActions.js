@@ -1,13 +1,11 @@
-// import { addMessage, clearMessages } from './MessageActions';
 import * as Types from '../../constants/actionTypes';
 import { API_ADD_USER, API_AUTHENTICATE, API_AWS_REGIONS, API_AZURE_REGIONS, API_CHANGE_NODE_PASSWORD, API_CHANGE_PASSWORD, API_GCP_REGIONS, API_INFO, API_SCRIPTS, API_USERS, API_USER_PRIVILEGES, API_USER_SCRIPT } from '../../constants/ApiConstants';
-import { APP_TYPE, NODE_TYPES, PLATFORM_TYPES, STATIC_KEYS, VMWARE_OBJECT } from '../../constants/InputConstants';
+import { APP_TYPE, NODE_TYPES, PLATFORM_TYPES, SAML, STATIC_KEYS, VMWARE_OBJECT } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH, USER_SETTINGS_PATH } from '../../constants/RouterConstants';
-import { APPLICATION_API_USER } from '../../constants/UserConstant';
+import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, ROLES_SETTINGS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH, USER_SETTINGS_PATH } from '../../constants/RouterConstants';
+import { APPLICATION_API_USER, APPLICATION_AUTHORIZATION, APPLICATION_UID } from '../../constants/UserConstant';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
-import { decrypt } from '../../utils/EncryptionUtils';
-import { getCookie, setCookie } from '../../utils/CookieUtils';
+import { getCookie, setCookie, removeCookie } from '../../utils/CookieUtils';
 import { onInit } from '../../utils/HistoryUtil';
 import { getMatchingInsType, getValue, getVMwareLocationPath, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { fetchByDelay } from '../../utils/SlowFetch';
@@ -24,7 +22,7 @@ import { fetchBandwidthConfig, fetchBandwidthReplNodes } from './ThrottlingActio
 import { MODAL_USER_SCRIPT } from '../../constants/Modalconstant';
 import { fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
 import { fetchSelectedVmsProperty, fetchVMwareComputeResource, fetchVMwareNetwork, getVMwareConfigDataForField, setVMwareAPIResponseData } from './VMwareActions';
-import { string } from 'prop-types';
+import { fetchRoles } from './RolesAction';
 
 export function refreshApplication() {
   return {
@@ -87,11 +85,29 @@ export function logOutUser() {
   };
 }
 
+export function removeCookies() {
+  return () => {
+    setCookie(APPLICATION_API_USER, '');
+    setCookie(APPLICATION_UID, '');
+    setCookie(APPLICATION_AUTHORIZATION, '');
+    removeCookie(APPLICATION_API_USER);
+    removeCookie(APPLICATION_UID);
+    removeCookie(APPLICATION_AUTHORIZATION);
+  };
+}
+
 export function valueChange(key, value) {
   return {
     type: Types.VALUE_CHANGE,
     key,
     value,
+  };
+}
+
+export function valueChanges(values) {
+  return {
+    type: Types.VALUE_CHANGES,
+    values,
   };
 }
 
@@ -365,6 +381,9 @@ export function refresh() {
       case USER_SETTINGS_PATH:
         dispatch(fetchUsers());
         break;
+      case ROLES_SETTINGS_PATH:
+        dispatch(fetchRoles());
+        break;
       default:
         dispatch(detailPathChecks(pathname));
     }
@@ -483,6 +502,7 @@ export function changeUserPassword(oldPass, newPass) {
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
+        dispatch(removeCookies());
         dispatch(logOutUser());
         window.location.reload();
       }
@@ -546,12 +566,12 @@ export function setUserDetails(data) {
 
 export function getUserInfo() {
   return (dispatch) => {
-    const username = getCookie(APPLICATION_API_USER);
-    if (typeof username === 'undefined') {
-      dispatch(logOutUser());
-      return;
+    let username = getCookie(APPLICATION_API_USER);
+    const uid = getCookie(APPLICATION_UID);
+    if (username === '' || typeof username === 'undefined' || (typeof uid !== 'undefined' && uid === '0')) {
+      username = SAML.DEFAULT_USERNAME;
     }
-    const url = `${API_USERS}?name=${username}`;
+    const url = `${API_USERS}?username=${username}`;
     dispatch(showApplicationLoader(url, 'Loading...'));
     return callAPI(url).then((json) => {
       dispatch(hideApplicationLoader(url));
@@ -559,13 +579,18 @@ export function getUserInfo() {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
         if (json && json.length >= 1) {
-          // setCookie(APPLICATION_API_USER_ID, json[0].id);
-          const newJson = json.filter((res) => res.username.toLocaleLowerCase() === username.toLocaleLowerCase());
-          dispatch(getUserPrivileges(newJson[0].id));
-          dispatch(setUserDetails(newJson[0]));
+          setCookie(APPLICATION_API_USER, json[0].username);
+          setCookie(APPLICATION_UID, json[0].id);
+          if (json[0].id === '' || typeof json[0].id === 'undefined' || json[0].id === 0) {
+            dispatch(getUserPrivileges(SAML.DEFAULT_USER_ID));
+          } else {
+            dispatch(getUserPrivileges(json[0].id));
+          }
+          dispatch(setUserDetails(json[0]));
           return;
         }
         dispatch(addMessage('Failed to fetch user details', MESSAGE_TYPES.ERROR));
+        dispatch(removeCookies());
         dispatch(logOutUser());
       }
     },
@@ -577,10 +602,7 @@ export function getUserInfo() {
 }
 
 export function getUserPrivileges(id) {
-  return (dispatch, state) => {
-    const { user } = state();
-    const { license } = user;
-    const { nodeKey } = license;
+  return (dispatch) => {
     const url = API_USER_PRIVILEGES.replace('<id>', id);
     dispatch(showApplicationLoader(API_USER_PRIVILEGES, 'Loading...'));
     return callAPI(url).then((json) => {
@@ -588,10 +610,7 @@ export function getUserPrivileges(id) {
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
-        // decrypt the privileges
-        let data = decrypt(json.privileges[0], nodeKey);
-        data = string.join(data, '');
-        dispatch(setPrivileges(data));
+        dispatch(setPrivileges(json));
       }
     },
     (err) => {

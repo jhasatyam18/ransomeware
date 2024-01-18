@@ -165,3 +165,8 @@ export const NODE_STATUS = {
   Online: 'online',
   Offline: 'offline',
 };
+
+export const SAML = {
+  DEFAULT_USERNAME: 'SAML',
+  DEFAULT_USER_ID: 0,
+};

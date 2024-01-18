@@ -234,11 +234,19 @@ export const FIELDS = {
   'ui.automate.migration': { label: 'auto.migration', type: FIELD_TYPE.CHECKBOX, shouldShow: true, fieldInfo: 'info.auto.migration', default: false },
   'ui.new.password': { label: 'New Password', placeHolderText: 'Enter new password', type: FIELD_TYPE.PASSWORD, patterns: [PASSWORD_REGEX], errorMessage: 'Password should have atleast 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character and be at least 8 characters long.', shouldShow: true },
   'ui.cnfm.password': { label: 'Confirm Password', placeHolderText: 'Confirm password', type: FIELD_TYPE.PASSWORD, validate: (v, u) => validatePassword(v, u), errorMessage: 'New password and confirm password does not match', shouldShow: true },
+  // idp
+  'configureIDP.name': { label: 'name', description: 'Name', placeHolderText: 'Enter name for the configuration', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Name required', shouldShow: true, fieldInfo: 'info.idp.name' },
+  'configureIDP.attributes.email': { label: 'idp.attributes.email', placeHolderText: 'Enter email address', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'email required', shouldShow: true, fieldInfo: 'info.idp.attr.email' },
+  'configureIDP.attributes.name': { label: 'name', placeHolderText: 'Enter name', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Name required', shouldShow: true, fieldInfo: 'info.idp.attr.name' },
+  'configureIDP.attributes.role': { label: 'idp.attributes.role', placeHolderText: 'Enter role', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Role required', shouldShow: true, fieldInfo: 'info.idp.attr.role' },
+  'configureIDP.metadataURL': { label: 'title.metadataurl', placeHolderText: 'Enter provider metadata url', type: FIELD_TYPE.TEXT, shouldShow: true, fieldInfo: 'info.idp.metadataurl' },
+  'configureIDP.metadataFile': { label: 'title.metadata.file', type: FIELD_TYPE.LABEL, shouldShow: true, fieldInfo: 'info.idp.metadataurl' },
+  'configureIDP.roleMaps': { label: 'roleMap', type: FIELD_TYPE.CUSTOM, shouldShow: true, fieldInfo: 'info.role.mapping', srcAltText: '', srcLabel: 'title.ad.role', tgtLabel: 'title.dm.role' },
   'configureUser.username': {
     label: 'username', placeHolderText: 'Username', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Username required', shouldShow: true, fieldInfo: 'info.user.name',
   },
   'configureUser.password': {
-    label: 'password', placeHolderText: 'Enter Password', type: FIELD_TYPE.PASSWORD, patterns: [PASSWORD_REGEX], errorMessage: 'Password should have atleast 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character and be at least 8 characters long.', shouldShow: true, fieldInfo: 'info.user.password',
+    label: 'password', placeHolderText: 'Enter Password', type: FIELD_TYPE.PASSWORD, patterns: [PASSWORD_REGEX], errorMessage: 'Password should have atleast 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character and be at least 8 characters and at most 32 characters long.', shouldShow: true, fieldInfo: 'info.user.password',
   },
   'configureUser.fullName': {
     label: 'user.fullname', placeHolderText: 'Fullname', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Full Name required', shouldShow: true, fieldInfo: 'info.user.fullname',

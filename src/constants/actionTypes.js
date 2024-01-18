@@ -40,6 +40,7 @@ export const OPEN_MODAL = 'OPEN_MODAL';
 
 // INPUT HANDLING
 export const VALUE_CHANGE = 'VALUE_CHANGE';
+export const VALUE_CHANGES = 'VALUE_CHANGES';
 export const ADD_ERROR_MESSAGE = 'ADD_ERROR_MESSAGE';
 export const DELETE_ERROR_MESSAGE = 'DELETE_ERROR_MESSAGE';
 export const CLEAR_VALUES = 'CLEAR_VALUES';
@@ -110,4 +111,7 @@ export const SET_REPORT_OBJECT = 'SET_REPORT_OBJECT';
 
 // Licenses
 export const FETCH_LICENSES = 'FETCH_LICENSES';
+
+// IDP
+export const FETCH_IDP = 'FETCH_IDP';
 export const SET_USER_DETAILS = 'SET_USER_DETAILS';
