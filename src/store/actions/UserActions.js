@@ -1,12 +1,11 @@
-// import { addMessage, clearMessages } from './MessageActions';
 import * as Types from '../../constants/actionTypes';
-import { API_AUTHENTICATE, API_AWS_REGIONS, API_AZURE_REGIONS, API_CHANGE_NODE_PASSWORD, API_CHANGE_PASSWORD, API_GCP_REGIONS, API_INFO, API_SCRIPTS, API_USERS, API_USER_PRIVILEGES, API_USER_SCRIPT } from '../../constants/ApiConstants';
-import { APP_TYPE, NODE_TYPES, PLATFORM_TYPES, STATIC_KEYS, VMWARE_OBJECT } from '../../constants/InputConstants';
+import { API_ADD_USER, API_AUTHENTICATE, API_AWS_REGIONS, API_AZURE_REGIONS, API_CHANGE_NODE_PASSWORD, API_CHANGE_PASSWORD, API_GCP_REGIONS, API_INFO, API_SCRIPTS, API_USERS, API_USER_PRIVILEGES, API_USER_SCRIPT } from '../../constants/ApiConstants';
+import { APP_TYPE, NODE_TYPES, PLATFORM_TYPES, SAML, STATIC_KEYS, VMWARE_OBJECT } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH } from '../../constants/RouterConstants';
-import { APPLICATION_API_USER } from '../../constants/UserConstant';
+import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, ROLES_SETTINGS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH, USER_SETTINGS_PATH } from '../../constants/RouterConstants';
+import { APPLICATION_API_USER, APPLICATION_AUTHORIZATION, APPLICATION_UID } from '../../constants/UserConstant';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
-import { getCookie, setCookie } from '../../utils/CookieUtils';
+import { getCookie, setCookie, removeCookie } from '../../utils/CookieUtils';
 import { onInit } from '../../utils/HistoryUtil';
 import { getMatchingInsType, getValue, getVMwareLocationPath, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { fetchByDelay } from '../../utils/SlowFetch';
@@ -23,6 +22,7 @@ import { fetchBandwidthConfig, fetchBandwidthReplNodes } from './ThrottlingActio
 import { MODAL_USER_SCRIPT } from '../../constants/Modalconstant';
 import { fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
 import { fetchSelectedVmsProperty, fetchVMwareComputeResource, fetchVMwareNetwork, getVMwareConfigDataForField, setVMwareAPIResponseData } from './VMwareActions';
+import { fetchRoles } from './RolesAction';
 
 export function refreshApplication() {
   return {
@@ -85,11 +85,29 @@ export function logOutUser() {
   };
 }
 
+export function removeCookies() {
+  return () => {
+    setCookie(APPLICATION_API_USER, '');
+    setCookie(APPLICATION_UID, '');
+    setCookie(APPLICATION_AUTHORIZATION, '');
+    removeCookie(APPLICATION_API_USER);
+    removeCookie(APPLICATION_UID);
+    removeCookie(APPLICATION_AUTHORIZATION);
+  };
+}
+
 export function valueChange(key, value) {
   return {
     type: Types.VALUE_CHANGE,
     key,
     value,
+  };
+}
+
+export function valueChanges(values) {
+  return {
+    type: Types.VALUE_CHANGES,
+    values,
   };
 }
 
@@ -219,6 +237,105 @@ export function fetchRegions(TYPE) {
   };
 }
 
+export function fetchUsersData(data) {
+  return {
+    type: Types.FETCH_USERS,
+    data,
+  };
+}
+
+export function setSelectedUsers(selectedUsers) {
+  return {
+    type: Types.SET_SELECTED_USERS,
+    selectedUsers,
+  };
+}
+
+export function fetchUsers() {
+  return (dispatch) => {
+    dispatch(showApplicationLoader(API_USERS, 'loading users'));
+    return callAPI(API_USERS)
+      .then((json) => {
+        dispatch(hideApplicationLoader(API_USERS));
+        if (json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          dispatch(fetchUsersData(json));
+        }
+      },
+      (err) => {
+        dispatch(hideApplicationLoader(API_USERS));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  };
+}
+
+export function removeUser(id) {
+  return (dispatch) => {
+    dispatch(showApplicationLoader(`${API_USERS}-${id}`, 'Removing User'));
+    const obj = createPayload(API_TYPES.DELETE, {});
+    return callAPI(`${API_USERS}/${id}`, obj)
+      .then((json) => {
+        dispatch(hideApplicationLoader(`${API_USERS}-${id}`));
+        if (json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          dispatch(addMessage('User deleted successfully', MESSAGE_TYPES.INFO));
+          dispatch(fetchUsers());
+          dispatch(setSelectedUsers([]));
+          dispatch(closeModal());
+        }
+      },
+      (err) => {
+        dispatch(hideApplicationLoader(`${API_USERS}-${id}`));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  };
+}
+
+export function configureUser(payload, isUpdate = false) {
+  return (dispatch) => {
+    let url = API_ADD_USER;
+    if (isUpdate) {
+      url = `${url}/${payload.id}`;
+    }
+    const obj = createPayload(isUpdate ? API_TYPES.PUT : API_TYPES.POST, { ...payload.configureUser });
+    dispatch(showApplicationLoader('configuring-user', 'Configuring User...'));
+    return callAPI(url, obj).then((json) => {
+      dispatch(hideApplicationLoader('configuring-user'));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        dispatch(addMessage('User configuration successful', MESSAGE_TYPES.SUCCESS));
+        dispatch(fetchUsers());
+        dispatch(clearValues());
+        dispatch(closeModal());
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('configuring-user'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+  };
+}
+
+export function handleUserTableSelection(data, isSelected, primaryKey) {
+  return (dispatch, getState) => {
+    const { settings } = getState();
+    const { selectedUsers } = settings;
+    if (isSelected) {
+      if (!selectedUsers || selectedUsers.length === 0 || !selectedUsers[data[primaryKey]]) {
+        const newUsers = { ...selectedUsers, [data[primaryKey]]: data };
+        dispatch(setSelectedUsers(newUsers));
+      }
+    } else if (selectedUsers[data[primaryKey]]) {
+      const newUsers = selectedUsers;
+      delete newUsers[data[primaryKey]];
+      dispatch(setSelectedUsers(newUsers));
+    }
+  };
+}
+
 export function refresh() {
   return (dispatch) => {
     const { location } = window;
@@ -260,6 +377,12 @@ export function refresh() {
       case THROTTLING_SETTINGS_PATH:
         dispatch(fetchBandwidthConfig());
         dispatch(fetchBandwidthReplNodes());
+        break;
+      case USER_SETTINGS_PATH:
+        dispatch(fetchUsers());
+        break;
+      case ROLES_SETTINGS_PATH:
+        dispatch(fetchRoles());
         break;
       default:
         dispatch(detailPathChecks(pathname));
@@ -325,6 +448,13 @@ export function initChangePassword(passwordChangeReq, allowCancel) {
     allowCancel,
   };
 }
+export function initResetPassword(passwordResetReq, allowReset) {
+  return {
+    type: Types.APP_USER_RESET_PASSWORD,
+    passwordResetReq,
+    allowReset,
+  };
+}
 
 export function saveApplicationToken(token) {
   return {
@@ -365,13 +495,14 @@ export function changeUserPassword(oldPass, newPass) {
     const { user } = getState();
     const { token } = user;
     dispatch(showApplicationLoader('CHANGE_PASSWORD', 'Changing password...'));
-    const name = getCookie(APPLICATION_API_USER) || '';
-    const obj = createPayload(API_TYPES.PUT, { username: getCookie(APPLICATION_API_USER), oldPassword: oldPass, newPassword: newPass });
-    return callAPI(API_CHANGE_PASSWORD.replace('<name>', name), obj, token).then((json) => {
+    // const name = getCookie(APPLICATION_API_USER) || '';
+    const obj = createPayload(API_TYPES.POST, { username: getCookie(APPLICATION_API_USER), oldPassword: oldPass, newPassword: newPass });
+    return callAPI(API_CHANGE_PASSWORD, obj, token).then((json) => {
       dispatch(hideApplicationLoader('CHANGE_PASSWORD'));
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
+        dispatch(removeCookies());
         dispatch(logOutUser());
         window.location.reload();
       }
@@ -400,6 +531,25 @@ export function removeNicConfig(networkKey, index) {
   };
 }
 
+export function resetCredetials(payload) {
+  return (dispatch) => {
+    dispatch(showApplicationLoader('CHANGE_PASSWORD', 'Changing password...'));
+    const obj = createPayload(API_TYPES.POST, { ...payload });
+    return callAPI(API_CHANGE_PASSWORD, obj).then((json) => {
+      dispatch(hideApplicationLoader('CHANGE_PASSWORD'));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        window.location.reload();
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('CHANGE_PASSWORD'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+  };
+}
+
 export function setPrivileges(privileges) {
   return {
     type: Types.APP_USER_PRIVILEGES,
@@ -407,14 +557,21 @@ export function setPrivileges(privileges) {
   };
 }
 
+export function setUserDetails(data) {
+  return {
+    type: Types.SET_USER_DETAILS,
+    data,
+  };
+}
+
 export function getUserInfo() {
   return (dispatch) => {
-    const username = getCookie(APPLICATION_API_USER);
-    if (typeof username === 'undefined') {
-      dispatch(logOutUser());
-      return;
+    let username = getCookie(APPLICATION_API_USER);
+    const uid = getCookie(APPLICATION_UID);
+    if (username === '' || typeof username === 'undefined' || (typeof uid !== 'undefined' && uid === '0')) {
+      username = SAML.DEFAULT_USERNAME;
     }
-    const url = `${API_USERS}?name=${username}`;
+    const url = `${API_USERS}?username=${username}`;
     dispatch(showApplicationLoader(url, 'Loading...'));
     return callAPI(url).then((json) => {
       dispatch(hideApplicationLoader(url));
@@ -422,11 +579,18 @@ export function getUserInfo() {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
         if (json && json.length >= 1) {
-          // setCookie(APPLICATION_API_USER_ID, json[0].id);
-          dispatch(getUserPrivileges(json[0].id));
+          setCookie(APPLICATION_API_USER, json[0].username);
+          setCookie(APPLICATION_UID, json[0].id);
+          if (json[0].id === '' || typeof json[0].id === 'undefined' || json[0].id === 0) {
+            dispatch(getUserPrivileges(SAML.DEFAULT_USER_ID));
+          } else {
+            dispatch(getUserPrivileges(json[0].id));
+          }
+          dispatch(setUserDetails(json[0]));
           return;
         }
         dispatch(addMessage('Failed to fetch user details', MESSAGE_TYPES.ERROR));
+        dispatch(removeCookies());
         dispatch(logOutUser());
       }
     },

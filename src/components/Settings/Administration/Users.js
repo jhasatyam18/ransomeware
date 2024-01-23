@@ -1,39 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Card, CardBody, Col, Container, Row } from 'reactstrap';
-import { API_USERS } from '../../../constants/ApiConstants';
-import { MESSAGE_TYPES } from '../../../constants/MessageConstants';
-import { TABLE_USERS } from '../../../constants/TableConstants';
-import { hideApplicationLoader, showApplicationLoader } from '../../../store/actions';
-import { addMessage } from '../../../store/actions/MessageActions';
-import { callAPI } from '../../../utils/ApiUtils';
+import { fetchUsers } from '../../../store/actions';
 import DMBreadCrumb from '../../Common/DMBreadCrumb';
-import DMTable from '../../Table/DMTable';
+import { fetchRoles } from '../../../store/actions/RolesAction';
+import UsersTable from './UsersTable';
+import UserActionButtons from './UserActionButtons';
 
 function Users(props) {
-  const { dispatch } = props;
-  const [userData, setUserData] = useState([]);
-  const getUsers = () => {
-    dispatch(showApplicationLoader(API_USERS, 'loading users'));
-    callAPI(API_USERS).then((json) => {
-      dispatch(hideApplicationLoader(API_USERS));
-      if (json.hasError) {
-        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
-      } else {
-        setUserData(json);
-      }
-    },
-    (err) => {
-      dispatch(hideApplicationLoader(API_USERS));
-      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-    });
-  };
+  const { dispatch, settings, user } = props;
+  const { roles } = user;
+  const { selectedUsers } = settings;
 
   useEffect(() => {
     let isUnmounting = false;
     if (!isUnmounting) {
-      getUsers();
+      dispatch(fetchUsers());
+      dispatch(fetchRoles());
     }
     return () => {
       isUnmounting = true;
@@ -47,15 +31,10 @@ function Users(props) {
           <Card>
             <CardBody>
               <DMBreadCrumb links={[{ label: 'users', link: '#' }]} />
+              <UserActionButtons user={user} dispatch={dispatch} selectedUsers={selectedUsers} roles={roles} />
               <Row>
                 <Col sm={12}>
-                  <DMTable
-                    columns={TABLE_USERS}
-                    data={userData}
-                    primaryKey="ID"
-                    name="users"
-                    dispatch={dispatch}
-                  />
+                  <UsersTable user={user} dispatch={dispatch} settings={settings} />
                 </Col>
               </Row>
             </CardBody>
@@ -67,7 +46,7 @@ function Users(props) {
 }
 
 function mapStateToProps(state) {
-  const { user } = state;
-  return { user };
+  const { settings, user } = state;
+  return { settings, user };
 }
 export default connect(mapStateToProps)(withTranslation()(Users));

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 
+import { withTranslation } from 'react-i18next';
 // Redux
 import { Link, withRouter } from 'react-router-dom';
 
@@ -12,7 +13,10 @@ import ChangePassword from './ChangePassword';
 // import images
 import logo from '../../assets/images/logo.png';
 import logoName from '../../assets/images/name.png';
-import { getInfo, login } from '../../store/actions';
+import { API_SAML } from '../../constants/ApiConstants';
+import saml from '../../assets/images/saml.svg';
+import { getInfo, initResetPassword, login } from '../../store/actions';
+import ResetPassword from './ResetPassword';
 
 class Login extends Component {
   constructor() {
@@ -21,6 +25,7 @@ class Login extends Component {
     this.onSubmit = this.onSubmit.bind(this);
     this.togglePassword = this.togglePassword.bind(this);
     this.showPassword = this.showPassword.bind(this);
+    this.onActiveDirectoryLogin = this.onActiveDirectoryLogin.bind(this);
   }
 
   componentDidMount() {
@@ -37,11 +42,22 @@ class Login extends Component {
     });
   }
 
+  handleReset = () => {
+    const { dispatch } = this.props;
+    dispatch(initResetPassword(true, true));
+  }
+
   onSubmit(e) {
     e.preventDefault();
     const { dispatch, history } = this.props;
     const { userName, password } = this.state;
     dispatch(login({ username: userName, password, history }));
+  }
+
+  // function to open saml login page in same tab
+  onActiveDirectoryLogin = (e) => {
+    e.preventDefault();
+    window.open(`https://${window.location.host}/${API_SAML}`, '_self');
   }
 
   togglePassword() {
@@ -64,10 +80,13 @@ class Login extends Component {
 
   render() {
     const { type } = this.state;
-    const { user } = this.props;
-    const { passwordChangeReq } = user;
+    const { user, t } = this.props;
+    const { passwordChangeReq, passwordResetReq } = user;
     if (passwordChangeReq) {
       return (<ChangePassword {...this.props} />);
+    }
+    if (passwordResetReq) {
+      return (<ResetPassword {...this.props} />);
     }
     return (
       <>
@@ -120,7 +139,6 @@ class Login extends Component {
                             id="userName"
                             onChange={this.handleChange}
                             autoComplete="off"
-                            autoFocus="autoFocus"
                             required
                           />
                         </div>
@@ -146,16 +164,33 @@ class Login extends Component {
                             type="submit"
                             onClick={this.onSubmit}
                           >
-                            Log In
+                            {t('auth.login')}
                           </button>
                         </div>
-                        {/* <div className="container login">
-                          <div className="row">
-                            <div className="col-sm-8 text-align sign-up">
-                              <a href="" className="text-align text-success margin-bottom-15">Forgot Password</a>
-                            </div>
+                        <div className="forgot-container">
+                          <Link to="#" onClick={this.handleReset} className="text-success">{t('forgot.password')}</Link>
+                        </div>
+                        <div className="mt-3 text-center muted">
+                          <hr />
+                          <div>
+                            {t('auth.signinWith')}
                           </div>
-                        </div> */}
+                        </div>
+                        <div className="mt-3">
+                          <button
+                            className="btn btn-secondary btn-block waves-effect waves-light"
+                            type="button"
+                            onClick={this.onActiveDirectoryLogin}
+                          >
+                            <img
+                              src={saml}
+                              alt=""
+                              className="rounded-circle"
+                              height="22"
+                            />
+                            {t('auth.activeDirectory')}
+                          </button>
+                        </div>
                       </AvForm>
                     </div>
                   </CardBody>
@@ -169,4 +204,4 @@ class Login extends Component {
   }
 }
 
-export default (withRouter(Login));
+export default (withTranslation())(withRouter(Login));

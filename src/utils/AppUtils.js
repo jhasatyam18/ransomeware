@@ -246,6 +246,7 @@ export function getSideBarContents() {
         { label: 'throttling', to: RPATH.THROTTLING_SETTINGS_PATH, icon: 'fas fa-tachometer-alt', isActivePath: [RPATH.THROTTLING_SETTINGS_PATH], hasChildren: false },
         { label: 'roles', to: RPATH.ROLES_SETTINGS_PATH, icon: 'fas fa-user-shield', isActivePath: [RPATH.ROLES_SETTINGS_PATH], hasChildren: false },
         { label: 'users', to: RPATH.USER_SETTINGS_PATH, icon: 'fas fa-users', isActivePath: [RPATH.USER_SETTINGS_PATH], hasChildren: false },
+        { label: 'title.identityProvider', to: RPATH.IDENTITY_PROVIDER, icon: 'fas fa-id-card', isActivePath: [RPATH.IDENTITY_PROVIDER], hasChildren: false },
         { label: 'tech.support', to: RPATH.SUPPORT_BUNDLE_PATH, icon: 'fas fa-headset', isActivePath: [RPATH.SUPPORT_BUNDLE_PATH], hasChildren: false },
       ],
     },

@@ -1092,3 +1092,22 @@ export const showReverseWarningText = (user) => {
   }
   return false;
 };
+
+export function validateConfigureIDP(user, dispatch) {
+  const { values } = user;
+  const fields = Object.keys(FIELDS).filter((key) => key.indexOf('configureIDP') !== -1);
+  let isClean = true;
+  fields.map((fieldKey) => {
+    const field = FIELDS[fieldKey];
+    const { shouldShow } = field;
+    const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
+    if (showField) {
+      if (!validateField(field, fieldKey, getValue(fieldKey, values), dispatch, user)) {
+        isClean = false;
+      }
+    } else {
+      dispatch(valueChange(field, fieldKey, getValue(fieldKey, values)));
+    }
+  });
+  return isClean;
+}

@@ -1,6 +1,7 @@
+import Cookies from 'js-cookie';
 import { clearMessages } from '../store/actions/MessageActions';
 import store from '../store/index';
-import { clearValues, logOutUser } from '../store/actions';
+import { clearValues, logOutUser, removeCookies } from '../store/actions';
 import { closeModal } from '../store/actions/ModalActions';
 import { closeWizard } from '../store/actions/WizardActions';
 
@@ -29,12 +30,13 @@ export function getUrlPath(URL) {
 }
 
 export function callAPI(URL, obj = {}) {
-  const opts = { headers: { 'Content-Type': 'application/json' }, ...obj };
+  const opts = { headers: { 'Content-Type': 'application/json', token: Cookies.get('token') }, ...obj };
   return fetch(getUrlPath(URL), opts)
     .then((response) => {
       if (response.status === 401) {
         store.dispatch(clearValues());
         store.dispatch(logOutUser());
+        store.dispatch(removeCookies());
         store.dispatch(closeModal());
         store.dispatch(closeWizard());
         store.dispatch(clearMessages());
