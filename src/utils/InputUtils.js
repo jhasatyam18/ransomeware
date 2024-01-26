@@ -8,6 +8,7 @@ import { isEmpty, isMemoryValueValid } from './validationUtils';
 import { getStorageForVMware, onScriptChange } from '../store/actions';
 import { onAwsStorageTypeChange } from '../store/actions/AwsActions';
 import { getLabelWithResourceGrp } from './AppUtils';
+import { addItemAtPosition } from './ObjectUtils';
 
 export function getValue(key, values) {
   const ret = values[key];
@@ -465,7 +466,7 @@ export function createVMConfigStackObject(vm, user) {
     case PLATFORM_TYPES.VMware:
       return getVMwareVMConfig(vm);
     case PLATFORM_TYPES.AWS:
-      return getAwsVMConfig(vm);
+      return getAwsVMConfig(vm, user);
     case PLATFORM_TYPES.Azure:
       return getAzureVMConfig(vm);
     default:
@@ -504,7 +505,7 @@ export function getGCPVMConfig(vm) {
   return config;
 }
 
-export function getAwsVMConfig(vm) {
+export function getAwsVMConfig(vm, reduxUserValues) {
   const key = (typeof vm === 'string' ? vm : vm.moref);
   const config = {
     data: [
@@ -517,7 +518,6 @@ export function getAwsVMConfig(vm) {
           [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', fieldInfo: 'info.protectionplan.instance.type', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
           [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.instance.volume.type.aws', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u), onChange: (user, dispatch) => onAwsStorageTypeChange(user, dispatch), disabled: (u, f) => shouldDisableStorageType(u, f) },
           [`${key}-vmConfig.general.volumeIOPS`]: { label: 'Volume IOPS', fieldInfo: 'info.protectionplan.instance.volume.iops.aws', type: FIELD_TYPE.NUMBER, errorMessage: 'Provide volume IOPS.', disabled: (u, f) => shouldEnableAWSIOPS(u, f), min: 0 },
-          [`${key}-vmConfig.general.encryptionKey`]: { label: 'Encryption KMS Key', fieldInfo: 'info.protectionplan.instance.volume.encrypt', type: FIELD_TYPE.SELECT, errorMessage: '', disabled: (u, f) => shouldEnableAWSEncryption(u, f), validate: null, options: (u) => getEncryptionKeyOptions(u), shouldShow: (user) => shouldShowAWSKMS(user) },
           [`${key}-vmConfig.general.tags`]: { label: 'Tags', fieldInfo: 'info.protectionplan.instance.tags.aws', type: STACK_COMPONENT_TAGS, validate: null, errorMessage: '', shouldShow: true },
         },
       },
@@ -532,6 +532,11 @@ export function getAwsVMConfig(vm) {
       ...getRecoveryScript(key),
     ],
   };
+  // add encryption key field only if source and target is AWS
+  if (shouldShowAWSKMS(reduxUserValues)) {
+    const updatedEntries = addItemAtPosition(config.data[0].children, 4, `${key}-vmConfig.general.encryptionKey`, { label: 'Encryption KMS Key', fieldInfo: 'info.protectionplan.instance.volume.encrypt', type: FIELD_TYPE.SELECT, errorMessage: '', disabled: (u, f) => shouldEnableAWSEncryption(u, f), validate: null, options: (u) => getEncryptionKeyOptions(u), shouldShow: (user) => shouldShowAWSKMS(user) });
+    config.data[0].children = updatedEntries;
+  }
   return config;
 }
 
