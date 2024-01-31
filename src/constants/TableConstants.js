@@ -39,6 +39,14 @@ export const VM_PLACEMENT_INFO_ITEM_RENDERER = 'VM_PLACEMENT_INFO_ITEM_RENDERER'
 export const SITE_LOCATION_ITEM_RENDERER = 'SITE_LOCATION_ITEM_RENDERER';
 export const SITE_NAME_LINK_RENDERER = 'SITE_NAME_LINK_RENDERER';
 export const RECOVERY_STATUS_RENDERER = 'RECOVERY_STATUS_RENDERER';
+export const PLAYBOOK_FILENAME_RENDERER = 'PLAYBOOK_FILENAME_RENDERER';
+export const SINGLE_PLAYBOOK_STATUS_RENDERER = 'SINGLE_PLAYBOOK_STATUS_RENDERER';
+export const PLAYBOOK_ACTION_RENDERER = 'PLAYBOOK_ACTION_RENDERER';
+export const PLAYBOOK_CONFIGURE_RENDERER = 'TEMPLATE_CONFIGURE_RENDERE';
+export const PLAYBOOK_CHANGES_RENDERER = 'PLAYBOOK_CHANGES_RENDERER';
+export const PLAYBOOK_RENDER_ISSUES_COLUMN = 'PLAYBOOK_RENDER_ISSUES_COLUMN';
+export const PLAYBOOK_PLAN_NAME_LINK_RENDERER = 'PLAYBOOK_PLAN_NAME_LINK_RENDERER';
+export const PLAYBOOK_PLAN_STATUS_RENDERER = 'PLAYBOOK_PLAN_STATUS_RENDERER';
 export const REPLICATION_PRIORITY_RENDERER = 'REPLICATION_PRIORITY_RENDERER';
 
 // show time taken by any job
@@ -260,6 +268,27 @@ export const TABLE_FILTER_TEXT = {
   TABLE_PROTECT_VM_VMWARE: 'Data can be filtered on following fields <br/> name and guestOS <br /> example: Windows or name=DBServer:guestOS=windows',
   TABLE_RECOVERY_VMS: 'Data can be filtered on following fields <br/> name <br /> example: Windows or name=DBServer',
 };
+
+export const PLAYBOOKS = [
+  { label: 'File', field: 'name', itemRenderer: PLAYBOOK_FILENAME_RENDERER, width: 3 },
+  { label: 'Configure', itemRenderer: PLAYBOOK_CONFIGURE_RENDERER, width: 2 },
+  { label: 'Status', field: 'status', itemRenderer: SINGLE_PLAYBOOK_STATUS_RENDERER, width: 4 },
+  { label: 'Actions', field: 'status', itemRenderer: PLAYBOOK_ACTION_RENDERER, width: 1 },
+];
+
+export const PLAYBOOK_DETAILS = [
+  { label: 'Protection Plan', field: 'name', itemRenderer: PLAYBOOK_PLAN_NAME_LINK_RENDERER },
+  { label: 'RPO', field: 'rpo' },
+  { label: 'Protected Site', field: 'protectedSiteName' },
+  { label: 'Recovery Site', field: 'recoverySiteName' },
+  { label: 'Virtual Machines', field: 'protectedEntities' },
+  { label: 'Status', field: 'status', itemRenderer: PLAYBOOK_PLAN_STATUS_RENDERER },
+];
+
+export const PLAYBOOK_ISSUES = [
+  { label: 'Virtual Machine (s)', field: 'name', width: 4 },
+  { label: 'Issue (s)', field: 'errorMessages', itemRenderer: PLAYBOOK_RENDER_ISSUES_COLUMN },
+];
 
 export const REPLICATION_PRIOPITY = [
   { label: 'Virtual Machine', field: 'name' },

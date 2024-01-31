@@ -636,6 +636,12 @@ span.flatpickr-weekday {
   width: 100%;
 }
 
+.container-display-recovery {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
 // Helper scss
 .text-center {
   text-align: center;

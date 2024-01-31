@@ -870,6 +870,7 @@ export function excludeKeys(key, recoveryPlatform) {
   }
   return true;
 }
+
 export function getReacoveryLocationData({ values, dataKey }) {
   return values[dataKey];
 }
@@ -972,7 +973,7 @@ export function findObj(obj, fieldVal) {
 }
 
 export function getVMwareLocationPath(data, fieldVal) {
-  const res = data;
+  const res = data || [];
   for (let i = 0; i < res.length; i += 1) {
     const keys = findObj(res[i], fieldVal);
     if (keys) {

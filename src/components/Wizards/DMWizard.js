@@ -226,11 +226,12 @@ class DMWizard extends React.Component {
           </div>
           <div className="modal-body noPadding">
             <Row style={{ margin: 0 }}>
+
               <Col sm={3} style={{ backgroundColor: '#333a4a' }}>
                 <DMWSteps steps={steps} currentStep={currentStep} />
               </Col>
               <Col sm={9}>
-                <SimpleBar style={{ minHeight: '65vh', maxHeight: '65vh' }} ref={this.ref}>
+                <SimpleBar style={{ minHeight: '65vh', maxHeight: '65vh', overflowX: 'hidden' }} autoHide ref={this.ref}>
                   {this.getStep(steps[currentStep].component)}
                 </SimpleBar>
               </Col>

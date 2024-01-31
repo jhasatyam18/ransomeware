@@ -3,7 +3,7 @@ import { withTranslation } from 'react-i18next';
 import { Card, CardHeader, Col, Collapse, Row } from 'reactstrap';
 
 function DMNote(props) {
-  const { title, t, info, color, open, subText } = props;
+  const { title, t, info, color, open, subText, component } = props;
   const [isOpen, setIopen] = useState(open);
   const noteText = t(info);
   const toggle = () => {
@@ -45,6 +45,7 @@ function DMNote(props) {
               ) : (
                 <>
                   <Collapse isOpen={isOpen}>
+                    {component ? component() : null}
                     {noteText}
                     {renderSubText()}
                   </Collapse>

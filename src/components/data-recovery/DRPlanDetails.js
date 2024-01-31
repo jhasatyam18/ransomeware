@@ -2,12 +2,10 @@ import classnames from 'classnames';
 import React, { Component, Suspense } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardTitle, Col, Container, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
-import { getValue } from '../../utils/InputUtils';
-import { valueChange } from '../../store/actions';
 import Loader from '../Shared/Loader';
 import { PLATFORM_TYPES, RECOVERY_STATUS, REPLICATION_STATUS, PROTECTION_PLANS_STATUS } from '../../constants/InputConstants';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
-import { deletePlanConfirmation, fetchDRPlanById, openCleanupTestRecoveryWizard, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
+import { deletePlanConfirmation, fetchDRPlanById, openCleanupTestRecoveryWizard, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, playbookExport, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
 import CheckBox from '../Common/CheckBox';
 import DisplayString from '../Common/DisplayString';
@@ -16,6 +14,7 @@ import DropdownActions from '../Common/DropdownActions';
 import ProtectionPlanVMConfig from './ProtectionPlanVMConfig';
 import { convertMinutesToDaysHourFormat } from '../../utils/AppUtils';
 import { isPlanRecovered } from '../../utils/validationUtils';
+import { downloadRecoveryPlaybook } from '../../store/actions/DrPlaybooksActions';
 
 const Replication = React.lazy(() => import('../Jobs/Replication'));
 const Recovery = React.lazy(() => import('../Jobs/Recovery'));
@@ -23,6 +22,7 @@ const Recovery = React.lazy(() => import('../Jobs/Recovery'));
 class DRPlanDetails extends Component {
   constructor() {
     super();
+    this.state = { activeTab: '1' };
     this.disableEdit = this.disableEdit.bind(this);
   }
 
@@ -35,11 +35,11 @@ class DRPlanDetails extends Component {
   }
 
   toggleTab(tab) {
-    const { dispatch, user } = this.props;
-    const { values } = user;
-    const activeTab = getValue('drplan.details.activeTab', values);
+    const { activeTab } = this.state;
     if (activeTab !== tab) {
-      dispatch(valueChange('drplan.details.activeTab', tab));
+      this.setState({
+        activeTab: tab,
+      });
     }
   }
 
@@ -172,7 +172,6 @@ class DRPlanDetails extends Component {
       { label: 'Recovery Pre Script', field: 'preScript' },
       { label: 'Recovery Post Script', field: 'postScript' },
 
-      { label: 'Synchronize All VM Replications', field: 'enablePPlanLevelScheduling' },
       { label: 'Script Timeout (Seconds)', field: 'scriptTimeout' },
       { label: 'Boot Delay (Seconds)', field: 'bootDelay' },
     ];
@@ -242,16 +241,20 @@ class DRPlanDetails extends Component {
     const isReverseActionDisabled = this.disableReverse(protectionPlan);
     let actions = [];
     if (platformType === protectedSitePlatform && localVMIP !== recoverySite.node.hostname) {
-      actions.push({ label: 'start', action: startPlan, id: protectionPlan.id, disabled: this.disableStart(protectionPlan) });
-      actions.push({ label: 'stop', action: stopPlan, id: protectionPlan.id, disabled: this.disableStop(protectionPlan) });
-      actions.push({ label: 'edit', action: openEditProtectionPlanWizard, id: protectionPlan, disabled: this.disableEdit() });
-      actions.push({ label: 'remove', action: deletePlanConfirmation, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS, navigate: PROTECTION_PLANS_PATH });
+      actions.push({ label: 'Start', action: startPlan, id: protectionPlan.id, disabled: this.disableStart(protectionPlan) });
+      actions.push({ label: 'Stop', action: stopPlan, id: protectionPlan.id, disabled: this.disableStop(protectionPlan) });
+      actions.push({ label: 'Edit', action: openEditProtectionPlanWizard, id: protectionPlan, disabled: this.disableEdit() });
+      actions.push({ label: 'Remove', action: deletePlanConfirmation, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS, navigate: PROTECTION_PLANS_PATH });
+      actions.push({ label: 'Download Plan Playbook', action: playbookExport, id: protectionPlan, disabled: this.disableEdit() });
+      actions.push({ label: 'Download Credentials Playbook', action: downloadRecoveryPlaybook, id: protectionPlan.id });
     } else if (localVMIP === recoverySite.node.hostname) {
-      actions = [{ label: 'recover', action: openRecoveryWizard, icon: 'fa fa-plus', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.full']) },
+      actions = [{ label: 'Recover', action: openRecoveryWizard, icon: 'fa fa-plus', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.full']) },
         { label: 'Migrate', action: openMigrationWizard, icon: 'fa fa-clone', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.migration']) },
         { label: 'Reverse', action: openReverseWizard, icon: 'fa fa-backward', disabled: isReverseActionDisabled },
         { label: 'Test Recovery', action: openTestRecoveryWizard, icon: 'fa fa-check', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.test']) },
-        { label: 'Cleanup Test Recoveries', action: openCleanupTestRecoveryWizard, icon: 'fa fa-broom', disabled: !hasRequestedPrivileges(user, ['recovery.test']) }];
+        { label: 'Cleanup Test Recoveries', action: openCleanupTestRecoveryWizard, icon: 'fa fa-broom', disabled: !hasRequestedPrivileges(user, ['recovery.test']) },
+        { label: 'Download Credentials Playbook', action: downloadRecoveryPlaybook, id: protectionPlan.id, icon: 'fa fa-download' },
+      ];
     } else {
       // no action to add
     }
@@ -262,10 +265,10 @@ class DRPlanDetails extends Component {
 
   renderRecoveryJobs() {
     const { drPlans, t, user } = this.props;
-    const { localVMIP, values } = user;
+    const { localVMIP } = user;
     const { protectionPlan } = drPlans;
     const { recoverySite } = protectionPlan;
-    const activeTab = getValue('drplan.details.activeTab', values);
+    const { activeTab } = this.state;
     if (localVMIP === recoverySite.node.hostname) {
       return (
         <NavItem>
@@ -279,10 +282,9 @@ class DRPlanDetails extends Component {
   }
 
   render() {
-    const { drPlans, dispatch, t, user } = this.props;
-    const { values } = user;
+    const { drPlans, dispatch, t } = this.props;
     const { protectionPlan } = drPlans;
-    const activeTab = getValue('drplan.details.activeTab', values) || '1';
+    const { activeTab } = this.state;
     if (!protectionPlan || Object.keys(protectionPlan).length === 0) {
       return null;
     }

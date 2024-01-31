@@ -1,0 +1,103 @@
+import { faDownload, faEdit, faTrash, faUpload } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from 'react';
+import { Input } from 'reactstrap';
+import { withTranslation } from 'react-i18next';
+import { API_GET_CONFIG_TEMPLATE_BY_ID } from '../../constants/ApiConstants';
+import { clearValues } from '../../store/actions';
+import { playbookExport } from '../../store/actions/DrPlanActions';
+import { NOTE_TEXT } from '../../constants/DMNoteConstant';
+import DMNote from '../Common/DMNote';
+import { closeModal, openModal } from '../../store/actions/ModalActions';
+import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
+import { deletePlaybook, uploadFiles } from '../../store/actions/DrPlaybooksActions';
+
+function SinglePlaybookActions({ data, dispatch, t }) {
+  const { id, name, planConfigurations } = data;
+  const downloadURL = `${window.location.protocol}//${window.location.host}/playbooks/${name}`;
+
+  const onDeleteTemplate = () => {
+    const options = { title: t('confirm.delete.playbook'), confirmAction: deletePlaybook, message: t('confirm.remove.playbook', { name: data.name }), id };
+    dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
+  };
+
+  const onFileChange = (e) => {
+    const url = API_GET_CONFIG_TEMPLATE_BY_ID.replace('<id>', id);
+    e.preventDefault();
+    if (!e.target.files || e.target.files.length === 0) {
+      return;
+    }
+
+    dispatch(uploadFiles(e.target.files[0], url, t('configure.playbook.download'), '', 'PUT'));
+  };
+
+  const onExport = () => {
+    dispatch(playbookExport(planConfigurations[0], planConfigurations[0].planID));
+  };
+
+  const onClose = () => {
+    dispatch(closeModal());
+    dispatch(clearValues());
+  };
+
+  const renderEditFooter = () => (
+    <div className="modal-footer">
+      <button type="button" className="btn btn-secondary" onClick={onClose}>Close </button>
+    </div>
+  );
+
+  const renderWarningWhileEdit = () => (
+    <>
+      <i className="fas fa-exclamation-triangle" />
+            &nbsp;&nbsp;&nbsp;
+      <span>
+        {t('edit.playbook.warn.msg', { name })}
+      </span>
+      <p className="margin-top-5">
+        {<small aria-hidden className="link_color" onClick={onExport}>[click here]</small>}
+        { t('title.download.configured.excel')}
+      </p>
+    </>
+  );
+  const renderedit = () => (
+    <>
+      <div className="card_note_warning margin-top-5 text-left">
+        {planConfigurations.length > 0 && planConfigurations[0]?.planID > 0
+          ? (
+            <>
+              <DMNote component={renderWarningWhileEdit} title="Note" color={NOTE_TEXT.WARNING} open />
+            </>
+          )
+          : null}
+        <span className="text-muted margin-left-20">
+          {t('title.upload.playbook')}
+        </span>
+        <label htmlFor={`reuploadFile-${name}`} className="margin-left-10 link_color">
+          <FontAwesomeIcon size="md" icon={faUpload} />
+        </label>
+        <Input type="file" accept="xlsx/*" id={`reuploadFile-${name}`} name={`reuploadFile-${name}`} className="modal-lic-upload" onSelect={onFileChange} onChange={onFileChange} />
+      </div>
+    </>
+  );
+  const onEdit = () => {
+    const options = { title: 'Edit Playbook', footerComponent: renderEditFooter, component: renderedit, color: 'success', footerLabel: t('title.reupload.excel'), size: `${planConfigurations[0]?.planID > 0 ? 'lg' : ''}` };
+    dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
+  };
+  return (
+    <>
+      <div className="margin-top-2">
+        <a href="#" onClick={onEdit}>
+          <FontAwesomeIcon size="sm" icon={faEdit} />
+        </a>
+        <a href={downloadURL}>
+          <FontAwesomeIcon className="single_playbook_download" size="sm" icon={faDownload} />
+        </a>
+        <a href="#" onClick={() => onDeleteTemplate()}>
+          <FontAwesomeIcon className="single_playbook_delete" size="sm" icon={faTrash} />
+        </a>
+      </div>
+    </>
+  );
+}
+
+export default (withTranslation()(SinglePlaybookActions));

@@ -2,8 +2,10 @@ import PropTypes from 'prop-types';
 import React, { Component, Suspense } from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
 import { withTranslation } from 'react-i18next';
+import Playbooks from '../Playbook/Playbooks';
+import SinglePlaybookDetailsPage from '../Playbook/SinglePlaybookDetailsPage';
 import { changePageTitle } from '../../utils/AppUtils';
-import { ALERTS_PATH, DASHBOARD_PATH, EVENTS_PATH, JOBS_PATH, LOGIN_PATH, NODES_PATH, PROTECTION_PLANS_PATH, PROTECTION_PLAN_DETAILS_PATH, REPORTS_PATH, SETTINGS_PATH, SITES_PATH } from '../../constants/RouterConstants';
+import { ALERTS_PATH, DASHBOARD_PATH, EVENTS_PATH, JOBS_PATH, LOGIN_PATH, NODES_PATH, PLAYBOOK_DETAILS_PAGE, PLAYBOOK_LIST, PROTECTION_PLANS_PATH, PROTECTION_PLAN_DETAILS_PATH, REPORTS_PATH, SETTINGS_PATH, SITES_PATH } from '../../constants/RouterConstants';
 import Login from '../../pages/AuthenticationInner/Login';
 // import Pages404 from '../../pages/Page-404';
 import DRPlans from '../data-recovery/DRPlans';
@@ -61,7 +63,7 @@ class Layout extends Component {
   }
 
   renderRoutes() {
-    const { sites, dispatch, user, drPlans } = this.props;
+    const { sites, dispatch, user, drPlans, drPlaybooks } = this.props;
     const { privileges = [] } = user;
     changePageTitle(user);
     if (privileges.length === 0) {
@@ -84,6 +86,8 @@ class Layout extends Component {
           <Route path={ALERTS_PATH} render={() => <Alerts />} />
           <Route path={REPORTS_PATH} render={() => <Report />} />
           <Route path={SETTINGS_PATH} render={() => <Settings />} />
+          <Route path={PLAYBOOK_DETAILS_PAGE} render={() => <SinglePlaybookDetailsPage drPlaybooks={drPlaybooks} dispatch={dispatch} user={user} />} />
+          <Route path={PLAYBOOK_LIST} render={() => <Playbooks drPlaybooks={drPlaybooks} dispatch={dispatch} user={user} />} />
           <Route render={() => <Dashboard {...this.props} />} />
         </Switch>
       </Suspense>
@@ -142,6 +146,7 @@ Layout.propTypes = {
   dispatch: PropTypes.func.isRequired,
   sites: PropTypes.object.isRequired,
   user: PropTypes.object.isRequired,
+  drPlaybooks: PropTypes.object.isRequired,
 };
 
 export default (withTranslation()(withRouter(Layout)));

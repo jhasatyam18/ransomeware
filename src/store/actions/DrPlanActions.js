@@ -7,7 +7,7 @@ import { fetchByDelay } from '../../utils/SlowFetch';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import * as Types from '../../constants/actionTypes';
 import {
-  API_FETCH_DR_PLANS, API_START_DR_PLAN, API_STOP_DR_PLAN, API_DELETE_DR_PLAN, API_FETCH_DR_PLAN_BY_ID, API_FETCH_REVERSE_DR_PLAN_BY_ID, API_RECOVER, API_MIGRATE, API_REVERSE, API_PROTECTION_PLAN_VMS, API_PROTECTION_PLAN_UPDATE, API_PROTECTION_PLAN_PROTECTED_VMS, API_VM_ALERTS, API_EDIT_PROTECTED_VM, API_FETCH_VMWARE_INVENTORY, API_TEST_RECOVERY_CLEANUP, API_AUTO_MIGRATE_WORKFLOW,
+  API_FETCH_DR_PLANS, API_START_DR_PLAN, API_STOP_DR_PLAN, API_DELETE_DR_PLAN, API_FETCH_DR_PLAN_BY_ID, API_FETCH_REVERSE_DR_PLAN_BY_ID, API_RECOVER, API_MIGRATE, API_REVERSE, API_PROTECTION_PLAN_VMS, API_PROTECTION_PLAN_UPDATE, API_PROTECTION_PLAN_PROTECTED_VMS, API_VM_ALERTS, API_EDIT_PROTECTED_VM, API_FETCH_VMWARE_INVENTORY, API_TEST_RECOVERY_CLEANUP, API_AUTO_MIGRATE_WORKFLOW, API_BULK_GENERATE,
 } from '../../constants/ApiConstants';
 import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
@@ -26,6 +26,7 @@ import { setVmwareInitialData, setVMwareTargetData } from './VMwareActions';
 import { setCookie } from '../../utils/CookieUtils';
 import { APPLICATION_GETTING_STARTED_COMPLETED } from '../../constants/UserConstant';
 import { fetchReplicationJobsByPplanId } from './JobActions';
+import { onPlanPlaybookExport } from './DrPlaybooksActions';
 
 export function fetchDrPlans(key) {
   return (dispatch) => {
@@ -568,6 +569,45 @@ export function openEditProtectionPlanWizard(plan, isEventAction = false, alert 
         return new Promise((resolve) => resolve());
       },
     );
+  };
+}
+
+export function playbookExport(plan, planID = undefined) {
+  return (dispatch) => {
+    let { id } = plan;
+    if (planID) {
+      id = planID;
+    }
+    let url = API_BULK_GENERATE;
+    url = `${url}`;
+    const payload = {
+      planID: `${id}`,
+      playbookType: 'protectionPlan',
+    };
+    const obj = createPayload(API_TYPES.POST, payload);
+    dispatch(showApplicationLoader('export-excel', 'Exporting configured excel'));
+    return callAPI(url, obj).then((json) => {
+      dispatch(hideApplicationLoader('export-excel'));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        const { name } = json;
+        if (typeof name !== 'undefined') {
+          const result = `/playbooks/download/${json.name}`;
+          const link = document.createElement('a');
+          link.href = result;
+          link.click();
+        }
+        dispatch(addMessage('Excel exported successfully', MESSAGE_TYPES.SUCCESS));
+        dispatch(closeModal());
+        dispatch(clearValues());
+        dispatch(refresh());
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('export-excel'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
   };
 }
 
@@ -1669,5 +1709,11 @@ export function setReverseConfig(protectionPlan) {
     dispatch(valueChange('drplan.enablePPlanLevelScheduling', protectionPlan.enablePPlanLevelScheduling));
     dispatch(valueChange('drplan.replPostScript', protectionPlan.replPostScript));
     dispatch(valueChange('drplan.replPreScript', protectionPlan.replPreScript));
+  };
+}
+export function onPlaybookExportClick(plan) {
+  return (dispatch) => {
+    const { id } = plan;
+    dispatch(onPlanPlaybookExport(id));
   };
 }

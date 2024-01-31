@@ -80,6 +80,7 @@ export function getRecoveryPayload(user, isMigration = false) {
   const { values } = user;
   // const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   const result = getKeyStruct('recovery.', values);
+  const recoveryFile = getValue('ui.recovery.credentials.fileName', values) || '';
   // Object.keys(vms).forEach((key) => {
   //   const { name } = vms[key];
   //   vmnames.push(name);
@@ -88,6 +89,7 @@ export function getRecoveryPayload(user, isMigration = false) {
   result.recovery.machineDetails = getRecoveryConfigVMDetails(user);
   result.recovery.protectionplanID = parseInt(`${result.recovery.protectionplanID}`, 10);
   result.recovery.isMigration = isMigration;
+  result.recovery.credentialsFileName = recoveryFile;
   return result;
 }
 

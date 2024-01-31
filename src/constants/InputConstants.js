@@ -89,7 +89,16 @@ export const STATIC_KEYS = {
   UI_NETWORKS: 'ui.values.network',
   UI_EDIT_RESERVE_IPS: 'ui.values.edit.reserveips',
   UI_WORKFLOW: 'ui.workflow',
+  UI_DISABLE_BULK_DOWNLOAD: 'disable.bulk.download',
+  UI_BULK_FILEPATH_DATA: 'ui.bulk.filepath.data',
+  UI_BULK_PPLAN: 'ui.bulk.pplan',
+  UI_TEMPLATE_FILEID: 'ui.template.fileid',
+  UI_TEMPLATE_BY_ID: 'ui.template.id',
   UI_REPLICATIONJOBS_BY_PPLAN_ID: 'ui.replicationjobs.by.pplanid',
+  UI_PLAYBOOK_DIFF: 'ui.playbook.diff',
+  UI_PLAYBOOK_DIFF_RESPONSE: 'ui.playbook.diff.response',
+  UI_PLAYBOOK_CURRENT_PLAN_CONFIG: 'ui.playbook.current.plan.config',
+  UI_PLAYBOOK_UPDATED_PLAN_CONFIG: 'ui.playbook.updated.plan.config',
 };
 
 // Recovery time in minutes
@@ -167,6 +176,11 @@ export const SUPPORTED_FIRMWARE = {
 export const NODE_STATUS = {
   Online: 'online',
   Offline: 'offline',
+};
+
+export const PLAYBOOK_TYPE = {
+  RECOVERY: 'recovery',
+  PLAN: 'protectionPlan',
 };
 
 export const SAML = {

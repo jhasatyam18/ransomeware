@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Label, Container, Row, Col } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
+import SimpleBar from 'simplebar-react';
 import DMTree from '../Shared/DMTree';
 import DMTable from '../Table/DMTable';
 import DMTPaginator from '../Table/DMTPaginator';
@@ -40,7 +41,7 @@ class DRPlanProtectVMStep extends Component {
   }
 
   render() {
-    const { dispatch, user, t } = this.props;
+    const { dispatch, user, t, vmCss, selectedVmCss } = this.props;
     const { values } = user;
     const { hasFilterString, searchData, dataToDisplay } = this.state;
     const vms = getValue('ui.site.vms', values);
@@ -53,17 +54,16 @@ class DRPlanProtectVMStep extends Component {
       selectedVMs = {};
     }
     if (platfromType === PLATFORM_TYPES.VMware) {
-      // VirtualMachine
       return (
         <Container fluid className="padding-top-20">
           <Label>{t('Select Virtual Machine for protection')}</Label>
-          <DMTree dispatch={dispatch} search searchURL={`api/v1/sites/${id}/vms`} user={user} selectedData={selectedVMs} showSelectedvmdata fieldKey="ui.site.vmware.selectedvms" field={field} selectedVMkey="ui.selectedvm.value" />
+          <DMTree dispatch={dispatch} search searchURL={`api/v1/sites/${id}/vms`} user={user} selectedData={selectedVMs} showSelectedvmdata fieldKey="ui.site.vmware.selectedvms" field={field} selectedVMkey="ui.selectedvm.value" vmCss={vmCss} selectedVmCss={selectedVmCss} />
         </Container>
       );
     }
     return (
       <Container fluid className="padding-10">
-        <Label>{t('Select Virtual Machine for protection')}</Label>
+        <Label className="margin-left-20">{t('Select Virtual Machine for protection')}</Label>
         <Row>
           <Col className="margin-left-30 padding-right-30 margin-right-10">
             <DMTPaginator
@@ -77,15 +77,17 @@ class DRPlanProtectVMStep extends Component {
             />
           </Col>
         </Row>
-        <DMTable
-          dispatch={dispatch}
-          columns={TABLE_PROTECT_VM_VMWARE}
-          data={dataToDisplay}
-          isSelectable
-          onSelect={handleProtectVMSeletion}
-          selectedData={selectedVMs}
-          primaryKey="moref"
-        />
+        <SimpleBar>
+          <DMTable
+            dispatch={dispatch}
+            columns={TABLE_PROTECT_VM_VMWARE}
+            data={dataToDisplay}
+            isSelectable
+            onSelect={handleProtectVMSeletion}
+            selectedData={selectedVMs}
+            primaryKey="moref"
+          />
+        </SimpleBar>
       </Container>
     );
   }

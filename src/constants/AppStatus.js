@@ -30,3 +30,16 @@ export const RECOVERY_STATUS = {
   MIGRATED: 'Migrated',
   RECOVERED: 'Recovered',
 };
+
+export const TEMPLATE_STATUS = [
+  'configUploaded',
+  'configValidating',
+  'configValidated',
+  'configValidationFailed',
+  'configPlanCreated',
+  'configPlanReconfigured',
+];
+
+export const PLAYBOOKS_STATUS = {
+  PLAYBOOK_VALIDATION_FAILED: 'configValidationFailed',
+};

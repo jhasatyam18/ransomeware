@@ -1,0 +1,180 @@
+import { faCheckCircle, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from 'react';
+import { withTranslation } from 'react-i18next';
+import { clearValues } from '../../store/actions';
+import { onCreatePlanFromPlaybook, validatePlaybook } from '../../store/actions/DrPlaybooksActions';
+import { closeModal, openModal } from '../../store/actions/ModalActions';
+import { MODAL_CONFIRMATION_WARNING, MODAL_TEMPLATE_ERROR } from '../../constants/Modalconstant';
+import { TEMPLATE_STATUS } from '../../constants/AppStatus';
+
+function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispatch, t }) {
+  const status = playbook[field];
+  const { id, planConfigurations } = playbook;
+  const statusInd = TEMPLATE_STATUS.indexOf(status);
+  const Uploaded = statusInd > 0 ? 'success_line' : '';
+  const Validated = statusInd > 3 ? 'success_line' : '';
+  let validateOnClick = '';
+  let configureOnClick = '';
+  let validateLable = t('validate');
+  let configureLabel = t('configure');
+  if (statusInd === 0) {
+    validateLable = <p className="link_color"><ins>{t('validate')}</ins></p>;
+  } else if (statusInd === 1) {
+    validateLable = t('validating');
+  } else if (statusInd === 3) {
+    validateLable = <p className="link_color"><ins>{t('validate')}</ins></p>;
+  } else if (statusInd < 4) {
+    validateLable = t('validated');
+  }
+  if (planConfigurations[0]?.planID > 0) {
+    if (statusInd === 2) {
+      configureLabel = <p className="link_color"><ins>{t('reconfigure')}</ins></p>;
+    } else if (statusInd === 5) {
+      configureLabel = t('reconfigured');
+    } else if (statusInd === 1) {
+      configureLabel = t('reconfigure');
+    } else {
+      configureLabel = t('configure');
+    }
+  } else if (statusInd === 4) {
+    configureLabel = t('configured');
+  } else if (statusInd === 2) {
+    configureLabel = <p className="link_color"><ins>{t('configure')}</ins></p>;
+  } else {
+    configureLabel = t('configure');
+  }
+  const onClose = () => {
+    dispatch(closeModal());
+    dispatch(clearValues());
+  };
+
+  const onCreatePplanClick = () => {
+    dispatch(onCreatePlanFromPlaybook(id));
+  };
+
+  const createPlanFooter = () => (
+    <div className="modal-footer">
+      <button type="button" className="btn btn-secondary" onClick={onClose}>
+        {t('close')}
+      </button>
+      <button type="button" className="btn btn-success" onClick={onCreatePplanClick}>
+        { planConfigurations[0]?.planID > 0 ? t('title.edit.pplan') : t('confirm')}
+      </button>
+    </div>
+  );
+
+  const onCreatePplan = () => {
+    const options = { title: t('confirm.playbook.plan.config'), footerComponent: createPlanFooter, confirmAction: onCreatePlanFromPlaybook, message: `Are you sure want to configure protection plan from ${playbook.name} playbook ?`, id, footerLabel: 'Create Protection Plan', color: 'success', size: 'lg' };
+    dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
+  };
+
+  const onErrorValidateClick = () => {
+    const options = { title: t('issues.identified'), size: 'lg', playbook };
+    dispatch(openModal(MODAL_TEMPLATE_ERROR, options));
+  };
+
+  const onValidate = () => {
+    const options = { title: t('title.validate.playbook'), confirmAction: validatePlaybook, message: `Are you sure want to Validate ${playbook.name} ?`, id: playbook.id, footerLabel: t('validate'), color: 'success', size: 'lg' };
+    dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
+  };
+
+  if (statusInd < 2) {
+    validateOnClick = onValidate;
+  } else if (statusInd === 3) {
+    validateOnClick = onErrorValidateClick;
+  } if (statusInd > 3 || statusInd === 2) {
+    validateOnClick = onValidate;
+  }
+  if (statusInd === 2) {
+    configureOnClick = onCreatePplan;
+  }
+
+  const renderValidate = () => {
+    if (statusInd === 1) {
+      return (
+        <>
+          <i className="fa fa-spinner fa-lg fa-spin text-info recovery_step_icon" />
+        </>
+      );
+    }
+    if (statusInd < 2) {
+      return (
+        <>
+          <FontAwesomeIcon onClick={validateOnClick} className="bulk_status_icon" icon={faCheckCircle} />
+        </>
+      );
+    } if (statusInd === 3) {
+      return (
+        <>
+          <FontAwesomeIcon
+            onClick={validateOnClick}
+            className="success bulk_status_icon error"
+            icon={faCircleXmark}
+          />
+        </>
+      );
+    } if (statusInd === 2) {
+      return (
+        <>
+          <FontAwesomeIcon onClick={validateOnClick} className="success bulk_status_icon" icon={faCheckCircle} />
+        </>
+      );
+    }
+    if (statusInd > 3) {
+      return (
+        <>
+          <FontAwesomeIcon className="success bulk_status_icon" icon={faCheckCircle} />
+        </>
+      );
+    }
+  };
+
+  const renderConfigure = () => {
+    if (statusInd <= 3) {
+      return (
+        <>
+          <FontAwesomeIcon className="bulk_status_icon" icon={faCheckCircle} />
+        </>
+      );
+    } if (statusInd > 3) {
+      return (
+        <>
+          <FontAwesomeIcon className="success bulk_status_icon" icon={faCheckCircle} onClick={configureOnClick} />
+        </>
+      );
+    }
+  };
+
+  return (
+    <>
+      {showStatusLabel ? <p style={{ fontWeight: '540', fontSize: '1.1em', width: '100%', margin: 'auto', textAlign: 'center', marginBottom: '1px', position: 'relative', left: '10px', top: '3px' }}>Status</p> : null}
+      <div className="d-flex bulk_status_parent mt-0">
+        <div>
+          <FontAwesomeIcon className="success bulk_status_icon" icon={faCheckCircle} />
+        </div>
+        <div className="flex-item">
+          <hr className={`bulk_sts_horizntal_line ${Uploaded}`} />
+        </div>
+        <div>{renderValidate()}</div>
+        <div className="flex-item"><hr className={`bulk_sts_horizntal_line ${Validated}`} /></div>
+        <div>
+          {renderConfigure()}
+        </div>
+      </div>
+      <div className="bulk_status_text_parent padding-left-18">
+        <div className="templta_status_text">
+          Uploaded
+        </div>
+        <div aria-hidden className="templta_status_text padding-left-10 " onClick={validateOnClick}>
+          {validateLable}
+        </div>
+        <div aria-hidden className="templta_status_text padding-right-2" onClick={configureOnClick}>
+          {configureLabel}
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default (withTranslation()(SinglePlaybookStatusRenderer));

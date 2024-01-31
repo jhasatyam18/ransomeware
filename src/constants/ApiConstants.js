@@ -117,6 +117,15 @@ export const API_USER_RESET = 'api/v1/users/<id>/reset';
 // scripts
 export const API_USER_SCRIPT = 'api/v1/script';
 
+// Bulk Upload
+export const API_BULK_GENERATE = 'api/v1/protection/playbooks/generate';
+export const API_GET_BULK_PLANS = 'api/v1/protection/playbooks';
+export const API_UPLOAD_TEMPLATED = 'api/v1/protection/playbooks/config';
+export const API_GET_CONFIG_TEMPLATE_BY_ID = 'api/v1/protection/playbooks/config/<id>';
+export const API_GET_PLAN_DIFF = 'api/v1/protection/playbooks/config/<id>/diff';
+export const CREATE_PLAN_FROM_PLAYBOOK = 'api/v1/protection/playbooks/config/<id>/configure';
+export const API_VALIDATE_TEMPLATE = 'api/v1/protection/playbooks/config/<id>/validate';
+
 // SAML
 export const API_SAML = 'login/saml';
 export const API_SAML_LOGOUT = 'logout/saml';

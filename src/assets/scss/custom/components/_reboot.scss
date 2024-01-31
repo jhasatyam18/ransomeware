@@ -83,7 +83,7 @@ label {
   text-align: left;
   background-color:#2e3548;
   border-radius: 5px;
- width: 300px; 
+ width: 100%; 
 }
 
 .selectedvm-div p{
@@ -211,14 +211,14 @@ padding-left:10px;
 }
 
 .dmtree_scrollbar{
-  max-height: 53vh; 
-  min-height: 53vh; 
-  background: #2e3548
+  max-height: 47vh;
+  min-height: 47vh;
+  background: #2e3548;
 }
 
 .dmtree-selectedvm-scrollbar{
-  max-height: 46vh;
-  min-height: 46vh
+  max-height:38vh;
+  min-height:38vh
 }
 
 .icon_font{

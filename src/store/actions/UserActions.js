@@ -2,7 +2,7 @@ import * as Types from '../../constants/actionTypes';
 import { API_ADD_USER, API_AUTHENTICATE, API_AWS_REGIONS, API_AZURE_REGIONS, API_CHANGE_NODE_PASSWORD, API_CHANGE_PASSWORD, API_GCP_REGIONS, API_INFO, API_SCRIPTS, API_USERS, API_USER_PRIVILEGES, API_USER_SCRIPT } from '../../constants/ApiConstants';
 import { APP_TYPE, NODE_TYPES, PLATFORM_TYPES, SAML, STATIC_KEYS, VMWARE_OBJECT } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PROTECTION_PLANS_PATH, ROLES_SETTINGS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH, USER_SETTINGS_PATH } from '../../constants/RouterConstants';
+import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PLAYBOOK_LIST, PROTECTION_PLANS_PATH, ROLES_SETTINGS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH, USER_SETTINGS_PATH } from '../../constants/RouterConstants';
 import { APPLICATION_API_USER, APPLICATION_AUTHORIZATION, APPLICATION_UID } from '../../constants/UserConstant';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { getCookie, setCookie, removeCookie } from '../../utils/CookieUtils';
@@ -22,6 +22,7 @@ import { fetchBandwidthConfig, fetchBandwidthReplNodes } from './ThrottlingActio
 import { MODAL_USER_SCRIPT } from '../../constants/Modalconstant';
 import { fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
 import { fetchSelectedVmsProperty, fetchVMwareComputeResource, fetchVMwareNetwork, getVMwareConfigDataForField, setVMwareAPIResponseData } from './VMwareActions';
+import { fetchPlaybookById, fetchPlaybooks } from './DrPlaybooksActions';
 import { fetchRoles } from './RolesAction';
 
 export function refreshApplication() {
@@ -378,6 +379,9 @@ export function refresh() {
         dispatch(fetchBandwidthConfig());
         dispatch(fetchBandwidthReplNodes());
         break;
+      case PLAYBOOK_LIST:
+        dispatch(fetchPlaybooks());
+        break;
       case USER_SETTINGS_PATH:
         dispatch(fetchUsers());
         break;
@@ -395,6 +399,9 @@ export function detailPathChecks(pathname) {
     if (pathname.indexOf('protection/plan/details') !== -1) {
       const pathArray = pathname.split('/');
       dispatch(fetchDRPlanById(pathArray[pathArray.length - 1]));
+    } else if (pathname.indexOf('protection/plan/playbook/') !== -1) {
+      const parts = pathname.split('/');
+      dispatch(fetchPlaybookById(parts[parts.length - 1]));
     }
     return null;
   };

@@ -17,7 +17,7 @@ function DMTree(props) {
   const [searchData, setSearchData] = useState([]);
   const [searchStr, setSearchStr] = useState('');
   const [apiData, setApiData] = useState([]);
-  const { data, user, dispatch, field, disabled, fieldKey, hideLabel, child, search, searchURL, showSelectedvmdata, selectedVMkey } = props;
+  const { data, user, dispatch, field, disabled, fieldKey, hideLabel, child, search, searchURL, showSelectedvmdata, selectedVMkey, vmCss, selectedVmCss } = props;
   const { getTreeData, dataKey } = field;
   const { values } = user;
   const showSelectedData = getValue(selectedVMkey, values);
@@ -135,7 +135,7 @@ function DMTree(props) {
   function renderSelectedVMNode() {
     if (showSelectedData.length > 0 && showSelectedvmdata) {
       return (
-        <Col sm={5}>
+        <Col sm={4}>
           <div>
             <div className="selectedvm-div">
               <p>
@@ -154,7 +154,7 @@ function DMTree(props) {
                 </>
               ) : (
                 <>
-                  <SimpleBar className="dmtree-selectedvm-scrollbar">
+                  <SimpleBar className={selectedVmCss || 'dmtree-selectedvm-scrollbar'}>
                     {showSelectedData.map((node) => (
                       <p>
                         {node.name}
@@ -203,9 +203,9 @@ function DMTree(props) {
       <Row>
         <Col sm={12}>
           <Row>
-            <Col sm={showSelectedvmdata && showSelectedData.length > 0 ? 7 : 12}>
+            <Col sm={showSelectedvmdata && showSelectedData.length > 0 ? 8 : 12}>
               {child || !search ? render() : (
-                <SimpleBar className="dmtree_scrollbar">
+                <SimpleBar className={vmCss || 'dmtree_scrollbar'}>
                   {render()}
                 </SimpleBar>
               )}

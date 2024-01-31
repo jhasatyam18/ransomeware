@@ -11,7 +11,7 @@ import { PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputC
 import { setRecoveryVMDetails } from './DrPlanActions';
 import { fetchAvailibilityZonesForAzure } from './AzureAction';
 
-export function fetchSites(key) {
+export function fetchSites(key, setProtectionPlatform) {
   return (dispatch) => {
     dispatch(showApplicationLoader('Fetching', 'Loading configured sites'));
     return callAPI(API_FETCH_SITES)
@@ -23,6 +23,9 @@ export function fetchSites(key) {
           dispatch(sitesFetched(json));
           if (key) {
             dispatch(valueChange(key, json));
+          }
+          if (setProtectionPlatform) {
+            dispatch(addProtectionSiteId(json));
           }
         }
       },
@@ -51,6 +54,17 @@ export function loginSuccess(token, username) {
     type: Types.AUTHENTICATE_USER_SUCCESS,
     token,
     username,
+  };
+}
+
+function addProtectionSiteId(json) {
+  return (dispatch) => {
+    for (let j = 0; j < json.length; j += 1) {
+      if (json[j].node.isLocalNode) {
+        dispatch(onProtectSiteChange({ value: json[j].id }));
+        break;
+      }
+    }
   };
 }
 
@@ -124,6 +138,7 @@ export function onProtectSiteChange({ value }) {
     const platfromType = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${value}`)[0].platformDetails.platformType;
     dispatch(valueChange('ui.values.protectionPlatform', platfromType));
     dispatch(valueChange('ui.values.protectionSiteID', value));
+    dispatch(valueChange('drplan.protectedSite', value));
     const url = (platfromType === PLATFORM_TYPES.VMware) ? API_FETCH_VMWARE_INVENTORY.replace('<id>', value) : API_FETCH_SITE_VMS.replace('<id>', value);
     dispatch(showApplicationLoader(url, 'Loading virtual machines'));
     return callAPI(url)

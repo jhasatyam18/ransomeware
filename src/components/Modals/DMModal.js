@@ -1,6 +1,7 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Modal } from 'reactstrap';
+import { clearValues } from '../../store/actions';
 import { closeModal } from '../../store/actions/ModalActions';
 import * as MODALS from '../../constants/Modalconstant';
 import ModalConfigureSite from './ModalConigureSite';
@@ -20,32 +21,34 @@ import ModalLocationTree from './ModalLocationTree';
 import ModalShowSummary from './ModalShowSummary';
 import ModalChangeNodePassword from './ModalChangeNodePassword';
 import ModalShowResetedVms from './ModalShowResetVm';
+import ModalPlaybookError from './ModalPlaybookError';
+import PlaybookUploadModal from './PlaybookUploadModal';
+import PlaybookGenerateModal from './PlaybookGenerateModal';
 import ModalReplicationPriority from './ModalReplicationPriority';
+import ModalTemplateShowPplanChanges from './ModalTemplateShowPplanChanges';
 import ModalConfigureUser from './ModalConfigureUser';
 import ModalResetCredentials from './ModalResetCredentials';
 
-class DMModal extends Component {
-  constructor() {
-    super();
-    this.closeModal = this.closeModal.bind(this);
-  }
+function DMModal(props) {
+  const { modal, user, dispatch } = props;
+  const { show, options } = modal;
+  const { css, modalActions, size } = options;
+  const { content } = modal;
 
-  closeModal() {
-    const { dispatch } = this.props;
+  const onClose = () => {
     dispatch(closeModal());
-  }
+    dispatch(clearValues());
+  };
 
-  renderContent(options) {
-    const { dispatch, modal, user } = this.props;
-    const { content } = modal;
+  const renderContent = () => {
     if (content) {
       switch (content) {
         case MODALS.MODAL_CONFIGURE_NEW_SITE:
-          return <ModalConfigureSite user={user} dispatch={dispatch} {...this.props} />;
+          return <ModalConfigureSite user={user} dispatch={dispatch} {...props} />;
         case MODALS.MODAL_CONFIRMATION_WARNING:
-          return <ConfirmationModal dispatch={dispatch} {...this.props} />;
+          return <ConfirmationModal dispatch={dispatch} user={user} {...props} />;
         case MODALS.MODAL_ABOUT:
-          return <ModalAbout dispatch={dispatch} {...this.props} />;
+          return <ModalAbout dispatch={dispatch} {...props} />;
         case MODALS.MODAL_ALERT_DETAILS:
           return <ModalAlertDetails />;
         case MODALS.MODAL_GENERATE_SUPPORT_BUNDLE:
@@ -74,41 +77,52 @@ class DMModal extends Component {
           return <ModalChangeNodePassword dispatch={dispatch} user={user} options={options} fieldKey={options.fieldKey} />;
         case MODALS.MODAL_SHOW_RESETED_VMS:
           return <ModalShowResetedVms dispatch={dispatch} user={user} options={options} />;
+        case MODALS.MODAL_PLAYBOOK_DOWNLOAD:
+          return <PlaybookGenerateModal dispatch={dispatch} user={user} options={options} />;
+        case MODALS.MODAL_PLAYBOOK_UPLOAD:
+          return <PlaybookUploadModal dispatch={dispatch} user={user} options={options} />;
+        case MODALS.MODAL_TEMPLATE_ERROR:
+          return <ModalPlaybookError dispatch={dispatch} user={user} options={options} />;
         case MODALS.MODAL_REPLICATION_PRIORITY:
           return <ModalReplicationPriority dispatch={dispatch} user={user} />;
+        case MODALS.MODAL_TEMPLATE_SHOW_PPLAN_CHANGES:
+          return <ModalTemplateShowPplanChanges dispatch={dispatch} user={user} options={options} />;
         case MODALS.MODAL_ADD_NEW_USER:
-          return <ModalConfigureUser dispatch={dispatch} user={user} {...this.props} />;
+          return <ModalConfigureUser dispatch={dispatch} user={user} {...props} />;
         case MODALS.MODAL_RESET_CREDENTIALS:
-          return <ModalResetCredentials dispatch={dispatch} user={user} {...this.props} />;
+          return <ModalResetCredentials dispatch={dispatch} user={user} {...props} />;
         default:
           return (<div>404</div>);
       }
     }
     return null;
+  };
+
+  if (!show) {
+    return null;
   }
 
-  render() {
-    const { modal } = this.props;
-    const { show, options } = modal;
-    const { css, size } = options;
-    if (!show) {
-      return null;
-    }
-    return (
-      <>
-        <Modal isOpen centered scrollable className={css} size={size}>
-          <div className="modal-header">
-            <h5 className="modal-title mt-0" id="DMMODAL">
-              {' '}
-              {options.title}
-              {' '}
-            </h5>
-          </div>
-          {this.renderContent(options)}
-        </Modal>
-      </>
-    );
-  }
+  return (
+    <>
+      <Modal isOpen centered scrollable className={css} size={size || ''}>
+        <div className="modal-header">
+          <h5 className="modal-title mt-0" id="DMMODAL">
+            {' '}
+            {options.title}
+            {' '}
+          </h5>
+          {modalActions ? (
+            <div className="wizard-header-options">
+              <div className="wizard-header-div">
+                <box-icon name="x-circle" type="solid" color="white" style={{ width: 20 }} onClick={onClose} />
+              </div>
+            </div>
+          ) : null}
+        </div>
+        {renderContent()}
+      </Modal>
+    </>
+  );
 }
 const propTypes = {
   dispatch: PropTypes.func.isRequired,

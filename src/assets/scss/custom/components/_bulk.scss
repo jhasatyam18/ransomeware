@@ -1,0 +1,104 @@
+.bulk_status_text_parent{
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  top:-15px;
+  margin: auto;
+}
+
+.bulk_status_parent{
+  width: 85%;
+  padding-left: 22px;
+  margin: auto;
+}
+.bulk_sts_horizntal_line{
+    background-color: #aeaeae;
+    height: 1px;
+    width: 100%;
+    position: relative;
+    top: -9px;
+  }
+
+.success{
+  color: #34c38f ;
+}
+.error{
+  color: #f46a6a ;
+}
+
+
+.flex-item{
+  flex-basis: 100%;
+}
+
+.bulk_status_icon{
+  z-index: -1;
+  margin-left: 4px;
+  margin-right: 4px;
+  font-size: 1em;
+  &:hover{
+    color: rgb(162, 206, 206);
+    cursor:pointer;
+  }
+}
+
+.templta_status_text{
+  font-size: 0.7rem;
+}
+.success_line{
+  background-color: #34c38f ;
+}
+
+.template_select_folder{
+  min-height: 30vh;
+  max-height: 30vh;
+}
+
+.template_serach_vm{
+  max-height: 19vh;
+  min-height: 19vh;
+}
+
+.bulk_summary__view {
+  margin: 0px;
+  transition:visibility 1s linear,opacity 0.3s linear;
+  .key {
+    background-color: #2a3042;
+    padding-left: 10px;
+    padding-top: 10px;
+  }
+  .child {
+    padding-left: 40px;
+  }
+  .value {
+    background-color: #32394e;
+    padding-top: 10px;
+    padding-left: 15px;
+  }
+}
+
+.bulk_diff_border{
+  border: 1px solid rgb(70, 73, 82)
+}
+
+.bulk_dmtree_vm_div{
+  min-height: 45vh;
+  max-height: 45vh; 
+  background: #2e3548;
+}
+
+.bulk_dmtree_selected_vm_div{
+  min-height: 36vh;
+  max-height: 36vh;
+}
+
+.single_playbook_download{
+  color: #34c38f;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.single_playbook_delete{
+  color: #f46a6a;
+}

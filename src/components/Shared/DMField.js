@@ -22,7 +22,7 @@ class DMField extends Component {
     const { type, COMPONENT } = field;
     switch (type) {
       case FIELD_TYPE.SELECT:
-        return <DMFieldSelect dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} />;
+        return <DMFieldSelect dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} hideLabel={hideLabel} />;
       case FIELD_TYPE.NUMBER:
         return <DMFieldNumber dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} />;
       case FIELD_TYPE.CHECKBOX:

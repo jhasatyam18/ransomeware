@@ -1,4 +1,12 @@
 import React from 'react';
+import PlaybookPlanStatusRenderer from '../components/Table/ItemRenderers/PlaybookPlanStatusRenderer';
+import PlaybookPlanNameRenderer from '../components/Table/ItemRenderers/PaybookPlanNameRenderer';
+import PlaybookIssuesColumnRenderer from '../components/Table/ItemRenderers/PlaybookIssuesColumnRenderer';
+import PlaybookChangesRenderer from '../components/Playbook/PlaybookChangesRenderer';
+import PlaybookConfigureRenderer from '../components/Table/ItemRenderers/PlaybookConfigureRenderer';
+import PlaybookFileNameRenderer from '../components/Table/ItemRenderers/PlaybookFileNameRenderer';
+import SinglePlaybookActions from '../components/Playbook/SinglePlaybookActions';
+import SinglePlaybookStatusRenderer from '../components/Playbook/SinglePlaybookStatusRenderer';
 import SiteLinkRenderer from '../components/Table/ItemRenderers/SiteLinkRenderer';
 import RecoveryStatusRenderer from '../components/Table/ItemRenderers/RecoveryStatusRenderer';
 import VMInstanceItemRenderer from '../components/Table/ItemRenderers/VMInstanceItemRenderer';
@@ -49,7 +57,7 @@ import VMUsernameItemRenderer from '../components/Table/ItemRenderers/VMUsername
 import VMNetworkInfoItemRenderer from '../components/Table/ItemRenderers/VMNetworkInfoItemRenderer';
 import { DATE_PICKER_COMP, FIELDS, FIELD_TYPE, MULTISELECT_ITEM_COMP, REPLICATION_INTERVAL_COMP, TIME_PICKER_COMP } from '../constants/FieldsConstant';
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMORY, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
-import { ALERT_ACK_ITEM_RENDERER, DATE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, EMAIL_RECIPIENT_ACTION_ITEM_RENDER, EVENT_LEVEL_ITEM_RENDERER, LICENSE_ACTION_ITEM_RENDERER, LICENSE_STATUS_ITEM_RENDER, LICENSE_USAGE_ITEM_RENDERER, NODE_ACTION_RENDERER, NODE_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDERER, PROTECTED_VM_ACTIONS_ITEM_ITEM_RENDERER, PROTECTION_SITE_LINK_ITEM_RENDERER, RECOVERY_SITE_LINK_ITEM_RENDERER, RECOVERY_STATUS_ITEM_RENDERER, RECOVERY_STATUS_RENDERER, RECOVERY_TYPE_ITEM_RENDERER, REPLICATION_INTERVAL_ITEM_RENDERER, REPLICATION_PRIORITY_RENDERER, ROLE_ITEM_RENDERER, SCRIPT_ITEM_RENDERER, SERVER_PORT_ITEM_RENDERER, SITE_LOCATION_ITEM_RENDERER, SITE_NAME_LINK_RENDERER, SIZE_ITEM_RENDERER, SSH_RDP_ITEM_RENDERER, STATUS_ITEM_RENDERER, SUPPORT_BUNDLE_ACTION_ITEM_RENDERER, THROTTLING_ACTION_ITEM_RENDER, THROTTLING_TIME_ITEM_RENDER, TIME_DURATION_RENDERER, TRANSFER_SIZE_ITEM_RENDERER, VIEW_ALERT_INFO_RENDERER, VM_BOOT_ORDER_ITEM_RENDER, VM_DISK_ITEM_RENDERER, VM_NETWORK_INFO_ITEM_RENDERER, VM_PLACEMENT_INFO_ITEM_RENDERER, VM_SIZE_ITEM_RENDERER, VM_UPASSWORD_ITEM_RENDERER, VM_USERNAME_ITEM_RENDERER } from '../constants/TableConstants';
+import { ALERT_ACK_ITEM_RENDERER, PLAYBOOK_ACTION_RENDERER, PLAYBOOK_FILENAME_RENDERER, SINGLE_PLAYBOOK_STATUS_RENDERER, DATE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, PLAYBOOK_CHANGES_RENDERER, EMAIL_RECIPIENT_ACTION_ITEM_RENDER, EVENT_LEVEL_ITEM_RENDERER, LICENSE_ACTION_ITEM_RENDERER, LICENSE_STATUS_ITEM_RENDER, LICENSE_USAGE_ITEM_RENDERER, NODE_ACTION_RENDERER, NODE_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDERER, PROTECTED_VM_ACTIONS_ITEM_ITEM_RENDERER, PROTECTION_SITE_LINK_ITEM_RENDERER, RECOVERY_SITE_LINK_ITEM_RENDERER, RECOVERY_STATUS_ITEM_RENDERER, RECOVERY_STATUS_RENDERER, RECOVERY_TYPE_ITEM_RENDERER, REPLICATION_INTERVAL_ITEM_RENDERER, ROLE_ITEM_RENDERER, SCRIPT_ITEM_RENDERER, SERVER_PORT_ITEM_RENDERER, SITE_LOCATION_ITEM_RENDERER, SITE_NAME_LINK_RENDERER, SIZE_ITEM_RENDERER, SSH_RDP_ITEM_RENDERER, STATUS_ITEM_RENDERER, SUPPORT_BUNDLE_ACTION_ITEM_RENDERER, PLAYBOOK_CONFIGURE_RENDERER, THROTTLING_ACTION_ITEM_RENDER, THROTTLING_TIME_ITEM_RENDER, TIME_DURATION_RENDERER, TRANSFER_SIZE_ITEM_RENDERER, VIEW_ALERT_INFO_RENDERER, VM_BOOT_ORDER_ITEM_RENDER, VM_DISK_ITEM_RENDERER, VM_NETWORK_INFO_ITEM_RENDERER, VM_PLACEMENT_INFO_ITEM_RENDERER, VM_SIZE_ITEM_RENDERER, VM_UPASSWORD_ITEM_RENDERER, VM_USERNAME_ITEM_RENDERER, PLAYBOOK_RENDER_ISSUES_COLUMN, PLAYBOOK_PLAN_NAME_LINK_RENDERER, REPLICATION_PRIORITY_RENDERER, PLAYBOOK_PLAN_STATUS_RENDERER } from '../constants/TableConstants';
 import ScriptItemRenderer from '../components/Table/ItemRenderers/ScriptItemRenderer';
 import ProtectedSiteLinkRenderer from '../components/Table/ItemRenderers/ProtectedSiteLinkItemRenderer';
 import DMSearchSelect from '../components/Shared/DMSearchSelect';
@@ -180,8 +188,24 @@ export function getItemRendererComponent(render, data, field, user, dispatch) {
       return <SiteLinkRenderer data={data} dispatch={dispatch} user={user} />;
     case RECOVERY_STATUS_RENDERER:
       return <RecoveryStatusRenderer data={data} field={field} dispatch={dispatch} user={user} />;
+    case SINGLE_PLAYBOOK_STATUS_RENDERER:
+      return <SinglePlaybookStatusRenderer playbook={data} field={field} dispatch={dispatch} user={user} />;
+    case PLAYBOOK_FILENAME_RENDERER:
+      return <PlaybookFileNameRenderer data={data} field={field} dispatch={dispatch} />;
+    case PLAYBOOK_ACTION_RENDERER:
+      return <SinglePlaybookActions data={data} field={field} dispatch={dispatch} />;
+    case PLAYBOOK_CONFIGURE_RENDERER:
+      return <PlaybookConfigureRenderer data={data} dispatch={dispatch} />;
+    case PLAYBOOK_CHANGES_RENDERER:
+      return <PlaybookChangesRenderer dispatch={dispatch} data={data} field={field} />;
+    case PLAYBOOK_RENDER_ISSUES_COLUMN:
+      return <PlaybookIssuesColumnRenderer dispatch={dispatch} data={data} field={field} />;
+    case PLAYBOOK_PLAN_NAME_LINK_RENDERER:
+      return <PlaybookPlanNameRenderer dispatch={dispatch} user={user} field={field} data={data} />;
     case REPLICATION_PRIORITY_RENDERER:
       return <ReplicationPriorityItemRenderer data={data} field={field} dispatch={dispatch} user={user} />;
+    case PLAYBOOK_PLAN_STATUS_RENDERER:
+      return <PlaybookPlanStatusRenderer data={data} field={field} dispatch={dispatch} user={user} />;
     default:
       return (<div> 404 </div>);
   }

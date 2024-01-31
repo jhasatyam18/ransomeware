@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
-import { STATUS_STARTED } from '../../constants/AppStatus';
+import { useHistory } from 'react-router-dom';
+import { PLAYBOOK_LIST } from '../../constants/RouterConstants';
 import { clearValues, fetchScript, valueChange } from '../../store/actions';
 import {
-  drPlanStopStart, deletePlan, openRecoveryWizard, openMigrationWizard, openReverseWizard, openEditProtectionPlanWizard,
+  deletePlan, openEditProtectionPlanWizard,
 } from '../../store/actions/DrPlanActions';
 import ActionButton from '../Common/ActionButton';
 import { openModal } from '../../store/actions/ModalActions';
@@ -16,57 +17,34 @@ import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
 import { PROTECTION_PLANS_STATUS, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { isPlanRecovered } from '../../utils/validationUtils';
 
-class DRPlanActionBar extends Component {
-  constructor() {
-    super();
-    this.planAction = this.planAction.bind(this);
-    this.onDelete = this.onDelete.bind(this);
-    this.onCreate = this.onCreate.bind(this);
-    this.onInitiateRecovery = this.onInitiateRecovery.bind(this);
-    this.onMigrate = this.onMigrate.bind(this);
-    this.onReverse = this.onReverse.bind(this);
-    this.showEdit = this.showEdit.bind(this);
-  }
-
-  onCreate() {
-    const { dispatch } = this.props;
+function DRPlanActionBar(props) {
+  const history = useHistory();
+  const onCreate = () => {
+    const { dispatch } = props;
     dispatch(clearValues());
     dispatch(fetchSites('ui.values.sites'));
     dispatch(fetchScript());
     dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.CREATE_PLAN));
     dispatch(valueChange('drplan.isCompression', true));
     dispatch(openWizard(CREATE_DR_PLAN_WIZARDS.options, CREATE_DR_PLAN_WIZARDS.steps));
-  }
+  };
 
-  onInitiateRecovery() {
-    const { dispatch } = this.props;
-    dispatch(openRecoveryWizard());
-  }
-
-  onMigrate() {
-    const { dispatch } = this.props;
-    dispatch(clearValues());
-    dispatch(openMigrationWizard());
-  }
-
-  onReverse() {
-    const { dispatch } = this.props;
-    dispatch(openReverseWizard());
-  }
-
-  onDelete() {
-    const { dispatch } = this.props;
+  const onDelete = () => {
+    const { dispatch } = props;
     const options = { title: 'Confirmation', confirmAction: deletePlan, message: 'Are you sure want to delete  ?' };
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
-  }
+  };
 
-  onEdit = () => {
-    const { dispatch } = this.props;
+  const onTemplateClick = () => {
+    history.push(PLAYBOOK_LIST);
+  };
+  const onEdit = () => {
+    const { dispatch } = props;
     dispatch(openEditProtectionPlanWizard());
-  }
+  };
 
-  getActionButtons(actions) {
-    const { t } = this.props;
+  const getActionButtons = (actions) => {
+    const { t } = props;
     return (
       <div className="btn-toolbar">
         <div className="btn-group" role="group" aria-label="First group">
@@ -79,33 +57,10 @@ class DRPlanActionBar extends Component {
         </div>
       </div>
     );
-  }
+  };
 
-  planAction(action) {
-    const { dispatch } = this.props;
-    dispatch(drPlanStopStart(action));
-  }
-
-  shouldShowAction(isSingle) {
-    const { selectedPlans } = this.props;
-    if (!selectedPlans) { return true; }
-    const len = Object.keys(selectedPlans).length;
-    if (!isSingle && len > 0) {
-      return false;
-    }
-    if (isSingle && len === 1) {
-      let key = Object.keys(selectedPlans);
-      key = parseInt(key[0], 10);
-      if (selectedPlans[key].status === STATUS_STARTED) {
-        return true;
-      }
-      return false;
-    }
-    return true;
-  }
-
-  showEdit() {
-    const { selectedPlans, user } = this.props;
+  const showEdit = () => {
+    const { selectedPlans, user } = props;
     const { localVMIP } = user;
     if (!selectedPlans) {
       return true;
@@ -123,10 +78,10 @@ class DRPlanActionBar extends Component {
       }
     }
     return false;
-  }
+  };
 
-  disableDeletePlan() {
-    const { selectedPlans, user } = this.props;
+  const disableDeletePlan = () => {
+    const { selectedPlans, user } = props;
     const { localVMIP } = user;
     if (!selectedPlans) { return true; }
     const keys = Object.keys(selectedPlans);
@@ -139,44 +94,28 @@ class DRPlanActionBar extends Component {
       return true;
     }
     return false;
-  }
+  };
 
-  renderServerOptions() {
-    const { user } = this.props;
-    const hasPrivilege = this.hasPrivilege(user, ['asd']);
-    const actions = [{ label: 'recover', onClick: this.onInitiateRecovery, icon: 'fa fa-recycle', isDisabled: !hasPrivilege },
-      { label: 'Migrate', onClick: this.onMigrate, icon: 'fa fa-share-square', isDisabled: !hasPrivilege },
-      { label: 'Reverse', onClick: this.onReverse, icon: 'fa fa-backward', isDisabled: !hasPrivilege }];
+  const renderGlobalActions = () => {
+    const { user } = props;
+    const actions = [{ label: 'New', onClick: onCreate, icon: 'fa fa-plus', isDisabled: !hasRequestedPrivileges(user, ['protectionplan.edit']) },
+      { label: 'Edit', onClick: onEdit, icon: 'fa fa-edit', isDisabled: (!hasRequestedPrivileges(user, ['protectionplan.create']) || showEdit()) },
+      { label: 'remove', onClick: onDelete, icon: 'fa fa-trash', isDisabled: (!hasRequestedPrivileges(user, ['protectionplan.delete']) || disableDeletePlan(true)) },
+      { label: 'Playbooks', onClick: onTemplateClick, icon: 'fa fa-file-excel', isDisabled: false }];
     return (
       <>
-        {this.getActionButtons(actions)}
+        {getActionButtons(actions)}
       </>
     );
-  }
+  };
 
-  renderGlobalActions() {
-    const { user } = this.props;
-    const actions = [{ label: 'New', onClick: this.onCreate, icon: 'fa fa-plus', isDisabled: !hasRequestedPrivileges(user, ['protectionplan.edit']) },
-      { label: 'Edit', onClick: this.onEdit, icon: 'fa fa-edit', isDisabled: (!hasRequestedPrivileges(user, ['protectionplan.create']) || this.showEdit()) },
-      { label: 'remove', onClick: this.onDelete, icon: 'fa fa-trash', isDisabled: (!hasRequestedPrivileges(user, ['protectionplan.delete']) || this.disableDeletePlan(true)) }];
-      // { label: 'start', onClick: () => { this.planAction(startPlan); }, icon: 'fa fa-play', isDisabled: this.shouldShowAction(false) },
-      // { label: 'stop', onClick: () => { this.planAction(stopPlan); }, icon: 'fa fa-stop', isDisabled: this.shouldShowAction(false) }
-    return (
-      <>
-        {this.getActionButtons(actions)}
-      </>
-    );
-  }
-
-  render() {
-    return (
-      <div className="btn-toolbar padding-left-20">
-        <div className="btn-group" role="group" aria-label="First group">
-          { this.renderGlobalActions() }
-        </div>
+  return (
+    <div className="btn-toolbar padding-left-20">
+      <div className="btn-group" role="group" aria-label="First group">
+        { renderGlobalActions() }
       </div>
-    );
-  }
+    </div>
+  );
 }
 const propTypes = {
   dispatch: PropTypes.func.isRequired,

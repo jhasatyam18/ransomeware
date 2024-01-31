@@ -1,5 +1,6 @@
 import ip from 'ip';
 import i18n from 'i18next';
+import { GENERAL_PLATFORM_KEYS, PLAN_KEYS } from '../constants/UserConstant';
 import { addErrorMessage, hideApplicationLoader, removeErrorMessage, showApplicationLoader, valueChange } from '../store/actions';
 import { addMessage } from '../store/actions/MessageActions';
 import { getVMwareVMSProps } from '../store/actions/UserActions';
@@ -12,6 +13,7 @@ import { IP_REGEX } from '../constants/ValidationConstants';
 import { PLATFORM_TYPES, RECOVERY_STATUS, STATIC_KEYS, UI_WORKFLOW } from '../constants/InputConstants';
 import { createVMConfigStackObject, getValue, isAWSCopyNic, validateMacAddressForVMwareNetwork, excludeKeys } from './InputUtils';
 import { setVMGuestOSInfo } from '../store/actions/DrPlanActions';
+import { convertMinutesToDaysHourFormat } from './AppUtils';
 
 export function isRequired(value) {
   if (!value) {
@@ -992,8 +994,7 @@ export function changedVMRecoveryConfigurations(payload, user, dispatch) {
   const { instanceDetails } = payload.drplan.recoveryEntities;
   const recoverVms = getValue('ui.site.recoveryEntities', values);
   const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
-  let res = false;
-  res = checkChangesForArrayInObject(recoverVms, instanceDetails, recoveryPlatform, 'sourceMoref');
+  const res = checkChangesForArrayInObject(recoverVms, instanceDetails, recoveryPlatform, 'sourceMoref');
   if (res) {
     dispatch(addMessage('Changes on recovery machine will be applied in next replication', MESSAGE_TYPES.WARNING));
   }
@@ -1092,6 +1093,201 @@ export const showReverseWarningText = (user) => {
   }
   return false;
 };
+
+export function checkPlanConfigurationChanges(prevPlan, currPlan) {
+  return (dispatch) => {
+    let arr = [{ title: i18n.t('label'), value: [i18n.t('previousVal'), i18n.t('updatedVal')] }];
+    for (let i = 0; i < PLAN_KEYS.length; i += 1) {
+      if (prevPlan[PLAN_KEYS[i]] !== currPlan[PLAN_KEYS[i]]) {
+        const obj = { };
+        if (PLAN_KEYS[i] === 'replicationInterval') {
+          const prevInt = `Every ${convertMinutesToDaysHourFormat(prevPlan[PLAN_KEYS[i]])}`;
+          const currInt = `Every ${convertMinutesToDaysHourFormat(currPlan[PLAN_KEYS[i]])}`;
+          obj.title = PLAN_KEYS[i];
+          obj.value = [prevInt, currInt];
+          arr = [...arr, obj];
+        } else {
+          obj.title = PLAN_KEYS[i];
+          obj.value = [prevPlan[PLAN_KEYS[i]], currPlan[PLAN_KEYS[i]]];
+          arr = [...arr, obj];
+        }
+      }
+    }
+    if (arr.length > 1) {
+      const resObj = [{ title: '', values: arr }];
+      dispatch(valueChange('plan', resObj));
+    }
+  };
+}
+
+export function checkVmRecoveryConfigurationChanges({ prevArr, currentArr, recoveryPlatform, condition }) {
+  return (dispatch) => {
+    const obj = { changes: {}, add: {}, delete: {}, netadd: {}, netDelete: {} };
+    const prevObjKey = Object.keys(prevArr);
+    const currObjKey = Object.keys(currentArr);
+    for (let i = 0; i < prevObjKey.length; i += 1) {
+      if (currentArr[prevObjKey[i]]) {
+        // check if the current data has previous vm
+        const prev = prevArr[prevObjKey[i]];
+        const curr = currentArr[prevObjKey[i]];
+        let generalRes = [];
+        generalRes = [{ title: i18n.t('label'), value: [i18n.t('previousVal'), i18n.t('updatedVal')] }, ...checkDiff(prev, curr, recoveryPlatform, 'GENERAL')];
+        const netRes = checkNetworkDiff(prev.networks, curr.networks, recoveryPlatform);
+        const netChanges = [...netRes.arr1];
+        if (generalRes.length > 1) {
+          obj.changes[`${prev[condition]}-name-${prev.instanceName}`] = [{ title: 'General', values: generalRes }];
+        }
+        if (netChanges.length > 0) {
+          if (generalRes.length === 1) {
+            obj.changes[`${prev[condition]}-name-${prev.instanceName}`] = [];
+          }
+          obj.changes[`${prev[condition]}-name-${prev.instanceName}`] = [...obj.changes[`${prev[condition]}-name-${prev.instanceName}`], ...netChanges];
+        }
+      } else {
+        // if it doesn't have previous vm then add it in delete section
+        obj.delete[prevObjKey[i]] = prevArr[prevObjKey[i]];
+      }
+    }
+
+    for (let j = 0; j < currObjKey.length; j += 1) {
+      // check if the updated data has added vm if yes add it in add section
+      if (!prevArr[currObjKey[j]]) {
+        const curr = currentArr[currObjKey[j]];
+        let generalRes = [];
+        generalRes = [{ title: 'Label', value: 'Values' }, ...checkDiff(curr, undefined, recoveryPlatform, 'GENERAL')];
+        const netRes = checkNetworkDiff(curr.networks, undefined, recoveryPlatform);
+        const netChanges = [...netRes.arr1];
+        if (generalRes.length > 1) {
+          obj.add[`${curr[condition]}-name-${curr.instanceName}`] = [{ title: 'General', values: generalRes, name: curr.instanceName, add: true }];
+        }
+        if (netChanges.length > 1) {
+          if (generalRes.length === 1) {
+            obj.add[`${curr[condition]}-name-${curr.instanceName}`] = [];
+          }
+          obj.add[`${curr[condition]}-name-${curr.instanceName}`] = [...obj.add[`${curr[condition]}-name-${curr.instanceName}`], ...netChanges];
+        }
+      }
+    }
+    dispatch(valueChange(STATIC_KEYS.UI_PLAYBOOK_DIFF, obj));
+  };
+}
+
+export function checkNetworkDiff(prevNet, currNet, recoveryPlatform) {
+  const netAddDel = { add: [], delete: [], changes: [] };
+  let arr = [];
+  let arr1 = [];
+  for (let i = 0; i < prevNet.length; i += 1) {
+    const prev = prevNet[i];
+    const curr = currNet[i];
+
+    if (curr) {
+      let resObj = [...checkDiff(prev, curr, recoveryPlatform, 'NETWORK')];
+      if (resObj.length > 0) {
+        resObj = [{ title: i18n.t('label'), value: [i18n.t('previousVal'), i18n.t('updatedVal')] }, ...resObj]; arr = [...arr, ...resObj];
+        arr1 = [...arr1, { title: `Nic- ${i}`, values: resObj }];
+      }
+    }
+  }
+  if (!currNet) {
+    for (let i = 0; i < prevNet.length; i += 1) {
+      const prev = prevNet[i];
+      const resObj = checkDiff(prev, currNet, recoveryPlatform, 'NETWORK');
+      arr = [...arr, ...resObj];
+    }
+  } else if (currNet.length !== prevNet.length) {
+    if (currNet.length > prevNet.length) {
+      currNet.forEach((curr, ind) => {
+        if (!prevNet[ind]) {
+          let resObj = [...checkDiff(curr, undefined, recoveryPlatform, 'NETWORK')];
+          if (resObj.length > 0) {
+            resObj = [{ title: i18n.t('label'), value: i18n.t('Value') }, ...resObj]; arr = [...arr, ...resObj];
+            arr1 = [...arr1, { title: `Nic-${ind}`, values: resObj, addData: true }];
+          }
+          netAddDel.add.push(curr);
+        }
+      });
+    } else {
+      prevNet.forEach((prev, ind) => {
+        if (!currNet[ind]) {
+          let resObj = [...checkDiff(prev, undefined, recoveryPlatform, 'NETWORK')];
+          if (resObj.length > 0) {
+            resObj = [{ title: i18n.t('label'), value: i18n.t('Value') }, ...resObj]; arr = [...arr, ...resObj];
+            arr1 = [...arr1, { title: `Nic-${ind}`, values: resObj, deleteData: true }];
+          }
+          netAddDel.delete.push(prev);
+        }
+      });
+    }
+  }
+
+  return { netAddDel, arr, arr1 };
+}
+
+export function checkDiff(prevObj, currObj, recoveryPlatform, type) {
+  const arr = [];
+  let obj = {};
+  let platformKeys = [];
+  let keyObj;
+  if (recoveryPlatform === PLATFORM_TYPES.AWS) {
+    keyObj = GENERAL_PLATFORM_KEYS.AWS;
+  } else if (recoveryPlatform === PLATFORM_TYPES.VMware) {
+    keyObj = GENERAL_PLATFORM_KEYS.VMWARE;
+  } else if (recoveryPlatform === PLATFORM_TYPES.Azure) {
+    keyObj = GENERAL_PLATFORM_KEYS.AZURE;
+  } else if (recoveryPlatform === PLATFORM_TYPES.GCP) {
+    keyObj = GENERAL_PLATFORM_KEYS.GCP;
+  }
+
+  if (type === 'GENERAL') {
+    platformKeys = keyObj.GENERAL;
+  } else {
+    platformKeys = keyObj.NETWORK;
+  }
+
+  for (let i = 0; i < platformKeys.length; i += 1) {
+    const key = platformKeys[i];
+    const prevVal = prevObj?.[key];
+    if (!currObj) {
+      obj.title = i18n.t(key) || key;
+      obj.value = prevVal;
+      arr.push(obj);
+      obj = {};
+    } else {
+      const currVal = currObj[key];
+      if (typeof prevVal === 'string') {
+        if (prevVal.toLowerCase() !== currVal.toLowerCase()) {
+          obj.title = i18n.t(key) || key;
+          obj.value = [prevVal, currVal];
+          arr.push(obj);
+          obj = {};
+        }
+      } else if (typeof prevVal === 'object') {
+        if (Object.keys(prevVal || []).length !== Object.keys(currVal || []).length) {
+          obj.title = i18n.t(key) || key;
+          if (key === 'tags') {
+            let prevstr = '';
+            let cuuStr = '';
+            prevVal.forEach((v, ind) => {
+              prevstr += `${ind !== 0 ? ', ' : ''}${v.key}-${v.value}`;
+            });
+            currVal.forEach((v, ind) => {
+              cuuStr += `${ind !== 0 ? ', ' : ''}${v.key}-${v.value}`;
+            });
+            obj.value = [prevstr, cuuStr];
+          }
+          arr.push(obj);
+          obj = {};
+        }
+      } else if (prevVal !== currVal) {
+        obj.title = i18n.t(key) || key;
+        obj.value = [prevVal, currVal];
+        arr.push(obj);
+        obj = {};
+      }
+    }
+  }
+  return arr;
+}
 
 export function validateConfigureIDP(user, dispatch) {
   const { values } = user;

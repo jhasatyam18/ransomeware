@@ -112,6 +112,10 @@ export const SET_REPORT_OBJECT = 'SET_REPORT_OBJECT';
 // Licenses
 export const FETCH_LICENSES = 'FETCH_LICENSES';
 
+// bulk
+export const SET_PLAYBOOK = 'SET_PLAYBOOK';
+export const FETCH_PLAYBOOKS = 'FETCH_TEMPLTES';
+export const SET_SELECTED_PLAYBOOKS = 'SET_SELECTED_PLAYBOOKS';
 // IDP
 export const FETCH_IDP = 'FETCH_IDP';
 export const SET_USER_DETAILS = 'SET_USER_DETAILS';
