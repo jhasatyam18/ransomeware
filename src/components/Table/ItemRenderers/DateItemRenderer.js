@@ -8,11 +8,13 @@ function DateItemRenderer({ data, field }) {
   const d = new Date(time);
   let resp = '';
   resp = `${d.toLocaleDateString()}-${d.toLocaleTimeString()}`;
+
   if (fieldArray.includes(field)) {
     if (data.status !== JOB_COMPLETION_STATUS) {
       resp = '-';
     }
   }
+
   if (data[field] === 0) {
     resp = '-';
     return (
@@ -21,6 +23,7 @@ function DateItemRenderer({ data, field }) {
       </>
     );
   }
+
   return (
     <>
       {resp}

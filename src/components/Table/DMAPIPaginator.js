@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect, useSelector } from 'react-redux';
 import { Button, ButtonGroup, Col, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Row } from 'reactstrap';
+import { API_LIMIT_HUNDRED } from '../../constants/UserConstant';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { hideApplicationLoader, showApplicationLoader } from '../../store/actions';
 import { addMessage } from '../../store/actions/MessageActions';
 import { callAPI } from '../../utils/ApiUtils';
 
 function DMAPIPaginator(props) {
-  const emptyPageInfo = { limit: 100, currentPage: 0, hasNext: false, hasPrev: false, nextOffset: 0, pageRecords: 0, totalPages: 0, totalRecords: 0 };
+  const { pageLimit = API_LIMIT_HUNDRED } = props;
+  const emptyPageInfo = { limit: pageLimit, currentPage: 0, hasNext: false, hasPrev: false, nextOffset: 0, pageRecords: 0, totalPages: 0, totalRecords: 0 };
   const [pageInfo, setPageInfo] = useState(emptyPageInfo);
   const [currentP, setCurrentPage] = useState(emptyPageInfo.currentPage);
   const { apiUrl, storeFn, dispatch, columns, t, isParameterizedUrl, name } = props;
@@ -51,7 +53,7 @@ function DMAPIPaginator(props) {
     callAPI(url).then((json) => {
       dispatch(hideApplicationLoader(url));
       const { records, ...others } = json;
-      setPageInfo({ ...others, limit: 100 });
+      setPageInfo({ ...others, limit: pageLimit || API_LIMIT_HUNDRED });
       dispatch(storeFn(records));
       return json;
     },
@@ -93,7 +95,7 @@ function DMAPIPaginator(props) {
       fetchData(0);
       setCurrentPage(1);
     } else {
-      fetchData((currentP - 1) * 100);
+      fetchData((currentP - 1) * API_LIMIT_HUNDRED);
     }
   };
 
@@ -174,33 +176,30 @@ function DMAPIPaginator(props) {
     );
   };
 
-  const renderFilter = () => {
-    const { showFilter } = props;
-    if (showFilter && showFilter === 'true') {
-      return (
-        <div className="input-group">
-          <input type="text" className="form-control" id="datableSearch" placeholder="Search" autoComplete="off" value={searchStr} onChange={(e) => setSearchStr(e.target.value)} onKeyPress={(e) => onKeyPress(e)} />
-          <span className="input-group-append">
-            <div className="input-group-text bg-transparent">
-              <a href="#" onClick={() => onSearch()}>
-                <i className="fas fa-search text-secondary" />
-              </a>
-            </div>
-          </span>
-          {renderColFilter()}
+  const renderFilter = () => (
+    <div className="input-group">
+      <input type="text" className="form-control" id="datableSearch" placeholder="Search" autoComplete="off" value={searchStr} onChange={(e) => setSearchStr(e.target.value)} onKeyPress={(e) => onKeyPress(e)} />
+      <span className="input-group-append">
+        <div className="input-group-text bg-transparent">
+          <a href="#" onClick={() => onSearch()}>
+            <i className="fas fa-search text-secondary" />
+          </a>
         </div>
-      );
-    }
-    return null;
-  };
+      </span>
+      {renderColFilter()}
+    </div>
+  );
 
   const renderData = () => {
+    const { showFilter } = props;
     const { hasNext, hasPrev, totalPages } = pageInfo;
     return (
       <Row>
-        <Col className="padding-0 margin-0 display__flex__reverse dmapi_col ">
-          {renderFilter()}
-        </Col>
+        {showFilter && showFilter === 'true' ? (
+          <Col className="padding-0 margin-0 display__flex__reverse dmapi_col ">
+            {renderFilter()}
+          </Col>
+        ) : null}
         <Col className="padding-0 margin-0 display__flex__reverse padding-right-20">
           <ButtonGroup className="btn-group-sm">
             <Button disabled={!hasPrev} onClick={onBack}>

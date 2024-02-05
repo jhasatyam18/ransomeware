@@ -7,6 +7,7 @@ export default function drPlans(state = INITIAL_STATE.drPlans, action) {
       return {
         ...state,
         plans: action.plans,
+        selectedPlans: [],
       };
     case Types.UPDATE_SELECTED_DR_PLAN:
       return {

@@ -2,6 +2,10 @@ import classnames from 'classnames';
 import React, { Component, Suspense } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardTitle, Col, Container, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
+import { PLAN_DETAIL_TABS } from '../../constants/UserConstant';
+import { fetchCheckpointsByPlanId } from '../../store/actions/checkpointActions';
+import { getValue } from '../../utils/InputUtils';
+import { valueChange } from '../../store/actions';
 import Loader from '../Shared/Loader';
 import { PLATFORM_TYPES, RECOVERY_STATUS, REPLICATION_STATUS, PROTECTION_PLANS_STATUS } from '../../constants/InputConstants';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
@@ -12,17 +16,19 @@ import DisplayString from '../Common/DisplayString';
 import DMBreadCrumb from '../Common/DMBreadCrumb';
 import DropdownActions from '../Common/DropdownActions';
 import ProtectionPlanVMConfig from './ProtectionPlanVMConfig';
-import { convertMinutesToDaysHourFormat } from '../../utils/AppUtils';
+import { convertMinutesToDaysHourFormat, getRecoveryCheckpointSummary } from '../../utils/AppUtils';
 import { isPlanRecovered } from '../../utils/validationUtils';
+import { STORE_KEYS } from '../../constants/StoreKeyConstants';
 import { downloadRecoveryPlaybook } from '../../store/actions/DrPlaybooksActions';
 
 const Replication = React.lazy(() => import('../Jobs/Replication'));
 const Recovery = React.lazy(() => import('../Jobs/Recovery'));
+const RecoveryCheckPointsJobs = React.lazy(() => import('../Jobs/RecoveryCheckpointsJobs'));
+const RecoveryCheckpoints = React.lazy(() => import('../Jobs/RecoveryCheckpoints'));
 
 class DRPlanDetails extends Component {
   constructor() {
     super();
-    this.state = { activeTab: '1' };
     this.disableEdit = this.disableEdit.bind(this);
   }
 
@@ -32,14 +38,15 @@ class DRPlanDetails extends Component {
     const parts = pathname.split('/');
     this.toggleTab = this.toggleTab.bind(this);
     dispatch(fetchDRPlanById(parts[parts.length - 1]));
+    dispatch(fetchCheckpointsByPlanId(parts[parts.length - 1]));
   }
 
   toggleTab(tab) {
-    const { activeTab } = this.state;
+    const { dispatch, user } = this.props;
+    const { values } = user;
+    const activeTab = getValue(STORE_KEYS.DRPLAN_DETAILS_ACTIVE_TAB, values);
     if (activeTab !== tab) {
-      this.setState({
-        activeTab: tab,
-      });
+      dispatch(valueChange(STORE_KEYS.DRPLAN_DETAILS_ACTIVE_TAB, tab));
     }
   }
 
@@ -113,9 +120,9 @@ class DRPlanDetails extends Component {
     return fields;
   }
 
-  renderField(label, field, value) {
+  renderField(label, field, value, data, info) {
     if (typeof value !== 'undefined') {
-      return <DisplayString value={value} />;
+      return <DisplayString value={value} data={data} info={info} />;
     }
     const type = (typeof field);
     switch (type) {
@@ -129,11 +136,12 @@ class DRPlanDetails extends Component {
   renderRecoverFields(keys) {
     const { drPlans } = this.props;
     const { protectionPlan } = drPlans;
+
     if (!protectionPlan) {
       return null;
     }
     const fields = keys.map((ele, index) => {
-      const { field, label, value } = ele;
+      const { field, label, value, data, info } = ele;
       if (typeof protectionPlan[field] !== 'undefined') {
         return (
           <div className="stack__info padding-right-20" key={`${field}-${index + 1}`}>
@@ -141,7 +149,7 @@ class DRPlanDetails extends Component {
               {label}
             </div>
             <div className="value">
-              {this.renderField(label, protectionPlan[field], value)}
+              {this.renderField(label, protectionPlan[field], value, data, info)}
             </div>
           </div>
         );
@@ -157,6 +165,8 @@ class DRPlanDetails extends Component {
     if (!protectionPlan) {
       return null;
     }
+    const { recoveryPointConfiguration } = protectionPlan;
+    const { isRecoveryCheckpointEnabled } = recoveryPointConfiguration;
     const startTIme = protectionPlan.startTime * 1000;
     const sd = new Date(startTIme);
     const keys = [
@@ -172,6 +182,8 @@ class DRPlanDetails extends Component {
       { label: 'Recovery Pre Script', field: 'preScript' },
       { label: 'Recovery Post Script', field: 'postScript' },
 
+      { label: 'Synchronize All VM Replications', field: 'enablePPlanLevelScheduling' },
+      { label: 'Enable Checkpointing', field: 'recoveryPointConfiguration', value: isRecoveryCheckpointEnabled, info: () => getRecoveryCheckpointSummary(recoveryPointConfiguration) },
       { label: 'Script Timeout (Seconds)', field: 'scriptTimeout' },
       { label: 'Boot Delay (Seconds)', field: 'bootDelay' },
     ];
@@ -232,12 +244,16 @@ class DRPlanDetails extends Component {
   }
 
   renderActions() {
-    const { drPlans, dispatch, t, user } = this.props;
+    const { drPlans, dispatch, t, user, jobs } = this.props;
     const { platformType, localVMIP } = user;
     const { protectionPlan } = drPlans;
+    const { vmCheckpoint } = jobs;
     const { protectedSite, recoverySite } = protectionPlan;
     const protectedSitePlatform = protectedSite.platformDetails.platformType;
+    const planHaCheckpoints = vmCheckpoint.length > 0 || false;
     const isServerActionDisabled = (protectionPlan.recoveryStatus === RECOVERY_STATUS.RECOVERED || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED);
+    const recoveredWithCheckpoints = planHaCheckpoints;
+    const recovered = recoveredWithCheckpoints || !(protectionPlan.recoveryStatus === RECOVERY_STATUS.RECOVERED || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED);
     const isReverseActionDisabled = this.disableReverse(protectionPlan);
     let actions = [];
     if (platformType === protectedSitePlatform && localVMIP !== recoverySite.node.hostname) {
@@ -248,7 +264,7 @@ class DRPlanDetails extends Component {
       actions.push({ label: 'Download Plan Playbook', action: playbookExport, id: protectionPlan, disabled: this.disableEdit() });
       actions.push({ label: 'Download Credentials Playbook', action: downloadRecoveryPlaybook, id: protectionPlan.id });
     } else if (localVMIP === recoverySite.node.hostname) {
-      actions = [{ label: 'Recover', action: openRecoveryWizard, icon: 'fa fa-plus', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.full']) },
+      actions = [{ label: 'recover', action: openRecoveryWizard, icon: 'fa fa-plus', disabled: !recovered || !hasRequestedPrivileges(user, ['recovery.full']) },
         { label: 'Migrate', action: openMigrationWizard, icon: 'fa fa-clone', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.migration']) },
         { label: 'Reverse', action: openReverseWizard, icon: 'fa fa-backward', disabled: isReverseActionDisabled },
         { label: 'Test Recovery', action: openTestRecoveryWizard, icon: 'fa fa-check', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.test']) },
@@ -266,13 +282,14 @@ class DRPlanDetails extends Component {
   renderRecoveryJobs() {
     const { drPlans, t, user } = this.props;
     const { localVMIP } = user;
+    const { values } = user;
     const { protectionPlan } = drPlans;
     const { recoverySite } = protectionPlan;
-    const { activeTab } = this.state;
+    const activeTab = getValue(STORE_KEYS.DRPLAN_DETAILS_ACTIVE_TAB, values);
     if (localVMIP === recoverySite.node.hostname) {
       return (
         <NavItem>
-          <NavLink className={`${classnames({ active: activeTab === '4' })} cursor-pointer`} onClick={() => { this.toggleTab('4'); }}>
+          <NavLink className={`${classnames({ active: activeTab === '6' })} cursor-pointer`} onClick={() => { this.toggleTab('6'); }}>
             <span className="d-none d-sm-block">{t('recovery.jobs')}</span>
           </NavLink>
         </NavItem>
@@ -281,14 +298,38 @@ class DRPlanDetails extends Component {
     return null;
   }
 
+  renderRecoveryCheckpoint(isRecoveryCheckpointEnabled) {
+    const { user } = this.props;
+    const { values } = user;
+    const activeTab = getValue(STORE_KEYS.DRPLAN_DETAILS_ACTIVE_TAB, values);
+    const { t } = this.props;
+    if (!isRecoveryCheckpointEnabled) {
+      return null;
+    }
+    return (
+      <>
+        <NavItem>
+          <NavLink className={`${classnames({ active: activeTab === '4' })} cursor-pointer`} onClick={() => { this.toggleTab('4'); }}>
+            <span className="d-none d-sm-block">{t('checkpoint.jobs')}</span>
+          </NavLink>
+        </NavItem>
+      </>
+    );
+  }
+
   render() {
-    const { drPlans, dispatch, t } = this.props;
+    const { drPlans, dispatch, t, user, jobs } = this.props;
+    const { values } = user;
     const { protectionPlan } = drPlans;
-    const { activeTab } = this.state;
+    const { vmCheckpoint } = jobs;
+    const activeTab = getValue(STORE_KEYS.DRPLAN_DETAILS_ACTIVE_TAB, values) || PLAN_DETAIL_TABS.ONE;
     if (!protectionPlan || Object.keys(protectionPlan).length === 0) {
       return null;
     }
-    const { name, protectedSite, recoverySite, id } = protectionPlan;
+    const { name, protectedSite, recoverySite, id, recoveryPointConfiguration } = protectionPlan;
+    const { isRecoveryCheckpointEnabled } = recoveryPointConfiguration;
+    const planHasRecoveryCheckpoints = vmCheckpoint.length > 0;
+    const checkpointTabs = isRecoveryCheckpointEnabled || planHasRecoveryCheckpoints;
     return (
       <>
         <Container fluid>
@@ -331,47 +372,73 @@ class DRPlanDetails extends Component {
             <CardBody>
               <Nav tabs className="nav-tabs-custom nav-justified">
                 <NavItem>
-                  <NavLink className={`${classnames({ active: activeTab === '1' })} cursor-pointer`} onClick={() => { this.toggleTab('1'); }}>
+                  <NavLink className={`${classnames({ active: activeTab === PLAN_DETAIL_TABS.ONE })} cursor-pointer`} onClick={() => { this.toggleTab(PLAN_DETAIL_TABS.ONE); }}>
                     <span className="d-none d-sm-block">{t('Virtual Machines')}</span>
                   </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink className={`${classnames({ active: activeTab === '2' })} cursor-pointer`} onClick={() => { this.toggleTab('2'); }}>
+                  <NavLink className={`${classnames({ active: activeTab === PLAN_DETAIL_TABS.TWO })} cursor-pointer`} onClick={() => { this.toggleTab(PLAN_DETAIL_TABS.TWO); }}>
                     <span className="d-none d-sm-block">{t('Configuration')}</span>
                   </NavLink>
                 </NavItem>
+                {checkpointTabs ? (
+                  <NavItem>
+                    <NavLink className={`${classnames({ active: activeTab === PLAN_DETAIL_TABS.FIVE })} cursor-pointer`} onClick={() => { this.toggleTab(PLAN_DETAIL_TABS.FIVE); }}>
+                      <span className="d-none d-sm-block">{t('checkpoint')}</span>
+                    </NavLink>
+                  </NavItem>
+                ) : null}
                 <NavItem>
-                  <NavLink className={`${classnames({ active: activeTab === '3' })} cursor-pointer`} onClick={() => { this.toggleTab('3'); }}>
+                  <NavLink className={`${classnames({ active: activeTab === PLAN_DETAIL_TABS.THREE })} cursor-pointer`} onClick={() => { this.toggleTab(PLAN_DETAIL_TABS.THREE); }}>
                     <span className="d-none d-sm-block">{t('replication.jobs')}</span>
                   </NavLink>
                 </NavItem>
+                {this.renderRecoveryCheckpoint(checkpointTabs)}
                 {this.renderRecoveryJobs()}
               </Nav>
               <TabContent activeTab={activeTab}>
-                <TabPane tabId="1" className="p-3">
+                <TabPane tabId={PLAN_DETAIL_TABS.ONE} className="p-3">
                   <ProtectionPlanVMConfig protectionPlan={protectionPlan} dispatch={dispatch} />
                 </TabPane>
-                <TabPane tabId="2" className="p-3">
+                <TabPane tabId={PLAN_DETAIL_TABS.TWO} className="p-3">
                   <Row>
                     <Col sm="12">
                       {this.renderRecoveryConfig()}
                     </Col>
                   </Row>
                 </TabPane>
-                <TabPane tabId="3" className="p-3">
+                <TabPane tabId={PLAN_DETAIL_TABS.THREE} className="p-3">
                   <Row>
                     <Col sm="12">
                       <Suspense fallback={<Loader />}>
-                        {activeTab === '3' ? <Replication protectionplanID={id} {...this.props} /> : null}
+                        {activeTab === PLAN_DETAIL_TABS.THREE ? <Replication protectionplanID={id} {...this.props} /> : null}
                       </Suspense>
                     </Col>
                   </Row>
                 </TabPane>
-                <TabPane tabId="4" className="p-3">
+                <TabPane tabId={PLAN_DETAIL_TABS.SIX} className="p-3">
                   <Row>
                     <Col sm="12">
                       <Suspense fallback={<Loader />}>
-                        {activeTab === '4' ? <Recovery protectionplanID={id} {...this.props} /> : null}
+                        {activeTab === PLAN_DETAIL_TABS.SIX ? <Recovery protectionplanID={id} {...this.props} /> : null}
+                      </Suspense>
+                    </Col>
+                  </Row>
+                </TabPane>
+                <TabPane tabId={PLAN_DETAIL_TABS.FOUR} className="p-3">
+                  <Row>
+                    <Col sm="12">
+                      <Suspense fallback={<Loader />}>
+                        {activeTab === PLAN_DETAIL_TABS.FOUR ? <RecoveryCheckPointsJobs user={user} protectionplanID={id} {...this.props} /> : null}
+                      </Suspense>
+                    </Col>
+                  </Row>
+                </TabPane>
+                <TabPane tabId={PLAN_DETAIL_TABS.FIVE} className="p-3">
+                  <Row>
+                    <Col sm="12">
+                      <Suspense fallback={<Loader />}>
+                        {activeTab === PLAN_DETAIL_TABS.FIVE ? <RecoveryCheckpoints user={user} protectionplanID={id} {...this.props} /> : null}
                       </Suspense>
                     </Col>
                   </Row>

@@ -17,7 +17,7 @@ class DMTableRow extends Component {
 
   getItemRenderer(render, data, field) {
     const { user, dispatch } = this.props;
-    return getItemRendererComponent(render, data, field, user, dispatch);
+    return getItemRendererComponent({ render, data, field, user, dispatch });
   }
 
   getObjectValue(object, field) {

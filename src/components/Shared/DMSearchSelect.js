@@ -28,7 +28,7 @@ class DMSearchSelect extends Component {
     if (!fieldValue && defaultValue) {
       let defaultVal;
       if (typeof defaultValue === 'function') {
-        defaultVal = defaultValue(user);
+        defaultVal = defaultValue(user, fieldKey);
       } else {
         defaultVal = defaultValue;
       }
@@ -93,7 +93,7 @@ class DMSearchSelect extends Component {
   MenuList(props) {
     return (
       <components.MenuList {...props}>
-        <SimpleBar style={{ maxHeight: '250px' }}>{props.children}</SimpleBar>
+        <SimpleBar style={{ maxHeight: '200px' }}>{props.children}</SimpleBar>
       </components.MenuList>
     );
   }
@@ -169,6 +169,11 @@ class DMSearchSelect extends Component {
                   components={{ MenuList: this.MenuList }}
                   captureMenuScroll={false}
                   onBlur={this.onBlur}
+                  className="MyDropdown"
+                  classNamePrefix="MyDropdown"
+                  menuPlacement="auto"
+                  maxMenuHeight={200}
+                  menuPosition="fixed"
                 />
                 {this.renderError(hasErrors)}
               </Col>

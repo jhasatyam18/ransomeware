@@ -48,6 +48,12 @@ export const PLAYBOOK_RENDER_ISSUES_COLUMN = 'PLAYBOOK_RENDER_ISSUES_COLUMN';
 export const PLAYBOOK_PLAN_NAME_LINK_RENDERER = 'PLAYBOOK_PLAN_NAME_LINK_RENDERER';
 export const PLAYBOOK_PLAN_STATUS_RENDERER = 'PLAYBOOK_PLAN_STATUS_RENDERER';
 export const REPLICATION_PRIORITY_RENDERER = 'REPLICATION_PRIORITY_RENDERER';
+export const RECOVERY_CHECKPOINT_OPTION_RENDERER = 'RECOVERY_CHECKPOIN_OPTION_RENDERER';
+export const JOB_TYPE_RENDERER = 'JOB_TYPE_RENDERER';
+export const PRESERVE_CHECKPOINT = 'RECOVERY_CHECKPOINT_PRESERVE';
+export const CHECKPOINTS_LINK_RENDERER = 'CHECKPOINT_LINK_RENDERER';
+export const JOB_TYPE_ITEM_RENDERER = 'JOB_TYPE_ITEM_RENDERER';
+export const CHECKPOINT_RECOVERY_JOB_ITEM_RENDERER = 'CHECKPOINT_JOB_ITEM_RENDERER';
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
@@ -119,8 +125,9 @@ export const RECOVERY_JOBS = [
 
 export const PROTECTION_PLAN_RECOVERY_JOBS = [
   { label: 'Virtual Machine', field: 'vmName', allowFilter: true, checked: true },
-  { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Recovery Type', field: 'recoveryType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER, allowFilter: true, checked: true },
+  { label: 'Recovery Point Time', field: 'recoveryPointTime', itemRenderer: DATE_ITEM_RENDERER, allowFilter: true, checked: true, width: '2.5' },
+  { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Job Status', field: 'status', itemRenderer: RECOVERY_STATUS_RENDERER, allowFilter: true, checked: true, width: '2.5' },
   { label: 'IP Address', field: 'publicIP', itemRenderer: SSH_RDP_ITEM_RENDERER },
 ];
@@ -293,4 +300,38 @@ export const PLAYBOOK_ISSUES = [
 export const REPLICATION_PRIOPITY = [
   { label: 'Virtual Machine', field: 'name' },
   { label: 'Replication Priority', itemRenderer: REPLICATION_PRIORITY_RENDERER },
+];
+
+export const RECOVERY_CHECKPOINT_OPTION = [
+  { label: 'Virtual Machine', field: 'name' },
+  { label: 'Recovery Point', itemRenderer: RECOVERY_CHECKPOINT_OPTION_RENDERER, width: 4.5 },
+];
+
+export const CHECKPOINTS_JOBS = [
+  { label: 'Workload Name', field: 'workloadName', allowFilter: true, checked: true },
+  { label: 'Job Type', field: 'jobType', allowFilter: true, checked: true },
+  { label: 'Size', field: 'recoveryCheckpointSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
+  { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
+  { label: 'Sync Time', field: 'syncTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER, allowFilter: true, checked: true },
+  { label: 'Checkpoint', field: 'recoveryCheckpointID', itemRenderer: CHECKPOINTS_LINK_RENDERER },
+];
+
+export const RECOVERY_CHECKPOINTS = [
+  { label: 'Size', field: 'recoveryPointSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
+  { label: 'Created At', field: 'recoveryPointTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Expires On', field: 'recoveryPointExpirationTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Checkpoint Status', field: 'recoveryCheckpointStatus', allowFilter: true, checked: true, itemRenderer: CHECKPOINT_RECOVERY_JOB_ITEM_RENDERER },
+  { label: 'Recovery Status', field: 'recoveryStatus', allowFilter: true, checked: true, itemRenderer: CHECKPOINT_RECOVERY_JOB_ITEM_RENDERER },
+  { label: 'Preserve', field: 'isPreserved', itemRenderer: PRESERVE_CHECKPOINT },
+];
+
+export const VM_RECOVERY_CHECKPOINTS = [
+  { label: 'Name', field: 'workloadName', allowFilter: true, width: 2 },
+  { label: 'Size', field: 'recoveryPointSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
+  { label: 'Created At', field: 'recoveryPointTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Expires On', field: 'recoveryPointExpirationTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Checkpoint Status', field: 'recoveryCheckpointStatus', allowFilter: true, checked: true, itemRenderer: CHECKPOINT_RECOVERY_JOB_ITEM_RENDERER },
+  { label: 'Recovery Status', field: 'recoveryStatus', allowFilter: true, checked: true, itemRenderer: CHECKPOINT_RECOVERY_JOB_ITEM_RENDERER },
+  { label: 'Preserve', field: 'isPreserved', itemRenderer: PRESERVE_CHECKPOINT },
 ];

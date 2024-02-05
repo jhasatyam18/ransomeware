@@ -3,13 +3,14 @@ import { getValue } from '../../utils/InputUtils';
 import { MODAL_NODE_PASSWORD_CHANGE } from '../../constants/Modalconstant';
 import * as Types from '../../constants/actionTypes';
 import { API_ACKNOWLEDGE_ALERT, API_ACKNOWLEDGE_NODE_ALERT, API_ALERT_TAKE_VM_ACTION, API_FETCH_ALERTS, API_FETCH_DR_PLAN_BY_ID, API_FETCH_EVENT_BY_ID, API_FETCH_UNREAD_ALERTS, API_NODE_ALERTS } from '../../constants/ApiConstants';
-import { EVENT_LEVELS, PPLAN_EVENTS, MONITOR_NODE_AUTH, VM_CONFIG_ACTION_EVENT, VM_DISK_ACTION_EVENT } from '../../constants/EventConstant';
+import { EVENT_LEVELS, PPLAN_EVENTS, MONITOR_NODE_AUTH, VM_CONFIG_ACTION_EVENT, VM_DISK_ACTION_EVENT, CHECKPOINT_ACTION_EVENT } from '../../constants/EventConstant';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { drPlanDetailsFetched, initReconfigureProtectedVM, openEditProtectionPlanWizard } from './DrPlanActions';
 import { addMessage } from './MessageActions';
 import { closeModal, openModal } from './ModalActions';
 import { hideApplicationLoader, refresh, showApplicationLoader, valueChange } from './UserActions';
+import { takeActionOnCheckpoint } from './checkpointActions';
 
 /**
  * Action to fetch all alerts
@@ -151,6 +152,10 @@ export function takeVMAction(alert, associatedEvent) {
     if (MONITOR_NODE_AUTH.indexOf(associatedEvent.type) !== -1) {
       dispatch(closeModal());
       dispatch(resetSystemCredentials(associatedEvent, alert));
+    }
+    if (CHECKPOINT_ACTION_EVENT.indexOf(associatedEvent.type) !== -1) {
+      dispatch(takeActionOnCheckpoint(alert, associatedEvent.id));
+      dispatch(closeModal());
     }
   };
 }

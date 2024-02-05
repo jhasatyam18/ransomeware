@@ -43,6 +43,12 @@ export const API_DASHBOARD_VIRTUAL_MACHINE_PROTECTION_ANALYSIS_PROTECTED_VMS = '
 export const API_DASHBOARD_NODE_STATS = 'api/v1/dashboard/nodestats';
 export const API_DASHBOARD_UNACK_ALERTS = 'api/v1/dashboard/unackalerts';
 export const API_RESCOVERY_JOB_STATUS_STEPS = 'api/v1/jobs/recover/vms/<id>';
+export const API_UPDAT_RECOVERY_CHECKPOINT_BY_ID = 'api/v1/recovery-checkpoints';
+export const API_RECOVERY_CHECKPOINT_BY_VM_ID_COMPRESSED = 'api/v1/recovery-checkpoints/?planID=<id>&compressed=true&workloadID=<moref>';
+export const API_RECOVERY_CHECKPOINT_BY_VM = 'api/v1/recovery-checkpoints/?planID=<id>&workloadID=<moref>';
+export const API_RECOVERY_CHECKPOINT = 'api/v1/recovery-checkpoints/?planID=<id>';
+export const API_RECOVERY_CHECKPOINT_JOBS = 'api/v1/jobs/recovery-checkpoints/?planID=<id>';
+
 // recovery
 export const API_RECOVER = 'api/v1/recover';
 export const API_TEST_RECOVERY_CLEANUP = 'api/v1/recover/cleanup';
@@ -76,6 +82,7 @@ export const API_ACKNOWLEDGE_NODE_ALERT = 'api/v1/alerts/acknowledge/?id=<alerti
 export const API_ALERT_TAKE_VM_ACTION = 'api/v1/alerts/action/<id>/vm';
 export const API_VM_ALERTS = 'api/v1/alerts?vmmoref=<moref>&ack=0';
 export const API_NODE_ALERTS = 'api/v1/alerts?nodeID=<id>&ack=0&alertID=<alertid>';
+export const API_CHECKPOINT_TAKE_ACTION = 'api/v1/alerts/action/<id>/checkpoint';
 
 // sb
 export const API_DELETE_SUPPORT_BUNDLE = 'api/v1/support/bundle/<id>';

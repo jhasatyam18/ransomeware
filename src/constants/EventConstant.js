@@ -18,3 +18,4 @@ export const MILI_SECONDS_TIME = {
   FIVE_THOUSAND: 5000,
 };
 export const MONITOR_NODE_AUTH = ['monitor.nodecredentialexpiringsoon', 'monitor.nodeauthentication'];
+export const CHECKPOINT_ACTION_EVENT = ['checkpoint.deleted.platform'];

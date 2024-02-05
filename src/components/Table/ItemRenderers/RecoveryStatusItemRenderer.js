@@ -1,13 +1,53 @@
-import React from 'react';
-import { Badge } from 'reactstrap';
+import React, { useState } from 'react';
+import { Badge, Popover, PopoverBody } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
-import { MIGRATION_INIT_FAILED, AUTO_MIGRATION_FAILED } from '../../../constants/AppStatus';
+import SimpleBar from 'simplebar-react';
+import { MIGRATION_INIT_FAILED, AUTO_MIGRATION_FAILED, CHECKPOINT_STATUS_AVAILABLE, CHECKPOINT_STATUS_DELETED_FROM_INFRA } from '../../../constants/AppStatus';
 
 function RecoveryStatusItemRenderer(props) {
-  const { t, data } = props;
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const { t, data, field } = props;
+  const failedStatus = [MIGRATION_INIT_FAILED, AUTO_MIGRATION_FAILED];
   if (!data) {
     return '-';
   }
+
+  if (field) {
+    if (data[field] === CHECKPOINT_STATUS_AVAILABLE) {
+      return (
+        <div>
+          <Badge className="font-size-13 badge-soft-success" pill>
+            {data[field]}
+          </Badge>
+        </div>
+      );
+    } if (data[field] === CHECKPOINT_STATUS_DELETED_FROM_INFRA) {
+      return (
+        <div>
+          <Badge className="font-size-13 badge-soft-danger" pill>
+            {data[field]}
+          </Badge>
+        </div>
+      );
+    }
+  }
+
+  const renderPopOver = (hoverInfo, key) => {
+    const { noPopOver } = props;
+    if (noPopOver) {
+      return null;
+    }
+    return (
+      <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: 'black', borderRadius: '6px', color: 'black', border: 'none', width: '250px', textAlign: hoverInfo.length <= 50 ? 'center' : 'left' }}>
+        <PopoverBody>
+          <SimpleBar style={{ maxHeight: '100px', minHeight: '20px', color: 'white' }}>
+            { `Recovered : ${hoverInfo}`}
+          </SimpleBar>
+        </PopoverBody>
+      </Popover>
+    );
+  };
+
   if (data.isRemovedFromPlan === true) {
     const msg = t('vm.remove.description');
     return (
@@ -35,12 +75,24 @@ function RecoveryStatusItemRenderer(props) {
     if (typeof data.recoveryStatus === 'undefined') {
       return null;
     }
-    const color = (data.recoveryStatus === MIGRATION_INIT_FAILED || data.recoveryStatus === AUTO_MIGRATION_FAILED ? 'danger' : 'success');
+    const { failureMessage, errorMessage } = data;
+    const errMsg = (typeof failureMessage !== 'undefined' ? failureMessage : errorMessage);
+    const msg = (typeof errMsg !== 'undefined' ? errMsg : '');
+    let hoverInfo = msg;
+    if (data.recoveryPointTime) {
+      const { recoveryPointTime } = data;
+      const time = recoveryPointTime * 1000;
+      const d = new Date(time);
+      hoverInfo = `${d.toLocaleDateString()}-${d.toLocaleTimeString()}`;
+    }
+    const { id } = data;
+    const color = (failedStatus.includes(data.recoveryStatus) ? 'danger' : 'success');
     return (
       <div>
-        <Badge className={`font-size-13 badge-soft-${color}`} pill>
+        <Badge className={`font-size-13 badge-soft-${color}`} id={`status-${id}`} pill onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)}>
           {data.recoveryStatus}
         </Badge>
+        {hoverInfo !== '' ? renderPopOver(hoverInfo, `status-${id}`) : null}
       </div>
     );
   }

@@ -1,0 +1,434 @@
+import { STORE_KEYS } from '../../constants/StoreKeyConstants';
+import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
+import * as Types from '../../constants/actionTypes';
+import { getValue } from '../../utils/InputUtils';
+import { MESSAGE_TYPES } from '../../constants/MessageConstants';
+import { MODAL_CONFIRMATION_WARNING, MODAL_PRESERVE_CHECKPOINT } from '../../constants/Modalconstant';
+import { MINUTES_CONVERSION, STATIC_KEYS } from '../../constants/InputConstants';
+import { API_CHECKPOINT_TAKE_ACTION, API_PROTECTTION_PLAN_REPLICATION_VM_JOBS, API_RECOVERY_CHECKPOINT, API_RECOVERY_CHECKPOINT_BY_VM, API_UPDAT_RECOVERY_CHECKPOINT_BY_ID } from '../../constants/ApiConstants';
+import { addMessage } from './MessageActions';
+import { closeModal, openModal } from './ModalActions';
+import { hideApplicationLoader, refresh, showApplicationLoader, valueChange } from './UserActions';
+
+export function setRecoveryCheckpointJobs(checkpointJobs) {
+  return {
+    type: Types.CHANGE_RECOVERY_CHECKPOINT_JOB,
+    checkpointJobs,
+  };
+}
+
+export function setRecoveryCheckpoint(recoveryCheckpoints) {
+  const obj = {};
+  const moref = recoveryCheckpoints[0]?.workloadID;
+  obj[moref] = recoveryCheckpoints;
+  return {
+    type: Types.FETCH_RECOVERY_CHECKPOINT,
+    recoveryCheckpoints: obj,
+  };
+}
+
+export function createPayloadForCheckpoints(checkpoint, user) {
+  const { id } = checkpoint;
+  const { values } = user;
+  const resObj = checkpoint;
+  resObj.preserveDescription = getValue(`${id}-checkpoint.preserve`, values);
+  if (resObj.preserveDescription) {
+    resObj.isPreserved = true;
+  }
+  return resObj;
+}
+
+/**
+   *
+   */
+export function updateRecoveryCheckpoint(payload) {
+  return (dispatch) => {
+    const method = API_TYPES.PUT;
+    const url = `${API_UPDAT_RECOVERY_CHECKPOINT_BY_ID}/${payload.id}`;
+    const obj = createPayload(method, payload);
+    dispatch(showApplicationLoader('JOBS-DATA', 'Preserving Checkpoint'));
+    return callAPI(url, obj)
+      .then((json) => {
+        dispatch(hideApplicationLoader('JOBS-DATA'));
+        if (json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          dispatch(addMessage('Checkpoint preserved successfully', MESSAGE_TYPES.INFO));
+          dispatch(closeModal());
+          dispatch(refresh());
+        }
+      },
+      (err) => {
+        dispatch(hideApplicationLoader('JOBS-DATA'));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  };
+}
+
+/**
+   *Opens modal for user to enter decription while preserving the checkpoint
+   * @param {*} selectedCheckpoints
+   * @returns
+   */
+export function preserveCheckpoint(selectedCheckpoints) {
+  return (dispatch) => {
+    const selectedCheckpointKey = Object.keys(selectedCheckpoints);
+    const options = { title: 'Preserve Checkpoint', recoveryCheckpoint: selectedCheckpoints[selectedCheckpointKey], size: 'lg' };
+    dispatch(openModal(MODAL_PRESERVE_CHECKPOINT, options));
+  };
+}
+
+/**
+   *Sets recovery checkpointing data while editing pplan or reversing pplan
+   * @param {*} recoveryCheckpointConfig - Object for recovery checkpointing
+   * @returns
+   */
+export function setPplanRecoveryCheckpointData(recoveryCheckpointConfig) {
+  return (dispatch) => {
+    const { isRecoveryCheckpointEnabled, recoveryPointTimePeriod, recoveryPointCopies, recoveryPointRetentionTime, id } = recoveryCheckpointConfig;
+    dispatch(valueChange(STORE_KEYS.RECOVERY_CHECKPOINTING_ENABLED, isRecoveryCheckpointEnabled));
+    dispatch(valueChange(STORE_KEYS.RECOVERY_CHECKPOINT_COUNT, recoveryPointCopies));
+    dispatch(valueChange('recoveryPointConfiguration.id', id));
+    const checkpointConfig = getCheckpointTimeFromMinute(recoveryPointTimePeriod);
+    dispatch(valueChange(STORE_KEYS.RECOVERY_CHECKPOINT_DURATION_NUM, checkpointConfig.time));
+    dispatch(valueChange(STORE_KEYS.RECOVERY_CHECKPOINT_DURATION_UNIT, checkpointConfig.unit));
+    const checkpointRetention = getCheckpointTimeFromMinute(recoveryPointRetentionTime);
+    dispatch(valueChange(STORE_KEYS.RECOVERY_CHECKPOINT_RETAIN_NUMEBER, checkpointRetention.time));
+    dispatch(valueChange(STORE_KEYS.RECOVERY_CHECKPOINT_RETAIN_NUMEBER_UNIT, checkpointRetention.unit));
+  };
+}
+
+/**
+   *Converts provided minutes to appropriate time and it's unit
+   * @param {*} time - takes time in minutes
+   * @returns object with time and it's unit
+   */
+export function getCheckpointTimeFromMinute(time) {
+  if (time === 0) {
+    return { time, unit: '' };
+  }
+
+  if (time % MINUTES_CONVERSION.YEAR === 0) {
+    return { time: Math.floor(time / MINUTES_CONVERSION.YEAR), unit: 'year' };
+  } if (time % MINUTES_CONVERSION.MONTH === 0) {
+    return { time: Math.floor(time / MINUTES_CONVERSION.MONTH), unit: 'month' };
+  } if (time % MINUTES_CONVERSION.WEEK === 0) {
+    return { time: Math.floor(time / MINUTES_CONVERSION.WEEK), unit: 'week' };
+  } if (time % MINUTES_CONVERSION.DAY === 0) {
+    return { time: Math.floor(time / MINUTES_CONVERSION.DAY), unit: 'day' };
+  } if (time % MINUTES_CONVERSION.HOUR === 0) {
+    return { time: Math.floor(time / MINUTES_CONVERSION.HOUR), unit: 'hour' };
+  }
+  return { time, unit: 'Minute' };
+}
+
+/**
+   * Onselect checkpoint update the selected checkpointi in the store
+   * @param {*} data
+   * @param {*} isSelected
+   * @param {*} primaryKey
+   * @returns
+   */
+
+export function handleRecoveryCheckpointTableSelection(data, isSelected, primaryKey) {
+  return (dispatch, getState) => {
+    const { jobs } = getState();
+    const { selectedCheckpoints } = jobs;
+    if (isSelected) {
+      if (!selectedCheckpoints || selectedCheckpoints.length === 0 || !selectedCheckpoints[data[primaryKey]]) {
+        const newCheckpoints = { ...selectedCheckpoints, [data[primaryKey]]: data };
+        dispatch(updateSelectedCheckpoints(newCheckpoints));
+      }
+    } else if (selectedCheckpoints[data[primaryKey]]) {
+      const newCheckpoints = selectedCheckpoints;
+      delete newCheckpoints[data[primaryKey]];
+      dispatch(updateSelectedCheckpoints(newCheckpoints));
+    }
+  };
+}
+
+export function handleAllRecoveryCheckpointTableSelection(isSelected) {
+  return (dispatch, getState) => {
+    const { jobs } = getState();
+    const { vmCheckpoint } = jobs;
+    if (isSelected) {
+      let newCheckpoints = {};
+      vmCheckpoint.forEach((ch) => {
+        newCheckpoints = { ...newCheckpoints, [ch.id]: ch };
+      });
+      dispatch(updateSelectedCheckpoints(newCheckpoints));
+    } else {
+      dispatch(updateSelectedCheckpoints({}));
+    }
+  };
+}
+
+/**
+   *update selected checkpoint in the store
+   * @param {*} selectedCheckpoints - checkpoint id
+   * @returns used to preserve selecetd checkpoint
+   */
+export function updateSelectedCheckpoints(selectedCheckpoints) {
+  return {
+    type: Types.SELECTED_RECOVERY_CHECKPOINTS,
+    selectedCheckpoints,
+  };
+}
+
+/**
+   * Opens Delete checkpoint confirmation modal
+   * @param {*} selectedCheckpoints - selected checkpoint id
+   * @returns opens confirmation modal
+   */
+export function openDeleteCheckpointModal() {
+  return (dispatch, getState) => {
+    const { jobs } = getState();
+    const { selectedCheckpoints } = jobs;
+    const selectedCheckpointKey = Object.keys(selectedCheckpoints);
+    const ids = [];
+    selectedCheckpointKey.forEach((el) => {
+      ids.push(selectedCheckpoints[el].id);
+    });
+    const options = { title: 'Confirmation', confirmAction: removeCheckpoint, message: 'Are you sure want to remove selected Checkpoint ?', id: ids.join(',') };
+    dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
+  };
+}
+
+/**
+   *Api to delete selected checkpoint
+   * @param {*} id - checkpoint ID
+   * @returns REMOVED CHECKPOINT
+   */
+
+export function removeCheckpoint(id) {
+  return (dispatch, getState) => {
+    const { jobs } = getState();
+    const { selectedCheckpoints } = jobs;
+    dispatch(showApplicationLoader('Checkpoint_Remove_Data', 'Removing Checkpoint'));
+    const obj = createPayload(API_TYPES.DELETE, {});
+    return callAPI(`${API_UPDAT_RECOVERY_CHECKPOINT_BY_ID}/?id=${id}`, obj)
+      .then((json) => {
+        dispatch(hideApplicationLoader('Checkpoint_Remove_Data'));
+        if (json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          if (json.length > 0) {
+            let errStr = 'Failed to delete recovery checkpoint created at';
+            json.map((j, i) => {
+              let time = j.recoveryPointTime;
+              time *= 1000;
+              const d = new Date(time);
+              let resp = '';
+              resp = `${d.toLocaleDateString()}-${d.toLocaleTimeString()}`;
+              const name = j.workloadName;
+              errStr = `${i !== 0 ? ',' : ''} ${errStr} ${resp} for ${name} with error ${j.errorMessage}`;
+            });
+          } else {
+            // remove deleted id from the store
+            const updatedCheckpoint = {};
+            const idarray = id.split(',');
+            Object.keys(selectedCheckpoints).map((el) => {
+              if (idarray.indexOf(el) === -1) {
+                updatedCheckpoint[el] = selectedCheckpoints[el];
+              }
+            });
+
+            dispatch(updateSelectedCheckpoints(updatedCheckpoint));
+            dispatch(addMessage('Checkpoint deleted successfully', MESSAGE_TYPES.INFO));
+          }
+          dispatch(refresh());
+          dispatch(closeModal());
+        }
+      },
+      (err) => {
+        dispatch(hideApplicationLoader('Checkpoint_Remove_Data'));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  };
+}
+
+/**
+   *
+   *set recovery checkpoint option for vm in recovery wizard
+   * @param {*} planId - protection plan id
+   * @param {*} moref - vm moref's in comma separated form
+   * @returns
+   */
+
+export function getVmCheckpoints(planId, moref) {
+  return async (dispatch) => {
+    try {
+      dispatch(showApplicationLoader('job_data', 'Fetching Checkpoints'));
+      let url = API_RECOVERY_CHECKPOINT_BY_VM.replace('<moref>', moref);
+      url = url.replace('<id>', planId);
+      url = `${url}&limit=${100}&searchstr=Available&searchcol=recoveryCheckpointStatus`;
+      const apiArray = [];
+      const firstCheckpoinRes = await callAPI(url);
+      const vmCheckpointRecords = [];
+      if (firstCheckpoinRes.records.length > 0) {
+        vmCheckpointRecords.push(firstCheckpoinRes.records);
+      }
+      if (firstCheckpoinRes.hasNext && firstCheckpoinRes.records.length > 0) {
+        for (let off = 0; off < firstCheckpoinRes.totalRecords - 1; off += 100) {
+          const set = off + 100;
+          apiArray.push(set);
+        }
+      }
+
+      const resolvedApiResponse = apiArray.map(async (i) => {
+        vmCheckpointRecords.push(await fetchVmCheckpoint(planId, moref, i, dispatch));
+      });
+
+      return Promise.all(resolvedApiResponse).then(
+        async () => {
+          dispatch(hideApplicationLoader('job_data'));
+          const vmCheckpoints = {};
+          vmCheckpointRecords.forEach((el) => {
+            el.forEach((els) => {
+              if (vmCheckpoints[els.workloadID]) {
+                vmCheckpoints[els.workloadID].push(els);
+              } else {
+                vmCheckpoints[els.workloadID] = [els];
+              }
+            });
+          });
+          const latestReplicationOfVms = await fetchVMsLatestReplicaionJob(planId, moref, dispatch);
+          latestReplicationOfVms.forEach((latestJob) => {
+            if (typeof vmCheckpoints[latestJob.vmMoref] !== 'undefined' && vmCheckpoints[latestJob.vmMoref].length > 0) {
+              vmCheckpoints[latestJob.vmMoref].unshift(latestJob);
+            }
+          });
+          dispatch(valueChange(STATIC_KEYS.UI_RECOVERY_CHECKPOINTS_BY_PLAN_ID, vmCheckpoints));
+          dispatch(valueChange(`${planId}-has-checkpoint`, vmCheckpoints.length > 0));
+          return new Promise((resolve) => resolve());
+        },
+        (err) => {
+          dispatch(hideApplicationLoader('job_data'));
+          dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+          return new Promise((resolve) => resolve());
+        },
+      );
+    } catch (err) {
+      dispatch(hideApplicationLoader('job_data'));
+      dispatch(hideApplicationLoader('job_data'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    }
+  };
+}
+
+/**
+ *
+ * @param {*} planId - pplan id
+ * @param {*} moref - vm moref
+ * @param {*} offset
+ * @param {*} dispatch
+ * @returns fetch provide vm checkpoints in pplan
+ */
+
+export async function fetchVmCheckpoint(planId, moref, offset = 0, dispatch) {
+  try {
+    let url = API_RECOVERY_CHECKPOINT_BY_VM.replace('<moref>', moref);
+    url = url.replace('<id>', planId);
+    if (offset === 0) {
+      url = `${url}&limit=${100}`;
+    } else {
+      url = `${url}&offset=${offset}&limit=${100}`;
+    }
+    const res = await callAPI(url);
+    return res.records;
+  } catch (err) {
+    dispatch(hideApplicationLoader('job_data'));
+    dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+  }
+}
+
+/**
+   *fetch latest replication job of the provided vm's
+   * @param {*} planId proection plan id
+   * @param {*} moref - multiple vm moref in comma separated
+   * @param {*} dispatch
+   * @returns latest successfull replication job of the vm's
+   */
+export async function fetchVMsLatestReplicaionJob(planId, moref, dispatch) {
+  try {
+    let url = API_PROTECTTION_PLAN_REPLICATION_VM_JOBS.replace('<id>', planId);
+    url = `${url}&vmMorefs=${moref}&latest=true`;
+    const res = await callAPI(url);
+    return res;
+  } catch (err) {
+    dispatch(hideApplicationLoader('job_data'));
+    dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+  }
+}
+
+export function setVmlevelCheckpoints(checkpoints) {
+  return {
+    type: Types.VM_RECOVERY_CHECKPOINTS,
+    vmCheckpoint: checkpoints,
+  };
+}
+
+export function updateSelectedPlans(selectedPlans) {
+  return {
+    type: Types.UPDATE_SELECTED_DR_PLAN,
+    selectedPlans,
+  };
+}
+
+/**
+ *
+ * @param {*} id checkpoint id
+ * @returns take action on selected checkpoint
+ */
+
+export function takeActionOnCheckpoint(alert, id) {
+  return (dispatch) => {
+    dispatch(showApplicationLoader('job_data', 'Taking action on VM Checkpoint'));
+    const obj = createPayload(API_TYPES.POST, alert);
+    const url = API_CHECKPOINT_TAKE_ACTION.replace('<id>', id);
+    return callAPI(url, obj)
+      .then((json) => {
+        dispatch(hideApplicationLoader('job_data'));
+        if (json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          dispatch(addMessage('Action initiated successfully', MESSAGE_TYPES.INFO));
+          dispatch(refresh());
+          dispatch(closeModal());
+        }
+      },
+      (err) => {
+        dispatch(hideApplicationLoader('job_data'));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  };
+}
+
+/**
+ *
+ * @param {*} planId
+ * @returns fetch recovery checkpoint by plan id
+ */
+
+export function fetchCheckpointsByPlanId(planId, key) {
+  return (dispatch) => {
+    const url = API_RECOVERY_CHECKPOINT.replace('<id>', planId);
+    return callAPI(url).then((res) => {
+      if (res.records.length > 0) {
+        if (typeof key !== 'undefined') {
+          dispatch(valueChange(key, true));
+        }
+        dispatch(setVmlevelCheckpoints(res.records));
+      } else {
+        dispatch(setVmlevelCheckpoints([]));
+      }
+    });
+  };
+}
+
+export function changeCheckpointType(checkpointType) {
+  return {
+    type: Types.CHANGE_CHECKPOINT_TYPE,
+    checkpointType,
+  };
+}

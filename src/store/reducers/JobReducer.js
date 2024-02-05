@@ -23,6 +23,26 @@ export default function jobs(state = INITIAL_STATE.jobs, action) {
       };
     case Types.RESET_JOBS:
       return INITIAL_STATE.jobs;
+    case Types.CHANGE_RECOVERY_CHECKPOINT_JOB:
+      return {
+        ...state, checkpointJobs: action.checkpointJobs,
+      };
+    case Types.FETCH_RECOVERY_CHECKPOINT:
+      return {
+        ...state, recoveryCheckpoints: { ...state.recoveryCheckpoints, ...action.recoveryCheckpoints },
+      };
+    case Types.SELECTED_RECOVERY_CHECKPOINTS:
+      return {
+        ...state, selectedCheckpoints: action.selectedCheckpoints,
+      };
+    case Types.VM_RECOVERY_CHECKPOINTS:
+      return {
+        ...state, vmCheckpoint: action.vmCheckpoint,
+      };
+    case Types.CHANGE_CHECKPOINT_TYPE:
+      return {
+        ...state, checkpointType: action.checkpointType,
+      };
     default:
       return state;
   }

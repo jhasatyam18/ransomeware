@@ -8,7 +8,7 @@ import {
 import { withTranslation } from 'react-i18next';
 
 const DropdownActions = (props) => {
-  const { actions, dispatch, t } = props;
+  const { actions, dispatch, t, className } = props;
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const toggle = () => setDropdownOpen((prevState) => !prevState);
   const { title } = props;
@@ -18,7 +18,7 @@ const DropdownActions = (props) => {
   }
 
   return (
-    <div className="display__flex__reverse">
+    <div className={className || 'display__flex__reverse'}>
       <Dropdown
         isOpen={dropdownOpen}
         toggle={toggle}

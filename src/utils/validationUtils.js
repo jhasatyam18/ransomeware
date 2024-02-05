@@ -1,14 +1,15 @@
 import ip from 'ip';
 import i18n from 'i18next';
+import { STORE_KEYS } from '../constants/StoreKeyConstants';
 import { GENERAL_PLATFORM_KEYS, PLAN_KEYS } from '../constants/UserConstant';
 import { addErrorMessage, hideApplicationLoader, removeErrorMessage, showApplicationLoader, valueChange } from '../store/actions';
 import { addMessage } from '../store/actions/MessageActions';
 import { getVMwareVMSProps } from '../store/actions/UserActions';
-import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
+import { FIELDS } from '../constants/FieldsConstant';
 import { MESSAGE_TYPES } from '../constants/MessageConstants';
 import { API_TYPES, callAPI, createPayload } from './ApiUtils';
 import { API_VALIDATE_MIGRATION, API_VALIDATE_RECOVERY, API_VALIDATE_REVERSE_PLAN } from '../constants/ApiConstants';
-import { getRecoveryPayload, getReversePlanPayload, getVMNetworkConfig, getVMwareNetworkConfig } from './PayloadUtil';
+import { getRecoveryPayload, getReplicationInterval, getReversePlanPayload, getVMNetworkConfig, getVMwareNetworkConfig, getRecoveryPointTimePeriod } from './PayloadUtil';
 import { IP_REGEX } from '../constants/ValidationConstants';
 import { PLATFORM_TYPES, RECOVERY_STATUS, STATIC_KEYS, UI_WORKFLOW } from '../constants/InputConstants';
 import { createVMConfigStackObject, getValue, isAWSCopyNic, validateMacAddressForVMwareNetwork, excludeKeys } from './InputUtils';
@@ -24,7 +25,6 @@ export function isRequired(value) {
 
 export function validateField(field, fieldKey, value, dispatch, user) {
   const { patterns, validate, errorMessage } = field;
-  const { type } = field;
   const { errors } = user;
   if (patterns) {
     let isValid = false;
@@ -42,10 +42,6 @@ export function validateField(field, fieldKey, value, dispatch, user) {
     }
   }
   if (typeof validate === 'function') {
-    if (type === FIELD_TYPE.SELECT && value === '-') {
-      dispatch(addErrorMessage(fieldKey, errorMessage));
-      return false;
-    }
     const hasError = validate({ value, dispatch, user, fieldKey });
     if (hasError) {
       dispatch(addErrorMessage(fieldKey, errorMessage));
@@ -495,7 +491,6 @@ export async function validateRecoveryVMs({ user, dispatch }) {
 
   if (isVMSelected) {
     const initialCheckPass = validateVMConfiguration({ user, dispatch });
-
     if (initialCheckPass) {
       try {
         const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
@@ -505,6 +500,7 @@ export async function validateRecoveryVMs({ user, dispatch }) {
           dispatch(showApplicationLoader('VALIDATING_RECOVERY_MACHINES', 'Validating virtual machines.'));
           const response = await callAPI(API_VALIDATE_RECOVERY, obj);
           dispatch(hideApplicationLoader('VALIDATING_RECOVERY_MACHINES'));
+
           if (response.length > 0) {
             let warningMsg = i18n.t('recovery.discard.warning.msg');
             const warningVMS = [];
@@ -1093,6 +1089,60 @@ export const showReverseWarningText = (user) => {
   }
   return false;
 };
+
+/**
+ *
+ * @param {*} value
+ * @param {*} user
+ * @returns validates all the recovery checkpoint fields on pplan create and edit page
+ */
+
+export function validateCheckpointFields(value, user) {
+  const { values } = user;
+  const isRecoveryCheckpointConfgured = getValue(STORE_KEYS.RECOVERY_CHECKPOINTING_ENABLED, values);
+  if (isRecoveryCheckpointConfgured) {
+    return (isEmpty({ value }) || isEmptyNum({ value }));
+  }
+  return false;
+}
+
+/**
+ *
+ * @param {*} user
+ * @returns if recovery checkpoint checkbox is diabled then disable all recovery checkpoint fields
+ */
+export function disableRecoveryCheckpointField(user) {
+  const { values } = user;
+  const disabled = getValue(STORE_KEYS.RECOVERY_CHECKPOINTING_ENABLED, values);
+  return !disabled;
+}
+
+/**
+ *
+ * @param {*} user
+ * @param {*} dispatch
+ * @param {*} fields - recovery checkpoint field keys
+ * @returns validate recovery checkpoint configuration on pplan create and edit wizard
+ */
+export function validateRecoveryCheckpointData(user, dispatch, fields) {
+  const { values } = user;
+  const isRecoveryCheckpointEnabled = getValue(STORE_KEYS.RECOVERY_CHECKPOINTING_ENABLED, values);
+  const recoveryPointTimePeriod = getRecoveryPointTimePeriod(user, STORE_KEYS.RECOVERY_CHECKPOINT_DURATION_NUM, STORE_KEYS.RECOVERY_CHECKPOINT_DURATION_UNIT);
+  const recoveryPointCopies = getValue(STORE_KEYS.RECOVERY_CHECKPOINT_COUNT, values);
+  const replicationInterval = getReplicationInterval(getValue(STATIC_KEYS.REPLICATION_INTERVAL_TYPE, values), getValue('drplan.replicationInterval', values));
+  const recoverySnapshot = (recoveryPointTimePeriod / recoveryPointCopies);
+  const isCHeckpoiningPossible = recoverySnapshot % replicationInterval;
+  if (validateSteps(user, dispatch, fields) && isRecoveryCheckpointEnabled) {
+    if (isCHeckpoiningPossible === 0) {
+      return true;
+    }
+    return false;
+  }
+  if (isRecoveryCheckpointEnabled) {
+    return false;
+  }
+  return true;
+}
 
 export function checkPlanConfigurationChanges(prevPlan, currPlan) {
   return (dispatch) => {

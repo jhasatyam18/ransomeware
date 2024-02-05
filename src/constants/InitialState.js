@@ -1,4 +1,4 @@
-import { APP_TYPE, RECOVERY_JOB_TYPE, REPLICATION_JOB_TYPE } from './InputConstants';
+import { APP_TYPE, RECOVERY_CHECKPOINT_TYPE, RECOVERY_JOB_TYPE, REPLICATION_JOB_TYPE } from './InputConstants';
 
 const INITIAL_STATE = {
   global: {
@@ -33,7 +33,7 @@ const INITIAL_STATE = {
   drPlaybooks: { templates: [], selectedPlaybook: {}, playbook: {} },
   modal: { content: null, options: {}, show: false },
   wizard: { steps: [], show: false, options: { title: '' } },
-  jobs: { replication: [], recovery: [], replicationType: REPLICATION_JOB_TYPE.PLAN, recoveryType: RECOVERY_JOB_TYPE.PLAN },
+  jobs: { replication: [], recovery: [], replicationType: REPLICATION_JOB_TYPE.PLAN, recoveryType: RECOVERY_JOB_TYPE.PLAN, checkpointJobs: [], recoveryCheckpoints: {}, selectedCheckpoints: {}, vmCheckpoint: [], checkpointType: RECOVERY_CHECKPOINT_TYPE.PLAN },
   dashboard: {
     titles: {},
     replicationStats: { completed: 0, running: 0, failures: 0, copies: 0, changeRate: 0, dataReduction: 0, rpo: 0, inSync: 0, notInsync: 0, changedRate: 0 },

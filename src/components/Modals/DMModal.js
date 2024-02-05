@@ -25,6 +25,7 @@ import ModalPlaybookError from './ModalPlaybookError';
 import PlaybookUploadModal from './PlaybookUploadModal';
 import PlaybookGenerateModal from './PlaybookGenerateModal';
 import ModalReplicationPriority from './ModalReplicationPriority';
+import ModalPreserveCheckpoint from './ModalPreserveCheckpoint';
 import ModalTemplateShowPplanChanges from './ModalTemplateShowPplanChanges';
 import ModalConfigureUser from './ModalConfigureUser';
 import ModalResetCredentials from './ModalResetCredentials';
@@ -85,6 +86,8 @@ function DMModal(props) {
           return <ModalPlaybookError dispatch={dispatch} user={user} options={options} />;
         case MODALS.MODAL_REPLICATION_PRIORITY:
           return <ModalReplicationPriority dispatch={dispatch} user={user} />;
+        case MODALS.MODAL_PRESERVE_CHECKPOINT:
+          return <ModalPreserveCheckpoint dispatch={dispatch} user={user} options={options} />;
         case MODALS.MODAL_TEMPLATE_SHOW_PPLAN_CHANGES:
           return <ModalTemplateShowPplanChanges dispatch={dispatch} user={user} options={options} />;
         case MODALS.MODAL_ADD_NEW_USER:

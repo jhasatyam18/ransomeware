@@ -11,7 +11,7 @@ import ActionButton from '../Common/ActionButton';
 import { openModal } from '../../store/actions/ModalActions';
 import { openWizard } from '../../store/actions/WizardActions';
 import { fetchSites } from '../../store/actions/SiteActions';
-import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
+import { MODAL_CONFIRMATION_WARNING, PPLAN_REMOVE_CHECKPOINT_RENDERER } from '../../constants/Modalconstant';
 import { CREATE_DR_PLAN_WIZARDS } from '../../constants/WizardConstants';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
 import { PROTECTION_PLANS_STATUS, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
@@ -31,8 +31,10 @@ function DRPlanActionBar(props) {
   };
 
   const onDelete = () => {
-    const { dispatch } = props;
-    const options = { title: 'Confirmation', confirmAction: deletePlan, message: 'Are you sure want to delete  ?' };
+    const { dispatch, selectedPlans } = props;
+    const selectedPlansKey = Object.keys(selectedPlans);
+    const plan = selectedPlans[selectedPlansKey[0]];
+    const options = { title: 'Confirmation', confirmAction: deletePlan, message: 'Are you sure want to delete  ?', render: PPLAN_REMOVE_CHECKPOINT_RENDERER, id: plan.id };
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   };
 

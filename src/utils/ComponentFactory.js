@@ -1,4 +1,9 @@
 import React from 'react';
+import DeletCheckpointPlanCheckbox from '../components/Table/ItemRenderers/DeletCheckpointPlanCheckbox';
+import { PPLAN_REMOVE_CHECKPOINT_RENDERER } from '../constants/Modalconstant';
+import CheckpoinLinkRenderer from '../components/Table/ItemRenderers/CheckpointLinkRenderer';
+import PreserveCheckpoint from '../components/Table/ItemRenderers/PreserveCheckpoint';
+import RecveryCheckpointOptionRenderer from '../components/Table/ItemRenderers/RecoveryCheckpointOptionRenderer';
 import PlaybookPlanStatusRenderer from '../components/Table/ItemRenderers/PlaybookPlanStatusRenderer';
 import PlaybookPlanNameRenderer from '../components/Table/ItemRenderers/PaybookPlanNameRenderer';
 import PlaybookIssuesColumnRenderer from '../components/Table/ItemRenderers/PlaybookIssuesColumnRenderer';
@@ -57,7 +62,7 @@ import VMUsernameItemRenderer from '../components/Table/ItemRenderers/VMUsername
 import VMNetworkInfoItemRenderer from '../components/Table/ItemRenderers/VMNetworkInfoItemRenderer';
 import { DATE_PICKER_COMP, FIELDS, FIELD_TYPE, MULTISELECT_ITEM_COMP, REPLICATION_INTERVAL_COMP, TIME_PICKER_COMP } from '../constants/FieldsConstant';
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMORY, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
-import { ALERT_ACK_ITEM_RENDERER, PLAYBOOK_ACTION_RENDERER, PLAYBOOK_FILENAME_RENDERER, SINGLE_PLAYBOOK_STATUS_RENDERER, DATE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, PLAYBOOK_CHANGES_RENDERER, EMAIL_RECIPIENT_ACTION_ITEM_RENDER, EVENT_LEVEL_ITEM_RENDERER, LICENSE_ACTION_ITEM_RENDERER, LICENSE_STATUS_ITEM_RENDER, LICENSE_USAGE_ITEM_RENDERER, NODE_ACTION_RENDERER, NODE_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDERER, PROTECTED_VM_ACTIONS_ITEM_ITEM_RENDERER, PROTECTION_SITE_LINK_ITEM_RENDERER, RECOVERY_SITE_LINK_ITEM_RENDERER, RECOVERY_STATUS_ITEM_RENDERER, RECOVERY_STATUS_RENDERER, RECOVERY_TYPE_ITEM_RENDERER, REPLICATION_INTERVAL_ITEM_RENDERER, ROLE_ITEM_RENDERER, SCRIPT_ITEM_RENDERER, SERVER_PORT_ITEM_RENDERER, SITE_LOCATION_ITEM_RENDERER, SITE_NAME_LINK_RENDERER, SIZE_ITEM_RENDERER, SSH_RDP_ITEM_RENDERER, STATUS_ITEM_RENDERER, SUPPORT_BUNDLE_ACTION_ITEM_RENDERER, PLAYBOOK_CONFIGURE_RENDERER, THROTTLING_ACTION_ITEM_RENDER, THROTTLING_TIME_ITEM_RENDER, TIME_DURATION_RENDERER, TRANSFER_SIZE_ITEM_RENDERER, VIEW_ALERT_INFO_RENDERER, VM_BOOT_ORDER_ITEM_RENDER, VM_DISK_ITEM_RENDERER, VM_NETWORK_INFO_ITEM_RENDERER, VM_PLACEMENT_INFO_ITEM_RENDERER, VM_SIZE_ITEM_RENDERER, VM_UPASSWORD_ITEM_RENDERER, VM_USERNAME_ITEM_RENDERER, PLAYBOOK_RENDER_ISSUES_COLUMN, PLAYBOOK_PLAN_NAME_LINK_RENDERER, REPLICATION_PRIORITY_RENDERER, PLAYBOOK_PLAN_STATUS_RENDERER } from '../constants/TableConstants';
+import { ALERT_ACK_ITEM_RENDERER, PLAYBOOK_ACTION_RENDERER, PLAYBOOK_FILENAME_RENDERER, SINGLE_PLAYBOOK_STATUS_RENDERER, DATE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, PLAYBOOK_CHANGES_RENDERER, EMAIL_RECIPIENT_ACTION_ITEM_RENDER, EVENT_LEVEL_ITEM_RENDERER, LICENSE_ACTION_ITEM_RENDERER, LICENSE_STATUS_ITEM_RENDER, LICENSE_USAGE_ITEM_RENDERER, NODE_ACTION_RENDERER, NODE_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDERER, PROTECTED_VM_ACTIONS_ITEM_ITEM_RENDERER, PROTECTION_SITE_LINK_ITEM_RENDERER, RECOVERY_SITE_LINK_ITEM_RENDERER, RECOVERY_STATUS_ITEM_RENDERER, RECOVERY_STATUS_RENDERER, RECOVERY_TYPE_ITEM_RENDERER, REPLICATION_INTERVAL_ITEM_RENDERER, ROLE_ITEM_RENDERER, SCRIPT_ITEM_RENDERER, SERVER_PORT_ITEM_RENDERER, SITE_LOCATION_ITEM_RENDERER, SITE_NAME_LINK_RENDERER, SIZE_ITEM_RENDERER, SSH_RDP_ITEM_RENDERER, STATUS_ITEM_RENDERER, SUPPORT_BUNDLE_ACTION_ITEM_RENDERER, PLAYBOOK_CONFIGURE_RENDERER, THROTTLING_ACTION_ITEM_RENDER, THROTTLING_TIME_ITEM_RENDER, TIME_DURATION_RENDERER, TRANSFER_SIZE_ITEM_RENDERER, VIEW_ALERT_INFO_RENDERER, VM_BOOT_ORDER_ITEM_RENDER, VM_DISK_ITEM_RENDERER, VM_NETWORK_INFO_ITEM_RENDERER, VM_PLACEMENT_INFO_ITEM_RENDERER, VM_SIZE_ITEM_RENDERER, VM_UPASSWORD_ITEM_RENDERER, VM_USERNAME_ITEM_RENDERER, PLAYBOOK_RENDER_ISSUES_COLUMN, PLAYBOOK_PLAN_NAME_LINK_RENDERER, REPLICATION_PRIORITY_RENDERER, PLAYBOOK_PLAN_STATUS_RENDERER, RECOVERY_CHECKPOINT_OPTION_RENDERER, PRESERVE_CHECKPOINT, CHECKPOINTS_LINK_RENDERER, CHECKPOINT_RECOVERY_JOB_ITEM_RENDERER } from '../constants/TableConstants';
 import ScriptItemRenderer from '../components/Table/ItemRenderers/ScriptItemRenderer';
 import ProtectedSiteLinkRenderer from '../components/Table/ItemRenderers/ProtectedSiteLinkItemRenderer';
 import DMSearchSelect from '../components/Shared/DMSearchSelect';
@@ -65,6 +70,7 @@ import ProtectedVMItemRenderer from '../components/Table/ItemRenderers/Protected
 import VMPlacementInfoItemRenderer from '../components/Table/ItemRenderers/VMPlacementInfoItemRenderer';
 import SiteLocationItemRenderer from '../components/Table/ItemRenderers/SiteLocationItemRenderer';
 import ReplicationPriorityItemRenderer from '../components/Table/ItemRenderers/ReplicationPriorityItemRenderer';
+import CheckpointRecoveryJobItemRenderer from '../components/Table/ItemRenderers/CheckpointRecoveryJobItemRenderer';
 
 export function getStackComponent(dispatch, user, children, conf, data) {
   const field = children[conf];
@@ -106,7 +112,7 @@ export function getFieldComponents(dispatch, fieldKey, user, component, hideLabe
   }
 }
 
-export function getItemRendererComponent(render, data, field, user, dispatch) {
+export function getItemRendererComponent({ render, data, field, user, dispatch, options }) {
   switch (render) {
     case OS_TYPE_ITEM_RENDERER:
       return <OsTypeItemRenderer data={data} />;
@@ -204,6 +210,16 @@ export function getItemRendererComponent(render, data, field, user, dispatch) {
       return <PlaybookPlanNameRenderer dispatch={dispatch} user={user} field={field} data={data} />;
     case REPLICATION_PRIORITY_RENDERER:
       return <ReplicationPriorityItemRenderer data={data} field={field} dispatch={dispatch} user={user} />;
+    case RECOVERY_CHECKPOINT_OPTION_RENDERER:
+      return <RecveryCheckpointOptionRenderer data={data} dispatch={dispatch} user={user} field={field} />;
+    case PRESERVE_CHECKPOINT:
+      return <PreserveCheckpoint data={data} dispatch={dispatch} user={user} field={field} />;
+    case CHECKPOINTS_LINK_RENDERER:
+      return <CheckpoinLinkRenderer data={data} dispatch={dispatch} user={user} field={field} />;
+    case CHECKPOINT_RECOVERY_JOB_ITEM_RENDERER:
+      return <CheckpointRecoveryJobItemRenderer data={data} field={field} />;
+    case PPLAN_REMOVE_CHECKPOINT_RENDERER:
+      return <DeletCheckpointPlanCheckbox user={user} dispatch={dispatch} options={options} />;
     case PLAYBOOK_PLAN_STATUS_RENDERER:
       return <PlaybookPlanStatusRenderer data={data} field={field} dispatch={dispatch} user={user} />;
     default:

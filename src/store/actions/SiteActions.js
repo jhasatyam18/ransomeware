@@ -281,6 +281,7 @@ export function handleProtectVMSeletion(data, isSelected, primaryKey) {
         // set guest os type of newly selected vm
         dispatch(valueChange(`${data[primaryKey]}-vmConfig.general.guestOS`, getMatchingOSType(data.guestOS)));
         dispatch(valueChange(`${data[primaryKey]}-vmConfig.general.firmwareType`, getMatchingFirmwareType(data.firmwareType)));
+        dispatch(valueChange(`${data[primaryKey]}-vmConfig.recovery.status`, data.recoveryStatus));
       }
     } else if (selectedVMs[data[primaryKey]]) {
       const newVMs = selectedVMs;
@@ -301,6 +302,7 @@ export function handleSelectAllRecoveryVMs(value) {
         if (!(typeof vm.isDisabled !== 'undefined' && vm.isDisabled === true)) {
           selectedVMs = { ...selectedVMs, [vm.moref]: vm };
           dispatch(setRecoveryVMDetails(vm.moref));
+          dispatch(valueChange(`${vm.moref}-vmConfig.recovery.status`, vm.recoveryStatus));
         }
       });
       dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, selectedVMs));

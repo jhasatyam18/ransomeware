@@ -27,7 +27,7 @@ function StatusItemRenderer({ data, field, t, noPopOver }) {
   let resp = status.charAt(0).toUpperCase() + status.slice(1);
 
   const renderPopOver = (hoverInfo, key) => {
-    if (noPopOver) {
+    if (noPopOver || !hoverInfo) {
       return null;
     }
     return (
@@ -60,7 +60,7 @@ function StatusItemRenderer({ data, field, t, noPopOver }) {
           </>
         ) : null}
         {resp}
-        {hoverInfo !== '' ? renderPopOver(hoverInfo, `status-${field}-${data.name}-${data.id}`) : null}
+        { renderPopOver(hoverInfo, `status-${field}-${data.name}-${data.id}`)}
       </Badge>
     );
   }

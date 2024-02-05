@@ -1,3 +1,4 @@
+import { STORE_KEYS } from '../../constants/StoreKeyConstants';
 import * as Types from '../../constants/actionTypes';
 import { API_ADD_USER, API_AUTHENTICATE, API_AWS_REGIONS, API_AZURE_REGIONS, API_CHANGE_NODE_PASSWORD, API_CHANGE_PASSWORD, API_GCP_REGIONS, API_INFO, API_SCRIPTS, API_USERS, API_USER_PRIVILEGES, API_USER_SCRIPT } from '../../constants/ApiConstants';
 import { APP_TYPE, NODE_TYPES, PLATFORM_TYPES, SAML, STATIC_KEYS, VMWARE_OBJECT } from '../../constants/InputConstants';
@@ -395,10 +396,15 @@ export function refresh() {
 }
 
 export function detailPathChecks(pathname) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
     if (pathname.indexOf('protection/plan/details') !== -1) {
       const pathArray = pathname.split('/');
       dispatch(fetchDRPlanById(pathArray[pathArray.length - 1]));
+      if (getValue(STORE_KEYS.RECOVERY_CHECKPOINT_JOB_LINK_INSTANCE, values)) {
+        dispatch(valueChange(STORE_KEYS.RECOVERY_CHECKPOINT_JOB_LINK_INSTANCE, undefined));
+      }
     } else if (pathname.indexOf('protection/plan/playbook/') !== -1) {
       const parts = pathname.split('/');
       dispatch(fetchPlaybookById(parts[parts.length - 1]));
@@ -1072,6 +1078,22 @@ export function onNodeTypeChange({ value, fieldKey }) {
       dispatch(valueChange(fKey, 5005));
     } else {
       dispatch(valueChange(fKey, 5000));
+    }
+  };
+}
+
+export function onDiffReverseChanges({ value }) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const recoveryPlatform = getValue('ui.values.recoveryPlatform', values) || '';
+    if (value) {
+      if (recoveryPlatform !== '' && recoveryPlatform === PLATFORM_TYPES.VMware) {
+        dispatch(valueChange('recoveryPointConfiguration.isRecoveryCheckpointEnabled', false));
+        dispatch(valueChange(STORE_KEYS.UI_DISABLE_RECOVERY_CHECKPOINT, true));
+      }
+    } else {
+      dispatch(valueChange(STORE_KEYS.UI_DISABLE_RECOVERY_CHECKPOINT, false));
     }
   };
 }

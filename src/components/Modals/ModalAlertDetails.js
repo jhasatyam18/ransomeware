@@ -9,7 +9,7 @@ import EventLevelItemRenderer from '../Table/ItemRenderers/EventLevelItemRendere
 import { acknowledgeAlert, takeVMAction } from '../../store/actions/AlertActions';
 import { closeModal } from '../../store/actions/ModalActions';
 import { getCookie } from '../../utils/CookieUtils';
-import { MONITOR_NODE_AUTH, PPLAN_EVENTS, VM_CONFIG_ACTION_EVENT, VM_DISK_ACTION_EVENT } from '../../constants/EventConstant';
+import { CHECKPOINT_ACTION_EVENT, MONITOR_NODE_AUTH, PPLAN_EVENTS, VM_CONFIG_ACTION_EVENT, VM_DISK_ACTION_EVENT } from '../../constants/EventConstant';
 import { APPLICATION_API_USER } from '../../constants/UserConstant';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
 import { refresh } from '../../store/actions/UserActions';
@@ -223,7 +223,7 @@ class ModalAlertDetails extends Component {
     if (selected.isAcknowledge || !hasRequestedPrivileges(user, ['alerts.actions'])) {
       return null;
     }
-    if (VM_DISK_ACTION_EVENT.indexOf(type) !== -1 || VM_CONFIG_ACTION_EVENT.indexOf(type) !== -1 || PPLAN_EVENTS.indexOf(type) !== -1 || MONITOR_NODE_AUTH.indexOf(type) !== -1) {
+    if (VM_DISK_ACTION_EVENT.indexOf(type) !== -1 || VM_CONFIG_ACTION_EVENT.indexOf(type) !== -1 || PPLAN_EVENTS.indexOf(type) !== -1 || MONITOR_NODE_AUTH.indexOf(type) !== -1 || CHECKPOINT_ACTION_EVENT.indexOf(type) !== -1) {
       const toolTip = (VM_DISK_ACTION_EVENT.indexOf(type) !== -1 ? t('take.action.tooltip.vm.disk.operation') : t('take.action.tooltip.vm.reconfigure.operation'));
       return (
         <button type="button" className="btn btn-secondary" onClick={this.takeAction} title={toolTip}>

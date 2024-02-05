@@ -6,6 +6,15 @@ export const APPLICATION_GETTING_STARTED_COMPLETED = 'APPLICATION_GETTING_STARTE
 export const API_MAX_RECORD_LIMIT = 2000;
 export const APP_SET_TIMEOUT = 20;
 export const DATA_GRID_SHORT_TEXT_LENGTH = 30;
+export const API_LIMIT_HUNDRED = 100;
+
+export const TIME_CONSTANTS = {
+  HOUR: 'hour',
+  DAY: 'day',
+  WEEK: 'week',
+  MONTH: 'month',
+  YEAR: 'year',
+};
 
 export const GENERAL_PLATFORM_KEYS = {
   AWS: {
@@ -37,3 +46,12 @@ export const PLAN_KEYS = [
   'preScript',
   'replicationInterval',
 ];
+
+export const PLAN_DETAIL_TABS = {
+  ONE: '1',
+  TWO: '2',
+  THREE: '3',
+  FOUR: '4',
+  FIVE: '5',
+  SIX: '6',
+};

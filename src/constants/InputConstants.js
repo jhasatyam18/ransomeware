@@ -47,6 +47,11 @@ export const RECOVERY_JOB_TYPE = {
   VM: 'VM',
 };
 
+export const RECOVERY_CHECKPOINT_TYPE = {
+  PLAN: 'PLAN',
+  VM: 'VM',
+};
+
 export const APP_TYPE = {
   CLIENT: 'CLIENT', SERVER: 'SERVER',
 };
@@ -95,6 +100,7 @@ export const STATIC_KEYS = {
   UI_TEMPLATE_FILEID: 'ui.template.fileid',
   UI_TEMPLATE_BY_ID: 'ui.template.id',
   UI_REPLICATIONJOBS_BY_PPLAN_ID: 'ui.replicationjobs.by.pplanid',
+  UI_RECOVERY_CHECKPOINTS_BY_PLAN_ID: 'recovery.checkpoint.by.plan.id',
   UI_PLAYBOOK_DIFF: 'ui.playbook.diff',
   UI_PLAYBOOK_DIFF_RESPONSE: 'ui.playbook.diff.response',
   UI_PLAYBOOK_CURRENT_PLAN_CONFIG: 'ui.playbook.current.plan.config',
@@ -176,6 +182,14 @@ export const SUPPORTED_FIRMWARE = {
 export const NODE_STATUS = {
   Online: 'online',
   Offline: 'offline',
+};
+
+export const MINUTES_CONVERSION = {
+  HOUR: 60,
+  DAY: 1440,
+  WEEK: 10080,
+  MONTH: 43800,
+  YEAR: 525600,
 };
 
 export const PLAYBOOK_TYPE = {

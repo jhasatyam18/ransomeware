@@ -1,4 +1,6 @@
-import { PLATFORM_TYPES, RECOVERY_ENTITY_TYPES, STATIC_KEYS } from '../constants/InputConstants';
+import { STORE_KEYS } from '../constants/StoreKeyConstants';
+import { TIME_CONSTANTS } from '../constants/UserConstant';
+import { MINUTES_CONVERSION, PLATFORM_TYPES, RECOVERY_ENTITY_TYPES, STATIC_KEYS } from '../constants/InputConstants';
 import { FIELDS } from '../constants/FieldsConstant';
 import {
   getValue,
@@ -68,8 +70,56 @@ export function getCreateDRPlanPayload(user, sites) {
   result.drplan.recoveryEntities.instanceDetails = getVMConfigPayload(user);
   result.drplan.replicationInterval = getReplicationInterval(getValue(STATIC_KEYS.REPLICATION_INTERVAL_TYPE, values), getValue('drplan.replicationInterval', values));
   result.drplan.startTime = getUnixTimeFromDate(result.drplan.startTime);
-  result.drplan.protectedEntityType = getRecoveryEntityType();
+  result.drplan.protectedEntityType = getRecoveryEntityType(user);
+  result.drplan.recoveryPointConfiguration = getRecoveryPointConfiguration(user);
   return result;
+}
+
+export function getRecoveryPointConfiguration(user) {
+  const { values } = user;
+  const resObj = {};
+  resObj.isRecoveryCheckpointEnabled = getValue(STORE_KEYS.RECOVERY_CHECKPOINTING_ENABLED, values);
+  resObj.recoveryPointTimePeriod = getRecoveryPointTimePeriod(user, STORE_KEYS.RECOVERY_CHECKPOINT_DURATION_NUM, STORE_KEYS.RECOVERY_CHECKPOINT_DURATION_UNIT);
+  resObj.recoveryPointCopies = getValue(STORE_KEYS.RECOVERY_CHECKPOINT_COUNT, values);
+  resObj.recoveryPointRetentionTime = getRecoveryPointTimePeriod(user, STORE_KEYS.RECOVERY_CHECKPOINT_RETAIN_NUMEBER, STORE_KEYS.RECOVERY_CHECKPOINT_RETAIN_NUMEBER_UNIT);
+  resObj.deleteAssociatedCheckpoint = getValue('drplan.removeCheckpoint', values) || false;
+  const id = getValue('recoveryPointConfiguration.id', values) || '';
+  if (id) {
+    resObj.id = id;
+  }
+  return resObj;
+}
+
+export function getRecoveryPointTimePeriod(user, timeCountKey, timeUnitKey) {
+  const { values } = user;
+  const timePerios = getValue(timeCountKey, values);
+  const unit = getValue(timeUnitKey, values);
+  const checkpointPeriod = convertCheckpointTimeInMinute(timePerios, unit);
+  return checkpointPeriod;
+}
+
+function convertCheckpointTimeInMinute(time, unit) {
+  let res = 0;
+  switch (unit) {
+    case TIME_CONSTANTS.HOUR:
+      res = time * MINUTES_CONVERSION.HOUR;
+      break;
+    case TIME_CONSTANTS.DAY:
+      res = time * MINUTES_CONVERSION.DAY;
+      break;
+    case TIME_CONSTANTS.WEEK:
+      res = time * MINUTES_CONVERSION.WEEK;
+      break;
+    case TIME_CONSTANTS.MONTH:
+      res = time * MINUTES_CONVERSION.MONTH;
+      break;
+    case TIME_CONSTANTS.YEAR:
+      res = time * MINUTES_CONVERSION.YEAR;
+      break;
+    default:
+      break;
+  }
+  return res;
 }
 
 export function getFilteredObject(data, keyToMatch, arrayFieldKey) {
@@ -251,7 +301,7 @@ export function getVMNetworkConfig(key, values) {
   return networks;
 }
 
-function getReplicationInterval(type, value) {
+export function getReplicationInterval(type, value) {
   const val = parseInt(value, 10);
   switch (type) {
     case STATIC_KEYS.REPLICATION_INTERVAL_TYPE_DAY:
@@ -274,6 +324,13 @@ function getRecoveryConfigVMDetails(user) {
     const { name, moref } = vm;
     const userName = getValue(`${moref}-username`, values);
     const password = getValue(`${moref}-password`, values);
+    const recoveryCheckpoint = getValue(`${moref}-recovery-checkpoint`, values) || '';
+    let recoveryCheckpointID = '';
+    if (recoveryCheckpoint.value && recoveryCheckpoint.value === 'latest') {
+      recoveryCheckpointID = '';
+    } else {
+      recoveryCheckpointID = recoveryCheckpoint.value;
+    }
     let instanceDetails = {};
     instanceConfig.forEach((ins) => {
       if (ins.sourceMoref === moref) {
@@ -281,7 +338,7 @@ function getRecoveryConfigVMDetails(user) {
       }
     });
     const discardPartialChanges = getValue('recovery.discardPartialChanges', values) || false;
-    machineDetails.push({ instanceDetails, vmMoref: moref, vmName: name, username: (userName && userName !== '' ? userName : ''), password: (password && password !== '' ? password : ''), discardPartialChanges });
+    machineDetails.push({ instanceDetails, vmMoref: moref, vmName: name, username: (userName && userName !== '' ? userName : ''), password: (password && password !== '' ? password : ''), discardPartialChanges, recoveryCheckpointID });
   });
   return machineDetails;
 }
@@ -314,6 +371,7 @@ export function getReversePlanPayload(user) {
   drplan.recoveryEntities.instanceDetails = getVMConfigPayload(user);
   drplan.replicationInterval = getReplicationInterval(getValue(STATIC_KEYS.REPLICATION_INTERVAL_TYPE, values), getValue('drplan.replicationInterval', values));
   drplan.startTime = getUnixTimeFromDate(drplan.startTime);
+  drplan.recoveryPointConfiguration = getRecoveryPointConfiguration(user);
   return drplan;
 }
 
@@ -402,6 +460,7 @@ export function getEditProtectionPlanPayload(user, sites) {
   result.drplan.replicationInterval = getReplicationInterval(getValue(STATIC_KEYS.REPLICATION_INTERVAL_TYPE, values), getValue('drplan.replicationInterval', values));
   result.drplan.startTime = getUnixTimeFromDate(result.drplan.startTime);
   result.drplan.protectedEntityType = getRecoveryEntityType();
+  result.drplan.recoveryPointConfiguration = getRecoveryPointConfiguration(user);
   return result;
 }
 

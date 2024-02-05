@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { withRouter } from 'react-router-dom';
+import { getItemRendererComponent } from '../../utils/ComponentFactory';
 import { closeModal } from '../../store/actions/ModalActions';
 
 class ConfirmationModal extends Component {
@@ -20,6 +21,16 @@ class ConfirmationModal extends Component {
     const { options } = modal;
     const { confirmAction, id } = options;
     dispatch(confirmAction(id, history));
+  }
+
+  modalItemRenderer() {
+    const { dispatch, modal, user } = this.props;
+    const { options } = modal;
+    const { render } = options;
+    if (render) {
+      return getItemRendererComponent({ render, user, dispatch, options });
+    }
+    return null;
   }
 
   renderFooter() {
@@ -64,6 +75,7 @@ class ConfirmationModal extends Component {
                   </div>
                   <div className="col-sm-8 confirmation_modal_msg">
                     {message}
+                    {this.modalItemRenderer()}
                   </div>
                 </>
               ) : (
