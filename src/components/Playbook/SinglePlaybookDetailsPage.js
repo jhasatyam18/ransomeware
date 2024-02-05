@@ -5,6 +5,7 @@ import { withTranslation } from 'react-i18next';
 import { faDownload, faEdit, faFileCircleCheck, faTrash, faUpload } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect, useSelector } from 'react-redux';
+import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
 import { playbookExport } from '../../store/actions/DrPlanActions';
 import { NOTE_TEXT } from '../../constants/DMNoteConstant';
 import DMNote from '../Common/DMNote';
@@ -246,11 +247,11 @@ function SinglePlaybookDetailsPage(props) {
     const disableValidate = TEMPLATE_STATUS.indexOf(status) === 1;
     const disablePlan = TEMPLATE_STATUS.indexOf(status) === 2;
     const pplanLabel = planConfigurations[0]?.planID > 0 ? t('title.edit.pplan') : t('title.create.pplan');
-    const actions = [{ label: t('validate'), onClick: onValidate, isDisabled: disableValidate, icon: faFileCircleCheck },
-      { label: pplanLabel, onClick: onCreatePplan, isDisabled: !disablePlan },
-      { label: t('download'), isDisabled: false, icon: faDownload, onClick: onDownloadClick },
-      { label: t('edit.playbook'), isDisabled: false, icon: faEdit, onClick: onEdit },
-      { label: t('remove'), onClick: onRemove, icon: faTrash, isDisabled: false },
+    const actions = [{ label: t('validate'), onClick: onValidate, isDisabled: !hasRequestedPrivileges(user, ['playbook.validate']) || disableValidate, icon: faFileCircleCheck },
+      { label: pplanLabel, onClick: onCreatePplan, isDisabled: !hasRequestedPrivileges(user, ['playbook.configure']) || !disablePlan },
+      { label: t('download'), isDisabled: !hasRequestedPrivileges(user, ['playbook.generate']), icon: faDownload, onClick: onDownloadClick },
+      { label: t('edit.playbook'), isDisabled: !hasRequestedPrivileges(user, ['playbook.edit']), icon: faEdit, onClick: onEdit },
+      { label: t('remove'), onClick: onRemove, icon: faTrash, isDisabled: !hasRequestedPrivileges(user, ['playbook.delete']) },
     ];
     return (
       <>
@@ -276,7 +277,7 @@ function SinglePlaybookDetailsPage(props) {
               {renderGlobalActions()}
             </Col>
             <Col sm={4}>
-              <SinglePlaybookStatusRenderer dispatch={dispatch} playbook={playbook} field="status" showStatusLabel />
+              <SinglePlaybookStatusRenderer dispatch={dispatch} playbook={playbook} field="status" showStatusLabel user={user} />
             </Col>
           </Row>
           {status === PLAYBOOKS_STATUS.PLAYBOOK_VALIDATION_FAILED ? (

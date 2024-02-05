@@ -2,13 +2,14 @@ import { faCheckCircle, faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { withTranslation } from 'react-i18next';
+import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
 import { clearValues } from '../../store/actions';
 import { onCreatePlanFromPlaybook, validatePlaybook } from '../../store/actions/DrPlaybooksActions';
 import { closeModal, openModal } from '../../store/actions/ModalActions';
 import { MODAL_CONFIRMATION_WARNING, MODAL_TEMPLATE_ERROR } from '../../constants/Modalconstant';
 import { TEMPLATE_STATUS } from '../../constants/AppStatus';
 
-function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispatch, t }) {
+function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispatch, t, user }) {
   const status = playbook[field];
   const { id, planConfigurations } = playbook;
   const statusInd = TEMPLATE_STATUS.indexOf(status);
@@ -64,17 +65,29 @@ function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispat
     </div>
   );
 
-  const onCreatePplan = () => {
+  const onCreatePplan = (e) => {
+    if (!hasRequestedPrivileges(user, ['playbook.configure'])) {
+      e.preventDefault();
+      return;
+    }
     const options = { title: t('confirm.playbook.plan.config'), footerComponent: createPlanFooter, confirmAction: onCreatePlanFromPlaybook, message: `Are you sure want to configure protection plan from ${playbook.name} playbook ?`, id, footerLabel: 'Create Protection Plan', color: 'success', size: 'lg' };
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   };
 
-  const onErrorValidateClick = () => {
+  const onErrorValidateClick = (e) => {
+    if (!hasRequestedPrivileges(user, ['playbook.validate'])) {
+      e.preventDefault();
+      return;
+    }
     const options = { title: t('issues.identified'), size: 'lg', playbook };
     dispatch(openModal(MODAL_TEMPLATE_ERROR, options));
   };
 
-  const onValidate = () => {
+  const onValidate = (e) => {
+    if (!hasRequestedPrivileges(user, ['playbook.validate'])) {
+      e.preventDefault();
+      return;
+    }
     const options = { title: t('title.validate.playbook'), confirmAction: validatePlaybook, message: `Are you sure want to Validate ${playbook.name} ?`, id: playbook.id, footerLabel: t('validate'), color: 'success', size: 'lg' };
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   };

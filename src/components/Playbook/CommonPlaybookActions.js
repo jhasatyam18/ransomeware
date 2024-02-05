@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload, faTrash, faUpload } from '@fortawesome/free-solid-svg-icons';
+import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
 import { API_UPLOAD_TEMPLATED } from '../../constants/ApiConstants';
 import { clearValues } from '../../store/actions';
 import { openModal } from '../../store/actions/ModalActions';
@@ -57,12 +58,12 @@ function CommonPlaybookActions(props) {
   };
 
   const renderGlobalActions = () => {
-    const { selectedPlaybook } = props;
+    const { selectedPlaybook, user } = props;
     const disabled = !Object.keys(selectedPlaybook).length === 0 || Object.keys(selectedPlaybook).length > 0;
     const disableOther = Object.keys(selectedPlaybook).length > 0;
-    const actions = [{ label: 'Generate', onClick: onGenerate, icon: faDownload, isDisabled: disabled },
-      { label: 'Upload', onClick: onUpload, icon: faUpload, isDisabled: disabled },
-      { label: 'Remove', onClick: onRemove, icon: faTrash, isDisabled: !disableOther }];
+    const actions = [{ label: 'Generate', onClick: onGenerate, icon: faDownload, isDisabled: !hasRequestedPrivileges(user, ['playbook.generate']) || disabled },
+      { label: 'Upload', onClick: onUpload, icon: faUpload, isDisabled: !hasRequestedPrivileges(user, ['playbook.upload']) || disabled },
+      { label: 'Remove', onClick: onRemove, icon: faTrash, isDisabled: !hasRequestedPrivileges(user, ['playbook.delete']) || !disableOther }];
     return (
       <>
         {getActionButtons(actions)}

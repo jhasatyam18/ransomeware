@@ -19,6 +19,7 @@ import { isPlanRecovered } from '../../utils/validationUtils';
 
 function DRPlanActionBar(props) {
   const history = useHistory();
+
   const onCreate = () => {
     const { dispatch } = props;
     dispatch(clearValues());
@@ -101,7 +102,7 @@ function DRPlanActionBar(props) {
     const actions = [{ label: 'New', onClick: onCreate, icon: 'fa fa-plus', isDisabled: !hasRequestedPrivileges(user, ['protectionplan.edit']) },
       { label: 'Edit', onClick: onEdit, icon: 'fa fa-edit', isDisabled: (!hasRequestedPrivileges(user, ['protectionplan.create']) || showEdit()) },
       { label: 'remove', onClick: onDelete, icon: 'fa fa-trash', isDisabled: (!hasRequestedPrivileges(user, ['protectionplan.delete']) || disableDeletePlan(true)) },
-      { label: 'Playbooks', onClick: onTemplateClick, icon: 'fa fa-file-excel', isDisabled: false }];
+      { label: 'Playbooks', onClick: onTemplateClick, icon: 'fa fa-file-excel', isDisabled: !hasRequestedPrivileges(user, ['playbook.list']) }];
     return (
       <>
         {getActionButtons(actions)}

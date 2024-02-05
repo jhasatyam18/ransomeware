@@ -193,7 +193,7 @@ export function getItemRendererComponent(render, data, field, user, dispatch) {
     case PLAYBOOK_FILENAME_RENDERER:
       return <PlaybookFileNameRenderer data={data} field={field} dispatch={dispatch} />;
     case PLAYBOOK_ACTION_RENDERER:
-      return <SinglePlaybookActions data={data} field={field} dispatch={dispatch} />;
+      return <SinglePlaybookActions data={data} field={field} dispatch={dispatch} user={user} />;
     case PLAYBOOK_CONFIGURE_RENDERER:
       return <PlaybookConfigureRenderer data={data} dispatch={dispatch} />;
     case PLAYBOOK_CHANGES_RENDERER:
