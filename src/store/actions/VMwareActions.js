@@ -4,7 +4,7 @@ import { API_FETCH_VMWARE_ADAPTER_TYPE } from '../../constants/ApiConstants';
 import { callAPI } from '../../utils/ApiUtils';
 import { addMessage } from './MessageActions';
 import { getComputeResources, getStorageForVMware, hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
-import { PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
+import { STATIC_KEYS } from '../../constants/InputConstants';
 import { setVMGuestOSInfo } from './DrPlanActions';
 
 // getStorageForVMware
@@ -254,13 +254,4 @@ export function getVMwareConfigDataForField(requestedField, entity, values) {
     }
   }
   return null;
-}
-
-export function showInstallSystemAgentOption(user) {
-  const { values } = user;
-  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
-  if (recoveryPlatform === PLATFORM_TYPES.VMware) {
-    return true;
-  }
-  return false;
 }

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Card, CardBody, CardTitle, Col, Form, Label, Row } from 'reactstrap';
-import { showInstallSystemAgentOption } from '../../store/actions/VMwareActions';
 import DMToolTip from '../Shared/DMToolTip';
 import { valueChange } from '../../store/actions';
 import { PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
@@ -62,7 +61,7 @@ class RecoveryConfig extends Component {
     const renderCheckbox = (key, label) => {
       const checked = this.getCheckboxValue(key);
       return (
-        <Row>
+        <Row className={recoveryPlatform !== PLATFORM_TYPES.VMware ? 'margin-bottom-20' : ''}>
           <Label for="dm-checkbox" className="col-sm-4 col-form-Label">
             {t(label)}
           </Label>
@@ -83,15 +82,13 @@ class RecoveryConfig extends Component {
       );
     };
 
-    const shouldShowInstallSysAgent = showInstallSystemAgentOption(user);
-
     return (
       <>
         <Card className="padding-20">
           <CardBody>
             <CardTitle>{t('Tools Installation')}</CardTitle>
             <Form className="form_w mt-3">
-              {shouldShowInstallSysAgent ? renderCheckbox('recovery.installSystemAgent', 'recovery.installSystemAgent') : null}
+              {renderCheckbox('recovery.installSystemAgent', 'recovery.installSystemAgent') }
               <DMField dispatch={dispatch} user={user} fieldKey="ui.installSystemAgent.warning" />
               <DMField dispatch={dispatch} user={user} fieldKey="recovery.installCloudPkg" />
               <DMField dispatch={dispatch} user={user} fieldKey="recovery.removeFromAD" />

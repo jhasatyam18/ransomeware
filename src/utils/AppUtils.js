@@ -395,7 +395,7 @@ export function moveSelectedItemsOnTop(data, selectedObjects) {
   return response;
 }
 
-export function showinstallCloudPkgWarningText(user) {
+export function showSystemAgentWarningText(user) {
   const { values } = user;
 
   const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);

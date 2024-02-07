@@ -1013,7 +1013,7 @@ export function getMatchingInsType(values, ins) {
 export function showInstallCloudPackageOption(user) {
   const { values } = user;
   const recoveryType = getValue('ui.values.recoveryPlatform', values);
-  if (recoveryType === PLATFORM_TYPES.VMware) {
+  if (recoveryType === PLATFORM_TYPES.VMware || recoveryType === PLATFORM_TYPES.Azure) {
     return false;
   }
   return true;
