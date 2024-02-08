@@ -1,0 +1,5 @@
+Datamotive_AWS.xlsx
+Datamotive_Azure.xlsx
+Datamotive_GCP.xlsx
+Datamotive_VMware.xlsx
+Datamotive_Recovery_Credentials.xlsx

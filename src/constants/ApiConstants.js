@@ -132,6 +132,7 @@ export const API_GET_CONFIG_TEMPLATE_BY_ID = 'api/v1/protection/playbooks/config
 export const API_GET_PLAN_DIFF = 'api/v1/protection/playbooks/config/<id>/diff';
 export const CREATE_PLAN_FROM_PLAYBOOK = 'api/v1/protection/playbooks/config/<id>/configure';
 export const API_VALIDATE_TEMPLATE = 'api/v1/protection/playbooks/config/<id>/validate';
+export const API_UPLOAD_RECOVERY_CRED = 'api/v1/protection/playbooks/recover';
 
 // SAML
 export const API_SAML = 'login/saml';

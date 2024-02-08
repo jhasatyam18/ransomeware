@@ -24,6 +24,11 @@ function PlaybookPlanStatusRenderer({ data, field, t }) {
       <Badge id="status-stsua" className="font-size-13 badge-soft-success" pill>{t('title.plan.created')}</Badge>
     );
   }
+  if (status === 'playbookPlanUpdated') {
+    return (
+      <Badge id="status-stsua" className="font-size-13 badge-soft-success" pill>{t('title.plan.reconfigured')}</Badge>
+    );
+  }
   return '-';
 }
 

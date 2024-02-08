@@ -171,7 +171,7 @@ export function validatePlaybook(id) {
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
-        dispatch(addMessage('Playbook Validated Successfully', MESSAGE_TYPES.SUCCESS));
+        dispatch(addMessage('Playbook validation started successfully...', MESSAGE_TYPES.SUCCESS));
         dispatch(closeModal());
         dispatch(refresh());
       }

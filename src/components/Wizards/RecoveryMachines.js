@@ -11,7 +11,7 @@ import { PLAYBOOK_TYPE, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputCo
 import { getValue } from '../../utils/InputUtils';
 import { filterData } from '../../utils/AppUtils';
 import { getUrlPath } from '../../utils/ApiUtils';
-import { API_UPLOAD_TEMPLATED } from '../../constants/ApiConstants';
+import { API_UPLOAD_RECOVERY_CRED } from '../../constants/ApiConstants';
 import { hideApplicationLoader, showApplicationLoader, valueChange } from '../../store/actions';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { addMessage } from '../../store/actions/MessageActions';
@@ -54,7 +54,7 @@ class RecoveryMachines extends Component {
     formData.append('file', e.target.files[0]);
     formData.append('name', fileName);
     formData.append('type', PLAYBOOK_TYPE.RECOVERY);
-    const url = getUrlPath(API_UPLOAD_TEMPLATED);
+    const url = getUrlPath(API_UPLOAD_RECOVERY_CRED);
     dispatch(showApplicationLoader('UPLOADING_RECOVERY_CREDENTIALS', 'Uploading recovery credentials...'));
     fetch(url, {
       method: 'POST',
@@ -64,16 +64,19 @@ class RecoveryMachines extends Component {
         dispatch(hideApplicationLoader('UPLOADING_RECOVERY_CREDENTIALS'));
         dispatch(valueChange('ui.recovery.credentials.fileName', fileName));
         dispatch(addMessage('Recovery credentials uploaded successfully', MESSAGE_TYPES.SUCCESS));
+        e.target.value = '';
       } else {
         dispatch(hideApplicationLoader('UPLOADING_RECOVERY_CREDENTIALS'));
         response.text().then((text) => {
           dispatch(addMessage(text, MESSAGE_TYPES.ERROR));
+          e.target.value = '';
         });
       }
     })
       .catch((err) => {
         dispatch(hideApplicationLoader('UPLOADING_RECOVERY_CREDENTIALS'));
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+        e.target.value = '';
       });
   };
 
