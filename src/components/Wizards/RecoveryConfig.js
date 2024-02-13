@@ -91,7 +91,6 @@ class RecoveryConfig extends Component {
               {renderCheckbox('recovery.installSystemAgent', 'recovery.installSystemAgent') }
               <DMField dispatch={dispatch} user={user} fieldKey="ui.installSystemAgent.warning" />
               <DMField dispatch={dispatch} user={user} fieldKey="recovery.installCloudPkg" />
-              <DMField dispatch={dispatch} user={user} fieldKey="recovery.removeFromAD" />
               {showOptionToDiscard ? (
                 <>
                   {renderWarningText()}

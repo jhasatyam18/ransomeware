@@ -61,7 +61,6 @@ function TestRecoveryScriptStep(props) {
           { renderCheckbox('recovery.installSystemAgent', 'recovery.installSystemAgent') }
           <DMField dispatch={dispatch} user={user} fieldKey="ui.installSystemAgent.warning" />
           <DMField dispatch={dispatch} user={user} fieldKey="recovery.installCloudPkg" />
-          <DMField dispatch={dispatch} user={user} fieldKey="recovery.removeFromAD" />
         </Form>
         <hr />
         <CardTitle>{t('pplan.scripts')}</CardTitle>
