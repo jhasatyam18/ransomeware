@@ -25,7 +25,7 @@ export const FIELD_TYPE = {
 export const FIELDS = {
 
   'configureSite.name': {
-    label: 'site.name', description: 'Site name', placeHolderText: 'Select Site', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Site name required', shouldShow: true, fieldInfo: 'info.site.name',
+    label: 'site.name', description: 'Site name', placeHolderText: '', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Site name required', shouldShow: true, fieldInfo: 'info.site.name',
   },
   'configureSite.description': {
     label: 'description', description: 'Site description', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Site Description Required', shouldShow: true, fieldInfo: 'info.site.description',

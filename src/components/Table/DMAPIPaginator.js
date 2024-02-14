@@ -36,7 +36,7 @@ function DMAPIPaginator(props) {
     }
     if (searchStr !== '') {
       // include encoded search value and field in the API
-      const encodedSearchStr = encodeURIComponent(searchStr);
+      const encodedSearchStr = encodeURIComponent(searchStr.trim());
       const applicableCols = filterColumns.filter((f) => f.checked === true);
       if (applicableCols.length > 0) {
         const searchFields = applicableCols.map((m) => m.field).join(',');
