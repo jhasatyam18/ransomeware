@@ -148,7 +148,7 @@ function Header(props) {
             {renderAppType()}
           </div>
           <div className="d-flex">
-            <div className="dropdown d-none d-lg-inline-block ml-1">
+            <div className="dropdown d-lg-inline-block ml-1">
               <button
                 type="button"
                 onClick={onRefresh}
@@ -158,7 +158,7 @@ function Header(props) {
                 <box-icon name="refresh" color="#a6b0cf" animation="spin-hover" />
               </button>
             </div>
-            <div className="dropdown d-none d-lg-inline-block ml-1">
+            <div className="dropdown d-lg-inline-block ml-1">
               <button
                 type="button"
                 onClick={toggleFullscreen}

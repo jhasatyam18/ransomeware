@@ -76,6 +76,9 @@ class NotificationDropdown extends Component {
     const { alerts } = this.props;
     const { unread } = alerts;
     if (unread && unread.length > 0) {
+      if (unread.length > 99) {
+        return <span className="badge badge-danger badge-pill">99+</span>;
+      }
       return <span className="badge badge-danger badge-pill">{unread.length}</span>;
     }
     return null;
