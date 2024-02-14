@@ -78,6 +78,11 @@ class DMMultiSelect extends Component {
     const { dispatch, fieldKey } = this.props;
     const selectedItems = this.getSelectedValues();
     const newData = selectedItems.filter((t) => t !== item);
+    if (newData.length === 0) {
+      this.setState({ value: '-' });
+    } else {
+      this.setState({ value: newData[newData.length - 1] });
+    }
     dispatch(valueChange(fieldKey, newData));
   }
 
@@ -134,9 +139,29 @@ class DMMultiSelect extends Component {
     );
   }
 
+  renderError(hasError) {
+    const { fieldKey, field, user } = this.props;
+    let { errorMessage } = field;
+    const { errorFunction } = field;
+    if (errorFunction && typeof errorFunction === 'function') {
+      const res = errorFunction({ fieldKey, user });
+      if (res !== '') {
+        errorMessage = res;
+      }
+    }
+    if (hasError) {
+      return (
+        <small className="form-text app_danger" htmlFor={fieldKey}>{errorMessage}</small>
+      );
+    }
+    return null;
+  }
+
   render() {
-    const { fieldKey, hideLabel } = this.props;
+    const { fieldKey, hideLabel, user } = this.props;
     const { value } = this.state;
+    const { errors } = user;
+    const hasErrors = !!(errors && errors[fieldKey] !== undefined);
     const css = hideLabel ? '' : 'row mb-4 form-group';
     return (
       <>
@@ -159,6 +184,7 @@ class DMMultiSelect extends Component {
                 {this.renderTooltip()}
               </Col>
             </Row>
+            {this.renderError(hasErrors)}
           </Col>
         </FormGroup>
       </>

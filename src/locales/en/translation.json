@@ -363,7 +363,7 @@
   "info.email.skip.ssl": "Verify the SSL certificate provided by the smtp email server",
   "info.email.replicate.config": "Replicate the configuration on the all connected sites",
   "info.email.recipient.address": "Email address of recipient",
-  "info.email.recipient.event": "Events for which email notification will be send the recipient",
+  "info.email.recipient.event": "Events for which email notifications will be sent to the recipient",
 
   "info.throttling.limit.enabled": "Enable bandwidth throttling",
   "info.throttling.time.limit.enabled": "Enable time based bandwidth throttling",
