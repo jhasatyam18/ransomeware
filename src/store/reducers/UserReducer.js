@@ -117,7 +117,6 @@ export default function user(state = INITIAL_STATE.user, action) {
     case Types.FETCH_ROLES: {
       return { ...state, roles: action.roles };
     }
-
     default:
       return state;
   }

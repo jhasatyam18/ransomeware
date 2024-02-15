@@ -4,8 +4,6 @@ import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardTitle, Col, Container, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
 import { PLAN_DETAIL_TABS } from '../../constants/UserConstant';
 import { fetchCheckpointsByPlanId } from '../../store/actions/checkpointActions';
-import { getValue } from '../../utils/InputUtils';
-import { valueChange } from '../../store/actions';
 import Loader from '../Shared/Loader';
 import { PLATFORM_TYPES, RECOVERY_STATUS, REPLICATION_STATUS, PROTECTION_PLANS_STATUS } from '../../constants/InputConstants';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
@@ -18,7 +16,6 @@ import DropdownActions from '../Common/DropdownActions';
 import ProtectionPlanVMConfig from './ProtectionPlanVMConfig';
 import { convertMinutesToDaysHourFormat, getRecoveryCheckpointSummary } from '../../utils/AppUtils';
 import { isPlanRecovered } from '../../utils/validationUtils';
-import { STORE_KEYS } from '../../constants/StoreKeyConstants';
 import { downloadRecoveryPlaybook } from '../../store/actions/DrPlaybooksActions';
 
 const Replication = React.lazy(() => import('../Jobs/Replication'));
@@ -30,6 +27,7 @@ class DRPlanDetails extends Component {
   constructor() {
     super();
     this.disableEdit = this.disableEdit.bind(this);
+    this.state = { activeTab: '1' };
   }
 
   componentDidMount() {
@@ -42,11 +40,9 @@ class DRPlanDetails extends Component {
   }
 
   toggleTab(tab) {
-    const { dispatch, user } = this.props;
-    const { values } = user;
-    const activeTab = getValue(STORE_KEYS.DRPLAN_DETAILS_ACTIVE_TAB, values);
+    const { activeTab } = this.state;
     if (activeTab !== tab) {
-      dispatch(valueChange(STORE_KEYS.DRPLAN_DETAILS_ACTIVE_TAB, tab));
+      this.setState({ activeTab: tab });
     }
   }
 
@@ -282,10 +278,9 @@ class DRPlanDetails extends Component {
   renderRecoveryJobs() {
     const { drPlans, t, user } = this.props;
     const { localVMIP } = user;
-    const { values } = user;
     const { protectionPlan } = drPlans;
     const { recoverySite } = protectionPlan;
-    const activeTab = getValue(STORE_KEYS.DRPLAN_DETAILS_ACTIVE_TAB, values);
+    const { activeTab } = this.state;
     if (localVMIP === recoverySite.node.hostname) {
       return (
         <NavItem>
@@ -299,9 +294,7 @@ class DRPlanDetails extends Component {
   }
 
   renderRecoveryCheckpoint(isRecoveryCheckpointEnabled) {
-    const { user } = this.props;
-    const { values } = user;
-    const activeTab = getValue(STORE_KEYS.DRPLAN_DETAILS_ACTIVE_TAB, values);
+    const { activeTab } = this.state;
     const { t } = this.props;
     if (!isRecoveryCheckpointEnabled) {
       return null;
@@ -319,10 +312,9 @@ class DRPlanDetails extends Component {
 
   render() {
     const { drPlans, dispatch, t, user, jobs } = this.props;
-    const { values } = user;
     const { protectionPlan } = drPlans;
     const { vmCheckpoint } = jobs;
-    const activeTab = getValue(STORE_KEYS.DRPLAN_DETAILS_ACTIVE_TAB, values) || PLAN_DETAIL_TABS.ONE;
+    const { activeTab } = this.state;
     if (!protectionPlan || Object.keys(protectionPlan).length === 0) {
       return null;
     }
