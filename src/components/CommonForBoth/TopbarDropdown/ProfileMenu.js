@@ -71,9 +71,24 @@ class ProfileMenu extends Component {
     }));
   }
 
+  renderChangePassword() {
+    const { t } = this.props;
+    return (
+      <>
+        <DropdownItem onClick={this.changePassword}>
+          <i className="fas fa-key font-size-16 align-middle mr-1" />
+          &nbsp;&nbsp;
+          {t('change.password')}
+        </DropdownItem>
+        <div className="dropdown-divider" />
+      </>
+    );
+  }
+
   render() {
     const { menu } = this.state;
-    const { t } = this.props;
+    const { t, user } = this.props;
+    const { id } = user;
     const name = getCookie(APPLICATION_API_USER) || '';
     return (
       <>
@@ -107,12 +122,7 @@ class ProfileMenu extends Component {
               </a>
             </DropdownItem>
             <div className="dropdown-divider" />
-            <DropdownItem onClick={this.changePassword}>
-              <i className="fas fa-key font-size-16 align-middle mr-1" />
-              &nbsp;&nbsp;
-              {t('change.password')}
-            </DropdownItem>
-            <div className="dropdown-divider" />
+            { id === 0 ? null : this.renderChangePassword()}
             <Link to="/logout" className="dropdown-item" onClick={this.logout}>
               <i className="fas fa-power-off font-size-16 align-middle mr-1 text-danger" />
               &nbsp;&nbsp;

@@ -8,7 +8,7 @@ import { onLimitChange, onTimeLimitChange } from '../store/actions/ThrottlingAct
 import { getAvailibilityZoneOptions, enableNodeTypeVM, getDefaultRecoverySite, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getReportProtectionPlans, getSiteNodeOptions, getSubnetOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort, getVMwareVMSelectionData, showInstallCloudPackageOption, isPlatformTypeAzure, showDifferentialReverseCheckbox, disableSiteSelection, getSitesOptions, showRevPrefix, showReverseReplType, getVmCheckpointOptions, getCheckpointDurationOption, getCheckRentaintionOption, revShowRemoveCheckpointOption, defaultRecoveryCheckpointForVm, onCheckpoinChange, userRoleOptions } from '../utils/InputUtils';
 import { validatePlanSiteSelection, isEmpty, validateDrSiteSelection, validatePassword, validateReplicationInterval, validateReplicationValue, showReverseWarningText, disableRecoveryCheckpointField, validateCheckpointFields } from '../utils/validationUtils';
 import { STATIC_KEYS } from './InputConstants';
-import { EMAIL_REGEX, FQDN_REGEX, HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX, PASSWORD_REGEX } from './ValidationConstants';
+import { EMAIL_REGEX, FQDN_REGEX, HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX, PASSWORD_REGEX, USERNAME_REGEX } from './ValidationConstants';
 import { onScriptChange, loadTreeChildData, onDiffReverseChanges } from '../store/actions/UserActions';
 import { NOTE_TEXT } from './DMNoteConstant';
 
@@ -237,7 +237,7 @@ export const FIELDS = {
   'recovery.cleanupTestRecoveries': { label: 'cleanup.test.recoveries', type: FIELD_TYPE.CHECKBOX, shouldShow: true, fieldInfo: 'info.test.recovery.cleanupTestRecoveries', defaultValue: false },
   'drplan.vms': { label: '', type: FIELD_TYPE.TREE, isMultiSelect: true, errorMessage: 'Please select virtual machine for protection', shouldShow: true, validate: (value, user) => isEmpty(value, user), fieldInfo: 'info.protection.protectionVm', getTreeData: ({ dataKey, values, fieldKey }) => getVMwareVMSelectionData({ dataKey, values, fieldKey }), baseURL: 'api/v1/sites/<id>/resources', baseURLIDReplace: '<id>:ui.values.protectionSiteID', urlParms: ['type', 'entity'], urlParmKey: ['static:Folder,VirtualMachine', 'object:value'], dataKey: 'ui.site.vms.data', enableSelection: (node) => enableNodeTypeVM(node), loadChildDta: ({ dataKey, field, node }) => loadTreeChildData(dataKey, node, field) },
   'ui.automate.migration': { label: 'auto.migration', type: FIELD_TYPE.CHECKBOX, shouldShow: true, fieldInfo: 'info.auto.migration', default: false },
-  'ui.new.password': { label: 'New Password', placeHolderText: 'Enter new password', type: FIELD_TYPE.PASSWORD, patterns: [PASSWORD_REGEX], errorMessage: 'Password should have atleast 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character and be at least 8 characters long.', shouldShow: true },
+  'ui.new.password': { label: 'New Password', placeHolderText: 'Enter new password', type: FIELD_TYPE.PASSWORD, patterns: [PASSWORD_REGEX], errorMessage: 'Password should have atleast 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character and be at least 8 characters long and max of 32 characters.', shouldShow: true },
   'ui.cnfm.password': { label: 'Confirm Password', placeHolderText: 'Confirm password', type: FIELD_TYPE.PASSWORD, validate: (v, u) => validatePassword(v, u), errorMessage: 'New password and confirm password does not match', shouldShow: true },
   'ui.vm.recovery.checkpoints': { label: '', shouldShow: true, type: FIELD_TYPE.SELECT_SEARCH, options: (user, fieldKey, dispatch) => getVmCheckpointOptions(user, fieldKey, dispatch), validate: ({ value }) => isEmpty({ value }), errorMessage: 'Please select recvery checkpoint', defaultValue: (user, fieldKey) => defaultRecoveryCheckpointForVm(user, fieldKey), onChange: ({ value, dispatch, fieldKey }) => onCheckpoinChange({ value, dispatch, fieldKey }) },
   'pplan.remove.checkpoint': { label: 'Remove Assosiated checkpoint', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: false },
@@ -252,16 +252,16 @@ export const FIELDS = {
   'configureIDP.metadataFile': { label: 'title.metadata.file', type: FIELD_TYPE.LABEL, shouldShow: true, fieldInfo: 'info.idp.metadataurl' },
   'configureIDP.roleMaps': { label: 'roleMap', type: FIELD_TYPE.CUSTOM, shouldShow: true, fieldInfo: 'info.role.mapping', srcAltText: '', srcLabel: 'title.ad.role', tgtLabel: 'title.dm.role' },
   'configureUser.username': {
-    label: 'username', placeHolderText: 'Username', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Username required', shouldShow: true, fieldInfo: 'info.user.name',
+    label: 'username', placeHolderText: 'Username', type: FIELD_TYPE.TEXT, patterns: [USERNAME_REGEX], errorMessage: 'Username can contain only characters like A-Z a-z 0-9 - _ and at least 5 characters long and max of 20 characters', shouldShow: true, fieldInfo: 'info.user.name',
   },
   'configureUser.password': {
-    label: 'password', placeHolderText: 'Enter Password', type: FIELD_TYPE.PASSWORD, patterns: [PASSWORD_REGEX], errorMessage: 'Password should have atleast 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character and be at least 8 characters and at most 32 characters long.', shouldShow: true, fieldInfo: 'info.user.password',
+    label: 'password', placeHolderText: 'Enter Password', type: FIELD_TYPE.PASSWORD, patterns: [PASSWORD_REGEX], errorMessage: 'Password should have atleast 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character and be at least 8 characters and max of 32 characters.', shouldShow: true, fieldInfo: 'info.user.password',
   },
   'configureUser.fullName': {
-    label: 'user.fullname', placeHolderText: 'Fullname', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Full Name required', shouldShow: true, fieldInfo: 'info.user.fullname',
+    label: 'user.fullname', placeHolderText: 'Fullname', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Full name is required', shouldShow: true, fieldInfo: 'info.user.fullname',
   },
   'configureUser.email': {
-    label: 'email', placeHolderText: 'Email', type: FIELD_TYPE.TEXT, shouldShow: true, fieldInfo: 'info.user.email',
+    label: 'email', placeHolderText: 'Email', type: FIELD_TYPE.TEXT, patterns: [EMAIL_REGEX], errorMessage: 'Email address is required', shouldShow: true, fieldInfo: 'info.user.email',
   },
   'configureUser.description': {
     label: 'description', placeHolderText: 'Description', type: FIELD_TYPE.TEXT, shouldShow: true, fieldInfo: 'info.user.description',
@@ -270,6 +270,6 @@ export const FIELDS = {
     label: 'user.role', placeHolderText: 'Select Role', type: FIELD_TYPE.SELECT, options: (user) => userRoleOptions(user), validate: (value, user) => isEmpty(value, user), errorMessage: 'User Role required', shouldShow: true, fieldInfo: 'info.user.role',
   },
   'reset.oldPassword': {
-    label: 'password', placeHolderText: 'Enter Password', type: FIELD_TYPE.PASSWORD, patterns: [PASSWORD_REGEX], errorMessage: 'Password should have atleast 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character and be at least 8 characters long.', shouldShow: true, fieldInfo: 'info.reset.password',
+    label: 'password', placeHolderText: 'Enter Password', type: FIELD_TYPE.PASSWORD, patterns: [PASSWORD_REGEX], errorMessage: 'Password should have atleast 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character and be at least 8 characters long and max of 32 characters.', shouldShow: true, fieldInfo: 'info.reset.password',
   },
 };

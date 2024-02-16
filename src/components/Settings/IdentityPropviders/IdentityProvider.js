@@ -17,6 +17,7 @@ import { MODAL_CONFIRMATION_WARNING } from '../../../constants/Modalconstant';
 import { openModal } from '../../../store/actions/ModalActions';
 import { FIELDS } from '../../../constants/FieldsConstant';
 import { API_SAML_METADATA } from '../../../constants/ApiConstants';
+import DMToolTip from '../../Shared/DMToolTip';
 
 function IdentityProvider(props) {
   const { t, user, dispatch, settings } = props;
@@ -29,6 +30,13 @@ function IdentityProvider(props) {
   const metaData = `https://${window.location.host}/${API_SAML_METADATA}`;
   const refresh = useSelector((state) => state.user.context.refresh);
   let isUnmounted = false;
+
+  function renderTooltip(fieldInfo) {
+    return (
+      <DMToolTip tooltip={fieldInfo} />
+    );
+  }
+
   useEffect(() => {
     setShowForm(false);
     dispatch(fetchRegisteredIDP());
@@ -84,14 +92,20 @@ function IdentityProvider(props) {
                 <Col sm={4} className="padding-bottom-5 padding-left-15">
                   {t('title.entityID')}
                 </Col>
-                <Col sm={8}>
+                <Col sm={7}>
                   {entityID}
+                </Col>
+                <Col sm={1}>
+                  {renderTooltip('info.saml.entity.id')}
                 </Col>
                 <Col sm={4} className="padding-left-15">
                   {t('title.metadataurl')}
                 </Col>
-                <Col sm={8}>
+                <Col sm={7}>
                   <a href={metaData} target="_blank" rel="noreferrer">{t('saml.2.0.metadata')}</a>
+                </Col>
+                <Col sm={1}>
+                  {renderTooltip('info.saml.metadata')}
                 </Col>
               </Row>
             </Form>
@@ -115,12 +129,15 @@ function IdentityProvider(props) {
             <Col sm={4}>
               {t('title.metadata.file')}
             </Col>
-            <Col sm={8} className="padding-left-15">
+            <Col sm={7} className="padding-left-15">
               <label htmlFor="fileUploadSAML" className="label">
                 <div className="idp-upload"><i className="fa fa-upload" size="lg" /></div>
               </label>
               <Input type="file" id="fileUploadSAML" name="fileUploadSAML" style={{ visibility: 'none', display: 'none' }} onSelect={onFileChange} onChange={onFileChange} />
               <p>{name === '' ? null : name}</p>
+            </Col>
+            <Col sm={1}>
+              {renderTooltip('info.idp.metadatafile')}
             </Col>
           </Row>
           {/* upload metadata file */}

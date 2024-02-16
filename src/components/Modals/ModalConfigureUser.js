@@ -7,6 +7,7 @@ import { FIELDS } from '../../constants/FieldsConstant';
 import DMField from '../Shared/DMField';
 import { getKeyStruct } from '../../utils/PayloadUtil';
 import { clearValues, configureUser } from '../../store/actions';
+import { validateSteps } from '../../utils/validationUtils';
 
 function ModalConfigureUser(props) {
   const { dispatch, user, modal, t } = props;
@@ -21,21 +22,26 @@ function ModalConfigureUser(props) {
   };
 
   const onConfigureUser = () => {
-    const payload = getKeyStruct('configureUser.', values);
-    let selectedRole = null;
-
-    // Setting the role of user in payload according to name
-    roles.forEach((role) => {
-      if (`${role.name}` === payload.configureUser.role) {
-        selectedRole = role;
-      }
-    });
-    payload.configureUser.role = selectedRole;
+    let fieldsToCheck = fields;
     if (isUpdate) {
-      payload.id = options.id;
-      dispatch(configureUser(payload, true));
-    } else {
-      dispatch(configureUser(payload, false));
+      fieldsToCheck = fieldsToCheck.filter((e) => e !== 'configureUser.password');
+    }
+    if (validateSteps(user, dispatch, fieldsToCheck)) {
+      const payload = getKeyStruct('configureUser.', values);
+      let selectedRole = null;
+      // Setting the role of user in payload according to name
+      roles.forEach((role) => {
+        if (`${role.name}` === payload.configureUser.role) {
+          selectedRole = role;
+        }
+      });
+      payload.configureUser.role = selectedRole;
+      if (isUpdate) {
+        payload.id = options.id;
+        dispatch(configureUser(payload, true));
+      } else {
+        dispatch(configureUser(payload, false));
+      }
     }
   };
 
