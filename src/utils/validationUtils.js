@@ -171,29 +171,32 @@ export function noValidate() {
 export async function validateMigrationVMs({ user, dispatch }) {
   const { values } = user;
 
-  const initialCheckPass = validateVMConfiguration({ user, dispatch });
-  if (initialCheckPass) {
-    try {
-      const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
-      const autoMigrate = getValue('ui.automate.migration', values);
-      if (autoMigrate) {
-        return true;
-      }
-      if (vms) {
-        const payload = getRecoveryPayload(user, true);
-        const obj = createPayload(API_TYPES.POST, { ...payload.recovery });
-        dispatch(showApplicationLoader('VALIDATING_MIGRATION_MACHINBES', 'Validating virtual machines.'));
-        const response = await callAPI(API_VALIDATE_MIGRATION, obj);
-        dispatch(hideApplicationLoader('VALIDATING_MIGRATION_MACHINBES'));
-        if (response.length > 0) {
-          return showValidationInfo(response, dispatch);
+  const validateSelectedVms = validateVMSelection(user, dispatch);
+  if (validateSelectedVms) {
+    const initialCheckPass = validateVMConfiguration({ user, dispatch });
+    if (initialCheckPass) {
+      try {
+        const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
+        const autoMigrate = getValue('ui.automate.migration', values);
+        if (autoMigrate) {
+          return true;
         }
-        return true;
+        if (vms) {
+          const payload = getRecoveryPayload(user, true);
+          const obj = createPayload(API_TYPES.POST, { ...payload.recovery });
+          dispatch(showApplicationLoader('VALIDATING_MIGRATION_MACHINBES', 'Validating virtual machines.'));
+          const response = await callAPI(API_VALIDATE_MIGRATION, obj);
+          dispatch(hideApplicationLoader('VALIDATING_MIGRATION_MACHINBES'));
+          if (response.length > 0) {
+            return showValidationInfo(response, dispatch);
+          }
+          return true;
+        }
+      } catch (err) {
+        dispatch(hideApplicationLoader('VALIDATING_MIGRATION_MACHINBES'));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+        return false;
       }
-    } catch (err) {
-      dispatch(hideApplicationLoader('VALIDATING_MIGRATION_MACHINBES'));
-      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-      return false;
     }
   } else {
     return false;
