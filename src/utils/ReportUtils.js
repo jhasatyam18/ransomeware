@@ -7,6 +7,7 @@ import { BLUE, LIGHT_NAVY_BLUE, LIGHT_GREY, REPORT_TYPES, DARK_NAVY_BLUE, EXCEL_
 import { calculateChangedData, formatTime, getAppDateFormat, getStorageWithUnit } from './AppUtils';
 import { getCookie } from './CookieUtils';
 import { APPLICATION_API_USER } from '../constants/UserConstant';
+import { PLAYBOOK_NAMES } from '../constants/InputConstants';
 
 /**
  * Create empty pdf document object
@@ -365,4 +366,39 @@ function getExcelData(dashboard) {
     { mergeCell: 'N19:P19', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: formatTime(rto) },
   ];
   return excel;
+}
+
+export async function exportIssues(data) {
+  let issues = data;
+  if (typeof issues === 'undefined') {
+    issues = [];
+  }
+  // Create a new workbook
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Identified_Issues');
+  worksheet.addRow(['Name', 'Error Messages']);
+  issues.forEach((entry) => {
+    entry.errorMessages.forEach((errorMessage, index) => {
+      if (index === 0) {
+        worksheet.addRow([entry.name, errorMessage]);
+      } else {
+        // For subsequent messages, leave the name column empty
+        worksheet.addRow(['', errorMessage]);
+      }
+    });
+  });
+  // Define columns widths for better readability
+  worksheet.columns = [
+    { header: 'Name', key: 'name', width: 30 },
+    { header: 'Error Messages', key: 'errorMessage', width: 50 },
+  ];
+
+  // Write the Excel file to disk
+  workbook.xlsx.writeBuffer().then((d) => {
+    const blob = new Blob([d], { type: REPORT_TYPES.EXCEL_BLOBTYPE });
+    const someDate = new Date();
+    const dateFormated = getAppDateFormat(someDate, false);
+
+    FileSaver.saveAs(blob, `${PLAYBOOK_NAMES}-${dateFormated}.xlsx`);
+  });
 }

@@ -36,7 +36,7 @@ function VMwareNetworkConfig(props) {
   }
 
   function configureNic(netkey, index) {
-    const options = { title: `Nic-${index}`, networkKey: netkey, index };
+    const options = { title: `Nic-${index + 1}`, networkKey: netkey, index };
     dispatch(getVMwareAdapterType());
     dispatch(openModal(MODAL_NETWORK_CONFIG, options));
   }
@@ -48,7 +48,7 @@ function VMwareNetworkConfig(props) {
         <tr key={key}>
           <td>
             <Label>
-              {`Nic - ${index}`}
+              {`Nic - ${index + 1}`}
             </Label>
           </td>
           <td>

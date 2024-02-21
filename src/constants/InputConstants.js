@@ -197,6 +197,10 @@ export const PLAYBOOK_TYPE = {
   PLAN: 'protectionPlan',
 };
 
+export const PLAYBOOK_NAMES = {
+  ISSUES: 'DM-Playbook-Issues-',
+};
+
 export const SAML = {
   DEFAULT_USERNAME: 'SAML',
   DEFAULT_USER_ID: 0,

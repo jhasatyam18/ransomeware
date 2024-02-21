@@ -47,7 +47,7 @@ class AwsNetworkConfig extends Component {
 
   configureNic(netKey, index) {
     const { dispatch } = this.props;
-    const options = { title: `Nic-${index}`, networkKey: netKey, index };
+    const options = { title: `Nic-${index + 1}`, networkKey: netKey, index };
     dispatch(openModal(MODAL_NETWORK_CONFIG, options));
   }
 
@@ -74,7 +74,7 @@ class AwsNetworkConfig extends Component {
         <tr key={key}>
           <td>
             <Label>
-              {`Nic - ${index}`}
+              {`Nic - ${index + 1}`}
             </Label>
           </td>
           <td>

@@ -660,7 +660,6 @@
   "upload.configured.playbook":"Uploading configured playbook...",
   "playbook.download.success":"Playbook uploaded successfully.",
   "upload.configured.playbooks":"Upload Configured Playbook",
-  "confirm.remove.playbook":"Are you sure want to remove {{name}} playbook ?"
-  
-
+  "confirm.remove.playbook":"Are you sure want to remove {{name}} playbook ?",
+  "export.identified.issues": "Download Identified Issues"
 }
