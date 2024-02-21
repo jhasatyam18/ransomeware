@@ -244,7 +244,7 @@ function SinglePlaybookDetailsPage(props) {
   };
 
   const renderGlobalActions = () => {
-    const disableValidate = TEMPLATE_STATUS.indexOf(status) === 1;
+    const disableValidate = (status === PLAYBOOKS_STATUS.PLAYBOOK_PLAN_CREATED || status === PLAYBOOKS_STATUS.PLAYBOOK_PLAN_RECONFIGURED);
     const disablePlan = TEMPLATE_STATUS.indexOf(status) === 2;
     const pplanLabel = planConfigurations[0]?.planID > 0 ? t('title.edit.pplan') : t('title.create.pplan');
     const actions = [{ label: t('validate'), onClick: onValidate, isDisabled: !hasRequestedPrivileges(user, ['playbook.validate']) || disableValidate, icon: faFileCircleCheck },

@@ -514,6 +514,7 @@
 
   "template.validating":"Validating Playbook contents",
   "template.drag.file":"Drop playbook here or click to upload.",
+  "template.configure.help.text":"(Configured Excel File)",
   "template.uploaded.successfully":"Playbook validated and uploaded successfully",
   "title.differntial.preserve.current":"Preserve Current State (Recovery operation might exceed the RTO)",
   "title.differential.discard.partial.changes":"Discard Partial Replicated Changes",

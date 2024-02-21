@@ -50,4 +50,9 @@ export const TEMPLATE_STATUS = [
 
 export const PLAYBOOKS_STATUS = {
   PLAYBOOK_VALIDATION_FAILED: 'configValidationFailed',
+  PLAYBOOK_UPLOADED: 'configUploaded',
+  PLAYBOOK_VALIDATING: 'configValidating',
+  PLAYBOOK_VALIDATED: 'configValidated',
+  PLAYBOOK_PLAN_CREATED: 'configPlanCreated',
+  PLAYBOOK_PLAN_RECONFIGURED: 'configPlanReconfigured',
 };
