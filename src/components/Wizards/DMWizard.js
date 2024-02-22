@@ -57,6 +57,17 @@ class DMWizard extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { currentStep } = this.state;
+    const { wizard, user, dispatch } = this.props;
+    const { steps } = wizard;
+    const { onUpdate } = steps[currentStep];
+    if (typeof onUpdate !== 'undefined') {
+      const status = onUpdate(user, dispatch);
+      if (status !== null) {
+        if (Object.keys(status).length !== 0 && status.moveNext === true) {
+          this.setState({ currentStep: currentStep + 1 });
+        }
+      }
+    }
     if (currentStep !== prevState.currentStep) {
       const scrollEl = this.ref.current.getScrollElement();
       scrollEl.scrollTop = 0;

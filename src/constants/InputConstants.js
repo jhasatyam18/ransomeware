@@ -105,6 +105,8 @@ export const STATIC_KEYS = {
   UI_PLAYBOOK_DIFF_RESPONSE: 'ui.playbook.diff.response',
   UI_PLAYBOOK_CURRENT_PLAN_CONFIG: 'ui.playbook.current.plan.config',
   UI_PLAYBOOK_UPDATED_PLAN_CONFIG: 'ui.playbook.updated.plan.config',
+  UI_DMWIZARD_MOVENEXT: 'ui.dmwizard.movenext',
+  VMWARE_CBT_KB_REFERENCE: 'https://kb.vmware.com/s/article/1020128',
 };
 
 // Recovery time in minutes

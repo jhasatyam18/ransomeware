@@ -637,6 +637,7 @@ export function getEventOptions() {
     { label: 'Node', value: 'Node' },
     { label: 'Credential', value: 'Credential' },
     { label: 'Monitoring', value: 'Monitoring' },
+    { label: 'Changed Block Tracking', value: 'ChangedBlockTracking' },
   ];
 }
 

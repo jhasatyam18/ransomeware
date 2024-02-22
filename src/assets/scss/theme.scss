@@ -159,6 +159,10 @@ span.flatpickr-weekday {
 .modal-card-body {
   padding-bottom: 0.25px;
 }
+.unfocused{
+  color: $cbt-unfocused-text;
+  font-size: 0.75rem;
+}
 
 .confirmation-icon {
   font-size: xxx-large;

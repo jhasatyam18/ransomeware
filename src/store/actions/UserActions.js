@@ -897,45 +897,40 @@ export function changeSystemPassword(nodeID, selectedAlerts) {
   };
 }
 
-export function getVMwareVMSProps(vms) {
-  return (dispatch, getState) => {
-    const { user } = getState();
-    const { values } = user;
-    const siteId = getValue('ui.values.protectionSiteID', values);
-    let vmString = [];
-    const selectedVMS = {};
-    const platforForm = getValue('ui.values.protectionPlatform', values);
-    if (platforForm === PLATFORM_TYPES.VMware) {
-      const plan = getValue('ui.selected.protection.plan', values);
-      // if vm is already  in the pretection plan then don't fetch it from the backend
-      if (plan !== '') {
-        vms.forEach((moreF) => {
-          let found = false;
-          plan.protectedEntities.virtualMachines.forEach((vm) => {
-            if (moreF === vm.moref) {
-              selectedVMS[vm.moref] = vm;
-              found = true;
-            }
-          });
-          if (!found) {
-            vmString.push(moreF);
+export function getVMwareVMSProps(vms, dispatch, user) {
+  const { values } = user;
+  const siteId = getValue('ui.values.protectionSiteID', values);
+  let vmString = [];
+  const selectedVMS = {};
+  const platform = getValue('ui.values.protectionPlatform', values);
+  if (platform === PLATFORM_TYPES.VMware) {
+    const plan = getValue('ui.selected.protection.plan', values);
+    // if vm is already in the pretection plan then don't fetch it from the backend
+    if (plan !== '') {
+      vms.forEach((moreF) => {
+        let found = false;
+        plan.protectedEntities.virtualMachines.forEach((vm) => {
+          if (moreF === vm.moref) {
+            selectedVMS[vm.moref] = vm;
+            found = true;
           }
         });
-      } else {
-        vmString = vms;
-      }
-      dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, selectedVMS));
-      dispatch(setVMGuestOSInfo(selectedVMS));
-      if (vmString && vmString.length > 0) {
-        vmString = vmString.join(',');
-        dispatch(fetchSelectedVmsProperty(siteId, vmString, selectedVMS));
-      }
+        if (!found) {
+          vmString.push(moreF);
+        }
+      });
     } else {
-      vmString = vms.toString();
-      dispatch(showApplicationLoader('vmware_data', 'Loading vmware data'));
-      dispatch(fetchSelectedVmsProperty(siteId, vmString, selectedVMS));
+      vmString = vms;
     }
-  };
+    dispatch(setVMGuestOSInfo(selectedVMS));
+    if (vmString && vmString.length > 0) {
+      vmString = vmString.join(',');
+      return fetchSelectedVmsProperty(siteId, vmString, selectedVMS, dispatch);
+    }
+  } else {
+    vmString = vms.toString();
+    return fetchSelectedVmsProperty(siteId, vmString, selectedVMS, dispatch);
+  }
 }
 
 export function getComputeResources(fieldKey, dataCenterKey) {

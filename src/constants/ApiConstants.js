@@ -140,3 +140,6 @@ export const API_SAML_LOGOUT = 'logout/saml';
 export const API_SAML_METADATA = 'saml/metadata';
 export const API_IDP = 'api/v1/idp';
 export const API_UPLOAD_IDP_CONFIG = 'api/v1/idp/upload';
+
+// CBT
+export const API_GET_VMWARE_VMS = 'api/v1/sites/<id>/vms?details=true&vms=vmstring';

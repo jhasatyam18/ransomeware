@@ -107,8 +107,7 @@ export default function user(state = INITIAL_STATE.user, action) {
       };
     case Types.SET_USER_DETAILS: {
       return {
-        ...state, id: action.data.id, userRole: action.data.role.name,
-
+        ...state, id: action.data.id,
       };
     }
     case Types.FETCH_USERS: {

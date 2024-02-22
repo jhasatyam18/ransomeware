@@ -662,5 +662,13 @@
   "playbook.download.success":"Playbook uploaded successfully.",
   "upload.configured.playbooks":"Upload Configured Playbook",
   "confirm.remove.playbook":"Are you sure want to remove {{name}} playbook ?",
+  "confirm.cbt.warning":"Change Block Tracking (CBT) is not enabled for the following Virtual Machine(s) : ",
+  "confirm.cbt.instruction":"For effective protection, it is essential to enable CBT on these Virtual Machines.",
+  "confirm.cbt.clickEnableCBT":"1. Click 'Enable CBT and Continue'",
+  "confirm.cbt.toConfigureVM":" to configure the above virtual machines and enable CBT on them.",
+  "confirm.cbt.clickCancel":"2. Click  'Cancel'",
+  "confirm.cbt.toCancelManually":" to manually configure CBT. For detailed instruction on how to configure CBT, ",
+  "enable.cbt":"Enable CBT and Continue",
+  "cancel" : "Cancel",
   "export.identified.issues": "Download Identified Issues"
 }

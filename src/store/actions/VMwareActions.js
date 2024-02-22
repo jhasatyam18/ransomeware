@@ -1,11 +1,13 @@
 import { getValue } from '../../utils/InputUtils';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { API_FETCH_VMWARE_ADAPTER_TYPE } from '../../constants/ApiConstants';
+import { API_FETCH_VMWARE_ADAPTER_TYPE, API_GET_VMWARE_VMS } from '../../constants/ApiConstants';
 import { callAPI } from '../../utils/ApiUtils';
 import { addMessage } from './MessageActions';
 import { getComputeResources, getStorageForVMware, hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
 import { STATIC_KEYS } from '../../constants/InputConstants';
 import { setVMGuestOSInfo } from './DrPlanActions';
+import { openModal } from './ModalActions';
+import { MODAL_CBT_CONFIRMATION } from '../../constants/Modalconstant';
 
 // getStorageForVMware
 export function getVMwareAdapterType() {
@@ -164,27 +166,38 @@ export function fetchVMwareNetwork(url, fieldKey, reqField, entityKey) {
 
 // on edit in vmware-vmware fetch selected vms properties
 
-export function fetchSelectedVmsProperty(siteId, vmString, selectedVMS) {
-  return (dispatch) => {
-    const vms = selectedVMS;
-    dispatch(showApplicationLoader('vmware_data', 'Loading vmware data'));
-    return callAPI(`api/v1/sites/${siteId}/vms?details=true&vms=${vmString}`).then((json) => {
-      dispatch(hideApplicationLoader('vmware_data'));
-      if (json.hasError) {
-        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
-      } else {
-        json.forEach((vm) => {
-          vms[vm.moref] = vm;
-        });
-        dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, vms));
-        dispatch(setVMGuestOSInfo(vms));
+export function fetchSelectedVmsProperty(siteId, vmString, selectedVMS, dispatch) {
+  let disabledCBT = false;
+  const vms = selectedVMS;
+  const url = API_GET_VMWARE_VMS;
+  dispatch(showApplicationLoader('vmware_data', 'Loading vmware data'));
+  return callAPI(url.replace('<id>', siteId).replace('vmstring', vmString)).then((json) => {
+    dispatch(hideApplicationLoader('vmware_data'));
+    if (json.hasError) {
+      dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+    } else {
+      json.forEach((vm) => {
+        vms[vm.moref] = vm;
+        if (!vm.changeTracking) {
+          disabledCBT = true;
+        }
+      });
+
+      if (disabledCBT) {
+        const options = { title: 'Change Block Tracking (CBT) Confirmation', selectedVMs: vms, size: 'lg' };
+        dispatch(openModal(MODAL_CBT_CONFIRMATION, options));
+        return false;
       }
-    },
-    (err) => {
-      dispatch(hideApplicationLoader('vmware_data'));
-      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-    });
-  };
+      dispatch(setVMGuestOSInfo(vms));
+      dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, vms));
+      return true;
+    }
+  },
+  (err) => {
+    dispatch(hideApplicationLoader('vmware_data'));
+    dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    return false;
+  });
 }
 
 export function filterDataForVMwareSearch(data, criteria) {

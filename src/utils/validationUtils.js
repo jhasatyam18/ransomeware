@@ -129,7 +129,18 @@ export function validateDrSiteSelection({ user, fieldKey, value, dispatch }) {
   return false;
 }
 
-export function validateDRPlanProtectData({ user, dispatch }) {
+export const checkCBTStatus = ({ user, dispatch }) => {
+  const { values } = user;
+  const isMoveNext = getValue(STATIC_KEYS.UI_DMWIZARD_MOVENEXT, values);
+  if (isMoveNext) {
+    const statusOfCBT = { moveNext: isMoveNext };
+    dispatch(valueChange(STATIC_KEYS.UI_DMWIZARD_MOVENEXT, false));
+    return statusOfCBT;
+  }
+  return null;
+};
+
+export async function validateDRPlanProtectData({ user, dispatch }) {
   const { values } = user;
   const vmwareVMS = getValue('ui.site.vmware.selectedvms', values);
   if (typeof vmwareVMS !== 'undefined' && vmwareVMS) {
@@ -141,10 +152,22 @@ export function validateDRPlanProtectData({ user, dispatch }) {
         dispatch(addMessage('Select virtual machine.', MESSAGE_TYPES.ERROR));
         return false;
       }
-      dispatch(getVMwareVMSProps(vmwareVMS));
-      return true;
+      if (workFlow === UI_WORKFLOW.EDIT_PLAN) {
+        const selected = getValue('ui.selectedvm.value', values);
+        const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
+        if (Object.keys(vms).length === selected.length) {
+          return true;
+        }
+      }
+      try {
+        const res = await getVMwareVMSProps(vmwareVMS, dispatch, user);
+        return res;
+      } catch (error) {
+        return false;
+      }
     }
   }
+
   const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   if (!vms || Object.keys(vms).length === 0) {
     dispatch(addMessage('Select virtual machine.', MESSAGE_TYPES.ERROR));

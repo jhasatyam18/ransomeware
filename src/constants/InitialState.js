@@ -14,7 +14,6 @@ const INITIAL_STATE = {
     isAuthenticated: false,
     token: '',
     userName: '',
-    userRole: '',
     isSystemDefault: false,
     isValidating: false,
     values: {},
