@@ -26,6 +26,9 @@ class ModalAbout extends Component {
     const { license, platformType } = user;
     const { version, nodeKey, activeLicenses } = license;
     let key = '';
+    if (typeof nodeKey === 'undefined' || typeof activeLicenses === 'undefined' || typeof version === 'undefined') {
+      return null;
+    }
     for (let i = 0; i < nodeKey.length; i += 1) {
       if (i !== 0 && i % 4 === 0) {
         key = `${key}-${nodeKey[i]}`;

@@ -16,7 +16,8 @@
   }
 }
 
-@each $color, $value in $theme-colors {
+@each $color,
+$value in $theme-colors {
   .badge-soft-#{$color} {
     @include badge-variant-soft($value);
   }
@@ -29,7 +30,13 @@
 }
 
 .badge-pill {
+  padding-right: 0.6em !important;
+  padding-left: 0.6em !important;
+}
+
+.badge-pill-alert {
   padding-right: 0.3em !important;
   padding-left: 0.3em !important;
   width: 2.4em;
+  border-radius: 9px;
 }
