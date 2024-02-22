@@ -399,6 +399,6 @@ export async function exportIssues(data) {
     const someDate = new Date();
     const dateFormated = getAppDateFormat(someDate, false);
 
-    FileSaver.saveAs(blob, `${PLAYBOOK_NAMES}-${dateFormated}.xlsx`);
+    FileSaver.saveAs(blob, `${PLAYBOOK_NAMES.ISSUES}-${dateFormated}.xlsx`);
   });
 }

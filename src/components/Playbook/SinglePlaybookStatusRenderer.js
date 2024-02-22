@@ -4,10 +4,10 @@ import React from 'react';
 import { withTranslation } from 'react-i18next';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
 import { clearValues } from '../../store/actions';
-import { onCreatePlanFromPlaybook, validatePlaybook } from '../../store/actions/DrPlaybooksActions';
+import { onCreatePlanFromPlaybook, playbookFetchPlanDiff, validatePlaybook } from '../../store/actions/DrPlaybooksActions';
 import { closeModal, openModal } from '../../store/actions/ModalActions';
 import { MODAL_CONFIRMATION_WARNING, MODAL_TEMPLATE_ERROR } from '../../constants/Modalconstant';
-import { TEMPLATE_STATUS } from '../../constants/AppStatus';
+import { PLAYBOOKS_STATUS, TEMPLATE_STATUS } from '../../constants/AppStatus';
 
 function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispatch, t, user }) {
   const status = playbook[field];
@@ -33,7 +33,7 @@ function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispat
       configureLabel = <p className="link_color"><ins>{t('reconfigure')}</ins></p>;
     } else if (statusInd === 5) {
       configureLabel = t('reconfigured');
-    } else if (statusInd === 1) {
+    } else if (statusInd === 1 || statusInd === 0) {
       configureLabel = t('reconfigure');
     } else {
       configureLabel = t('configure');
@@ -71,6 +71,10 @@ function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispat
       return;
     }
     const options = { title: t('confirm.playbook.plan.config'), footerComponent: createPlanFooter, confirmAction: onCreatePlanFromPlaybook, message: `Are you sure want to configure protection plan from ${playbook.name} playbook ?`, id, footerLabel: 'Create Protection Plan', color: 'success', size: 'lg' };
+    if (planConfigurations[0]?.planID > 0) {
+      dispatch(playbookFetchPlanDiff(id, playbook));
+      return;
+    }
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   };
 
@@ -84,7 +88,8 @@ function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispat
   };
 
   const onValidate = (e) => {
-    if (!hasRequestedPrivileges(user, ['playbook.validate'])) {
+    const disableValidate = (status === PLAYBOOKS_STATUS.PLAYBOOK_PLAN_CREATED || status === PLAYBOOKS_STATUS.PLAYBOOK_PLAN_RECONFIGURED);
+    if (!hasRequestedPrivileges(user, ['playbook.validate']) || disableValidate) {
       e.preventDefault();
       return;
     }
@@ -161,7 +166,7 @@ function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispat
 
   return (
     <>
-      {showStatusLabel ? <p style={{ fontWeight: '540', fontSize: '1.1em', width: '100%', margin: 'auto', textAlign: 'center', marginBottom: '1px', position: 'relative', left: '10px', top: '3px' }}>Status</p> : null}
+      {showStatusLabel ? <p className="progress_text">{t('title.progress')}</p> : null}
       <div className="d-flex bulk_status_parent mt-0">
         <div>
           <FontAwesomeIcon className="success bulk_status_icon" icon={faCheckCircle} />
@@ -176,13 +181,13 @@ function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispat
         </div>
       </div>
       <div className="bulk_status_text_parent padding-left-18">
-        <div className="templta_status_text">
+        <div className="template_status_text">
           Uploaded
         </div>
-        <div aria-hidden className="templta_status_text padding-left-10 " onClick={validateOnClick}>
+        <div aria-hidden className="template_status_text padding-left-10 " onClick={validateOnClick}>
           {validateLable}
         </div>
-        <div aria-hidden className="templta_status_text padding-right-2" onClick={configureOnClick}>
+        <div aria-hidden className="template_status_text padding-right-2" onClick={configureOnClick}>
           {configureLabel}
         </div>
       </div>

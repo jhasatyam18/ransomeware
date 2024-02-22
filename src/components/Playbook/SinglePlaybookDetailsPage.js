@@ -21,7 +21,7 @@ import { closeModal, openModal } from '../../store/actions/ModalActions';
 import { PLAYBOOKS_STATUS, TEMPLATE_STATUS } from '../../constants/AppStatus';
 import { PLAYBOOK_DETAILS, PLAYBOOK_CHANGES_RENDERER } from '../../constants/TableConstants';
 import DMTable from '../Table/DMTable';
-import { deletePlaybook, onCreatePlanFromPlaybook, setSinglePlaybook, uploadFiles, validatePlaybook } from '../../store/actions/DrPlaybooksActions';
+import { deletePlaybook, onCreatePlanFromPlaybook, playbookFetchPlanDiff, setSinglePlaybook, uploadFiles, validatePlaybook } from '../../store/actions/DrPlaybooksActions';
 import DMBreadCrumb from '../Common/DMBreadCrumb';
 import { PLAYBOOK_LIST, PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import SinglePlaybookStatusRenderer from './SinglePlaybookStatusRenderer';
@@ -156,8 +156,16 @@ function SinglePlaybookDetailsPage(props) {
     </div>
   );
 
-  const onCreatePplan = () => {
+  const onCreatePplan = (e) => {
+    if (!hasRequestedPrivileges(user, ['playbook.configure'])) {
+      e.preventDefault();
+      return;
+    }
     const options = { title: t('confirm.playbook.plan.config'), footerComponent: createPlanFooter, confirmAction: onCreatePlanFromPlaybook, message: `Are you sure want to configure protection plan from ${playbook.name} playbook ?`, id, footerLabel: 'Create Protection Plan', color: 'success', size: 'lg' };
+    if (planConfigurations[0]?.planID > 0) {
+      dispatch(playbookFetchPlanDiff(id, playbook));
+      return;
+    }
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   };
 

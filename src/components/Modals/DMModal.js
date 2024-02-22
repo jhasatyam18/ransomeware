@@ -29,6 +29,7 @@ import ModalPreserveCheckpoint from './ModalPreserveCheckpoint';
 import ModalTemplateShowPplanChanges from './ModalTemplateShowPplanChanges';
 import ModalConfigureUser from './ModalConfigureUser';
 import ModalResetCredentials from './ModalResetCredentials';
+import ModalPlaybookReconfigure from './ModalPlaybookReconfigure';
 import ModalCBTConfirmation from './ModalCBTConfirmation';
 
 function DMModal(props) {
@@ -95,6 +96,8 @@ function DMModal(props) {
           return <ModalConfigureUser dispatch={dispatch} user={user} {...props} />;
         case MODALS.MODAL_RESET_CREDENTIALS:
           return <ModalResetCredentials dispatch={dispatch} user={user} {...props} />;
+        case MODALS.MODAL_RECONFIGURE_PLAYBOOK:
+          return <ModalPlaybookReconfigure dispatch={dispatch} user={user} {...props} options={options} />;
         case MODALS.MODAL_CBT_CONFIRMATION:
           return <ModalCBTConfirmation dispatch={dispatch} user={user} {...props} />;
         default:

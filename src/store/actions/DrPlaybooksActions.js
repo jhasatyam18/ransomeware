@@ -1,5 +1,5 @@
 import { FIELDS } from '../../constants/FieldsConstant';
-import { MODAL_TEMPLATE_SHOW_PPLAN_CHANGES } from '../../constants/Modalconstant';
+import { MODAL_RECONFIGURE_PLAYBOOK, MODAL_TEMPLATE_SHOW_PPLAN_CHANGES } from '../../constants/Modalconstant';
 import { checkPlanConfigurationChanges, checkVmRecoveryConfigurationChanges, validateField } from '../../utils/validationUtils';
 import { PLAYBOOK_LIST } from '../../constants/RouterConstants';
 import { API_TYPES, callAPI, createPayload, getUrlPath } from '../../utils/ApiUtils';
@@ -362,7 +362,7 @@ export function downloadRecoveryPlaybook(id) {
   };
 }
 
-export function playbookFetchPlanDiff(id) {
+export function playbookFetchPlanDiff(id, playbook) {
   return (dispatch) => {
     const url = API_GET_PLAN_DIFF.replace('<id>', id);
     dispatch(showApplicationLoader('configuring-bulk-plan-export', 'Showing Playbook difference...'));
@@ -382,7 +382,11 @@ export function playbookFetchPlanDiff(id) {
         });
 
         dispatch(checkVmRecoveryConfigurationChanges({ prevArr: prevObj, currentArr: currObj, recoveryPlatform: json.updatedPlanConfiguration[0].recoverySite.platformDetails.platformType, condition: 'sourceMoref', key: 'ans' }));
-
+        if (playbook) {
+          const options = { title: 'Reconfigure Plan', playbookId: playbook.id, confirmAction: onCreatePlanFromPlaybook, message: `Are you sure want to configure protection plan from ${playbook.name} playbook ?`, footerLabel: 'Reconfigure Protection Plan', color: 'success', size: 'lg', planName: json.updatedPlanConfiguration[0].name, planId: id };
+          dispatch(openModal(MODAL_RECONFIGURE_PLAYBOOK, options));
+          return;
+        }
         const options = { title: 'View Changes', size: 'lg', planId: id, planName: json.updatedPlanConfiguration[0].name };
         dispatch(openModal(MODAL_TEMPLATE_SHOW_PPLAN_CHANGES, options));
       }

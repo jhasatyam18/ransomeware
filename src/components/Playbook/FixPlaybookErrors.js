@@ -13,15 +13,38 @@ function FixPlaybookErrors({ dispatch, playbook, t }) {
   const howToFix = () => (
     <>
       <div>
-        <span className="success margin-top-20 margin-left-5">How To Fix</span>
-        <ol type="1">
+        <span className="success margin-top-20 margin-left-5">
+          {t('title.playbook.how.fix.title')}
+        </span>
+        <ul type="1">
           <li>
-            <a href="#" onClick={onErrorClick}>
-              {t('click.here')}
-            </a>
-            {t('view.errors')}
+            <div className="how_to_fix_container">
+              <div className="stepName">
+                {`${t('title.playbook.step')}-1`}
+              </div>
+              <a href="#" onClick={onErrorClick}>
+                {t('click.here')}
+              </a>
+              {t('view.errors')}
+            </div>
           </li>
-        </ol>
+          <li>
+            <div className="how_to_fix_container">
+              <div className="stepName">
+                {`${t('title.playbook.step')}-2`}
+              </div>
+              {t('title.correct.issues')}
+            </div>
+          </li>
+          <li>
+            <div className="how_to_fix_container">
+              <div className="stepName">
+                {`${t('title.playbook.step')}-3`}
+              </div>
+              {t('title.upload.rectified.playbook')}
+            </div>
+          </li>
+        </ul>
       </div>
     </>
   );
