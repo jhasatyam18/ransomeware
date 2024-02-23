@@ -4,6 +4,7 @@ import { withTranslation } from 'react-i18next';
 import {
   Card, CardBody, Col, Container, Row,
 } from 'reactstrap';
+import { fetchPlaybooks } from '../../store/actions/DrPlaybooksActions';
 import DMTable from '../Table/DMTable';
 import DRPlanActionBar from './DRPlanActionBar';
 import DMBreadCrumb from '../Common/DMBreadCrumb';
@@ -15,6 +16,7 @@ class DRPlans extends Component {
     const { dispatch } = this.props;
     dispatch(updateSelectedPlans({}));
     dispatch(fetchDrPlans());
+    dispatch(fetchPlaybooks());
   }
 
   componentWillUnmount() {

@@ -54,6 +54,7 @@ export const PRESERVE_CHECKPOINT = 'RECOVERY_CHECKPOINT_PRESERVE';
 export const CHECKPOINTS_LINK_RENDERER = 'CHECKPOINT_LINK_RENDERER';
 export const JOB_TYPE_ITEM_RENDERER = 'JOB_TYPE_ITEM_RENDERER';
 export const CHECKPOINT_RECOVERY_JOB_ITEM_RENDERER = 'CHECKPOINT_JOB_ITEM_RENDERER';
+export const PLAYBOOK_ITEM_RENDERER = 'PLAYBOOK_ITEM_RENDERER';
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
@@ -74,6 +75,7 @@ export const TABLE_HEADER_DR_PLANS = [
   { label: 'replication.interval', field: 'replicationInterval', itemRenderer: REPLICATION_INTERVAL_ITEM_RENDERER },
   { label: 'status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
   { label: 'Recovery Status', field: 'recoveryStatus', itemRenderer: STATUS_ITEM_RENDERER },
+  { label: 'Playbook', field: '', itemRenderer: PLAYBOOK_ITEM_RENDERER },
 ];
 export const TABLE_PROTECT_VM_VMWARE = [
   { label: 'name', field: 'name' },
