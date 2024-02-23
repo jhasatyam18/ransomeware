@@ -658,5 +658,6 @@
   "confirm.cbt.clickCancel": "2. Click  'Cancel'",
   "confirm.cbt.toCancelManually": " to manually configure CBT. For detailed instruction on how to configure CBT, ",
   "enable.cbt": "Enable CBT and Continue",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "title.upload.rectified.playbook": "Upload rectified excel file and run validation"
 }

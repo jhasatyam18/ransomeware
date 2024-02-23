@@ -112,7 +112,6 @@ function PlaybookUploadModal(props) {
           <Input accept=".xlsx" type="file" id="fileUpload" name="fileUpload" className="modal-lic-upload" onSelect={onFileChange} onChange={onFileChange} />
         </div>
         <span>{name ? null : msg}</span>
-        <span>{t('template.configure.help.text')}</span>
       </>
     );
   };
