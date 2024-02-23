@@ -152,13 +152,7 @@ export async function validateDRPlanProtectData({ user, dispatch }) {
         dispatch(addMessage('Select virtual machine.', MESSAGE_TYPES.ERROR));
         return false;
       }
-      if (workFlow === UI_WORKFLOW.EDIT_PLAN) {
-        const selected = getValue('ui.selectedvm.value', values);
-        const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
-        if (Object.keys(vms).length === selected.length) {
-          return true;
-        }
-      }
+
       try {
         const res = await getVMwareVMSProps(vmwareVMS, dispatch, user);
         return res;

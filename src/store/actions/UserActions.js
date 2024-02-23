@@ -922,6 +922,7 @@ export function getVMwareVMSProps(vms, dispatch, user) {
     } else {
       vmString = vms;
     }
+    dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, selectedVMS));
     dispatch(setVMGuestOSInfo(selectedVMS));
     if (vmString && vmString.length > 0) {
       vmString = vmString.join(',');
@@ -931,6 +932,7 @@ export function getVMwareVMSProps(vms, dispatch, user) {
     vmString = vms.toString();
     return fetchSelectedVmsProperty(siteId, vmString, selectedVMS, dispatch);
   }
+  return true;
 }
 
 export function getComputeResources(fieldKey, dataCenterKey) {
