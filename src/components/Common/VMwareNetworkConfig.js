@@ -53,7 +53,7 @@ function VMwareNetworkConfig(props) {
           </td>
           <td>
             <Label className="padding-left-20">
-              <a href="#" onClick={() => configureNic(nic.key, index)}>
+              <a href="#" id={`${networkKey}-index-${index}`} onClick={() => configureNic(nic.key, index)}>
                 {t('title.network')}
               </a>
             </Label>

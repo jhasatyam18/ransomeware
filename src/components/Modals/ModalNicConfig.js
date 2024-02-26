@@ -187,8 +187,8 @@ class ModalNicConfig extends Component {
             </SimpleBar>
           </Card>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={this.onCancel}>Cancel</button>
-            <button type="button" className="btn btn-success" onClick={this.onSave}>Save</button>
+            <button type="button" className="btn btn-secondary" id={`${networkKey}-cancel`} onClick={this.onCancel}>Cancel</button>
+            <button type="button" className="btn btn-success" id={`${networkKey}-save`} onClick={this.onSave}>Save</button>
           </div>
         </Container>
       </>
@@ -219,8 +219,8 @@ class ModalNicConfig extends Component {
             </CardBody>
           </Card>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={this.onCancel}>Cancel</button>
-            <button type="button" className="btn btn-success" onClick={this.onSave}>Save</button>
+            <button type="button" className="btn btn-secondary" id={`${networkKey}-cancel`} onClick={this.onCancel}>Cancel</button>
+            <button type="button" className="btn btn-success" id={`${networkKey}-save`} onClick={this.onSave}>Save</button>
           </div>
         </Container>
       </>
@@ -319,8 +319,8 @@ class ModalNicConfig extends Component {
           </SimpleBar>
         </Card>
         <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={this.onCancel}>Cancel</button>
-          <button type="button" className="btn btn-success" onClick={this.onSave}>Save</button>
+          <button type="button" className="btn btn-secondary" id={`${networkKey}-cancel`} onClick={this.onCancel}>Cancel</button>
+          <button type="button" className="btn btn-success" id={`${networkKey}-save`} onClick={this.onSave}>Save</button>
         </div>
       </Container>
     );
@@ -350,8 +350,8 @@ class ModalNicConfig extends Component {
             </CardBody>
           </Card>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={this.onCancel}>{t('title.cancel')}</button>
-            <button type="button" className="btn btn-success" onClick={this.onSave}>{t('title.save')}</button>
+            <button type="button" className="btn btn-secondary" id={`${networkKey}-cancel`} onClick={this.onCancel}>{t('title.cancel')}</button>
+            <button type="button" className="btn btn-success" id={`${networkKey}-save`} onClick={this.onSave}>{t('title.save')}</button>
           </div>
         </Container>
       </>

@@ -59,7 +59,7 @@ class AzureNetworkConfig extends Component {
           </td>
           <td>
             <Label className="padding-left-20">
-              <a href="#" onClick={() => this.configureNic(nic.key, index)} title={title}>
+              <a id={`${networkKey}-index-${index}`} href="#" onClick={() => this.configureNic(nic.key, index)} title={title}>
                 {t('title.network')}
               </a>
             </Label>

@@ -110,7 +110,7 @@ function ReplicationInterval(props) {
               </Input>
             </Col>
             <Col sm={4}>
-              <Input type="select" className="form-control form-control-sm custom-select" onChange={handleMinSelect} value={min}>
+              <Input type="select" id="replication-interval-minute" className="form-control form-control-sm custom-select" onChange={handleMinSelect} value={min}>
                 <option key="replication-minutes" value="0">
                   Minutes
                 </option>

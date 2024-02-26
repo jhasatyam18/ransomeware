@@ -159,6 +159,7 @@ class DMSearchSelect extends Component {
             <Row>
               <Col sm={11}>
                 <Select
+                  inputId={fieldKey}
                   id={fieldKey}
                   styles={this.getStyles(hasErrors)}
                   isDisabled={disabled}

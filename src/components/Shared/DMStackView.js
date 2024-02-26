@@ -15,12 +15,12 @@ class DMStackView extends Component {
   }
 
   renderIcon() {
-    const { openStack } = this.props;
+    const { openStack, vmMoref, title } = this.props;
     return (
       <div className="wizard-header-options">
         <div className="wizard-header-div">
-          {openStack ? <box-icon name="chevron-down" color="white" onClick={this.toggle} style={{ height: 20, cursor: 'pointer' }} />
-            : <box-icon name="chevron-right" color="white" onClick={this.toggle} style={{ height: 20, cursor: 'pointer' }} />}
+          {openStack ? <box-icon id={`${vmMoref}-${title}-down`} name="chevron-down" color="white" onClick={this.toggle} style={{ height: 20, cursor: 'pointer' }} />
+            : <box-icon id={`${vmMoref}-${title}-right`} name="chevron-right" color="white" onClick={this.toggle} style={{ height: 20, cursor: 'pointer' }} />}
         </div>
       </div>
     );
@@ -54,14 +54,14 @@ class DMStackView extends Component {
   }
 
   renderParentHeader() {
-    const { title } = this.props;
+    const { title, vmMoref } = this.props;
     return (
       <Row>
         <Col sm={2} className="padding-right-0 padding-left-5">
           {this.renderIcon()}
         </Col>
         <Col sm={10} className="padding-left-0">
-          <span aria-hidden style={{ cursor: 'pointer' }} onClick={this.toggle}>
+          <span aria-hidden id={`${vmMoref}-${title}`} style={{ cursor: 'pointer' }} onClick={this.toggle}>
             {title}
           </span>
         </Col>

@@ -25,7 +25,7 @@ const DropdownActions = (props) => {
         className="d-inline-block"
       >
         <DropdownToggle>
-          <span className="d-none d-xl-inline-block ml-2 mr-1">
+          <span id="drplan-details-actions" className="d-none d-xl-inline-block ml-2 mr-1">
             {title}
           </span>
           <i className="bx bx-chevron-down" />
@@ -33,9 +33,10 @@ const DropdownActions = (props) => {
         <DropdownMenu right>
           {actions.map((item) => {
             const { label, disabled, icon } = item;
+            const labelID = label.replaceAll(' ', '');
             return (
               <DropdownItem right onClick={() => onActionClick(item)} disabled={disabled} className={!disabled ? 'text-white' : ''}>
-                <i className={icon} />
+                <i className={icon} id={`${labelID}`} />
                 &nbsp;&nbsp;
                 {t(label)}
               </DropdownItem>

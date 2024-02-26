@@ -33,7 +33,7 @@ function Location(props) {
     <>
       <tr>
         <td className="padding-left-20">
-          <a href="#" onClick={() => handleClick()}>
+          <a id={`${fieldKey}`} href="#" onClick={() => handleClick()}>
             {t('title.select')}
             &nbsp;&nbsp;
           </a>

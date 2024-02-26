@@ -38,9 +38,9 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
     clearInterval(timerId.current);
   }, []);
 
-  const fetchRunningJobsSteps = () => {
+  function fetchRunningJobsSteps() {
     const url = API_RESCOVERY_JOB_STATUS_STEPS.replace('<id>', jobdata.id);
-    callAPI(url).then((json) => {
+    return callAPI(url).then((json) => {
       let step = [];
       if (json.step !== '' && typeof json.step !== 'undefined') {
         step = JSON.parse(json.step);
@@ -53,7 +53,7 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
     }, (err) => {
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
-  };
+  }
 
   const handleCheckbox = () => {
     setToggle(!toggle);

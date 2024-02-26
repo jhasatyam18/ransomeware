@@ -69,7 +69,7 @@ class GCPNetworkConfig extends Component {
                   Config
                 </Label>
               ) : (
-                <a href="#" onClick={() => this.configureNic(nic.key, index)} title={title}>
+                <a href="#" id={`${networkKey}-index-${index}`} onClick={() => this.configureNic(nic.key, index)} title={title}>
                   Config
                 </a>
               )}

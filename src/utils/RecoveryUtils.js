@@ -213,6 +213,7 @@ function getGeneralConfig({ sourceConfig, user, workFlow }) {
 function getNetworkConfig({ sourceConfig, user, workFlow }) {
   const { values } = user;
   let recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+  const protectionPlatform = getValue('ui.values.protectionPlatform', values);
   let workflow;
   // if workflow is last successfull test recovery then use local site as recovery platform
   if (typeof workFlow !== 'undefined' && workFlow === UI_WORKFLOW.LAST_TEST_RECOVERY_SUMMARY) {
@@ -233,7 +234,6 @@ function getNetworkConfig({ sourceConfig, user, workFlow }) {
     switch (recoveryPlatform) {
       case PLATFORM_TYPES.AWS:
         keys = [
-          { title: 'label.copy.fromSource', value: isFromSource },
           { title: 'label.vpc.id', value: vpcId },
           { title: 'label.subnet', value: subnet },
           { title: 'label.availZone', value: availZone },
@@ -243,6 +243,9 @@ function getNetworkConfig({ sourceConfig, user, workFlow }) {
           { title: 'label.network', value: networkMoref },
 
         ];
+        if (protectionPlatform === PLATFORM_TYPES.AWS) {
+          keys = [...keys, { title: 'label.copy.fromSource', value: isFromSource }];
+        }
         break;
       case PLATFORM_TYPES.GCP:
         const networkOption = getNetworkOptions(user);
@@ -255,6 +258,7 @@ function getNetworkConfig({ sourceConfig, user, workFlow }) {
           { title: 'label.network', value: network },
           { title: 'label.subnet', value: subnet },
           { title: 'label.networkTier', value: networkTier },
+          { title: 'label.auto.publicIP', value: isPublicIP },
         ];
         break;
       case PLATFORM_TYPES.VMware:

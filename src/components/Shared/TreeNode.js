@@ -113,7 +113,7 @@ function TreeNode(props) {
     if (showChild === false) {
       return (
         <>
-          <box-icon name="chevron-right" color="white" onClick={handleCaretChenge} style={{ height: 20 }} />
+          <box-icon name="chevron-right" id={`${node.key}-${node.title}`} color="white" onClick={handleCaretChenge} style={{ height: 20 }} />
           <a href="#" onClick={() => handleCaretChenge()} className="mr-2 ">
             <FontAwesomeIcon size="lg" icon={faFolder} />
           </a>
@@ -122,7 +122,7 @@ function TreeNode(props) {
     }
     return (
       <>
-        <box-icon name="chevron-down" color="white" onClick={handleCaretChenge} style={{ height: 20 }} />
+        <box-icon name="chevron-down" id={`${node.key}-${node.title}`} color="white" onClick={handleCaretChenge} style={{ height: 20 }} />
         <a href="#" onClick={() => handleCaretChenge()} className="mr-2 ">
           <FontAwesomeIcon size="lg" icon={faFolderOpen} />
         </a>
@@ -152,7 +152,7 @@ function TreeNode(props) {
         <div className={highLightSelection && value ? 'folderSelection treeDiv padding-top-4 padding-bottom-4' : 'treeDiv'}>
           {renderInput()}
           {renderCaret()}
-          <p className="tree_node_p" aria-hidden onClick={() => handleTextClick(!value)}>{node.title}</p>
+          <p className="tree_node_p" id={`${node.key}-${node.title}`} aria-hidden onClick={() => handleTextClick(!value)}>{node.title}</p>
         </div>
       </>
     );

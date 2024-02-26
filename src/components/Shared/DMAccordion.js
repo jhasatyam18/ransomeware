@@ -57,13 +57,13 @@ class DMAccordion extends Component {
     }, 200);
   }
 
-  renderChild() {
+  renderChild(vmMoref) {
     const { dispatch, config, user } = this.props;
     const { stackIndex } = this.state;
     const { data } = config;
     return data.map((conf, index) => (
       <>
-        <DMStackView dispatch={dispatch} index={index} user={user} configuration={conf} title={conf.title} hasChildren={conf.hasChildren} key={`stack-view-${index * 1}`} openStack={stackIndex === index} onToggleStack={this.toggleStack} openByDefault={index === 0 ? 'true' : 'false'} />
+        <DMStackView dispatch={dispatch} vmMoref={vmMoref} index={index} user={user} configuration={conf} title={conf.title} hasChildren={conf.hasChildren} key={`stack-view-${index * 1}`} openStack={stackIndex === index} onToggleStack={this.toggleStack} openByDefault={index === 0 ? 'true' : 'false'} />
       </>
     ));
   }
@@ -96,18 +96,18 @@ class DMAccordion extends Component {
 
   render() {
     const { isOpen, reload } = this.state;
-    const { title } = this.props;
+    const { title, sourceID } = this.props;
     if (reload > 0) {
       this.resetReload();
       return '';
     }
     return (
-      <div key={`dm-accordion-${title}`} className="dmaccordian">
+      <div key={`dm-accordion-${sourceID}`} className="dmaccordian">
         <Card className="margin-bottom-10 ">
           <CardHeader>
             <Row>
               <Col sm={6}>
-                <a href="#" onClick={this.toggle}>
+                <a id={`dm-accordion-${sourceID}`} href="#" onClick={this.toggle}>
                   {title}
                 </a>
               </Col>
@@ -117,7 +117,7 @@ class DMAccordion extends Component {
             </Row>
             <Collapse isOpen={isOpen}>
               <CardBody className="padding-left-0 paddings-right-0">
-                {this.renderChild()}
+                {this.renderChild(sourceID)}
               </CardBody>
               {this.renderCopyConfig()}
             </Collapse>

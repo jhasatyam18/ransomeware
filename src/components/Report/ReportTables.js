@@ -92,9 +92,9 @@ class ReportTables extends Component {
           <CardHeader>
             <Row>
               <Col sm={6}>
-                <a href="#" onClick={this.toggle}>
+                <span aria-hidden className="link_color" onClick={this.toggle}>
                   {title}
-                </a>
+                </span>
               </Col>
               <Col sm={6} className="d-flex flex-row-reverse">
                 {this.renderIcon()}

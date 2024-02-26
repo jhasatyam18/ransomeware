@@ -689,7 +689,7 @@ export function setProtectionPlanDataForUpdate(selectedPlan, isEventAction = fal
   return (dispatch) => {
     dispatch(showApplicationLoader('UPDATE_PROTECTION_PLAN', 'Loading protection plan data...'));
     const wiz = UPDATE_PROTECTION_PLAN_WIZARDS;
-    wiz.options.title = `Edit Plan - ${selectedPlan.name}`;
+    wiz.options.title = `Reconfigure Plan - ${selectedPlan.name}`;
     wiz.options.onFinish = onEditProtectionPlan;
     const apis = [dispatch(setProtectionPlanVMsForUpdate(selectedPlan, isEventAction, event))];
     return Promise.all(apis)
