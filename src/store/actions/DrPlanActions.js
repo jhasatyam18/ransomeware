@@ -1,8 +1,9 @@
 import i18n from 'i18next';
+import { RECOVERY_STATUS } from '../../constants/AppStatus';
 import { STORE_KEYS } from '../../constants/StoreKeyConstants';
 import { getMemoryInfo, getNetworkIDFromName, getSubnetIDFromName, getLabelWithResourceGrp } from '../../utils/AppUtils';
 import { DRPLAN_CONFIG_STEP } from '../../constants/DrplanConstants';
-import { changedVMRecoveryConfigurations, validateRecoveryVMs } from '../../utils/validationUtils';
+import { changedVMRecoveryConfigurations } from '../../utils/validationUtils';
 import { MILI_SECONDS_TIME, MONITORING_DISK_CHANGES } from '../../constants/EventConstant';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
@@ -14,13 +15,13 @@ import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { fetchNetworks, fetchSites, onRecoverSiteChange } from './SiteActions';
 import { getCreateDRPlanPayload, getEditProtectionPlanPayload, getRecoveryPayload, getReversePlanPayload, getVMConfigPayload } from '../../utils/PayloadUtil';
-import { clearValues, fetchScript, hideApplicationLoader, loadRecoveryLocationData, refresh, setInstanceDetails, setProtectionPlanScript, setTags, showApplicationLoader, valueChange } from './UserActions';
+import { clearValues, fetchScript, hideApplicationLoader, loadRecoveryLocationData, onDiffReverseChanges, refresh, setInstanceDetails, setProtectionPlanScript, setTags, showApplicationLoader, valueChange } from './UserActions';
 import { closeWizard, openWizard } from './WizardActions';
 import { closeModal, openModal } from './ModalActions';
 import { addAssociatedIPForAzure, addAssociatedReverseIP } from './AwsActions';
 import { MIGRATION_WIZARDS, RECOVERY_WIZARDS, TEST_RECOVERY_WIZARDS, REVERSE_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS, PROTECTED_VM_RECONFIGURATION_WIZARD, CLEANUP_TEST_RECOVERY_WIZARDS, STEPS } from '../../constants/WizardConstants';
 import { getMatchingInsType, getValue, getVMMorefFromEvent, isSamePlatformPlan, getVMInstanceFromEvent, getMatchingOSType, getMatchingFirmwareType } from '../../utils/InputUtils';
-import { PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
+import { CHECKPOINT_TYPE, PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { MODAL_CONFIRMATION_WARNING, PPLAN_REMOVE_CHECKPOINT_RENDERER } from '../../constants/Modalconstant';
 import { setVmwareInitialData, setVMwareTargetData } from './VMwareActions';
@@ -232,69 +233,43 @@ export function drPlanDetailsFetched(protectionPlan) {
   };
 }
 
-export function onProtectionPlanChange({ value, allowDeleted }) {
+export function onProtectionPlanChange({ value, allowDeleted, planRecoveryStatus }) {
   return (dispatch, getState) => {
-    const { user } = getState();
-    const { values } = user;
     const url = API_FETCH_DR_PLAN_BY_ID.replace('<id>', value);
     return callAPI(url)
       .then((json) => {
         if (json && json.hasError) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
+          const { user } = getState();
+          const { values } = user;
           const data = [];
           const info = json.protectedEntities.virtualMachines || [];
           const rEntities = json.recoveryEntities.instanceDetails || [];
-          const allVmMorefs = [];
-          const planHasCheckpoints = getValue(STATIC_KEYS.UI_RECOVERY_CHECKPOINTS_BY_PLAN_ID, values) || [];
-          const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values) || '';
-          const isRecoveryFlow = (workflow === UI_WORKFLOW.RECOVERY || UI_WORKFLOW.TEST_RECOVERY || UI_WORKFLOW.MIGRATION) || false;
-          if (planHasCheckpoints.length === 0 && !isRecoveryFlow) {
-            // for clean up test recvery flow and for plan has no checkpoints
-            info.forEach((vm) => {
-              rEntities.forEach((rE) => {
-                if (vm.moref === rE.sourceMoref) {
-                  const machine = vm;
-                  machine.name = rE.instanceName;
-                  if (typeof vm.recoveryStatus !== 'undefined' && (vm.recoveryStatus === 'Migrated' || vm.recoveryStatus === 'Recovered' || vm.isRemovedFromPlan === true)) {
-                    if (typeof allowDeleted === 'undefined' || !allowDeleted) {
-                      machine.isDisabled = true;
-                    }
-                  }
-                  dispatch(valueChange(`${vm.moref}-vmConfig.general.guestOS`, vm.guestOS));
-                  dispatch(valueChange(`${vm.moref}-vmConfig.general.encryptionKey`, vm.encryptionKey));
-                  dispatch(valueChange(`${vm.moref}-vmConfig.general.firmwareType`, getMatchingFirmwareType(vm.firmwareType)));
-                  data.push(vm);
-                }
-              });
-            });
-          } else {
-            const allVmCheckpoints = getValue(STATIC_KEYS.UI_RECOVERY_CHECKPOINTS_BY_PLAN_ID, values);
-            info.forEach((vm) => {
-              rEntities.forEach((rE) => {
-                if (vm.moref === rE.sourceMoref) {
-                  const machine = vm;
-                  machine.name = rE.instanceName;
-                  const vmHasCheckpoints = allVmCheckpoints[vm.moref] || [];
-                  if (vm.isRemovedFromPlan === true) {
+          const planHasCheckpoints = getValue(STATIC_KEYS.UI_RECOVERY_CHECKPOINTS_BY_VM_ID, values) || [];
+          info.forEach((vm) => {
+            rEntities.forEach((rE) => {
+              if (vm.moref === rE.sourceMoref) {
+                const machine = vm;
+                machine.name = rE.instanceName;
+                if (typeof vm.recoveryStatus !== 'undefined' && (vm.recoveryStatus === RECOVERY_STATUS.MIGRATED || vm.recoveryStatus === RECOVERY_STATUS.RECOVERED || vm.isRemovedFromPlan === true)) {
+                  // if plan is recovered and vm's has checkpoint then render point-int-time recovery option
+                  // if point-in-time recovery option is rendered then show/enable recovered vm checkbox
+                  if (Object.keys(planHasCheckpoints).length > 0 && typeof planRecoveryStatus !== 'undefined' && planRecoveryStatus === RECOVERY_STATUS.RECOVERED && vm.recoveryStatus === RECOVERY_STATUS.RECOVERED) {
+                    machine.isDisabled = false;
+                  } else if (typeof allowDeleted === 'undefined' || !allowDeleted) {
                     machine.isDisabled = true;
-                  } else if ((typeof vm.recoveryStatus !== 'undefined' && (vm.recoveryStatus === 'Migrated' || vm.recoveryStatus === 'Recovered'))) {
-                    if (vmHasCheckpoints.length === 0) {
-                      machine.isDisabled = true;
-                    } else {
-                      machine.isDisabled = false;
-                    }
                   }
-                  dispatch(valueChange(`${vm.moref}-vmConfig.general.guestOS`, vm.guestOS));
-                  dispatch(valueChange(`${vm.moref}-vmConfig.general.firmwareType`, vm.firmwareType));
-                  dispatch(valueChange(`${vm.moref}-vmConfig.general.encryptionKey`, allVmMorefs.join(',')));
-                  dispatch(valueChange(`${vm.moref}-vmConfig.general.encryptionKey`, vm.encryptionKey));
-                  data.push(vm);
                 }
-              });
+                dispatch(valueChange(`${vm.moref}-vmConfig.general.guestOS`, vm.guestOS));
+                dispatch(valueChange(`${vm.moref}-vmConfig.general.encryptionKey`, vm.encryptionKey));
+                dispatch(valueChange(`${vm.moref}-vmConfig.general.firmwareType`, getMatchingFirmwareType(vm.firmwareType)));
+                data.push(vm);
+              }
             });
-          }
-          dispatch(valueChange('ui.recovery.vms', data));
+          });
+
+          dispatch(valueChange(STORE_KEYS.UI_RECOVERY_VMS, data));
         }
       },
       (err) => {
@@ -459,7 +434,7 @@ export function openRecoveryWizard() {
   return (dispatch, getState) => {
     const { drPlans } = getState();
     const { protectionPlan } = drPlans;
-    const { id, recoverySite, protectedSite, recoveryPointConfiguration, recoveryEntities } = protectionPlan;
+    const { id, recoverySite, protectedSite, recoveryPointConfiguration, recoveryEntities, recoveryStatus } = protectionPlan;
     const { isRecoveryCheckpointEnabled } = recoveryPointConfiguration;
     const { platformDetails } = recoverySite;
     const allVmMorefs = [];
@@ -471,8 +446,6 @@ export function openRecoveryWizard() {
     }
     return Promise.all(apis).then(
       () => {
-        const { jobs } = getState();
-        const { vmCheckpoint } = jobs;
         dispatch(valueChange('ui.values.recoveryPlatform', platformDetails.platformType));
         dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.RECOVERY));
         dispatch(fetchDrPlans('ui.values.drplan'));
@@ -481,21 +454,19 @@ export function openRecoveryWizard() {
         dispatch(valueChange('ui.recovery.plan', protectionPlan));
         dispatch(valueChange('ui.values.recoveryPlatform', platformDetails.platformType));
         dispatch(valueChange('ui.values.protectionPlatform', protectedSite.platformDetails.platformType));
+        if (recoveryStatus === RECOVERY_STATUS.RECOVERED) {
+          dispatch(valueChange(STATIC_KEYS.DISABLE_RECOVERY_FROM_LATEST, true));
+          dispatch(valueChange(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, CHECKPOINT_TYPE.POINT_IN_TIME));
+        }
         // fetch VMs for drPlan
-        dispatch(onProtectionPlanChange({ value: id }));
+        dispatch(onProtectionPlanChange({ value: id, planRecoveryStatus: recoveryStatus }));
         // set is migration flag to false
         dispatch(valueChange('ui.isMigration.workflow', false));
         // set is test recovery flag to false
         dispatch(valueChange('recovery.dryrun', false));
         dispatch(valueChange('recovery.discardPartialChanges', false));
         dispatch(valueChange(STORE_KEYS.RECOVERY_CHECKPOINTING_ENABLED, isRecoveryCheckpointEnabled));
-        let { steps } = RECOVERY_WIZARDS;
-        if (vmCheckpoint.length === 0) {
-          steps = [steps[0], ...steps.slice(2, steps.length)];
-          steps[0].validate = (u, disp) => validateRecoveryVMs({ user: u, dispatch: disp });
-          steps[0].isAsync = true;
-        }
-        dispatch(openWizard(RECOVERY_WIZARDS.options, steps));
+        dispatch(openWizard(RECOVERY_WIZARDS.options, RECOVERY_WIZARDS.steps));
         return new Promise((resolve) => resolve());
       },
       (err) => {
@@ -546,21 +517,13 @@ export function openTestRecoveryWizard(cleanUpTestRecoveries) {
       const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined)), dispatch(fetchScript()), dispatch(fetchDrPlans('ui.values.drplan')), dispatch(getVmCheckpoints(id, allVmMorefs.join(',')))];
       return Promise.all(apis).then(
         () => {
-          const { jobs } = getState();
-          const { vmCheckpoint } = jobs;
           const isCleanUpFlow = (typeof cleanUpTestRecoveries !== 'undefined' && cleanUpTestRecoveries === true);
           dispatch(fetchPlatformSpecificData(protectionPlan));
           if (isCleanUpFlow) {
             dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.CLEANUP_TEST_RECOVERY));
             dispatch(openWizard(CLEANUP_TEST_RECOVERY_WIZARDS.options, CLEANUP_TEST_RECOVERY_WIZARDS.steps));
           } else {
-            let { steps } = TEST_RECOVERY_WIZARDS;
-            if (vmCheckpoint.length === 0) {
-              steps = [...steps.slice(0, 2), ...steps.slice(3, steps.length)];
-              steps[1].validate = (user) => validateRecoveryVMs({ user, dispatch });
-              steps[1].isAsync = true;
-            }
-            dispatch(openWizard(TEST_RECOVERY_WIZARDS.options, steps));
+            dispatch(openWizard(TEST_RECOVERY_WIZARDS.options, TEST_RECOVERY_WIZARDS.steps));
           }
           dispatch(onProtectionPlanChange({ value: protectionPlan.id, allowDeleted: isCleanUpFlow }));
           dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW_TEST_RECOVERY, true));
@@ -864,6 +827,8 @@ export function setProtectionPlanVMConfig(selectedVMS, protectionPlan) {
     dispatch(valueChange('drplan.isCompression', protectionPlan.isCompression));
     dispatch(valueChange('drplan.isDedupe', protectionPlan.isDeDupe));
     dispatch(valueChange('drplan.enableDifferentialReverse', protectionPlan.enableDifferentialReverse));
+    // based on enable differential reverse enable or disable
+    dispatch(onDiffReverseChanges({ value: protectionPlan.enableDifferentialReverse }));
     dispatch(valueChange('drplan.enablePPlanLevelScheduling', protectionPlan.enablePPlanLevelScheduling));
     dispatch(valueChange('drplan.replPostScript', protectionPlan.replPostScript));
     dispatch(valueChange('drplan.replPreScript', protectionPlan.replPreScript));
@@ -1361,23 +1326,23 @@ export function updateVMConfig() {
   };
 }
 
-export function setRecoveryVMDetails(vmMoref) {
+export function setRecoveryVMDetails(vmMoref, protectectionPlan) {
   return (dispatch, getState) => {
     const { user } = getState();
     const { values } = user;
     const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
     switch (recoveryPlatform) {
       case PLATFORM_TYPES.AWS:
-        dispatch(setAWSVMRecoveryData(vmMoref));
+        dispatch(setAWSVMRecoveryData(vmMoref, protectectionPlan));
         return;
       case PLATFORM_TYPES.GCP:
-        dispatch(setGCPVMRecoveryData(vmMoref));
+        dispatch(setGCPVMRecoveryData(vmMoref, protectectionPlan));
         return;
       case PLATFORM_TYPES.VMware:
-        dispatch(setVMwareVMRecoveryData(vmMoref));
+        dispatch(setVMwareVMRecoveryData(vmMoref, protectectionPlan));
         return;
       case PLATFORM_TYPES.Azure:
-        dispatch(setAzureVMRecoveryData(vmMoref));
+        dispatch(setAzureVMRecoveryData(vmMoref, protectectionPlan));
         return;
       default:
         dispatch(addMessage('Invalid recovery platform', MESSAGE_TYPES.ERROR));
@@ -1385,11 +1350,11 @@ export function setRecoveryVMDetails(vmMoref) {
   };
 }
 
-export function setAWSVMRecoveryData(vmMoref) {
+export function setAWSVMRecoveryData(vmMoref, protectectionPlan) {
   return (dispatch, getState) => {
     const { user } = getState();
     const { values } = user;
-    const plan = getValue('ui.recovery.plan', values);
+    const plan = protectectionPlan || getValue('ui.recovery.plan', values);
     // const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
     if (typeof plan === 'undefined' || plan === '' || !plan) {
       return;
@@ -1443,11 +1408,11 @@ export function setAWSVMRecoveryData(vmMoref) {
   };
 }
 
-export function setVMwareVMRecoveryData(vmMoref) {
+export function setVMwareVMRecoveryData(vmMoref, protectectionPlan) {
   return (dispatch, getState) => {
     const { user } = getState();
     const { values } = user;
-    const plan = getValue('ui.recovery.plan', values);
+    const plan = protectectionPlan || getValue('ui.recovery.plan', values);
     const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
     if (typeof plan === 'undefined' || plan === '' || !plan) {
       return;
@@ -1507,11 +1472,11 @@ export function setVMwareVMRecoveryData(vmMoref) {
   };
 }
 
-export function setGCPVMRecoveryData(vmMoref) {
+export function setGCPVMRecoveryData(vmMoref, protectectionPlan) {
   return (dispatch, getState) => {
     const { user } = getState();
     const { values } = user;
-    const plan = getValue('ui.recovery.plan', values);
+    const plan = protectectionPlan || getValue('ui.recovery.plan', values);
     if (typeof plan === 'undefined' || plan === '' || !plan) {
       return;
     }
@@ -1559,11 +1524,11 @@ export function setGCPVMRecoveryData(vmMoref) {
   };
 }
 
-export function setAzureVMRecoveryData(vmMoref) {
+export function setAzureVMRecoveryData(vmMoref, protectection) {
   return (dispatch, getState) => {
     const { user } = getState();
     const { values } = user;
-    const plan = getValue('ui.recovery.plan', values);
+    const plan = protectection || getValue('ui.recovery.plan', values);
     if (typeof plan === 'undefined' || plan === '' || !plan) {
       return;
     }
@@ -1694,6 +1659,7 @@ function setReverseData(json) {
       dispatch(valueChange('ui.values.recoveryPlatform', platformDetails.platformType));
       dispatch(valueChange('ui.values.recoverySiteID', recoverySite.id));
       dispatch(valueChange('ui.recovery.plan', json));
+      dispatch(valueChange('drplan.removeCheckpoint', true));
       dispatch(setPplanRecoveryCheckpointData(json.recoveryPointConfiguration));
       dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.REVERSE_PLAN));
       if (!json.enableDifferentialReverse) {
@@ -1782,6 +1748,14 @@ export function setReverseConfig(protectionPlan) {
     dispatch(valueChange('drplan.isCompression', protectionPlan.isCompression));
     dispatch(valueChange('drplan.isDeDupe', protectionPlan.isDeDupe));
     dispatch(valueChange('drplan.enableDifferentialReverse', protectionPlan.enableDifferentialReverse));
+    if (protectionPlan.enableDifferentialReverse) {
+      if (recoverySitePlatform !== '' && recoverySitePlatform === PLATFORM_TYPES.VMware) {
+        dispatch(valueChange('recoveryPointConfiguration.isRecoveryCheckpointEnabled', false));
+        dispatch(valueChange(STORE_KEYS.UI_DISABLE_RECOVERY_CHECKPOINT, true));
+      }
+    } else {
+      dispatch(valueChange(STORE_KEYS.UI_DISABLE_RECOVERY_CHECKPOINT, false));
+    }
     dispatch(valueChange('drplan.enablePPlanLevelScheduling', protectionPlan.enablePPlanLevelScheduling));
     dispatch(valueChange('drplan.replPostScript', protectionPlan.replPostScript));
     dispatch(valueChange('drplan.replPreScript', protectionPlan.replPreScript));

@@ -1,40 +1,113 @@
 import React, { Component } from 'react';
 import { Col, Label, Row, Container } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
+import { RECOVERY_STATUS } from '../../constants/AppStatus';
+import { STORE_KEYS } from '../../constants/StoreKeyConstants';
+import { setRecoveryVMDetails } from '../../store/actions/DrPlanActions';
 import DMTable from '../Table/DMTable';
 import DMTPaginator from '../Table/DMTPaginator';
 import DMField from '../Shared/DMField';
 import DMToolTip from '../Shared/DMToolTip';
 import { handleProtectVMSeletion, handleSelectAllRecoveryVMs } from '../../store/actions/SiteActions';
-import { TABLE_FILTER_TEXT, TABLE_RECOVERY_VMS } from '../../constants/TableConstants';
-import { PLAYBOOK_TYPE, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
-import { getValue } from '../../utils/InputUtils';
+import { RECOVERY_CHECKPOINT_OPTION_RENDERER, TABLE_FILTER_TEXT, TABLE_RECOVERY_VMS } from '../../constants/TableConstants';
+import { CHECKPOINT_TYPE, PLAYBOOK_TYPE, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
+import { commonCheckpointOptions, getValue, onCommonCheckpointChange } from '../../utils/InputUtils';
 import { filterData } from '../../utils/AppUtils';
 import { getUrlPath } from '../../utils/ApiUtils';
 import { API_UPLOAD_RECOVERY_CRED } from '../../constants/ApiConstants';
 import { hideApplicationLoader, showApplicationLoader, valueChange } from '../../store/actions';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { addMessage } from '../../store/actions/MessageActions';
+import DMSearchSelect from '../Shared/DMSearchSelect';
+import { FIELD_TYPE } from '../../constants/FieldsConstant';
+import { isEmpty } from '../../utils/validationUtils';
 
 class RecoveryMachines extends Component {
   constructor() {
     super();
-    this.state = { dataToDisplay: [], hasFilterString: false, searchData: [], recFileName: '' };
+    this.state = { dataToDisplay: [], hasFilterString: false, searchData: [], recFileName: '', recoveryType: CHECKPOINT_TYPE.LATEST };
     this.setDataForDisplay = this.setDataForDisplay.bind(this);
     this.onFileChange = this.onFileChange.bind(this);
     this.resetCredentialFile = this.resetCredentialFile.bind(this);
     this.onFilter = this.onFilter.bind(this);
   }
 
+  componentDidMount() {
+    const { user } = this.props;
+    const { values } = user;
+    const selectedRecoveryType = getValue(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, values);
+    if (selectedRecoveryType !== '') {
+      this.setState({ recoveryType: selectedRecoveryType });
+    } else {
+      this.setState({ recoveryType: CHECKPOINT_TYPE.LATEST });
+    }
+  }
+
   onFilter(criteria) {
     const { user } = this.props;
     const { values } = user;
-    const vms = getValue('ui.recovery.vms', values);
+    const vms = getValue(STORE_KEYS.UI_RECOVERY_VMS, values);
     if (criteria === '') {
       this.setState({ hasFilterString: false, searchData: [] });
     } else {
       const newData = filterData(vms, criteria, TABLE_RECOVERY_VMS);
       this.setState({ hasFilterString: true, searchData: newData });
+    }
+  }
+
+  onCheckointTypeChange(value) {
+    const { dispatch, user } = this.props;
+    const { values } = user;
+    this.setState({ recoveryType: value });
+    dispatch(valueChange(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, value));
+    this.setRecoveryConfigs(dispatch, values, value);
+  }
+
+  setRecoveryConfigs(dispatch, values, value) {
+    const { t } = this.props;
+    const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
+    const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
+    const recVms = getValue(STORE_KEYS.UI_RECOVERY_VMS, values);
+    const data = [];
+    if (value === CHECKPOINT_TYPE.LATEST) {
+      recVms.forEach((vm) => {
+        const virtualMachine = vm;
+        if (typeof vm.recoveryStatus !== 'undefined' && (vm.recoveryStatus === RECOVERY_STATUS.MIGRATED || vm.recoveryStatus === RECOVERY_STATUS.RECOVERED || vm.isRemovedFromPlan === true)) {
+          // hide checkbox if the vm is recovered
+          virtualMachine.isDisabled = true;
+          // if the recovered vm is selected in point-in-time and the user clicks on latest then remove recovered vm from selected vm
+          delete vms[vm.moref];
+        }
+        data.push(virtualMachine);
+      });
+      dispatch(valueChange(STORE_KEYS.UI_RECOVERY_VMS, data));
+      dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, vms));
+      // after clicking on latest the recovery config should get updated as per latest data from the store
+      if (workflow === UI_WORKFLOW.RECOVERY) {
+        Object.keys(vms).forEach((vm) => {
+          dispatch(setRecoveryVMDetails(vm));
+        });
+      }
+      // REMOVE CHECKPOINT WARNING TEXT
+      dispatch(valueChange(STORE_KEYS.UI_CHECKPOINT_SELECT_WARNING, ''));
+    } else if (value === CHECKPOINT_TYPE.POINT_IN_TIME) {
+      recVms.forEach((vm) => {
+        const virtualMachine = vm;
+        if (typeof vm.recoveryStatus !== 'undefined' && (vm.recoveryStatus === RECOVERY_STATUS.RECOVERED || vm.isRemovedFromPlan === true)) {
+          // below code is to enable vm selection for point-in-time even if it's recovered
+          virtualMachine.isDisabled = false;
+        }
+        data.push(virtualMachine);
+      });
+      dispatch(valueChange(STORE_KEYS.UI_RECOVERY_VMS, data));
+      const plan = getValue(STORE_KEYS.UI_CHECKPOINT_PLAN, values);
+      if (Object.keys(plan).length > 0) {
+        Object.keys(vms).forEach((vm) => {
+          dispatch(setRecoveryVMDetails(vm, plan));
+        });
+      }
+      // Add checkpoint warning text
+      dispatch(valueChange(STORE_KEYS.UI_CHECKPOINT_SELECT_WARNING, t('recovery.checkpoint.onchange.warn')));
     }
   }
 
@@ -85,6 +158,46 @@ class RecoveryMachines extends Component {
     this.setState({ recFileName: '' });
   };
 
+  RenderOptions() {
+    const { t, user } = this.props;
+    const { values } = user;
+    const { recoveryType } = this.state;
+    const disablePointInTime = getValue(STATIC_KEYS.IS_POINT_IN_TIME_DISABLED, values);
+    const disableLatest = getValue(STATIC_KEYS.DISABLE_RECOVERY_FROM_LATEST, values);
+    return (
+      <Row className="margin-top-20">
+        <Col sm={4} className="padding-left-30">{t('recover.from')}</Col>
+        <Col sm={8}>
+          <div className="form-check-inline pr-4 pl-3">
+            <p className="form-check-label">
+              <input type="radio" disabled={disableLatest} className="form-check-input" name="recoveryType" value={CHECKPOINT_TYPE.LATEST} checked={recoveryType === CHECKPOINT_TYPE.LATEST} onChange={(e) => this.onCheckointTypeChange(e.target.value)} />
+              {t('test.recovery.latest')}
+            </p>
+          </div>
+          <div className="form-check-inline">
+            <p className="form-check-label fs-30">
+              <input type="radio" disabled={disablePointInTime} className="form-check-input" name="recoveryType" value={CHECKPOINT_TYPE.POINT_IN_TIME} checked={recoveryType === CHECKPOINT_TYPE.POINT_IN_TIME} onChange={(e) => this.onCheckointTypeChange(e.target.value)} />
+              {t('test.recovery.pointInTime')}
+            </p>
+          </div>
+        </Col>
+      </Row>
+    );
+  }
+
+  renderCommonCheckpointOption() {
+    const { dispatch, user, t } = this.props;
+    const commonCheckpointField = { shouldShow: true, type: FIELD_TYPE.SELECT_SEARCH, options: () => commonCheckpointOptions(user), validate: ({ value }) => isEmpty({ value }), errorMessage: 'Please select common point in time checkpoint', onChange: ({ value, fieldKey }) => onCommonCheckpointChange({ value, dispatch, fieldKey }) };
+    return (
+      <Row className="margin-top-20">
+        <Col sm={4} className="padding-left-30">{t('select.point.in.time')}</Col>
+        <Col sm={4}>
+          <DMSearchSelect className="w-20" fieldKey="ui.unique.checkpoint.field" field={commonCheckpointField} user={user} dispatch={dispatch} hideLabel />
+        </Col>
+      </Row>
+    );
+  }
+
   renderRemoveFile() {
     const { recFileName } = this.state;
     if (recFileName === '') {
@@ -100,19 +213,26 @@ class RecoveryMachines extends Component {
   render() {
     const { dispatch, user, t } = this.props;
     const { values } = user;
-    const { hasFilterString, searchData, dataToDisplay, recFileName } = this.state;
-    const vms = getValue('ui.recovery.vms', values);
+    const { hasFilterString, searchData, dataToDisplay, recFileName, recoveryType } = this.state;
+    const vms = getValue(STORE_KEYS.UI_RECOVERY_VMS, values);
     let selectedVMs = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
     const data = (hasFilterString ? searchData : vms);
+    const pointInTime = { label: t('test.recovery.pointInTime'), field: 'recoveryStatus', itemRenderer: RECOVERY_CHECKPOINT_OPTION_RENDERER, width: 4 };
+    const planHasCheckpoints = getValue(STATIC_KEYS.UI_RECOVERY_CHECKPOINTS_BY_VM_ID, values) || [];
     let title = '';
     if (!selectedVMs) {
       selectedVMs = {};
     }
     const isMigrationWorkflow = getValue('ui.isMigration.workflow', values);
     const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values) || '';
+    const checkpointWarning = getValue(STORE_KEYS.UI_CHECKPOINT_SELECT_WARNING, values);
     let columns = [];
     if (workflow === UI_WORKFLOW.CLEANUP_TEST_RECOVERY) {
       columns = TABLE_RECOVERY_VMS.filter((col) => col.label !== 'Username' && col.label !== 'Password');
+    } else if ((workflow === UI_WORKFLOW.TEST_RECOVERY || workflow === UI_WORKFLOW.RECOVERY) && recoveryType === CHECKPOINT_TYPE.POINT_IN_TIME) {
+      // Recovery type is point-in-time then add option to select checkpoint column
+      columns = [...TABLE_RECOVERY_VMS];
+      columns.splice(3, 0, pointInTime);
     } else {
       columns = TABLE_RECOVERY_VMS;
     }
@@ -125,10 +245,28 @@ class RecoveryMachines extends Component {
     } else {
       title = t('title.machines.recovery');
     }
+
+    const renderWarningMsg = () => (
+      <>
+        <div className="padding-left-20 card_note_warning">
+          {checkpointWarning}
+        </div>
+      </>
+    );
+
     return (
       <Container fluid className="padding-10">
+        {(workflow === UI_WORKFLOW.TEST_RECOVERY || workflow === UI_WORKFLOW.RECOVERY) && Object.keys(planHasCheckpoints).length > 0
+          ? (
+            <>
+              {this.RenderOptions()}
+              {recoveryType === CHECKPOINT_TYPE.POINT_IN_TIME && this.renderCommonCheckpointOption()}
+              {checkpointWarning ? renderWarningMsg() : null}
+            </>
+          )
+          : null}
         <br />
-        <Label>{title}</Label>
+        <Label className="padding-left-20">{title}</Label>
         <br />
         <Row>
           <Col sm={12} className="padding-left-30">

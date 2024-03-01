@@ -304,15 +304,10 @@ export const REPLICATION_PRIOPITY = [
   { label: 'Replication Priority', itemRenderer: REPLICATION_PRIORITY_RENDERER },
 ];
 
-export const RECOVERY_CHECKPOINT_OPTION = [
-  { label: 'Virtual Machine', field: 'name' },
-  { label: 'Recovery Point', itemRenderer: RECOVERY_CHECKPOINT_OPTION_RENDERER, width: 4.5 },
-];
-
 export const CHECKPOINTS_JOBS = [
   { label: 'Workload Name', field: 'workloadName', allowFilter: true, checked: true },
   { label: 'Job Type', field: 'jobType', allowFilter: true, checked: true },
-  { label: 'Size', field: 'recoveryCheckpointSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
+  { label: 'Size', field: 'checkpointSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Sync Time', field: 'syncTime', itemRenderer: DATE_ITEM_RENDERER },
   { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER, allowFilter: true, checked: true },
@@ -320,20 +315,20 @@ export const CHECKPOINTS_JOBS = [
 ];
 
 export const RECOVERY_CHECKPOINTS = [
-  { label: 'Size', field: 'recoveryPointSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
-  { label: 'Created At', field: 'recoveryPointTime', itemRenderer: DATE_ITEM_RENDERER },
-  { label: 'Expires On', field: 'recoveryPointExpirationTime', itemRenderer: DATE_ITEM_RENDERER },
-  { label: 'Checkpoint Status', field: 'recoveryCheckpointStatus', allowFilter: true, checked: true, itemRenderer: CHECKPOINT_RECOVERY_JOB_ITEM_RENDERER },
+  { label: 'Size', field: 'size', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
+  { label: 'Created At', field: 'creationTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Expires On', field: 'expirationTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Checkpoint Status', field: 'checkpointStatus', allowFilter: true, checked: true, itemRenderer: CHECKPOINT_RECOVERY_JOB_ITEM_RENDERER },
   { label: 'Recovery Status', field: 'recoveryStatus', allowFilter: true, checked: true, itemRenderer: CHECKPOINT_RECOVERY_JOB_ITEM_RENDERER },
   { label: 'Preserve', field: 'isPreserved', itemRenderer: PRESERVE_CHECKPOINT },
 ];
 
 export const VM_RECOVERY_CHECKPOINTS = [
   { label: 'Name', field: 'workloadName', allowFilter: true, width: 2 },
-  { label: 'Size', field: 'recoveryPointSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
-  { label: 'Created At', field: 'recoveryPointTime', itemRenderer: DATE_ITEM_RENDERER },
-  { label: 'Expires On', field: 'recoveryPointExpirationTime', itemRenderer: DATE_ITEM_RENDERER },
-  { label: 'Checkpoint Status', field: 'recoveryCheckpointStatus', allowFilter: true, checked: true, itemRenderer: CHECKPOINT_RECOVERY_JOB_ITEM_RENDERER },
+  { label: 'Size', field: 'size', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
+  { label: 'Created At', field: 'creationTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Expires On', field: 'expirationTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Checkpoint Status', field: 'checkpointStatus', allowFilter: true, checked: true, itemRenderer: CHECKPOINT_RECOVERY_JOB_ITEM_RENDERER },
   { label: 'Recovery Status', field: 'recoveryStatus', allowFilter: true, checked: true, itemRenderer: CHECKPOINT_RECOVERY_JOB_ITEM_RENDERER },
   { label: 'Preserve', field: 'isPreserved', itemRenderer: PRESERVE_CHECKPOINT },
 ];

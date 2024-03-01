@@ -8,7 +8,7 @@ import DMNote from '../../Common/DMNote';
 import { getValue } from '../../../utils/InputUtils';
 import { createVMTestRecoveryConfig } from '../../../utils/RecoveryUtils';
 import { NOTE_TEXT } from '../../../constants/DMNoteConstant';
-import { COPY_CONFIG, STATIC_KEYS, UI_WORKFLOW } from '../../../constants/InputConstants';
+import { CHECKPOINT_TYPE, COPY_CONFIG, STATIC_KEYS, UI_WORKFLOW } from '../../../constants/InputConstants';
 import { valueChange } from '../../../store/actions';
 
 function TestRecoveryVMConfiguration(props) {
@@ -16,12 +16,14 @@ function TestRecoveryVMConfiguration(props) {
   const { values } = user;
   const option = getValue('ui.recovery.option', values);
   const workFlow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
-
+  const isPointInTime = getValue(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, values) || '';
   useEffect(() => {
     if (workFlow === UI_WORKFLOW.TEST_RECOVERY) {
+      if (isPointInTime !== CHECKPOINT_TYPE.POINT_IN_TIME) {
       // to fetch last test recovery only in case of test recovery flow
-      dispatch(fetchLastTestRecovery());
-      onRecoveryConfigOptChange(option);
+        dispatch(fetchLastTestRecovery());
+        onRecoveryConfigOptChange(option);
+      }
     }
   }, []);
 
@@ -81,20 +83,25 @@ function TestRecoveryVMConfiguration(props) {
 
   const renderNote = () => <DMNote title="Info" info="test.recovery.note" subText="test.recovery.staticIP.warning" color={NOTE_TEXT.INFO} open />;
 
-  const prevRecoveryConfigOpt = () => (
-    <>
-      <div className="custom-control custom-checkbox padding-bottom-8 test_rec_config">
-        <div>
-          <input type="radio" id="cure" name="option" value="current" checked={option === 'current'} onChange={(e) => onRecoveryConfigOptChange(e.target.value)} />
-          <label htmlFor="current" style={{ paddingLeft: '5px', cursor: 'pointer' }} aria-hidden="true" onClick={() => onRecoveryConfigOptChange('current')}>Recovery Configuration</label>
-        </div>
-        <div>
-          <input type="radio" id="previous" name="option" value="previous" checked={option === 'previous'} onChange={(e) => onRecoveryConfigOptChange(e.target.value)} />
-          <label htmlFor="previous" style={{ paddingLeft: '5px', cursor: 'pointer' }} aria-hidden="true" onClick={() => onRecoveryConfigOptChange('previous')}>Previous Test Recovery Configuration</label>
-        </div>
-      </div>
-    </>
-  );
+  const prevRecoveryConfigOpt = () => {
+    if (isPointInTime !== CHECKPOINT_TYPE.POINT_IN_TIME) {
+      return (
+        <>
+          <div className="custom-control custom-checkbox padding-bottom-8 test_rec_config">
+            <div>
+              <input type="radio" id="cure" name="option" value="current" checked={option === 'current'} onChange={(e) => onRecoveryConfigOptChange(e.target.value)} />
+              <label htmlFor="current" style={{ paddingLeft: '5px', cursor: 'pointer' }} aria-hidden="true" onClick={() => onRecoveryConfigOptChange('current')}>{t('test.recovery.recovery.configuration')}</label>
+            </div>
+            <div>
+              <input type="radio" id="previous" name="option" value="previous" checked={option === 'previous'} onChange={(e) => onRecoveryConfigOptChange(e.target.value)} />
+              <label htmlFor="previous" style={{ paddingLeft: '5px', cursor: 'pointer' }} aria-hidden="true" onClick={() => onRecoveryConfigOptChange('previous')}>{t('test.recovery.prev.recovery.configuration')}</label>
+            </div>
+          </div>
+        </>
+      );
+    }
+    return null;
+  };
 
   const renderTestRecoveryItems = () => (
     <>

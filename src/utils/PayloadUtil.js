@@ -1,6 +1,6 @@
 import { STORE_KEYS } from '../constants/StoreKeyConstants';
 import { TIME_CONSTANTS } from '../constants/UserConstant';
-import { MINUTES_CONVERSION, PLATFORM_TYPES, RECOVERY_ENTITY_TYPES, STATIC_KEYS } from '../constants/InputConstants';
+import { CHECKPOINT_TYPE, MINUTES_CONVERSION, PLATFORM_TYPES, RECOVERY_ENTITY_TYPES, STATIC_KEYS } from '../constants/InputConstants';
 import { FIELDS } from '../constants/FieldsConstant';
 import {
   getValue,
@@ -325,10 +325,9 @@ function getRecoveryConfigVMDetails(user) {
     const userName = getValue(`${moref}-username`, values);
     const password = getValue(`${moref}-password`, values);
     const recoveryCheckpoint = getValue(`${moref}-recovery-checkpoint`, values) || '';
+    const recoveryType = getValue(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, values);
     let recoveryCheckpointID = '';
-    if (recoveryCheckpoint.value && recoveryCheckpoint.value === 'latest') {
-      recoveryCheckpointID = '';
-    } else {
+    if (recoveryType === CHECKPOINT_TYPE.POINT_IN_TIME && recoveryCheckpoint.value) {
       recoveryCheckpointID = recoveryCheckpoint.value;
     }
     let instanceDetails = {};

@@ -100,13 +100,19 @@ export const STATIC_KEYS = {
   UI_TEMPLATE_FILEID: 'ui.template.fileid',
   UI_TEMPLATE_BY_ID: 'ui.template.id',
   UI_REPLICATIONJOBS_BY_PPLAN_ID: 'ui.replicationjobs.by.pplanid',
-  UI_RECOVERY_CHECKPOINTS_BY_PLAN_ID: 'recovery.checkpoint.by.plan.id',
+  UI_RECOVERY_CHECKPOINTS_BY_VM_ID: 'recovery.checkpoint.by.vm.id',
   UI_PLAYBOOK_DIFF: 'ui.playbook.diff',
   UI_PLAYBOOK_DIFF_RESPONSE: 'ui.playbook.diff.response',
   UI_PLAYBOOK_CURRENT_PLAN_CONFIG: 'ui.playbook.current.plan.config',
   UI_PLAYBOOK_UPDATED_PLAN_CONFIG: 'ui.playbook.updated.plan.config',
+  UI_UNIQUE_CHECKPONT_SELECTED_OPTION: 'ui.unique.checkpoint.selected.option',
+  UI_CHECKPOINT_RECOVERY_TYPE: 'ui.checkpoint.recoveryTypes',
+  UI_COMMON_CHECKPOINT_OPTIONS: 'ui.common.checkpoint_options',
   UI_DMWIZARD_MOVENEXT: 'ui.dmwizard.movenext',
   VMWARE_CBT_KB_REFERENCE: 'https://kb.vmware.com/s/article/1020128',
+  IS_POINT_IN_TIME_DISABLED: 'ui.point.in.time.disable',
+  DISABLE_RECOVERY_FROM_LATEST: 'ui.disable.recover.latest',
+  POINT_IN_TIME_RECOVERY_CHECKPOINTS: 'ui.point.intime.checkpoint.recovery.config',
 };
 
 // Recovery time in minutes
@@ -206,4 +212,9 @@ export const PLAYBOOK_NAMES = {
 export const SAML = {
   DEFAULT_USERNAME: 'SAML',
   DEFAULT_USER_ID: 0,
+};
+
+export const CHECKPOINT_TYPE = {
+  LATEST: 'latest',
+  POINT_IN_TIME: 'pointInTime',
 };

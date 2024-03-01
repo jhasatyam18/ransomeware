@@ -116,6 +116,9 @@ export default function user(state = INITIAL_STATE.user, action) {
     case Types.FETCH_ROLES: {
       return { ...state, roles: action.roles };
     }
+    case Types.SET_DRPLAN_DETAIL_ACTIVE_TAB: {
+      return { ...state, drPlanDetailActiveTab: action.value };
+    }
     default:
       return state;
   }

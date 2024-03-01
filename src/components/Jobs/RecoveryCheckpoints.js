@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, Col, Container, Form, Label, Row } from 'reactstrap';
+import { CHECKPOINT_STATUS_DELETED_FROM_INFRA } from '../../constants/AppStatus';
 import { valueChange } from '../../store/actions';
 import DMBreadCrumb from '../Common/DMBreadCrumb';
 import DropdownActions from '../Common/DropdownActions';
@@ -37,7 +38,7 @@ function RecoveryCheckpoints(props) {
   };
   const renderActions = () => {
     const selectedCheckpointsKeys = Object.keys(selectedCheckpoints);
-    const disablePreserve = selectedCheckpointsKeys.length === 1 ? selectedCheckpoints[selectedCheckpointsKeys[0]].isPreserved : true;
+    const disablePreserve = selectedCheckpointsKeys.length === 1 && selectedCheckpoints[selectedCheckpointsKeys[0]].checkpointStatus !== CHECKPOINT_STATUS_DELETED_FROM_INFRA ? selectedCheckpoints[selectedCheckpointsKeys[0]].isPreserved : true;
     const disableDelete = selectedCheckpointsKeys.length === 0;
     let actions = [];
     if (localVMIP === recoverySite.node.hostname) {
@@ -90,8 +91,8 @@ function RecoveryCheckpoints(props) {
 
   const renderVMLevelCheckpoints = () => {
     let url = API_RECOVERY_CHECKPOINT.replace('<id>', id);
-    if (instance && instance.recoveryCheckpointID) {
-      url = `${url}&searchstr=${instance.recoveryCheckpointID}&searchcol=id`;
+    if (instance && instance.checkpointID) {
+      url = `${url}&searchstr=${instance.checkpointID}&searchcol=id`;
     }
 
     return (
@@ -139,7 +140,7 @@ function RecoveryCheckpoints(props) {
       <Container fluid>
         <Card>
           <CardBody>
-            <DMBreadCrumb links={[{ label: 'Recovery Checkpoints', link: '#' }]} />
+            <DMBreadCrumb links={[{ label: t('point.in.time.checkpoint'), link: '#' }]} />
             {checkpointType === RECOVERY_CHECKPOINT_TYPE.PLAN ? renderPplanLevelCheckpoints() : null}
             {checkpointType === RECOVERY_CHECKPOINT_TYPE.VM ? renderVMLevelCheckpoints() : null}
           </CardBody>

@@ -1,14 +1,17 @@
+import { STORE_KEYS } from '../constants/StoreKeyConstants';
 import { MAC_ADDRESS } from '../constants/ValidationConstants';
 import { API_FETCH_VMWARE_LOCATION } from '../constants/ApiConstants';
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMORY, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
-import { EXCLUDE_KEYS_CONSTANTS, EXCLUDE_KEYS_RECOVERY_CONFIGURATION, PLATFORM_TYPES, RECOVERY_STATUS, SCRIPT_TYPE, STATIC_KEYS, SUPPORTED_FIRMWARE, SUPPORTED_GUEST_OS, UI_WORKFLOW } from '../constants/InputConstants';
+import { EXCLUDE_KEYS_CONSTANTS, EXCLUDE_KEYS_RECOVERY_CONFIGURATION, PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS, SUPPORTED_FIRMWARE, SUPPORTED_GUEST_OS, UI_WORKFLOW } from '../constants/InputConstants';
 import { JOB_INIT_FAILED, JOB_INIT_SYNC_FAILED, NODE_STATUS_ONLINE } from '../constants/AppStatus';
 import { isEmpty, isMemoryValueValid } from './validationUtils';
 import { getStorageForVMware, onScriptChange, valueChange } from '../store/actions';
 import { onAwsStorageTypeChange } from '../store/actions/AwsActions';
 import { getLabelWithResourceGrp } from './AppUtils';
 import { addItemAtPosition } from './ObjectUtils';
+import { recoveryConfigOnCheckpointChanges } from '../store/actions/checkpointActions';
+// import { recoveryConfigOnCheckpointChanges } from '../store/actions/checkpointActions';
 
 export function getValue(key, values) {
   const ret = values[key];
@@ -1238,25 +1241,19 @@ export function getVmCheckpointOptions(user, fieldKey) {
   const { values } = user;
   const fieldKeyArr = fieldKey.split('-recovery-checkpoint');
   const vmId = fieldKeyArr[0];
-  const recoveryCheckpoint = getValue(STATIC_KEYS.UI_RECOVERY_CHECKPOINTS_BY_PLAN_ID, values);
+  const recoveryCheckpoint = getValue(STATIC_KEYS.UI_RECOVERY_CHECKPOINTS_BY_VM_ID, values);
   const vmMorefs = Object.keys(recoveryCheckpoint);
-  const vmRecoveryStatus = getValue(`${vmId}-vmConfig.recovery.status`, values);
   const options = [];
   vmMorefs.forEach((rec) => {
     if (rec === vmId.toString()) {
       const vmCheckpointOptions = recoveryCheckpoint[rec];
-      vmCheckpointOptions.forEach((checkpoint, ind) => {
-        let time = checkpoint.currentSnapshotTime ? checkpoint.currentSnapshotTime : checkpoint.recoveryPointTime;
-        time *= 1000;
-        const d = new Date(time);
-        let resp = '';
-        resp = `${d.toLocaleDateString()}-${d.toLocaleTimeString()}`;
-        if (ind === 0) {
-          if (vmRecoveryStatus !== RECOVERY_STATUS.RECOVERED) {
-            resp += ' (Latest)';
-            options.push({ label: resp, value: 'latest' });
-          }
-        } else {
+      vmCheckpointOptions.forEach((checkpoint, index) => {
+        if (index > 0) {
+          let time = checkpoint.creationTime ? checkpoint.creationTime : checkpoint.recoveryPointTime;
+          time *= 1000;
+          const d = new Date(time);
+          let resp = '';
+          resp = `${d.toLocaleDateString()}-${d.toLocaleTimeString()}`;
           options.push({ label: resp, value: checkpoint.id });
         }
       });
@@ -1284,45 +1281,50 @@ export function revShowRemoveCheckpointOption(user) {
 
 /**
  *select default checkpoint for vm while doing recovery
- *if vm is recovered then don't show latest replication option
  * @param {*} user
- * @param {*} fieldKey
+ * @param {*} dispatch
  * @returns
  */
 
-export function defaultRecoveryCheckpointForVm(user, fieldKey) {
+export function defaultRecoveryCheckpointForVm({ user, dispatch, recoveryCheckpoint }) {
   const { values } = user;
-  const vmId = fieldKey.split('-recovery-checkpoint');
-  const vmRecoveryStatus = getValue(`${vmId[0]}-vmConfig.recovery.status`, values);
-  const recoveryCheckpoint = getValue(STATIC_KEYS.UI_RECOVERY_CHECKPOINTS_BY_PLAN_ID, values);
-  if (vmRecoveryStatus === RECOVERY_STATUS.RECOVERED) {
-    let time = recoveryCheckpoint[vmId[0]][1].recoveryPointTime;
-    time *= 1000;
-    const d = new Date(time);
-    let resp = '';
-    resp = `${d.toLocaleDateString()}-${d.toLocaleTimeString()}`;
-
-    return { label: resp, value: recoveryCheckpoint[vmId[0]][1].id };
+  const uniqueCheckpointValue = getValue('ui.unique.checkpoint.field', values);
+  let checkpointObj = {};
+  if (uniqueCheckpointValue !== '' && typeof recoveryCheckpoint !== 'undefined' && recoveryCheckpoint.length > 0) {
+    for (let i = 0; i < recoveryCheckpoint.length; i += 1) {
+      const checkpoint = recoveryCheckpoint[i];
+      if (checkpoint.checkpointScheduleTime === uniqueCheckpointValue.value) {
+        let time = checkpoint.creationTime;
+        time *= 1000;
+        const d = new Date(time);
+        let resp = '';
+        resp = `${d.toLocaleDateString()}-${d.toLocaleTimeString()}`;
+        const changedValue = { label: resp, value: checkpoint.id };
+        dispatch(valueChange(`${checkpoint.workloadID}-recovery-checkpoint`, changedValue));
+        checkpointObj = { label: resp, value: checkpoint.id };
+        break;
+      }
+    }
   }
-  let time = recoveryCheckpoint[vmId[0]][0].currentSnapshotTime;
-  time *= 1000;
-  const d = new Date(time);
-  let resp = '';
-  resp = `${d.toLocaleDateString()}-${d.toLocaleTimeString()}`;
-
-  return { label: `${resp} (Latest)`, value: 'latest' };
+  return checkpointObj;
 }
 
-export function onCheckpoinChange({ value, fieldKey }) {
+/**
+ *On individual vm recovery checkpoint option change
+ * @param object containing value and fieldkey
+ * @returns
+ */
+
+export function onVmRecoveryCheckpointOptionChange({ value, fieldKey }) {
   return (dispatch, getState) => {
     const { user } = getState();
     const { values } = user;
-    const vmId = fieldKey.split('-recovery-checkpoint');
-    const recoveryStatus = getValue(`${vmId[0]}-vmConfig.recovery.status`, values);
-    if (recoveryStatus === RECOVERY_STATUS.RECOVERED || value === 'latest') {
-      dispatch(valueChange('checkpoint-warning', ''));
-    } else {
-      dispatch(valueChange('checkpoint-warning', 'Recovering VMs with different checkpoints may lead to inconsistencies in overall application state, Reverse differential will not be supported when recovered from a checkpoint.'));
+    const checkpointIds = [];
+    const vmMoref = fieldKey.split('-recovery-checkpoint');
+    const plan = getValue(STORE_KEYS.UI_CHECKPOINT_PLAN, values);
+    checkpointIds.push(value);
+    if (Object.keys(plan).length > 0) {
+      dispatch(recoveryConfigOnCheckpointChanges(checkpointIds, vmMoref[0]));
     }
   };
 }
@@ -1351,4 +1353,43 @@ export function userRoleOptions(user) {
     }, result);
   }
   return result;
+}
+
+export function commonCheckpointOptions(user) {
+  const { values } = user;
+  const uniqueOptions = getValue(STATIC_KEYS.UI_COMMON_CHECKPOINT_OPTIONS, values);
+  const options = [];
+  if (uniqueOptions) {
+    for (let i = 0; i < uniqueOptions.length; i += 1) {
+      const time = uniqueOptions[i].checkpointScheduleTime * 1000;
+      const d = new Date(time);
+      let resp = '';
+      resp = `${d.toLocaleDateString()}-${d.toLocaleTimeString()}`;
+      options.push({ label: resp, value: uniqueOptions[i].checkpointScheduleTime });
+    }
+  }
+  return options;
+}
+
+/**
+ * On common recovery checkpoint option changes
+ * it changes recovery configs which has checkpoint equal to common checkpoint option
+ * @returns
+ */
+export function onCommonCheckpointChange() {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const vmRecoveryCheckpoints = getValue(STATIC_KEYS.UI_RECOVERY_CHECKPOINTS_BY_VM_ID, values);
+    const checkpointIds = [];
+    if (vmRecoveryCheckpoints !== '') {
+      Object.keys(vmRecoveryCheckpoints).forEach((el) => {
+        const checkpointid = defaultRecoveryCheckpointForVm({ user, dispatch, recoveryCheckpoint: vmRecoveryCheckpoints[el] });
+        if (typeof checkpointid?.value !== 'undefined') {
+          checkpointIds.push(checkpointid.value);
+        }
+      });
+    }
+    dispatch(recoveryConfigOnCheckpointChanges(checkpointIds));
+  };
 }

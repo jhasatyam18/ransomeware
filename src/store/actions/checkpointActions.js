@@ -4,11 +4,12 @@ import * as Types from '../../constants/actionTypes';
 import { getValue } from '../../utils/InputUtils';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { MODAL_CONFIRMATION_WARNING, MODAL_PRESERVE_CHECKPOINT } from '../../constants/Modalconstant';
-import { MINUTES_CONVERSION, STATIC_KEYS } from '../../constants/InputConstants';
-import { API_CHECKPOINT_TAKE_ACTION, API_PROTECTTION_PLAN_REPLICATION_VM_JOBS, API_RECOVERY_CHECKPOINT, API_RECOVERY_CHECKPOINT_BY_VM, API_UPDAT_RECOVERY_CHECKPOINT_BY_ID } from '../../constants/ApiConstants';
+import { MINUTES_CONVERSION, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
+import { API_CHECKPOINT_TAKE_ACTION, API_GET_SELECTED_CHECKPOINTS, API_PROTECTTION_PLAN_REPLICATION_VM_JOBS, API_RECOVERY_CHECKPOINT, API_RECOVERY_CHECKPOINT_BY_VM, API_UPDAT_RECOVERY_CHECKPOINT_BY_ID } from '../../constants/ApiConstants';
 import { addMessage } from './MessageActions';
 import { closeModal, openModal } from './ModalActions';
 import { hideApplicationLoader, refresh, showApplicationLoader, valueChange } from './UserActions';
+import { setRecoveryVMDetails } from './DrPlanActions';
 
 export function setRecoveryCheckpointJobs(checkpointJobs) {
   return {
@@ -213,7 +214,7 @@ export function removeCheckpoint(id) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
           if (json.length > 0) {
-            let errStr = 'Failed to delete recovery checkpoint created at';
+            let errStr = 'Failed to delete Point In Time checkpoint created at';
             json.map((j, i) => {
               let time = j.recoveryPointTime;
               time *= 1000;
@@ -261,12 +262,15 @@ export function getVmCheckpoints(planId, moref) {
       dispatch(showApplicationLoader('job_data', 'Fetching Checkpoints'));
       let url = API_RECOVERY_CHECKPOINT_BY_VM.replace('<moref>', moref);
       url = url.replace('<id>', planId);
-      url = `${url}&limit=${100}&searchstr=Available&searchcol=recoveryCheckpointStatus`;
+      url = `${url}&limit=${100}&searchstr=Available&searchcol=checkpointStatus`;
       const apiArray = [];
       const firstCheckpoinRes = await callAPI(url);
       const vmCheckpointRecords = [];
       if (firstCheckpoinRes.records.length > 0) {
         vmCheckpointRecords.push(firstCheckpoinRes.records);
+        dispatch(valueChange(STATIC_KEYS.IS_POINT_IN_TIME_DISABLED, false));
+      } else {
+        dispatch(valueChange(STATIC_KEYS.IS_POINT_IN_TIME_DISABLED, true));
       }
       if (firstCheckpoinRes.hasNext && firstCheckpoinRes.records.length > 0) {
         for (let off = 0; off < firstCheckpoinRes.totalRecords - 1; off += 100) {
@@ -274,32 +278,47 @@ export function getVmCheckpoints(planId, moref) {
           apiArray.push(set);
         }
       }
-
-      const resolvedApiResponse = apiArray.map(async (i) => {
-        vmCheckpointRecords.push(await fetchVmCheckpoint(planId, moref, i, dispatch));
-      });
+      let resolvedApiResponse = [];
+      if (apiArray.length > 0) {
+        resolvedApiResponse = apiArray.map(async (i) => {
+          vmCheckpointRecords.push(await fetchVmCheckpoint(planId, moref, i, dispatch));
+        });
+      }
 
       return Promise.all(resolvedApiResponse).then(
         async () => {
           dispatch(hideApplicationLoader('job_data'));
           const vmCheckpoints = {};
-          vmCheckpointRecords.forEach((el) => {
-            el.forEach((els) => {
-              if (vmCheckpoints[els.workloadID]) {
-                vmCheckpoints[els.workloadID].push(els);
-              } else {
-                vmCheckpoints[els.workloadID] = [els];
+          if (vmCheckpointRecords.length > 0) {
+            vmCheckpointRecords.forEach((el) => {
+              el.forEach((els) => {
+                if (vmCheckpoints[els.workloadID]) {
+                  vmCheckpoints[els.workloadID].push(els);
+                } else {
+                  vmCheckpoints[els.workloadID] = [els];
+                }
+              });
+            });
+            const allCheckpointScheduleTime = vmCheckpointRecords[0].map((record) => ({ id: record.id, checkpointScheduleTime: record.checkpointScheduleTime }));
+            const repeatedCheckpointScheduleTime = {};
+            const uniqueCheckpointScheduleTime = [];
+
+            allCheckpointScheduleTime.forEach((obj) => {
+              if (!repeatedCheckpointScheduleTime[obj.checkpointScheduleTime]) {
+                repeatedCheckpointScheduleTime[obj.checkpointScheduleTime] = true;
+                uniqueCheckpointScheduleTime.push(obj);
               }
             });
-          });
-          const latestReplicationOfVms = await fetchVMsLatestReplicaionJob(planId, moref, dispatch);
-          latestReplicationOfVms.forEach((latestJob) => {
-            if (typeof vmCheckpoints[latestJob.vmMoref] !== 'undefined' && vmCheckpoints[latestJob.vmMoref].length > 0) {
-              vmCheckpoints[latestJob.vmMoref].unshift(latestJob);
-            }
-          });
-          dispatch(valueChange(STATIC_KEYS.UI_RECOVERY_CHECKPOINTS_BY_PLAN_ID, vmCheckpoints));
-          dispatch(valueChange(`${planId}-has-checkpoint`, vmCheckpoints.length > 0));
+            dispatch(valueChange(STATIC_KEYS.UI_COMMON_CHECKPOINT_OPTIONS, uniqueCheckpointScheduleTime));
+            const latestReplicationOfVms = await fetchVMsLatestReplicaionJob(planId, moref, dispatch);
+            latestReplicationOfVms.forEach((latestJob) => {
+              if (typeof vmCheckpoints[latestJob.vmMoref] !== 'undefined' && vmCheckpoints[latestJob.vmMoref].length > 0) {
+                vmCheckpoints[latestJob.vmMoref].unshift(latestJob);
+              }
+            });
+            dispatch(valueChange(STATIC_KEYS.UI_RECOVERY_CHECKPOINTS_BY_VM_ID, vmCheckpoints));
+            dispatch(valueChange(`${planId}-has-checkpoint`, vmCheckpoints.length > 0));
+          }
           return new Promise((resolve) => resolve());
         },
         (err) => {
@@ -430,5 +449,73 @@ export function changeCheckpointType(checkpointType) {
   return {
     type: Types.CHANGE_CHECKPOINT_TYPE,
     checkpointType,
+  };
+}
+
+/**
+ *It takes checkpoint id array and fetch all the recovery configs based on checkpoint ids
+ *Updates recovery configs of the selected vms
+ * @param {*} user
+ * @param {*} selectedCheckpointsId : array of selected vm checkpoint id
+ * @returns
+ */
+
+export function recoveryConfigOnCheckpointChanges(selectedCheckpointsId, selectedVmMoref) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values) || '';
+    const selecetdVms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
+    if (workflow === UI_WORKFLOW.TEST_RECOVERY || workflow === UI_WORKFLOW.RECOVERY) {
+      let checkpointRecConfigs = [];
+      const url = API_GET_SELECTED_CHECKPOINTS.replace('<id>', selectedCheckpointsId);
+      dispatch(showApplicationLoader('reseting-configuration', 'Setting Recovery Configurations'));
+      return callAPI(url)
+        .then((json) => {
+          dispatch(hideApplicationLoader('reseting-configuration'));
+          if (json.hasError) {
+            dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+          } else {
+            checkpointRecConfigs = [...json.records];
+            // get checkpoint recovery config plan in case of single select or user added one more vm or checkpoint
+            let checkpointPlan = getValue(STORE_KEYS.UI_CHECKPOINT_PLAN, values);
+            let obj = { };
+            if (Object.keys(checkpointPlan).length === 0) {
+              // if user selected point-in-time option for the first time then get the recovery plan data and modify instance details based on json record
+              checkpointPlan = getValue('ui.recovery.plan', values);
+              obj = JSON.parse(JSON.stringify(checkpointPlan));
+            } else {
+              obj = { ...checkpointPlan };
+            }
+            if (Object.keys(obj).length > 0) {
+              const { recoveryEntities } = obj;
+              const { instanceDetails } = recoveryEntities;
+              if (Object.keys(checkpointRecConfigs).length > 0) {
+                checkpointRecConfigs.forEach((el) => {
+                  for (let i = 0; i < instanceDetails.length; i += 1) {
+                    if (el.workloadID === instanceDetails[i].sourceMoref) {
+                      const newInstanceDetails = JSON.parse(el.targetWorkloadConfig);
+                      newInstanceDetails.sourceMoref = instanceDetails[i].sourceMoref;
+                      instanceDetails[i] = newInstanceDetails;
+                    }
+                  }
+                });
+              }
+              dispatch(valueChange(STORE_KEYS.UI_CHECKPOINT_PLAN, obj));
+              if (typeof selectedVmMoref !== 'undefined') {
+                dispatch(setRecoveryVMDetails(selectedVmMoref, obj));
+              } else if (Object.keys(selecetdVms).length > 0) {
+                Object.keys(selecetdVms).forEach((vm) => {
+                  dispatch(setRecoveryVMDetails(vm, obj));
+                });
+              }
+            }
+          }
+        },
+        (err) => {
+          dispatch(hideApplicationLoader('reseting-configuration'));
+          dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+        });
+    }
   };
 }

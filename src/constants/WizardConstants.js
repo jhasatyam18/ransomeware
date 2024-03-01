@@ -1,5 +1,5 @@
 import { cleanupTestRecoveries, onConfigureDRPlan, startMigration, startRecovery, startReversePlan, updateVMConfig } from '../store/actions/DrPlanActions';
-import { noValidate, validateDRPlanProtectData, validateSteps, validateMigrationVMs, validateVMConfiguration, validateRecoveryVMs, validateReversePlan, validateRecoveryCheckpointData, validateVMSelection, checkCBTStatus } from '../utils/validationUtils';
+import { noValidate, validateDRPlanProtectData, validateSteps, validateMigrationVMs, validateVMConfiguration, validateReversePlan, validateRecoveryCheckpointData, checkCBTStatus, validateRecoveryVMs, validateVMSelection } from '../utils/validationUtils';
 import { postPlanSitesSelected } from '../store/actions/SiteActions';
 import { UI_WORKFLOW } from './InputConstants';
 import { STORE_KEYS } from './StoreKeyConstants';
@@ -52,7 +52,7 @@ export const CREATE_DR_PLAN_WIZARDS = {
     { label: 'Boot Order', title: '', component: DRPLAN_BOOT_ORDER_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
     { label: 'Replication Configuration', title: '', component: REPLICATION_CONFIGURATION_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: DRPLAN_PROTECTION_CONFIG_STEP_FIELDS },
     { label: 'Scripts', title: '', component: DRPLAN_SCRIPT_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
-    { label: 'Recovery Checkpoints', component: DRPLAN_RECOVERY_CHECKPOINT_CONFIG, validate: (user, dispatch, fields) => validateRecoveryCheckpointData(user, dispatch, fields), fields: RECOVERY_CHECKPOINTS_FIELDS },
+    { label: 'Point In Time Configuration', component: DRPLAN_RECOVERY_CHECKPOINT_CONFIG, validate: (user, dispatch, fields) => validateRecoveryCheckpointData(user, dispatch, fields), fields: RECOVERY_CHECKPOINTS_FIELDS },
     { label: 'Summary', title: '', component: PROTECTION_PLAN_SUMMARY_STEP, validate: (user, dispatch) => noValidate(user, dispatch) }],
 };
 
@@ -60,8 +60,7 @@ export const CREATE_DR_PLAN_WIZARDS = {
 export const RECOVERY_WIZARDS = {
   options: { title: 'Recovery', onFinish: startRecovery },
   steps: [
-    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateVMSelection(user, dispatch), name: STEPS.VIRTUAL_MACHINE },
-    { label: 'Recovery Checkpoint', title: '', component: DRPLAN_RECOVERY_CHECKPOINT_CONFIG, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), name: STEPS.RECOVERY_CONFIG, isAsync: true },
+    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), name: STEPS.VIRTUAL_MACHINE, isAsync: true },
     { label: 'Tools and Scripts', title: '', component: RECOVERY_CONFIG, validate: (user, dispatch) => noValidate({ user, dispatch }), name: STEPS.RECOVERY_CONFIG },
     { label: 'Summary', title: '', component: RECOVERY_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch), name: STEPS.SUMMARY }],
 };
@@ -79,10 +78,9 @@ export const MIGRATION_WIZARDS = {
 export const TEST_RECOVERY_WIZARDS = {
   options: { title: 'Test Recovery', onFinish: startRecovery },
   steps: [
-    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateDRPlanProtectData({ user, dispatch }) },
+    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateVMSelection(user, dispatch) },
     { label: 'Test Recovery Configuration', title: '', component: TEST_RECOVERY_CONFIG_STEP, validate: (user, dispatch) => validateVMConfiguration({ user, dispatch }) },
-    { label: 'Recovery Checkpoint', title: '', component: DRPLAN_RECOVERY_CHECKPOINT_CONFIG, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), isAsync: true },
-    { label: 'Tools and Scripts', title: '', component: TEST_RECOVERY_CONFIG_SCRIPTS, validate: (user, dispatch) => noValidate(user, dispatch) },
+    { label: 'Tools and Scripts', title: '', component: TEST_RECOVERY_CONFIG_SCRIPTS, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), isAsync: true },
     { label: 'Summary', title: '', component: RECOVERY_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch) }],
 };
 
@@ -95,7 +93,7 @@ export const REVERSE_WIZARDS = {
     { label: 'Boot Order', title: '', component: DRPLAN_BOOT_ORDER_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
     { label: 'Replication Configuration', title: '', component: REPLICATION_CONFIGURATION_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: DRPLAN_PROTECTION_CONFIG_STEP_FIELDS },
     { label: 'Scripts', title: '', component: DRPLAN_SCRIPT_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
-    { label: 'Recovery Checkpoints', component: DRPLAN_RECOVERY_CHECKPOINT_CONFIG, validate: (user, dispatch, fields) => validateRecoveryCheckpointData(user, dispatch, fields), fields: RECOVERY_CHECKPOINTS_FIELDS },
+    { label: 'Point In Time Configuration', component: DRPLAN_RECOVERY_CHECKPOINT_CONFIG, validate: (user, dispatch, fields) => validateRecoveryCheckpointData(user, dispatch, fields), fields: RECOVERY_CHECKPOINTS_FIELDS },
     { label: 'Summary', title: '', component: REVERSE_SUMMARY, validate: (user, dispatch) => validateReversePlan({ user, dispatch }), isAsync: true }],
 };
 
@@ -108,7 +106,7 @@ export const UPDATE_PROTECTION_PLAN_WIZARDS = {
     { label: 'Boot Order', title: '', component: DRPLAN_BOOT_ORDER_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
     { label: 'Replication Configuration', title: '', component: REPLICATION_CONFIGURATION_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: DRPLAN_PROTECTION_CONFIG_STEP_FIELDS },
     { label: 'Scripts', title: '', component: DRPLAN_SCRIPT_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
-    { label: 'Recovery Checkpoints', component: DRPLAN_RECOVERY_CHECKPOINT_CONFIG, validate: (user, dispatch, fields) => validateRecoveryCheckpointData(user, dispatch, fields), fields: RECOVERY_CHECKPOINTS_FIELDS },
+    { label: 'Point In Time Configuration', component: DRPLAN_RECOVERY_CHECKPOINT_CONFIG, validate: (user, dispatch, fields) => validateRecoveryCheckpointData(user, dispatch, fields), fields: RECOVERY_CHECKPOINTS_FIELDS },
     { label: 'Summary', title: '', component: PROTECTION_PLAN_SUMMARY_STEP, validate: (user, dispatch) => noValidate(user, dispatch) }],
 };
 
@@ -123,6 +121,6 @@ export const PROTECTED_VM_RECONFIGURATION_WIZARD = {
 export const CLEANUP_TEST_RECOVERY_WIZARDS = {
   options: { title: 'Cleanup Test Recovery', onFinish: cleanupTestRecoveries },
   steps: [
-    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateDRPlanProtectData({ user, dispatch }) },
+    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateDRPlanProtectData({ user, dispatch }), isAsync: true },
     { label: 'Summary', title: '', component: TEST_RECOVERY_CLEANUP_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch) }],
 };

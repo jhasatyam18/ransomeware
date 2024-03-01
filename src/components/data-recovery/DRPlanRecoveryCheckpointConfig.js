@@ -2,14 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardBody, CardTitle, Col, Container, Input, Label, Row } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
 import { TIME_CONSTANTS } from '../../constants/UserConstant';
-import DMTable from '../Table/DMTable';
 import DMField from '../Shared/DMField';
 import DMToolTip from '../Shared/DMToolTip';
 import { getCheckpointTimeFromMinute } from '../../store/actions/checkpointActions';
 import { removeErrorMessage, valueChange } from '../../store/actions';
 import { STORE_KEYS } from '../../constants/StoreKeyConstants';
-import { RECOVERY_CHECKPOINT_OPTION } from '../../constants/TableConstants';
-import { STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
+import { STATIC_KEYS } from '../../constants/InputConstants';
 import { isEmpty, isEmptyNum } from '../../utils/validationUtils';
 import { getRecoveryPointConfiguration, getReplicationInterval } from '../../utils/PayloadUtil';
 import { convertMinIntoHrDayWeekMonthYear } from '../../utils/AppUtils';
@@ -23,10 +21,7 @@ function DRPlanRecoveryCheckpointConfig(props) {
   const [retainUnit, setretainUnit] = useState('hour');
   const { dispatch, user, t } = props;
   const { values, errors } = user;
-  const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
-  const showCheckpointConfiguration = workflow === UI_WORKFLOW.CREATE_PLAN || workflow === UI_WORKFLOW.EDIT_PLAN || workflow === UI_WORKFLOW.REVERSE_PLAN;
   const selectedVmForRecovery = getValue('ui.site.selectedVMs', values);
-  const checkpointWarning = getValue('checkpoint-warning', values);
   const disableRecoveryCheckpointing = getValue(STORE_KEYS.UI_DISABLE_RECOVERY_CHECKPOINT, values) || false;
   const data = [];
   Object.keys(selectedVmForRecovery).forEach((el) => {
@@ -41,6 +36,8 @@ function DRPlanRecoveryCheckpointConfig(props) {
     const retainNumber = getValue(STORE_KEYS.RECOVERY_CHECKPOINT_RETAIN_NUMEBER, values) || 0;
     const retainForUnit = getValue(STORE_KEYS.RECOVERY_CHECKPOINT_RETAIN_NUMEBER_UNIT, values) || TIME_CONSTANTS.HOUR;
     const durationunit = getValue(STORE_KEYS.RECOVERY_CHECKPOINT_DURATION_UNIT, values) || TIME_CONSTANTS.DAY;
+    dispatch(valueChange('recoveryPointConfiguration.duration', TIME_CONSTANTS.DAY));
+    dispatch(valueChange('recoveryPointConfiguration.retainfor', TIME_CONSTANTS.HOUR));
     setDurationNum(parseInt(durationNumber, 10));
     setCount(parseInt(snapshotCount, 10));
     setretainNum(parseInt(retainNumber, 10));
@@ -120,19 +117,9 @@ function DRPlanRecoveryCheckpointConfig(props) {
     }
   };
 
-  const renderWarningMsg = () => (
-    <>
-      <div className="padding-left-20 padding-top-15 card_note_warning">
-        <p>
-          {checkpointWarning}
-        </p>
-      </div>
-    </>
-  );
-
   const enableCheckpointItem = () => (
     <Row className={`margin-top-5 ${disableRecoveryCheckpointing ? 'checkpoint_diable_summary' : ''}`}>
-      <Col sm={3}>
+      <Col sm={4}>
         {t('title.enable.checkpointing')}
       </Col>
       <Col sm={6}>
@@ -260,43 +247,25 @@ function DRPlanRecoveryCheckpointConfig(props) {
 
   return (
     <>
-      {showCheckpointConfiguration ? (
-        <Card>
-          <CardBody>
-            <Container>
-              <CardTitle className="margin-bottom-20">{t('Checkpoint Configuration')}</CardTitle>
-              {disableRecoveryCheckpointing ? (
-                <p className="card_note_warning">
-                  {t('checkpoint.disable.warning.text')}
-                </p>
-              ) : null}
-              {enableCheckpointItem()}
-              <div className={`${!isRecoveryCheckpointingEnable ? 'checkpoint_diable_summary' : null}`}>
-                {checkpointCountAndPeriodItem()}
-                {checkpointRetaintionItem()}
-                {renderSummary()}
-              </div>
-            </Container>
-
-          </CardBody>
-        </Card>
-      ) : (
-        <Card>
-          <CardBody>
-            <Container>
-              <CardTitle>Recovey Options </CardTitle>
-              {checkpointWarning ? renderWarningMsg() : null}
-              <DMTable
-                dispatch={dispatch}
-                columns={RECOVERY_CHECKPOINT_OPTION}
-                data={data}
-                user={user}
-              />
-            </Container>
-
-          </CardBody>
-        </Card>
-      )}
+      <Card>
+        <CardBody>
+          <Container>
+            <CardTitle className="margin-bottom-20">{t('point.in.time.configuration')}</CardTitle>
+            <p>{t('replication.interval.info', { replicationInterval })}</p>
+            {disableRecoveryCheckpointing ? (
+              <p className="card_note_warning">
+                {t('checkpoint.disable.warning.text')}
+              </p>
+            ) : null}
+            {enableCheckpointItem()}
+            <div className={`${!isRecoveryCheckpointingEnable ? 'checkpoint_diable_summary' : null}`}>
+              {checkpointCountAndPeriodItem()}
+              {checkpointRetaintionItem()}
+              {renderSummary()}
+            </div>
+          </Container>
+        </CardBody>
+      </Card>
     </>
   );
 }

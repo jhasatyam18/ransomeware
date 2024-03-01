@@ -1,5 +1,6 @@
 import ip from 'ip';
 import i18n from 'i18next';
+import { setVMGuestOSInfo } from '../store/actions/DrPlanActions';
 import { STORE_KEYS } from '../constants/StoreKeyConstants';
 import { GENERAL_PLATFORM_KEYS, PLAN_KEYS } from '../constants/UserConstant';
 import { addErrorMessage, hideApplicationLoader, removeErrorMessage, showApplicationLoader, valueChange } from '../store/actions';
@@ -11,9 +12,8 @@ import { API_TYPES, callAPI, createPayload } from './ApiUtils';
 import { API_VALIDATE_MIGRATION, API_VALIDATE_RECOVERY, API_VALIDATE_REVERSE_PLAN } from '../constants/ApiConstants';
 import { getRecoveryPayload, getReplicationInterval, getReversePlanPayload, getVMNetworkConfig, getVMwareNetworkConfig, getRecoveryPointTimePeriod } from './PayloadUtil';
 import { IP_REGEX } from '../constants/ValidationConstants';
-import { PLATFORM_TYPES, RECOVERY_STATUS, STATIC_KEYS, UI_WORKFLOW } from '../constants/InputConstants';
+import { CHECKPOINT_TYPE, PLATFORM_TYPES, RECOVERY_STATUS, STATIC_KEYS, UI_WORKFLOW } from '../constants/InputConstants';
 import { createVMConfigStackObject, getValue, isAWSCopyNic, validateMacAddressForVMwareNetwork, excludeKeys } from './InputUtils';
-import { setVMGuestOSInfo } from '../store/actions/DrPlanActions';
 import { convertMinutesToDaysHourFormat } from './AppUtils';
 
 export function isRequired(value) {
@@ -161,7 +161,6 @@ export async function validateDRPlanProtectData({ user, dispatch }) {
       }
     }
   }
-
   const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   if (!vms || Object.keys(vms).length === 0) {
     dispatch(addMessage('Select virtual machine.', MESSAGE_TYPES.ERROR));
@@ -227,7 +226,7 @@ export function validateVMConfiguration({ user, dispatch }) {
   // let fields = {};
   const vmName = [];
   if (Object.keys(vms).length === 0) {
-    dispatch(addMessage('Please navigate back and select a virtual machine for protection', MESSAGE_TYPES.ERROR));
+    dispatch(addMessage('Please select a virtual machine for protection', MESSAGE_TYPES.ERROR));
     return false;
   }
   Object.keys(vms).forEach((vm) => {
@@ -506,9 +505,7 @@ export function validateAzureNetwork(user, dispatch) {
 
 export async function validateRecoveryVMs({ user, dispatch }) {
   const { values } = user;
-
   const isVMSelected = validateVMSelection(user, dispatch);
-
   if (isVMSelected) {
     const initialCheckPass = validateVMConfiguration({ user, dispatch });
     if (initialCheckPass) {
@@ -1002,6 +999,11 @@ export function validateVMSelection(user, dispatch) {
     dispatch(addMessage('Select virtual machines', MESSAGE_TYPES.ERROR));
     return false;
   }
+  const recoveryPath = getValue(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, values);
+  // Recovery checkpoint based on point-in-time is already set for recovery on Commn checkpoint changes
+  if (recoveryPath === CHECKPOINT_TYPE.POINT_IN_TIME) {
+    return validateCheckpointSelection(user, vms, dispatch);
+  }
   return true;
 }
 
@@ -1376,4 +1378,29 @@ export function validateConfigureIDP(user, dispatch) {
     }
   });
   return isClean;
+}
+
+/**
+ * Validate if user select unique checkpoin then all the selected VMs have that checkpoint selected
+ * @param {*} user
+ * @param {*} vms
+ * @param {*} dispatch
+ * @returns
+ */
+
+export function validateCheckpointSelection(user, vms, dispatch) {
+  const { values } = user;
+  let checkpointFlag = 0;
+  const selectedVMsCount = Object.keys(vms).length;
+  Object.keys(vms).forEach((vm) => {
+    const checkpoint = getValue(`${vm}-recovery-checkpoint`, values);
+    if (Object.keys(checkpoint).length !== 0) {
+      checkpointFlag += 1;
+    }
+  });
+  if (checkpointFlag !== selectedVMsCount) {
+    dispatch(addMessage('Select Point In Time For Virtual machine.', MESSAGE_TYPES.ERROR));
+    return false;
+  }
+  return true;
 }

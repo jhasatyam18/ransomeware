@@ -9,4 +9,6 @@ export const STORE_KEYS = {
   RECOVERY_CHECKPOINT_RETAIN_NUMEBER_UNIT: 'recoveryPointConfiguration.retainfor',
   UI_RECOVERY_VMS: 'ui.recovery.vms',
   UI_DISABLE_RECOVERY_CHECKPOINT: 'ui.disable.recovery.checkpointing',
+  UI_CHECKPOINT_PLAN: 'ui.checkpoint.plan',
+  UI_CHECKPOINT_SELECT_WARNING: 'checkpoint-warning',
 };

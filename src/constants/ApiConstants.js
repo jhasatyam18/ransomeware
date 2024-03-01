@@ -43,11 +43,12 @@ export const API_DASHBOARD_VIRTUAL_MACHINE_PROTECTION_ANALYSIS_PROTECTED_VMS = '
 export const API_DASHBOARD_NODE_STATS = 'api/v1/dashboard/nodestats';
 export const API_DASHBOARD_UNACK_ALERTS = 'api/v1/dashboard/unackalerts';
 export const API_RESCOVERY_JOB_STATUS_STEPS = 'api/v1/jobs/recover/vms/<id>';
-export const API_UPDAT_RECOVERY_CHECKPOINT_BY_ID = 'api/v1/recovery-checkpoints';
-export const API_RECOVERY_CHECKPOINT_BY_VM_ID_COMPRESSED = 'api/v1/recovery-checkpoints/?planID=<id>&compressed=true&workloadID=<moref>';
-export const API_RECOVERY_CHECKPOINT_BY_VM = 'api/v1/recovery-checkpoints/?planID=<id>&workloadID=<moref>';
-export const API_RECOVERY_CHECKPOINT = 'api/v1/recovery-checkpoints/?planID=<id>';
-export const API_RECOVERY_CHECKPOINT_JOBS = 'api/v1/jobs/recovery-checkpoints/?planID=<id>';
+export const API_UPDAT_RECOVERY_CHECKPOINT_BY_ID = 'api/v1/checkpoints';
+export const API_RECOVERY_CHECKPOINT_BY_VM_ID_COMPRESSED = 'api/v1/checkpoints/?planID=<id>&compressed=true&workloadID=<moref>';
+export const API_RECOVERY_CHECKPOINT_BY_VM = 'api/v1/checkpoints/?planID=<id>&workloadID=<moref>';
+export const API_RECOVERY_CHECKPOINT = 'api/v1/checkpoints/?planID=<id>';
+export const API_RECOVERY_CHECKPOINT_JOBS = 'api/v1/jobs/checkpoints/?planID=<id>';
+export const API_GET_SELECTED_CHECKPOINTS = 'api/v1/checkpoints/?checkpointIDs=<id>';
 
 // recovery
 export const API_RECOVER = 'api/v1/recover';

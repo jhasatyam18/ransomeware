@@ -347,6 +347,7 @@ export function refresh() {
     switch (pathname) {
       case PROTECTION_PLANS_PATH:
         dispatch(fetchDrPlans());
+        dispatch(fetchPlaybooks());
         break;
       case SITES_PATH:
         dispatch(fetchSites());
@@ -1092,5 +1093,12 @@ export function onDiffReverseChanges({ value }) {
     } else {
       dispatch(valueChange(STORE_KEYS.UI_DISABLE_RECOVERY_CHECKPOINT, false));
     }
+  };
+}
+
+export function setActiveTab(value) {
+  return {
+    type: Types.SET_DRPLAN_DETAIL_ACTIVE_TAB,
+    value,
   };
 }

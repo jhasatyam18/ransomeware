@@ -5,9 +5,10 @@ import { addMessage } from './MessageActions';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { closeModal } from './ModalActions';
 import { fetchRegions, hideApplicationLoader, loadRecoveryLocationData, showApplicationLoader, valueChange } from './UserActions';
+import { STORE_KEYS } from '../../constants/StoreKeyConstants';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { getMatchingFirmwareType, getMatchingOSType, getValue } from '../../utils/InputUtils';
-import { PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
+import { CHECKPOINT_TYPE, PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { setRecoveryVMDetails } from './DrPlanActions';
 import { fetchAvailibilityZonesForAzure } from './AzureAction';
 
@@ -270,6 +271,8 @@ export function handleProtectVMSeletion(data, isSelected, primaryKey) {
     const { user } = getState();
     const { values } = user;
     let selectedVMs = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
+    const recoveryPath = getValue(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, values);
+    // Recovery checkpoint based on point-in-time is already set for recovery on Commn checkpoint changes
     if (!selectedVMs) {
       selectedVMs = {};
     }
@@ -277,11 +280,18 @@ export function handleProtectVMSeletion(data, isSelected, primaryKey) {
       if (!selectedVMs || selectedVMs.length === 0 || !selectedVMs[data[primaryKey]]) {
         const newVMs = { ...selectedVMs, [data[primaryKey]]: data };
         dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, newVMs));
-        dispatch(setRecoveryVMDetails(data[primaryKey]));
-        // set guest os type of newly selected vm
+        dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, newVMs));
         dispatch(valueChange(`${data[primaryKey]}-vmConfig.general.guestOS`, getMatchingOSType(data.guestOS)));
         dispatch(valueChange(`${data[primaryKey]}-vmConfig.general.firmwareType`, getMatchingFirmwareType(data.firmwareType)));
         dispatch(valueChange(`${data[primaryKey]}-vmConfig.recovery.status`, data.recoveryStatus));
+        if (recoveryPath === CHECKPOINT_TYPE.POINT_IN_TIME) {
+          const plan = getValue(STORE_KEYS.UI_CHECKPOINT_PLAN, values);
+          if (Object.keys(plan).length > 0) {
+            dispatch(setRecoveryVMDetails(data[primaryKey], plan));
+          }
+        } else {
+          dispatch(setRecoveryVMDetails(data[primaryKey]));
+        }
       }
     } else if (selectedVMs[data[primaryKey]]) {
       const newVMs = selectedVMs;
@@ -295,13 +305,19 @@ export function handleSelectAllRecoveryVMs(value) {
   return (dispatch, getState) => {
     const { user } = getState();
     const { values } = user;
-    const data = getValue('ui.recovery.vms', values);
+    const data = getValue(STORE_KEYS.UI_RECOVERY_VMS, values);
+    const recoveryPath = getValue(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, values) || '';
+    const plan = getValue(STORE_KEYS.UI_CHECKPOINT_PLAN, values);
     let selectedVMs = {};
     if (value) {
       data.forEach((vm) => {
         if (!(typeof vm.isDisabled !== 'undefined' && vm.isDisabled === true)) {
           selectedVMs = { ...selectedVMs, [vm.moref]: vm };
-          dispatch(setRecoveryVMDetails(vm.moref));
+          if (recoveryPath !== CHECKPOINT_TYPE.POINT_IN_TIME) {
+            dispatch(setRecoveryVMDetails(vm.moref));
+          } else if (Object.keys(plan).length > 0) {
+            dispatch(setRecoveryVMDetails(vm.moref, plan));
+          }
           dispatch(valueChange(`${vm.moref}-vmConfig.recovery.status`, vm.recoveryStatus));
         }
       });

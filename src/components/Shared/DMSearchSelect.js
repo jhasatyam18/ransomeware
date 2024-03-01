@@ -28,7 +28,7 @@ class DMSearchSelect extends Component {
     if (!fieldValue && defaultValue) {
       let defaultVal;
       if (typeof defaultValue === 'function') {
-        defaultVal = defaultValue(user, fieldKey);
+        defaultVal = defaultValue(user, fieldKey, dispatch);
       } else {
         defaultVal = defaultValue;
       }

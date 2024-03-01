@@ -26,6 +26,8 @@ const INITIAL_STATE = {
     tree: { treeKey: '' },
     roles: [],
     users: [],
+    // Added tab in redux
+    drPlanDetailActiveTab: '1',
   },
   sites: { sites: [], selectedSites: [] },
   drPlans: { plans: [], selectedPlans: [], recoveryPlan: {} },
