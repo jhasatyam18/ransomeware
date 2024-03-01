@@ -30,7 +30,7 @@ class RecoveryConfig extends Component {
   handleChange = (e, key) => {
     const { dispatch } = this.props;
     dispatch(valueChange(key, e.target.checked));
-  }
+  };
 
   render() {
     const { user, dispatch, t } = this.props;

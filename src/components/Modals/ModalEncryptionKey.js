@@ -34,7 +34,7 @@ class ModalEncryptionKey extends Component {
       password: e.target.value,
       error: '',
     });
-  }
+  };
 
   onFilterKeyPress(e) {
     if (e.key === 'Enter') {

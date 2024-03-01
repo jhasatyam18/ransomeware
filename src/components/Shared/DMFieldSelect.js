@@ -70,7 +70,7 @@ class DMFieldSelect extends Component {
     const { value } = this.state;
     dispatch(valueChange(fieldKey, value));
     validateField(field, fieldKey, value, dispatch, user);
-  }
+  };
 
   handleChange = (e) => {
     const { dispatch, fieldKey, user, field } = this.props;
@@ -83,7 +83,7 @@ class DMFieldSelect extends Component {
       dispatch(onChange({ value: e.target.value, dispatch, user, fieldKey }));
     }
     validateField(field, fieldKey, e.target.value, dispatch, user);
-  }
+  };
 
   renderOptions() {
     const options = this.getOptions();

@@ -157,7 +157,6 @@ function ModalScripts(props) {
             </div>
           </Col>
         </Row>
-
       </FormGroup>
       <FormGroup className="row mb-4 form-group">
         <Col sm={4}>

@@ -2,8 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDatePicker from 'react-datepicker';
 import { withTranslation } from 'react-i18next';
-import { Col, FormFeedback, FormGroup, Label } from 'reactstrap';
-import { FIELDS } from '../../constants/FieldsConstant';
+import { Col, FormGroup, Label } from 'reactstrap';
 import { valueChange } from '../../store/actions/UserActions';
 import { getValue } from '../../utils/InputUtils';
 // Import Images
@@ -11,7 +10,8 @@ import { getValue } from '../../utils/InputUtils';
 class DMTimePicker extends Component {
   constructor() {
     super();
-    this.state = { value: '', isFocused: false };
+    this.state = { value: '' };
+    // isFocused: false
   }
 
   componentDidMount() {
@@ -31,25 +31,17 @@ class DMTimePicker extends Component {
   handleChange = (time) => {
     const { dispatch, fieldKey } = this.props;
     this.setState({
-      value: time, isFocused: false,
+      value: time,
+      // isFocused: false,
     });
     dispatch(valueChange(fieldKey, time));
-  }
-
-  handleFocus(val) {
-    this.setState({
-      isFocused: val,
-    });
-  }
+  };
 
   onBlur = () => {
     const { fieldKey, dispatch } = this.props;
     const { value } = this.state;
-    this.setState({ isFocused: false });
     dispatch(valueChange(fieldKey, value));
-    // TODO: should be handled
-    // validateField(field, fieldKey, value, dispatch, user);
-  }
+  };
 
   getTimeValue() {
     const { value } = this.state;
@@ -68,13 +60,6 @@ class DMTimePicker extends Component {
     return fieldValue;
   }
 
-  isDisabled(value) {
-    if (value === true) {
-      return value;
-    }
-    return false;
-  }
-
   renderLabel() {
     const { t, hideLabel, field } = this.props;
     const { label } = field;
@@ -86,22 +71,6 @@ class DMTimePicker extends Component {
         {t(label)}
       </Label>
     );
-  }
-
-  renderError(hasError) {
-    const { field, fieldKey } = this.props;
-    const { isFocused } = this.state;
-    if (hasError) {
-      return (
-        <FormFeedback for={fieldKey}>{FIELDS[fieldKey].errorMessage}</FormFeedback>
-      );
-    }
-    if (isFocused) {
-      return (
-        <small className="form-text text-muted" htmlFor={fieldKey}>{field.description}</small>
-      );
-    }
-    return null;
   }
 
   render() {
@@ -130,7 +99,7 @@ class DMTimePicker extends Component {
               timeCaption="Time"
               dateFormat="h:mm aa"
               onBlur={this.onBlur}
-              onFocus={() => this.handleFocus(true)}
+              // onFocus={() => this.handleFocus(true)}
             />
           </Col>
           {/* <label className="margin-top-3">:</label>

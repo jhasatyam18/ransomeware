@@ -34,7 +34,7 @@ class RoleMapper extends Component {
     this.setState({
       [e.target.id]: e.target.value,
     });
-  }
+  };
 
   getOptions() {
     const { user, fieldKey, options } = this.props;

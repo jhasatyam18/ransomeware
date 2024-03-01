@@ -9,8 +9,6 @@ function ServerPortItemRenderer({ data }) {
     replPort = `${replCtrlPort}, ${replDataPort}`;
   } else if (replCtrlPort !== 0) {
     replPort = replCtrlPort;
-  } else if (replCtrlPort !== 0) {
-    replPort = replDataPort;
   }
   function getPort(icon, title, value) {
     return (

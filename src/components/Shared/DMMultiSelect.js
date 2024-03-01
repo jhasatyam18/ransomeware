@@ -46,7 +46,7 @@ class DMMultiSelect extends Component {
       this.setState({ value: e.target.value });
       dispatch(valueChange(fieldKey, selectedItems));
     }
-  }
+  };
 
   getOptions() {
     const { field, user, fieldKey } = this.props;

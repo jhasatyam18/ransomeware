@@ -23,7 +23,7 @@ class ModalSupportBundle extends Component {
       description: e.target.value,
       error: '',
     });
-  }
+  };
 
   onClose() {
     const { dispatch } = this.props;

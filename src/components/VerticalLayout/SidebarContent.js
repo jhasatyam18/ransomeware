@@ -1,4 +1,3 @@
-// MetisMenu
 import MetisMenu from 'metismenujs';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -65,7 +64,7 @@ class SidebarContent extends Component {
               <i className={menu.icon} style={{ fontSize: 16, color: this.isActive(menu.isActivePath.join(',')) }} />
               <span>{t(menu.label)}</span>
             </Link>
-            <ul className="sub-menu" aria-expanded="false">
+            <ul className="sub-menu">
               {this.renderMenu(menu.subMenu)}
             </ul>
           </li>

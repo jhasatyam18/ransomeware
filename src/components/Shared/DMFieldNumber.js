@@ -65,14 +65,14 @@ class placeHolderNumber extends Component {
     if (typeof onChange === 'function') {
       dispatch(onChange({ dispatch, user, fieldKey, value: targetValue }));
     }
-  }
+  };
 
   onBlur = () => {
     const { fieldKey, dispatch, user, field } = this.props;
     const { value } = this.state;
     dispatch(valueChange(fieldKey, parseInt(value, 10)));
     validateField(field, fieldKey, value, dispatch, user);
-  }
+  };
 
   renderError(hasError) {
     const { fieldKey, field } = this.props;

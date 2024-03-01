@@ -38,7 +38,7 @@ class DMFieldRange extends Component {
     } else {
       dispatch(valueChange(fieldKey, targetValue));
     }
-  }
+  };
 
   handleFocus(val) {
     const { fieldKey, dispatch, user } = this.props;
@@ -67,7 +67,7 @@ class DMFieldRange extends Component {
     this.setState({ isFocused: false });
     dispatch(valueChange(fieldKey, parseInt(value, 10)));
     validateField(field, fieldKey, value, dispatch, user);
-  }
+  };
 
   renderError(hasError) {
     const { field, fieldKey } = this.props;

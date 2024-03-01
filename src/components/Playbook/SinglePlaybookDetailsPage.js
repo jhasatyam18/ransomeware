@@ -200,7 +200,7 @@ function SinglePlaybookDetailsPage(props) {
         {t('edit.playbook.warn.msg', { name })}
       </span>
       <p className="margin-top-5">
-        {<small aria-hidden className="link_color" onClick={onExport}>[click here]</small>}
+        <small aria-hidden className="link_color" onClick={onExport}>[click here]</small>
         { t('title.download.configured.excel')}
       </p>
     </>

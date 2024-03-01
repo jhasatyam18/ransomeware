@@ -56,7 +56,7 @@ class Layout extends Component {
 
   toggleMenuCallback = () => {
 
-  }
+  };
 
   capitalizeFirstLetter(string) {
     return string.charAt(1).toUpperCase() + string.slice(2);

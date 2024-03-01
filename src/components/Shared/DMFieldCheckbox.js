@@ -25,7 +25,7 @@ class DMFieldCheckbox extends Component {
     if (typeof onChange === 'function') {
       dispatch(onChange({ value: e.target.checked, fieldKey }));
     }
-  }
+  };
 
   getCheckboxValue() {
     const { fieldKey, user } = this.props;

@@ -69,7 +69,7 @@ class DMSearchSelect extends Component {
     const { values } = user;
     const val = getValue(fieldKey, values);
     validateField(field, fieldKey, val.value, dispatch, user);
-  }
+  };
 
   handleChange = (selectedOption) => {
     const { dispatch, fieldKey, field, user } = this.props;
@@ -79,7 +79,7 @@ class DMSearchSelect extends Component {
       dispatch(onChange({ value: selectedOption.value, dispatch, user, fieldKey }));
     }
     validateField(field, fieldKey, selectedOption.value, dispatch, user);
-  }
+  };
 
   getFieldValue() {
     const { user, fieldKey } = this.props;

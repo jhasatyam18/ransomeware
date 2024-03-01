@@ -160,7 +160,7 @@ function DRPlanRecoveryCheckpointConfig(props) {
             />
             {renderError(countHasError, STORE_KEYS.RECOVERY_CHECKPOINT_COUNT, 'Invalid')}
           </Col>
-          <p className="padding-top-6" sm={1}>
+          <p className="padding-top-6">
             {t('title.checkpoint.every')}
           </p>
           <Col sm={2}>

@@ -29,7 +29,7 @@ class SecurityGroups extends Component {
       this.setState({ selectedSG, value: e.target.value });
       dispatch(valueChange(vmKey, selectedSG));
     }
-  }
+  };
 
   removeSG(sg) {
     const { dispatch, vmKey } = this.props;

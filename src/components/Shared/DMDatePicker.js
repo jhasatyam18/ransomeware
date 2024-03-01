@@ -34,7 +34,7 @@ class DMDatePicker extends Component {
       value: date,
     });
     dispatch(valueChange(fieldKey, date));
-  }
+  };
 
   minDate() {
     const { field } = this.props;

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactHtmlParser from 'react-html-parser';
 import { Button, ButtonGroup, Col, Row, Popover, PopoverBody } from 'reactstrap';
 
 class DMTPaginator extends Component {
@@ -36,7 +35,7 @@ class DMTPaginator extends Component {
     this.setState({
       searchStr: e.target.value,
     });
-  }
+  };
 
   onFilterKeyPress(e) {
     if (e.key === 'Enter') {
@@ -84,12 +83,12 @@ class DMTPaginator extends Component {
     this.setState({
       popoverOpen: show,
     });
-  }
+  };
 
   getHelpText(html) {
     return (
       <div>
-        {ReactHtmlParser(html)}
+        {html}
       </div>
     );
   }

@@ -148,7 +148,7 @@ function ShowPlaybookVmChanges(props) {
         <CardHeader style={{ backgroundColor: '#2a3042', border: '1px solid #464952' }}>
           <Row>
             <Col sm={6}>
-              <span aria-hidden className="link_color" onClick={toggle} disable={deletedData}>
+              <span aria-hidden className="link_color" onClick={toggle}>
                 {id}
               </span>
             </Col>

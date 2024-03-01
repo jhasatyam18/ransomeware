@@ -31,7 +31,7 @@ class ModalAlertDetails extends Component {
       ackMessage: e.target.value,
       error: '',
     });
-  }
+  };
 
   onClose() {
     const { dispatch } = this.props;
@@ -50,7 +50,7 @@ class ModalAlertDetails extends Component {
     selected.acknowledgeMessage = ackMessage;
     selected.acknowledgeBy = user;
     dispatch(takeVMAction(selected, associatedEvent));
-  }
+  };
 
   acknowledgeAndClose() {
     const { dispatch, alerts, t } = this.props;

@@ -49,7 +49,7 @@ class DMFieldRadio extends Component {
     if (typeof onChange === 'function') {
       dispatch(onChange({ value: e.target.value, dispatch, user }));
     }
-  }
+  };
 
   renderOptions() {
     const { selected } = this.state;

@@ -31,13 +31,13 @@ class DMFieldText extends Component {
     if (e.target.charCode === 13 || e.charCode === 13) {
       e.preventDefault();
     }
-  }
+  };
 
   handleChange = (e) => {
     const { dispatch, fieldKey, field, user } = this.props;
     dispatch(valueChange(fieldKey, e.target.value));
     validateField(field, fieldKey, e.target.value, dispatch, user);
-  }
+  };
 
   handleFocus(val) {
     this.setState({
@@ -60,7 +60,7 @@ class DMFieldText extends Component {
     this.setState({ isFocused: false });
     dispatch(valueChange(fieldKey, value.trim()));
     validateField(field, fieldKey, value, dispatch, user);
-  }
+  };
 
   typeToggle() {
     const { state } = this;
@@ -167,7 +167,7 @@ class DMFieldText extends Component {
                     value={value}
                     onBlur={this.onBlur}
                     onChange={this.handleChange}
-                    invalid={hasErrors}
+                    // invalid={hasErrors}
                     autoComplete="none"
                     placeholder={placeH}
                     onFocus={() => this.handleFocus(true)}

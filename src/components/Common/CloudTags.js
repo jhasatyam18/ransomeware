@@ -35,7 +35,7 @@ class CloudTags extends Component {
     this.setState({
       [e.target.id]: e.target.value,
     });
-  }
+  };
 
   copyTags = (e) => {
     const { tags, sourceTags } = this.state;
@@ -55,7 +55,7 @@ class CloudTags extends Component {
     }
     this.setState({ tagKey: '', tagValue: '', tags: newTags, chkCopyTgs: e.target.checked });
     dispatch(valueChange(vmKey, newTags));
-  }
+  };
 
   removeTag(tag) {
     const { dispatch, vmKey } = this.props;

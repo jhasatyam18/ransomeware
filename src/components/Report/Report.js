@@ -42,7 +42,7 @@ class Report extends Component {
   toggleCollapse = () => {
     const { openCollapse } = this.state;
     this.setState({ openCollapse: !openCollapse });
-  }
+  };
 
   generateReport = () => {
     const { dispatch } = this.props;
@@ -60,7 +60,7 @@ class Report extends Component {
     if (openCollapse) {
       this.toggleCollapse();
     }
-  }
+  };
 
   exportToPDF = () => {
     const { dispatch, t } = this.props;
@@ -73,7 +73,7 @@ class Report extends Component {
       this.setState({ printView: false });
       dispatch(hideApplicationLoader('PDF_REPORT'));
     }, MILI_SECONDS_TIME.TEN_THOUSAND);
-  }
+  };
 
   exportToExcel = () => {
     const { dispatch, dashboard, t } = this.props;
@@ -86,7 +86,7 @@ class Report extends Component {
       this.setState({ printView: false });
       dispatch(hideApplicationLoader('EXCEL_REPORT'));
     }, MILI_SECONDS_TIME.TEN_THOUSAND);
-  }
+  };
 
   renderForm() {
     return (

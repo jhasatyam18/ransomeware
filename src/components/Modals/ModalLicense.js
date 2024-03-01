@@ -58,19 +58,15 @@ class ModalLicense extends Component {
       this.setState({ state: 'error' });
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
-  }
+  };
 
   dragOver = (e) => {
     e.preventDefault();
-  }
+  };
 
   dragEnter = (e) => {
     e.preventDefault();
-  }
-
-  dragLeave = (e) => {
-    e.preventDefault();
-  }
+  };
 
   dragDrop = (e) => {
     e.preventDefault();
@@ -80,7 +76,7 @@ class ModalLicense extends Component {
       state: 'uploading',
     });
     this.uploadFile(files[0]);
-  }
+  };
 
   onFileChange = (e) => {
     e.preventDefault();
