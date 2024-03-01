@@ -65,7 +65,7 @@ function VMNetworkInfoItemRenderer(props) {
       return (
         <div key={`nic-${index + 1}`}>
           <div className="vmnetwork_info">
-            {`Nic-${index}`}
+            {`Nic-${index + 1}`}
           </div>
           {
             fields.map((f) => renderField(f, n, index))

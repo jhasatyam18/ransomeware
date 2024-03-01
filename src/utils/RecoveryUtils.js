@@ -302,7 +302,7 @@ function getNetworkConfig({ sourceConfig, user, workFlow }) {
         { title: 'DNS', value: dns },
       ];
     }
-    const nic = { title: `Nic-${index}`, values: keys };
+    const nic = { title: `Nic-${index + 1}`, values: keys };
     netWorkKeys.push(nic);
   });
   return netWorkKeys;
