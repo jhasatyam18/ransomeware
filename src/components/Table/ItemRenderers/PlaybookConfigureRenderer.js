@@ -1,20 +1,20 @@
-import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Col, Row } from 'reactstrap';
 import { faLaptop, faLayerGroup } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from 'react';
+import { Col, Row } from 'reactstrap';
 
 function PlaybookConfigureRenderer({ data }) {
-  const { protectedEntities, protectionPlans } = data;
+  const { protectedEntitiesCount, protectionPlansCount } = data;
 
   return (
     <Row className="margin-top-3">
       <Col sm={6}>
         <FontAwesomeIcon size="sm" icon={faLayerGroup} />
-        <span className="padding-left-10">{protectionPlans}</span>
+        <span className="padding-left-10">{protectionPlansCount}</span>
       </Col>
       <Col sm={6}>
         <FontAwesomeIcon size="sm" icon={faLaptop} />
-        <span className="padding-left-10">{protectedEntities}</span>
+        <span className="padding-left-10">{protectedEntitiesCount}</span>
       </Col>
     </Row>
   );

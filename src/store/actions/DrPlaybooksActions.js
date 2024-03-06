@@ -1,16 +1,17 @@
+import * as Types from '../../constants/actionTypes';
+import { API_BULK_GENERATE, API_GET_BULK_PLANS, API_GET_CONFIG_TEMPLATE_BY_ID, API_GET_PLAN_DIFF, API_UPDATE_ISPLAYBOOK_DOWNLOAD_STATUS, API_UPLOAD_TEMPLATED, API_VALIDATE_TEMPLATE, CREATE_PLAN_FROM_PLAYBOOK } from '../../constants/ApiConstants';
+import { PLAYBOOK_IN_VALIDATED } from '../../constants/AppStatus';
 import { FIELDS } from '../../constants/FieldsConstant';
+import { PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
+import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { MODAL_RECONFIGURE_PLAYBOOK, MODAL_TEMPLATE_SHOW_PPLAN_CHANGES } from '../../constants/Modalconstant';
-import { checkPlanConfigurationChanges, checkVmRecoveryConfigurationChanges, validateField } from '../../utils/validationUtils';
 import { PLAYBOOK_LIST } from '../../constants/RouterConstants';
 import { API_TYPES, callAPI, createPayload, getUrlPath } from '../../utils/ApiUtils';
-import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
 import { getValue } from '../../utils/InputUtils';
-import { API_BULK_GENERATE, API_GET_BULK_PLANS, API_GET_CONFIG_TEMPLATE_BY_ID, API_GET_PLAN_DIFF, API_UPLOAD_TEMPLATED, API_VALIDATE_TEMPLATE, CREATE_PLAN_FROM_PLAYBOOK } from '../../constants/ApiConstants';
+import { checkPlanConfigurationChanges, checkVmRecoveryConfigurationChanges, validateField } from '../../utils/validationUtils';
 import { addMessage } from './MessageActions';
-import { clearValues, hideApplicationLoader, refresh, showApplicationLoader, valueChange } from './UserActions';
-import * as Types from '../../constants/actionTypes';
 import { closeModal, openModal } from './ModalActions';
+import { clearValues, hideApplicationLoader, refresh, showApplicationLoader, valueChange } from './UserActions';
 
 /**
  *
@@ -286,6 +287,13 @@ export function onCreatePlanFromPlaybook(id) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
         dispatch(addMessage('Protection plan configured successfully', MESSAGE_TYPES.SUCCESS));
+        const { name, status } = json;
+        if (status !== 'configPlanReconfigured' && typeof name !== 'undefined') {
+          const result = `/playbooks/${json.name}`;
+          const link = document.createElement('a');
+          link.href = result;
+          link.click();
+        }
         dispatch(closeModal());
         dispatch(refresh());
       }
@@ -473,4 +481,34 @@ export function uploadFiles(file, apiUrl, msg1, msg2, method) {
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
   };
+}
+
+export function updateIsPlaybookDownloadedStatus(playbookId) {
+  return (dispatch) => {
+    const url = API_UPDATE_ISPLAYBOOK_DOWNLOAD_STATUS.replace('<playbookid>', playbookId);
+    const obj = createPayload(API_TYPES.PUT, { });
+    return callAPI(url, obj).then((json) => {
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('configuring-bulk-upload'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+  };
+}
+
+export function downloadPlaybooks(data, dispatch) {
+  const { playbookStatus, name, id } = data;
+  if (typeof name !== 'undefined') {
+    if (playbookStatus === PLAYBOOK_IN_VALIDATED) {
+      dispatch(updateIsPlaybookDownloadedStatus(id));
+    }
+    const downloadURL = `${window.location.protocol}//${window.location.host}/playbooks/${name}`;
+    const link = document.createElement('a');
+    link.href = downloadURL;
+    link.click();
+    dispatch(refresh());
+  }
 }

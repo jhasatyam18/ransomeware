@@ -1,15 +1,12 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import {
-  Col, FormFeedback, FormGroup, Input, Label, Row,
-} from 'reactstrap';
 import { isNumber } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
-import { valueChange } from '../../store/actions/UserActions';
+import { Col, FormFeedback, FormGroup, Input, Label, Row } from 'reactstrap';
 import { FIELDS } from '../../constants/FieldsConstant';
-import { validateField } from '../../utils/validationUtils';
+import { valueChange } from '../../store/actions/UserActions';
 import { getValue } from '../../utils/InputUtils';
-// Import Images
+import { validateField } from '../../utils/validationUtils';
 
 class DMFieldRange extends Component {
   constructor() {
@@ -43,7 +40,7 @@ class DMFieldRange extends Component {
   handleFocus(val) {
     const { fieldKey, dispatch, user } = this.props;
     const { values } = user;
-    const fieldValue = getValue(fieldKey, values) || '';
+    const fieldValue = getValue(fieldKey, values) || 0;
     dispatch(valueChange(fieldKey, fieldValue));
     this.setState({
       isFocused: val,
@@ -51,12 +48,9 @@ class DMFieldRange extends Component {
   }
 
   getRangeValue() {
-    const { fieldKey, user, dispatch } = this.props;
+    const { fieldKey, user } = this.props;
     const { values } = user;
-    const fieldValue = getValue(fieldKey, values) || '';
-    if (fieldValue === '' || fieldValue === undefined) {
-      return dispatch(valueChange(fieldKey, 0));
-    }
+    const fieldValue = getValue(fieldKey, values) || 0;
     return fieldValue;
   }
 

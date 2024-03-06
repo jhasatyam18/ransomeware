@@ -34,6 +34,8 @@ export const RECOVERY_CHECKPOINT_JOB_PURGED = 'Purge';
 export const CHECKPOINT_STATUS_AVAILABLE = 'Available';
 export const CHECKPOINT_STATUS_DELETED_FROM_INFRA = 'Deleted from Platform';
 
+export const PLAYBOOK_IN_VALIDATED = 'Not-in-sync';
+
 export const RECOVERY_STATUS = {
   MIGRATED: 'Migrated',
   RECOVERED: 'Recovered',

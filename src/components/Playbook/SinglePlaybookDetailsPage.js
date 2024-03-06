@@ -1,31 +1,32 @@
-import React, { useEffect, useRef } from 'react';
-import { Container, Card, CardBody, Row, Col, Input } from 'reactstrap';
-import { useLocation } from 'react-router-dom';
-import { withTranslation } from 'react-i18next';
 import { faDownload, faEdit, faFileCircleCheck, faTrash, faUpload } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useEffect, useRef } from 'react';
+import { withTranslation } from 'react-i18next';
 import { connect, useSelector } from 'react-redux';
-import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
-import { playbookExport } from '../../store/actions/DrPlanActions';
+import { useLocation } from 'react-router-dom';
+import { Card, CardBody, Col, Container, Input, Row } from 'reactstrap';
+import { API_GET_CONFIG_TEMPLATE_BY_ID } from '../../constants/ApiConstants';
+import { PLAYBOOKS_STATUS, TEMPLATE_STATUS } from '../../constants/AppStatus';
 import { NOTE_TEXT } from '../../constants/DMNoteConstant';
-import DMNote from '../Common/DMNote';
 import { MILI_SECONDS_TIME } from '../../constants/EventConstant';
 import { STATIC_KEYS } from '../../constants/InputConstants';
-import { addMessage } from '../../store/actions/MessageActions';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { callAPI } from '../../utils/ApiUtils';
-import { API_GET_CONFIG_TEMPLATE_BY_ID } from '../../constants/ApiConstants';
-import { clearValues, hideApplicationLoader, showApplicationLoader, valueChange } from '../../store/actions';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
-import { closeModal, openModal } from '../../store/actions/ModalActions';
-import { PLAYBOOKS_STATUS, TEMPLATE_STATUS } from '../../constants/AppStatus';
-import { PLAYBOOK_DETAILS, PLAYBOOK_CHANGES_RENDERER } from '../../constants/TableConstants';
-import DMTable from '../Table/DMTable';
-import { deletePlaybook, onCreatePlanFromPlaybook, playbookFetchPlanDiff, setSinglePlaybook, uploadFiles, validatePlaybook } from '../../store/actions/DrPlaybooksActions';
-import DMBreadCrumb from '../Common/DMBreadCrumb';
 import { PLAYBOOK_LIST, PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
-import SinglePlaybookStatusRenderer from './SinglePlaybookStatusRenderer';
+import { PLAYBOOK_CHANGES_RENDERER, PLAYBOOK_DETAILS } from '../../constants/TableConstants';
+import { KEY_CONSTANTS } from '../../constants/UserConstant';
+import { clearValues, hideApplicationLoader, showApplicationLoader, valueChange } from '../../store/actions';
+import { playbookExport } from '../../store/actions/DrPlanActions';
+import { deletePlaybook, downloadPlaybooks, onCreatePlanFromPlaybook, playbookFetchPlanDiff, setSinglePlaybook, uploadFiles, validatePlaybook } from '../../store/actions/DrPlaybooksActions';
+import { addMessage } from '../../store/actions/MessageActions';
+import { closeModal, openModal } from '../../store/actions/ModalActions';
+import { callAPI } from '../../utils/ApiUtils';
+import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
+import DMBreadCrumb from '../Common/DMBreadCrumb';
+import DMNote from '../Common/DMNote';
+import DMTable from '../Table/DMTable';
 import FixPlaybookErrors from './FixPlaybookErrors';
+import SinglePlaybookStatusRenderer from './SinglePlaybookStatusRenderer';
 
 function SinglePlaybookDetailsPage(props) {
   const { dispatch, drPlaybooks, user, t } = props;
@@ -243,12 +244,7 @@ function SinglePlaybookDetailsPage(props) {
   };
 
   const onDownloadClick = () => {
-    if (typeof name !== 'undefined') {
-      const downloadURL = `${window.location.protocol}//${window.location.host}/playbooks/${name}`;
-      const link = document.createElement('a');
-      link.href = downloadURL;
-      link.click();
-    }
+    downloadPlaybooks(playbook, dispatch);
   };
 
   const renderGlobalActions = () => {
@@ -285,7 +281,7 @@ function SinglePlaybookDetailsPage(props) {
               {renderGlobalActions()}
             </Col>
             <Col sm={4}>
-              <SinglePlaybookStatusRenderer dispatch={dispatch} playbook={playbook} field="status" showStatusLabel user={user} />
+              <SinglePlaybookStatusRenderer flow={KEY_CONSTANTS.PPLAN_DETAILS} dispatch={dispatch} playbook={playbook} field="status" showStatusLabel user={user} />
             </Col>
           </Row>
           {status === PLAYBOOKS_STATUS.PLAYBOOK_VALIDATION_FAILED ? (

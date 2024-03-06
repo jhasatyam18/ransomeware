@@ -1,17 +1,20 @@
 import { faCheckCircle, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from 'react';
+import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
-import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
+import { Popover, PopoverBody } from 'reactstrap';
+import { PLAYBOOKS_STATUS, PLAYBOOK_IN_VALIDATED, TEMPLATE_STATUS } from '../../constants/AppStatus';
+import { MODAL_CONFIRMATION_WARNING, MODAL_TEMPLATE_ERROR } from '../../constants/Modalconstant';
+import { KEY_CONSTANTS } from '../../constants/UserConstant';
 import { clearValues } from '../../store/actions';
 import { onCreatePlanFromPlaybook, playbookFetchPlanDiff, validatePlaybook } from '../../store/actions/DrPlaybooksActions';
 import { closeModal, openModal } from '../../store/actions/ModalActions';
-import { MODAL_CONFIRMATION_WARNING, MODAL_TEMPLATE_ERROR } from '../../constants/Modalconstant';
-import { PLAYBOOKS_STATUS, TEMPLATE_STATUS } from '../../constants/AppStatus';
+import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
 
-function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispatch, t, user }) {
+function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispatch, t, user, flow }) {
   const status = playbook[field];
-  const { id, planConfigurations } = playbook;
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const { id, planConfigurations, playbookStatus } = playbook;
   const statusInd = TEMPLATE_STATUS.indexOf(status);
   const Uploaded = statusInd > 0 ? 'success_line' : '';
   const Validated = statusInd > 3 ? 'success_line' : '';
@@ -164,9 +167,45 @@ function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispat
     }
   };
 
+  const renderPopOver = (hoverInfo, key) => (
+    <Popover placement="bottom" isOpen={popoverOpen} target={key}>
+      <PopoverBody style={{ maxHeight: '100px', minHeight: '30px', color: '#fff', backgroundColor: 'black', textAlign: 'center' }}>
+        {hoverInfo}
+      </PopoverBody>
+    </Popover>
+  );
+
+  const renderStatusLabel = () => {
+    if (playbookStatus === PLAYBOOK_IN_VALIDATED) {
+      if (flow === KEY_CONSTANTS.PPLAN_DETAILS) {
+        return (
+          <>
+            <p className="progress_text text-warning">{t('title.in.validated')}</p>
+            <p className="invalidate_warn_sts">{t('playbook.invalidate.error')}</p>
+          </>
+        );
+      }
+      // for playbook listing page
+      return (
+        <>
+          <p onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} id={`plybook-in-validate-${playbook.id}`} className="invalidate_warn_sts margin-0 padding-left-7 text-warning">{t('title.in.validated')}</p>
+          {renderPopOver(t('playbook.invalidate.error'), `plybook-in-validate-${playbook.id}`)}
+        </>
+      );
+    }
+    if (showStatusLabel) {
+      // if playbook is reconfigured then set the status to in-sync
+      if (status === 'configPlanReconfigured') {
+        return <p className="progress_text">{t('In-Sync')}</p>;
+      }
+      return <p className="progress_text">{t('title.progress')}</p>;
+    }
+    return null;
+  };
+
   return (
     <>
-      {showStatusLabel ? <p className="progress_text">{t('title.progress')}</p> : null}
+      {renderStatusLabel()}
       <div className="d-flex bulk_status_parent mt-0">
         <div>
           <FontAwesomeIcon className="success bulk_status_icon" icon={faCheckCircle} />

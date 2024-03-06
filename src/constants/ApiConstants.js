@@ -134,6 +134,7 @@ export const API_GET_PLAN_DIFF = 'api/v1/protection/playbooks/config/<id>/diff';
 export const CREATE_PLAN_FROM_PLAYBOOK = 'api/v1/protection/playbooks/config/<id>/configure';
 export const API_VALIDATE_TEMPLATE = 'api/v1/protection/playbooks/config/<id>/validate';
 export const API_UPLOAD_RECOVERY_CRED = 'api/v1/protection/playbooks/recover';
+export const API_UPDATE_ISPLAYBOOK_DOWNLOAD_STATUS = 'api/v1/protection/playbooks/config/<playbookid>?playbookStatus=In-sync';
 
 // SAML
 export const API_SAML = 'login/saml';
