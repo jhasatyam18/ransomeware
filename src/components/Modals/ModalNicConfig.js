@@ -3,20 +3,20 @@ import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Card, CardBody, Col, Container, Form, Row } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
-import { onGCPNetworkChange } from '../../store/actions/GcpActions';
+import { FIELD_TYPE, MULTISELECT_ITEM_COMP } from '../../constants/FieldsConstant';
+import { PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
+import { onAwsCopyNetConfigChange, onAwsSubnetChange, onAwsVPCChange, valueChange } from '../../store/actions';
 import { onAwsPublicIPChecked } from '../../store/actions/AwsActions';
-import DMSearchSelect from '../Shared/DMSearchSelect';
+import { onGCPNetworkChange } from '../../store/actions/GcpActions';
+import { closeModal } from '../../store/actions/ModalActions';
+import { getAvailibilityZoneOptions, getAWSElasticIPOptions, getAzureExternalIPOptions, getAzureNetworkOptions, getAzureSecurityGroupOption, getAzureSubnetOptions, getGCPExternalIPOptions, getGCPNetworkTierOptions, getGCPSubnetOptions, getNetworkOptions, getSecurityGroupOption, getSubnetOptions, getValue, getVMwareAdpaterOption, getVPCOptions, getWMwareNetworkOptions, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
+import { isEmpty, validateNicConfig, validateOptionalIPAddress } from '../../utils/validationUtils';
 import DMFieldCheckbox from '../Shared/DMFieldCheckbox';
 import DMFieldRadio from '../Shared/DMFieldRadio';
 import DMFieldSelect from '../Shared/DMFieldSelect';
 import DMFieldText from '../Shared/DMFieldText';
 import DMMultiSelect from '../Shared/DMMultiSelect';
-import { FIELD_TYPE, MULTISELECT_ITEM_COMP } from '../../constants/FieldsConstant';
-import { PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
-import { onAwsCopyNetConfigChange, onAwsSubnetChange, onAwsVPCChange, valueChange } from '../../store/actions';
-import { closeModal } from '../../store/actions/ModalActions';
-import { getAvailibilityZoneOptions, getAWSElasticIPOptions, getAzureExternalIPOptions, getAzureNetworkOptions, getAzureSecurityGroupOption, getAzureSubnetOptions, getGCPExternalIPOptions, getGCPNetworkTierOptions, getGCPSubnetOptions, getNetworkOptions, getSecurityGroupOption, getSubnetOptions, getValue, getVMwareAdpaterOption, getVPCOptions, getWMwareNetworkOptions, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
-import { isEmpty, validateNicConfig, validateOptionalIPAddress } from '../../utils/validationUtils';
+import DMSearchSelect from '../Shared/DMSearchSelect';
 /**
  * Component for network adapter config
  */
@@ -160,7 +160,7 @@ class ModalNicConfig extends Component {
     const chkField = { label: 'Auto Public IP', description: '', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: false, fieldInfo: 'info.protectionplan.network.aws.public', onChange: (v, f) => onAwsPublicIPChecked(v, f) };
     const privateIPField = { label: 'Private IP', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.TEXT, shouldShow: true, validate: (v, u) => validateOptionalIPAddress(v, u), errorMessage: 'Invalid ip address or ip is not in subnet cidr range', fieldInfo: 'info.protectionplan.network.aws.privateip' };
     const securityGroup = { label: 'Security  Groups', placeHolderText: 'Security group', description: '', type: FIELD_TYPE.CUSTOM, shouldShow: true, validate: (v, u) => isEmpty(v, u), errorMessage: 'Select security group', COMPONENT: MULTISELECT_ITEM_COMP, options: (u, k) => getSecurityGroupOption(u, k), fieldInfo: 'info.protectionplan.network.aws.security.group' };
-    const network = { fieldInfo: 'info.protectionplan.network.aws.elasticip', label: 'Elastic IP for instance', placeHolderText: 'Elastic IP', description: '', type: FIELD_TYPE.SELECT, shouldShow: true, errorMessage: 'Select external', options: (u, f) => getAWSElasticIPOptions(u, f), validate: (v, u) => isEmpty(v, u) };
+    const network = { fieldInfo: 'info.protectionplan.network.aws.elasticip', label: 'Elastic IP for instance', placeHolderText: 'Elastic IP', description: '', type: FIELD_TYPE.SELECT, shouldShow: true, errorMessage: 'Select external', options: (u, f) => getAWSElasticIPOptions(u, f) };
     const availZone = { fieldInfo: 'info.protectionplan.network.aws.availZone', label: 'Availability Zone', placeHolderText: 'Availability Zone', description: '', type: FIELD_TYPE.SELECT, shouldShow: true, errorMessage: 'Select availability zone', options: (u, f) => getAvailibilityZoneOptions(u, f), validate: (v, u) => isEmpty(v, u) };
     const isPublic = getValue(`${networkKey}-isPublic`, values);
     const isCopyFromSource = getValue(`${networkKey}-isFromSource`, values) || false;

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
-import { Card, CardBody, CardHeader, Col, Row, Collapse } from 'reactstrap';
+import { Card, CardBody, CardHeader, Col, Collapse, Row } from 'reactstrap';
 import { PLAYBOOK_ISSUES } from '../../constants/TableConstants';
+import { KEY_CONSTANTS } from '../../constants/UserConstant';
 import DMTable from '../Table/DMTable';
 
 function PlaybookPlanIssues({ data, t }) {
@@ -11,10 +12,16 @@ function PlaybookPlanIssues({ data, t }) {
   }
   const validate = JSON.parse(planValidationResponse);
 
-  // System validation error comes at the last index from the response separated it from vm validation errors
-  const vmValidation = validate.splice(0, validate.length - 1);
-  const systemValidation = validate.splice(validate.length - 1, validate.length);
-  // Only issues column will be shown for system validation error table
+  const vmValidation = [];
+  const systemValidation = [];
+  validate.forEach((element) => {
+    if (element.name === KEY_CONSTANTS.PLAYBOOK_ERROR_SYSTEM_VALIDATIONS || element.name === KEY_CONSTANTS.PLAYBOOK_GENERAL_CONFIGURATION) {
+      systemValidation.push(element);
+    } else {
+      vmValidation.push(element);
+    }
+  });
+
   const systemValidaionColumn = PLAYBOOK_ISSUES[PLAYBOOK_ISSUES.length - 1];
   const [isOpen, setIsOpen] = useState(true);
   const [sysOpen, setSysOpen] = useState(false);
@@ -33,50 +40,54 @@ function PlaybookPlanIssues({ data, t }) {
 
   return (
     <div key="dm-accordion-title" className="padding-10 width-50">
-      <Card className="margin-bottom-10">
-        <CardHeader>
-          <Row>
-            <Col sm={6}>
-              <span aria-hidden className="link_color">
-                {name}
-              </span>
-            </Col>
-            <Col sm={6} className="d-flex flex-row-reverse">
-              {renderIcon(setIsOpen, isOpen)}
-            </Col>
-          </Row>
-          <Collapse isOpen={isOpen}>
-            <CardBody className="padding-left-0 paddings-right-0">
-              <DMTable
-                columns={PLAYBOOK_ISSUES}
-                data={vmValidation}
-              />
-            </CardBody>
-          </Collapse>
-        </CardHeader>
-      </Card>
-      <Card>
-        <CardHeader className="margin-top10">
-          <Row>
-            <Col sm={6}>
-              <span aria-hidden className="link_color">
-                {t('title.system.validation')}
-              </span>
-            </Col>
-            <Col sm={6} className="d-flex flex-row-reverse">
-              {renderIcon(setSysOpen, sysOpen)}
-            </Col>
-          </Row>
-          <Collapse isOpen={sysOpen}>
-            <CardBody className="padding-left-0 paddings-right-0">
-              <DMTable
-                columns={[systemValidaionColumn]}
-                data={systemValidation}
-              />
-            </CardBody>
-          </Collapse>
-        </CardHeader>
-      </Card>
+      {vmValidation.length > 0 ? (
+        <Card className="margin-bottom-10">
+          <CardHeader>
+            <Row>
+              <Col sm={6}>
+                <span aria-hidden className="link_color" onClick={() => toggle(setIsOpen, isOpen)}>
+                  {name}
+                </span>
+              </Col>
+              <Col sm={6} className="d-flex flex-row-reverse">
+                {renderIcon(setIsOpen, isOpen)}
+              </Col>
+            </Row>
+            <Collapse isOpen={isOpen}>
+              <CardBody className="padding-left-0 paddings-right-0">
+                <DMTable
+                  columns={PLAYBOOK_ISSUES}
+                  data={vmValidation}
+                />
+              </CardBody>
+            </Collapse>
+          </CardHeader>
+        </Card>
+      ) : null}
+      {systemValidation.length > 0 ? (
+        <Card>
+          <CardHeader className="margin-top10">
+            <Row>
+              <Col sm={6}>
+                <span aria-hidden className="link_color" onClick={() => toggle(setSysOpen, sysOpen)}>
+                  {t('title.system.validation')}
+                </span>
+              </Col>
+              <Col sm={6} className="d-flex flex-row-reverse">
+                {renderIcon(setSysOpen, sysOpen)}
+              </Col>
+            </Row>
+            <Collapse isOpen={sysOpen}>
+              <CardBody className="padding-left-0 paddings-right-0">
+                <DMTable
+                  columns={[systemValidaionColumn]}
+                  data={systemValidation}
+                />
+              </CardBody>
+            </Collapse>
+          </CardHeader>
+        </Card>
+      ) : null}
     </div>
   );
 }

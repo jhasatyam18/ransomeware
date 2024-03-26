@@ -1,21 +1,20 @@
 import { faDownload, faEdit, faTrash, faUpload } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
-import { Input } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
-import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
+import { Input } from 'reactstrap';
 import { API_GET_CONFIG_TEMPLATE_BY_ID } from '../../constants/ApiConstants';
+import { NOTE_TEXT } from '../../constants/DMNoteConstant';
+import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
 import { clearValues } from '../../store/actions';
 import { playbookExport } from '../../store/actions/DrPlanActions';
-import { NOTE_TEXT } from '../../constants/DMNoteConstant';
-import DMNote from '../Common/DMNote';
+import { deletePlaybook, downloadPlaybooks, uploadFiles } from '../../store/actions/DrPlaybooksActions';
 import { closeModal, openModal } from '../../store/actions/ModalActions';
-import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
-import { deletePlaybook, uploadFiles } from '../../store/actions/DrPlaybooksActions';
+import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
+import DMNote from '../Common/DMNote';
 
 function SinglePlaybookActions({ data, dispatch, t, user }) {
   const { id, name, planConfigurations } = data;
-  const downloadURL = `${window.location.protocol}//${window.location.host}/playbooks/${name}`;
 
   const onDeleteTemplate = (e) => {
     if (!hasRequestedPrivileges(user, ['playbook.delete'])) {
@@ -92,13 +91,17 @@ function SinglePlaybookActions({ data, dispatch, t, user }) {
     const options = { title: 'Edit Playbook', footerComponent: renderEditFooter, component: renderedit, color: 'success', footerLabel: t('title.reupload.excel'), size: `${planConfigurations[0]?.planID > 0 ? 'lg' : ''}` };
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   };
+  const onDownloadClick = () => {
+    downloadPlaybooks(data, dispatch);
+  };
+
   return (
     <>
       <div className="margin-top-2">
         <a href="#" onClick={onEdit}>
           <FontAwesomeIcon size="sm" icon={faEdit} />
         </a>
-        <a href={!hasRequestedPrivileges(user, ['playbook.generate']) ? '#' : downloadURL}>
+        <a href="#" onClick={onDownloadClick} disabled={!hasRequestedPrivileges(user, ['playbook.generate'])}>
           <FontAwesomeIcon className="single_playbook_download" size="sm" icon={faDownload} />
         </a>
         <a href="#" onClick={onDeleteTemplate}>

@@ -670,5 +670,7 @@
   "recovery.checkpoint.onchange.warn": "Recovering VMs with different checkpoints may lead to inconsistencies in overall application state, Reverse differential will not be supported when recovered from a checkpoint.",
   "test.recovery.recovery.configuration": "Recovery Configuration",
   "test.recovery.prev.recovery.configuration": "Previous Test Recovery Configuration",
-  "title.system.validation": "System Validation"
+  "title.system.validation": "System Validation",
+  "title.in.validated":"Not-in-sync",
+  "playbook.invalidate.error":"Playbook is not in-sync with the current plan configuration please download the updated playbook"
 }

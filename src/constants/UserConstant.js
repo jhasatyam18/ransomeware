@@ -55,3 +55,9 @@ export const PLAN_DETAIL_TABS = {
   FIVE: '5',
   SIX: '6',
 };
+
+export const KEY_CONSTANTS = {
+  PPLAN_DETAILS: 'PPLAN_DETAILS',
+  PLAYBOOK_ERROR_SYSTEM_VALIDATIONS: 'System Validation',
+  PLAYBOOK_GENERAL_CONFIGURATION: 'General Configuration',
+};
