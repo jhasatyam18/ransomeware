@@ -1,14 +1,16 @@
-import React from 'react';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Col, Row } from 'reactstrap';
+import { PLAYBOOK_IN_VALIDATED } from '../../../constants/AppStatus';
+import { updateIsPlaybookDownloadedStatus } from '../../../store/actions/DrPlaybooksActions';
 import { hasRequestedPrivileges } from '../../../utils/PrivilegeUtils';
 import PlaybookFileNameRenderer from './PlaybookFileNameRenderer';
 
 function DownloadPlaybookFromPlanList(props) {
-  const { drPlaybooks, data, user } = props;
+  const { drPlaybooks, data, user, dispatch } = props;
   const { id } = data;
   const { templates } = drPlaybooks;
   let downloadURL = '';
@@ -16,6 +18,10 @@ function DownloadPlaybookFromPlanList(props) {
   if (templates.length !== 0) {
     templates.forEach((exl) => {
       if (exl.planConfigurations[0].planID === id) {
+        const { playbookStatus } = exl;
+        if (playbookStatus === PLAYBOOK_IN_VALIDATED) {
+          dispatch(updateIsPlaybookDownloadedStatus(id));
+        }
         downloadURL = `${window.location.protocol}//${window.location.host}/playbooks/${exl.name}`;
         playbook = exl;
       }

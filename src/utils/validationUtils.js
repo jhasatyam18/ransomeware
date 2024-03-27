@@ -1,20 +1,20 @@
-import ip from 'ip';
 import i18n from 'i18next';
-import { setVMGuestOSInfo } from '../store/actions/DrPlanActions';
+import ip from 'ip';
+import { API_VALIDATE_MIGRATION, API_VALIDATE_RECOVERY, API_VALIDATE_REVERSE_PLAN } from '../constants/ApiConstants';
+import { FIELDS } from '../constants/FieldsConstant';
+import { CHECKPOINT_TYPE, PLATFORM_TYPES, RECOVERY_STATUS, STATIC_KEYS, UI_WORKFLOW } from '../constants/InputConstants';
+import { MESSAGE_TYPES } from '../constants/MessageConstants';
 import { STORE_KEYS } from '../constants/StoreKeyConstants';
 import { GENERAL_PLATFORM_KEYS, PLAN_KEYS } from '../constants/UserConstant';
+import { IP_REGEX } from '../constants/ValidationConstants';
 import { addErrorMessage, hideApplicationLoader, removeErrorMessage, showApplicationLoader, valueChange } from '../store/actions';
+import { setVMGuestOSInfo } from '../store/actions/DrPlanActions';
 import { addMessage } from '../store/actions/MessageActions';
 import { getVMwareVMSProps } from '../store/actions/UserActions';
-import { FIELDS } from '../constants/FieldsConstant';
-import { MESSAGE_TYPES } from '../constants/MessageConstants';
 import { API_TYPES, callAPI, createPayload } from './ApiUtils';
-import { API_VALIDATE_MIGRATION, API_VALIDATE_RECOVERY, API_VALIDATE_REVERSE_PLAN } from '../constants/ApiConstants';
-import { getRecoveryPayload, getReplicationInterval, getReversePlanPayload, getVMNetworkConfig, getVMwareNetworkConfig, getRecoveryPointTimePeriod } from './PayloadUtil';
-import { IP_REGEX } from '../constants/ValidationConstants';
-import { CHECKPOINT_TYPE, PLATFORM_TYPES, RECOVERY_STATUS, STATIC_KEYS, UI_WORKFLOW } from '../constants/InputConstants';
-import { createVMConfigStackObject, getValue, isAWSCopyNic, validateMacAddressForVMwareNetwork, excludeKeys } from './InputUtils';
 import { convertMinutesToDaysHourFormat } from './AppUtils';
+import { createVMConfigStackObject, excludeKeys, getValue, isAWSCopyNic, validateMacAddressForVMwareNetwork } from './InputUtils';
+import { getRecoveryPayload, getRecoveryPointTimePeriod, getReplicationInterval, getReversePlanPayload, getVMNetworkConfig, getVMwareNetworkConfig } from './PayloadUtil';
 
 export function isRequired(value) {
   if (!value) {
@@ -1227,12 +1227,12 @@ export function checkVmRecoveryConfigurationChanges({ prevArr, currentArr, recov
         const curr = currentArr[currObjKey[j]];
         let generalRes = [];
         generalRes = [{ title: 'Label', value: 'Values' }, ...checkDiff(curr, undefined, recoveryPlatform, 'GENERAL')];
-        const netRes = checkNetworkDiff(curr.networks, undefined, recoveryPlatform);
+        const netRes = checkNetworkDiff([], curr.networks, recoveryPlatform);
         const netChanges = [...netRes.arr1];
         if (generalRes.length > 1) {
           obj.add[`${curr[condition]}-name-${curr.instanceName}`] = [{ title: 'General', values: generalRes, name: curr.instanceName, add: true }];
         }
-        if (netChanges.length > 1) {
+        if (netChanges.length > 0) {
           if (generalRes.length === 1) {
             obj.add[`${curr[condition]}-name-${curr.instanceName}`] = [];
           }
@@ -1246,34 +1246,37 @@ export function checkVmRecoveryConfigurationChanges({ prevArr, currentArr, recov
 
 export function checkNetworkDiff(prevNet, currNet, recoveryPlatform) {
   const netAddDel = { add: [], delete: [], changes: [] };
-  let arr = [];
   let arr1 = [];
+  // if prev length is 0 or prevNet is not defined that means new vm added
+  if (typeof prevNet === 'undefined' || prevNet.length === 0) {
+    currNet.forEach((net, i) => {
+      let resObj = [...checkDiff(net, undefined, recoveryPlatform, 'NETWORK')];
+      if (resObj.length > 0) {
+        resObj = [{ title: i18n.t('label'), value: [i18n.t('previousVal'), i18n.t('updatedVal')] }, ...resObj];
+        arr1 = [...arr1, { title: `Nic- ${i + 1}`, values: resObj }];
+      }
+    });
+    return { arr1 };
+  }
   for (let i = 0; i < prevNet.length; i += 1) {
     const prev = prevNet[i];
     const curr = currNet[i];
-
     if (curr) {
       let resObj = [...checkDiff(prev, curr, recoveryPlatform, 'NETWORK')];
       if (resObj.length > 0) {
-        resObj = [{ title: i18n.t('label'), value: [i18n.t('previousVal'), i18n.t('updatedVal')] }, ...resObj]; arr = [...arr, ...resObj];
-        arr1 = [...arr1, { title: `Nic- ${i}`, values: resObj }];
+        resObj = [{ title: i18n.t('label'), value: [i18n.t('previousVal'), i18n.t('updatedVal')] }, ...resObj];
+        arr1 = [...arr1, { title: `Nic- ${i + 1}`, values: resObj }];
       }
     }
   }
-  if (!currNet) {
-    for (let i = 0; i < prevNet.length; i += 1) {
-      const prev = prevNet[i];
-      const resObj = checkDiff(prev, currNet, recoveryPlatform, 'NETWORK');
-      arr = [...arr, ...resObj];
-    }
-  } else if (currNet.length !== prevNet.length) {
+  if (currNet.length !== prevNet.length) {
     if (currNet.length > prevNet.length) {
       currNet.forEach((curr, ind) => {
         if (!prevNet[ind]) {
           let resObj = [...checkDiff(curr, undefined, recoveryPlatform, 'NETWORK')];
           if (resObj.length > 0) {
-            resObj = [{ title: i18n.t('label'), value: i18n.t('Value') }, ...resObj]; arr = [...arr, ...resObj];
-            arr1 = [...arr1, { title: `Nic-${ind}`, values: resObj, addData: true }];
+            resObj = [{ title: i18n.t('label'), value: i18n.t('Value') }, ...resObj];
+            arr1 = [...arr1, { title: `Nic-${ind + 1}`, values: resObj, addData: true }];
           }
           netAddDel.add.push(curr);
         }
@@ -1283,8 +1286,8 @@ export function checkNetworkDiff(prevNet, currNet, recoveryPlatform) {
         if (!currNet[ind]) {
           let resObj = [...checkDiff(prev, undefined, recoveryPlatform, 'NETWORK')];
           if (resObj.length > 0) {
-            resObj = [{ title: i18n.t('label'), value: i18n.t('Value') }, ...resObj]; arr = [...arr, ...resObj];
-            arr1 = [...arr1, { title: `Nic-${ind}`, values: resObj, deleteData: true }];
+            resObj = [{ title: i18n.t('label'), value: i18n.t('Value') }, ...resObj];
+            arr1 = [...arr1, { title: `Nic-${ind + 1}`, values: resObj, deleteData: true }];
           }
           netAddDel.delete.push(prev);
         }
@@ -1292,7 +1295,7 @@ export function checkNetworkDiff(prevNet, currNet, recoveryPlatform) {
     }
   }
 
-  return { netAddDel, arr, arr1 };
+  return { arr1 };
 }
 
 export function checkDiff(prevObj, currObj, recoveryPlatform, type) {

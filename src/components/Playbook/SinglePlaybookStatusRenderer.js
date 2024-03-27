@@ -195,7 +195,7 @@ function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispat
     }
     if (showStatusLabel) {
       // if playbook is reconfigured then set the status to in-sync
-      if (status === 'configPlanReconfigured') {
+      if (status === KEY_CONSTANTS.PLAYBOOK_PLAN_RECONFIGURED || status === KEY_CONSTANTS.PLAYBOOK_PLAN_COFIGURE) {
         return <p className="progress_text">{t('In-Sync')}</p>;
       }
       return <p className="progress_text">{t('title.progress')}</p>;
