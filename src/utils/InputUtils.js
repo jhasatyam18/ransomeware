@@ -8,7 +8,6 @@ import { getStorageForVMware, onScriptChange, valueChange } from '../store/actio
 import { onAwsStorageTypeChange } from '../store/actions/AwsActions';
 import { recoveryConfigOnCheckpointChanges } from '../store/actions/checkpointActions';
 import { getLabelWithResourceGrp } from './AppUtils';
-import { addItemAtPosition } from './ObjectUtils';
 import { isEmpty, isMemoryValueValid } from './validationUtils';
 // import { recoveryConfigOnCheckpointChanges } from '../store/actions/checkpointActions';
 
