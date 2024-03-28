@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardBody, CardTitle, Col, Container, Input, Label, Row } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
-import { TIME_CONSTANTS } from '../../constants/UserConstant';
-import DMField from '../Shared/DMField';
-import DMToolTip from '../Shared/DMToolTip';
-import { getCheckpointTimeFromMinute } from '../../store/actions/checkpointActions';
-import { removeErrorMessage, valueChange } from '../../store/actions';
-import { STORE_KEYS } from '../../constants/StoreKeyConstants';
+import { Card, CardBody, CardTitle, Col, Container, Input, Label, Row } from 'reactstrap';
 import { STATIC_KEYS } from '../../constants/InputConstants';
-import { isEmpty, isEmptyNum } from '../../utils/validationUtils';
-import { getRecoveryPointConfiguration, getReplicationInterval } from '../../utils/PayloadUtil';
+import { STORE_KEYS } from '../../constants/StoreKeyConstants';
+import { TIME_CONSTANTS } from '../../constants/UserConstant';
+import { removeErrorMessage, valueChange } from '../../store/actions';
+import { getCheckpointTimeFromMinute } from '../../store/actions/checkpointActions';
 import { convertMinIntoHrDayWeekMonthYear } from '../../utils/AppUtils';
 import { getCheckpointDurationOption, getCheckRentaintionOption, getValue } from '../../utils/InputUtils';
+import { getRecoveryPointConfiguration, getReplicationInterval } from '../../utils/PayloadUtil';
+import { isEmpty, isEmptyNum } from '../../utils/validationUtils';
+import DMField from '../Shared/DMField';
+import DMToolTip from '../Shared/DMToolTip';
 
 function DRPlanRecoveryCheckpointConfig(props) {
   const [count, setCount] = useState(0);
@@ -119,7 +119,7 @@ function DRPlanRecoveryCheckpointConfig(props) {
 
   const enableCheckpointItem = () => (
     <Row className={`margin-top-5 ${disableRecoveryCheckpointing ? 'checkpoint_diable_summary' : ''}`}>
-      <Col sm={4}>
+      <Col sm={3}>
         {t('title.enable.checkpointing')}
       </Col>
       <Col sm={6}>
