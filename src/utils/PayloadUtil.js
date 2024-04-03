@@ -254,7 +254,7 @@ export function getVMNetworkConfig(key, values) {
     if (network !== '' && recoveryPlatform === PLATFORM_TYPES.AWS) {
       publicIP = getAWSNetworkIDFromName(values, network) || publicIP;
     }
-    if (recoveryPlatform === PLATFORM_TYPES.Azure) {
+    if (network !== '' && recoveryPlatform === PLATFORM_TYPES.Azure) {
       let netArr = '';
       if (typeof network === 'object') {
         netArr = network.value;

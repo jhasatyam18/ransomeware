@@ -439,6 +439,7 @@ export function validateAzureNetwork(user, dispatch) {
   const subnets = getValue(STATIC_KEYS.UI_SUBNETS, values);
   let isClean = true;
   let message = '';
+  const messages = [];
   // empty config
   const ips = [];
   const publicIP = [];
@@ -452,12 +453,14 @@ export function validateAzureNetwork(user, dispatch) {
     const vmName = vms[vm].name;
     if (netConfigs.length === 0) {
       message = `${vmName}: Network configuration required`;
+      messages.push(message);
       isClean = false;
     } else {
       for (let i = 0; i < netConfigs.length; i += 1) {
         if (netConfigs[i].subnet === '') {
-          message = `${vmName}: Network configure missing for nic-${i}`;
           isClean = false;
+          message = `${vmName}: Network configure missing for nic-${i}`;
+          messages.push(message);
         }
         if (typeof netConfigs[i].privateIP !== 'undefined' && netConfigs[i].privateIP !== '') {
           ips.push(netConfigs[i].privateIP);
@@ -478,10 +481,12 @@ export function validateAzureNetwork(user, dispatch) {
       // nics with different vpcid
       if (vpcSet.length > 1) {
         message = `${vmName}: All nics of an instance must belong to same VPC.`;
+        messages.push(message);
         isClean = false;
       }
       if (netSet.length > 1) {
         message = `${vmName}: All the virtual networks for a vm should be same.`;
+        messages.push(message);
         isClean = false;
       }
     }
@@ -491,14 +496,16 @@ export function validateAzureNetwork(user, dispatch) {
   const publicIpSet = [...new Set(publicIP)];
   if (ipSet.length !== ips.length && message === '') {
     message = 'Duplicate ip address not allowed';
+    messages.push(message);
     isClean = false;
   }
   if (publicIpSet.length !== publicIP.length && message === '') {
     message = 'Duplicate Public ip address not allowed';
+    messages.push(message);
     isClean = false;
   }
   if (!isClean) {
-    dispatch(addMessage(message, MESSAGE_TYPES.ERROR));
+    dispatch(addMessage(messages.join(', '), MESSAGE_TYPES.ERROR));
   }
   return isClean;
 }
