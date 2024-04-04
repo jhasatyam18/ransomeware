@@ -234,8 +234,10 @@ export function drPlanDetailsFetched(protectionPlan) {
 export function onProtectionPlanChange({ value, allowDeleted, planRecoveryStatus }) {
   return (dispatch, getState) => {
     const url = API_FETCH_DR_PLAN_BY_ID.replace('<id>', value);
+    dispatch(showApplicationLoader(API_FETCH_DR_PLAN_BY_ID, 'Fetching protection plan details...'));
     return callAPI(url)
       .then((json) => {
+        dispatch(hideApplicationLoader(API_FETCH_DR_PLAN_BY_ID));
         if (json && json.hasError) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
@@ -271,6 +273,7 @@ export function onProtectionPlanChange({ value, allowDeleted, planRecoveryStatus
         }
       },
       (err) => {
+        dispatch(hideApplicationLoader(API_FETCH_DR_PLAN_BY_ID));
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
   };

@@ -4,7 +4,7 @@ import { MESSAGE_TYPES } from '../constants/MessageConstants';
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP } from '../constants/StackConstants';
 import { addMessage } from '../store/actions/MessageActions';
 import { getLabelWithResourceGrp, getMemoryInfo } from './AppUtils';
-import { getAzureGeneralSettings, getEncryptionKeyOptions, getInstanceTypeOptions, getNetworkOptions, getRecoveryScript, getReplicationScript, getValue, getVMwareGeneralSettings, shouldEnableAWSEncryption } from './InputUtils';
+import { getAzureGeneralSettings, getEncryptionKeyOptions, getInstanceTypeOptions, getNetworkOptions, getRecoveryScript, getReplicationScript, getValue, getVMwareGeneralSettings, shouldEnableAWSEncryption, getGCPNetworkValue } from './InputUtils';
 import { getSourceConfig } from './PayloadUtil';
 import { isEmpty } from './validationUtils';
 
@@ -254,6 +254,9 @@ function getNetworkConfig({ sourceConfig, user, workFlow }) {
             network = netopt.label;
           }
         });
+        if (network !== '' || typeof network !== 'undefined') {
+          network = getGCPNetworkValue(network);
+        }
         keys = [
           { title: 'label.network', value: network },
           { title: 'label.subnet', value: subnet },
@@ -299,6 +302,7 @@ function getNetworkConfig({ sourceConfig, user, workFlow }) {
           { title: 'label.network', value: networkLabel || '' },
           { title: 'label.subnet', value: subnetLabel || '' },
           { title: 'label.security.groups', value: securityLabel || '' },
+          { title: 'label.auto.publicIP', value: typeof isPublicIP !== 'undefined' ? isPublicIP : '' },
         ];
         break;
       default:

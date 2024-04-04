@@ -1342,6 +1342,11 @@ export function userRoleOptions(user) {
   return result;
 }
 
+export const getGCPNetworkValue = (value) => {
+  let networkValue = value.split('/');
+  networkValue = networkValue[networkValue.length - 1];
+  return networkValue;
+};
 export function commonCheckpointOptions(user) {
   const { values } = user;
   const uniqueOptions = getValue(STATIC_KEYS.UI_COMMON_CHECKPOINT_OPTIONS, values);
