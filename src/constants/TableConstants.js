@@ -285,7 +285,7 @@ export const PLAYBOOKS = [
   { label: 'File', field: 'name', itemRenderer: PLAYBOOK_FILENAME_RENDERER, width: 3 },
   { label: 'Configure', itemRenderer: PLAYBOOK_CONFIGURE_RENDERER, width: 2 },
   { label: 'Status', field: 'status', itemRenderer: SINGLE_PLAYBOOK_STATUS_RENDERER, width: 4 },
-  { label: 'Actions', field: 'status', itemRenderer: PLAYBOOK_ACTION_RENDERER, width: 1 },
+  { label: 'Actions', field: 'status', itemRenderer: PLAYBOOK_ACTION_RENDERER, width: 2 },
 ];
 
 export const PLAYBOOK_DETAILS = [
