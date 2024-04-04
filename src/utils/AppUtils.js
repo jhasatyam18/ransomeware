@@ -473,3 +473,28 @@ export function getRecoveryCheckpointSummary(recoveryCheckpointConfig) {
   }
   return null;
 }
+
+export const processCriteria = (criteria) => {
+  const statusMapping = {
+    running: 'started',
+  };
+
+  const keys = Object.keys(statusMapping);
+  for (let i = 0; i < keys.length; i += 1) {
+    if (keys[i].includes(criteria.toLowerCase())) {
+      return statusMapping[keys[i]];
+    }
+  }
+
+  return criteria;
+};
+
+export const arraysAreNotEqual = (currArray, prevArray) => {
+  if (currArray.length === prevArray.length) {
+    if (currArray.length > 0 && currArray[0].id !== prevArray[0].id) {
+      return true;
+    }
+    return false;
+  }
+  return true;
+};

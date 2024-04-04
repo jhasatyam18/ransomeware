@@ -5,13 +5,14 @@ import { getAppKey, getStorageWithUnit } from '../../../utils/AppUtils';
 
 function VMDisksItemRenderer(props) {
   const { data, t } = props;
+  const { id } = data;
   let { virtualDisks = [] } = data;
   const [popoverOpen, setPopoverOpen] = useState(false);
   let name = data.name.replace(/\s/g, '');
   name = name.replace(/[^a-zA-Z ]/g, '');
   let key = '';
   if (name) {
-    key = `disk-${name}`;
+    key = `disk-${name}-${id}`;
   } else {
     key = getAppKey();
   }

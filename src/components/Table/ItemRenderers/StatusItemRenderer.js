@@ -18,11 +18,11 @@ function StatusItemRenderer({ data, field, t, noPopOver }) {
   }
 
   let status = data[field];
-  status = status.toLowerCase();
-
   if (!status) {
     return '-';
   }
+
+  status = status.toLowerCase();
 
   let resp = status.charAt(0).toUpperCase() + status.slice(1);
 

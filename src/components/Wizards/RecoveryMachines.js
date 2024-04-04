@@ -47,10 +47,10 @@ class RecoveryMachines extends Component {
     const { user } = this.props;
     const { values } = user;
     const vms = getValue(STORE_KEYS.UI_RECOVERY_VMS, values);
-    if (criteria === '') {
+    if (criteria.trim() === '') {
       this.setState({ hasFilterString: false, searchData: [] });
     } else {
-      const newData = filterData(vms, criteria, TABLE_RECOVERY_VMS);
+      const newData = filterData(vms, criteria.trim(), TABLE_RECOVERY_VMS);
       this.setState({ hasFilterString: true, searchData: newData });
     }
   }
@@ -274,6 +274,7 @@ class RecoveryMachines extends Component {
           </Col>
           <Col sm={6} className="margin-left-30">
             <DMTPaginator
+              id="recoverymachine"
               defaultLayout="true"
               data={data}
               setData={this.setDataForDisplay}
