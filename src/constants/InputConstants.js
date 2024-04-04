@@ -220,3 +220,8 @@ export const CHECKPOINT_TYPE = {
   LATEST: 'latest',
   POINT_IN_TIME: 'pointInTime',
 };
+
+export const CONSTANT_NUMBERS = {
+  TWENTY_FIVE: 25,
+  ZERO: 0,
+};
