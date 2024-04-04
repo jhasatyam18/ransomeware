@@ -1,16 +1,16 @@
-import { fetchByDelay } from '../../utils/SlowFetch';
-import { callAPI } from '../../utils/ApiUtils';
-import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { API_LATEST_TEST_RECOVERY_PPLAN } from '../../constants/ApiConstants';
-import { addMessage } from './MessageActions';
-import { updateValues, valueChange } from './UserActions';
-import { setPublicIPWhileEdit } from './DrPlanActions';
-import { getSourceConfig } from '../../utils/PayloadUtil';
+import { COPY_CONFIG, PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
+import { MESSAGE_TYPES } from '../../constants/MessageConstants';
+import { APP_SET_TIMEOUT } from '../../constants/UserConstant';
+import { callAPI } from '../../utils/ApiUtils';
 import { getLabelWithResourceGrp, getMemoryInfo, getNetworkIDFromName, getSubnetIDFromName } from '../../utils/AppUtils';
 import { getValue } from '../../utils/InputUtils';
-import { COPY_CONFIG, PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
-import { APP_SET_TIMEOUT } from '../../constants/UserConstant';
+import { getSourceConfig } from '../../utils/PayloadUtil';
+import { fetchByDelay } from '../../utils/SlowFetch';
+import { setPublicIPWhileEdit } from './DrPlanActions';
+import { addMessage } from './MessageActions';
 import { closeModal } from './ModalActions';
+import { updateValues, valueChange } from './UserActions';
 import { setVMwareTargetData } from './VMwareActions';
 
 export function copyInstanceConfiguration({ sourceVM, targetVMs, configToCopy, sourceData }) {
@@ -204,16 +204,14 @@ function setNetworkConfig(sourceConfig, targetVM, user, dispatch) {
     if (nics && nics.length > 0) {
       for (let index = 0; index < networks.length; index += 1) {
         if (typeof networks[index] !== 'undefined' && networks[index]) {
-          const { vpcId = '', Subnet = '', networkTier = '', isFromSource, securityGroups, adapterType, networkMoref, networkPlatformID } = networks[index];
-          let { subnet, network, publicIP, isPublicIP = '' } = networks[index];
+          const { vpcId = '', Subnet = '', networkTier = '', isFromSource, securityGroups, adapterType, networkMoref, networkPlatformID, isPublicIP = '' } = networks[index];
+          let { subnet, network, publicIP } = networks[index];
           let sgs = (securityGroups ? securityGroups.split(',') : []);
           if (typeof subnet === 'undefined' || subnet === '' && Subnet !== '') {
             subnet = Subnet;
           }
           if (recoveryPlatform === PLATFORM_TYPES.VMware) {
             network = { label: network, value: networkPlatformID };
-            isPublicIP = false;
-            publicIP = '';
           } else if (recoveryPlatform === PLATFORM_TYPES.Azure) {
             const { publicIp } = setPublicIPWhileEdit(isPublicIP, publicIP, networkKey, index, values, dispatch);
             network = getNetworkIDFromName(network, values);
