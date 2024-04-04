@@ -55,12 +55,12 @@ class DMSearchSelect extends Component {
   getOptions() {
     const { field, user, fieldKey } = this.props;
     const { options } = field;
-    let optionValues;
+    let optionValues = [{ label: '', value: '' }];
     if (typeof options === 'function') {
-      optionValues = options(user, fieldKey);
+      optionValues = [...optionValues, ...options(user, fieldKey)];
       return optionValues;
     }
-    optionValues = (options && options.length > 0 ? options : []);
+    optionValues = (options && options.length > 0 ? [...optionValues, ...options] : optionValues);
     return optionValues;
   }
 

@@ -113,6 +113,7 @@ export const STATIC_KEYS = {
   IS_POINT_IN_TIME_DISABLED: 'ui.point.in.time.disable',
   DISABLE_RECOVERY_FROM_LATEST: 'ui.disable.recover.latest',
   POINT_IN_TIME_RECOVERY_CHECKPOINTS: 'ui.point.intime.checkpoint.recovery.config',
+  DMTREE_SEARCH_FOLDER_KEY: 'DMTREE_SEARCH_FOLDER_KER',
   PLAYBOOK_CONFIG_VALIDATING: 'configValidating',
 };
 

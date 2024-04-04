@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
-import { withTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
-import { Label, Row, Col } from 'reactstrap';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useRef, useState } from 'react';
+import { withTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { Col, Label, Row } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
-import { valueChange } from '../../store/actions/UserActions';
+import { STATIC_KEYS } from '../../constants/InputConstants';
+import { hideApplicationLoader, showApplicationLoader, valueChange } from '../../store/actions/UserActions';
 import { filterDataForVMwareSearch } from '../../store/actions/VMwareActions';
-import { addMessage } from '../../store/actions/MessageActions';
 import { callAPI } from '../../utils/ApiUtils';
 import { getValue } from '../../utils/InputUtils';
-import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import TreeNode from './TreeNode';
 
 function DMTree(props) {
   const [searchData, setSearchData] = useState([]);
   const [searchStr, setSearchStr] = useState('');
   const [apiData, setApiData] = useState([]);
+  const ref = useRef(null);
   const { data, user, dispatch, field, disabled, fieldKey, hideLabel, child, search, searchURL, showSelectedvmdata, selectedVMkey, vmCss, selectedVmCss } = props;
   const { getTreeData, dataKey } = field;
   const { values } = user;
@@ -33,41 +33,43 @@ function DMTree(props) {
   }
 
   function onSearchChange(e) {
-    const convertedData = [];
+    setSearchStr(e.target.value);
     if (searchURL && searchURL !== '' && apiData.length === 0) {
-      if (searchStr === '') {
-        callAPI(searchURL).then((json) => {
-          if (json.hasError) {
-            dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
-          } else {
-            // TODO
-            json.forEach((d) => {
-              const node = {};
-              node.doneChildrenLoading = true;
-              node.key = d.moref;
-              node.type = 'VirtualMachine';
-              node.value = d.moref;
-              node.children = [];
-              node.title = d.name;
-              node.id = d.moref;
-              convertedData.push(node);
-            });
-            setApiData(convertedData);
-          }
-        },
-        (err) => {
-          dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-        });
+      if (e.charCode === 13) {
+        fetchVMwareFolderData();
+        return;
       }
     }
-    setSearchStr(e.target.value);
     onFilter(e);
   }
 
-  function onFilterKeyPress(e) {
-    if (e.key === 'Enter') {
-      onFilter(e);
-    }
+  async function fetchVMwareFolderData() {
+    const convertedData = [];
+    dispatch(showApplicationLoader('VMWARE_FOLDER_API', 'Loading....'));
+    ref.current.blur();
+    const json = await callAPI(searchURL);
+    dispatch(hideApplicationLoader('VMWARE_FOLDER_API'));
+    ref.current.focus();
+    json.forEach((d) => {
+      const node = {};
+      node.doneChildrenLoading = true;
+      node.key = d.moref;
+      node.type = 'VirtualMachine';
+      node.value = d.moref;
+      node.children = [];
+      node.title = d.name;
+      node.id = d.moref;
+      convertedData.push(node);
+    });
+    setApiData(convertedData);
+    const newData = filterDataForVMwareSearch(convertedData, searchStr);
+    const searchFolderData = {
+      children: newData,
+      doneChildrenLoading: true,
+      key: STATIC_KEYS.DMTREE_SEARCH_FOLDER_KEY,
+      type: 'Folder',
+    };
+    setSearchData([searchFolderData]);
   }
 
   function onFilter(e = null) {
@@ -79,10 +81,8 @@ function DMTree(props) {
       const searchFolderData = {
         children: newData,
         doneChildrenLoading: true,
-        key: 'datacenter-3',
-        title: 'Searched Results',
+        key: STATIC_KEYS.DMTREE_SEARCH_FOLDER_KEY,
         type: 'Folder',
-        value: 'datacenter-3',
       };
       setSearchData([searchFolderData]);
     }
@@ -100,8 +100,9 @@ function DMTree(props) {
                 id="datableSearch"
                 placeholder="Search"
                 onChange={onSearchChange}
-                onKeyPress={onFilterKeyPress}
+                onKeyPress={onSearchChange}
                 autoComplete="off"
+                ref={ref}
               />
               <span className="input-group-append">
                 <div className="input-group-text bg-transparent">
@@ -132,6 +133,7 @@ function DMTree(props) {
     dispatch(valueChange(fieldKey, arr));
     dispatch(valueChange(selectedVMkey, arr1));
   }
+
   function renderSelectedVMNode() {
     if (showSelectedData.length > 0 && showSelectedvmdata) {
       return (
