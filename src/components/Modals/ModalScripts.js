@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Col, Form, FormGroup, Input, Label, Row } from 'reactstrap';
-import { addMessage } from '../../store/actions/MessageActions';
-import { closeModal } from '../../store/actions/ModalActions';
-import { fetchScript, hideApplicationLoader, refreshApplication, showApplicationLoader } from '../../store/actions';
 import { API_USER_SCRIPT } from '../../constants/ApiConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
+import { fetchScript, hideApplicationLoader, refreshApplication, showApplicationLoader } from '../../store/actions';
+import { addMessage } from '../../store/actions/MessageActions';
+import { closeModal } from '../../store/actions/ModalActions';
 import { getUrlPath } from '../../utils/ApiUtils';
 import DMToolTip from '../Shared/DMToolTip';
 
@@ -100,7 +100,19 @@ function ModalScripts(props) {
         } else {
           dispatch(hideApplicationLoader('USER_SCRIPT'));
           response.text().then((text) => {
-            dispatch(addMessage(text, MESSAGE_TYPES.ERROR));
+            const parsedText = JSON.parse(text);
+            if (typeof parsedText === 'object') {
+              const { isWarning, message } = parsedText;
+              if (isWarning) {
+                dispatch(addMessage(message, MESSAGE_TYPES.WARNING));
+                dispatch(closeModal());
+                dispatch(refreshApplication());
+              } else {
+                dispatch(addMessage(message, MESSAGE_TYPES.ERROR));
+              }
+            } else {
+              dispatch(addMessage(parsedText, MESSAGE_TYPES.ERROR));
+            }
           });
         }
       })
