@@ -1,7 +1,7 @@
 import { API_FETCH_VMWARE_LOCATION } from '../constants/ApiConstants';
 import { JOB_INIT_FAILED, JOB_INIT_SYNC_FAILED, NODE_STATUS_ONLINE } from '../constants/AppStatus';
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
-import { EXCLUDE_KEYS_CONSTANTS, EXCLUDE_KEYS_RECOVERY_CONFIGURATION, PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS, SUPPORTED_FIRMWARE, SUPPORTED_GUEST_OS, UI_WORKFLOW } from '../constants/InputConstants';
+import { EXCLUDE_KEYS_CONSTANTS, EXCLUDE_KEYS_RECOVERY_CONFIGURATION, PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS, SUPPORTED_FIRMWARE, SUPPORTED_GUEST_OS, UI_WORKFLOW, EMAIL } from '../constants/InputConstants';
 import { STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMORY, STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
 import { MAC_ADDRESS } from '../constants/ValidationConstants';
 import { getStorageForVMware, onScriptChange, valueChange } from '../store/actions';
@@ -1384,4 +1384,13 @@ export function onCommonCheckpointChange() {
     }
     dispatch(recoveryConfigOnCheckpointChanges(checkpointIds));
   };
+}
+
+export function showRecipientEmailField(user) {
+  const { values } = user;
+  const isValidateEmail = getValue(EMAIL.RECIPIENT_ISVALIDATE, values);
+  if (!isValidateEmail) {
+    return false;
+  }
+  return true;
 }

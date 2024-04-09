@@ -3,11 +3,12 @@ import * as Types from '../../constants/actionTypes';
 // constants
 import { API_EMAIL_CONFIGURATION, API_EMAIL_CONFIGURE, API_EMAIL_RECIPIENTS } from '../../constants/ApiConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
+import { EMAIL } from '../../constants/InputConstants';
 // Util
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { addMessage } from './MessageActions';
 import { closeModal } from './ModalActions';
-import { hideApplicationLoader, showApplicationLoader } from './UserActions';
+import { hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
 /**
  * Fetch email configuration
  * @returns set of email configuration data in redux managed state
@@ -58,11 +59,19 @@ export function fetchEmailRecipients() {
 /**
  * Configure email
  */
-export function configureEmail(config) {
+export function configureEmail(config, isTestEmail = false) {
   return (dispatch) => {
     dispatch(showApplicationLoader(API_EMAIL_CONFIGURE, 'Configuring email...'));
-    const method = (typeof config.ID === 'undefined' ? API_TYPES.POST : API_TYPES.PUT);
-    const url = (typeof config.ID === 'undefined' ? API_EMAIL_CONFIGURE : `${API_EMAIL_CONFIGURE}/${config.ID}`);
+    let method;
+    let url;
+    if (isTestEmail) {
+      method = API_TYPES.POST;
+      url = `${API_EMAIL_CONFIGURE}?isTestRun=true`;
+    } else {
+      method = (typeof config.ID === 'undefined' ? API_TYPES.POST : API_TYPES.PUT);
+      url = (typeof config.ID === 'undefined' ? API_EMAIL_CONFIGURE : `${API_EMAIL_CONFIGURE}/${config.ID}`);
+    }
+
     const obj = createPayload(method, config);
     return callAPI(url, obj)
       .then((json) => {
@@ -70,9 +79,13 @@ export function configureEmail(config) {
         if (json.hasError) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
-          dispatch(addMessage('Email settings configured successfully.', MESSAGE_TYPES.INFO));
-          dispatch(fetchEmailConfig());
-          dispatch(closeModal());
+          dispatch(addMessage(isTestEmail ? json : 'Email settings configured successfully.', MESSAGE_TYPES.INFO));
+          if (!isTestEmail) {
+            dispatch(fetchEmailConfig());
+            dispatch(closeModal());
+          } else {
+            dispatch(valueChange(EMAIL.RECIPIENT_ISVALIDATE, false));
+          }
         }
       },
       (err) => {

@@ -216,6 +216,11 @@ export const SAML = {
   DEFAULT_USER_ID: 0,
 };
 
+export const EMAIL = {
+  RECIPIENT_ISVALIDATE: 'emailConfiguration.isValidate',
+  RECIPIENT_EMAIL: 'emailConfiguration.recipientEmail',
+};
+
 export const CHECKPOINT_TYPE = {
   LATEST: 'latest',
   POINT_IN_TIME: 'pointInTime',
