@@ -1,16 +1,14 @@
 import { API_FETCH_VMWARE_LOCATION } from '../constants/ApiConstants';
 import { JOB_INIT_FAILED, JOB_INIT_SYNC_FAILED, NODE_STATUS_ONLINE } from '../constants/AppStatus';
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
-import { EXCLUDE_KEYS_CONSTANTS, EXCLUDE_KEYS_RECOVERY_CONFIGURATION, PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS, SUPPORTED_FIRMWARE, SUPPORTED_GUEST_OS, UI_WORKFLOW } from '../constants/InputConstants';
+import { EXCLUDE_KEYS_CONSTANTS, EXCLUDE_KEYS_RECOVERY_CONFIGURATION, PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS, SUPPORTED_FIRMWARE, SUPPORTED_GUEST_OS, UI_WORKFLOW, EMAIL } from '../constants/InputConstants';
 import { STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMORY, STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
 import { MAC_ADDRESS } from '../constants/ValidationConstants';
 import { getStorageForVMware, onScriptChange, valueChange } from '../store/actions';
 import { onAwsStorageTypeChange } from '../store/actions/AwsActions';
 import { recoveryConfigOnCheckpointChanges } from '../store/actions/checkpointActions';
 import { getLabelWithResourceGrp } from './AppUtils';
-import { addItemAtPosition } from './ObjectUtils';
 import { isEmpty, isMemoryValueValid } from './validationUtils';
-// import { recoveryConfigOnCheckpointChanges } from '../store/actions/checkpointActions';
 
 export function getValue(key, values) {
   const ret = values[key];
@@ -1344,6 +1342,11 @@ export function userRoleOptions(user) {
   return result;
 }
 
+export const getGCPNetworkValue = (value) => {
+  let networkValue = value.split('/');
+  networkValue = networkValue[networkValue.length - 1];
+  return networkValue;
+};
 export function commonCheckpointOptions(user) {
   const { values } = user;
   const uniqueOptions = getValue(STATIC_KEYS.UI_COMMON_CHECKPOINT_OPTIONS, values);
@@ -1381,4 +1384,13 @@ export function onCommonCheckpointChange() {
     }
     dispatch(recoveryConfigOnCheckpointChanges(checkpointIds));
   };
+}
+
+export function showRecipientEmailField(user) {
+  const { values } = user;
+  const isValidateEmail = getValue(EMAIL.RECIPIENT_ISVALIDATE, values);
+  if (!isValidateEmail) {
+    return false;
+  }
+  return true;
 }

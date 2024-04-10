@@ -10,7 +10,7 @@ import DMField from '../Shared/DMField';
 import DMToolTip from '../Shared/DMToolTip';
 import { handleProtectVMSeletion, handleSelectAllRecoveryVMs } from '../../store/actions/SiteActions';
 import { RECOVERY_CHECKPOINT_OPTION_RENDERER, TABLE_FILTER_TEXT, TABLE_RECOVERY_VMS } from '../../constants/TableConstants';
-import { CHECKPOINT_TYPE, PLAYBOOK_TYPE, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
+import { CHECKPOINT_TYPE, CONSTANT_NUMBERS, PLAYBOOK_TYPE, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { commonCheckpointOptions, getValue, onCommonCheckpointChange } from '../../utils/InputUtils';
 import { filterData } from '../../utils/AppUtils';
 import { getUrlPath } from '../../utils/ApiUtils';
@@ -47,10 +47,10 @@ class RecoveryMachines extends Component {
     const { user } = this.props;
     const { values } = user;
     const vms = getValue(STORE_KEYS.UI_RECOVERY_VMS, values);
-    if (criteria === '') {
+    if (criteria.trim() === '') {
       this.setState({ hasFilterString: false, searchData: [] });
     } else {
-      const newData = filterData(vms, criteria, TABLE_RECOVERY_VMS);
+      const newData = filterData(vms, criteria.trim(), TABLE_RECOVERY_VMS);
       this.setState({ hasFilterString: true, searchData: newData });
     }
   }
@@ -254,6 +254,13 @@ class RecoveryMachines extends Component {
       </>
     );
 
+    const getRecFileName = (fileName) => {
+      if (fileName.length > CONSTANT_NUMBERS.TWENTY_FIVE) {
+        return `${fileName.substring(CONSTANT_NUMBERS.ZERO, CONSTANT_NUMBERS.TWENTY_FIVE)}...`;
+      }
+      return fileName;
+    };
+
     return (
       <Container fluid className="padding-10">
         {(workflow === UI_WORKFLOW.TEST_RECOVERY || workflow === UI_WORKFLOW.RECOVERY) && Object.keys(planHasCheckpoints).length > 0
@@ -274,6 +281,7 @@ class RecoveryMachines extends Component {
           </Col>
           <Col sm={6} className="margin-left-30">
             <DMTPaginator
+              id="recoverymachine"
               defaultLayout="true"
               data={data}
               setData={this.setDataForDisplay}
@@ -287,11 +295,11 @@ class RecoveryMachines extends Component {
             <Col sm={5}>
               <div className="container-display-recovery">
                 <div href="#">
-                  <label htmlFor="credentialUpload" className="label text-success">
+                  <label htmlFor="credentialUpload" className="label text-success" title={recFileName}>
                     <i className="fas fa-upload" />
                   &nbsp;
                   &nbsp;
-                    {recFileName === '' ? t('title.upload.recovery.file') : recFileName}
+                    {recFileName === '' ? t('title.upload.recovery.file') : getRecFileName(recFileName)}
                   </label>
                   <input accept=".xlsx" type="file" id="credentialUpload" name="credentialUpload" style={{ visibility: 'none', display: 'none' }} onSelect={this.onFileChange} onChange={this.onFileChange} />
                 </div>

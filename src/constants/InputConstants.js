@@ -113,6 +113,8 @@ export const STATIC_KEYS = {
   IS_POINT_IN_TIME_DISABLED: 'ui.point.in.time.disable',
   DISABLE_RECOVERY_FROM_LATEST: 'ui.disable.recover.latest',
   POINT_IN_TIME_RECOVERY_CHECKPOINTS: 'ui.point.intime.checkpoint.recovery.config',
+  DMTREE_SEARCH_FOLDER_KEY: 'DMTREE_SEARCH_FOLDER_KER',
+  PLAYBOOK_CONFIG_VALIDATING: 'configValidating',
 };
 
 // Recovery time in minutes
@@ -214,7 +216,17 @@ export const SAML = {
   DEFAULT_USER_ID: 0,
 };
 
+export const EMAIL = {
+  RECIPIENT_ISVALIDATE: 'emailConfiguration.isValidate',
+  RECIPIENT_EMAIL: 'emailConfiguration.recipientEmail',
+};
+
 export const CHECKPOINT_TYPE = {
   LATEST: 'latest',
   POINT_IN_TIME: 'pointInTime',
+};
+
+export const CONSTANT_NUMBERS = {
+  TWENTY_FIVE: 25,
+  ZERO: 0,
 };

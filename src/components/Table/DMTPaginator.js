@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Button, ButtonGroup, Col, Row, Popover, PopoverBody } from 'reactstrap';
+import { arraysAreNotEqual } from '../../utils/AppUtils';
 
 class DMTPaginator extends Component {
   constructor() {
     super();
-    this.state = { popoverOpen: false, totalRows: 0, disablePrevious: false, disableNext: false, index: 0, maxRowPerPage: 100, searchStr: '' };
+    this.state = { popoverOpen: false, data: [], disablePrevious: false, disableNext: false, index: 0, maxRowPerPage: 100, searchStr: '' };
     this.onNext = this.onNext.bind(this);
     this.onBack = this.onBack.bind(this);
     this.onFilter = this.onFilter.bind(this);
@@ -14,12 +15,12 @@ class DMTPaginator extends Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.data.length !== prevState.totalRows) {
+    if (arraysAreNotEqual(nextProps.data, prevState.data)) {
       const { data, setData } = nextProps;
       const { maxRowPerPage } = prevState;
       const dataToShow = data.slice(0, 0 + maxRowPerPage);
       setData(dataToShow);
-      return ({ index: 0 + maxRowPerPage, totalRows: data.length, maxRowPerPage: 100, disablePrevious: true, disableNext: !(data.length > maxRowPerPage) });
+      return ({ index: 0 + maxRowPerPage, data, maxRowPerPage: 100, disablePrevious: true, disableNext: !(data.length > maxRowPerPage) });
     }
     return null;
   }
@@ -94,7 +95,7 @@ class DMTPaginator extends Component {
   }
 
   renderFilter() {
-    const { showFilter, filterHelpText } = this.props;
+    const { showFilter, filterHelpText, id = 'datableSearch' } = this.props;
     const { popoverOpen } = this.state;
     if (showFilter && showFilter === 'true') {
       return (
@@ -102,7 +103,7 @@ class DMTPaginator extends Component {
           <input
             type="text"
             className="form-control"
-            id="datableSearch"
+            id={id}
             placeholder="Search"
             onFocus={this.onFilterFocus}
             onBlur={this.onFilterBlur}
@@ -117,7 +118,7 @@ class DMTPaginator extends Component {
               <box-icon name="search" className="search__icon" size="15px" color="#FFF" onClick={this.onFilter} />
             </div>
           </span>
-          <Popover placement="bottom" isOpen={popoverOpen} target="datableSearch" style={{ backgroundColor: '#222736' }}>
+          <Popover placement="bottom" isOpen={popoverOpen} target={id} style={{ backgroundColor: '#222736' }}>
             <PopoverBody>
               {this.getHelpText(filterHelpText)}
             </PopoverBody>
@@ -130,8 +131,8 @@ class DMTPaginator extends Component {
 
   renderData() {
     const { disablePrevious, disableNext, maxRowPerPage } = this.state;
-    const { totalRows, index } = this.state;
-    const tPages = Math.ceil(totalRows / maxRowPerPage);
+    const { data, index } = this.state;
+    const tPages = Math.ceil(data.length / maxRowPerPage);
     const cP = (index > 0 ? Math.ceil(index / maxRowPerPage) : 0);
     return (
       <Row>

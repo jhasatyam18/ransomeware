@@ -18,21 +18,28 @@ function DownloadPlaybookFromPlanList(props) {
   if (templates.length !== 0) {
     templates.forEach((exl) => {
       if (exl.planConfigurations[0].planID === id) {
-        const { playbookStatus } = exl;
-        if (playbookStatus === PLAYBOOK_IN_VALIDATED) {
-          dispatch(updateIsPlaybookDownloadedStatus(id));
-        }
         downloadURL = `${window.location.protocol}//${window.location.host}/playbooks/${exl.name}`;
         playbook = exl;
       }
     });
   }
+  const onDownloadClick = () => {
+    if (!hasRequestedPrivileges(user, ['playbook.generate'])) {
+      return null;
+    }
+    if (playbook.playbookStatus === PLAYBOOK_IN_VALIDATED) {
+      dispatch(updateIsPlaybookDownloadedStatus(playbook.id));
+    }
+    const link = document.createElement('a');
+    link.href = downloadURL;
+    link.click();
+  };
   if (downloadURL && playbook) {
     return (
       <>
         <Row>
           <Col sm={1} className="padding-top-3 padding-left-2">
-            <a href={!hasRequestedPrivileges(user, ['playbook.generate']) ? '#' : downloadURL}>
+            <a href="#" onClick={onDownloadClick}>
               <FontAwesomeIcon className="single_playbook_download" size="sm" icon={faDownload} />
             </a>
           </Col>

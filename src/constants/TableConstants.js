@@ -276,13 +276,16 @@ export const TABLE_FILTER_TEXT = {
   REPLICATION_VM_JOBS: 'Data can be filtered on following fields <br/> vmName, iterationNumber, status and syncStatus <br /> example: Windows or vmName=windows',
   TABLE_PROTECT_VM_VMWARE: 'Data can be filtered on following fields <br/> name and guestOS <br /> example: Windows or name=DBServer:guestOS=windows',
   TABLE_RECOVERY_VMS: 'Data can be filtered on following fields <br/> name <br /> example: Windows or name=DBServer',
+  TABLE_HEADER_DR_PLANS: 'Data can be filtered on following fields :- Name, Status, Recovery Status, Protection Site, Recovery Site',
+  TABLE_PROTECTION_PLAN_VMS: 'Data can be filtered on following fields :- Name, OS, Disk, Status',
+  TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG: 'Data can be filtered on following fields :- Name, Instance Type',
 };
 
 export const PLAYBOOKS = [
   { label: 'File', field: 'name', itemRenderer: PLAYBOOK_FILENAME_RENDERER, width: 3 },
   { label: 'Configure', itemRenderer: PLAYBOOK_CONFIGURE_RENDERER, width: 2 },
   { label: 'Status', field: 'status', itemRenderer: SINGLE_PLAYBOOK_STATUS_RENDERER, width: 4 },
-  { label: 'Actions', field: 'status', itemRenderer: PLAYBOOK_ACTION_RENDERER, width: 1 },
+  { label: 'Actions', field: 'status', itemRenderer: PLAYBOOK_ACTION_RENDERER, width: 2 },
 ];
 
 export const PLAYBOOK_DETAILS = [

@@ -19,9 +19,6 @@ class DMMultiSelect extends Component {
     if (typeof msValues === 'string' && msValues.length > 0) {
       msValues = msValues.split(',');
     }
-    // if (msValues) {
-    //   this.setState({ selectedItems: msValues });
-    // }
   }
 
   getSelectedValues() {

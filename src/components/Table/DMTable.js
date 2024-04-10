@@ -1,12 +1,10 @@
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Row, Col, Card, CardBody,
-} from 'reactstrap';
-import {
-  Table, Thead, Tr, Th, Tbody, Td,
-} from 'react-super-responsive-table';
+import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
+import {
+  Table, Tbody, Td, Th, Thead, Tr,
+} from 'react-super-responsive-table';
+import { Card, CardBody, Col, Row } from 'reactstrap';
 import DMTableRow from './DMTableRows';
 
 class DMTable extends Component {
@@ -31,9 +29,9 @@ class DMTable extends Component {
   }
 
   onChange(e) {
-    const { onSelectAll, dispatch } = this.props;
+    const { onSelectAll, dispatch, data } = this.props;
     this.setState({ selected: e.target.checked });
-    dispatch(onSelectAll(e.target.checked));
+    dispatch(onSelectAll(e.target.checked, data));
   }
 
   renderHeaderLables(columns) {

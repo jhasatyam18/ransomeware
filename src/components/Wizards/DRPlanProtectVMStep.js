@@ -24,10 +24,10 @@ class DRPlanProtectVMStep extends Component {
     const { user } = this.props;
     const { values } = user;
     const vms = getValue('ui.site.vms', values);
-    if (criteria === '') {
+    if (criteria.trim() === '') {
       this.setState({ hasFilterString: false, searchData: [] });
     } else {
-      const newData = filterData(vms, criteria, TABLE_PROTECT_VM_VMWARE);
+      const newData = filterData(vms, criteria.trim(), TABLE_PROTECT_VM_VMWARE);
       this.setState({ hasFilterString: true, searchData: newData });
     }
   }
@@ -67,6 +67,7 @@ class DRPlanProtectVMStep extends Component {
         <Row>
           <Col className="margin-left-30 padding-right-30 margin-right-10">
             <DMTPaginator
+              id="planvmstep"
               defaultLayout="true"
               data={data}
               setData={this.setDataForDisplay}

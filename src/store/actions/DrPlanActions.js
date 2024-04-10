@@ -1,35 +1,33 @@
 import i18n from 'i18next';
-import { RECOVERY_STATUS } from '../../constants/AppStatus';
-import { STORE_KEYS } from '../../constants/StoreKeyConstants';
-import { getMemoryInfo, getNetworkIDFromName, getSubnetIDFromName, getLabelWithResourceGrp } from '../../utils/AppUtils';
-import { DRPLAN_CONFIG_STEP } from '../../constants/DrplanConstants';
-import { changedVMRecoveryConfigurations } from '../../utils/validationUtils';
-import { MILI_SECONDS_TIME, MONITORING_DISK_CHANGES } from '../../constants/EventConstant';
-import { fetchByDelay } from '../../utils/SlowFetch';
-import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import * as Types from '../../constants/actionTypes';
-import {
-  API_FETCH_DR_PLANS, API_START_DR_PLAN, API_STOP_DR_PLAN, API_DELETE_DR_PLAN, API_FETCH_DR_PLAN_BY_ID, API_FETCH_REVERSE_DR_PLAN_BY_ID, API_RECOVER, API_MIGRATE, API_REVERSE, API_PROTECTION_PLAN_VMS, API_PROTECTION_PLAN_UPDATE, API_PROTECTION_PLAN_PROTECTED_VMS, API_VM_ALERTS, API_EDIT_PROTECTED_VM, API_FETCH_VMWARE_INVENTORY, API_TEST_RECOVERY_CLEANUP, API_AUTO_MIGRATE_WORKFLOW, API_BULK_GENERATE,
-} from '../../constants/ApiConstants';
-import { addMessage } from './MessageActions';
-import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
-import { fetchNetworks, fetchSites, onRecoverSiteChange } from './SiteActions';
-import { getCreateDRPlanPayload, getEditProtectionPlanPayload, getRecoveryPayload, getReversePlanPayload, getVMConfigPayload } from '../../utils/PayloadUtil';
-import { clearValues, fetchScript, hideApplicationLoader, loadRecoveryLocationData, onDiffReverseChanges, refresh, setInstanceDetails, setProtectionPlanScript, setTags, showApplicationLoader, valueChange } from './UserActions';
-import { closeWizard, openWizard } from './WizardActions';
-import { closeModal, openModal } from './ModalActions';
-import { addAssociatedIPForAzure, addAssociatedReverseIP } from './AwsActions';
-import { MIGRATION_WIZARDS, RECOVERY_WIZARDS, TEST_RECOVERY_WIZARDS, REVERSE_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS, PROTECTED_VM_RECONFIGURATION_WIZARD, CLEANUP_TEST_RECOVERY_WIZARDS, STEPS } from '../../constants/WizardConstants';
-import { getMatchingInsType, getValue, getVMMorefFromEvent, isSamePlatformPlan, getVMInstanceFromEvent, getMatchingOSType, getMatchingFirmwareType } from '../../utils/InputUtils';
+import { API_AUTO_MIGRATE_WORKFLOW, API_BULK_GENERATE, API_DELETE_DR_PLAN, API_EDIT_PROTECTED_VM, API_FETCH_DR_PLANS, API_FETCH_DR_PLAN_BY_ID, API_FETCH_REVERSE_DR_PLAN_BY_ID, API_FETCH_VMWARE_INVENTORY, API_MIGRATE, API_PROTECTION_PLAN_PROTECTED_VMS, API_PROTECTION_PLAN_UPDATE, API_PROTECTION_PLAN_VMS, API_RECOVER, API_REVERSE, API_START_DR_PLAN, API_STOP_DR_PLAN, API_TEST_RECOVERY_CLEANUP, API_VM_ALERTS } from '../../constants/ApiConstants';
+import { RECOVERY_STATUS } from '../../constants/AppStatus';
+import { DRPLAN_CONFIG_STEP } from '../../constants/DrplanConstants';
+import { MILI_SECONDS_TIME, MONITORING_DISK_CHANGES } from '../../constants/EventConstant';
 import { CHECKPOINT_TYPE, PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
-import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
+import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { MODAL_CONFIRMATION_WARNING, PPLAN_REMOVE_CHECKPOINT_RENDERER } from '../../constants/Modalconstant';
-import { setVmwareInitialData, setVMwareTargetData } from './VMwareActions';
-import { setCookie } from '../../utils/CookieUtils';
+import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
+import { STORE_KEYS } from '../../constants/StoreKeyConstants';
 import { APPLICATION_GETTING_STARTED_COMPLETED } from '../../constants/UserConstant';
+import { CLEANUP_TEST_RECOVERY_WIZARDS, MIGRATION_WIZARDS, PROTECTED_VM_RECONFIGURATION_WIZARD, RECOVERY_WIZARDS, REVERSE_WIZARDS, STEPS, TEST_RECOVERY_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS } from '../../constants/WizardConstants';
+import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
+import { getLabelWithResourceGrp, getMemoryInfo, getNetworkIDFromName, getSubnetIDFromName } from '../../utils/AppUtils';
+import { setCookie } from '../../utils/CookieUtils';
+import { getMatchingFirmwareType, getMatchingInsType, getMatchingOSType, getValue, getVMInstanceFromEvent, getVMMorefFromEvent, isSamePlatformPlan } from '../../utils/InputUtils';
+import { getCreateDRPlanPayload, getEditProtectionPlanPayload, getRecoveryPayload, getReversePlanPayload, getVMConfigPayload } from '../../utils/PayloadUtil';
+import { fetchByDelay } from '../../utils/SlowFetch';
+import { changedVMRecoveryConfigurations } from '../../utils/validationUtils';
+import { addAssociatedIPForAzure, addAssociatedReverseIP } from './AwsActions';
 import { fetchCheckpointsByPlanId, getVmCheckpoints, setPplanRecoveryCheckpointData } from './checkpointActions';
+import { downloadDateModifiedPlaybook, onPlanPlaybookExport } from './DrPlaybooksActions';
 import { fetchReplicationJobsByPplanId } from './JobActions';
-import { onPlanPlaybookExport } from './DrPlaybooksActions';
+import { addMessage } from './MessageActions';
+import { closeModal, openModal } from './ModalActions';
+import { fetchNetworks, fetchSites, onRecoverSiteChange } from './SiteActions';
+import { clearValues, fetchScript, hideApplicationLoader, loadRecoveryLocationData, onDiffReverseChanges, refresh, setInstanceDetails, setProtectionPlanScript, setTags, showApplicationLoader, valueChange } from './UserActions';
+import { setVmwareInitialData, setVMwareTargetData } from './VMwareActions';
+import { closeWizard, openWizard } from './WizardActions';
 
 export function fetchDrPlans(key) {
   return (dispatch) => {
@@ -236,8 +234,10 @@ export function drPlanDetailsFetched(protectionPlan) {
 export function onProtectionPlanChange({ value, allowDeleted, planRecoveryStatus }) {
   return (dispatch, getState) => {
     const url = API_FETCH_DR_PLAN_BY_ID.replace('<id>', value);
+    dispatch(showApplicationLoader(API_FETCH_DR_PLAN_BY_ID, 'Fetching protection plan details...'));
     return callAPI(url)
       .then((json) => {
+        dispatch(hideApplicationLoader(API_FETCH_DR_PLAN_BY_ID));
         if (json && json.hasError) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
@@ -273,6 +273,7 @@ export function onProtectionPlanChange({ value, allowDeleted, planRecoveryStatus
         }
       },
       (err) => {
+        dispatch(hideApplicationLoader(API_FETCH_DR_PLAN_BY_ID));
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
   };
@@ -630,10 +631,7 @@ export function playbookExport(plan, planID = undefined) {
       } else {
         const { name } = json;
         if (typeof name !== 'undefined') {
-          const result = `/playbooks/download/${json.name}`;
-          const link = document.createElement('a');
-          link.href = result;
-          link.click();
+          downloadDateModifiedPlaybook(name);
         }
         dispatch(addMessage('Excel exported successfully', MESSAGE_TYPES.SUCCESS));
         dispatch(closeModal());

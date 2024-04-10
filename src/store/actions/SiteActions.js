@@ -1,16 +1,16 @@
-import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import * as Types from '../../constants/actionTypes';
-import { API_AWS_AVAILABILITY_ZONES, API_FETCH_VMWARE_INVENTORY, API_CREATE_SITES, API_DELETE_SITES, API_FETCH_SITES, API_FETCH_SITE_VMS, API_GCP_AVAILABILITY_ZONES, API_SITE_NETWORKS, API_AZURE_AVAILIBITY_ZONES } from '../../constants/ApiConstants';
-import { addMessage } from './MessageActions';
+import { API_AWS_AVAILABILITY_ZONES, API_AZURE_AVAILIBITY_ZONES, API_CREATE_SITES, API_DELETE_SITES, API_FETCH_SITES, API_FETCH_SITE_VMS, API_FETCH_VMWARE_INVENTORY, API_GCP_AVAILABILITY_ZONES, API_SITE_NETWORKS } from '../../constants/ApiConstants';
+import { CHECKPOINT_TYPE, PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
+import { MESSAGE_TYPES } from '../../constants/MessageConstants';
+import { STORE_KEYS } from '../../constants/StoreKeyConstants';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
+import { getMatchingFirmwareType, getMatchingOSType, getValue } from '../../utils/InputUtils';
+import { fetchByDelay } from '../../utils/SlowFetch';
+import { fetchAvailibilityZonesForAzure } from './AzureAction';
+import { setRecoveryVMDetails } from './DrPlanActions';
+import { addMessage } from './MessageActions';
 import { closeModal } from './ModalActions';
 import { fetchRegions, hideApplicationLoader, loadRecoveryLocationData, showApplicationLoader, valueChange } from './UserActions';
-import { STORE_KEYS } from '../../constants/StoreKeyConstants';
-import { fetchByDelay } from '../../utils/SlowFetch';
-import { getMatchingFirmwareType, getMatchingOSType, getValue } from '../../utils/InputUtils';
-import { CHECKPOINT_TYPE, PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
-import { setRecoveryVMDetails } from './DrPlanActions';
-import { fetchAvailibilityZonesForAzure } from './AzureAction';
 
 export function fetchSites(key, setProtectionPlatform) {
   return (dispatch) => {
@@ -301,11 +301,17 @@ export function handleProtectVMSeletion(data, isSelected, primaryKey) {
   };
 }
 
-export function handleSelectAllRecoveryVMs(value) {
+/**
+ *
+ * @param {*} value - true or false
+ * @param {*} data - array of data wheather it's searched or normal data
+ * @returns
+ */
+
+export function handleSelectAllRecoveryVMs(value, data) {
   return (dispatch, getState) => {
     const { user } = getState();
     const { values } = user;
-    const data = getValue(STORE_KEYS.UI_RECOVERY_VMS, values);
     const recoveryPath = getValue(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, values) || '';
     const plan = getValue(STORE_KEYS.UI_CHECKPOINT_PLAN, values);
     let selectedVMs = {};

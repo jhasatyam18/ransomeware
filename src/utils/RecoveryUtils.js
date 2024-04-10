@@ -1,12 +1,12 @@
-import { addMessage } from '../store/actions/MessageActions';
 import { FIELD_TYPE } from '../constants/FieldsConstant';
-import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP } from '../constants/StackConstants';
-import { MESSAGE_TYPES } from '../constants/MessageConstants';
 import { COPY_CONFIG, PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../constants/InputConstants';
-import { getInstanceTypeOptions, getAzureGeneralSettings, getRecoveryScript, getReplicationScript, getValue, getVMwareGeneralSettings, getNetworkOptions, getEncryptionKeyOptions, shouldEnableAWSEncryption } from './InputUtils';
-import { isEmpty } from './validationUtils';
+import { MESSAGE_TYPES } from '../constants/MessageConstants';
+import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP } from '../constants/StackConstants';
+import { addMessage } from '../store/actions/MessageActions';
+import { getLabelWithResourceGrp, getMemoryInfo } from './AppUtils';
+import { getAzureGeneralSettings, getEncryptionKeyOptions, getInstanceTypeOptions, getNetworkOptions, getRecoveryScript, getReplicationScript, getValue, getVMwareGeneralSettings, shouldEnableAWSEncryption, getGCPNetworkValue } from './InputUtils';
 import { getSourceConfig } from './PayloadUtil';
-import { getMemoryInfo, getLabelWithResourceGrp } from './AppUtils';
+import { isEmpty } from './validationUtils';
 
 export function createVMTestRecoveryConfig(vm, user, dispatch) {
   const { values } = user;
@@ -225,7 +225,7 @@ function getNetworkConfig({ sourceConfig, user, workFlow }) {
   const { networks, availZone } = sourceConfig;
   const netWorkKeys = [];
   networks.forEach((nw, index) => {
-    const { vpcId = '', Subnet = '', isPublicIP = '', networkTier = '', privateIP, isFromSource, securityGroups, adapterType, networkMoref, macAddress, netmask, gateway, dns } = nw;
+    const { vpcId = '', Subnet = '', isPublicIP = '', networkTier = '', privateIP, isFromSource, securityGroups, adapterType, networkMoref, macAddress = '', netmask = '', gateway = '', dns = '' } = nw;
     let { subnet = '', network, publicIP } = nw;
     if (subnet === '' && Subnet !== '') {
       subnet = Subnet;
@@ -254,6 +254,9 @@ function getNetworkConfig({ sourceConfig, user, workFlow }) {
             network = netopt.label;
           }
         });
+        if (network !== '' || typeof network !== 'undefined') {
+          network = getGCPNetworkValue(network);
+        }
         keys = [
           { title: 'label.network', value: network },
           { title: 'label.subnet', value: subnet },
@@ -267,6 +270,17 @@ function getNetworkConfig({ sourceConfig, user, workFlow }) {
           { title: 'label.adapter.type', value: adapterType },
           { title: 'label.auto.publicIP', value: isPublicIP },
         ];
+        if (workflow !== UI_WORKFLOW.CREATE_PLAN) {
+          const configureguestos = publicIP !== '' && netmask !== '' && gateway !== '' && dns !== '';
+          keys = [...keys, { title: 'Private IP', value: privateIP },
+            { title: 'Mac Address', value: macAddress },
+            { title: 'Configure Guest Network', value: configureguestos },
+            { title: 'PublicIP', value: publicIP },
+            { title: 'Netmask', value: netmask },
+            { title: 'Gateway', value: gateway },
+            { title: 'DNS', value: dns },
+          ];
+        }
         break;
       case PLATFORM_TYPES.Azure:
         let networkLabel = '';
@@ -288,19 +302,11 @@ function getNetworkConfig({ sourceConfig, user, workFlow }) {
           { title: 'label.network', value: networkLabel || '' },
           { title: 'label.subnet', value: subnetLabel || '' },
           { title: 'label.security.groups', value: securityLabel || '' },
+          { title: 'label.auto.publicIP', value: typeof isPublicIP !== 'undefined' ? isPublicIP : '' },
         ];
         break;
       default:
         break;
-    }
-    if (workflow !== UI_WORKFLOW.CREATE_PLAN) {
-      keys = [...keys, { title: 'Private IP', value: privateIP },
-        { title: 'Mac Address', value: macAddress },
-        { title: 'Public IP', value: publicIP },
-        { title: 'Netmask', value: netmask },
-        { title: 'Gateway', value: gateway },
-        { title: 'DNS', value: dns },
-      ];
     }
     const nic = { title: `Nic-${index + 1}`, values: keys };
     netWorkKeys.push(nic);

@@ -5,8 +5,8 @@ import { onPlatformTypeChange, onNodeTypeChange } from '../store/actions';
 import { onProtectionPlanChange } from '../store/actions/DrPlanActions';
 import { onProtectSiteChange, updateAvailabilityZones } from '../store/actions/SiteActions';
 import { onLimitChange, onTimeLimitChange } from '../store/actions/ThrottlingAction';
-import { getAvailibilityZoneOptions, enableNodeTypeVM, getDefaultRecoverySite, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getReportProtectionPlans, getSiteNodeOptions, getSubnetOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort, getVMwareVMSelectionData, showInstallCloudPackageOption, isPlatformTypeAzure, showDifferentialReverseCheckbox, disableSiteSelection, getSitesOptions, showRevPrefix, showReverseReplType, getVmCheckpointOptions, getCheckpointDurationOption, getCheckRentaintionOption, revShowRemoveCheckpointOption, defaultRecoveryCheckpointForVm, onVmRecoveryCheckpointOptionChange, userRoleOptions } from '../utils/InputUtils';
-import { validatePlanSiteSelection, isEmpty, validateDrSiteSelection, validatePassword, validateReplicationInterval, validateReplicationValue, showReverseWarningText, disableRecoveryCheckpointField, validateCheckpointFields } from '../utils/validationUtils';
+import { getAvailibilityZoneOptions, enableNodeTypeVM, getDefaultRecoverySite, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getReportProtectionPlans, getSiteNodeOptions, getSubnetOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort, getVMwareVMSelectionData, showInstallCloudPackageOption, isPlatformTypeAzure, showDifferentialReverseCheckbox, disableSiteSelection, getSitesOptions, showRevPrefix, showReverseReplType, getVmCheckpointOptions, getCheckpointDurationOption, getCheckRentaintionOption, revShowRemoveCheckpointOption, defaultRecoveryCheckpointForVm, onVmRecoveryCheckpointOptionChange, userRoleOptions, showRecipientEmailField } from '../utils/InputUtils';
+import { validatePlanSiteSelection, isEmpty, validateDrSiteSelection, validatePassword, validateReplicationInterval, validateReplicationValue, showReverseWarningText, disableRecoveryCheckpointField, validateCheckpointFields, isEmptyNum } from '../utils/validationUtils';
 import { STATIC_KEYS } from './InputConstants';
 import { EMAIL_REGEX, FQDN_REGEX, HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX, PASSWORD_REGEX, USERNAME_REGEX } from './ValidationConstants';
 import { onScriptChange, loadTreeChildData, onDiffReverseChanges } from '../store/actions/UserActions';
@@ -196,9 +196,13 @@ export const FIELDS = {
   'emailConfiguration.smtpHost': {
     label: 'emailConfiguration.smtpHost', placeHolderText: 'SMTP host name', type: FIELD_TYPE.TEXT, errorMessage: 'Enter valid smtp host or ip address', shouldShow: true, validate: (value, user) => isEmpty(value, user), fieldInfo: 'info.email.smtp.host' },
   'emailConfiguration.smtpPort': {
-    label: 'emailConfiguration.smtpPort', placeHolderText: 'SMTP port', type: FIELD_TYPE.NUMBER, errorMessage: 'Enter valid smtp port', shouldShow: true, validate: (value, user) => isEmpty(value, user), fieldInfo: 'info.email.smtp.port' },
+    label: 'emailConfiguration.smtpPort', placeHolderText: 'SMTP port', type: FIELD_TYPE.NUMBER, errorMessage: 'Enter valid smtp port', shouldShow: true, validate: (value, user) => isEmptyNum(value, user), fieldInfo: 'info.email.smtp.port', defaultValue: 1, min: 1 },
   'emailConfiguration.insecureSkipVerify': {
     label: 'emailConfiguration.insecureSkipVerify', placeHolderText: '', type: FIELD_TYPE.CHECKBOX, shouldShow: true, fieldInfo: 'info.email.skip.ssl' },
+  'emailConfiguration.isValidate': {
+    label: 'emailConfiguration.isValidate', placeHolderText: '', type: FIELD_TYPE.CHECKBOX, shouldShow: true, fieldInfo: 'info.recepient.checkbox' },
+  'emailConfiguration.recipientEmail': {
+    label: 'Recipient Email', placeHolderText: 'Recipient email address', type: FIELD_TYPE.TEXT, errorMessage: 'Enter valid email address', shouldShow: (user) => showRecipientEmailField(user), patterns: [EMAIL_REGEX], fieldInfo: 'info.recipient.email.address' },
   // 'emailConfiguration.replicateConfig': {
   //   label: 'emailConfiguration.replicateConfig', description: 'Replicate configuration on connected sites', placeHolderText: 'Replicate configuration on connected sites', type: FIELD_TYPE.CHECKBOX, shouldShow: true, fieldInfo: 'info.email.replicate.config' },
   'emailRecipient.emailAddress': {

@@ -437,10 +437,7 @@ export function configurePlaybookGenerate() {
           dispatch(addMessage('Playbook generated and downloaded successfully', MESSAGE_TYPES.SUCCESS));
           const { name = 'undefined' } = json;
           if (typeof name !== 'undefined') {
-            const result = `/playbooks/download/${json.name}`;
-            const link = document.createElement('a');
-            link.href = result;
-            link.click();
+            downloadDateModifiedPlaybook(name);
           }
           dispatch(closeModal());
           dispatch(clearValues());
@@ -490,6 +487,8 @@ export function updateIsPlaybookDownloadedStatus(playbookId) {
     return callAPI(url, obj).then((json) => {
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        dispatch(refresh());
       }
     },
     (err) => {
@@ -511,4 +510,18 @@ export function downloadPlaybooks(data, dispatch) {
     link.click();
     dispatch(refresh());
   }
+}
+
+export function downloadDateModifiedPlaybook(name) {
+  const result = `/playbooks/download/${name}`;
+  const nameSplitByDash = name.split('-');
+  const d = new Date(parseInt(nameSplitByDash[nameSplitByDash.length - 1].split('.')[0], 10) * 1000);
+  let resp = '';
+  resp = `${d.toLocaleDateString()}-${d.toLocaleTimeString()}`;
+  resp = resp.replaceAll('/', '_').split(' ').join('_');
+  const link = document.createElement('a');
+  nameSplitByDash.pop();
+  link.download = `${nameSplitByDash.join('_')}-${resp}`;
+  link.href = result;
+  link.click();
 }
