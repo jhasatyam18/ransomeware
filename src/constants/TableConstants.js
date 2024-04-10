@@ -55,6 +55,7 @@ export const CHECKPOINTS_LINK_RENDERER = 'CHECKPOINT_LINK_RENDERER';
 export const JOB_TYPE_ITEM_RENDERER = 'JOB_TYPE_ITEM_RENDERER';
 export const CHECKPOINT_RECOVERY_JOB_ITEM_RENDERER = 'CHECKPOINT_JOB_ITEM_RENDERER';
 export const PLAYBOOK_ITEM_RENDERER = 'PLAYBOOK_ITEM_RENDERER';
+export const PLATFORM_TYPE_ITEM_RENDERER = 'PREP_NODE_ITEM_RENDERER';
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
@@ -197,7 +198,8 @@ export const TABLE_NODES = [
   { label: 'Name', field: 'name' },
   { label: 'Hostname', field: 'hostname' },
   { label: 'Type', field: 'nodeType' },
-  { label: 'Platform Type ', field: 'platformType' },
+  { label: 'Platform Type ', field: 'platformType', itemRenderer: PLATFORM_TYPE_ITEM_RENDERER },
+  { label: 'Version', field: 'version', ifEmptyShow: '-' },
   { label: 'Ports', field: 'managementPort', itemRenderer: SERVER_PORT_ITEM_RENDERER },
   { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
 ];

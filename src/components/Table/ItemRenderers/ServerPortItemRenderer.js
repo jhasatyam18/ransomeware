@@ -1,4 +1,5 @@
 import React from 'react';
+import { NODE_TYPES } from '../../../constants/InputConstants';
 
 function ServerPortItemRenderer({ data }) {
   const mgmtPort = data.managementPort;
@@ -26,6 +27,7 @@ function ServerPortItemRenderer({ data }) {
       <div>
         {mgmtPort !== 0 ? getPort('fas fa-user', 'Management', mgmtPort) : ''}
         {replPort !== 0 ? getPort('far fa-clone', 'Replication', replPort) : ''}
+        {mgmtPort === 0 && replPort === 0 && data.nodeType === NODE_TYPES.PrepNode ? getPort('far fa-clone', 'Replication', '5985-5986') : ''}
       </div>
     </>
   );

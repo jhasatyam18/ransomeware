@@ -51,6 +51,12 @@ class DMTableRow extends Component {
     if (typeof filterText !== 'undefined') {
       return filterText(value);
     }
+    if (typeof value === 'undefined' || value === null || value === '') {
+      const { ifEmptyShow } = tableHeader;
+      if (typeof ifEmptyShow !== 'undefined') {
+        return ifEmptyShow;
+      }
+    }
     return value;
   }
 
