@@ -1,16 +1,16 @@
 import i18n from 'i18next';
-import { showSystemAgentWarningText } from '../utils/AppUtils';
-import { getErrorMessage, getFieldInfo, getLabel } from '../utils/LocallUtils';
-import { onPlatformTypeChange, onNodeTypeChange } from '../store/actions';
+import { onNodeTypeChange, onPlatformTypeChange } from '../store/actions';
 import { onProtectionPlanChange } from '../store/actions/DrPlanActions';
 import { onProtectSiteChange, updateAvailabilityZones } from '../store/actions/SiteActions';
 import { onLimitChange, onTimeLimitChange } from '../store/actions/ThrottlingAction';
-import { getAvailibilityZoneOptions, enableNodeTypeVM, getDefaultRecoverySite, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getReportProtectionPlans, getSiteNodeOptions, getSubnetOptions, isPlatformTypeAWS, isPlatformTypeGCP, isPlatformTypeVMware, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort, getVMwareVMSelectionData, showInstallCloudPackageOption, isPlatformTypeAzure, showDifferentialReverseCheckbox, disableSiteSelection, getSitesOptions, showRevPrefix, showReverseReplType, getVmCheckpointOptions, getCheckpointDurationOption, getCheckRentaintionOption, revShowRemoveCheckpointOption, defaultRecoveryCheckpointForVm, onVmRecoveryCheckpointOptionChange, userRoleOptions, showRecipientEmailField } from '../utils/InputUtils';
-import { validatePlanSiteSelection, isEmpty, validateDrSiteSelection, validatePassword, validateReplicationInterval, validateReplicationValue, showReverseWarningText, disableRecoveryCheckpointField, validateCheckpointFields, isEmptyNum } from '../utils/validationUtils';
+import { loadTreeChildData, onDiffReverseChanges, onScriptChange } from '../store/actions/UserActions';
+import { showSystemAgentWarningText } from '../utils/AppUtils';
+import { defaultRecoveryCheckpointForVm, disableSiteSelection, enableNodeTypeVM, getAvailibilityZoneOptions, getCheckpointDurationOption, getCheckRentaintionOption, getDefaultRecoverySite, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getReportProtectionPlans, getSiteNodeOptions, getSitesOptions, getSubnetOptions, getVmCheckpointOptions, getVMwareVMSelectionData, isPlatformTypeAWS, isPlatformTypeAzure, isPlatformTypeGCP, isPlatformTypeVMware, onVmRecoveryCheckpointOptionChange, revShowRemoveCheckpointOption, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort, showDifferentialReverseCheckbox, showInstallCloudPackageOption, showRecipientEmailField, showReverseReplType, showRevPrefix, userRoleOptions } from '../utils/InputUtils';
+import { getErrorMessage, getFieldInfo, getLabel } from '../utils/LocallUtils';
+import { disableRecoveryCheckpointField, isEmpty, isEmptyNum, showReverseWarningText, validateCheckpointFields, validateDrSiteSelection, validatePassword, validatePlanSiteSelection, validateReplicationInterval, validateReplicationValue } from '../utils/validationUtils';
+import { NOTE_TEXT } from './DMNoteConstant';
 import { STATIC_KEYS } from './InputConstants';
 import { EMAIL_REGEX, FQDN_REGEX, HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX, PASSWORD_REGEX, USERNAME_REGEX } from './ValidationConstants';
-import { onScriptChange, loadTreeChildData, onDiffReverseChanges } from '../store/actions/UserActions';
-import { NOTE_TEXT } from './DMNoteConstant';
 
 export const CONFIURE_SITE_GROUP = ['configureSite.platformDetails.type', 'configureSite.platformDetails.platformName'];
 export const REPLICATION_INTERVAL_COMP = 'REPLICATION_INTERVAL_COMP';
@@ -276,4 +276,6 @@ export const FIELDS = {
   'reset.oldPassword': {
     label: 'password', placeHolderText: 'Enter Password', type: FIELD_TYPE.PASSWORD, patterns: [PASSWORD_REGEX], errorMessage: 'Password should have atleast 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character and be at least 8 characters long and max of 32 characters.', shouldShow: true, fieldInfo: 'info.reset.password',
   },
+  'ui.reset.disk.replication': { label: 'Select All', type: FIELD_TYPE.CHECKBOX, shouldShow: true, default: false },
+
 };

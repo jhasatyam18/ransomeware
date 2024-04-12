@@ -55,6 +55,9 @@ export const CHECKPOINTS_LINK_RENDERER = 'CHECKPOINT_LINK_RENDERER';
 export const JOB_TYPE_ITEM_RENDERER = 'JOB_TYPE_ITEM_RENDERER';
 export const CHECKPOINT_RECOVERY_JOB_ITEM_RENDERER = 'CHECKPOINT_JOB_ITEM_RENDERER';
 export const PLAYBOOK_ITEM_RENDERER = 'PLAYBOOK_ITEM_RENDERER';
+export const QUIESCE_SOURCE_SNAPSHOT_RENDERER = 'QUIESCE_SOURCE_SNAPSHOT_RENDERER';
+export const QUIESCE_VMNAME_RENDERER = 'QUIESCE_VMNAME_RENDERER';
+export const DISK_REPLICATION_TYPE_ITEM_RENDERER = 'DISK_REPLICATION_TYPE_ITEM_RENDERER';
 export const PLATFORM_TYPE_ITEM_RENDERER = 'PREP_NODE_ITEM_RENDERER';
 
 // show time taken by any job
@@ -112,6 +115,7 @@ export const REPLICATION_JOBS = [
   { label: 'Virtual Machine', field: 'vmName', allowFilter: true, checked: true },
   { label: 'Disk Id', field: 'diskId' },
   { label: 'Iteration', field: 'iterationNumber' },
+  { label: 'Type', field: 'replicationType', allowFilter: true, itemRenderer: DISK_REPLICATION_TYPE_ITEM_RENDERER, width: '2' },
   { label: 'Data Changed', field: 'changedSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Data Transferred', field: 'transferSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Replication Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
@@ -336,4 +340,8 @@ export const VM_RECOVERY_CHECKPOINTS = [
   { label: 'Checkpoint Status', field: 'checkpointStatus', allowFilter: true, checked: true, itemRenderer: CHECKPOINT_RECOVERY_JOB_ITEM_RENDERER },
   { label: 'Recovery Status', field: 'recoveryStatus', allowFilter: true, checked: true, itemRenderer: CHECKPOINT_RECOVERY_JOB_ITEM_RENDERER },
   { label: 'Preserve', field: 'isPreserved', itemRenderer: PRESERVE_CHECKPOINT },
+];
+export const VMWARE_QUIESCE_SNAPSHOT = [
+  { label: 'Virtual Machine', field: 'name', itemRenderer: QUIESCE_VMNAME_RENDERER },
+  { label: 'Enable', itemRenderer: QUIESCE_SOURCE_SNAPSHOT_RENDERER },
 ];

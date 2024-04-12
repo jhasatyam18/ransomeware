@@ -1,6 +1,6 @@
 import { cleanupTestRecoveries, onConfigureDRPlan, startMigration, startRecovery, startReversePlan, updateVMConfig } from '../store/actions/DrPlanActions';
-import { noValidate, validateDRPlanProtectData, validateSteps, validateMigrationVMs, validateVMConfiguration, validateReversePlan, validateRecoveryCheckpointData, checkCBTStatus, validateRecoveryVMs, validateVMSelection } from '../utils/validationUtils';
 import { postPlanSitesSelected } from '../store/actions/SiteActions';
+import { checkCBTStatus, noValidate, validateDRPlanProtectData, validateMigrationVMs, validateRecoveryCheckpointData, validateRecoveryVMs, validateReversePlan, validateSteps, validateVMConfiguration, validateVMSelection } from '../utils/validationUtils';
 import { UI_WORKFLOW } from './InputConstants';
 import { STORE_KEYS } from './StoreKeyConstants';
 

@@ -477,6 +477,10 @@ span.flatpickr-weekday {
   }
 }
 
+.icon__warning {
+  color: $warning;
+}
+
 .dm__progress__bar {
   min-height: 12px;
 }
@@ -604,7 +608,15 @@ span.flatpickr-weekday {
   position: relative;
   left: -12px;
   top: 18px;
-  height: 80%;
+  height: 75%;
+}
+
+.step_msg_div_data{
+  margin: 5px;
+  position: relative;
+  left: -12px;
+  top: 18px;
+  height: 90%;
 }
 
 .step_msg{
@@ -654,4 +666,9 @@ span.flatpickr-weekday {
 
 .horizontal-line {
   border-bottom: $horizontal-line-height $horizontal-line-style $horizontal-line-color;
+}
+.display__flex__row {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
 }

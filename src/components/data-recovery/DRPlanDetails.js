@@ -2,22 +2,22 @@ import classnames from 'classnames';
 import React, { Component, Suspense } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardTitle, Col, Container, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
-import { PLAN_DETAIL_TABS } from '../../constants/UserConstant';
-import { fetchCheckpointsByPlanId } from '../../store/actions/checkpointActions';
-import Loader from '../Shared/Loader';
-import { PLATFORM_TYPES, RECOVERY_STATUS, REPLICATION_STATUS, PROTECTION_PLANS_STATUS } from '../../constants/InputConstants';
+import { PLATFORM_TYPES, PROTECTION_PLANS_STATUS, RECOVERY_STATUS, REPLICATION_STATUS } from '../../constants/InputConstants';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
-import { deletePlanConfirmation, fetchDRPlanById, openCleanupTestRecoveryWizard, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, playbookExport, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
+import { PLAN_DETAIL_TABS } from '../../constants/UserConstant';
+import { setActiveTab } from '../../store/actions';
+import { fetchCheckpointsByPlanId } from '../../store/actions/checkpointActions';
+import { deletePlanConfirmation, fetchDRPlanById, onResetDiskReplicationClick, onResetLinkCLick, openCleanupTestRecoveryWizard, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, playbookExport, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
+import { downloadRecoveryPlaybook } from '../../store/actions/DrPlaybooksActions';
+import { convertMinutesToDaysHourFormat, getRecoveryCheckpointSummary } from '../../utils/AppUtils';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
+import { isPlanRecovered } from '../../utils/validationUtils';
 import CheckBox from '../Common/CheckBox';
 import DisplayString from '../Common/DisplayString';
 import DMBreadCrumb from '../Common/DMBreadCrumb';
 import DropdownActions from '../Common/DropdownActions';
+import Loader from '../Shared/Loader';
 import ProtectionPlanVMConfig from './ProtectionPlanVMConfig';
-import { convertMinutesToDaysHourFormat, getRecoveryCheckpointSummary } from '../../utils/AppUtils';
-import { isPlanRecovered } from '../../utils/validationUtils';
-import { downloadRecoveryPlaybook } from '../../store/actions/DrPlaybooksActions';
-import { setActiveTab } from '../../store/actions';
 
 const Replication = React.lazy(() => import('../Jobs/Replication'));
 const Recovery = React.lazy(() => import('../Jobs/Recovery'));
@@ -35,7 +35,9 @@ class DRPlanDetails extends Component {
     const { pathname } = location;
     const parts = pathname.split('/');
     this.toggleTab = this.toggleTab.bind(this);
-    dispatch(fetchDRPlanById(parts[parts.length - 1]));
+    const urlParams = new URLSearchParams(window.location.search);
+    const params = Object.fromEntries(urlParams.entries());
+    dispatch(fetchDRPlanById(parts[parts.length - 1], params));
     dispatch(fetchCheckpointsByPlanId(parts[parts.length - 1]));
   }
 
@@ -258,6 +260,7 @@ class DRPlanDetails extends Component {
       actions.push({ label: 'Start', action: startPlan, id: protectionPlan.id, disabled: this.disableStart(protectionPlan) });
       actions.push({ label: 'Stop', action: stopPlan, id: protectionPlan.id, disabled: this.disableStop(protectionPlan) });
       actions.push({ label: 'Edit', action: openEditProtectionPlanWizard, id: protectionPlan, disabled: this.disableEdit() });
+      actions.push({ label: 'Resync Disk Replication', action: onResetDiskReplicationClick, id: protectionPlan, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS, navigate: PROTECTION_PLANS_PATH });
       actions.push({ label: 'Remove', action: deletePlanConfirmation, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS, navigate: PROTECTION_PLANS_PATH });
       actions.push({ label: 'Download Plan Playbook', action: playbookExport, id: protectionPlan, disabled: this.disableEdit() });
     } else if (localVMIP === recoverySite.node.hostname) {
@@ -265,6 +268,7 @@ class DRPlanDetails extends Component {
         { label: 'Migrate', action: openMigrationWizard, icon: 'fa fa-clone', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.migration']) },
         { label: 'Reverse', action: openReverseWizard, icon: 'fa fa-backward', disabled: isReverseActionDisabled },
         { label: 'Test Recovery', action: openTestRecoveryWizard, icon: 'fa fa-check', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.test']) },
+        { label: 'Reset', action: onResetLinkCLick, id: protectionPlan, icon: 'fa fa-check', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.test']) },
         { label: 'Cleanup Test Recoveries', action: openCleanupTestRecoveryWizard, icon: 'fa fa-broom', disabled: !hasRequestedPrivileges(user, ['recovery.test']) },
         { label: 'Download Credentials Playbook', action: downloadRecoveryPlaybook, id: protectionPlan.id, icon: 'fa fa-download' },
       ];

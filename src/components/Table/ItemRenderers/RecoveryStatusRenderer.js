@@ -1,27 +1,28 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Col, Popover, PopoverBody, Row } from 'reactstrap';
-import { withTranslation } from 'react-i18next';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faListCheck } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useEffect, useRef, useState } from 'react';
+import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { MESSAGE_TYPES } from '../../../constants/MessageConstants';
-import { addMessage } from '../../../store/actions/MessageActions';
+import { Col, Popover, PopoverBody, Row } from 'reactstrap';
+import { API_RESCOVERY_JOB_STATUS_STEPS } from '../../../constants/ApiConstants';
 import { JOB_COMPLETION_STATUS, JOB_FAILED } from '../../../constants/AppStatus';
 import { MILI_SECONDS_TIME } from '../../../constants/EventConstant';
-import { callAPI } from '../../../utils/ApiUtils';
-import { UI_WORKFLOW } from '../../../constants/InputConstants';
-import { getRecoveryInfoForVM } from '../../../utils/RecoveryUtils';
-import { MODAL_SUMMARY } from '../../../constants/Modalconstant';
+import { RECOVERY_GUEST_OS, RECOVERY_STATUS, STATIC_KEYS, UI_WORKFLOW } from '../../../constants/InputConstants';
+import { MESSAGE_TYPES } from '../../../constants/MessageConstants';
+import { MODAL_SUMMARY, MODAL_TROUBLESHOOTING_WINDOW } from '../../../constants/Modalconstant';
+import { addMessage } from '../../../store/actions/MessageActions';
 import { openModal } from '../../../store/actions/ModalActions';
-import { API_RESCOVERY_JOB_STATUS_STEPS } from '../../../constants/ApiConstants';
-import StatusItemRenderer from './StatusItemRenderer';
+import { callAPI } from '../../../utils/ApiUtils';
+import { getRecoveryInfoForVM } from '../../../utils/RecoveryUtils';
 import StepStatus from '../../Common/StepStatus';
+import StatusItemRenderer from './StatusItemRenderer';
 
 function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
   const [toggle, setToggle] = useState(data.step === '');
   const [popOver, setpopOver] = useState(false);
   const [jobdata, setjobdata] = useState(data);
   const [steps, setSteps] = useState([]);
+  const [detailedStepError, setDetailedStepError] = useState(false);
   const parsedConfiguration = data.config !== '' && typeof data.config !== 'undefined' ? JSON.parse(data.config) : undefined;
   const { values } = user;
   const COPY_CONFIG = [{ value: 'copy_gen_config', label: 'General' },
@@ -33,17 +34,44 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
   const timerId = useRef();
   const RecoveryStatus = [JOB_COMPLETION_STATUS, JOB_FAILED];
 
-  useEffect(() => () => {
+  useEffect(() => {
+    if (typeof data !== 'undefined' && data.step !== '') {
+      const step = JSON.parse(data.step);
+      step.forEach((element) => {
+        if (typeof element.data !== 'undefined' && element.data !== '') {
+          const parseData = JSON.parse(element.data);
+          parseData.forEach((pd) => {
+            const key = Object.keys(pd);
+            const detailedStepStatus = pd[key[0]].result;
+            if (detailedStepStatus === STATIC_KEYS.REC_STEP_FAIL) {
+              setDetailedStepError(true);
+            }
+          });
+        }
+      });
+    }
     // while the step component is openeed and we went on other page then also the timer should get cleared
-    clearInterval(timerId.current);
+    return () => {
+      clearInterval(timerId.current);
+    };
   }, []);
-
-  function fetchRunningJobsSteps() {
+  const fetchRunningJobsSteps = () => {
     const url = API_RESCOVERY_JOB_STATUS_STEPS.replace('<id>', jobdata.id);
     return callAPI(url).then((json) => {
       let step = [];
       if (json.step !== '' && typeof json.step !== 'undefined') {
         step = JSON.parse(json.step);
+        step.forEach((element) => {
+          if (element.data !== '') {
+            const parseData = JSON.parse(element.data);
+            for (let j = 0; j < parseData.length; j += 1) {
+              if (parseData[j].result === STATIC_KEYS.REC_STEP_FAIL) {
+                setDetailedStepError(true);
+                break;
+              }
+            }
+          }
+        });
       }
       setSteps(step);
       setjobdata(json);
@@ -53,7 +81,7 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
     }, (err) => {
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
-  }
+  };
 
   const handleCheckbox = () => {
     setToggle(!toggle);
@@ -93,6 +121,11 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
     dispatch(openModal(MODAL_SUMMARY, options));
   };
 
+  const openTroubleshootingWindow = () => {
+    const opts = { title: data.recoveryType === 'full recovery' ? t('title.troubleshoot.recovery') : t('title.troubleshoot.test.recovery'), css: 'modal-xl', data: { recoveryType: data.recoveryType, protectionPlanID: data.protectionPlanID } };
+    dispatch(openModal(MODAL_TROUBLESHOOTING_WINDOW, opts));
+  };
+
   const renderPopOver = (key) => (
     <Popover placement="bottom" isOpen={popOver && !toggle} target={key} style={{ backgroundColor: '#fff', width: '110px', textAlign: 'center', borderRadius: '5px' }}>
       <PopoverBody style={{ color: 'black' }}>
@@ -122,14 +155,23 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
     <>
       <div className="rec_job_parent">
         <Row>
-          <Col sm={7}>
+          <Col sm={6}>
             <StatusItemRenderer data={jobdata} field={field} />
           </Col>
-          <Col sm={2} className="show_details">
-            {renderShowProgress()}
-          </Col>
-          <Col sm={2}>
-            <i className="fas fa-info-circle info__icon test_summary_icon" aria-hidden="true" onClick={onClick} style={{ height: 20, cursor: 'pointer' }} />
+          <Col sm={6}>
+            <Row>
+              <Col sm={4} className="show_details padding-right-5">
+                {renderShowProgress()}
+              </Col>
+              <Col sm={4}>
+                <i title="View Recovery Configuration" className="fas fa-info-circle info__icon test_summary_icon" aria-hidden="true" onClick={onClick} style={{ height: 20, cursor: 'pointer' }} />
+              </Col>
+              {((data.status === RECOVERY_STATUS.FAILED || detailedStepError) && data.guestOS === RECOVERY_GUEST_OS.WINDOWS) ? (
+                <Col sm={4} className="padding-left-5" title="Troubleshooting Steps">
+                  <i title="Troubleshooting Steps" className="fas fa-exclamation-triangle icon__warning" aria-hidden="true" onClick={openTroubleshootingWindow} style={{ height: 20, cursor: 'pointer' }} />
+                </Col>
+              ) : null}
+            </Row>
           </Col>
         </Row>
         <Row className=" padding-left-2">

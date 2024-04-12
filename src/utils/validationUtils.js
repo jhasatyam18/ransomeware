@@ -58,7 +58,11 @@ export function validateField(field, fieldKey, value, dispatch, user) {
 export function isEmpty({ value }) {
   let val = value;
   if (typeof value === 'object') {
-    val = value.value;
+    if (value.length > 0) {
+      val = value;
+    } else {
+      val = value.value;
+    }
   }
   return (typeof val === 'undefined' || typeof val === 'string' && val.trim() === '' || val === null || val.length === 0);
 }
