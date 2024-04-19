@@ -8,6 +8,7 @@ export const UI_WORKFLOW = {
   LAST_TEST_RECOVERY_SUMMARY: 'LAST_TEST_RECOVERY_SUMMARY',
   CLEANUP_TEST_RECOVERY: 'CLEANUP_TEST_RECOVERY',
   RECOVERY: 'RECOVERY',
+  RESET_DISK_REPLICATION: 'RESET_DISK_REPLICATION',
 };
 
 export const PLATFORM_TYPES = {
@@ -23,7 +24,7 @@ export const PROTECTION_PLANS_STATUS = {
 };
 
 export const RECOVERY_STATUS = {
-  RECOVERED: 'Recovered', MIGRATED: 'Migrated', MIGRATION_INIT: 'migration_init',
+  RECOVERED: 'Recovered', MIGRATED: 'Migrated', MIGRATION_INIT: 'migration_init', FAILED: 'failed',
 };
 
 export const JOBS_TABS = [
@@ -113,6 +114,9 @@ export const STATIC_KEYS = {
   IS_POINT_IN_TIME_DISABLED: 'ui.point.in.time.disable',
   DISABLE_RECOVERY_FROM_LATEST: 'ui.disable.recover.latest',
   POINT_IN_TIME_RECOVERY_CHECKPOINTS: 'ui.point.intime.checkpoint.recovery.config',
+  REC_STEP_PASS: 'Pass',
+  REC_STEP_FAIL: 'Fail',
+  VMWARE_QUIESCE_KEY: '-vmConfig.general.IsVMwareQuiescing',
   DMTREE_SEARCH_FOLDER_KEY: 'DMTREE_SEARCH_FOLDER_KER',
   PLAYBOOK_CONFIG_VALIDATING: 'configValidating',
 };
@@ -225,6 +229,20 @@ export const CHECKPOINT_TYPE = {
   LATEST: 'latest',
   POINT_IN_TIME: 'pointInTime',
 };
+export const RECOVERY_TYPE = {
+  TEST_RECOVERY: 'test recovery',
+  FULL_RECOVERY: 'full recovery',
+  MIGRATION: 'migration',
+};
+
+export const COPY_TEXT = {
+  TEXT_CHANGE_TIMEOUT: 3000,
+};
+
+export const RECOVERY_GUEST_OS = {
+  WINDOWS: 'Windows',
+};
+export const VMWARE_OS_DISK_DEVICE_KEYS = [2000, 3000, 32000];
 
 export const CONSTANT_NUMBERS = {
   TWENTY_FIVE: 25,

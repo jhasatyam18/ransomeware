@@ -1,15 +1,8 @@
+import { FIELDS } from '../constants/FieldsConstant';
+import { CHECKPOINT_TYPE, MINUTES_CONVERSION, PLATFORM_TYPES, RECOVERY_ENTITY_TYPES, STATIC_KEYS } from '../constants/InputConstants';
 import { STORE_KEYS } from '../constants/StoreKeyConstants';
 import { TIME_CONSTANTS } from '../constants/UserConstant';
-import { CHECKPOINT_TYPE, MINUTES_CONVERSION, PLATFORM_TYPES, RECOVERY_ENTITY_TYPES, STATIC_KEYS } from '../constants/InputConstants';
-import { FIELDS } from '../constants/FieldsConstant';
-import {
-  getValue,
-  shouldShowNodePlatformType,
-  shouldShowNodeManagementPort,
-  shouldShowNodeReplicationPort,
-  getAWSNetworkIDFromName,
-  convertMemoryToMb,
-} from './InputUtils';
+import { convertMemoryToMb, getAWSNetworkIDFromName, getValue, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort } from './InputUtils';
 
 export function getKeyStruct(filterKey, values) {
   const result = {};
@@ -62,7 +55,7 @@ export function getCreateDRPlanPayload(user, sites) {
   result.drplan.recoveryEntities.name = 'dummy';
   result.drplan.protectedEntities.VirtualMachines = [];
   Object.keys(vms).forEach((key) => {
-    const vm = setVMProperties(vms[key], values);
+    const vm = setVMProperties(vms[key], values, result.drplan.protectedSite);
     vm.id = '0';
     result.drplan.protectedEntities.VirtualMachines.push(vm);
   });
@@ -362,7 +355,7 @@ export function getReversePlanPayload(user) {
   drplan.enablePPlanLevelScheduling = getValue('drplan.enablePPlanLevelScheduling', values);
   drplan.protectedEntities.VirtualMachines = [];
   Object.keys(vms).forEach((key) => {
-    const vm = setVMProperties(vms[key], values);
+    const vm = setVMProperties(vms[key], values, drplan.protectedSite);
     drplan.protectedEntities.VirtualMachines.push(vm);
   });
   drplan.recoverySite = rSite;
@@ -451,7 +444,7 @@ export function getEditProtectionPlanPayload(user, sites) {
   result.drplan.protectedEntities.VirtualMachines = [];
   Object.keys(vms).forEach((key) => {
     let vm = vms[key];
-    vm = setVMProperties(vm, values);
+    vm = setVMProperties(vm, values, result.drplan.protectedSite);
     result.drplan.protectedEntities.VirtualMachines.push(vm);
   });
   result.drplan.protectedEntities.Name = 'dummy';
@@ -539,7 +532,7 @@ export function getSourceConfig(key, user) {
   return { ...genC, networks, ...scripts };
 }
 
-function setVMProperties(vm, values) {
+function setVMProperties(vm, values, protectedSite) {
   const vmConfig = vm;
   // set scripts
   const preScript = getValue(`${vm.moref}-protection.scripts.preScript`, values);
@@ -558,6 +551,10 @@ function setVMProperties(vm, values) {
   }
   const replicationPriority = parseInt(getValue(`${vm.moref}-vmConfig.general.replicationPriority`, values), 10) || 0;
   vmConfig.replicationPriority = replicationPriority;
+  if (protectedSite.platformDetails.platformType === PLATFORM_TYPES.VMware) {
+    const quiesce = getValue(`${vm.moref}${STATIC_KEYS.VMWARE_QUIESCE_KEY}`, values);
+    vmConfig.isVMwareQuiescing = quiesce;
+  }
   return vmConfig;
 }
 
@@ -581,4 +578,26 @@ export function getConfigureIDPPayload(user, settings) {
   }
   payload.configureIDP.roleMaps = roleMap;
   return payload;
+}
+export function getResetDiskReplicationPayload(user, drPlans) {
+  const { values } = user;
+  const { protectionPlan } = drPlans;
+  const result = { drplan: protectionPlan };
+  const protectedVMs = [];
+  result.drplan.protectedEntities.virtualMachines.forEach((vm) => {
+    const vmKey = getValue(`reset-repl-vm-id-${vm.moref}`, values);
+    const newVm = vm;
+    if (typeof vmKey !== 'undefined') {
+      newVm.virtualDisks.forEach((vdisk, ind) => {
+        if (typeof vmKey[vdisk.id] === 'boolean' && vmKey[vdisk.id] === true) {
+          newVm.virtualDisks[ind].isReplicationReset = true;
+        } else {
+          newVm.virtualDisks[ind].isReplicationReset = false;
+        }
+      });
+    }
+    protectedVMs.push(newVm);
+  });
+  result.drplan.protectedEntities.virtualMachines = protectedVMs;
+  return result;
 }

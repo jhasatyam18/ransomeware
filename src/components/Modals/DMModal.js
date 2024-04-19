@@ -1,39 +1,42 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 import { Modal } from 'reactstrap';
+import * as MODALS from '../../constants/Modalconstant';
 import { clearValues } from '../../store/actions';
 import { closeModal } from '../../store/actions/ModalActions';
-import * as MODALS from '../../constants/Modalconstant';
-import ModalConfigureSite from './ModalConigureSite';
 import ConfirmationModal from './ConfirmationModal';
 import ModalAbout from './ModalAbout';
 import ModalAlertDetails from './ModalAlertDetails';
-import ModalSupportBundle from './ModalSupportBundle';
+import ModalBandwidthConfig from './ModalBandwidthConfig';
+import ModalCBTConfirmation from './ModalCBTConfirmation';
+import ModalChangeNodePassword from './ModalChangeNodePassword';
 import ModalConfigureNode from './ModalConfigureNode';
+import ModalConfigureUser from './ModalConfigureUser';
+import ModalConfigureSite from './ModalConigureSite';
 import ModalEmailConfiguration from './ModalEmailConfiguration';
 import ModalEmailRecipient from './ModalEmailRecipient';
 import ModalEncryptionKey from './ModalEncryptionKey';
-import ModalNicConfig from './ModalNicConfig';
 import ModalLicense from './ModalLicense';
-import ModalBandwidthConfig from './ModalBandwidthConfig';
-import ModalScripts from './ModalScripts';
 import ModalLocationTree from './ModalLocationTree';
-import ModalShowSummary from './ModalShowSummary';
-import ModalChangeNodePassword from './ModalChangeNodePassword';
-import ModalShowResetedVms from './ModalShowResetVm';
+import ModalNicConfig from './ModalNicConfig';
 import ModalPlaybookError from './ModalPlaybookError';
-import PlaybookUploadModal from './PlaybookUploadModal';
-import PlaybookGenerateModal from './PlaybookGenerateModal';
-import ModalReplicationPriority from './ModalReplicationPriority';
-import ModalPreserveCheckpoint from './ModalPreserveCheckpoint';
-import ModalTemplateShowPplanChanges from './ModalTemplateShowPplanChanges';
-import ModalConfigureUser from './ModalConfigureUser';
-import ModalResetCredentials from './ModalResetCredentials';
 import ModalPlaybookReconfigure from './ModalPlaybookReconfigure';
-import ModalCBTConfirmation from './ModalCBTConfirmation';
+import ModalPreserveCheckpoint from './ModalPreserveCheckpoint';
+import ModalReplicationPriority from './ModalReplicationPriority';
+import ModalResetCredentials from './ModalResetCredentials';
+import ResetDiskReplicationModal from './ModalResetDiskReplication';
+import ModalScripts from './ModalScripts';
+import ModalShowResetedVms from './ModalShowResetVm';
+import ModalShowSummary from './ModalShowSummary';
+import ModalSupportBundle from './ModalSupportBundle';
+import ModalTemplateShowPplanChanges from './ModalTemplateShowPplanChanges';
+import ModalTroubleShooting from './ModalTroubleShooting';
+import ModalVMwareQuiesce from './ModalVMwareQuiesce';
+import PlaybookGenerateModal from './PlaybookGenerateModal';
+import PlaybookUploadModal from './PlaybookUploadModal';
 
 function DMModal(props) {
-  const { modal, user, dispatch } = props;
+  const { modal, dispatch, user } = props;
   const { show, options } = modal;
   const { css, modalActions, size } = options;
   const { content } = modal;
@@ -100,6 +103,12 @@ function DMModal(props) {
           return <ModalPlaybookReconfigure dispatch={dispatch} user={user} {...props} options={options} />;
         case MODALS.MODAL_CBT_CONFIRMATION:
           return <ModalCBTConfirmation dispatch={dispatch} user={user} {...props} />;
+        case MODALS.MODAL_TROUBLESHOOTING_WINDOW:
+          return <ModalTroubleShooting dispatch={dispatch} options={options} />;
+        case MODALS.MODAL_VMWARE_QUIESCE:
+          return <ModalVMwareQuiesce dispatch={dispatch} user={user} />;
+        case MODALS.MODAL_RESET_DISK_REPLICATION:
+          return <ResetDiskReplicationModal dispatch={dispatch} user={user} options={options} />;
         default:
           return (<div>404</div>);
       }

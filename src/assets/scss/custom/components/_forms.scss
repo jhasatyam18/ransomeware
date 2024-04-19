@@ -201,3 +201,14 @@
 .progress_step_border{
   border-left: 1px solid grey; 
 }
+
+.rec_step_list{
+  position: relative;
+  top: -35px;
+  left: -6px;
+  margin-bottom: 0px;
+}
+
+.checkbox_disabled{
+  opacity: 0.1; 
+}

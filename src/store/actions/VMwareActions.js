@@ -1,13 +1,13 @@
-import { getValue } from '../../utils/InputUtils';
-import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { API_FETCH_VMWARE_ADAPTER_TYPE, API_GET_VMWARE_VMS } from '../../constants/ApiConstants';
-import { callAPI } from '../../utils/ApiUtils';
-import { addMessage } from './MessageActions';
-import { getComputeResources, getStorageForVMware, hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
 import { STATIC_KEYS } from '../../constants/InputConstants';
-import { setVMGuestOSInfo } from './DrPlanActions';
-import { openModal } from './ModalActions';
+import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { MODAL_CBT_CONFIRMATION } from '../../constants/Modalconstant';
+import { callAPI } from '../../utils/ApiUtils';
+import { getValue } from '../../utils/InputUtils';
+import { setVMGuestOSInfo } from './DrPlanActions';
+import { addMessage } from './MessageActions';
+import { openModal } from './ModalActions';
+import { getComputeResources, getStorageForVMware, hideApplicationLoader, showApplicationLoader, valueChange } from './UserActions';
 
 // getStorageForVMware
 export function getVMwareAdapterType() {
@@ -182,13 +182,12 @@ export function fetchSelectedVmsProperty(siteId, vmString, selectedVMS, dispatch
           disabledCBT = true;
         }
       });
-
+      dispatch(setVMGuestOSInfo(vms));
       if (disabledCBT) {
         const options = { title: 'Change Block Tracking (CBT) Confirmation', selectedVMs: vms, size: 'lg' };
         dispatch(openModal(MODAL_CBT_CONFIRMATION, options));
         return false;
       }
-      dispatch(setVMGuestOSInfo(vms));
       dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, vms));
       return true;
     }

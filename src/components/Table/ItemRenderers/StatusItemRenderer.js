@@ -1,11 +1,11 @@
-import { withTranslation } from 'react-i18next';
-import React, { useState } from 'react';
-import SimpleBar from 'simplebar-react';
-import { Badge, Popover, PopoverBody } from 'reactstrap';
-import { NODE_STATUS_ONLINE, NODE_STATUS_OFFLINE, JOB_RECOVERED, JOB_COMPLETION_STATUS, JOB_RUNNING_STATUS, JOB_IN_PROGRESS, JOB_FAILED, JOB_INIT_FAILED, JOB_IN_SYNC, JOB_COMPLETED_WITH_ERRORS, JOB_EXCEEDED_INTERVAL, JOB_STOPPED, JOB_INIT_SUCCESS, JOB_INIT_PROGRESS, JOB_SYNC_FAILED, JOB_INIT_SYNC_PROGRESS, JOB_RESYNC_FAILED, JOB_RESYNC_IN_PROGRESS, JOB_RESYNC_SUCCESS, JOB_SYNC_IN_PROGRESS, JOB_INIT_SYNC_FAILED, JOB_MIGRATED, MIGRATION_INIT_FAILED, PARTIALLY_COMPLETED, JOB_QUEUED } from '../../../constants/AppStatus';
 import 'boxicons';
+import React, { useState } from 'react';
+import { withTranslation } from 'react-i18next';
+import { Badge, Popover, PopoverBody } from 'reactstrap';
+import SimpleBar from 'simplebar-react';
+import { JOB_COMPLETED_WITH_ERRORS, JOB_COMPLETION_STATUS, JOB_EXCEEDED_INTERVAL, JOB_FAILED, JOB_INIT_FAILED, JOB_INIT_PROGRESS, JOB_INIT_SUCCESS, JOB_INIT_SYNC_FAILED, JOB_INIT_SYNC_PROGRESS, JOB_IN_PROGRESS, JOB_IN_SYNC, JOB_MIGRATED, JOB_QUEUED, JOB_RECOVERED, JOB_RESYNC_FAILED, JOB_RESYNC_IN_PROGRESS, JOB_RESYNC_SUCCESS, JOB_RUNNING_STATUS, JOB_STOPPED, JOB_SYNC_FAILED, JOB_SYNC_IN_PROGRESS, MIGRATION_INIT_FAILED, NODE_STATUS_OFFLINE, NODE_STATUS_ONLINE, PARTIALLY_COMPLETED } from '../../../constants/AppStatus';
 
-function StatusItemRenderer({ data, field, t, noPopOver }) {
+function StatusItemRenderer({ data, field, t, noPopOver, showDate }) {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const successStatus = [JOB_COMPLETION_STATUS, JOB_INIT_SUCCESS, NODE_STATUS_ONLINE, JOB_RESYNC_SUCCESS, JOB_IN_SYNC, JOB_RECOVERED, JOB_MIGRATED];
   const runningStatus = [JOB_RUNNING_STATUS, JOB_IN_PROGRESS];
@@ -60,7 +60,8 @@ function StatusItemRenderer({ data, field, t, noPopOver }) {
           </>
         ) : null}
         {resp}
-        { renderPopOver(hoverInfo, `status-${field}-${data.name}-${data.id}`)}
+        {hoverInfo !== '' ? renderPopOver(hoverInfo, `status-${field}-${data.name}-${data.id}`) : null}
+        {showDate === 'true' ? <span className="font-size-11 padding-left-10">{new Date(data.lastRunTime * 1000).toLocaleString()}</span> : null}
       </Badge>
     );
   }

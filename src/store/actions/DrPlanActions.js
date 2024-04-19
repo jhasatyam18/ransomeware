@@ -6,7 +6,7 @@ import { DRPLAN_CONFIG_STEP } from '../../constants/DrplanConstants';
 import { MILI_SECONDS_TIME, MONITORING_DISK_CHANGES } from '../../constants/EventConstant';
 import { CHECKPOINT_TYPE, PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { MODAL_CONFIRMATION_WARNING, PPLAN_REMOVE_CHECKPOINT_RENDERER } from '../../constants/Modalconstant';
+import { MODAL_CONFIRMATION_WARNING, MODAL_RESET_DISK_REPLICATION, PPLAN_REMOVE_CHECKPOINT_RENDERER } from '../../constants/Modalconstant';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { STORE_KEYS } from '../../constants/StoreKeyConstants';
 import { APPLICATION_GETTING_STARTED_COMPLETED } from '../../constants/UserConstant';
@@ -15,7 +15,7 @@ import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { getLabelWithResourceGrp, getMemoryInfo, getNetworkIDFromName, getSubnetIDFromName } from '../../utils/AppUtils';
 import { setCookie } from '../../utils/CookieUtils';
 import { getMatchingFirmwareType, getMatchingInsType, getMatchingOSType, getValue, getVMInstanceFromEvent, getVMMorefFromEvent, isSamePlatformPlan } from '../../utils/InputUtils';
-import { getCreateDRPlanPayload, getEditProtectionPlanPayload, getRecoveryPayload, getReversePlanPayload, getVMConfigPayload } from '../../utils/PayloadUtil';
+import { getCreateDRPlanPayload, getEditProtectionPlanPayload, getRecoveryPayload, getResetDiskReplicationPayload, getReversePlanPayload, getVMConfigPayload } from '../../utils/PayloadUtil';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { changedVMRecoveryConfigurations } from '../../utils/validationUtils';
 import { addAssociatedIPForAzure, addAssociatedReverseIP } from './AwsActions';
@@ -203,7 +203,7 @@ export function onConfigureDRPlan() {
   };
 }
 
-export function fetchDRPlanById(id) {
+export function fetchDRPlanById(id, params) {
   return (dispatch) => {
     const url = API_FETCH_DR_PLAN_BY_ID.replace('<id>', id);
     const obj = createPayload();
@@ -215,6 +215,10 @@ export function fetchDRPlanById(id) {
       } else {
         dispatch(drPlanDetailsFetched(json));
         dispatch(closeModal());
+        // if plan details is rendered thorugh reset url then open reset disk replication modal
+        if (typeof params !== 'undefined' && Object.keys(params).length > 0 && params.reset) {
+          dispatch(onResetDiskReplicationClick());
+        }
       }
     },
     (err) => {
@@ -673,9 +677,16 @@ export function setProtectionPlanDataForUpdate(selectedPlan, isEventAction = fal
 
 export function onEditProtectionPlan() {
   return (dispatch, getState) => {
-    const { user, sites } = getState();
+    const { user, sites, drPlans } = getState();
     const { values } = user;
-    const payload = getEditProtectionPlanPayload(user, sites.sites);
+    // STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.RESET_DISK_REPLICATION
+    const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
+    let payload = {};
+    if (workflow === UI_WORKFLOW.RESET_DISK_REPLICATION) {
+      payload = getResetDiskReplicationPayload(user, drPlans);
+    } else {
+      payload = getEditProtectionPlanPayload(user, sites.sites);
+    }
     const obj = createPayload(API_TYPES.PUT, { ...payload.drplan });
     const id = getValue('ui.selected.protection.planID', values);
     let url = API_PROTECTION_PLAN_UPDATE.replace('<id>', id);
@@ -693,6 +704,7 @@ export function onEditProtectionPlan() {
         dispatch(addMessage('Protection plan configured successfully.', MESSAGE_TYPES.SUCCESS));
         dispatch(closeWizard());
         dispatch(clearValues());
+        dispatch(closeModal());
         fetchByDelay(dispatch, refresh, 2000);
       }
       changedVMRecoveryConfigurations(payload, user, dispatch);
@@ -779,11 +791,19 @@ export function setProtectionPlanVMsForUpdate(protectionPlan, isEventAction = fa
 }
 
 export function setVMGuestOSInfo(selectedVMs) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
     Object.keys(selectedVMs).forEach((key) => {
       if (selectedVMs[key]) {
         dispatch(valueChange(`${selectedVMs[key].moref}-vmConfig.general.guestOS`, getMatchingOSType(selectedVMs[key].guestOS)));
         dispatch(valueChange(`${selectedVMs[key].moref}-vmConfig.general.firmwareType`, getMatchingFirmwareType(selectedVMs[key].firmwareType)));
+        if (workflow === UI_WORKFLOW.CREATE_PLAN || workflow === UI_WORKFLOW.REVERSE_PLAN || selectedVMs[key].id === '') {
+          dispatch(valueChange(`${selectedVMs[key].moref}${STATIC_KEYS.VMWARE_QUIESCE_KEY}`, true));
+        } else if (typeof selectedVMs[key].isVMwareQuiescing !== 'undefined') {
+          dispatch(valueChange(`${selectedVMs[key].moref}${STATIC_KEYS.VMWARE_QUIESCE_KEY}`, selectedVMs[key].isVMwareQuiescing));
+        }
       }
     });
   };
@@ -852,7 +872,9 @@ export function setProtectionPlanVMConfig(selectedVMS, protectionPlan) {
 
 function setAWSVMDetails(selectedVMS, protectionPlan, dispatch) {
   const vms = Object.values(selectedVMS);
-  const { recoveryEntities, protectedEntities } = protectionPlan;
+  const { recoveryEntities, protectedEntities, protectedSite } = protectionPlan;
+  const { platformDetails } = protectedSite;
+  const { platformType } = platformDetails;
   const { instanceDetails } = recoveryEntities;
   const { virtualMachines = [] } = protectedEntities;
   vms.forEach((vm) => {
@@ -862,6 +884,9 @@ function setAWSVMDetails(selectedVMS, protectionPlan, dispatch) {
         dispatch(setProtectionPlanScript(key, pvm));
         // setreplication priority while editing protection plan
         dispatch(valueChange(`${key}-vmConfig.general.replicationPriority`, pvm.replicationPriority));
+        if (platformType === PLATFORM_TYPES.VMware) {
+          dispatch(valueChange(`${pvm.moref}${STATIC_KEYS.VMWARE_QUIESCE_KEY}`, pvm.isVMwareQuiescing || false));
+        }
       }
     });
     instanceDetails.forEach((ins) => {
@@ -1685,6 +1710,10 @@ function setReverseData(json) {
                 if (platformDetails.platformType === PLATFORM_TYPES.AWS) {
                   dispatch(valueChange(`${vm.moref}-vmConfig.general.replicationPriority`, vm.replicationPriority));
                 }
+                if (protectedSitePlatform === PLATFORM_TYPES.VMware) {
+                  // set quiesce
+                  dispatch(valueChange(`${vm.moref}${STATIC_KEYS.VMWARE_QUIESCE_KEY}`, true));
+                }
                 dispatch(setRecoveryVMDetails(vm.moref));
               }
             });
@@ -1763,5 +1792,48 @@ export function onPlaybookExportClick(plan) {
   return (dispatch) => {
     const { id } = plan;
     dispatch(onPlanPlaybookExport(id));
+  };
+}
+
+export function onResetDiskReplicationClick(plan) {
+  return (dispatch, getState) => {
+    const { drPlans } = getState();
+    const { protectionPlan } = drPlans;
+    const selectedPlan = (typeof plan === 'undefined' ? protectionPlan : plan);
+    const { id } = selectedPlan;
+    const options = { title: 'Resync Disk Replication', size: 'xl', selectedPlan };
+    dispatch(clearValues());
+    dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.RESET_DISK_REPLICATION));
+    dispatch(valueChange('ui.selected.protection.planID', id));
+    dispatch(setResetReplicationData(selectedPlan));
+    dispatch(openModal(MODAL_RESET_DISK_REPLICATION, options));
+  };
+}
+
+export function setResetReplicationData(plan) {
+  return (dispatch) => {
+    const { protectedEntities } = plan;
+    const { virtualMachines } = protectedEntities;
+    virtualMachines.forEach((vm) => {
+      const vmid = {};
+      vm.virtualDisks.forEach((vdisk) => {
+        if (vdisk.isReplicationReset) {
+          vmid[vdisk.id] = true;
+        }
+      });
+      if (Object.keys(vmid).length > 0) {
+        dispatch(valueChange(`reset-repl-vm-id-${vm.moref}`, vmid));
+      }
+    });
+  };
+}
+
+export function onResetLinkCLick(plan) {
+  return () => {
+    const { protectedSite, id } = plan;
+    const { node } = protectedSite;
+    const { hostname } = node;
+    const link = `https://${hostname}:5000/protection/plan/details/${id}?reset=true`;
+    window.open(link);
   };
 }

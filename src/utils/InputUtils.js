@@ -1,7 +1,7 @@
 import { API_FETCH_VMWARE_LOCATION } from '../constants/ApiConstants';
 import { JOB_INIT_FAILED, JOB_INIT_SYNC_FAILED, NODE_STATUS_ONLINE } from '../constants/AppStatus';
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
-import { EXCLUDE_KEYS_CONSTANTS, EXCLUDE_KEYS_RECOVERY_CONFIGURATION, PLATFORM_TYPES, SCRIPT_TYPE, STATIC_KEYS, SUPPORTED_FIRMWARE, SUPPORTED_GUEST_OS, UI_WORKFLOW, EMAIL } from '../constants/InputConstants';
+import { EMAIL, EXCLUDE_KEYS_CONSTANTS, EXCLUDE_KEYS_RECOVERY_CONFIGURATION, PLATFORM_TYPES, RECOVERY_STATUS, SCRIPT_TYPE, STATIC_KEYS, SUPPORTED_FIRMWARE, SUPPORTED_GUEST_OS, UI_WORKFLOW, VMWARE_OS_DISK_DEVICE_KEYS } from '../constants/InputConstants';
 import { STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMORY, STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
 import { MAC_ADDRESS } from '../constants/ValidationConstants';
 import { getStorageForVMware, onScriptChange, valueChange } from '../store/actions';
@@ -1266,6 +1266,39 @@ export function revShowRemoveCheckpointOption(user) {
   const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
   const isCheckpointAvilable = getValue(`${planId}-has-checkpoints`, values);
   if (workflow === UI_WORKFLOW.REVERSE_PLAN && isCheckpointAvilable) {
+    return true;
+  }
+  return false;
+}
+
+export function isVMwareOSDisk(disk) {
+  let isOsDisk = false;
+  if (disk) {
+    VMWARE_OS_DISK_DEVICE_KEYS.forEach((key) => {
+      if (disk.deviceKey === key) {
+        isOsDisk = true;
+      }
+    });
+  }
+  return isOsDisk;
+}
+
+export function getDiskLabel(disk, index, isVMwareSource) {
+  const label = `Data Disk-${index}`;
+  let isOSDisk = false;
+  if (isVMwareSource) {
+    isOSDisk = isVMwareOSDisk(disk);
+  } else {
+    isOSDisk = index === 0;
+  }
+  if (isOSDisk) {
+    return 'OS Disk';
+  }
+  return label;
+}
+
+export function isVMRecovered(vmData) {
+  if (vmData && vmData.status === RECOVERY_STATUS.MIGRATED || vmData.status === RECOVERY_STATUS.RECOVERED) {
     return true;
   }
   return false;
