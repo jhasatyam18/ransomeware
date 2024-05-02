@@ -1,30 +1,30 @@
-import { STORE_KEYS } from '../../constants/StoreKeyConstants';
 import * as Types from '../../constants/actionTypes';
 import { API_ADD_USER, API_AUTHENTICATE, API_AWS_REGIONS, API_AZURE_REGIONS, API_CHANGE_NODE_PASSWORD, API_CHANGE_PASSWORD, API_GCP_REGIONS, API_INFO, API_SCRIPTS, API_USERS, API_USER_PRIVILEGES, API_USER_SCRIPT } from '../../constants/ApiConstants';
 import { APP_TYPE, NODE_TYPES, PLATFORM_TYPES, SAML, STATIC_KEYS, VMWARE_OBJECT } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
+import { MODAL_USER_SCRIPT } from '../../constants/Modalconstant';
 import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PLAYBOOK_LIST, PROTECTION_PLANS_PATH, ROLES_SETTINGS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH, USER_SETTINGS_PATH } from '../../constants/RouterConstants';
+import { STORE_KEYS } from '../../constants/StoreKeyConstants';
 import { APPLICATION_API_USER, APPLICATION_AUTHORIZATION, APPLICATION_UID } from '../../constants/UserConstant';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
-import { getCookie, setCookie, removeCookie } from '../../utils/CookieUtils';
+import { getCookie, removeCookie, setCookie } from '../../utils/CookieUtils';
 import { onInit } from '../../utils/HistoryUtil';
 import { getMatchingInsType, getValue, getVMwareLocationPath, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { acknowledgeNodeAlert, getUnreadAlerts } from './AlertActions';
 import { fetchDRPlanById, fetchDrPlans, setVMGuestOSInfo } from './DrPlanActions';
+import { fetchPlaybookById, fetchPlaybooks } from './DrPlaybooksActions';
 import { fetchEmailConfig, fetchEmailRecipients } from './EmailActions';
+import { fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
 import { fetchLicenses } from './LicenseActions';
 import { addMessage, clearMessages } from './MessageActions';
 import { closeModal, openModal } from './ModalActions';
 import { fetchNodes } from './NodeActions';
+import { fetchRoles } from './RolesAction';
 import { fetchAvailibilityZones, fetchSites } from './SiteActions';
 import { fetchSupportBundles } from './SupportActions';
 import { fetchBandwidthConfig, fetchBandwidthReplNodes } from './ThrottlingAction';
-import { MODAL_USER_SCRIPT } from '../../constants/Modalconstant';
-import { fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
 import { fetchSelectedVmsProperty, fetchVMwareComputeResource, fetchVMwareNetwork, getVMwareConfigDataForField, setVMwareAPIResponseData } from './VMwareActions';
-import { fetchPlaybookById, fetchPlaybooks } from './DrPlaybooksActions';
-import { fetchRoles } from './RolesAction';
 
 export function refreshApplication() {
   return {
@@ -582,7 +582,7 @@ export function getUserInfo() {
   return (dispatch) => {
     let username = getCookie(APPLICATION_API_USER);
     const uid = getCookie(APPLICATION_UID);
-    if (username === '' || typeof username === 'undefined' || (typeof uid !== 'undefined' && uid === '0')) {
+    if ((username === '' || typeof username === 'undefined') && (typeof uid === 'undefined' || uid === '')) {
       username = SAML.DEFAULT_USERNAME;
     }
     const url = `${API_USERS}?username=${username}`;
