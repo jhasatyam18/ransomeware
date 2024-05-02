@@ -19,7 +19,7 @@ export const TIME_CONSTANTS = {
 export const GENERAL_PLATFORM_KEYS = {
   AWS: {
     GENERAL: ['guestOS', 'firmwareType', 'instanceType', 'volumeType', 'volumeIOPS', 'encryptionKey', 'tags'],
-    NETWORK: ['vpcId', 'Subnet', 'availZone', 'isPublicIP', 'network', 'privateIP', 'securityGroups'],
+    NETWORK: ['vpcId', 'Subnet', 'availZone', 'isPublicIP', 'publicIP', 'privateIP', 'securityGroups'],
   },
   VMWARE: {
     GENERAL: ['guestOS', 'firmwareType', 'folderPath', 'hostMoref', 'dataStoreMoref', 'numCPU', 'memoryMB'],

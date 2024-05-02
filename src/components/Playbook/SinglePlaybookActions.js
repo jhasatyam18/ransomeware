@@ -97,15 +97,15 @@ function SinglePlaybookActions({ data, dispatch, t, user }) {
 
   return (
     <>
-      <div className="margin-top-2">
+      <div className="margin-top-4 singlee_playbook_icon">
         <a href="#" onClick={onEdit}>
-          <FontAwesomeIcon size="sm" icon={faEdit} />
+          <FontAwesomeIcon icon={faEdit} />
         </a>
         <a href="#" onClick={onDownloadClick} disabled={!hasRequestedPrivileges(user, ['playbook.generate'])}>
-          <FontAwesomeIcon className="single_playbook_download" size="sm" icon={faDownload} />
+          <FontAwesomeIcon className="single_playbook_download" icon={faDownload} />
         </a>
         <a href="#" onClick={onDeleteTemplate}>
-          <FontAwesomeIcon className="single_playbook_delete" size="sm" icon={faTrash} />
+          <FontAwesomeIcon className="single_playbook_delete" icon={faTrash} />
         </a>
       </div>
     </>

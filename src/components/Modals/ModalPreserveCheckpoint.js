@@ -1,18 +1,18 @@
 import React from 'react';
-import { Container } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
-import { validateField, isEmpty } from '../../utils/validationUtils';
+import { Container } from 'reactstrap';
+import { FIELD_TYPE } from '../../constants/FieldsConstant';
 import { removeErrorMessage } from '../../store/actions';
-import { getValue } from '../../utils/InputUtils';
-import DMFieldText from '../Shared/DMFieldText';
 import { createPayloadForCheckpoints, updateRecoveryCheckpoint } from '../../store/actions/checkpointActions';
 import { closeModal } from '../../store/actions/ModalActions';
-import { FIELD_TYPE } from '../../constants/FieldsConstant';
+import { getValue } from '../../utils/InputUtils';
+import { isEmpty, validateField } from '../../utils/validationUtils';
+import DMFieldText from '../Shared/DMFieldText';
 
 function ModalPreserveCheckpoint({ dispatch, options, user, t }) {
   const { values } = user;
   const { recoveryCheckpoint } = options;
-  const { id, workloadName, recoveryPointTime } = recoveryCheckpoint;
+  const { id, workloadName, creationTime } = recoveryCheckpoint;
   const key = `${id}-checkpoint.preserve`;
   const textField = { label: '', validate: ({ value }) => isEmpty({ value, user }), placeHolderText: 'Reason to preserve snapshot ', type: FIELD_TYPE.TEXT, shouldShow: true, errorMessage: 'Reason to preserve a checkpoint is mandatory', fieldInfo: 'Provide reason to preserve checkpoint' };
   const onClose = () => {
@@ -29,7 +29,7 @@ function ModalPreserveCheckpoint({ dispatch, options, user, t }) {
     }
   };
   const renderReasonDescription = () => {
-    let time = recoveryPointTime * 1000;
+    let time = creationTime * 1000;
     const d = new Date(time);
     time = `${d.toLocaleDateString()}-${d.toLocaleTimeString()}`;
     return (
