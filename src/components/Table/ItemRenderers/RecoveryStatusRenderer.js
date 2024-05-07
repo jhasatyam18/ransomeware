@@ -153,33 +153,31 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
   };
   return (
     <>
-      <div className="rec_job_parent">
-        <Row>
-          <Col sm={6}>
-            <StatusItemRenderer data={jobdata} field={field} />
-          </Col>
-          <Col sm={6}>
-            <Row>
-              <Col sm={4} className="show_details padding-right-5">
-                {renderShowProgress()}
+      <Row>
+        <Col sm={6}>
+          <StatusItemRenderer data={jobdata} field={field} />
+        </Col>
+        <Col sm={6}>
+          <Row>
+            <Col sm={4} className="show_details">
+              {renderShowProgress()}
+            </Col>
+            <Col sm={4}>
+              <i title="View Recovery Configuration" className="fas fa-info-circle info__icon test_summary_icon" aria-hidden="true" onClick={onClick} style={{ height: 20, cursor: 'pointer' }} />
+            </Col>
+            {((data.status === RECOVERY_STATUS.FAILED || detailedStepError) && data.guestOS === RECOVERY_GUEST_OS.WINDOWS) ? (
+              <Col sm={4} className="padding-left-5" title="Troubleshooting Steps">
+                <i title="Troubleshooting Steps" className="fas fa-exclamation-triangle icon__warning" aria-hidden="true" onClick={openTroubleshootingWindow} style={{ height: 20, cursor: 'pointer' }} />
               </Col>
-              <Col sm={4}>
-                <i title="View Recovery Configuration" className="fas fa-info-circle info__icon test_summary_icon" aria-hidden="true" onClick={onClick} style={{ height: 20, cursor: 'pointer' }} />
-              </Col>
-              {((data.status === RECOVERY_STATUS.FAILED || detailedStepError) && data.guestOS === RECOVERY_GUEST_OS.WINDOWS) ? (
-                <Col sm={4} className="padding-left-5" title="Troubleshooting Steps">
-                  <i title="Troubleshooting Steps" className="fas fa-exclamation-triangle icon__warning" aria-hidden="true" onClick={openTroubleshootingWindow} style={{ height: 20, cursor: 'pointer' }} />
-                </Col>
-              ) : null}
-            </Row>
-          </Col>
-        </Row>
-        <Row className=" padding-left-2">
-          <Col sm={12}>
-            {toggle === true ? <StepStatus steps={steps} data={jobdata} /> : null}
-          </Col>
-        </Row>
-      </div>
+            ) : null}
+          </Row>
+        </Col>
+      </Row>
+      <Row className=" padding-left-2">
+        <Col sm={12}>
+          {toggle || detailedStepError === true ? <StepStatus steps={steps} data={jobdata} /> : null}
+        </Col>
+      </Row>
     </>
   );
 }

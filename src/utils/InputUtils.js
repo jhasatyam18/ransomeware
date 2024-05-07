@@ -1,8 +1,10 @@
+import { t } from 'i18next';
 import { API_FETCH_VMWARE_LOCATION } from '../constants/ApiConstants';
 import { JOB_INIT_FAILED, JOB_INIT_SYNC_FAILED, NODE_STATUS_ONLINE } from '../constants/AppStatus';
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
 import { EMAIL, EXCLUDE_KEYS_CONSTANTS, EXCLUDE_KEYS_RECOVERY_CONFIGURATION, PLATFORM_TYPES, RECOVERY_STATUS, SCRIPT_TYPE, STATIC_KEYS, SUPPORTED_FIRMWARE, SUPPORTED_GUEST_OS, UI_WORKFLOW, VMWARE_OS_DISK_DEVICE_KEYS } from '../constants/InputConstants';
 import { STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMORY, STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
+import { STORE_KEYS } from '../constants/StoreKeyConstants';
 import { MAC_ADDRESS } from '../constants/ValidationConstants';
 import { getStorageForVMware, onScriptChange, valueChange } from '../store/actions';
 import { onAwsStorageTypeChange } from '../store/actions/AwsActions';
@@ -1246,7 +1248,7 @@ export function getVmCheckpointOptions(user, fieldKey) {
           const d = new Date(time);
           let resp = '';
           resp = `${d.toLocaleDateString()}-${d.toLocaleTimeString()}`;
-          options.push({ label: resp, value: checkpoint.id });
+          options.push({ label: resp, value: checkpoint.id, creationTime: checkpoint.creationTime });
         }
       });
     }
@@ -1339,11 +1341,26 @@ export function defaultRecoveryCheckpointForVm({ user, dispatch, recoveryCheckpo
  * @param object containing value and fieldkey
  * @returns
  */
-
-export function onVmRecoveryCheckpointOptionChange({ value, fieldKey }) {
-  return (dispatch) => {
+export function onVmRecoveryCheckpointOptionChange({ value, fieldKey, selectedOption }) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
     const checkpointIds = [];
     const vmMoref = fieldKey.split('-recovery-checkpoint');
+    const vms = getValue(STATIC_KEYS.UI_RECOVERY_CHECKPOINTS_BY_VM_ID, values);
+    let commonCheckpoint = selectedOption.creationTime;
+    Object.keys(vms).forEach((key) => {
+      const vmCheckpoint = getValue(`${key}-recovery-checkpoint`, values);
+      // varify if other vm's creation time is equal and skip current checkpoint
+      if (vmCheckpoint.creationTime !== commonCheckpoint && selectedOption.value !== vms[key].id) {
+        commonCheckpoint = '';
+      }
+    });
+    if (commonCheckpoint === '') {
+      dispatch(valueChange(STORE_KEYS.UI_CHECKPOINT_SELECT_WARNING, t('recovery.checkpoint.onchange.warn')));
+    } else {
+      dispatch(valueChange(STORE_KEYS.UI_CHECKPOINT_SELECT_WARNING, ''));
+    }
     checkpointIds.push(value);
     dispatch(recoveryConfigOnCheckpointChanges(checkpointIds, vmMoref[0]));
   };
@@ -1401,21 +1418,33 @@ export function commonCheckpointOptions(user) {
  * it changes recovery configs which has checkpoint equal to common checkpoint option
  * @returns
  */
-export function onCommonCheckpointChange() {
+export function onCommonCheckpointChange({ value }) {
   return (dispatch, getState) => {
     const { user } = getState();
     const { values } = user;
     const vmRecoveryCheckpoints = getValue(STATIC_KEYS.UI_RECOVERY_CHECKPOINTS_BY_VM_ID, values);
     const checkpointIds = [];
+    let vmsCountWithoutCommonCheckpoint = 0;
     if (vmRecoveryCheckpoints !== '') {
       Object.keys(vmRecoveryCheckpoints).forEach((el) => {
         const checkpointid = defaultRecoveryCheckpointForVm({ user, dispatch, recoveryCheckpoint: vmRecoveryCheckpoints[el] });
         if (typeof checkpointid?.value !== 'undefined') {
           checkpointIds.push(checkpointid.value);
+        } else {
+          vmsCountWithoutCommonCheckpoint += 1;
         }
       });
     }
-    dispatch(recoveryConfigOnCheckpointChanges(checkpointIds));
+    if (value !== '' && vmsCountWithoutCommonCheckpoint > 0) {
+      // Add checkpoint warning text
+      dispatch(valueChange(STORE_KEYS.UI_CHECKPOINT_SELECT_WARNING, t('recovery.checkpoint.onchange.warn')));
+    } else {
+      dispatch(valueChange(STORE_KEYS.UI_CHECKPOINT_SELECT_WARNING, ''));
+    }
+    // if common checkpoint is selected then only fetch the data as common checkpoint can be empty
+    if (value !== '') {
+      dispatch(recoveryConfigOnCheckpointChanges(checkpointIds));
+    }
   };
 }
 

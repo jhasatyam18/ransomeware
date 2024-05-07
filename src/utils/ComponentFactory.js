@@ -126,7 +126,7 @@ export function getItemRendererComponent({ render, data, field, user, dispatch, 
     case DR_PLAN_NAME_ITEM_RENDERER:
       return <DRPlanNameItemRenderer data={data} />;
     case DATE_ITEM_RENDERER:
-      return <DateItemRenderer data={data} field={field} />;
+      return <DateItemRenderer data={data} field={field} dispatch={dispatch} />;
     case STATUS_ITEM_RENDERER:
       return <StatusItemRenderer data={data} field={field} />;
     case TRANSFER_SIZE_ITEM_RENDERER:

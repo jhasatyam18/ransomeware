@@ -62,4 +62,6 @@ export const KEY_CONSTANTS = {
   PLAYBOOK_GENERAL_CONFIGURATION: 'General Configuration',
   PLAYBOOK_PLAN_COFIGURE: 'configPlanCreated',
   PLAYBOOK_PLAN_RECONFIGURED: 'configPlanReconfigured',
+  CHECKPOINT_EXPIRY_TIME: 'expirationTime',
+  CHECKPOINT_RECOVERY_POINT_TIME: 'recoveryPointTime',
 };

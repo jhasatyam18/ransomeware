@@ -183,7 +183,7 @@ class DRPlanDetails extends Component {
       { label: 'Recovery Post Script', field: 'postScript' },
 
       { label: 'Synchronize All VM Replications', field: 'enablePPlanLevelScheduling' },
-      { label: 'Enable Checkpointing', field: 'recoveryPointConfiguration', value: isRecoveryCheckpointEnabled, info: () => getRecoveryCheckpointSummary(recoveryPointConfiguration) },
+      { label: 'Point In Time', field: 'recoveryPointConfiguration', value: isRecoveryCheckpointEnabled, info: () => getRecoveryCheckpointSummary(recoveryPointConfiguration) },
       { label: 'Script Timeout (Seconds)', field: 'scriptTimeout' },
       { label: 'Boot Delay (Seconds)', field: 'bootDelay' },
     ];
