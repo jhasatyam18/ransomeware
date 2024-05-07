@@ -1408,17 +1408,21 @@ export function validateConfigureIDP(user, dispatch) {
 
 export function validateCheckpointSelection(user, vms, dispatch) {
   const { values } = user;
-  let checkpointFlag = 0;
-  const selectedVMsCount = Object.keys(vms).length;
-  Object.keys(vms).forEach((vm) => {
+  let checkpointFlag = false;
+  const checkpointRequiredVM = [];
+  const selectedVMs = Object.keys(vms);
+  for (let i = 0; i < selectedVMs.length; i += 1) {
+    const vm = selectedVMs[i];
     const checkpoint = getValue(`${vm}-recovery-checkpoint`, values);
-    if (Object.keys(checkpoint).length !== 0) {
-      checkpointFlag += 1;
+    if (typeof checkpoint.value === 'undefined' || checkpoint.value === '') {
+      checkpointRequiredVM.push(vms[vm].name);
+      checkpointFlag = true;
     }
-  });
-  if (checkpointFlag !== selectedVMsCount) {
-    dispatch(addMessage('Select Point In Time For Virtual machine.', MESSAGE_TYPES.ERROR));
+  }
+  if (checkpointFlag) {
+    dispatch(addMessage(`${i18n.t('checkpoint.selection.error.msg')} ${checkpointRequiredVM.join(', ')}.`, MESSAGE_TYPES.ERROR));
     return false;
   }
+
   return true;
 }
