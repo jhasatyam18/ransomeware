@@ -97,7 +97,7 @@ function DMTree(props) {
               <input
                 type="text"
                 className="form-control"
-                id="datableSearch"
+                id="planvmstep"
                 placeholder="Search"
                 onChange={onSearchChange}
                 onKeyPress={onSearchChange}

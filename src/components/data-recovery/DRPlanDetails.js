@@ -260,7 +260,7 @@ class DRPlanDetails extends Component {
       actions.push({ label: 'Start', action: startPlan, id: protectionPlan.id, disabled: this.disableStart(protectionPlan) });
       actions.push({ label: 'Stop', action: stopPlan, id: protectionPlan.id, disabled: this.disableStop(protectionPlan) });
       actions.push({ label: 'Edit', action: openEditProtectionPlanWizard, id: protectionPlan, disabled: this.disableEdit() });
-      actions.push({ label: 'Resync Disk Replication', action: onResetDiskReplicationClick, id: protectionPlan, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS, navigate: PROTECTION_PLANS_PATH });
+      actions.push({ label: 'Resync Disk Replication', action: onResetDiskReplicationClick, id: protectionPlan, disabled: isServerActionDisabled, navigate: PROTECTION_PLANS_PATH });
       actions.push({ label: 'Remove', action: deletePlanConfirmation, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS, navigate: PROTECTION_PLANS_PATH });
       actions.push({ label: 'Download Plan Playbook', action: playbookExport, id: protectionPlan, disabled: this.disableEdit() });
     } else if (localVMIP === recoverySite.node.hostname) {
