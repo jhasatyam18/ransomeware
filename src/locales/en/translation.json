@@ -811,5 +811,6 @@
   "checkpoint.preserve.count":"Preserved checkpoint count :",
   "checkpoint.total.count":"Total available checkpoint count :",
   "cbt.warning":"Ensure that there are no snapshots on the virtual machine before enabling CBT. If there are existing snapshots, VMware APIs might return incorrect changed block data and cause issues in incremental replications. For details, refer here ",
-  "checkpoint.preserve.title":"Preserve Checkpoint"
+  "checkpoint.preserve.title":"Preserve Checkpoint",
+  "checkpoint.preserve.error.message":" {{workloadName}}({{timeStr}}): {{errorMessage}}"
 }
