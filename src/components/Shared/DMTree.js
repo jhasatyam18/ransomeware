@@ -32,10 +32,12 @@ function DMTree(props) {
     );
   }
 
-  function onSearchChange(e) {
-    setSearchStr(e.target.value);
+  function onSearchChange(e, onSearchClick = false) {
+    if (!onSearchClick) {
+      setSearchStr(e.target.value);
+    }
     if (searchURL && searchURL !== '' && apiData.length === 0) {
-      if (e.charCode === 13) {
+      if ((e?.charCode === 13 || onSearchClick) && (searchStr !== '' || e?.target.value !== '')) {
         fetchVMwareFolderData();
         return;
       }
@@ -104,7 +106,7 @@ function DMTree(props) {
                 autoComplete="off"
                 ref={ref}
               />
-              <span className="input-group-append">
+              <span className="input-group-append" aria-hidden onClick={() => onSearchChange(null, true)}>
                 <div className="input-group-text bg-transparent">
                   <box-icon name="search" className="search__icon" size="15px" color="#FFF" />
                 </div>
