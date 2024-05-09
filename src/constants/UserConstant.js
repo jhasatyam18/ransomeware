@@ -19,7 +19,7 @@ export const TIME_CONSTANTS = {
 export const GENERAL_PLATFORM_KEYS = {
   AWS: {
     GENERAL: ['guestOS', 'firmwareType', 'instanceType', 'volumeType', 'volumeIOPS', 'encryptionKey', 'tags'],
-    NETWORK: ['vpcId', 'Subnet', 'availZone', 'isPublicIP', 'network', 'privateIP', 'securityGroups'],
+    NETWORK: ['vpcId', 'Subnet', 'availZone', 'isPublicIP', 'publicIP', 'privateIP', 'securityGroups'],
   },
   VMWARE: {
     GENERAL: ['guestOS', 'firmwareType', 'folderPath', 'hostMoref', 'dataStoreMoref', 'numCPU', 'memoryMB'],
@@ -62,4 +62,6 @@ export const KEY_CONSTANTS = {
   PLAYBOOK_GENERAL_CONFIGURATION: 'General Configuration',
   PLAYBOOK_PLAN_COFIGURE: 'configPlanCreated',
   PLAYBOOK_PLAN_RECONFIGURED: 'configPlanReconfigured',
+  CHECKPOINT_EXPIRY_TIME: 'expirationTime',
+  CHECKPOINT_RECOVERY_POINT_TIME: 'recoveryPointTime',
 };

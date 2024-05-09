@@ -130,3 +130,31 @@
   display: flex;
   justify-content: space-between;
 }
+
+.checkpoint_preserved_text{
+  font-size: 9px;
+  color:$green;
+  display: block;
+  padding-left: 2px;
+  padding-top: 2px;
+}
+
+.checkpoint_summary{
+  padding-left: 15px;
+  margin-top: 0px;
+  font-weight: 100;
+  color: #c3cbe4
+}
+
+.checkpoint_preserve_text{
+  font-size: 9px;
+  color:#50a5f1;
+  display: block;
+  padding-left: 2px;
+  padding-top: 2px;  
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.singlee_playbook_icon{
+  font-size: 15px;
+}

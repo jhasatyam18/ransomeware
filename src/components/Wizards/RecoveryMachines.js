@@ -1,26 +1,25 @@
 import React, { Component } from 'react';
-import { Col, Label, Row, Container } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
+import { Col, Container, Label, Row } from 'reactstrap';
+import { API_UPLOAD_RECOVERY_CRED } from '../../constants/ApiConstants';
 import { RECOVERY_STATUS } from '../../constants/AppStatus';
+import { FIELD_TYPE } from '../../constants/FieldsConstant';
+import { CHECKPOINT_TYPE, CONSTANT_NUMBERS, PLAYBOOK_TYPE, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
+import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { STORE_KEYS } from '../../constants/StoreKeyConstants';
+import { RECOVERY_CHECKPOINT_OPTION_RENDERER, TABLE_FILTER_TEXT, TABLE_RECOVERY_VMS } from '../../constants/TableConstants';
+import { hideApplicationLoader, showApplicationLoader, valueChange } from '../../store/actions';
 import { setRecoveryVMDetails } from '../../store/actions/DrPlanActions';
+import { addMessage } from '../../store/actions/MessageActions';
+import { handleProtectVMSeletion, handleSelectAllRecoveryVMs } from '../../store/actions/SiteActions';
+import { getUrlPath } from '../../utils/ApiUtils';
+import { filterData } from '../../utils/AppUtils';
+import { commonCheckpointOptions, getValue, onCommonCheckpointChange } from '../../utils/InputUtils';
+import DMField from '../Shared/DMField';
+import DMSearchSelect from '../Shared/DMSearchSelect';
+import DMToolTip from '../Shared/DMToolTip';
 import DMTable from '../Table/DMTable';
 import DMTPaginator from '../Table/DMTPaginator';
-import DMField from '../Shared/DMField';
-import DMToolTip from '../Shared/DMToolTip';
-import { handleProtectVMSeletion, handleSelectAllRecoveryVMs } from '../../store/actions/SiteActions';
-import { RECOVERY_CHECKPOINT_OPTION_RENDERER, TABLE_FILTER_TEXT, TABLE_RECOVERY_VMS } from '../../constants/TableConstants';
-import { CHECKPOINT_TYPE, CONSTANT_NUMBERS, PLAYBOOK_TYPE, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
-import { commonCheckpointOptions, getValue, onCommonCheckpointChange } from '../../utils/InputUtils';
-import { filterData } from '../../utils/AppUtils';
-import { getUrlPath } from '../../utils/ApiUtils';
-import { API_UPLOAD_RECOVERY_CRED } from '../../constants/ApiConstants';
-import { hideApplicationLoader, showApplicationLoader, valueChange } from '../../store/actions';
-import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { addMessage } from '../../store/actions/MessageActions';
-import DMSearchSelect from '../Shared/DMSearchSelect';
-import { FIELD_TYPE } from '../../constants/FieldsConstant';
-import { isEmpty } from '../../utils/validationUtils';
 
 class RecoveryMachines extends Component {
   constructor() {
@@ -64,7 +63,6 @@ class RecoveryMachines extends Component {
   }
 
   setRecoveryConfigs(dispatch, values, value) {
-    const { t } = this.props;
     const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
     const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
     const recVms = getValue(STORE_KEYS.UI_RECOVERY_VMS, values);
@@ -106,8 +104,6 @@ class RecoveryMachines extends Component {
           dispatch(setRecoveryVMDetails(vm, plan));
         });
       }
-      // Add checkpoint warning text
-      dispatch(valueChange(STORE_KEYS.UI_CHECKPOINT_SELECT_WARNING, t('recovery.checkpoint.onchange.warn')));
     }
   }
 
@@ -187,7 +183,7 @@ class RecoveryMachines extends Component {
 
   renderCommonCheckpointOption() {
     const { dispatch, user, t } = this.props;
-    const commonCheckpointField = { shouldShow: true, type: FIELD_TYPE.SELECT_SEARCH, options: () => commonCheckpointOptions(user), validate: ({ value }) => isEmpty({ value }), errorMessage: 'Please select common point in time checkpoint', onChange: ({ value, fieldKey }) => onCommonCheckpointChange({ value, dispatch, fieldKey }) };
+    const commonCheckpointField = { shouldShow: true, type: FIELD_TYPE.SELECT_SEARCH, options: () => commonCheckpointOptions(user), validate: true, errorMessage: '', onChange: ({ value, fieldKey }) => onCommonCheckpointChange({ value, dispatch, fieldKey }) };
     return (
       <Row className="margin-top-20">
         <Col sm={4} className="padding-left-30">{t('select.point.in.time')}</Col>

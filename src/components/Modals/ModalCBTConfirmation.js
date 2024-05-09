@@ -1,17 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { withTranslation } from 'react-i18next';
-import { Tooltip } from 'reactstrap';
+import { STATIC_KEYS } from '../../constants/InputConstants';
 import { closeModal } from '../../store/actions/ModalActions';
 import { valueChange } from '../../store/actions/UserActions';
-import { STATIC_KEYS } from '../../constants/InputConstants';
 
 function ModalCBTConfirmation(props) {
   const { t, modal, dispatch } = props;
   const { options } = modal;
   const { selectedVMs = {} } = options;
-  const [tooltipOpen, setTooltipOpen] = useState(false);
-
-  const toggle = () => setTooltipOpen(!tooltipOpen);
 
   function vmsName() {
     if (Object.keys(selectedVMs).length > 0) {
@@ -21,26 +17,7 @@ function ModalCBTConfirmation(props) {
           disabledCBTVMs.push(selectedVMs[vm]);
         }
       });
-      if (disabledCBTVMs.length > 4) {
-        const firstFourVMsNames = disabledCBTVMs.slice(0, 4).map((vm) => vm.name).join(', ');
-        return (
-          <>
-            <span className="unfocused">{ firstFourVMsNames }</span>
-            <span id="remainingVM">
-              ...
-              <Tooltip
-                placement="auto"
-                isOpen={tooltipOpen}
-                target="remainingVM"
-                toggle={toggle}
-              >
-                {disabledCBTVMs.slice(4, disabledCBTVMs.length).map((vm) => vm.name).join(', ')}
-              </Tooltip>
-            </span>
-          </>
-        );
-      }
-      return <span className="unfocused">{disabledCBTVMs.map((vm) => vm.name).join(', ')}</span>;
+      return <span>{disabledCBTVMs.map((vm) => vm.name).join(', ')}</span>;
     }
     return null;
   }
@@ -48,16 +25,23 @@ function ModalCBTConfirmation(props) {
   const alertMessage = () => (
     <div className="col-sm-12 confirmation_modal_msg">
       <span>{t('confirm.cbt.warning')}</span>
-      {vmsName()}
-      <p className="unfocused margin-top-25">{t('confirm.cbt.instruction')}</p>
-      <p>
+      <p style={{ fontWeight: '100', marginBottom: '2px' }}>{vmsName()}</p>
+      <p className="unfocused margin-top-5 margin-bottom-2">{t('confirm.cbt.instruction')}</p>
+      <p className="margin-bottom-2">
         <span>{t('confirm.cbt.clickEnableCBT')}</span>
         <span className="unfocused">{t('confirm.cbt.toConfigureVM')}</span>
       </p>
-      <p>
+      <p className="margin-bottom-2">
         <span>{t('confirm.cbt.clickCancel')}</span>
         <span className="unfocused">{t('confirm.cbt.toCancelManually')}</span>
         <span><a href={STATIC_KEYS.VMWARE_CBT_KB_REFERENCE} rel="noreferrer" target="_blank">{t('click.here')}</a></span>
+      </p>
+      <p className="cbt_icon__warning margin-top-10">
+        <i className="fas fa-exclamation-triangle icon__warning padding-right-7" aria-hidden="true" style={{ height: 20, cursor: 'pointer' }} />
+        <snap className="warning ">
+          {t('cbt.warning')}
+        </snap>
+        <a className="d-inline" href="https://kb.vmware.com/s/article/1020128" rel="noreferrer" target="_blank">(https://kb.vmware.com/s/article/1020128)</a>
       </p>
     </div>
   );
@@ -95,7 +79,7 @@ function ModalCBTConfirmation(props) {
   return (
     <>
       <div className="modal-body noPadding">
-        <div className="container padding-20">
+        <div className="container padding-left-20 padding-top-10 padding-right-20">
           <div className="row">
             <div className="width-100 confirmation_modal_msg">
               {alertMessage()}

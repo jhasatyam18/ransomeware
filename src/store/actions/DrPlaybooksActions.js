@@ -381,12 +381,20 @@ export function playbookFetchPlanDiff(id, playbook) {
       } else {
         dispatch(checkPlanConfigurationChanges(json.currentPlanConfiguration[0], json.updatedPlanConfiguration[0]));
         const prevObj = {};
-        json.currentPlanConfiguration[0].recoveryEntities.instanceDetails.forEach((d) => {
-          prevObj[d.sourceMoref] = d;
+        json.currentPlanConfiguration[0].recoveryEntities.instanceDetails.forEach((d, ind) => {
+          // added guest os and firmware information in recovery configuration to show different values for playbook diff page
+          const data = d;
+          data.guestOS = json.currentPlanConfiguration[0].protectedEntities.virtualMachines[ind].guestOS;
+          data.firmwareType = json.currentPlanConfiguration[0].protectedEntities.virtualMachines[ind].firmwareType;
+          prevObj[data.sourceMoref] = data;
         });
         const currObj = {};
-        json.updatedPlanConfiguration[0].recoveryEntities.instanceDetails.forEach((d) => {
-          currObj[d.sourceMoref] = d;
+        json.updatedPlanConfiguration[0].recoveryEntities.instanceDetails.forEach((d, ind) => {
+          // added guest os and firmware information in recovery configuration to show different values for playbook diff page
+          const data = d;
+          data.guestOS = json.updatedPlanConfiguration[0].protectedEntities.virtualMachines[ind].guestOS;
+          data.firmwareType = json.updatedPlanConfiguration[0].protectedEntities.virtualMachines[ind].firmwareType;
+          currObj[data.sourceMoref] = data;
         });
 
         dispatch(checkVmRecoveryConfigurationChanges({ prevArr: prevObj, currentArr: currObj, recoveryPlatform: json.updatedPlanConfiguration[0].recoverySite.platformDetails.platformType, condition: 'sourceMoref', key: 'ans' }));

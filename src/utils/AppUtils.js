@@ -1,6 +1,7 @@
-import { getCheckpointTimeFromMinute } from '../store/actions/checkpointActions';
-import { STATIC_KEYS, PLATFORM_TYPES } from '../constants/InputConstants';
+import { t } from 'i18next';
+import { PLATFORM_TYPES, STATIC_KEYS } from '../constants/InputConstants';
 import * as RPATH from '../constants/RouterConstants';
+import { getCheckpointTimeFromMinute } from '../store/actions/checkpointActions';
 import { getAzureNetworkOptions, getValue } from './InputUtils';
 
 const KEY_NAME = 'datamotive';
@@ -422,8 +423,7 @@ export function getLabelWithResourceGrp(val) {
   return label;
 }
 
-export function convertMinIntoHrDayWeekMonthYear(recoveryPointTimePeriod, recoveryPointCopies) {
-  const recoverySnapshot = (recoveryPointTimePeriod / recoveryPointCopies).toFixed(2);
+export function convertMinIntoHrDayWeekMonthYear(recoveryPointTimePeriod, recoveryPointCopies, recoverySnapshot) {
   const decimal = recoverySnapshot.toString().split('.')[1];
   let minutes = Math.floor(recoveryPointTimePeriod / recoveryPointCopies);
   const MINS_PER_YEAR = 24 * 365 * 60;
@@ -463,15 +463,30 @@ export function convertMinIntoHrDayWeekMonthYear(recoveryPointTimePeriod, recove
   return str;
 }
 
+export function convertToMinute(number, unit) {
+  const unitsInMinutes = {
+    year: 24 * 365 * 60,
+    month: 24 * 30 * 60,
+    week: 24 * 7 * 60,
+    day: 24 * 60,
+    hour: 60,
+  };
+  if (unit in unitsInMinutes) {
+    return number * unitsInMinutes[unit];
+  }
+}
+
 export function getRecoveryCheckpointSummary(recoveryCheckpointConfig) {
   const { recoveryPointTimePeriod, recoveryPointRetentionTime, recoveryPointCopies, isRecoveryCheckpointEnabled } = recoveryCheckpointConfig;
   if (isRecoveryCheckpointEnabled) {
     const checkpointRetention = getCheckpointTimeFromMinute(recoveryPointRetentionTime);
     const retaintion = `${checkpointRetention.time} ${checkpointRetention.unit}`;
-    const checkpointCopyCreationTime = convertMinIntoHrDayWeekMonthYear(recoveryPointTimePeriod, recoveryPointCopies);
-    return ` Checkpanoints will be created from replicated copy in every ${checkpointCopyCreationTime}. Each copy will be maintained for ${retaintion}(s).` || '';
+    const recoverySnapshot = (recoveryPointTimePeriod / recoveryPointCopies).toFixed(2);
+    const checkpointCopyCreationTime = convertMinIntoHrDayWeekMonthYear(recoveryPointTimePeriod, recoveryPointCopies, recoverySnapshot);
+    const maxCheckpointPossible = Math.floor(recoveryPointRetentionTime / recoverySnapshot);
+    return t('checkpoint.info', { checkpointCopyCreationTime, retaintion, maxCheckpointPossible });
   }
-  return null;
+  return '';
 }
 
 export const processCriteria = (criteria) => {

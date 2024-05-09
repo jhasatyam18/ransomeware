@@ -56,11 +56,11 @@ function ShowPlaybookVmChanges(props) {
     if (typeof val1 === 'boolean') {
       val1 = (val1 ? t('label.yes') : t('label.no'));
     }
-    if (!val) {
-      val = t('label.no');
+    if (!val || val === '') {
+      val = t('-');
     }
-    if (!val1) {
-      val1 = t('label.no');
+    if (!val1 || val1 === '') {
+      val1 = t('-');
     }
     if (value === '&nbsp;') {
       val = '';

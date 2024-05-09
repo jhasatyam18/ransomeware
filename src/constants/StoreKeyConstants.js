@@ -11,4 +11,5 @@ export const STORE_KEYS = {
   UI_DISABLE_RECOVERY_CHECKPOINT: 'ui.disable.recovery.checkpointing',
   UI_CHECKPOINT_PLAN: 'ui.checkpoint.plan',
   UI_CHECKPOINT_SELECT_WARNING: 'checkpoint-warning',
+  UI_PRESERVED_CHECKPOINT_OBJECT: 'ui.preserved.checkpoint.obj',
 };

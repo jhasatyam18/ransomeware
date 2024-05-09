@@ -51,6 +51,7 @@ export const RECOVERY_JOB_TYPE = {
 export const RECOVERY_CHECKPOINT_TYPE = {
   PLAN: 'PLAN',
   VM: 'VM',
+  PRESERVED_CHECKPOINTS: 'PRESERVED_CHECKPOINTS',
 };
 
 export const APP_TYPE = {

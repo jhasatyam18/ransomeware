@@ -126,6 +126,7 @@ export const RECOVERY_JOBS = [
   { label: 'Virtual Machine', field: 'vmName', allowFilter: true, checked: true },
   { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Recovery Type', field: 'recoveryType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER, allowFilter: true, checked: true },
+  { label: 'Recovery Point Time', field: 'recoveryPointTime', itemRenderer: DATE_ITEM_RENDERER, width: '2.3' },
   { label: 'Job Status', field: 'status', itemRenderer: RECOVERY_STATUS_RENDERER, allowFilter: true, checked: true, width: '2.5' },
   { label: 'IP Address', field: 'publicIP', itemRenderer: SSH_RDP_ITEM_RENDERER },
 ];
@@ -133,9 +134,9 @@ export const RECOVERY_JOBS = [
 export const PROTECTION_PLAN_RECOVERY_JOBS = [
   { label: 'Virtual Machine', field: 'vmName', allowFilter: true, checked: true },
   { label: 'Recovery Type', field: 'recoveryType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER, allowFilter: true, checked: true },
-  { label: 'Recovery Point Time', field: 'recoveryPointTime', itemRenderer: DATE_ITEM_RENDERER, allowFilter: true, checked: true, width: '2.5' },
+  { label: 'Recovery Point Time', field: 'recoveryPointTime', itemRenderer: DATE_ITEM_RENDERER, width: '2.3' },
   { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
-  { label: 'Job Status', field: 'status', itemRenderer: RECOVERY_STATUS_RENDERER, allowFilter: true, checked: true, width: '2.5' },
+  { label: 'Job Status', field: 'status', itemRenderer: RECOVERY_STATUS_RENDERER, allowFilter: true, checked: true, width: '2.6' },
   { label: 'IP Address', field: 'publicIP', itemRenderer: SSH_RDP_ITEM_RENDERER },
 ];
 
@@ -333,7 +334,7 @@ export const RECOVERY_CHECKPOINTS = [
 ];
 
 export const VM_RECOVERY_CHECKPOINTS = [
-  { label: 'Name', field: 'workloadName', allowFilter: true, width: 2 },
+  { label: 'Name', field: 'workloadName', allowFilter: true, checked: true, width: 2 },
   { label: 'Size', field: 'size', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Created At', field: 'creationTime', itemRenderer: DATE_ITEM_RENDERER },
   { label: 'Expires On', field: 'expirationTime', itemRenderer: DATE_ITEM_RENDERER },

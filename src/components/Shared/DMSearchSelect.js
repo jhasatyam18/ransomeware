@@ -1,17 +1,14 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import Select, { components } from 'react-select';
-import {
-  Col, FormGroup, Label, Row,
-} from 'reactstrap';
 import { withTranslation } from 'react-i18next';
+import Select, { components } from 'react-select';
+import { Col, FormGroup, Label, Row } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
 import { PLATFORM_TYPES } from '../../constants/InputConstants';
-import DMToolTip from './DMToolTip';
-import { getValue } from '../../utils/InputUtils';
 import { valueChange } from '../../store/actions/UserActions';
-import { validateField } from '../../utils/validationUtils';
 import { getSearchSelectStyle } from '../../utils/ApiUtils';
+import { getValue } from '../../utils/InputUtils';
+import { validateField } from '../../utils/validationUtils';
+import DMToolTip from './DMToolTip';
 
 class DMSearchSelect extends Component {
   componentDidMount() {
@@ -76,7 +73,7 @@ class DMSearchSelect extends Component {
     const { onChange } = field;
     dispatch(valueChange(fieldKey, selectedOption));
     if (typeof onChange === 'function') {
-      dispatch(onChange({ value: selectedOption.value, dispatch, user, fieldKey }));
+      dispatch(onChange({ value: selectedOption.value, dispatch, user, fieldKey, selectedOption }));
     }
     validateField(field, fieldKey, selectedOption.value, dispatch, user);
   };
@@ -188,9 +185,5 @@ class DMSearchSelect extends Component {
     );
   }
 }
-const propTypes = {
-  dispatch: PropTypes.func.isRequired,
-};
-DMSearchSelect.propTypes = propTypes;
 
 export default (withTranslation()(DMSearchSelect));

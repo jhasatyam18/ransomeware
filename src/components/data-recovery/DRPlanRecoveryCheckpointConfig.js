@@ -6,7 +6,7 @@ import { STORE_KEYS } from '../../constants/StoreKeyConstants';
 import { TIME_CONSTANTS } from '../../constants/UserConstant';
 import { removeErrorMessage, valueChange } from '../../store/actions';
 import { getCheckpointTimeFromMinute } from '../../store/actions/checkpointActions';
-import { convertMinIntoHrDayWeekMonthYear } from '../../utils/AppUtils';
+import { convertMinIntoHrDayWeekMonthYear, convertToMinute } from '../../utils/AppUtils';
 import { getCheckpointDurationOption, getCheckRentaintionOption, getValue } from '../../utils/InputUtils';
 import { getRecoveryPointConfiguration, getReplicationInterval } from '../../utils/PayloadUtil';
 import { isEmpty, isEmptyNum } from '../../utils/validationUtils';
@@ -82,10 +82,10 @@ function DRPlanRecoveryCheckpointConfig(props) {
   const renderSummary = () => {
     if (count && durationNum && durationUnit && retainNum && retainUnit) {
       const { recoveryPointTimePeriod, recoveryPointCopies, isRecoveryCheckpointEnabled, recoveryPointRetentionTime } = getRecoveryPointConfiguration(user);
-      const recoverySnapshot = (recoveryPointTimePeriod / recoveryPointCopies);
+      const recoverySnapshot = (recoveryPointTimePeriod / recoveryPointCopies).toFixed(2);
       const isCHeckpoiningPossible = recoverySnapshot % replicationInterval;
       const retaintion = `${retainNum} ${retainUnit}`;
-      const checkpointCopyCreationTime = convertMinIntoHrDayWeekMonthYear(recoveryPointTimePeriod, recoveryPointCopies);
+      const checkpointCopyCreationTime = convertMinIntoHrDayWeekMonthYear(recoveryPointTimePeriod, recoveryPointCopies, recoverySnapshot);
       let res = '';
       let className = '';
       if (isCHeckpoiningPossible === 0) {
@@ -93,7 +93,9 @@ function DRPlanRecoveryCheckpointConfig(props) {
           className = 'card_note_warning';
           res = t('checkpoint.warn.retain.greterthan.interval', { recoveryPointCopies, durationNum, durationUnit, checkpointCopyCreationTime, retaintion });
         } else {
-          res = t('checkpoint.info', { checkpointCopyCreationTime, retaintion });
+          const retainInMin = convertToMinute(retainNum, retainUnit);
+          const maxCheckpointPossible = Math.floor(retainInMin / recoverySnapshot);
+          res = t('checkpoint.info', { checkpointCopyCreationTime, retaintion, maxCheckpointPossible });
         }
       } else {
         className = 'card_note_warning';

@@ -1,15 +1,15 @@
-import { STORE_KEYS } from '../../constants/StoreKeyConstants';
-import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import * as Types from '../../constants/actionTypes';
-import { getValue } from '../../utils/InputUtils';
+import { API_CHECKPOINT_TAKE_ACTION, API_GET_SELECTED_CHECKPOINTS, API_PROTECTTION_PLAN_REPLICATION_VM_JOBS, API_RECOVERY_CHECKPOINT, API_RECOVERY_CHECKPOINT_BY_VM, API_UPDAT_RECOVERY_CHECKPOINT_BY_ID } from '../../constants/ApiConstants';
+import { MINUTES_CONVERSION, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { MODAL_CONFIRMATION_WARNING, MODAL_PRESERVE_CHECKPOINT } from '../../constants/Modalconstant';
-import { MINUTES_CONVERSION, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
-import { API_CHECKPOINT_TAKE_ACTION, API_GET_SELECTED_CHECKPOINTS, API_PROTECTTION_PLAN_REPLICATION_VM_JOBS, API_RECOVERY_CHECKPOINT, API_RECOVERY_CHECKPOINT_BY_VM, API_UPDAT_RECOVERY_CHECKPOINT_BY_ID } from '../../constants/ApiConstants';
+import { STORE_KEYS } from '../../constants/StoreKeyConstants';
+import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
+import { getValue } from '../../utils/InputUtils';
+import { setRecoveryVMDetails } from './DrPlanActions';
 import { addMessage } from './MessageActions';
 import { closeModal, openModal } from './ModalActions';
-import { hideApplicationLoader, refresh, showApplicationLoader, valueChange } from './UserActions';
-import { setRecoveryVMDetails } from './DrPlanActions';
+import { clearValues, hideApplicationLoader, refresh, showApplicationLoader, valueChange } from './UserActions';
 
 export function setRecoveryCheckpointJobs(checkpointJobs) {
   return {
@@ -28,15 +28,17 @@ export function setRecoveryCheckpoint(recoveryCheckpoints) {
   };
 }
 
-export function createPayloadForCheckpoints(checkpoint, user) {
-  const { id } = checkpoint;
+export function createPayloadForCheckpoints(checkpointid, user) {
   const { values } = user;
-  const resObj = checkpoint;
-  resObj.preserveDescription = getValue(`${id}-checkpoint.preserve`, values);
-  if (resObj.preserveDescription) {
-    resObj.isPreserved = true;
-  }
-  return resObj;
+  const checkpontPayloadArray = [];
+  const checkpointKeys = Object.keys(checkpointid);
+  checkpointKeys.forEach((k) => {
+    const obj = checkpointid[k];
+    obj.isPreserved = true;
+    obj.preserveDescription = getValue('checkpoint.preserve', values);
+    checkpontPayloadArray.push(obj);
+  });
+  return checkpontPayloadArray;
 }
 
 /**
@@ -45,7 +47,7 @@ export function createPayloadForCheckpoints(checkpoint, user) {
 export function updateRecoveryCheckpoint(payload) {
   return (dispatch) => {
     const method = API_TYPES.PUT;
-    const url = `${API_UPDAT_RECOVERY_CHECKPOINT_BY_ID}/${payload.id}`;
+    const url = `${API_UPDAT_RECOVERY_CHECKPOINT_BY_ID}`;
     const obj = createPayload(method, payload);
     dispatch(showApplicationLoader('JOBS-DATA', 'Preserving Checkpoint'));
     return callAPI(url, obj)
@@ -55,6 +57,7 @@ export function updateRecoveryCheckpoint(payload) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
           dispatch(addMessage('Checkpoint preserved successfully', MESSAGE_TYPES.INFO));
+          dispatch(clearValues());
           dispatch(closeModal());
           dispatch(refresh());
         }
@@ -73,8 +76,7 @@ export function updateRecoveryCheckpoint(payload) {
    */
 export function preserveCheckpoint(selectedCheckpoints) {
   return (dispatch) => {
-    const selectedCheckpointKey = Object.keys(selectedCheckpoints);
-    const options = { title: 'Preserve Checkpoint', recoveryCheckpoint: selectedCheckpoints[selectedCheckpointKey], size: 'lg' };
+    const options = { title: 'Preserve Checkpoint', selectedCheckpoints, size: 'lg' };
     dispatch(openModal(MODAL_PRESERVE_CHECKPOINT, options));
   };
 }
