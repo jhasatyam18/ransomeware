@@ -47,7 +47,7 @@ class RecoveryConfig extends Component {
       return (
         <>
           <div className="card_note_warning rec_warn_text ">
-            <p className="rev_diff_warning">{t('reovery.discard.warning.txt')}</p>
+            <p className="rev_diff_warning mt-4">{t('reovery.discard.warning.txt')}</p>
             { vmNotCompletedReplication.map((el) => <li style={{ width: '800px', paddingLeft: '15px', position: 'relative', top: '-10px' }}>{el}</li>)}
           </div>
         </>
