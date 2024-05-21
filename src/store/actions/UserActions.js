@@ -8,6 +8,7 @@ import { STORE_KEYS } from '../../constants/StoreKeyConstants';
 import { APPLICATION_API_USER, APPLICATION_AUTHORIZATION, APPLICATION_UID } from '../../constants/UserConstant';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { getCookie, removeCookie, setCookie } from '../../utils/CookieUtils';
+import { Decrypt } from '../../utils/EncryptionUtil';
 import { onInit } from '../../utils/HistoryUtil';
 import { getMatchingInsType, getValue, getVMwareLocationPath, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { fetchByDelay } from '../../utils/SlowFetch';
@@ -158,7 +159,7 @@ export function getInfo(history) {
         fetchByDelay(dispatch, updateLicenseInfo, 2000, { nodeKey, version, serviceType, activeLicenses: licenses });
         // dispatch(validateLicense(licenseExpiredTime));
         dispatch(getUnreadAlerts());
-        dispatch(getUserInfo());
+        dispatch(getUserInfo(nodeKey));
         if (history) {
           onInit(history);
         }
@@ -578,7 +579,7 @@ export function setUserDetails(data) {
   };
 }
 
-export function getUserInfo() {
+export function getUserInfo(nodeKey) {
   return (dispatch) => {
     let username = getCookie(APPLICATION_API_USER);
     const uid = getCookie(APPLICATION_UID);
@@ -596,13 +597,14 @@ export function getUserInfo() {
           setCookie(APPLICATION_API_USER, json[0].username);
           setCookie(APPLICATION_UID, json[0].id);
           if (json[0].id === '' || typeof json[0].id === 'undefined' || json[0].id === 0) {
-            dispatch(getUserPrivileges(SAML.DEFAULT_USER_ID));
+            dispatch(getUserPrivileges(SAML.DEFAULT_USER_ID, nodeKey));
           } else {
-            dispatch(getUserPrivileges(json[0].id));
+            dispatch(getUserPrivileges(json[0].id, nodeKey));
           }
           dispatch(setUserDetails(json[0]));
           return;
         }
+        dispatch(setPrivileges([]));
         dispatch(addMessage('Failed to fetch user details', MESSAGE_TYPES.ERROR));
         dispatch(removeCookies());
         dispatch(logOutUser());
@@ -615,8 +617,11 @@ export function getUserInfo() {
   };
 }
 
-export function getUserPrivileges(id) {
+export function getUserPrivileges(id, nodeKey) {
   return (dispatch) => {
+    if (nodeKey === '' || typeof nodeKey === 'undefined') {
+      return;
+    }
     const url = API_USER_PRIVILEGES.replace('<id>', id);
     dispatch(showApplicationLoader(API_USER_PRIVILEGES, 'Loading...'));
     return callAPI(url).then((json) => {
@@ -625,6 +630,11 @@ export function getUserPrivileges(id) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
         dispatch(setPrivileges(json));
+        if (json && json.length >= 1) {
+          decryptAndSetPrivileges(json, nodeKey, dispatch);
+          return;
+        }
+        dispatch(addMessage('Failed to fetch user privileges', MESSAGE_TYPES.ERROR));
       }
     },
     (err) => {
@@ -1101,4 +1111,19 @@ export function setActiveTab(value) {
     type: Types.SET_DRPLAN_DETAIL_ACTIVE_TAB,
     value,
   };
+}
+
+export async function decryptAndSetPrivileges(data, nodeKey, dispatch) {
+  if (typeof data === 'undefined' || data.length === 0) {
+    return;
+  }
+  let privileges = [];
+  // decrypt the privileges using node key
+  try {
+    const d = await Decrypt(data, `${nodeKey}${nodeKey}`);
+    privileges = d.split(',') || [];
+  } catch (error) {
+    dispatch(addMessage('Failed to fetch user privileges', MESSAGE_TYPES.ERROR));
+  }
+  dispatch(setPrivileges(privileges));
 }

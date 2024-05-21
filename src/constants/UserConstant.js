@@ -64,4 +64,5 @@ export const KEY_CONSTANTS = {
   PLAYBOOK_PLAN_RECONFIGURED: 'configPlanReconfigured',
   CHECKPOINT_EXPIRY_TIME: 'expirationTime',
   CHECKPOINT_RECOVERY_POINT_TIME: 'recoveryPointTime',
+  CHECKPOINT_DELETED_FROM_PLATFORM: 'Deleted from Platform',
 };

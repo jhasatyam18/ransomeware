@@ -1,3 +1,4 @@
+import { t } from 'i18next';
 import * as Types from '../../constants/actionTypes';
 import { API_CHECKPOINT_TAKE_ACTION, API_GET_SELECTED_CHECKPOINTS, API_PROTECTTION_PLAN_REPLICATION_VM_JOBS, API_RECOVERY_CHECKPOINT, API_RECOVERY_CHECKPOINT_BY_VM, API_UPDAT_RECOVERY_CHECKPOINT_BY_ID } from '../../constants/ApiConstants';
 import { MINUTES_CONVERSION, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
@@ -56,10 +57,27 @@ export function updateRecoveryCheckpoint(payload) {
         if (json.hasError) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
-          dispatch(addMessage('Checkpoint preserved successfully', MESSAGE_TYPES.INFO));
-          dispatch(clearValues());
-          dispatch(closeModal());
-          dispatch(refresh());
+          const str = [];
+          json.forEach((el) => {
+            const { errorMessage, PointInTimeCheckpoint } = el;
+            if (errorMessage !== '') {
+              const { workloadName, creationTime } = PointInTimeCheckpoint;
+              const time = creationTime * 1000;
+              const d = new Date(time);
+              const timeStr = `${d.toLocaleDateString()}-${d.toLocaleTimeString()}`;
+              str.push(t('checkpoint.preserve.error.message', { workloadName, timeStr, errorMessage }));
+            }
+          });
+          if (str.length !== 0) {
+            dispatch(addMessage(str.join('\n'), MESSAGE_TYPES.ERROR));
+            dispatch(clearValues());
+            dispatch(closeModal());
+          } else {
+            dispatch(addMessage('Checkpoint preserved successfully', MESSAGE_TYPES.INFO));
+            dispatch(clearValues());
+            dispatch(closeModal());
+            dispatch(refresh());
+          }
         }
       },
       (err) => {

@@ -59,6 +59,7 @@ export const QUIESCE_SOURCE_SNAPSHOT_RENDERER = 'QUIESCE_SOURCE_SNAPSHOT_RENDERE
 export const QUIESCE_VMNAME_RENDERER = 'QUIESCE_VMNAME_RENDERER';
 export const DISK_REPLICATION_TYPE_ITEM_RENDERER = 'DISK_REPLICATION_TYPE_ITEM_RENDERER';
 export const PLATFORM_TYPE_ITEM_RENDERER = 'PREP_NODE_ITEM_RENDERER';
+export const EVENT_DESCRIPTION_RENDERER = 'EVENT_DESCRIPTION_RENDERER';
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
@@ -185,8 +186,8 @@ export const TABLE_EVENTS = [
   { label: 'Topic', field: 'topic', width: 2, allowFilter: true, checked: true },
   { label: 'Level', field: 'severity', itemRenderer: EVENT_LEVEL_ITEM_RENDERER, width: 1, allowFilter: true, checked: true },
   { label: 'Event Type', field: 'type', width: 1, allowFilter: true, checked: true },
-  { label: 'Description', field: 'description', width: 4, allowFilter: true, checked: true },
-  { label: 'User', field: 'generator', allowFilter: true, checked: true },
+  { label: 'Description', field: 'description', itemRenderer: EVENT_DESCRIPTION_RENDERER, width: 3, allowFilter: true, checked: true },
+  { label: 'User', field: 'generator', allowFilter: true, checked: true, width: 1 },
 ];
 
 // Table fields for ALERTS

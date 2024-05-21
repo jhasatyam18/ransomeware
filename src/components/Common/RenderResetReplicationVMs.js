@@ -84,6 +84,16 @@ function RenderResetReplicationVms(props) {
     );
   };
 
+  const calculateDisk = () => {
+    let diskCount = 0;
+    virtualDisks.forEach((disk) => {
+      if (!disk.isDeleted) {
+        diskCount += 1;
+      }
+    });
+    return diskCount;
+  };
+
   const renderDisks = () => virtualDisks.map((disk, ind) => renderCheckboxAndLabel(disk, ind));
   const renderRecoveryStatus = () => {
     if (vmData.recoveryStatus === '' || typeof vmData.lastRunTime === 'undefined' || vmData.lastRunTime === 0) {
@@ -113,7 +123,7 @@ function RenderResetReplicationVms(props) {
                 </Col>
                 <Col sm={3}>
                   <span aria-hidden className="margin-right-30">
-                    {` ${t('total.disks')} -  ${vmData.virtualDisks.length}`}
+                    {` ${t('total.disks')} -  ${calculateDisk()}`}
                   </span>
                 </Col>
                 <Col sm={3}>

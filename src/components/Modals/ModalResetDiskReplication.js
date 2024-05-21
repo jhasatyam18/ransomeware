@@ -175,8 +175,36 @@ function ResetDiskReplicationModal({ t, dispatch, options, user }) {
       </div>
     );
   };
+
+  const showWarningMsg = () => {
+    const { recoveryPointConfiguration } = selectedPlan;
+    const { isRecoveryCheckpointEnabled } = recoveryPointConfiguration;
+    const selectedVMS = getSelectedDisks();
+    const hideMsg = (typeof selectedVMS === 'undefined' || Object.keys(selectedVMS).length === 0);
+    if (hideMsg) {
+      return null;
+    }
+    if (isRecoveryCheckpointEnabled) {
+      return (
+        <div className="text-warning mt-4 ml-4">
+          <i className="fas fa-exclamation-triangle" />
+          &nbsp;&nbsp;&nbsp;
+          {`${t('resynk.disk.warning.with.checkpoint')}`}
+        </div>
+      );
+    }
+    return (
+      <div className="text-warning mt-4 ml-4">
+        <i className="fas fa-exclamation-triangle" />
+        &nbsp;&nbsp;&nbsp;
+        {`${t('resynk.disk.warning.without.checkpoint')}`}
+      </div>
+    );
+  };
+
   return (
     <>
+      {!showConfirmation && showWarningMsg()}
       <Row>
         <Col sm={6} className="padding-20 margin-left-10">
           {renderFilter()}

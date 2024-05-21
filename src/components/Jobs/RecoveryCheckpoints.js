@@ -7,6 +7,7 @@ import { RECOVERY_CHECKPOINT_TYPE } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { STORE_KEYS } from '../../constants/StoreKeyConstants';
 import { VM_RECOVERY_CHECKPOINTS } from '../../constants/TableConstants';
+import { KEY_CONSTANTS } from '../../constants/UserConstant';
 import { valueChange } from '../../store/actions';
 import { changeCheckpointType, handleAllRecoveryCheckpointTableSelection, handleRecoveryCheckpointTableSelection, openDeleteCheckpointModal, preserveCheckpoint, setVmlevelCheckpoints, updateSelectedCheckpoints } from '../../store/actions/checkpointActions';
 import { addMessage } from '../../store/actions/MessageActions';
@@ -73,7 +74,7 @@ function RecoveryCheckpoints(props) {
   };
   const renderActions = () => {
     const selectedCheckpointsKeys = Object.keys(selectedCheckpoints);
-    const disablePreserve = selectedCheckpointsKeys.length > 0 ? selectedCheckpointsKeys.some((el) => selectedCheckpoints[el].isPreserved === true) : true;
+    const disablePreserve = selectedCheckpointsKeys.length > 0 ? selectedCheckpointsKeys.some((el) => selectedCheckpoints[el].isPreserved === true || selectedCheckpoints[el].checkpointStatus === KEY_CONSTANTS.CHECKPOINT_DELETED_FROM_PLATFORM) : true;
     const disableDelete = selectedCheckpointsKeys.length === 0;
     let actions = [];
     if (localVMIP === recoverySite.node.hostname) {

@@ -23,7 +23,7 @@ export function isRequired(value) {
   return null;
 }
 
-export function validateField(field, fieldKey, value, dispatch, user) {
+export function validateField(field, fieldKey, value, dispatch, user, emptyFields = []) {
   const { patterns, validate, errorMessage } = field;
   const { errors } = user;
   if (patterns) {
@@ -38,6 +38,7 @@ export function validateField(field, fieldKey, value, dispatch, user) {
     });
     if (!isValid) {
       dispatch(addErrorMessage(fieldKey, errorMessage));
+      emptyFields.push(`${field.label}`);
       return false;
     }
   }
@@ -45,6 +46,7 @@ export function validateField(field, fieldKey, value, dispatch, user) {
     const hasError = validate({ value, dispatch, user, fieldKey });
     if (hasError) {
       dispatch(addErrorMessage(fieldKey, errorMessage));
+      emptyFields.push(`${field.label}`);
       return false;
     }
   }
@@ -103,7 +105,7 @@ export function validateConfigureSite(user, dispatch) {
   return isClean;
 }
 
-export function validateSteps(user, dispatch, fields, staticFields) {
+export function validateSteps(user, dispatch, fields, staticFields, emptyFields = []) {
   const { values } = user;
   let isClean = true;
   fields.map((fieldKey) => {
@@ -111,7 +113,7 @@ export function validateSteps(user, dispatch, fields, staticFields) {
     const { shouldShow } = field;
     const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
     if (showField) {
-      if (!validateField(field, fieldKey, getValue(fieldKey, values), dispatch, user)) {
+      if (!validateField(field, fieldKey, getValue(fieldKey, values), dispatch, user, emptyFields)) {
         isClean = false;
       }
     }
@@ -244,19 +246,20 @@ export function validateVMConfiguration({ user, dispatch }) {
     const vmConfig = createVMConfigStackObject(vm, user);
     const { data } = vmConfig;
     let fields = {};
+    const emptyFields = [];
     data.forEach((item) => {
       const { children } = item;
       Object.keys(children).forEach((key) => {
         fields = { ...fields, [key]: children[key] };
       });
     });
-    const response = validateSteps(user, dispatch, Object.keys(fields), fields);
+    const response = validateSteps(user, dispatch, Object.keys(fields), fields, emptyFields);
     if (!response) {
-      vmName.push(vms[vm].name);
+      vmName.push(`${emptyFields.join(', ')} of ${vms[vm].name}`);
     }
   });
   if (vmName.length > 0) {
-    dispatch(addMessage(`Check node configuration of ${vmName.join(', ')} vm  One or more required field data is not provided.`, MESSAGE_TYPES.ERROR));
+    dispatch(addMessage(`Please fill the required field(s) ${vmName.join(' , ')}`, MESSAGE_TYPES.ERROR));
     return false;
   }
   // validate Network
