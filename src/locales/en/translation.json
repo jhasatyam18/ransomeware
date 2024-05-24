@@ -814,5 +814,8 @@
   "checkpoint.preserve.title":"Preserve Checkpoint",
   "checkpoint.preserve.error.message":" {{workloadName}}({{timeStr}}): {{errorMessage}}",
   "resynk.disk.warning.with.checkpoint": "This operation will delete latest disk/snapshot and create a new one to resync full data. Existing point-in-time checkpoints will not be impacted.",
-  "resynk.disk.warning.without.checkpoint": "This operation will delete latest disk/snapshot and create a new one to resync full data."
+  "resynk.disk.warning.without.checkpoint": "This operation will delete latest disk/snapshot and create a new one to resync full data.",
+  "info.recovery.username": "Virtual machine's username to execute the pre and postscripts. If there are no scripts for the virtual machine, then credentials are not mandatory",
+  "info.recovery.password": "Virtual Machine's password to execute the pre and postscripts. If there are no scripts for the virtual machine, then credentials are not mandatory",
+  "generate.report": "Generate Report"
 }

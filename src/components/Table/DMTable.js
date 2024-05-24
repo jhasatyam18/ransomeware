@@ -6,6 +6,7 @@ import {
 } from 'react-super-responsive-table';
 import { Card, CardBody, Col, Row } from 'reactstrap';
 import DMTableRow from './DMTableRows';
+import DMToolTip from '../Shared/DMToolTip';
 
 class DMTable extends Component {
   constructor() {
@@ -40,7 +41,10 @@ class DMTable extends Component {
       .map((col, index) => (
         <Th key={`${index + 1}-${col.lable}`} width={`${col.width * 10}%`}>
           {' '}
-          {t(col.label)}
+          <Row>
+            <Col sm={9}>{t(col.label)}</Col>
+            <Col sm={1}>{typeof col.info !== 'undefined' && col.info !== null && col.info && <DMToolTip tooltip={col.info} />}</Col>
+          </Row>
           {' '}
         </Th>
       ));

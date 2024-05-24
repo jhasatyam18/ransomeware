@@ -14,6 +14,7 @@ import { hideApplicationLoader, showApplicationLoader } from '../../store/action
 import { valueChange } from '../../store/actions';
 import { RECOVERY_JOBS, REPLICATION_VM_JOBS, TABLE_ALERTS, TABLE_EVENTS, TABLE_HEADER_DR_PLANS, TABLE_HEADER_SITES, TABLE_NODES, TABLE_REPORT_PROTECTED_VMS } from '../../constants/TableConstants';
 import { STATIC_KEYS } from '../../constants/InputConstants';
+import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
 
 class Report extends Component {
   constructor() {
@@ -96,6 +97,8 @@ class Report extends Component {
 
   renderReportFilter() {
     const { openCollapse } = this.state;
+    const { user, t } = this.props;
+    const disabled = !hasRequestedPrivileges(user, ['report.create']);
     if (!openCollapse) {
       return null;
     }
@@ -104,7 +107,7 @@ class Report extends Component {
         <div className="padding-top-10">
           {this.renderForm()}
         </div>
-        <Button className="btn btn-outline-success btn-sm margin-bottom-10" onClick={this.generateReport}>Generate Report</Button>
+        <Button className="btn btn-outline-success btn-sm margin-bottom-10 bg-secondary" onClick={this.generateReport} disabled={disabled}>{t('generate.report')}</Button>
       </Col>
     );
   }
