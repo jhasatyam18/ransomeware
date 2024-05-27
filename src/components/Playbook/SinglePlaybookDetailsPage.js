@@ -15,7 +15,7 @@ import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
 import { PLAYBOOK_LIST, PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { PLAYBOOK_CHANGES_RENDERER, PLAYBOOK_DETAILS } from '../../constants/TableConstants';
 import { KEY_CONSTANTS } from '../../constants/UserConstant';
-import { clearValues, hideApplicationLoader, showApplicationLoader, valueChange } from '../../store/actions';
+import { hideApplicationLoader, showApplicationLoader, valueChange } from '../../store/actions';
 import { playbookExport } from '../../store/actions/DrPlanActions';
 import { deletePlaybook, downloadPlaybooks, onCreatePlanFromPlaybook, playbookFetchPlanDiff, setSinglePlaybook, uploadFiles, validatePlaybook } from '../../store/actions/DrPlaybooksActions';
 import { addMessage } from '../../store/actions/MessageActions';
@@ -140,8 +140,7 @@ function SinglePlaybookDetailsPage(props) {
   };
 
   const onClose = () => {
-    dispatch(closeModal());
-    dispatch(clearValues());
+    dispatch(closeModal(true));
   };
 
   const onCreatePplanClick = () => {

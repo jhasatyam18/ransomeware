@@ -7,7 +7,7 @@ function PlaybookIssuesColumnRenderer({ data, field }) {
   return (
     <>
       <ul type="I">
-        { data[field].map((el) => (
+        { data[field] !== null && data[field].map((el) => (
           <li>
             {el}
           </li>

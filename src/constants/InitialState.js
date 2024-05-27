@@ -32,7 +32,7 @@ const INITIAL_STATE = {
   sites: { sites: [], selectedSites: [] },
   drPlans: { plans: [], selectedPlans: [], recoveryPlan: {} },
   drPlaybooks: { templates: [], selectedPlaybook: {}, playbook: {} },
-  modal: { content: null, options: {}, show: false },
+  modal: [],
   wizard: { steps: [], show: false, options: { title: '' } },
   jobs: { replication: [], recovery: [], replicationType: REPLICATION_JOB_TYPE.PLAN, recoveryType: RECOVERY_JOB_TYPE.PLAN, checkpointJobs: [], recoveryCheckpoints: {}, selectedCheckpoints: {}, vmCheckpoint: [], checkpointType: RECOVERY_CHECKPOINT_TYPE.PLAN },
   dashboard: {

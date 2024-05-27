@@ -6,7 +6,7 @@ import { closeModal } from '../../store/actions/ModalActions';
 import { FIELDS } from '../../constants/FieldsConstant';
 import DMField from '../Shared/DMField';
 import { getKeyStruct } from '../../utils/PayloadUtil';
-import { clearValues, configureUser } from '../../store/actions';
+import { configureUser } from '../../store/actions';
 import { validateSteps } from '../../utils/validationUtils';
 
 function ModalConfigureUser(props) {
@@ -17,8 +17,7 @@ function ModalConfigureUser(props) {
   const fields = Object.keys(FIELDS).filter((key) => key.indexOf('configureUser') !== -1);
 
   const onClose = () => {
-    dispatch(closeModal());
-    dispatch(clearValues());
+    dispatch(closeModal(true));
   };
 
   const onConfigureUser = () => {

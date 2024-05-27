@@ -8,7 +8,6 @@ import { fetchSites } from '../../store/actions/SiteActions';
 import { getValue } from '../../utils/InputUtils';
 import DMFieldSelect from '../Shared/DMFieldSelect';
 import { FIELDS } from '../../constants/FieldsConstant';
-import { MODAL_PLAYBOOK_DOWNLOAD } from '../../constants/Modalconstant';
 import { closeModal } from '../../store/actions/ModalActions';
 import DRPlanProtectVMStep from '../Wizards/DRPlanProtectVMStep';
 
@@ -34,7 +33,7 @@ function PlaybookGenerateModal(props) {
 
   const onClose = () => {
     const { dispatch } = props;
-    dispatch(closeModal(MODAL_PLAYBOOK_DOWNLOAD));
+    dispatch(closeModal());
   };
 
   const onConfigure = () => {

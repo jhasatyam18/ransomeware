@@ -638,8 +638,7 @@ export function playbookExport(plan, planID = undefined) {
           downloadDateModifiedPlaybook(name);
         }
         dispatch(addMessage('Excel exported successfully', MESSAGE_TYPES.SUCCESS));
-        dispatch(closeModal());
-        dispatch(clearValues());
+        dispatch(closeModal(true));
         dispatch(refresh());
       }
     },
@@ -863,8 +862,7 @@ export function setProtectionPlanVMConfig(selectedVMS, protectionPlan) {
         return setAZUREVMDetails(selectedVMS, protectionPlan, dispatch, user);
       default:
         dispatch(addMessage('Unknown platform type', MESSAGE_TYPES.ERROR));
-        dispatch(clearValues());
-        dispatch(closeModal());
+        dispatch(closeModal(true));
         dispatch(closeWizard());
     }
   };

@@ -8,7 +8,7 @@ import { closeModal } from '../../store/actions/ModalActions';
 import { getKeyStruct } from '../../utils/PayloadUtil';
 import { API_USER_RESET } from '../../constants/ApiConstants';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
-import { clearValues, hideApplicationLoader, showApplicationLoader } from '../../store/actions';
+import { hideApplicationLoader, showApplicationLoader } from '../../store/actions';
 import { addMessage } from '../../store/actions/MessageActions';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { getCookie } from '../../utils/CookieUtils';
@@ -23,8 +23,7 @@ const ModalResetCredentials = (props) => {
   const fields = Object.keys(FIELDS).filter((key) => key.indexOf('reset') !== -1);
 
   const onClose = () => {
-    dispatch(closeModal());
-    dispatch(clearValues());
+    dispatch(closeModal(true));
   };
 
   const onResetCredetials = () => {

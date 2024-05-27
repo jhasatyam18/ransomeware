@@ -1,8 +1,6 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import { Modal } from 'reactstrap';
 import * as MODALS from '../../constants/Modalconstant';
-import { clearValues } from '../../store/actions';
 import { closeModal } from '../../store/actions/ModalActions';
 import ConfirmationModal from './ConfirmationModal';
 import ModalAbout from './ModalAbout';
@@ -36,31 +34,34 @@ import PlaybookGenerateModal from './PlaybookGenerateModal';
 import PlaybookUploadModal from './PlaybookUploadModal';
 
 function DMModal(props) {
-  const { modal, dispatch, user } = props;
+  const { modal, user, dispatch } = props;
+
+  if (!modal || Object.keys(modal).length === 0) {
+    return null;
+  }
   const { show, options } = modal;
   const { css, modalActions, size } = options;
   const { content } = modal;
 
   const onClose = () => {
-    dispatch(closeModal());
-    dispatch(clearValues());
+    dispatch(closeModal(true));
   };
 
   const renderContent = () => {
     if (content) {
       switch (content) {
         case MODALS.MODAL_CONFIGURE_NEW_SITE:
-          return <ModalConfigureSite user={user} dispatch={dispatch} {...props} />;
+          return <ModalConfigureSite {...props} />;
         case MODALS.MODAL_CONFIRMATION_WARNING:
-          return <ConfirmationModal dispatch={dispatch} user={user} {...props} />;
+          return <ConfirmationModal {...props} />;
         case MODALS.MODAL_ABOUT:
-          return <ModalAbout dispatch={dispatch} {...props} />;
+          return <ModalAbout {...props} />;
         case MODALS.MODAL_ALERT_DETAILS:
-          return <ModalAlertDetails />;
+          return <ModalAlertDetails {...props} options={options} />;
         case MODALS.MODAL_GENERATE_SUPPORT_BUNDLE:
-          return <ModalSupportBundle />;
+          return <ModalSupportBundle {...props} />;
         case MODALS.MODAL_NODE_CONFIGURATION:
-          return <ModalConfigureNode options={options} />;
+          return <ModalConfigureNode {...props} options={options} />;
         case MODALS.MODAL_EMAIL_CONFIGURATION:
           return <ModalEmailConfiguration options={options} />;
         case MODALS.MODAL_EMAIL_RECIPIENTS_CONFIGURATION:
@@ -142,10 +143,5 @@ function DMModal(props) {
     </>
   );
 }
-const propTypes = {
-  dispatch: PropTypes.func.isRequired,
-  modal: PropTypes.object.isRequired,
-  user: PropTypes.object.isRequired,
-};
-DMModal.propTypes = propTypes;
+
 export default DMModal;

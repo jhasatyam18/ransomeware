@@ -311,8 +311,7 @@ export function configureUser(payload, isUpdate = false) {
       } else {
         dispatch(addMessage('User configuration successful', MESSAGE_TYPES.SUCCESS));
         dispatch(fetchUsers());
-        dispatch(clearValues());
-        dispatch(closeModal());
+        dispatch(closeModal(true));
       }
     },
     (err) => {

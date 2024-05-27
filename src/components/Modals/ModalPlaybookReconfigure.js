@@ -8,14 +8,15 @@ import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { addMessage } from '../../store/actions/MessageActions';
 import { refresh } from '../../store/actions';
 import { getValue } from '../../utils/InputUtils';
-import { closeModal } from '../../store/actions/ModalActions';
+import { closeModal, openModal } from '../../store/actions/ModalActions';
 import { STATIC_KEYS } from '../../constants/InputConstants';
 import ShowPlaybookVmChanges from '../Playbook/ShowPlaybookVmChanges';
+import { MODAL_CBT_CONFIRMATION } from '../../constants/Modalconstant';
 
 function ModalPlaybookReconfigure({ dispatch, user, options, t }) {
   const { values } = user;
   const protectionPlanChanges = getValue('plan', values) || [];
-  const { message, planId, playbookId } = options;
+  const { message, planId, playbookId, disabledVMs = {} } = options;
 
   const data = getValue(STATIC_KEYS.UI_PLAYBOOK_DIFF, values);
   if (protectionPlanChanges.length === 0 && (Object.keys(data.changes).length === 0 && Object.keys(data.add).length === 0 && Object.keys(data.delete).length === 0)) {
@@ -40,12 +41,17 @@ function ModalPlaybookReconfigure({ dispatch, user, options, t }) {
     dispatch(onCreatePlanFromPlaybook(playbookId));
   };
 
+  const openCBTEnableModal = () => {
+    const cbtModalOptions = { title: 'Change Block Tracking (CBT) Confirmation', selectedVMs: disabledVMs, confirmAction: onCreatePlanFromPlaybook, id: playbookId, size: 'lg' };
+    dispatch(openModal(MODAL_CBT_CONFIRMATION, cbtModalOptions));
+  };
+
   const renderFooter = () => (
     <div className="modal-footer">
       <button type="button" className="btn btn-secondary" onClick={onClose}>
         {t('close')}
       </button>
-      <button type="button" className="btn btn-success" onClick={onCreatePplanClick}>
+      <button type="button" className="btn btn-success" onClick={Object.keys(disabledVMs).length > 0 ? openCBTEnableModal : onCreatePplanClick}>
         { planId > 0 ? t('title.edit.pplan') : t('confirm')}
       </button>
     </div>

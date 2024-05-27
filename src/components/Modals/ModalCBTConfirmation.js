@@ -7,7 +7,7 @@ import { valueChange } from '../../store/actions/UserActions';
 function ModalCBTConfirmation(props) {
   const { t, modal, dispatch } = props;
   const { options } = modal;
-  const { selectedVMs = {} } = options;
+  const { selectedVMs = {}, confirmAction = null, id = '' } = options;
 
   function vmsName() {
     if (Object.keys(selectedVMs).length > 0) {
@@ -51,6 +51,10 @@ function ModalCBTConfirmation(props) {
   };
 
   const onConfirm = () => {
+    if (typeof id !== 'undefined' && id !== '' && confirmAction !== null) {
+      dispatch(confirmAction(id));
+      return;
+    }
     if (Object.keys(selectedVMs).length > 0) {
       dispatch(valueChange(STATIC_KEYS.UI_DMWIZARD_MOVENEXT, true));
       Object.keys(selectedVMs).forEach((vm) => {

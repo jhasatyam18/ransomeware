@@ -59,7 +59,7 @@ export function validateField(field, fieldKey, value, dispatch, user, emptyField
 
 export function isEmpty({ value }) {
   let val = value;
-  if (typeof value === 'object') {
+  if (typeof value === 'object' && value !== null) {
     if (value.length > 0) {
       val = value;
     } else {

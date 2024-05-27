@@ -11,7 +11,7 @@ import { getValue } from '../../utils/InputUtils';
 import { checkPlanConfigurationChanges, checkVmRecoveryConfigurationChanges, validateField } from '../../utils/validationUtils';
 import { addMessage } from './MessageActions';
 import { closeModal, openModal } from './ModalActions';
-import { clearValues, hideApplicationLoader, refresh, showApplicationLoader, valueChange } from './UserActions';
+import { hideApplicationLoader, refresh, showApplicationLoader, valueChange } from './UserActions';
 
 /**
  *
@@ -295,6 +295,7 @@ export function onCreatePlanFromPlaybook(id) {
           link.click();
         }
         dispatch(closeModal());
+        dispatch(closeModal());
         dispatch(refresh());
       }
     },
@@ -399,7 +400,15 @@ export function playbookFetchPlanDiff(id, playbook) {
 
         dispatch(checkVmRecoveryConfigurationChanges({ prevArr: prevObj, currentArr: currObj, recoveryPlatform: json.updatedPlanConfiguration[0].recoverySite.platformDetails.platformType, condition: 'sourceMoref', key: 'ans' }));
         if (playbook) {
-          const options = { title: 'Reconfigure Plan', playbookId: playbook.id, confirmAction: onCreatePlanFromPlaybook, message: `Are you sure want to configure protection plan from ${playbook.name} playbook ?`, footerLabel: 'Reconfigure Protection Plan', color: 'success', size: 'lg', planName: json.updatedPlanConfiguration[0].name, planId: id };
+          const { planConfigurations } = playbook;
+          const disabledVMsName = {};
+          if (planConfigurations[0].planValidationResponse !== '') {
+            const validationResponse = JSON.parse(planConfigurations[0].planValidationResponse);
+            validationResponse.forEach((vm, index) => {
+              disabledVMsName[index] = { ...vm, changeTracking: false };
+            });
+          }
+          const options = { title: 'Reconfigure Plan', playbookId: playbook.id, confirmAction: onCreatePlanFromPlaybook, message: `Are you sure want to configure protection plan from ${playbook.name} playbook ?`, footerLabel: 'Reconfigure Protection Plan', color: 'success', size: 'lg', planName: json.updatedPlanConfiguration[0].name, planId: id, disabledVMs: disabledVMsName };
           dispatch(openModal(MODAL_RECONFIGURE_PLAYBOOK, options));
           return;
         }
@@ -447,8 +456,7 @@ export function configurePlaybookGenerate() {
           if (typeof name !== 'undefined') {
             downloadDateModifiedPlaybook(name);
           }
-          dispatch(closeModal());
-          dispatch(clearValues());
+          dispatch(closeModal(true));
           dispatch(refresh());
         }
       },
@@ -477,8 +485,7 @@ export function uploadFiles(file, apiUrl, msg1, msg2, method) {
         if (msg2) {
           dispatch(addMessage(msg2, MESSAGE_TYPES.SUCCESS));
         }
-        dispatch(closeModal());
-        dispatch(clearValues());
+        dispatch(closeModal(true));
         dispatch(refresh());
       }
     }, (err) => {

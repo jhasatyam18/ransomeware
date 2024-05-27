@@ -1,7 +1,7 @@
 import Cookies from 'js-cookie';
 import { clearMessages } from '../store/actions/MessageActions';
 import store from '../store/index';
-import { clearValues, logOutUser, removeCookies } from '../store/actions';
+import { logOutUser, removeCookies } from '../store/actions';
 import { closeModal } from '../store/actions/ModalActions';
 import { closeWizard } from '../store/actions/WizardActions';
 
@@ -34,10 +34,9 @@ export function callAPI(URL, obj = {}) {
   return fetch(getUrlPath(URL), opts)
     .then((response) => {
       if (response.status === 401) {
-        store.dispatch(clearValues());
         store.dispatch(logOutUser());
         store.dispatch(removeCookies());
-        store.dispatch(closeModal());
+        store.dispatch(closeModal(true));
         store.dispatch(closeWizard());
         store.dispatch(clearMessages());
       }
