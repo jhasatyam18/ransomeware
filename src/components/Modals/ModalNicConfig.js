@@ -231,7 +231,7 @@ class ModalNicConfig extends Component {
     const { user, dispatch, options, t } = this.props;
     const { values } = user;
     const { networkKey } = options;
-    const networkField = { label: '', description: '', type: FIELD_TYPE.SELECT_SEARCH, shouldShow: true, defaultValue: false, options: (u, f) => getWMwareNetworkOptions(u, f), fieldInfo: 'info.vmware.network' };
+    const networkField = { label: '', description: '', type: FIELD_TYPE.SELECT_SEARCH, shouldShow: true, defaultValue: false, options: (u, f) => getWMwareNetworkOptions(u, f), fieldInfo: 'info.vmware.network', validate: (value, u) => isEmpty(value, u), errorMessage: 'Select Network' };
     const AdapterField = { label: '', description: '', type: FIELD_TYPE.SELECT, options: (u, f) => getVMwareAdpaterOption(u, f), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select Adapter Type', shouldShow: true, fieldInfo: 'info.vmware.adapter.type' };
     const MacAddressField = { label: '', description: '', type: FIELD_TYPE.TEXT, options: (u, f) => getVPCOptions(u, f), shouldShow: true, fieldInfo: 'info.vmware.mac.address' };
     const staticIP = { fieldInfo: 'info.protectionplan.network.vmware.staticip', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.SELECT, shouldShow: true, errorMessage: 'Configure static IP Address', validate: (v, u) => isEmpty(v, u) };

@@ -19,7 +19,7 @@ import { getCreateDRPlanPayload, getEditProtectionPlanPayload, getRecoveryPayloa
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { changedVMRecoveryConfigurations } from '../../utils/validationUtils';
 import { addAssociatedIPForAzure, addAssociatedReverseIP } from './AwsActions';
-import { fetchCheckpointsByPlanId, getVmCheckpoints, setPplanRecoveryCheckpointData } from './checkpointActions';
+import { fetchCheckpointsByPlanId, fetchLatestReplicationJob, getVmCheckpoints, setPplanRecoveryCheckpointData } from './checkpointActions';
 import { downloadDateModifiedPlaybook, onPlanPlaybookExport } from './DrPlaybooksActions';
 import { fetchReplicationJobsByPplanId } from './JobActions';
 import { addMessage } from './MessageActions';
@@ -272,8 +272,9 @@ export function onProtectionPlanChange({ value, allowDeleted, planRecoveryStatus
               }
             });
           });
-
           dispatch(valueChange(STORE_KEYS.UI_RECOVERY_VMS, data));
+          // to fetch latest replication job to sho in recovery, test-recovery and migration wizard
+          dispatch(fetchLatestReplicationJob(data));
         }
       },
       (err) => {

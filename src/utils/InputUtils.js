@@ -1317,6 +1317,7 @@ export function defaultRecoveryCheckpointForVm({ user, dispatch, recoveryCheckpo
   const { values } = user;
   const uniqueCheckpointValue = getValue('ui.unique.checkpoint.field', values);
   let checkpointObj = {};
+  let checkPointHasCommonPoint = false;
   if (uniqueCheckpointValue !== '' && typeof recoveryCheckpoint !== 'undefined' && recoveryCheckpoint.length > 0) {
     for (let i = 0; i < recoveryCheckpoint.length; i += 1) {
       const checkpoint = recoveryCheckpoint[i];
@@ -1329,9 +1330,16 @@ export function defaultRecoveryCheckpointForVm({ user, dispatch, recoveryCheckpo
         const changedValue = { label: resp, value: checkpoint.id };
         dispatch(valueChange(`${checkpoint.workloadID}-recovery-checkpoint`, changedValue));
         checkpointObj = { label: resp, value: checkpoint.id };
+        checkPointHasCommonPoint = true;
         break;
       }
     }
+  }
+
+  // if a checkpoint does not have a common checkpoint and if that checkpoint has some value then clear that value
+  // on common checkpoint change
+  if (!checkPointHasCommonPoint && recoveryCheckpoint?.length > 0) {
+    dispatch(valueChange(`${recoveryCheckpoint[1].workloadID}-recovery-checkpoint`, ''));
   }
   return checkpointObj;
 }

@@ -36,13 +36,21 @@ function DRPlanRecoveryCheckpointConfig(props) {
     const retainNumber = getValue(STORE_KEYS.RECOVERY_CHECKPOINT_RETAIN_NUMEBER, values) || 0;
     const retainForUnit = getValue(STORE_KEYS.RECOVERY_CHECKPOINT_RETAIN_NUMEBER_UNIT, values) || TIME_CONSTANTS.HOUR;
     const durationunit = getValue(STORE_KEYS.RECOVERY_CHECKPOINT_DURATION_UNIT, values) || TIME_CONSTANTS.DAY;
-    dispatch(valueChange('recoveryPointConfiguration.duration', TIME_CONSTANTS.DAY));
-    dispatch(valueChange('recoveryPointConfiguration.retainfor', TIME_CONSTANTS.HOUR));
     setDurationNum(parseInt(durationNumber, 10));
     setCount(parseInt(snapshotCount, 10));
     setretainNum(parseInt(retainNumber, 10));
-    setretainUnit(retainForUnit || TIME_CONSTANTS.HOUR);
-    setdurationUnit(durationunit || TIME_CONSTANTS.DAY);
+    setretainUnit(retainForUnit);
+    setdurationUnit(durationunit);
+
+    /**
+     * for STORE_KEYS.RECOVERY_CHECKPOINT_RETAIN_NUMEBER_UNIT, STORE_KEYS.RECOVERY_CHECKPOINT_DURATION_UNIT  if din get the value from store then set the value in the store
+       for other fields if there is no value present then user have to set it
+       but for unit fields user directly moves as it's defalut value is set and if user want that default value then he won't change it
+       in that case value does not get updated in the store and while validating that field ui shows error
+     */
+
+    dispatch(valueChange(STORE_KEYS.RECOVERY_CHECKPOINT_DURATION_UNIT, durationunit));
+    dispatch(valueChange(STORE_KEYS.RECOVERY_CHECKPOINT_RETAIN_NUMEBER_UNIT, retainForUnit));
   }, []);
 
   const renderOptions = (options) => options.map((op) => {

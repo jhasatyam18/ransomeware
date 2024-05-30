@@ -720,7 +720,7 @@ function validateVMwareNicConfig(dispatch, user, options) {
   const adapterType = getValue(`${networkKey}-adapterType`, values) || '';
   const macAddress = getValue(`${networkKey}-macAddress`, values) || '';
   const staticip = getValue(`${networkKey}-isPublic`, values) || '';
-  if (network === '' || network === '-') {
+  if (network === '' || network === '-' || network?.value === '') {
     dispatch(addMessage('Select network', MESSAGE_TYPES.ERROR));
     return false;
   }
@@ -785,7 +785,7 @@ function validateAzureNicConfig(dispatch, user, options) {
   const subnet = getValue(`${networkKey}-subnet`, values) || '';
   const pubIP = getValue(`${networkKey}-publicIP`, values) || '';
   const network = getValue(`${networkKey}-network`, values) || '';
-  if (network === '') {
+  if (network === '' || network?.value === '') {
     dispatch(addMessage('Please select the network', MESSAGE_TYPES.ERROR));
     return false;
   }
@@ -1418,14 +1418,16 @@ export function validateCheckpointSelection(user, vms, dispatch) {
     const vm = selectedVMs[i];
     const checkpoint = getValue(`${vm}-recovery-checkpoint`, values);
     if (typeof checkpoint.value === 'undefined' || checkpoint.value === '') {
+      const field = FIELDS['ui.vm.recovery.checkpoints'];
+      const { shouldShow } = field;
+      const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
+      if (showField) {
+        validateField(field, `${vm}-recovery-checkpoint`, getValue(`${vm}-recovery-checkpoint`, values), dispatch, user);
+      }
       checkpointRequiredVM.push(vms[vm].name);
       checkpointFlag = true;
     }
   }
-  if (checkpointFlag) {
-    dispatch(addMessage(`${i18n.t('checkpoint.selection.error.msg')} ${checkpointRequiredVM.join(', ')}.`, MESSAGE_TYPES.ERROR));
-    return false;
-  }
 
-  return true;
+  return !checkpointFlag;
 }

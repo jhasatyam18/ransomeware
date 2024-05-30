@@ -157,7 +157,8 @@ export const TABLE_RECOVERY_VMS = [
   { label: 'name', field: 'name' },
   { label: 'Username', field: 'virtualDisks', itemRenderer: VM_USERNAME_ITEM_RENDERER, info: 'info.recovery.username' },
   { label: 'Password', field: 'guestOS', itemRenderer: VM_UPASSWORD_ITEM_RENDERER, info: 'info.recovery.password' },
-  { label: 'status', field: 'recoveryStatus', width: 1.1 },
+  { label: 'Point In Time', field: 'currentSnapshotTime', itemRenderer: RECOVERY_CHECKPOINT_OPTION_RENDERER, width: 4 },
+  { label: 'status', field: 'recoveryStatus' },
 ];
 
 // Table fields for protection plan vise replication
@@ -318,7 +319,6 @@ export const REPLICATION_PRIOPITY = [
 export const CHECKPOINTS_JOBS = [
   { label: 'Workload Name', field: 'workloadName', allowFilter: true, checked: true },
   { label: 'Job Type', field: 'jobType', allowFilter: true, checked: true },
-  { label: 'Size', field: 'checkpointSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Sync Time', field: 'syncTime', itemRenderer: DATE_ITEM_RENDERER },
   { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER, allowFilter: true, checked: true },
@@ -336,7 +336,6 @@ export const RECOVERY_CHECKPOINTS = [
 
 export const VM_RECOVERY_CHECKPOINTS = [
   { label: 'Name', field: 'workloadName', allowFilter: true, checked: true, width: 2 },
-  { label: 'Size', field: 'size', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Created At', field: 'creationTime', itemRenderer: DATE_ITEM_RENDERER },
   { label: 'Expires On', field: 'expirationTime', itemRenderer: DATE_ITEM_RENDERER },
   { label: 'Checkpoint Status', field: 'checkpointStatus', allowFilter: true, checked: true, itemRenderer: CHECKPOINT_RECOVERY_JOB_ITEM_RENDERER },
