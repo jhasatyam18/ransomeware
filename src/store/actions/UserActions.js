@@ -1018,10 +1018,12 @@ export function getStorageForVMware({ fieldKey, hostMoref }) {
       networkURL = `api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Network},${VMWARE_OBJECT.DistributedVirtualPortgroup}&entity=${hostMoref}`;
       storageURL = `api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Datastore}&entity=${hostMoref}`;
       entityKey = `${hostMoref}`;
-    } else {
+    } else if (fieldVal !== '' && fieldVal.value !== '') {
       networkURL = `api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Network},${VMWARE_OBJECT.DistributedVirtualPortgroup}&entity=${fieldVal.value}`;
       storageURL = `api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Datastore}&entity=${fieldVal.value}`;
       entityKey = `${fieldVal.value}`;
+    } else {
+      return;
     }
 
     const apis = [dispatch(fetchVMwareComputeResource(storageURL, fieldKey, VMWARE_OBJECT.Network, entityKey)), dispatch(fetchVMwareNetwork(networkURL, fieldKey, VMWARE_OBJECT.Datastore, entityKey))];

@@ -95,35 +95,70 @@ export function fetchVMwareComputeResource(url, fieldKey, reqField, entityKey) {
   return (dispatch, getState) => {
     const { user } = getState();
     const { values } = user;
-    const computeKey = fieldKey.replace('hostMoref', 'DATASTORE');
+    const storageKey = fieldKey.replace('hostMoref', 'DATASTORE');
     const responseData = getVMwareConfigDataForField(reqField, entityKey, values);
+
     if (responseData !== null) {
-      dispatch(valueChange(computeKey, responseData));
+      dispatch(clearVMwareStorageValIfNotPresent(responseData, fieldKey, storageKey, reqField, entityKey));
       return;
     }
-    dispatch(showApplicationLoader('vmware_compute', 'Loading vmware datastore'));
+    dispatch(showApplicationLoader('vmware_datastore', 'Loading vmware datastore'));
     return callAPI(url).then((json) => {
-      dispatch(hideApplicationLoader('vmware_compute'));
+      dispatch(hideApplicationLoader('vmware_datastore'));
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
-        const res = [];
-        json.forEach((d) => {
-          const val = {};
-          val.label = d.name;
-          val.value = d.id;
-          res.push(val);
-        });
-        dispatch(valueChange(computeKey, res));
-        if (reqField && entityKey) {
-          dispatch(setVMwareAPIResponseData(reqField, entityKey, res));
-        }
+        dispatch(clearVMwareStorageValIfNotPresent(json, fieldKey, storageKey, reqField, entityKey));
       }
     },
     (err) => {
-      dispatch(hideApplicationLoader('vmware_compute'));
+      dispatch(hideApplicationLoader('vmware_datastore'));
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
+  };
+}
+
+/**
+  on compute change this function will be called to fetch datatore data
+  if for some reason user has already selected datastore value in case of vmware and user selects another compute
+  and if the option list does not have previously selected datastore data then clear storage key from store
+
+ * @param {*} data -> array of all the option
+ * @param {*} fieldKey -> vmware compute fieldkey
+ * @param {*} storageKey -> vmware storage key
+ * @returns
+ */
+
+function clearVMwareStorageValIfNotPresent(data, fieldKey, storageKey, reqField, entityKey) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const storageFieldKey = fieldKey.replace('hostMoref', 'dataStoreMoref');
+    const storageVal = getValue(storageFieldKey, values);
+    let isStorageValPresent = false;
+    const res = [];
+
+    data.forEach((d) => {
+      const val = {};
+      val.label = d.name || d.label;
+      val.value = d.id || d.value;
+      if (storageVal && storageVal.value === val.value) {
+        isStorageValPresent = true;
+      }
+      res.push(val);
+    });
+
+    // if the option list does not have previously selected storage data then clear storage key from store
+
+    if (typeof storageVal === 'object' && Object.keys(storageVal).length > 0 && !isStorageValPresent) {
+      dispatch(valueChange(storageFieldKey, ''));
+    }
+
+    dispatch(valueChange(storageKey, res));
+
+    if (reqField && entityKey) {
+      dispatch(setVMwareAPIResponseData(reqField, entityKey, res));
+    }
   };
 }
 
