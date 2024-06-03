@@ -1,36 +1,35 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Row, Col } from 'reactstrap';
+import React from 'react';
+import { Col, Modal, Row } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
+import { STATIC_KEYS } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { addMessage } from '../../store/actions/MessageActions';
-import { clearValues, valueChange } from '../../store/actions';
-import { closeWizard } from '../../store/actions/WizardActions';
-import { DRPLAN_PROTECT_STEP, DRPLAN_RECOVERY_STEP, PROTECTION_PLAN_SUMMARY_STEP, RECOVERY_PROTECT_VM_STEP, RECOVERY_SUMMARY, MIGRATION_GENERAL_STEP, DRPLAN_VM_CONFIG_STEP, WIZARD_STEP, RECOVERY_GENERAL_STEP, REVERSE_CONFIG_STEP, REVERSE_SUMMARY, RECOVERY_CONFIG, DRPLAN_BOOT_ORDER_STEP, VM_ALERTS_STEP, VM_CONFIGURATION_STEP, DRPLAN_SCRIPT_STEP, TEST_RECOVERY_CONFIG_STEP, TEST_RECOVERY_CONFIG_SCRIPTS, TEST_RECOVERY_CLEANUP_SUMMARY, REPLICATION_CONFIGURATION_STEP, DRPLAN_RECOVERY_CHECKPOINT_CONFIG } from '../../constants/WizardConstants';
+import { DRPLAN_BOOT_ORDER_STEP, DRPLAN_PROTECT_STEP, DRPLAN_RECOVERY_CHECKPOINT_CONFIG, DRPLAN_RECOVERY_STEP, DRPLAN_SCRIPT_STEP, DRPLAN_VM_CONFIG_STEP, MIGRATION_GENERAL_STEP, PROTECTION_PLAN_SUMMARY_STEP, RECOVERY_CONFIG, RECOVERY_PROTECT_VM_STEP, RECOVERY_SUMMARY, REPLICATION_CONFIGURATION_STEP, REVERSE_CONFIG_STEP, REVERSE_SUMMARY, TEST_RECOVERY_CLEANUP_SUMMARY, TEST_RECOVERY_CONFIG_SCRIPTS, TEST_RECOVERY_CONFIG_STEP, VM_ALERTS_STEP, VM_CONFIGURATION_STEP, WIZARD_STEP } from '../../constants/WizardConstants';
 import Pages404 from '../../pages/Page-404';
-import DRPlanRecoveryConfigStep from './DRPlanRecoveryConfigStep';
-import DRPlanProtectVMStep from './DRPlanProtectVMStep';
+import { clearValues, valueChange } from '../../store/actions';
+import { addMessage } from '../../store/actions/MessageActions';
+import { closeWizard } from '../../store/actions/WizardActions';
+import DRPlanRecoveryCheckpointConfig from '../data-recovery/DRPlanRecoveryCheckpointConfig';
 import DMWSteps from './DNWizardSteps';
+import DRPlanBootOrderStep from './DRPlanBootOrderStep';
+import DRPlanProtectVMStep from './DRPlanProtectVMStep';
+import DRPlanRecoveryConfigStep from './DRPlanRecoveryConfigStep';
+import DRPlanScriptStep from './DRPlanScriptStep';
+import MigrationGeneralStep from './MigrationGeneralStep';
+import ProtectionPlanSummaryStep from './ProtectionPlanSummaryStep';
+import RecoveryConfig from './RecoveryConfig';
 import RecoveryMachines from './RecoveryMachines';
 import RecoverySummary from './RecoverySummary';
-import ProtectionPlanSummaryStep from './ProtectionPlanSummaryStep';
-import MigrationGeneralStep from './MigrationGeneralStep';
-import VMConfigurationStep from './VMConfigurationStep';
-import WizardStep from './WizardStep';
-import RecoveryGeneralStep from './RecoveryGeneralStep';
+import ReplicationConfigurationStep from './ReplicationConfigurationStep';
 import ReversePlanConfigStep from './ReversePlanConfigStep';
 import ReversePlanSummary from './ReversePlanSummary';
-import RecoveryConfig from './RecoveryConfig';
-import DRPlanBootOrderStep from './DRPlanBootOrderStep';
+import TestRecoveryScriptStep from './Step/TestRecoveryScriptStep';
+import TestRecoveryVMConfiguration from './Step/TestRecoveryVMConfiguration';
+import TestRecoveryCleanupSummary from './TestRecoveryCleanupSummary';
+import VMConfigurationStep from './VMConfigurationStep';
 import VMAlerts from './VMEdit/VMAlerts';
 import VMConfigure from './VMEdit/VMConfigure';
-import DRPlanScriptStep from './DRPlanScriptStep';
-import TestRecoveryVMConfiguration from './Step/TestRecoveryVMConfiguration';
-import TestRecoveryScriptStep from './Step/TestRecoveryScriptStep';
-import TestRecoveryCleanupSummary from './TestRecoveryCleanupSummary';
-import { STATIC_KEYS } from '../../constants/InputConstants';
-import ReplicationConfigurationStep from './ReplicationConfigurationStep';
-import DRPlanRecoveryCheckpointConfig from '../data-recovery/DRPlanRecoveryCheckpointConfig';
+import WizardStep from './WizardStep';
 
 class DMWizard extends React.Component {
   ref;
@@ -165,8 +164,6 @@ class DMWizard extends React.Component {
         return <VMConfigurationStep {...this.props} />;
       case WIZARD_STEP:
         return <WizardStep {...this.props} fields={steps[currentStep].fields} />;
-      case RECOVERY_GENERAL_STEP:
-        return <RecoveryGeneralStep {...this.props} />;
       case REVERSE_CONFIG_STEP:
         return <ReversePlanConfigStep {...this.props} />;
       case REVERSE_SUMMARY:
