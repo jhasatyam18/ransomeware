@@ -3,6 +3,7 @@ import { PLATFORM_TYPES, STATIC_KEYS } from '../constants/InputConstants';
 import * as RPATH from '../constants/RouterConstants';
 import { getCheckpointTimeFromMinute } from '../store/actions/checkpointActions';
 import { getAzureNetworkOptions, getValue } from './InputUtils';
+import { RECOVERY_STATUS } from '../constants/AppStatus';
 
 const KEY_NAME = 'datamotive';
 let startValue = 1;
@@ -489,6 +490,18 @@ export function getRecoveryCheckpointSummary(recoveryCheckpointConfig) {
   return '';
 }
 
+export function isUnrecoveredVMsLengthMoreThanOne(protectedVM) {
+  let unRecoveredAndMigratedVMsCount = 0;
+  protectedVM.forEach((vm) => {
+    if (vm.recoveryStatus !== RECOVERY_STATUS.RECOVERED && vm.recoveryStatus !== RECOVERY_STATUS.MIGRATED) {
+      unRecoveredAndMigratedVMsCount += 1;
+    }
+  });
+  if (unRecoveredAndMigratedVMsCount > 1) {
+    return true;
+  }
+  return false;
+}
 export const processCriteria = (criteria) => {
   const statusMapping = {
     running: 'started',

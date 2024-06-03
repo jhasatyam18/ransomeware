@@ -11,5 +11,9 @@ export const STORE_KEYS = {
   UI_DISABLE_RECOVERY_CHECKPOINT: 'ui.disable.recovery.checkpointing',
   UI_CHECKPOINT_PLAN: 'ui.checkpoint.plan',
   UI_CHECKPOINT_SELECT_WARNING: 'checkpoint-warning',
+  UI_COPY_CONFIG_USERNAME: 'copyConfig.username',
+  UI_COPY_CONFIG_PASSWORD: 'copyConfig.password',
+  UI_COPY_CONFIG_USERNAME_CHECKBOX: 'copyConfig.usernameCheckbox',
+  UI_COPY_CONFIG_PASSWORD_CHECKBOX: 'copyConfig.passwordCheckbox',
   UI_PRESERVED_CHECKPOINT_OBJECT: 'ui.preserved.checkpoint.obj',
 };

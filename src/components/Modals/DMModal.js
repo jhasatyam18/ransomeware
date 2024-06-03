@@ -19,6 +19,7 @@ import ModalLocationTree from './ModalLocationTree';
 import ModalNicConfig from './ModalNicConfig';
 import ModalPlaybookError from './ModalPlaybookError';
 import ModalPlaybookReconfigure from './ModalPlaybookReconfigure';
+import ModalApplyCredentials from './ModalApplyCredentials';
 import ModalPreserveCheckpoint from './ModalPreserveCheckpoint';
 import ModalReplicationPriority from './ModalReplicationPriority';
 import ModalResetCredentials from './ModalResetCredentials';
@@ -104,6 +105,8 @@ function DMModal(props) {
           return <ModalPlaybookReconfigure dispatch={dispatch} user={user} {...props} options={options} />;
         case MODALS.MODAL_CBT_CONFIRMATION:
           return <ModalCBTConfirmation dispatch={dispatch} user={user} {...props} />;
+        case MODALS.MODAL_APPLY_CREDENTIALS:
+          return <ModalApplyCredentials dispatch={dispatch} user={user} {...props} />;
         case MODALS.MODAL_TROUBLESHOOTING_WINDOW:
           return <ModalTroubleShooting dispatch={dispatch} options={options} />;
         case MODALS.MODAL_VMWARE_QUIESCE:

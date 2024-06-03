@@ -12,7 +12,7 @@ import { STORE_KEYS } from '../../constants/StoreKeyConstants';
 import { APPLICATION_GETTING_STARTED_COMPLETED } from '../../constants/UserConstant';
 import { CLEANUP_TEST_RECOVERY_WIZARDS, MIGRATION_WIZARDS, PROTECTED_VM_RECONFIGURATION_WIZARD, RECOVERY_WIZARDS, REVERSE_WIZARDS, STEPS, TEST_RECOVERY_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS } from '../../constants/WizardConstants';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
-import { getLabelWithResourceGrp, getMemoryInfo, getNetworkIDFromName, getSubnetIDFromName } from '../../utils/AppUtils';
+import { getLabelWithResourceGrp, getMemoryInfo, getNetworkIDFromName, getSubnetIDFromName, isUnrecoveredVMsLengthMoreThanOne } from '../../utils/AppUtils';
 import { setCookie } from '../../utils/CookieUtils';
 import { getMatchingFirmwareType, getMatchingInsType, getMatchingOSType, getValue, getVMInstanceFromEvent, getVMMorefFromEvent, isSamePlatformPlan } from '../../utils/InputUtils';
 import { getCreateDRPlanPayload, getEditProtectionPlanPayload, getRecoveryPayload, getResetDiskReplicationPayload, getReversePlanPayload, getVMConfigPayload } from '../../utils/PayloadUtil';
@@ -248,6 +248,7 @@ export function onProtectionPlanChange({ value, allowDeleted, planRecoveryStatus
           const { user } = getState();
           const { values } = user;
           const data = [];
+          let applyToAllFlag = true;
           const info = json.protectedEntities.virtualMachines || [];
           const rEntities = json.recoveryEntities.instanceDetails || [];
           const planHasCheckpoints = getValue(STATIC_KEYS.UI_RECOVERY_CHECKPOINTS_BY_VM_ID, values) || [];
@@ -255,6 +256,10 @@ export function onProtectionPlanChange({ value, allowDeleted, planRecoveryStatus
             rEntities.forEach((rE) => {
               if (vm.moref === rE.sourceMoref) {
                 const machine = vm;
+                if (applyToAllFlag && (machine.recoveryStatus !== RECOVERY_STATUS.RECOVERED && machine.recoveryStatus !== RECOVERY_STATUS.MIGRATED) && isUnrecoveredVMsLengthMoreThanOne(info)) {
+                  machine.showApplyToAll = true;
+                  applyToAllFlag = false;
+                }
                 machine.name = rE.instanceName;
                 if (typeof vm.recoveryStatus !== 'undefined' && (vm.recoveryStatus === RECOVERY_STATUS.MIGRATED || vm.recoveryStatus === RECOVERY_STATUS.RECOVERED || vm.isRemovedFromPlan === true)) {
                   // if plan is recovered and vm's has checkpoint then render point-int-time recovery option
