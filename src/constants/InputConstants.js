@@ -248,4 +248,5 @@ export const VMWARE_OS_DISK_DEVICE_KEYS = [2000, 3000, 32000];
 export const CONSTANT_NUMBERS = {
   TWENTY_FIVE: 25,
   ZERO: 0,
+  ONE: '1',
 };

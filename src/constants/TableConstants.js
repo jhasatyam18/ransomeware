@@ -60,6 +60,7 @@ export const QUIESCE_VMNAME_RENDERER = 'QUIESCE_VMNAME_RENDERER';
 export const DISK_REPLICATION_TYPE_ITEM_RENDERER = 'DISK_REPLICATION_TYPE_ITEM_RENDERER';
 export const PLATFORM_TYPE_ITEM_RENDERER = 'PREP_NODE_ITEM_RENDERER';
 export const EVENT_DESCRIPTION_RENDERER = 'EVENT_DESCRIPTION_RENDERER';
+export const JOBS_VM_NAME_RENDERER = 'JOBS_VM_NAME_RENDERER';
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
@@ -124,7 +125,7 @@ export const REPLICATION_JOBS = [
 ];
 
 export const RECOVERY_JOBS = [
-  { label: 'Virtual Machine', field: 'vmName', allowFilter: true, checked: true },
+  { label: 'Virtual Machine', field: 'vmName', itemRenderer: JOBS_VM_NAME_RENDERER, allowFilter: true, checked: true },
   { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Recovery Type', field: 'recoveryType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER, allowFilter: true, checked: true },
   { label: 'Recovery Point Time', field: 'recoveryPointTime', itemRenderer: DATE_ITEM_RENDERER, width: '2.3' },
@@ -142,7 +143,7 @@ export const PROTECTION_PLAN_RECOVERY_JOBS = [
 ];
 
 export const REPLICATION_VM_JOBS = [
-  { label: 'Virtual Machine', field: 'vmName', allowFilter: true, checked: true },
+  { label: 'Virtual Machine', field: 'vmName', itemRenderer: JOBS_VM_NAME_RENDERER, allowFilter: true, checked: true },
   { label: 'Iteration', field: 'iterationNumber' },
   { label: 'Changed', field: 'changedSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Transferred', field: 'transferredSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
