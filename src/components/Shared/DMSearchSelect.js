@@ -101,10 +101,10 @@ class DMSearchSelect extends Component {
   };
 
   clearValueIfNotInOption(fieldValue) {
-    if (fieldValue && fieldValue !== '') {
+    if (fieldValue && fieldValue !== '' && Object.keys(fieldValue).length > 0) {
       const options = this.getOptions() || [];
       const { value } = fieldValue;
-      const valueInOption = options.find((option) => option.value === value.value);
+      const valueInOption = options.find((option) => option.value === value);
       if (options.length > 0 && !valueInOption) {
         this.setState({ value: '' });
       }
