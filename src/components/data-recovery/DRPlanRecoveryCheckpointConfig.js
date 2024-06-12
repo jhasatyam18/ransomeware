@@ -160,6 +160,7 @@ function DRPlanRecoveryCheckpointConfig(props) {
           <Col sm={2}>
             <Input
               type="number"
+              min={1}
               className={`form-control ${!isRecoveryCheckpointingEnable ? 'checkpoint_diable_summary' : ''}`}
               id="recoveryPointConfiguration.count"
               disabled={!isRecoveryCheckpointingEnable}
@@ -176,6 +177,7 @@ function DRPlanRecoveryCheckpointConfig(props) {
           <Col sm={2}>
             <Input
               type="number"
+              min={1}
               invalid={durationHasError}
               id="recoveryPointConfiguration.duration.number"
               className={`form-control form-control-sm custom-select ${!isRecoveryCheckpointingEnable ? 'checkpoint_diable_summary' : ''}`}
