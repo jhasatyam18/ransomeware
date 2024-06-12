@@ -8,7 +8,7 @@ function RecveryCheckpointOptionRenderer({ data, user, dispatch, field }) {
   const { values } = user;
   const fieldObj = FIELDS['ui.vm.recovery.checkpoints'];
   const isAutoMigrate = getValue('ui.automate.migration', values);
-  if (isAutoMigrate) {
+  if (isAutoMigrate || !data[field]) {
     return '-';
   }
   if (field === 'currentSnapshotTime') {
