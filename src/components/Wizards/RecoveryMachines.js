@@ -187,7 +187,7 @@ class RecoveryMachines extends Component {
     return (
       <Row className="margin-top-20">
         <Col sm={4} className="padding-left-30">{t('select.point.in.time')}</Col>
-        <Col sm={4}>
+        <Col sm={5}>
           <DMSearchSelect className="w-20" fieldKey="ui.unique.checkpoint.field" field={commonCheckpointField} user={user} dispatch={dispatch} hideLabel />
         </Col>
       </Row>

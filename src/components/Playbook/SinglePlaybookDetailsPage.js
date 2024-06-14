@@ -222,7 +222,7 @@ function SinglePlaybookDetailsPage(props) {
         <label htmlFor={`reuploadFile-${name}`} className="margin-left-10 link_color">
           <FontAwesomeIcon size="md" icon={faUpload} />
         </label>
-        <Input type="file" accept="xlsx/*" id={`reuploadFile-${name}`} name={`reuploadFile-${name}`} className="modal-lic-upload" onSelect={onFileChange} onChange={onFileChange} />
+        <Input type="file" accept=".xlsx*" id={`reuploadFile-${name}`} name={`reuploadFile-${name}`} className="modal-lic-upload" onSelect={onFileChange} onChange={onFileChange} />
 
       </div>
     </>

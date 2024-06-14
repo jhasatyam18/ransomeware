@@ -277,6 +277,6 @@ export const FIELDS = {
     label: 'password', placeHolderText: 'Enter Password', type: FIELD_TYPE.PASSWORD, patterns: [PASSWORD_REGEX], errorMessage: 'Password should have atleast 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character and be at least 8 characters long and max of 32 characters.', shouldShow: true, fieldInfo: 'info.reset.password',
   },
   'ui.reset.disk.replication': { label: 'Select All', type: FIELD_TYPE.CHECKBOX, shouldShow: true, default: false },
-  'ui.common.checkpoint': { shouldShow: true, type: FIELD_TYPE.SELECT_SEARCH, options: (user) => commonCheckpointOptions(user), validate: true, errorMessage: '', onChange: ({ value, fieldKey, dispatch }) => onCommonCheckpointChange({ value, dispatch, fieldKey }) },
+  'ui.common.checkpoint': { shouldShow: true, type: FIELD_TYPE.SELECT_SEARCH, options: (user) => commonCheckpointOptions(user), validate: true, errorMessage: '', onChange: ({ value, fieldKey, dispatch }) => onCommonCheckpointChange({ value, dispatch, fieldKey }), fieldInfo: 'common.checkpoint.info' },
 
 };

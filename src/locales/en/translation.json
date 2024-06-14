@@ -820,5 +820,6 @@
   "resynk.disk.warning.without.checkpoint": "This operation will delete latest disk/snapshot and create a new one to resync full data.",
   "info.recovery.username": "Virtual machine's username to execute the pre and postscripts. If there are no scripts for the virtual machine, then credentials are not mandatory",
   "info.recovery.password": "Virtual Machine's password to execute the pre and postscripts. If there are no scripts for the virtual machine, then credentials are not mandatory",
-  "generate.report": "Generate Report"
+  "generate.report": "Generate Report",
+  "common.checkpoint.info":"This field specifies the common time for virtual machine point-in-time copies."
 }
