@@ -155,11 +155,11 @@ export const REPLICATION_VM_JOBS = [
 
 // Table fields for recovery virtual machines
 export const TABLE_RECOVERY_VMS = [
-  { label: 'name', field: 'name' },
+  { label: 'name', field: 'name', width: 1.1 },
   { label: 'Username', field: 'virtualDisks', itemRenderer: VM_USERNAME_ITEM_RENDERER, info: 'info.recovery.username' },
   { label: 'Password', field: 'guestOS', itemRenderer: VM_UPASSWORD_ITEM_RENDERER, info: 'info.recovery.password' },
-  { label: 'Point In Time', field: 'currentSnapshotTime', itemRenderer: RECOVERY_CHECKPOINT_OPTION_RENDERER, width: 4 },
-  { label: 'status', field: 'recoveryStatus' },
+  { label: 'Point In Time', field: 'currentSnapshotTime', itemRenderer: RECOVERY_CHECKPOINT_OPTION_RENDERER, width: 3 },
+  { label: 'status', field: 'recoveryStatus', width: 1.1 },
 ];
 
 // Table fields for protection plan vise replication

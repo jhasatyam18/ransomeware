@@ -1425,6 +1425,7 @@ export function validateCheckpointSelection(user, vms, dispatch) {
         validateField(field, `${vm}-recovery-checkpoint`, getValue(`${vm}-recovery-checkpoint`, values), dispatch, user);
       }
       checkpointRequiredVM.push(vms[vm].name);
+      dispatch(addMessage(`Please select point in time checkpoint for ${checkpointRequiredVM.join(', ')}`, MESSAGE_TYPES.ERROR));
       checkpointFlag = true;
     }
   }
