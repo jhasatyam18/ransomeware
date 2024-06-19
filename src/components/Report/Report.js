@@ -3,18 +3,20 @@ import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Button, Card, CardBody, Col, Container, Row } from 'reactstrap';
 import { MILI_SECONDS_TIME } from '../../constants/EventConstant';
-import { exportTableToExcel } from '../../utils/ReportUtils';
+import { REPORT_DURATION, STATIC_KEYS } from '../../constants/InputConstants';
+import { RECOVERY_JOBS, REPLICATION_VM_JOBS, TABLE_ALERTS, TABLE_EVENTS, TABLE_HEADER_DR_PLANS, TABLE_HEADER_SITES, TABLE_NODES, TABLE_REPORT_PROTECTED_VMS } from '../../constants/TableConstants';
+import { valueChange } from '../../store/actions';
 import { fetchDrPlans } from '../../store/actions/DrPlanActions';
+import { exportReportToPDF, generateAuditReport, getCriteria, resetReport } from '../../store/actions/ReportActions';
+import { hideApplicationLoader, showApplicationLoader } from '../../store/actions/UserActions';
+import { getValue } from '../../utils/InputUtils';
+import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
+import { exportTableToExcel } from '../../utils/ReportUtils';
+import { isEmpty } from '../../utils/validationUtils';
+import DMBreadCrumb from '../Common/DMBreadCrumb';
 import ReportSideBar from './ReportSideBar';
 import ReportSystemOverview from './ReportSystemOverview';
 import ReportTables from './ReportTables';
-import DMBreadCrumb from '../Common/DMBreadCrumb';
-import { exportReportToPDF, generateAuditReport, getCriteria, resetReport } from '../../store/actions/ReportActions';
-import { hideApplicationLoader, showApplicationLoader } from '../../store/actions/UserActions';
-import { valueChange } from '../../store/actions';
-import { RECOVERY_JOBS, REPLICATION_VM_JOBS, TABLE_ALERTS, TABLE_EVENTS, TABLE_HEADER_DR_PLANS, TABLE_HEADER_SITES, TABLE_NODES, TABLE_REPORT_PROTECTED_VMS } from '../../constants/TableConstants';
-import { STATIC_KEYS } from '../../constants/InputConstants';
-import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
 
 class Report extends Component {
   constructor() {
@@ -29,10 +31,7 @@ class Report extends Component {
     const { dispatch } = this.props;
     dispatch(fetchDrPlans(STATIC_KEYS.UI_PROTECTION_PLANS));
     dispatch(valueChange('report.protectionPlan.protectionPlans', 0));
-    // const d = new Date();
-    // d.setDate(d.getDate() - 30);
-    // dispatch(valueChange('report.startDate', d));
-    // dispatch(valueChange('report.endDate', new Date()));
+    dispatch(valueChange('report.system.includeSystemOverView', true));
   }
 
   componentWillUnmount() {
@@ -46,16 +45,23 @@ class Report extends Component {
   };
 
   generateReport = () => {
-    const { dispatch } = this.props;
+    const { dispatch, user } = this.props;
     const { openCollapse } = this.state;
-    // const { dispatch, user } = this.props;
-    // const { values } = user;
-    // const startDate = getValue('report.startDate', values);
-    // const endDate = getValue('report.endDate', values);
-    // if (isEmpty({ value: startDate }) || isEmpty({ value: endDate })) {
-    //   dispatch(addMessage('Select report time duration', MESSAGE_TYPES.ERROR));
-    //   return;
-    // }
+    const { values } = user;
+    const startDate = getValue(STATIC_KEYS.REPORT_DURATION_START_DATE, values);
+    const endDate = getValue(STATIC_KEYS.REPORT_DURATION_END_DATE, values);
+    const durationType = getValue(STATIC_KEYS.REPORT_DURATION_TYPE, values);
+    if (durationType === REPORT_DURATION.CUSTOM && (isEmpty({ value: startDate }) || isEmpty({ value: endDate }))) {
+      const date = new Date();
+      if (isEmpty({ value: startDate }) && isEmpty({ value: endDate })) {
+        dispatch(valueChange(STATIC_KEYS.REPORT_DURATION_START_DATE, date));
+        dispatch(valueChange(STATIC_KEYS.REPORT_DURATION_END_DATE, date));
+      } else if (isEmpty({ value: endDate })) {
+        dispatch(valueChange(STATIC_KEYS.REPORT_DURATION_END_DATE, date));
+      } else {
+        dispatch(valueChange(STATIC_KEYS.REPORT_DURATION_START_DATE, date));
+      }
+    }
     dispatch(valueChange('report.system.includeSystemOverView', true));
     dispatch(generateAuditReport());
     if (openCollapse) {
@@ -77,11 +83,11 @@ class Report extends Component {
   };
 
   exportToExcel = () => {
-    const { dispatch, dashboard, t } = this.props;
-    this.setState({ printView: true });
+    const { dispatch, dashboard, t, reports } = this.props;
+    const { result } = reports;
     dispatch(showApplicationLoader('EXCEL_REPORT', t('report.export.excel')));
     setTimeout(() => {
-      exportTableToExcel(dashboard);
+      exportTableToExcel(dashboard, result);
     }, MILI_SECONDS_TIME.TEN_THOUSAND);
     setTimeout(() => {
       this.setState({ printView: false });
@@ -98,7 +104,9 @@ class Report extends Component {
   renderReportFilter() {
     const { openCollapse } = this.state;
     const { user, t } = this.props;
-    const disabled = !hasRequestedPrivileges(user, ['report.create']);
+    const { values } = user;
+    const durationType = getValue(STATIC_KEYS.REPORT_DURATION_TYPE, values);
+    const disabled = !hasRequestedPrivileges(user, ['report.create']) || isEmpty({ value: durationType });
     if (!openCollapse) {
       return null;
     }

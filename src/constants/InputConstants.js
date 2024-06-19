@@ -120,6 +120,9 @@ export const STATIC_KEYS = {
   VMWARE_QUIESCE_KEY: '-vmConfig.general.IsVMwareQuiescing',
   DMTREE_SEARCH_FOLDER_KEY: 'DMTREE_SEARCH_FOLDER_KER',
   PLAYBOOK_CONFIG_VALIDATING: 'configValidating',
+  REPORT_DURATION_START_DATE: 'report.duration.startDate',
+  REPORT_DURATION_END_DATE: 'report.duration.endDate',
+  REPORT_DURATION_TYPE: 'report.duration.type',
 };
 
 // Recovery time in minutes
@@ -249,4 +252,13 @@ export const CONSTANT_NUMBERS = {
   TWENTY_FIVE: 25,
   ZERO: 0,
   ONE: '1',
+};
+export const REPORT_DURATION = {
+  CUSTOM: 'custom',
+  WEEK: 'week',
+  MONTH: 'month',
+  YEAR: 'year',
+  SIZE: 'size',
+  TIME: 'time',
+  DATE: 'date',
 };

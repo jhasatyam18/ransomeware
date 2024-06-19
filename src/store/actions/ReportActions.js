@@ -4,11 +4,13 @@ import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { callAPI } from '../../utils/ApiUtils';
 import { getAppDateFormat } from '../../utils/AppUtils';
 import { getValue } from '../../utils/InputUtils';
-import { addFooters, addHeaderPage, addTableFromHtml, exportDoc, createPDFDoc, systemOverview } from '../../utils/ReportUtils';
+import { addFooters, addHeaderPage, exportDoc, createPDFDoc, systemOverview, addTableFromData, getStartDate } from '../../utils/ReportUtils';
 import { fetchDashboardTitles, fetchRecoveryStats, fetchReplicationStats } from './DashboardActions';
 import { addMessage } from './MessageActions';
 import { hideApplicationLoader, showApplicationLoader } from './UserActions';
 import { API_MAX_RECORD_LIMIT } from '../../constants/UserConstant';
+import { ALERTS_COLUMNS, EVENTS_COLUMNS, NODE_COLUMNS, PROTECTED_VMS_COLUMNS, PROTECTION_PLAN_COLUMNS, RECOVERY_JOB_COLUMNS, REPLICATION_JOB_COLUMNS, SITE_COLUMNS } from '../../constants/TableConstants';
+import { REPORT_DURATION, STATIC_KEYS } from '../../constants/InputConstants';
 
 export function generateAuditReport() {
   return (dispatch, getState) => {
@@ -103,13 +105,14 @@ export function reportFetchPlans(id) {
 /**
  * @returns Fetch and set events info for report
  */
-export function reportFetchEvents(data = [], offSet = 0) {
-  const url = `${API_FETCH_EVENTS}?offset=${offSet}&limit=${API_MAX_RECORD_LIMIT}`;
+export function reportFetchEvents(data = [], offSet = 0, criteria) {
+  const { startDate, endDate } = criteria;
+  const url = `${API_FETCH_EVENTS}?offset=${offSet}&limit=${API_MAX_RECORD_LIMIT}&starttime=${startDate}&endtime=${endDate}`;
   return (dispatch) => (
     callAPI(url)
       .then((json) => {
         if (json.hasNext === true) {
-          dispatch(reportFetchEvents([...data, ...json.records], json.nextOffset));
+          dispatch(reportFetchEvents([...data, ...json.records], json.nextOffset, criteria));
         } else {
           dispatch(setReportObject('events', [...data, ...json.records]));
         }
@@ -123,13 +126,14 @@ export function reportFetchEvents(data = [], offSet = 0) {
 /**
  * @returns Fetch and set alerts info for report
  */
-export function reportFetchAlerts(data = [], offSet = 0) {
-  const url = `${API_FETCH_ALERTS}?offset=${offSet}&limit=${API_MAX_RECORD_LIMIT}`;
+export function reportFetchAlerts(data = [], offSet = 0, criteria) {
+  const { startDate, endDate } = criteria;
+  const url = `${API_FETCH_ALERTS}?offset=${offSet}&limit=${API_MAX_RECORD_LIMIT}&starttime=${startDate}&endtime=${endDate}`;
   return (dispatch) => (
     callAPI(url)
       .then((json) => {
         if (json.hasNext === true) {
-          dispatch(reportFetchAlerts([...data, ...json.records], json.nextOffset));
+          dispatch(reportFetchAlerts([...data, ...json.records], json.nextOffset, criteria));
         } else {
           dispatch(setReportObject('alerts', [...data, ...json.records]));
         }
@@ -143,15 +147,19 @@ export function reportFetchAlerts(data = [], offSet = 0) {
 /**
  * @returns Fetch and set replication job info for report
  */
-export function reportFetchReplicationJobs(id, data = [], offset = 0) {
+export function reportFetchReplicationJobs(id, data = [], offset = 0, criteria = {}, limit) {
   return (dispatch) => {
-    const url = (isPlanSpecificData(id) ? `${API_PROTECTTION_PLAN_REPLICATION_VM_JOBS.replace('<id>', id)}&limit=${API_MAX_RECORD_LIMIT}&offset=${offset}` : `${API_REPLICATION_VM_JOBS}?limit=${API_MAX_RECORD_LIMIT}&offset=${offset}`);
+    const { startDate, endDate } = criteria;
+    const url = (isPlanSpecificData(id) ? `${API_PROTECTTION_PLAN_REPLICATION_VM_JOBS.replace('<id>', id)}&limit=${API_MAX_RECORD_LIMIT}&offset=${offset}&starttime=${startDate}&endtime=${endDate}` : `${API_REPLICATION_VM_JOBS}?limit=${limit || API_MAX_RECORD_LIMIT}&offset=${offset}&starttime=${startDate}&endtime=${endDate}`);
+    dispatch(showApplicationLoader('replication_report', 'generating replications'));
     callAPI(url)
       .then((json) => {
         if (json.hasNext === true) {
-          dispatch(reportFetchReplicationJobs(id, [...data, ...json.records], json.nextOffset));
+          const maxLimit = (json.totalRecords - json.limit);
+          dispatch(reportFetchReplicationJobs(id, [...data, ...json.records], json.nextOffset, criteria, maxLimit));
         } else {
           dispatch(setReportObject('replication', [...data, ...json.records]));
+          dispatch(hideApplicationLoader('replication_report', 'Generating audit report...'));
         }
       },
       (err) => {
@@ -163,13 +171,14 @@ export function reportFetchReplicationJobs(id, data = [], offset = 0) {
 /**
  * @returns Fetch and set recovery job info for report
  */
-export function reportFetchRecoveryJobs(id, data = [], offset = 0) {
+export function reportFetchRecoveryJobs(id, data = [], offset = 0, criteria = {}) {
   return (dispatch) => {
-    const url = (isPlanSpecificData(id) ? `${API_RECOVERY_PLAN_RECOVERY_JOBS.replace('<id>', id)}&limit=${API_MAX_RECORD_LIMIT}&offset=${offset}` : `${API_RECOVERY_JOBS}?limit=${API_MAX_RECORD_LIMIT}&offset=${offset}`);
+    const { startDate, endDate } = criteria;
+    const url = (isPlanSpecificData(id) ? `${API_RECOVERY_PLAN_RECOVERY_JOBS.replace('<id>', id)}&limit=${API_MAX_RECORD_LIMIT}&offset=${offset}&starttime=${startDate}&endtime=${endDate}` : `${API_RECOVERY_JOBS}?limit=${API_MAX_RECORD_LIMIT}&offset=${offset}&starttime=${startDate}&endtime=${endDate}`);
     callAPI(url)
       .then((json) => {
         if (json.hasNext === true) {
-          dispatch(reportFetchRecoveryJobs(id, [...data, ...json.records], json.nextOffset));
+          dispatch(reportFetchRecoveryJobs(id, [...data, ...json.records], json.nextOffset, criteria));
         } else {
           dispatch(setReportObject('recovery', [...data, ...json.records]));
         }
@@ -189,10 +198,12 @@ export function setProtectedVMs(pPlans, id) {
     dispatch(setReportObject('protectedVMS', []));
     const { user } = getState();
     const criteria = getCriteria(user);
+    const { startDate, endDate } = criteria;
     if (!criteria.includeProtectedVMS) {
       return;
     }
-    callAPI(API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS)
+    const url = `${API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS}?starttime=${startDate}&endtime=${endDate}`;
+    callAPI(url)
       .then((json) => {
         if ((json && isPlanSpecificData(id)) || (json && json.length > 0 && json.length === pPlans.length)) {
           const protectedVMS = [];
@@ -261,25 +272,57 @@ function getRequiredReportObjects(criteria, dispatch) {
     apis.push(dispatch(reportFetchNodes()));
   }
   if (criteria.includeEvents) {
-    apis.push(dispatch(reportFetchEvents([], 0)));
+    apis.push(dispatch(reportFetchEvents([], 0, criteria)));
   }
   if (criteria.includeAlerts) {
-    apis.push(dispatch(reportFetchAlerts([], 0)));
+    apis.push(dispatch(reportFetchAlerts([], 0, criteria)));
   }
   if (criteria.includeReplicationJobs) {
-    apis.push(dispatch(reportFetchReplicationJobs(criteria.protectionPlanID, [], 0)));
+    apis.push(dispatch(reportFetchReplicationJobs(criteria.protectionPlanID, [], 0, criteria)));
   }
   if (criteria.includeRecoveryJobs) {
-    apis.push(dispatch(reportFetchRecoveryJobs(criteria.protectionPlanID, [], 0)));
+    apis.push(dispatch(reportFetchRecoveryJobs(criteria.protectionPlanID, [], 0, criteria)));
   }
   return apis;
 }
 
 export function getCriteria(user) {
   const { values } = user;
+  let startDate = new Date(getValue(STATIC_KEYS.REPORT_DURATION_START_DATE, values));
+  startDate.setHours(0, 0, 0, 0); // setting start date time to 12AM
+  let endDate = new Date(getValue(STATIC_KEYS.REPORT_DURATION_END_DATE, values));
+  if (endDate.toDateString() !== new Date().toDateString()) {
+    endDate.setHours(23, 59, 59, 999); // Setting end date time to 11:59 PM if end date is not today
+  }
+  const durationType = getValue(STATIC_KEYS.REPORT_DURATION_TYPE, values);
+
+  switch (durationType) {
+    case REPORT_DURATION.CUSTOM:
+      startDate = startDate.getTime();
+      endDate = endDate.getTime();
+      break;
+    case REPORT_DURATION.WEEK:
+      startDate = getStartDate(REPORT_DURATION.WEEK);
+      endDate = new Date().getTime();
+      break;
+    case REPORT_DURATION.MONTH:
+      startDate = getStartDate(REPORT_DURATION.MONTH);
+      endDate = new Date().getTime();
+      break;
+    case REPORT_DURATION.YEAR:
+      startDate = getStartDate(REPORT_DURATION.YEAR);
+      endDate = new Date().getTime();
+      break;
+    default:
+      break;
+  }
+
+  const startTimeInSecond = Math.floor(startDate / 1000);
+  const endTimeInSecond = Math.floor(endDate / 1000);
+
   return {
-    startDate: getValue('report.startDate', values),
-    endDate: getValue('report.endDate', values),
+    startDate: startTimeInSecond,
+    endDate: endTimeInSecond,
     includeSystemOverView: getValue('report.system.includeSystemOverView', values),
     includeNodes: getValue('report.system.includeNodes', values),
     includeEvents: getValue('report.system.includeEvents', values),
@@ -288,39 +331,50 @@ export function getCriteria(user) {
     includeRecoveryJobs: getValue('report.protectionPlan.includeRecoveryJobs', values),
     includeProtectedVMS: getValue('report.protectionPlan.includeProtectedVMS', values),
     protectionPlanID: getValue('report.protectionPlan.protectionPlans', values),
+    durationType: getValue(STATIC_KEYS.REPORT_DURATION_TYPE, values),
   };
 }
 
 export function exportReportToPDF() {
   return (dispatch, getState) => {
-    const { user, dashboard } = getState();
+    const { user, dashboard, reports } = getState();
+    const { result } = reports;
+    const { protectedVMS, replication, plans, sites, nodes, events, alerts, recovery } = result;
     try {
-      const criteria = getCriteria(user);
+      const criteria = getCriteria(user, dispatch);
       const doc = createPDFDoc();
       addHeaderPage(doc, criteria.startDate, criteria.endDate);
       if (criteria.includeSystemOverView) {
         doc.addPage();
         systemOverview(doc, dashboard);
       }
-      addTableFromHtml(doc, 'rpt-protection_plans', 'Protection Plans');
-      addTableFromHtml(doc, 'rpt-sites', 'Sites');
+      const planColumn = PROTECTION_PLAN_COLUMNS;
+      const siteColumn = SITE_COLUMNS;
+      addTableFromData(doc, planColumn, 'Protection Plans', plans);
+      addTableFromData(doc, siteColumn, 'Sites', sites);
       if (criteria.includeNodes) {
-        addTableFromHtml(doc, 'rpt-nodes', 'Nodes');
+        const columns = NODE_COLUMNS;
+        addTableFromData(doc, columns, 'Nodes', nodes);
       }
       if (criteria.includeProtectedVMS) {
-        addTableFromHtml(doc, 'rpt-protected_machines', 'Protected Machines');
+        const columns = PROTECTED_VMS_COLUMNS;
+        addTableFromData(doc, columns, 'Protected Machines', protectedVMS);
       }
       if (criteria.includeEvents) {
-        addTableFromHtml(doc, 'rpt-events', 'Events');
+        const columns = EVENTS_COLUMNS;
+        addTableFromData(doc, columns, 'Events', events);
       }
       if (criteria.includeAlerts) {
-        addTableFromHtml(doc, 'rpt-alerts', 'Alerts');
+        const columns = ALERTS_COLUMNS;
+        addTableFromData(doc, columns, 'Alerts', alerts);
       }
       if (criteria.includeReplicationJobs) {
-        addTableFromHtml(doc, 'rpt-replication_jobs', 'Replication Jobs');
+        const columns = REPLICATION_JOB_COLUMNS;
+        addTableFromData(doc, columns, 'Replication Jobs', replication);
       }
       if (criteria.includeRecoveryJobs) {
-        addTableFromHtml(doc, 'rpt-recovery_jobs', 'Recovery Jobs');
+        const columns = RECOVERY_JOB_COLUMNS;
+        addTableFromData(doc, columns, 'Recovery Jobs', recovery);
       }
       const d = new Date();
       addFooters(doc);

@@ -32,7 +32,7 @@ export const API_REPLICATION_VM_JOBS = 'api/v1/jobs/replication/vms';
 export const API_PROTECTTION_PLAN_REPLICATION_VM_JOBS = 'api/v1/jobs/replication/vms?protectionplanid=<id>';
 export const API_PROTECTOIN_PLAN_REPLICATION_JOBS = 'api/v1/jobs/replication/disks?protectionplanid=<id>';
 export const API_RECOVERY_JOBS = 'api/v1/jobs/recover/vms';
-export const API_RECOVERY_PLAN_RECOVERY_JOBS = 'api/v1/jobs/recover/protectionplans/<id>';
+export const API_RECOVERY_PLAN_RECOVERY_JOBS = 'api/v1/jobs/recover/vms?protectionplanid=<id>';
 export const API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS = 'api/v1/jobs/replication/protectionplans';
 export const API_PROTECTION_PLAN_RECOVERY_JOBS_STATUS = 'api/v1/jobs/recover/protectionplans';
 export const API_DASHBOARD_TITLE = 'api/v1/dashboard/titles';

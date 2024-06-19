@@ -37,9 +37,20 @@ class DMDatePicker extends Component {
   };
 
   minDate() {
-    const { field } = this.props;
+    const { field, user, dispatch, fieldKey } = this.props;
     const { minDate } = field;
+    const { values } = user;
+    const value = getValue(fieldKey, values);
+    if (typeof minDate === 'function') {
+      return minDate({ user, dispatch, fieldKey, value });
+    }
     return minDate ? new Date() : 'undefined';
+  }
+
+  maxDate() {
+    const { field } = this.props;
+    const { maxDate } = field;
+    return maxDate ? new Date() : 'undefined';
   }
 
   minTime() {
@@ -112,6 +123,7 @@ class DMDatePicker extends Component {
                   disabled={disabled}
                   showTimeSelect={showTime}
                   minDate={this.minDate()}
+                  maxDate={this.maxDate()}
                   minTime={this.minTime()}
                   maxTime={this.maxTime()}
                   timeIntervals={interval}

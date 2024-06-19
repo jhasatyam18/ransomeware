@@ -7,6 +7,7 @@ import { loadTreeChildData, onDiffReverseChanges, onScriptChange } from '../stor
 import { showSystemAgentWarningText } from '../utils/AppUtils';
 import { commonCheckpointOptions, defaultRecoveryCheckpointForVm, disableSiteSelection, enableNodeTypeVM, getAvailibilityZoneOptions, getCheckpointDurationOption, getCheckRentaintionOption, getDefaultRecoverySite, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getReportProtectionPlans, getSiteNodeOptions, getSitesOptions, getSubnetOptions, getVmCheckpointOptions, getVMwareVMSelectionData, isPlatformTypeAWS, isPlatformTypeAzure, isPlatformTypeGCP, isPlatformTypeVMware, onCommonCheckpointChange, onVmRecoveryCheckpointOptionChange, revShowRemoveCheckpointOption, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort, showDifferentialReverseCheckbox, showInstallCloudPackageOption, showRecipientEmailField, showReverseReplType, showRevPrefix, userRoleOptions } from '../utils/InputUtils';
 import { getErrorMessage, getFieldInfo, getLabel } from '../utils/LocallUtils';
+import { getReportDurationOptions, setMinDateForReport, showReportDurationDate } from '../utils/ReportUtils';
 import { disableRecoveryCheckpointField, isEmpty, isEmptyNum, showReverseWarningText, validateCheckpointFields, validateDrSiteSelection, validatePassword, validatePlanSiteSelection, validateReplicationInterval, validateReplicationValue } from '../utils/validationUtils';
 import { NOTE_TEXT } from './DMNoteConstant';
 import { STATIC_KEYS } from './InputConstants';
@@ -218,9 +219,12 @@ export const FIELDS = {
   'report.system.includeAlerts': { label: 'report.includeAlerts', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
   'report.protectionPlan.protectionPlans': { label: 'report.protectionPlans', type: FIELD_TYPE.SELECT, shouldShow: true, options: (user) => getReportProtectionPlans(user), defaultValue: 0 },
   // 'report.protectionPlan.sites': { label: 'Sites', description: 'Include sites in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: true },
-  'report.protectionPlan.includeProtectedVMS': { label: 'report.includeProtectedVMS', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
-  'report.protectionPlan.includeReplicationJobs': { label: 'report.includeReplicationJobs', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
-  'report.protectionPlan.includeRecoveryJobs': { label: 'report.includeRecoveryJobs', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'report.protectionPlan.includeProtectedVMS': { label: 'report.includeProtectedVMS', description: 'Add sites in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'report.protectionPlan.includeReplicationJobs': { label: 'report.includeReplicationJobs', description: 'Add replication jobs in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'report.protectionPlan.includeRecoveryJobs': { label: 'report.includeRecoveryJobs', description: 'Add recovery jobs in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'report.duration.type': { label: 'report.duration', type: FIELD_TYPE.SELECT, shouldShow: true, options: (user) => getReportDurationOptions(user), defaultValue: 'month' },
+  'report.duration.startDate': { label: 'report.startDate', COMPONENT: DATE_PICKER_COMP, type: FIELD_TYPE.CUSTOM, shouldShow: (user) => showReportDurationDate(user), validate: (value, user) => isEmpty(value, user), maxDate: true },
+  'report.duration.endDate': { label: 'report.endDate', COMPONENT: DATE_PICKER_COMP, type: FIELD_TYPE.CUSTOM, shouldShow: (user) => showReportDurationDate(user), validate: (value, user) => isEmpty(value, user), maxDate: true, minDate: ({ user }) => setMinDateForReport({ user }) },
   // Reverse
   'reverse.name': { label: 'name', placeHolderText: 'Name', type: FIELD_TYPE.LABEL, shouldShow: true },
   'reverse.protectedSite': { label: 'protect.site', placeHolderText: 'Protect Site', type: FIELD_TYPE.LABEL, shouldShow: true },

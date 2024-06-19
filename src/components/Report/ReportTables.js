@@ -4,13 +4,27 @@ import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardHeader, Col, Collapse, Row } from 'reactstrap';
 import DMTable from '../Table/DMTable';
 import DMTPaginator from '../Table/DMTPaginator';
+import { filterData } from '../../utils/AppUtils';
 
 class ReportTables extends Component {
   constructor() {
     super();
-    this.state = { dataToDisplay: [], isOpen: false };
+    this.state = { hasFilterString: false, searchData: [], dataToDisplay: [], isOpen: false };
     this.setDataForDisplay = this.setDataForDisplay.bind(this);
     this.toggle = this.toggle.bind(this);
+    this.onFilter = this.onFilter.bind(this);
+  }
+
+  onFilter(criteria) {
+    const { dataSource, reports, columns } = this.props;
+    const { result } = reports;
+    const data = (typeof result[dataSource] !== 'undefined' ? result[dataSource] : []);
+    if (criteria.trim() === '') {
+      this.setState({ hasFilterString: false, searchData: [] });
+    } else {
+      const newData = filterData(data, criteria, columns);
+      this.setState({ hasFilterString: true, searchData: newData });
+    }
   }
 
   setDataForDisplay(data) {
@@ -37,7 +51,8 @@ class ReportTables extends Component {
   renderPaginator() {
     const { reports, dataSource, columns } = this.props;
     const { result } = reports;
-    const data = (typeof result[dataSource] !== 'undefined' ? result[dataSource] : []);
+    const { hasFilterString, searchData } = this.state;
+    const data = hasFilterString ? searchData : (typeof result[dataSource] !== 'undefined' && result[dataSource]) || [];
     return (
       <Row className="padding-left-20">
         <Col sm={12}>
@@ -46,6 +61,8 @@ class ReportTables extends Component {
               data={data}
               setData={this.setDataForDisplay}
               columns={columns}
+              showFilter="true"
+              onFilter={this.onFilter}
             />
           </div>
         </Col>
@@ -54,9 +71,7 @@ class ReportTables extends Component {
   }
 
   renderTable() {
-    const { reports, dataSource, dispatch, user, columns, title, printView } = this.props;
-    const { result } = reports;
-    const data = (typeof result[dataSource] !== 'undefined' ? result[dataSource] : []);
+    const { dispatch, user, columns, title, printView } = this.props;
     const { dataToDisplay } = this.state;
     const name = `rpt-${title.toLowerCase().split(' ').join('_')}`;
     return (
@@ -67,7 +82,7 @@ class ReportTables extends Component {
             <DMTable
               dispatch={dispatch}
               columns={columns}
-              data={printView === false ? data : dataToDisplay}
+              data={dataToDisplay}
               primaryKey="id"
               name={name}
               user={user}
