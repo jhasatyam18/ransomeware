@@ -825,5 +825,6 @@
   "report.duration": "Duration",
   "report.duration.heading": "Report Duration",
   "report.system": "System",
-  "generate.report": "Generate Report"
+  "generate.report": "Generate Report",
+  "time.zone" : "Local Time Zone"
 }

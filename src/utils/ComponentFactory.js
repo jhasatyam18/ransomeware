@@ -103,7 +103,7 @@ export function getStackComponent(dispatch, user, children, conf, data) {
   }
 }
 
-export function getFieldComponents(dispatch, fieldKey, user, component, hideLabel) {
+export function getFieldComponents(dispatch, fieldKey, user, component, hideLabel, disabled) {
   const field = FIELDS[fieldKey];
   switch (component) {
     case REPLICATION_INTERVAL_COMP:
@@ -113,7 +113,7 @@ export function getFieldComponents(dispatch, fieldKey, user, component, hideLabe
     case DATE_PICKER_COMP:
       return <DMDatePicker dispatch={dispatch} fieldKey={fieldKey} user={user} field={field} hideLabel={hideLabel} />;
     case TIME_PICKER_COMP:
-      return <DMTimePicker dispatch={dispatch} fieldKey={fieldKey} user={user} field={field} hideLabel={hideLabel} />;
+      return <DMTimePicker dispatch={dispatch} fieldKey={fieldKey} user={user} field={field} hideLabel={hideLabel} disabled={disabled} />;
     default:
       return <div>404</div>;
   }

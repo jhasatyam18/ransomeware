@@ -414,6 +414,7 @@ function getUnixTimeFromDate(date) {
 
 export function getBandwidthPayload(formKey, user) {
   const payload = getFormPayload(formKey, user);
+  payload.throttling.timeZone = getLocalTimeZone();
   payload.throttling.startTime = getTimeFromDate(payload.throttling.startTime);
   payload.throttling.endTime = getTimeFromDate(payload.throttling.endTime);
   return payload;
@@ -600,4 +601,25 @@ export function getResetDiskReplicationPayload(user, drPlans) {
   });
   result.drplan.protectedEntities.virtualMachines = protectedVMs;
   return result;
+}
+
+export function getTimeZoneFromDate() {
+  const date = new Date().toString();
+  /*
+  Here getting the date and converting it to string "Fri Jun 21 2024 11:35:50 GMT+0530 (India standard Time)".
+  After that searching the index of 'GMT' in date string because it is always comes in same format so after
+  getting the index just get the substring from GMT index to GMT index+8 beacuse time zone will always have
+  8 characters.
+  */
+  const gmtIndex = date.indexOf('GMT');
+  const timeZoneOffset = date.substring(gmtIndex, gmtIndex + 8); // "GMT+0530"
+  const LocaltimeZone = getLocalTimeZone(); // "(Asia/Calcutta)"
+  // It will return "GMT+0530 (Asia/Calcutta)"
+  return `${timeZoneOffset} (${LocaltimeZone})`;
+}
+
+export function getLocalTimeZone() {
+  const { timeZone } = Intl.DateTimeFormat().resolvedOptions();
+  // It will return IANA Local time zone "(Asia/Calcutta)"
+  return `${timeZone}`;
 }

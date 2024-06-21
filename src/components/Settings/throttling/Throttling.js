@@ -7,7 +7,7 @@ import { TABLE_THROTTLING_NODES } from '../../../constants/TableConstants';
 import { addMessage } from '../../../store/actions/MessageActions';
 import { configureBandwidth, fetchBandwidthConfig, fetchBandwidthReplNodes } from '../../../store/actions/ThrottlingAction';
 import { getValue } from '../../../utils/InputUtils';
-import { getBandwidthPayload } from '../../../utils/PayloadUtil';
+import { getBandwidthPayload, getTimeZoneFromDate } from '../../../utils/PayloadUtil';
 import ActionButton from '../../Common/ActionButton';
 import DMBreadCrumb from '../../Common/DMBreadCrumb';
 import DMField from '../../Shared/DMField';
@@ -154,6 +154,15 @@ class Throttling extends Component {
             </Row>
           </div>
         </div>
+        {!timeDisabled
+          ? (
+            <Row className="mb-4">
+              <Col sm={5}>{t('time.zone')}</Col>
+              <Col sm={5} className="padding-left-30 ml-4 text-secondary">
+                {getTimeZoneFromDate()}
+              </Col>
+            </Row>
+          ) : null}
         <div className="form__item">
           <div className="form__label">
             {t('throttling.applyToAll')}

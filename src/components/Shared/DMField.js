@@ -38,7 +38,7 @@ class DMField extends Component {
       case FIELD_TYPE.TREE:
         return <DMTree dispatch={dispatch} fieldKey={fieldKey} field={field} user={user} disabled={disabled} hideLabel={hideLabel} />;
       case FIELD_TYPE.CUSTOM:
-        return getFieldComponents(dispatch, fieldKey, user, COMPONENT, hideLabel);
+        return getFieldComponents(dispatch, fieldKey, user, COMPONENT, hideLabel, disabled);
       case FIELD_TYPE.TEXTLABEL:
         return <DMFieldWarningLabel dispatch={dispatch} fieldKey={fieldKey} user={user} disabled={disabled} hideLabel={hideLabel} field={field} />;
       case FIELD_TYPE.STATICTEXT:
