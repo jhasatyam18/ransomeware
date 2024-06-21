@@ -1,5 +1,5 @@
 .bulk_status_text_parent{
-  width: 90%;
+  width: 95%;
   display: flex;
   justify-content: space-between;
   position: relative;
@@ -13,7 +13,7 @@
   margin: auto;
 }
 .bulk_sts_horizntal_line{
-    background-color: #aeaeae;
+    border-top:1px solid #aeaeae;
     height: 1px;
     width: 100%;
     position: relative;
@@ -47,7 +47,7 @@
   font-size: 0.7rem;
 }
 .success_line{
-  background-color: #34c38f ;
+  border-top:1px solid #34c38f;
 }
 
 .template_select_folder{

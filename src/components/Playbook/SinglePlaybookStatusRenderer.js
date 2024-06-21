@@ -196,7 +196,7 @@ function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispat
       // for playbook listing page
       return (
         <>
-          <p onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} id={`plybook-in-validate-${playbook.id}`} className="invalidate_warn_sts margin-0 padding-left-7 text-warning">{t('title.in.validated')}</p>
+          <p onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} id={`plybook-in-validate-${playbook.id}`} className="invalidate_warn_sts margin-0 padding-left-20 text-warning">{t('title.in.validated')}</p>
           {renderPopOver(t('playbook.invalidate.error'), `plybook-in-validate-${playbook.id}`)}
         </>
       );
@@ -227,14 +227,14 @@ function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispat
           {renderConfigure()}
         </div>
       </div>
-      <div className="bulk_status_text_parent padding-left-18">
+      <div className="bulk_status_text_parent padding-left-27">
         <div className="template_status_text">
           Uploaded
         </div>
-        <div aria-hidden className="template_status_text padding-left-10 " onClick={validateOnClick}>
+        <div aria-hidden className={`template_status_text ${configureLabel === 'Reconfigured' ? 'padding-left-10' : ''}`} onClick={validateOnClick}>
           {validateLable}
         </div>
-        <div aria-hidden className="template_status_text padding-right-2" onClick={configureOnClick}>
+        <div aria-hidden className={`template_status_text padding-right ${configureLabel === 'Reconfigured' ? '' : 'pr-2'}`} onClick={configureOnClick}>
           {configureLabel}
         </div>
       </div>

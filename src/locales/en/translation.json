@@ -605,7 +605,7 @@
   "confirm.playbook.plan.config": "Confirm Protection Plan Configuration",
   "confirm.confirmation": "Confirmation",
   "confirm.delete.playbook": "Confirm Delete Playbook",
-  "title.download.configured.excel": "To download configured playboook if you haven't downloaded it yet.",
+  "title.download.configured.excel": " To download configured playboook if you haven't downloaded it yet.",
   "title.edit.pplan": "Reconfigure Plan",
   "title.create.pplan": "Create Protection Plans",
   "download": "Download",

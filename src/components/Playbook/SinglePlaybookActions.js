@@ -56,7 +56,7 @@ function SinglePlaybookActions({ data, dispatch, t, user }) {
         {t('edit.playbook.warn.msg', { name })}
       </span>
       <p className="margin-top-5">
-        <small aria-hidden className="link_color" onClick={onExport}>[click here]</small>
+        <span aria-hidden className="link_color" onClick={onExport}>[click here]</span>
         { t('title.download.configured.excel')}
       </p>
     </>
@@ -75,7 +75,7 @@ function SinglePlaybookActions({ data, dispatch, t, user }) {
           {t('title.upload.playbook')}
         </span>
         <label htmlFor={`reuploadFile-${name}`} className="margin-left-10 link_color">
-          <FontAwesomeIcon size="md" icon={faUpload} />
+          <FontAwesomeIcon size="xl" icon={faUpload} />
         </label>
         <Input type="file" accept=".xlsx*" id={`reuploadFile-${name}`} name={`reuploadFile-${name}`} className="modal-lic-upload" onSelect={onFileChange} onChange={onFileChange} />
       </div>
