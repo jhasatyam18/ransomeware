@@ -387,6 +387,8 @@ export function playbookFetchPlanDiff(id, playbook) {
           const data = d;
           data.guestOS = json.currentPlanConfiguration[0].protectedEntities.virtualMachines[ind].guestOS;
           data.firmwareType = json.currentPlanConfiguration[0].protectedEntities.virtualMachines[ind].firmwareType;
+          data.replPostScript = json.currentPlanConfiguration[0].protectedEntities.virtualMachines[ind].postScript;
+          data.replPreScript = json.currentPlanConfiguration[0].protectedEntities.virtualMachines[ind].preScript;
           prevObj[data.sourceMoref] = data;
         });
         const currObj = {};
@@ -395,6 +397,8 @@ export function playbookFetchPlanDiff(id, playbook) {
           const data = d;
           data.guestOS = json.updatedPlanConfiguration[0].protectedEntities.virtualMachines[ind].guestOS;
           data.firmwareType = json.updatedPlanConfiguration[0].protectedEntities.virtualMachines[ind].firmwareType;
+          data.replPostScript = json.updatedPlanConfiguration[0].protectedEntities.virtualMachines[ind].postScript;
+          data.replPreScript = json.updatedPlanConfiguration[0].protectedEntities.virtualMachines[ind].preScript;
           currObj[data.sourceMoref] = data;
         });
 

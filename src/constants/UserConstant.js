@@ -34,6 +34,8 @@ export const GENERAL_PLATFORM_KEYS = {
     NETWORK: ['network', 'Subnet', 'privateIP', 'publicIP', 'securityGroups', 'isPublicIP'],
   },
 };
+export const REC_SCRIPTS = ['postScript', 'preScript'];
+export const REP_SCRIPTS = ['replPostScript', 'replPreScript'];
 
 export const PLAN_KEYS = [
   'bootDelay',
