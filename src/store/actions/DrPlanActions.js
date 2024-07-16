@@ -25,7 +25,7 @@ import { fetchReplicationJobsByPplanId } from './JobActions';
 import { addMessage } from './MessageActions';
 import { closeModal, openModal } from './ModalActions';
 import { fetchNetworks, fetchSites, onRecoverSiteChange } from './SiteActions';
-import { clearValues, fetchScript, hideApplicationLoader, loadRecoveryLocationData, onDiffReverseChanges, refresh, setInstanceDetails, setProtectionPlanScript, setTags, showApplicationLoader, valueChange } from './UserActions';
+import { clearValues, fetchScript, hideApplicationLoader, loadRecoveryLocationData, onDiffReverseChanges, refresh, setActiveTab, setInstanceDetails, setProtectionPlanScript, setTags, showApplicationLoader, valueChange } from './UserActions';
 import { setVmwareInitialData, setVMwareTargetData } from './VMwareActions';
 import { closeWizard, openWizard } from './WizardActions';
 
@@ -392,7 +392,7 @@ export function startReversePlan() {
         dispatch(clearValues());
         dispatch(addMessage('Reverse Protection Plan Configured Successfully.', MESSAGE_TYPES.SUCCESS));
         dispatch(refresh());
-        dispatch(valueChange(STORE_KEYS.DRPLAN_DETAILS_ACTIVE_TAB, '3'));
+        dispatch(setActiveTab('1'));
       }
     },
     (err) => {
