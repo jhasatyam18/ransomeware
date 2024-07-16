@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Col, Row } from 'reactstrap';
 import { PLAYBOOK_IN_VALIDATED } from '../../../constants/AppStatus';
 import { updateIsPlaybookDownloadedStatus } from '../../../store/actions/DrPlaybooksActions';
 import { hasRequestedPrivileges } from '../../../utils/PrivilegeUtils';
@@ -37,16 +36,16 @@ function DownloadPlaybookFromPlanList(props) {
   if (downloadURL && playbook) {
     return (
       <>
-        <Row>
-          <Col sm={1} className="padding-top-3 padding-left-2">
+        <p className="mb-1">
+          <span>
             <a href="#" onClick={onDownloadClick}>
               <FontAwesomeIcon className="single_playbook_download" size="sm" icon={faDownload} />
             </a>
-          </Col>
-          <Col sm={10}>
+          </span>
+          <span>
             <PlaybookFileNameRenderer data={playbook} field="name" />
-          </Col>
-        </Row>
+          </span>
+        </p>
       </>
     );
   }

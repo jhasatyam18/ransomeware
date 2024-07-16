@@ -354,7 +354,7 @@ export function downloadRecoveryPlaybook(id) {
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
-        dispatch(addMessage('Playbook Configured Successfully', MESSAGE_TYPES.SUCCESS));
+        dispatch(addMessage('Playbook Credentials downloaded Successfully', MESSAGE_TYPES.SUCCESS));
         const { name = 'undefined' } = json;
         if (typeof name !== 'undefined') {
           const result = `/playbooks/download/${json.name}`;

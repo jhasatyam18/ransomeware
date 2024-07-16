@@ -279,7 +279,7 @@ class RecoveryMachines extends Component {
           <Col sm={12} className="padding-left-30">
             {isMigrationWorkflow ? <DMField dispatch={dispatch} user={user} fieldKey="ui.automate.migration" key="ui.automate.migration" /> : null}
           </Col>
-          <Col sm={6} className="margin-left-30">
+          <Col sm={5} className="margin-left-30">
             <DMTPaginator
               id="recoverymachine"
               defaultLayout="true"
@@ -291,8 +291,9 @@ class RecoveryMachines extends Component {
               filterHelpText={TABLE_FILTER_TEXT.TABLE_RECOVERY_VMS}
             />
           </Col>
+          <Col sm={2} />
           {workflow !== UI_WORKFLOW.CLEANUP_TEST_RECOVERY ? (
-            <Col sm={5}>
+            <Col sm={4} className="margin-left-13">
               <div className="container-display-recovery">
                 <div href="#">
                   <label htmlFor="credentialUpload" className="label text-success" title={recFileName}>

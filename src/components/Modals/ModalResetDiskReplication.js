@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Col, Row } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
-import { clearValues } from '../../store/actions';
+import { clearValues, refresh } from '../../store/actions';
 import { onEditProtectionPlan } from '../../store/actions/DrPlanActions';
 import { closeModal } from '../../store/actions/ModalActions';
 import RenderResetReplicationVMs from '../Common/RenderResetReplicationVMs';
@@ -21,6 +21,7 @@ function ResetDiskReplicationModal({ t, dispatch, options, user }) {
   const onCancel = () => {
     dispatch(clearValues());
     dispatch(closeModal());
+    dispatch(refresh());
   };
 
   const onSave = () => {
