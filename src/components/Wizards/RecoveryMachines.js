@@ -223,14 +223,18 @@ class RecoveryMachines extends Component {
     const checkpointWarning = t('recovery.checkpoint.onchange.warn');
     let columns = [];
     if (workflow === UI_WORKFLOW.CLEANUP_TEST_RECOVERY) {
-      columns = TABLE_RECOVERY_VMS.filter((col) => col.label !== 'Username' && col.label !== 'Password');
+      columns = TABLE_RECOVERY_VMS.filter((col) => col.label !== 'Username' && col.label !== 'Password' && col.label !== 'Point In Time')
+        .map((col) => ({ ...col }));
+      columns[0].width = '7';
+      columns[1].width = '4';
     } else if ((workflow === UI_WORKFLOW.TEST_RECOVERY || workflow === UI_WORKFLOW.RECOVERY) && recoveryType === CHECKPOINT_TYPE.POINT_IN_TIME) {
       // Recovery type is point-in-time then add option to select checkpoint column
       columns = [...TABLE_RECOVERY_VMS];
       columns[3].field = '';
     } else {
-      columns = TABLE_RECOVERY_VMS;
+      columns = TABLE_RECOVERY_VMS.map((el) => ({ ...el }));
       columns[3].field = 'currentSnapshotTime';
+      columns[3].width = '2';
     }
     if (isMigrationWorkflow) {
       title = t('title.machines.migration');
