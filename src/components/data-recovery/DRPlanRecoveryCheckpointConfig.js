@@ -12,6 +12,7 @@ import { getRecoveryPointConfiguration, getReplicationInterval } from '../../uti
 import { isEmpty, isEmptyNum } from '../../utils/validationUtils';
 import DMField from '../Shared/DMField';
 import DMToolTip from '../Shared/DMToolTip';
+import { POSITIVE_NUMBERS_REGEX } from '../../constants/ValidationConstants';
 
 function DRPlanRecoveryCheckpointConfig(props) {
   const [count, setCount] = useState(0);
@@ -74,7 +75,16 @@ function DRPlanRecoveryCheckpointConfig(props) {
   };
 
   const handleNumChange = (e, fieldKey, func) => {
-    let val = parseInt(`${e.target.value}`, 10);
+    const { value } = e.target;
+    if (value === '') {
+      func(value);
+    }
+    // Accepts only positive number
+    const regex = new RegExp(POSITIVE_NUMBERS_REGEX);
+    if (value.match(regex) === null) {
+      return;
+    }
+    let val = parseInt(`${value}`, 10);
     if (val === 0) {
       val = 1;
     }
@@ -160,7 +170,6 @@ function DRPlanRecoveryCheckpointConfig(props) {
           <Col sm={2}>
             <Input
               type="number"
-              min={1}
               className={`form-control ${!isRecoveryCheckpointingEnable ? 'checkpoint_diable_summary' : ''}`}
               id="recoveryPointConfiguration.count"
               disabled={!isRecoveryCheckpointingEnable}
@@ -177,7 +186,6 @@ function DRPlanRecoveryCheckpointConfig(props) {
           <Col sm={2}>
             <Input
               type="number"
-              min={1}
               invalid={durationHasError}
               id="recoveryPointConfiguration.duration.number"
               className={`form-control form-control-sm custom-select ${!isRecoveryCheckpointingEnable ? 'checkpoint_diable_summary' : ''}`}
@@ -223,7 +231,6 @@ function DRPlanRecoveryCheckpointConfig(props) {
           <Col sm={2}>
             <Input
               type="number"
-              min={1}
               id="recoveryPointConfiguration.retain.number"
               className={`form-control form-control-sm custom-select ${!isRecoveryCheckpointingEnable ? 'checkpoint_diable_summary' : ''}`}
               onChange={(e) => handleNumChange(e, STORE_KEYS.RECOVERY_CHECKPOINT_RETAIN_NUMEBER, setretainNum)}
