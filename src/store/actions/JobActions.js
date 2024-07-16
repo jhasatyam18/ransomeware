@@ -27,6 +27,13 @@ export function changeReplicationJobType(jobType) {
   };
 }
 
+export function setDiskReplicationJobs(replication) {
+  return {
+    type: Types.FETCH_DISK_REPLICATION_JOBS,
+    replication,
+  };
+}
+
 export function fetchReplicationJobs(id) {
   return (dispatch, getState) => {
     dispatch(setReplicationJobs([]));

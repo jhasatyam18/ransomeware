@@ -95,6 +95,7 @@ function DMAPIPaginator(props) {
     }
     return () => {
       isUnmounting = true;
+      dispatch(storeFn([]));
       if (typeof fetchInInterval !== 'undefined') {
         clearInterval(timerRef.current);
         timerRef.current = null;

@@ -5,7 +5,7 @@ import { API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS, API_PROTECTOIN_PLAN_REPLIC
 import { REPLICATION_JOB_TYPE } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { REPLICATION_JOBS, REPLICATION_VM_JOBS, TABLE_FILTER_TEXT } from '../../constants/TableConstants';
-import { changeReplicationJobType, setReplicationJobs } from '../../store/actions/JobActions';
+import { changeReplicationJobType, setDiskReplicationJobs, setReplicationJobs } from '../../store/actions/JobActions';
 import { addMessage } from '../../store/actions/MessageActions';
 import { callAPI } from '../../utils/ApiUtils';
 import DMBreadCrumb from '../Common/DMBreadCrumb';
@@ -89,7 +89,7 @@ class Replication extends Component {
 
   renderDiskJobs() {
     const { jobs, protectionplanID, dispatch } = this.props;
-    const { replication } = jobs;
+    const { diskReplication } = jobs;
     const url = (protectionplanID === 0 ? API_REPLICATION_JOBS : API_PROTECTOIN_PLAN_REPLICATION_JOBS.replace('<id>', protectionplanID));
     return (
       <>
@@ -105,7 +105,7 @@ class Replication extends Component {
                 filterHelpText={TABLE_FILTER_TEXT.REPLICATION_JOBS}
                 apiUrl={url}
                 isParameterizedUrl={protectionplanID === 0 ? 'false' : 'true'}
-                storeFn={setReplicationJobs}
+                storeFn={setDiskReplicationJobs}
                 name="replicationDisks"
                 fetchInInterval
               />
@@ -115,7 +115,7 @@ class Replication extends Component {
         <DMTable
           dispatch={dispatch}
           columns={REPLICATION_JOBS}
-          data={replication}
+          data={diskReplication}
         />
 
       </>
