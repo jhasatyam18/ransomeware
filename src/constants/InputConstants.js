@@ -123,6 +123,8 @@ export const STATIC_KEYS = {
   REPORT_DURATION_START_DATE: 'report.duration.startDate',
   REPORT_DURATION_END_DATE: 'report.duration.endDate',
   REPORT_DURATION_TYPE: 'report.duration.type',
+  REPORT_STATUS_TYPE: 'alert-status',
+  PORTS_RENDERER: 'port-renderer',
 };
 
 // Recovery time in minutes
@@ -261,4 +263,10 @@ export const REPORT_DURATION = {
   SIZE: 'size',
   TIME: 'time',
   DATE: 'date',
+  DURATION: 'duration',
+  LOCATION: 'location',
+};
+
+export const NUMBER = {
+  FIVE_HUNDRED: 500,
 };

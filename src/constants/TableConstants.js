@@ -362,7 +362,7 @@ export const SITE_COLUMNS = [
   { header: 'Site Type', field: 'siteType' },
   { header: 'Description', field: 'description' },
   { header: 'Platform', field: 'platformDetails.platformType' },
-  { header: 'Location', field: 'platformDetails.hostname' },
+  { header: 'Location', field: 'platformDetails', type: 'location' },
   { header: 'Node', field: 'node.name' },
 ];
 
@@ -371,8 +371,8 @@ export const NODE_COLUMNS = [
   { header: 'Hostname', field: 'hostname' },
   { header: 'Type', field: 'nodeType' },
   { header: 'Platform Type', field: 'platformType' },
-  { header: 'Version', field: 'version' },
-  { header: 'Port', field: 'managementPort' },
+  { header: 'Ports', field: 'managementPort', type: 'port-renderer' },
+  { header: 'Status', field: 'status' },
 ];
 
 export const EVENTS_COLUMNS = [
@@ -389,7 +389,7 @@ export const ALERTS_COLUMNS = [
   { header: 'Severity', field: 'severity' },
   { header: 'Created', field: 'createdTime', type: 'date' },
   { header: 'Last Updated', field: 'updatedTime', type: 'date' },
-  { header: 'Status', field: 'status' },
+  { header: 'Status', field: 'isAcknowledge', type: 'alert-status' },
 ];
 
 export const PROTECTED_VMS_COLUMNS = [
@@ -414,8 +414,8 @@ export const REPLICATION_JOB_COLUMNS = [
 
 export const RECOVERY_JOB_COLUMNS = [
   { header: 'Virtual Machine', field: 'vmName' },
-  { header: 'Duration', field: 'startTime', type: 'date' },
-  { header: 'Recovery Type', field: 'recoveryType', type: 'size' },
-  { header: 'Job Status', field: 'status', type: 'size' },
+  { header: 'Duration', field: 'startTime', type: 'duration' },
+  { header: 'Recovery Type', field: 'recoveryType' },
+  { header: 'Job Status', field: 'status' },
   { header: 'IP Address', field: 'publicIP' },
 ];

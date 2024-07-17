@@ -3,7 +3,7 @@ import * as FileSaver from 'file-saver';
 import i18n from 'i18next';
 import JsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { PLAYBOOK_NAMES, REPORT_DURATION, STATIC_KEYS } from '../constants/InputConstants';
+import { NUMBER, PLATFORM_TYPES, REPORT_DURATION, STATIC_KEYS, PLAYBOOK_NAMES } from '../constants/InputConstants';
 import { ALPHABETS, BLUE, BORDER_STYLE, DARK_NAVY_BLUE, EXCEL_WORKSHEET_TABLE_HEADER_CELL, EXCEL_WORKSHEET_TITLE, LIGHT_GREY, LIGHT_NAVY_BLUE, REPORT_TYPES } from '../constants/ReportConstants';
 import { ALERTS_COLUMNS, EVENTS_COLUMNS, NODE_COLUMNS, PROTECTED_VMS_COLUMNS, PROTECTION_PLAN_COLUMNS, RECOVERY_JOB_COLUMNS, REPLICATION_JOB_COLUMNS, SITE_COLUMNS } from '../constants/TableConstants';
 import { APPLICATION_API_USER } from '../constants/UserConstant';
@@ -36,7 +36,11 @@ export function addTableFromData(doc, columns, title, data) {
     if (value === undefined || value === null || value === '') {
       value = '-';
     } else if (col.type) {
-      value = convertValueAccordingToType(value, col.type);
+      value = convertValueAccordingToType(value, col.type, item);
+    }
+    if (typeof value === 'string' && value.length > NUMBER.FIVE_HUNDRED) {
+      const words = value.split(' ').slice(0, 5);
+      value = `${words.join(' ')}...`;
     }
     return value;
   }));
@@ -403,7 +407,7 @@ function formatSize(size) {
   return `${(size / GB).toFixed(2)} GB`;
 }
 
-function convertValueAccordingToType(value, type) {
+function convertValueAccordingToType(value, type, data = {}) {
   switch (type) {
     case REPORT_DURATION.SIZE:
       return formatSize(value);
@@ -411,6 +415,14 @@ function convertValueAccordingToType(value, type) {
       return formatTimeValue(value);
     case REPORT_DURATION.TIME:
       return convertMinutesToDaysHourFormat(value);
+    case REPORT_DURATION.DURATION:
+      return timeDuration(data);
+    case REPORT_DURATION.LOCATION:
+      return SetLocationAccordingToPlatform(data);
+    case STATIC_KEYS.REPORT_STATUS_TYPE:
+      return SetAlertStatus(data);
+    case STATIC_KEYS.PORTS_RENDERER:
+      return getPortsOfNode(data);
     default:
       return value;
   }
@@ -439,7 +451,13 @@ function addDataToWorksheet(worksheet, columns, data, workbook, base64ImgUrl, he
       if (value === undefined || value === null || value === '') {
         value = '-';
       } else if (col.type) {
-        value = convertValueAccordingToType(value, col.type);
+        value = convertValueAccordingToType(value, col.type, item);
+      }
+      if (typeof value === 'string') {
+        const words = value.split(' ');
+        if (words.length > NUMBER.FIVE_HUNDRED) {
+          value = `${words.slice(0, 5).join(' ')}...`;
+        }
       }
       row[col.field] = value;
     });
@@ -502,4 +520,52 @@ export function setMinDateForReport({ user }) {
   const { values } = user;
   const startDate = getValue(STATIC_KEYS.REPORT_DURATION_START_DATE, values);
   return startDate === '' ? new Date() : startDate;
+}
+
+export function timeDuration(data) {
+  const { startTime, endTime } = data;
+  if (endTime === 0) {
+    return formatTimeValue(startTime);
+  }
+  if (startTime && endTime) {
+    const sDate = new Date(startTime * 1000);
+    const eDate = new Date(endTime * 1000);
+    const duration = formatTime(Math.ceil(eDate - sDate) / 1000);
+    return duration;
+  }
+  return '-';
+}
+
+export function SetLocationAccordingToPlatform(data) {
+  const { availZone, hostname, region, platformType } = data.platformDetails;
+  if (platformType === PLATFORM_TYPES.VMware) {
+    return hostname;
+  }
+  if (platformType === PLATFORM_TYPES.Azure) {
+    return region;
+  }
+  return availZone;
+}
+
+export function SetAlertStatus(data = {}) {
+  const isAcknowledged = data.isAcknowledge;
+  if (isAcknowledged) {
+    return 'Acknowledged';
+  }
+  return 'Not Acknowledged';
+}
+
+function getPortsOfNode(data) {
+  const mgmtPort = data.managementPort;
+  const replCtrlPort = data.replicationCtrlPort;
+  const replDataPort = data.replicationDataPort;
+  let replPort = 0;
+  if (replCtrlPort !== 0 && replDataPort !== 0) {
+    replPort = `${replCtrlPort}, ${replDataPort}`;
+  } else if (replCtrlPort !== 0) {
+    replPort = replCtrlPort;
+  } else if (replDataPort !== 0) {
+    replPort = replDataPort;
+  }
+  return `${mgmtPort}, ${replPort}`;
 }
