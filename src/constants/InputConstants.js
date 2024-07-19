@@ -268,5 +268,5 @@ export const REPORT_DURATION = {
 };
 
 export const NUMBER = {
-  FIVE_HUNDRED: 500,
+  TWO_HUNDRED: 200,
 };

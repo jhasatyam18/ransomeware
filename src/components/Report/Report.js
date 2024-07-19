@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Button, Card, CardBody, Col, Container, Row } from 'reactstrap';
 import { MILI_SECONDS_TIME } from '../../constants/EventConstant';
 import { REPORT_DURATION, STATIC_KEYS } from '../../constants/InputConstants';
-import { RECOVERY_JOBS, REPLICATION_VM_JOBS, TABLE_ALERTS, TABLE_EVENTS, TABLE_HEADER_DR_PLANS, TABLE_HEADER_SITES, TABLE_NODES, TABLE_REPORT_PROTECTED_VMS } from '../../constants/TableConstants';
+import { DATE_ITEM_RENDERER, RECOVERY_JOBS, REPLICATION_VM_JOBS, TABLE_ALERTS, TABLE_EVENTS, TABLE_HEADER_DR_PLANS, TABLE_HEADER_SITES, TABLE_NODES, TABLE_REPORT_PROTECTED_VMS } from '../../constants/TableConstants';
 import { valueChange } from '../../store/actions';
 import { fetchDrPlans } from '../../store/actions/DrPlanActions';
 import { exportReportToPDF, generateAuditReport, getCriteria, resetReport } from '../../store/actions/ReportActions';
@@ -125,6 +125,8 @@ class Report extends Component {
     const { user } = this.props;
     const criteria = getCriteria(user);
     const { includeSystemOverView = false, includeNodes, includeEvents, includeAlerts, includeReplicationJobs, includeRecoveryJobs, includeProtectedVMS } = criteria;
+    const jobsColumns = RECOVERY_JOBS.map((col) => ({ ...col }));
+    jobsColumns.splice(1, 0, { label: 'Start Time', field: 'startTime', itemRenderer: DATE_ITEM_RENDERER }, { label: 'End Time', field: 'endTime', itemRenderer: DATE_ITEM_RENDERER });
     return (
       <>
         {includeSystemOverView === true ? <ReportSystemOverview printView={printView} /> : null}
@@ -135,7 +137,7 @@ class Report extends Component {
         {includeEvents === true ? <ReportTables title="Events" columns={TABLE_EVENTS} dataSource="events" printView={printView} /> : null}
         {includeAlerts === true ? <ReportTables title="Alerts" columns={TABLE_ALERTS} dataSource="alerts" printView={printView} /> : null}
         {includeReplicationJobs === true ? <ReportTables title="Replication Jobs" columns={REPLICATION_VM_JOBS} dataSource="replication" printView={printView} /> : null}
-        {includeRecoveryJobs === true ? <ReportTables title="Recovery Jobs" columns={RECOVERY_JOBS} dataSource="recovery" printView={printView} /> : null}
+        {includeRecoveryJobs === true ? <ReportTables title="Recovery Jobs" columns={jobsColumns} dataSource="recovery" printView={printView} /> : null}
       </>
     );
   }

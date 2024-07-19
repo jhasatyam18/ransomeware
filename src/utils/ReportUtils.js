@@ -33,18 +33,29 @@ export function addTableFromData(doc, columns, title, data) {
   const rows = data.map((item) => columns.map((col) => {
     const keys = (col.field.split('.'));
     let value = getValueFromNestedObject(item, keys);
-    if (value === undefined || value === null || value === '') {
+    if (value === null || value === '') {
       value = '-';
     } else if (col.type) {
       value = convertValueAccordingToType(value, col.type, item);
     }
-    if (typeof value === 'string' && value.length > NUMBER.FIVE_HUNDRED) {
+    if (typeof value === 'string' && value.length > NUMBER.TWO_HUNDRED) {
       const words = value.split(' ').slice(0, 5);
       value = `${words.join(' ')}...`;
     }
     return value;
   }));
   const columnHeaders = columns.map((col) => col.header);
+  autoTable(doc, {
+    head: [
+      [
+        {
+          content: title,
+          colSpan: 1,
+          styles: { fontSize: 14, fillColor: 'white', textColor: 'black' },
+        },
+      ],
+    ],
+  });
   autoTable(doc, {
     head: [columnHeaders],
     body: rows,
@@ -172,7 +183,7 @@ export function addFooters(doc) {
   for (let i = 1; i <= pageCount; i += 1) {
     doc.setPage(i);
     doc.text(`Page No - ${String(i)}`, 20, doc.internal.pageSize.height - 10);
-    doc.text(i18n.t('report.pdf.title'), 250, doc.internal.pageSize.height - 10);
+    doc.text(i18n.t('report.pdf.title'), 330, doc.internal.pageSize.height - 10);
   }
 }
 
@@ -448,14 +459,14 @@ function addDataToWorksheet(worksheet, columns, data, workbook, base64ImgUrl, he
     columns.forEach((col) => {
       const keys = (col.field.split('.'));
       let value = getValueFromNestedObject(item, keys);
-      if (value === undefined || value === null || value === '') {
+      if (value === null || value === '') {
         value = '-';
       } else if (col.type) {
         value = convertValueAccordingToType(value, col.type, item);
       }
       if (typeof value === 'string') {
         const words = value.split(' ');
-        if (words.length > NUMBER.FIVE_HUNDRED) {
+        if (words.length > NUMBER.TWO_HUNDRED) {
           value = `${words.slice(0, 5).join(' ')}...`;
         }
       }
@@ -560,12 +571,18 @@ function getPortsOfNode(data) {
   const replCtrlPort = data.replicationCtrlPort;
   const replDataPort = data.replicationDataPort;
   let replPort = 0;
+  if (mgmtPort === 0 && replCtrlPort === 0 && replDataPort === 0) {
+    return '-';
+  }
   if (replCtrlPort !== 0 && replDataPort !== 0) {
     replPort = `${replCtrlPort}, ${replDataPort}`;
   } else if (replCtrlPort !== 0) {
     replPort = replCtrlPort;
   } else if (replDataPort !== 0) {
     replPort = replDataPort;
+  }
+  if (mgmtPort === 0) {
+    return replPort;
   }
   return `${mgmtPort}, ${replPort}`;
 }
