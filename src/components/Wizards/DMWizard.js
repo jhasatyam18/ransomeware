@@ -4,7 +4,7 @@ import { Col, Modal, Row } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
 import { STATIC_KEYS } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { DRPLAN_BOOT_ORDER_STEP, DRPLAN_PROTECT_STEP, DRPLAN_RECOVERY_CHECKPOINT_CONFIG, DRPLAN_RECOVERY_STEP, DRPLAN_SCRIPT_STEP, DRPLAN_VM_CONFIG_STEP, MIGRATION_GENERAL_STEP, PROTECTION_PLAN_SUMMARY_STEP, RECOVERY_CONFIG, RECOVERY_PROTECT_VM_STEP, RECOVERY_SUMMARY, REPLICATION_CONFIGURATION_STEP, REVERSE_CONFIG_STEP, REVERSE_SUMMARY, TEST_RECOVERY_CLEANUP_SUMMARY, TEST_RECOVERY_CONFIG_SCRIPTS, TEST_RECOVERY_CONFIG_STEP, VM_ALERTS_STEP, VM_CONFIGURATION_STEP, WIZARD_STEP } from '../../constants/WizardConstants';
+import { DRPLAN_BOOT_ORDER_STEP, DRPLAN_PROTECT_STEP, DRPLAN_RECOVERY_CHECKPOINT_CONFIG, DRPLAN_RECOVERY_STEP, DRPLAN_SCRIPT_STEP, DRPLAN_VM_CONFIG_STEP, MIGRATION_GENERAL_STEP, PROTECTION_PLAN_SUMMARY_STEP, RECOVERY_CONFIG, RECOVERY_PROTECT_VM_STEP, RECOVERY_SUMMARY, REPLICATION_CONFIGURATION_STEP, REVERSE_CONFIG_STEP, REVERSE_SUMMARY, TEST_RECOVERY_CLEANUP_SUMMARY, TEST_RECOVERY_CONFIG_SCRIPTS, TEST_RECOVERY_CONFIG_STEP, VM_ALERTS_STEP, VM_CONFIGURATION_STEP, WIZARD_STEP, REVERSE_VM_STEP, REVERSE_RECOVERY_ENTITY_STEP, REVERSE_VM_REPL_INFO_STEP } from '../../constants/WizardConstants';
 import Pages404 from '../../pages/Page-404';
 import { clearValues, valueChange } from '../../store/actions';
 import { addMessage } from '../../store/actions/MessageActions';
@@ -30,6 +30,9 @@ import VMConfigurationStep from './VMConfigurationStep';
 import VMAlerts from './VMEdit/VMAlerts';
 import VMConfigure from './VMEdit/VMConfigure';
 import WizardStep from './WizardStep';
+import ReverseVMStep from './ReverseVMStep';
+import ReverseRecoveryEntity from './ReverseRecoveryEntity';
+import ReverseVMReplInfo from './ReverseVMReplInfo';
 
 class DMWizard extends React.Component {
   ref;
@@ -188,6 +191,12 @@ class DMWizard extends React.Component {
         return <ReplicationConfigurationStep {...this.props} fields={steps[currentStep].fields} />;
       case DRPLAN_RECOVERY_CHECKPOINT_CONFIG:
         return <DRPlanRecoveryCheckpointConfig {...this.props} />;
+      case REVERSE_VM_STEP:
+        return <ReverseVMStep {...this.props} />;
+      case REVERSE_RECOVERY_ENTITY_STEP:
+        return <ReverseRecoveryEntity {...this.props} />;
+      case REVERSE_VM_REPL_INFO_STEP:
+        return <ReverseVMReplInfo {...this.props} />;
       default:
         return <Pages404 />;
     }

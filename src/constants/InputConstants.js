@@ -123,6 +123,10 @@ export const STATIC_KEYS = {
   REPORT_DURATION_START_DATE: 'report.duration.startDate',
   REPORT_DURATION_END_DATE: 'report.duration.endDate',
   REPORT_DURATION_TYPE: 'report.duration.type',
+  UI_REVERSE_RECOVERY_ENTITY: 'ui.reverse.recovery.entity',
+  REVERSE_VALIDATE_FAILED_ENTITIE: 'reverse.validate.failedEntitie',
+  FULL: 'Full',
+  DM_REVERSED: '-dm-reversed',
   REPORT_STATUS_TYPE: 'alert-status',
   PORTS_RENDERER: 'port-renderer',
 };
@@ -270,3 +274,10 @@ export const REPORT_DURATION = {
 export const NUMBER = {
   TWO_HUNDRED: 200,
 };
+
+export const REVERSE_ENTITY_TYPE = {
+  MAINTAIN_ORIGINAL: 'maintain-original',
+  CREATE_NEW_COPY: 'create-new',
+};
+
+export const RECOVERY_ENTITY_OPTIONS = [{ label: 'Maintain Original Copy', value: 'maintain-original' }, { label: 'Create New Copy', value: 'create-new' }];

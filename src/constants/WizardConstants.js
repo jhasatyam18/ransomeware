@@ -13,7 +13,7 @@ export const DRPLAN_BOOT_ORDER_STEP = 'DRPLAN_BOOT_ORDER_STEP';
 export const DRPLAN_SCRIPT_STEP = 'DRPLAN_SCRIPT_STEP';
 export const DRPLAN_VM_CONFIG_STEP = 'DRPLAN_VM_CONFIG_STEP';
 export const DRPLAN_GENERAL_SETTINGS_STEP_FIELDS = ['drplan.name', 'drplan.protectedSite', 'drplan.recoverySite'];
-export const DRPLAN_PROTECTION_CONFIG_STEP_FIELDS = ['drplan.startTime', 'drplan.replicationInterval', 'reverse.replType', 'reverse.suffix', 'drplan.removeCheckpoint', 'drplan.isEncryptionOnWire', 'drplan.isCompression', 'drplan.isDedupe', 'drplan.enableDifferentialReverse', 'drplan.enablePPlanLevelScheduling', 'drplan.reverseWarningText'];
+export const DRPLAN_PROTECTION_CONFIG_STEP_FIELDS = ['drplan.startTime', 'drplan.replicationInterval', 'drplan.removeCheckpoint', 'drplan.isEncryptionOnWire', 'drplan.isCompression', 'drplan.isDedupe', 'drplan.enableDifferentialReverse', 'drplan.enablePPlanLevelScheduling', 'drplan.reverseWarningText'];
 export const DRPLAN_SCRIPTS_CONFIG_STEP_FIELDS = ['drplan.replPreScript', 'drplan.replPostScript', 'drplan.preScript', 'drplan.postScript', 'drplan.scriptTimeout'];
 export const RECOVERY_CHECKPOINTS_FIELDS = [STORE_KEYS.RECOVERY_CHECKPOINTING_ENABLED, STORE_KEYS.RECOVERY_CHECKPOINT_DURATION_UNIT, STORE_KEYS.RECOVERY_CHECKPOINT_RETAIN_NUMEBER_UNIT, STORE_KEYS.RECOVERY_CHECKPOINT_COUNT, STORE_KEYS.RECOVERY_CHECKPOINT_RETAIN_NUMEBER, STORE_KEYS.RECOVERY_CHECKPOINT_DURATION_NUM];
 // export const DRPLAN_RECOVERY_CONFIG_AWS_STEP_FIELDS = ['drplan.recoveryEntities.instanceDetails.amiID', 'drplan.recoveryEntities.instanceDetails.instanceType', 'drplan.recoveryEntities.instanceDetails.availabilityZone', 'drplan.recoveryEntities.instanceDetails.volumeType'];
@@ -31,9 +31,13 @@ export const VM_ALERTS_STEP = 'VM_ALERTS_STEP';
 export const VM_CONFIGURATION_STEP = 'VM_CONFIGURATION_STEP';
 export const REPLICATION_CONFIGURATION_STEP = 'REPLICATION_CONFIGURATION_STEP';
 export const DRPLAN_RECOVERY_CHECKPOINT_CONFIG = 'RECOVERY_CHECKPOINT_CONFIG';
+export const REVERSE_VM_STEP = 'REVERSE_VM_STEP';
+export const REVERSE_RECOVERY_ENTITY_STEP = 'REVERSE_RECOVERY_ENTITY_STEP';
+export const REVERSE_VM_REPL_INFO_STEP = 'REVERSE_VM_REPL_INFO_STEP';
 
 export const MIGRATION_GENERAL_STEP_FIELDS = ['recovery.protectionplanID'];
 export const REVERSE_RECOVERY_CONFIGURATION_STEP = ['reverse.recoverySite'];
+export const REVERSE_RECOVERY_ENTITY_STEP_FIELDS = ['reverse.suffix'];
 
 export const STEPS = {
   VIRTUAL_MACHINE: 'VIRTUAL_MACHINE',
@@ -87,8 +91,11 @@ export const REVERSE_WIZARDS = {
   options: { title: 'Reverse Protection Plan', onFinish: startReversePlan },
   steps: [
     { label: 'Reverse Plan', title: '', component: REVERSE_CONFIG_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: REVERSE_RECOVERY_CONFIGURATION_STEP },
+    { label: 'Virtual Machines', title: '', component: REVERSE_VM_STEP, validate: (user, dispatch) => validateDRPlanProtectData({ user, dispatch }), isAsync: true, onUpdate: (user, dispatch) => checkCBTStatus({ user, dispatch }) },
+    { label: 'Recovery Entity', title: '', component: REVERSE_RECOVERY_ENTITY_STEP, validate: (user, dispatch, fields) => noValidate(user, dispatch, fields) },
     { label: 'Recovery Configuration', title: '', component: TEST_RECOVERY_CONFIG_STEP, validate: (user, dispatch) => validateVMConfiguration({ user, dispatch }) },
-    { label: 'Boot Order', title: '', component: DRPLAN_BOOT_ORDER_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
+    { label: 'Boot Order', title: '', component: DRPLAN_BOOT_ORDER_STEP, validate: (user, dispatch) => validateReversePlan({ user, dispatch }) },
+    { label: 'Replication Info', title: '', component: REVERSE_VM_REPL_INFO_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
     { label: 'Replication Configuration', title: '', component: REPLICATION_CONFIGURATION_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: DRPLAN_PROTECTION_CONFIG_STEP_FIELDS },
     { label: 'Scripts', title: '', component: DRPLAN_SCRIPT_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
     { label: 'Point In Time Configuration', component: DRPLAN_RECOVERY_CHECKPOINT_CONFIG, validate: (user, dispatch, fields) => validateRecoveryCheckpointData(user, dispatch, fields), fields: RECOVERY_CHECKPOINTS_FIELDS },

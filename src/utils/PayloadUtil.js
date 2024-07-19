@@ -1,5 +1,5 @@
 import { FIELDS } from '../constants/FieldsConstant';
-import { CHECKPOINT_TYPE, MINUTES_CONVERSION, PLATFORM_TYPES, RECOVERY_ENTITY_TYPES, STATIC_KEYS } from '../constants/InputConstants';
+import { CHECKPOINT_TYPE, MINUTES_CONVERSION, PLATFORM_TYPES, RECOVERY_ENTITY_TYPES, REVERSE_ENTITY_TYPE, STATIC_KEYS, UI_WORKFLOW } from '../constants/InputConstants';
 import { STORE_KEYS } from '../constants/StoreKeyConstants';
 import { TIME_CONSTANTS } from '../constants/UserConstant';
 import { convertMemoryToMb, getAWSNetworkIDFromName, getValue, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort } from './InputUtils';
@@ -200,10 +200,12 @@ export function getVMConfigPayload(user) {
       availZone = getValue(`${key}-vmConfig.general.availibility.zone`, values);
     }
     const encryptionKey = getValue(`${key}-vmConfig.general.encryptionKey`, values) || '';
+    const planEntityType = getValue(STATIC_KEYS.UI_REVERSE_RECOVERY_ENTITY, values);
+    const recoveryEntityType = getValue(`${key}-vmConfig.general.entityType`, values) || planEntityType;
     if (typeof id !== 'undefined' && id !== '') {
-      instanceDetails.push({ sourceMoref, id, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, encryptionKey });
+      instanceDetails.push({ sourceMoref, id, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, encryptionKey, recoveryEntityType });
     } else {
-      instanceDetails.push({ sourceMoref, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, encryptionKey });
+      instanceDetails.push({ sourceMoref, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, encryptionKey, recoveryEntityType });
     }
   });
   return instanceDetails;
@@ -341,25 +343,27 @@ export function getReversePlanPayload(user) {
   const selectedRSite = getValue('reverse.recoverySite', values);
   const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   const rSite = sites.filter((site) => getFilteredObject(site, selectedRSite, 'id'))[0];
-  const replType = getValue('reverse.replType', values);
-  const recoverySufffix = getValue('reverse.suffix', values);
-  if (replType === STATIC_KEYS.DIFFERENTIAL) {
-    drplan.isDifferential = true;
-  } else {
-    drplan.isDifferential = false;
-  }
+  let suffixFlag = false;
   drplan.isDedupe = getValue('drplan.isDedupe', values);
   drplan.isCompression = getValue('drplan.isCompression', values);
   drplan.isEncryptionOnWire = getValue('drplan.isEncryptionOnWire', values);
   drplan.enableDifferentialReverse = getValue('drplan.enableDifferentialReverse', values);
   drplan.enablePPlanLevelScheduling = getValue('drplan.enablePPlanLevelScheduling', values);
+  drplan.recoveryEntityType = getValue(STATIC_KEYS.UI_REVERSE_RECOVERY_ENTITY, values);
   drplan.protectedEntities.VirtualMachines = [];
+  drplan.recoveryEntities.suffix = '';
   Object.keys(vms).forEach((key) => {
     const vm = setVMProperties(vms[key], values, drplan.protectedSite);
     drplan.protectedEntities.VirtualMachines.push(vm);
+    const EntityTypeVM = getValue(`${key}-vmConfig.general.entityType`, values);
+    if (EntityTypeVM === REVERSE_ENTITY_TYPE.CREATE_NEW_COPY) {
+      suffixFlag = true;
+    }
   });
+  if (suffixFlag) {
+    drplan.recoveryEntities.suffix = STATIC_KEYS.DM_REVERSED;
+  }
   drplan.recoverySite = rSite;
-  drplan.recoveryEntities.suffix = recoverySufffix;
   drplan.recoveryEntities.instanceDetails = getVMConfigPayload(user);
   drplan.replicationInterval = getReplicationInterval(getValue(STATIC_KEYS.REPLICATION_INTERVAL_TYPE, values), getValue('drplan.replicationInterval', values));
   drplan.startTime = getUnixTimeFromDate(drplan.startTime);
@@ -556,6 +560,18 @@ function setVMProperties(vm, values, protectedSite) {
     const quiesce = getValue(`${vm.moref}${STATIC_KEYS.VMWARE_QUIESCE_KEY}`, values);
     vmConfig.isVMwareQuiescing = quiesce;
   }
+  const failedEntity = getValue(STATIC_KEYS.REVERSE_VALIDATE_FAILED_ENTITIE, values);
+  const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
+  let isDifferential = workflow === UI_WORKFLOW.REVERSE_PLAN;
+  if (failedEntity !== '') {
+    for (let i = 0; i < failedEntity.length; i += 1) {
+      if (failedEntity[i].failedEntity === vm.moref) {
+        isDifferential = false;
+        break;
+      }
+    }
+  }
+  vmConfig.isDifferential = isDifferential;
   return vmConfig;
 }
 

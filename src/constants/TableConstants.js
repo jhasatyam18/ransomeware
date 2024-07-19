@@ -61,6 +61,7 @@ export const DISK_REPLICATION_TYPE_ITEM_RENDERER = 'DISK_REPLICATION_TYPE_ITEM_R
 export const PLATFORM_TYPE_ITEM_RENDERER = 'PREP_NODE_ITEM_RENDERER';
 export const EVENT_DESCRIPTION_RENDERER = 'EVENT_DESCRIPTION_RENDERER';
 export const JOBS_VM_NAME_RENDERER = 'JOBS_VM_NAME_RENDERER';
+export const REVERSE_SUMMARY_ENTITY_TYPE_RENDERER = 'REVERSE_SUMMARY_ENTITY_TYPE_RENDERER';
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
@@ -420,4 +421,12 @@ export const RECOVERY_JOB_COLUMNS = [
   { header: 'Recovery Type', field: 'recoveryType' },
   { header: 'Job Status', field: 'status' },
   { header: 'IP Address', field: 'publicIP' },
+];
+
+export const TABLE_REVERSE_VM = [
+  { label: 'Workload', field: 'name' },
+  { label: 'os', field: 'guestOS', itemRenderer: OS_TYPE_ITEM_RENDERER },
+  { label: 'Storage', field: 'virtualDisks', itemRenderer: VM_SIZE_ITEM_RENDERER },
+  { label: 'Replication Type', field: 'replicationType' },
+  { label: 'description', field: 'description', width: 3 },
 ];

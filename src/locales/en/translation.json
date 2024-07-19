@@ -827,5 +827,22 @@
   "report.duration.heading": "Report Duration",
   "report.system": "System",
   "generate.report": "Generate Report",
-  "time.zone" : "Local Time Zone"
+  "time.zone" : "Local Time Zone",
+  "maintain.original": "Maintain Original",
+  "maintain.original.example.statement.one": "If VM Demo-1 is getting reversed, the same will be used for replication.",
+  "maintain.original.statement.one": "The initial source VM will be used for replication.",
+  "maintain.original.statement.two": "Latest changed data will be merged with original data.",
+  "create.new.copy": "Create New Copy",
+  "create.new.copy.statement.one": "A new copy of the initial source VM will be created.",
+  "create.new.copy.statement.two": "Initial source VM will remain in the infrastructure with all of it's data.",
+  "create.new.copy.statement.three": "Data will be replicated into the newly created VM.",
+  "create.new.copy.example.one": "If VM Demo-1 is getting reversed, a new VM with name Demo-1-dm-reversed will be created and used for replication.",
+  "entity.type.info": "Select 'Maintain Original Copy' to replicate to the original VM or select 'Create New Copy' to create a new VM and replicate data into the new VM.",
+  "reconfig.plan.azure.target": "Changing virtual network will delete existing recovery entity and create new one.",
+  "reconfig.plan.aws.target": "Making any changes to the primary network would delete the existing recovery entity and create a new one.",
+  "warning": "Warning :",
+  "maintain.original.warning.one": "This will overwrite the data.",
+  "maintain.original.warning.two": "For safety purpose, validate the health of the source VM.",
+  "maintain.original.warning.three": "Ensure that the initial source VM is powered-off.",
+  "create.new.warning.one": "Ensure that there is enough storage space available in target."
 }

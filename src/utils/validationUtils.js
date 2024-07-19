@@ -611,13 +611,14 @@ export async function validateReversePlan({ user, dispatch }) {
       dispatch(addMessage('Recovery site is not reachable. Please select a different recovery site.', MESSAGE_TYPES.ERROR));
       return false;
     }
-    if (response.failedEntities === null) {
+    if (response.failedEntities === null || response.failedEntities.length === 0) {
       return true;
     }
     if (response.failedEntities.length !== 0) {
       const { failedEntities } = response;
       const failureObj = {};
       const errorMsg = [];
+      dispatch(valueChange(STATIC_KEYS.REVERSE_VALIDATE_FAILED_ENTITIE, failedEntities));
       failedEntities.forEach((element) => {
         const { failedEntity } = element;
         const { failureMessage } = element;
@@ -636,9 +637,8 @@ export async function validateReversePlan({ user, dispatch }) {
           }
         });
       }
-      dispatch(addMessage(i18n.t('error.reverse.validation', { error: errorMsg.join('') }), MESSAGE_TYPES.ERROR));
+      return true;
     }
-    return false;
   } catch (err) {
     dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     return false;

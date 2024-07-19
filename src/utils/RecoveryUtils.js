@@ -1,7 +1,7 @@
 import { FIELD_TYPE } from '../constants/FieldsConstant';
-import { COPY_CONFIG, PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../constants/InputConstants';
+import { COPY_CONFIG, PLATFORM_TYPES, RECOVERY_ENTITY_OPTIONS, STATIC_KEYS, UI_WORKFLOW } from '../constants/InputConstants';
 import { MESSAGE_TYPES } from '../constants/MessageConstants';
-import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP } from '../constants/StackConstants';
+import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_RADIO, STACK_COMPONENT_SECURITY_GROUP } from '../constants/StackConstants';
 import { addMessage } from '../store/actions/MessageActions';
 import { getLabelWithResourceGrp, getMemoryInfo } from './AppUtils';
 import { getAzureGeneralSettings, getEncryptionKeyOptions, getInstanceTypeOptions, getNetworkOptions, getRecoveryScript, getReplicationScript, getValue, getVMwareGeneralSettings, shouldEnableAWSEncryption, getGCPNetworkValue } from './InputUtils';
@@ -46,6 +46,7 @@ function getAWSVMTestConfig(vm, workflow) {
     config.data.push(...getReplicationScript(key));
     // add key selection in case of reverse plan
     config.data[0].children[`${key}-vmConfig.general.encryptionKey`] = { label: 'Encryption KMS Key', fieldInfo: 'info.protectionplan.instance.volume.encrypt', type: FIELD_TYPE.SELECT, errorMessage: '', disabled: (u, f) => shouldEnableAWSEncryption(u, f), validate: null, options: (u) => getEncryptionKeyOptions(u) };
+    config.data[0].children[`${key}-vmConfig.general.entityType`] = { label: 'Recovery Entity Type', fieldInfo: 'entity.type.info', type: STACK_COMPONENT_RADIO, errorMessage: 'Please select entity type', validate: null, options: RECOVERY_ENTITY_OPTIONS };
   }
   config.data.push(...getRecoveryScript(key));
   return config;
@@ -74,6 +75,7 @@ function getGCPVMTestConfig(vm, workflow) {
   };
   if (workflow === UI_WORKFLOW.REVERSE_PLAN) {
     config.data.push(...getReplicationScript(key));
+    config.data[0].children[`${key}-vmConfig.general.entityType`] = { label: 'Recovery Entity Type', fieldInfo: 'entity.type.info', type: STACK_COMPONENT_RADIO, errorMessage: 'Please select entity type', validate: null, options: RECOVERY_ENTITY_OPTIONS };
   }
   config.data.push(...getRecoveryScript(key));
   return config;
@@ -88,6 +90,7 @@ function getVMwareVMTestConfig(vm, workflow) {
   };
   if (workflow === UI_WORKFLOW.REVERSE_PLAN) {
     config.data.push(...getReplicationScript(key));
+    config.data[0].children[`${key}-vmConfig.general.entityType`] = { label: 'Recovery Entity Type', fieldInfo: 'entity.type.info', type: STACK_COMPONENT_RADIO, errorMessage: 'Please select entity type', validate: null, options: RECOVERY_ENTITY_OPTIONS };
   }
   config.data.push(...getRecoveryScript(key));
   return config;
@@ -349,6 +352,7 @@ function getAzureVMTestConfig(vm, workflow) {
   };
   if (workflow === UI_WORKFLOW.REVERSE_PLAN) {
     config.data.push(...getReplicationScript(key));
+    config.data[0].children[`${key}-vmConfig.general.entityType`] = { label: 'Recovery Entity Type', fieldInfo: 'entity.type.info', type: STACK_COMPONENT_RADIO, errorMessage: 'Please select entity type', validate: null, options: RECOVERY_ENTITY_OPTIONS };
   }
   config.data.push(...getRecoveryScript(key));
   return config;
