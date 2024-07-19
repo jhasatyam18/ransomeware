@@ -216,7 +216,7 @@ function setNetworkConfig(sourceConfig, targetVM, user, dispatch) {
             const { publicIp } = setPublicIPWhileEdit(isPublicIP, publicIP, networkKey, index, values, dispatch);
             network = getNetworkIDFromName(network, values);
             subnet = getSubnetIDFromName(subnet, values, network);
-            if (publicIp === 'true' || publicIp === 'false') {
+            if (publicIp === 'true' || publicIp === 'false' || publicIP !== '') {
               publicIP = publicIp;
             } else {
               publicIP = 'false';
@@ -226,8 +226,6 @@ function setNetworkConfig(sourceConfig, targetVM, user, dispatch) {
               const label = getLabelWithResourceGrp(securityGroups);
               sgs = { label, value: securityGroups };
             }
-          } else if (recoveryPlatform === PLATFORM_TYPES.AWS) {
-            network = publicIP;
           }
           const nwCon = setNetworkConfigValues({ key, index, vpcId, subnet, availZone, isPublicIP, publicIP, network, networkTier, isFromSource, sgs, adapterType, networkMoref });
 
