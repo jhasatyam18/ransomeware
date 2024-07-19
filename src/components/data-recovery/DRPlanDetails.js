@@ -275,7 +275,7 @@ class DRPlanDetails extends Component {
       // no action to add
     }
     return (
-      <DropdownActions title={t('actions')} dispatch={dispatch} actions={actions} />
+      <DropdownActions title={t('actions')} dispatch={dispatch} actions={actions} uniqueID="drplan-details-actions" />
     );
   }
 
