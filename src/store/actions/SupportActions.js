@@ -1,13 +1,13 @@
 // actions
 import * as Types from '../../constants/actionTypes';
-import { hideApplicationLoader, showApplicationLoader } from './UserActions';
-import { addMessage } from './MessageActions';
 // constants
 import { API_DELETE_SUPPORT_BUNDLE, API_SUPPORT_BUNDLE } from '../../constants/ApiConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 // Util
-import { callAPI, API_TYPES, createPayload } from '../../utils/ApiUtils';
+import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
+import { addMessage } from './MessageActions';
 import { closeModal } from './ModalActions';
+import { hideApplicationLoader, refresh, showApplicationLoader } from './UserActions';
 
 /**
  * Fetch all the available support bundles
@@ -72,6 +72,7 @@ export function generateSupportBundle(bundle) {
         } else {
           dispatch(addMessage('Generate new support bundle started. Use support bundle list for more details.', MESSAGE_TYPES.INFO));
           dispatch(fetchSupportBundles());
+          dispatch(refresh());
         }
       },
       (err) => {

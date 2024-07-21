@@ -3,7 +3,6 @@ import { withTranslation } from 'react-i18next';
 import Select, { components } from 'react-select';
 import { Col, FormGroup, Label, Row } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
-import { PLATFORM_TYPES } from '../../constants/InputConstants';
 import { valueChange } from '../../store/actions/UserActions';
 import { getSearchSelectStyle } from '../../utils/ApiUtils';
 import { getValue } from '../../utils/InputUtils';
@@ -11,15 +10,19 @@ import { validateField } from '../../utils/validationUtils';
 import DMToolTip from './DMToolTip';
 
 class DMSearchSelect extends Component {
+  constructor() {
+    super();
+    this.state = { value: { label: '', value: '' } };
+  }
+
   componentDidMount() {
     const { fieldKey, user, field, dispatch } = this.props;
     const { defaultValue } = field;
     const { values } = user;
-    const { options } = field;
     const fieldValue = getValue(fieldKey, values);
-
-    if (!fieldValue && typeof fieldValue !== 'undefined') {
-      dispatch(valueChange(fieldKey, defaultValue));
+    if (fieldValue !== '' && typeof fieldValue === 'object') {
+      this.setState({ value: fieldValue });
+      dispatch(valueChange(fieldKey, fieldValue));
     }
 
     if (!fieldValue && defaultValue) {
@@ -29,20 +32,36 @@ class DMSearchSelect extends Component {
       } else {
         defaultVal = defaultValue;
       }
+      this.setState({ value: defaultVal });
       dispatch(valueChange(fieldKey, defaultVal));
     }
-    // for edit pplan for vmware-vmware to get the options and label
-    const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
-    if (recoveryPlatform === PLATFORM_TYPES.VMware && fieldValue) {
-      if (typeof options === 'function') {
-        const optionValues = options(user, fieldKey) || [];
-        optionValues.map((val) => {
-          if (val.value === fieldValue.value) {
-            dispatch(valueChange(fieldKey, val));
-          }
-        });
-      }
+    const { options } = field;
+    if (typeof options === 'function') {
+      const optionValues = options(user, fieldKey) || [];
+      optionValues.map((val) => {
+        if (val.value === fieldValue.value) {
+          dispatch(valueChange(fieldKey, val));
+          this.setState({ value: val });
+        }
+      });
     }
+    this.clearValueIfNotInOption(fieldValue);
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { user, fieldKey, dispatch, field } = nextProps;
+    const { values } = user;
+    const { value } = prevState;
+    const nextValue = getValue(fieldKey, values);
+    if (nextValue.value !== value.value) {
+      // if user first have selected empty value because of which field had error and parent component have selected value then error does not get clear
+      // below code is to clear error from the field if value is changed from it's parent component
+      if (typeof nextValue === 'object' && nextValue.value !== '') {
+        validateField(field, fieldKey, nextValue, dispatch, user);
+      }
+      return ({ value: nextValue });
+    }
+    return null;
   }
 
   getStyles(hasError) {
@@ -71,20 +90,25 @@ class DMSearchSelect extends Component {
   handleChange = (selectedOption) => {
     const { dispatch, fieldKey, field, user } = this.props;
     const { onChange } = field;
+    this.setState({
+      value: selectedOption,
+    });
     dispatch(valueChange(fieldKey, selectedOption));
     if (typeof onChange === 'function') {
-      dispatch(onChange({ value: selectedOption.value, dispatch, user, fieldKey, selectedOption }));
+      dispatch(onChange({ selectedOption, dispatch, user, fieldKey }));
     }
-    validateField(field, fieldKey, selectedOption.value, dispatch, user);
+    validateField(field, fieldKey, selectedOption, dispatch, user);
   };
 
-  getFieldValue() {
-    const { user, fieldKey } = this.props;
-    const { values } = user;
-    if (values) {
-      return getValue(fieldKey, values);
+  clearValueIfNotInOption(fieldValue) {
+    if (fieldValue && fieldValue !== '' && Object.keys(fieldValue).length > 0) {
+      const options = this.getOptions() || [];
+      const { value } = fieldValue;
+      const valueInOption = options.find((option) => option.value === value);
+      if (options.length > 0 && !valueInOption) {
+        this.setState({ value: '' });
+      }
     }
-    return '';
   }
 
   MenuList(props) {
@@ -143,6 +167,7 @@ class DMSearchSelect extends Component {
     const { field, fieldKey, user, hideLabel, disabled } = this.props;
     const { shouldShow } = field;
     const { errors } = user;
+    const { value } = this.state;
     const hasErrors = !!(errors && errors[fieldKey] !== undefined);
     const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
     if (!showField) return null;
@@ -163,7 +188,7 @@ class DMSearchSelect extends Component {
                   isSearchable={isSearch}
                   options={this.getOptions()}
                   onChange={this.handleChange}
-                  value={this.getFieldValue()}
+                  value={value}
                   components={{ MenuList: this.MenuList }}
                   captureMenuScroll={false}
                   onBlur={this.onBlur}
@@ -172,6 +197,7 @@ class DMSearchSelect extends Component {
                   menuPlacement="auto"
                   maxMenuHeight={200}
                   menuPosition="fixed"
+                  clearValue={this.clearValueIfNotInOption}
                 />
                 {this.renderError(hasErrors)}
               </Col>

@@ -88,7 +88,7 @@ function RecoveryCheckpoints(props) {
     }
 
     return (
-      <DropdownActions className="action_align_left" title={t('actions')} dispatch={dispatch} actions={actions} />
+      <DropdownActions className="action_align_left" title={t('actions')} dispatch={dispatch} actions={actions} uniqueID="point-in-time-checkpoint-action" />
     );
   };
 
@@ -108,8 +108,8 @@ function RecoveryCheckpoints(props) {
           </Label>
         </div>
         <div className="form-check-inline">
-          <Label className="form-check-label" for="vms-options">
-            <input type="radio" className="form-check-input" id="vms-options" name="jobsType" value={checkpointType === RECOVERY_CHECKPOINT_TYPE.PRESERVED_CHECKPOINTS} checked={checkpointType === RECOVERY_CHECKPOINT_TYPE.PRESERVED_CHECKPOINTS} onChange={() => { changeJobType(RECOVERY_CHECKPOINT_TYPE.PRESERVED_CHECKPOINTS); }} />
+          <Label className="form-check-label" for="preserve-options">
+            <input type="radio" className="form-check-input" id="preserve-options" name="jobsType" value={checkpointType === RECOVERY_CHECKPOINT_TYPE.PRESERVED_CHECKPOINTS} checked={checkpointType === RECOVERY_CHECKPOINT_TYPE.PRESERVED_CHECKPOINTS} onChange={() => { changeJobType(RECOVERY_CHECKPOINT_TYPE.PRESERVED_CHECKPOINTS); }} />
             {t('Preserved')}
           </Label>
         </div>

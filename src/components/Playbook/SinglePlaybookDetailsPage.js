@@ -15,7 +15,7 @@ import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
 import { PLAYBOOK_LIST, PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { PLAYBOOK_CHANGES_RENDERER, PLAYBOOK_DETAILS } from '../../constants/TableConstants';
 import { KEY_CONSTANTS } from '../../constants/UserConstant';
-import { clearValues, hideApplicationLoader, showApplicationLoader, valueChange } from '../../store/actions';
+import { hideApplicationLoader, showApplicationLoader, valueChange } from '../../store/actions';
 import { playbookExport } from '../../store/actions/DrPlanActions';
 import { deletePlaybook, downloadPlaybooks, onCreatePlanFromPlaybook, playbookFetchPlanDiff, setSinglePlaybook, uploadFiles, validatePlaybook } from '../../store/actions/DrPlaybooksActions';
 import { addMessage } from '../../store/actions/MessageActions';
@@ -140,8 +140,7 @@ function SinglePlaybookDetailsPage(props) {
   };
 
   const onClose = () => {
-    dispatch(closeModal());
-    dispatch(clearValues());
+    dispatch(closeModal(true));
   };
 
   const onCreatePplanClick = () => {
@@ -201,7 +200,7 @@ function SinglePlaybookDetailsPage(props) {
         {t('edit.playbook.warn.msg', { name })}
       </span>
       <p className="margin-top-5">
-        <small aria-hidden className="link_color" onClick={onExport}>[click here]</small>
+        <span aria-hidden className="link_color" onClick={onExport}>[click here]</span>
         { t('title.download.configured.excel')}
       </p>
     </>
@@ -221,10 +220,9 @@ function SinglePlaybookDetailsPage(props) {
           {t('title.upload.playbook')}
         </span>
         <label htmlFor={`reuploadFile-${name}`} className="margin-left-10 link_color">
-          <FontAwesomeIcon size="md" icon={faUpload} />
+          <FontAwesomeIcon size="xl" icon={faUpload} />
         </label>
-        <Input type="file" accept="xlsx/*" id={`reuploadFile-${name}`} name={`reuploadFile-${name}`} className="modal-lic-upload" onSelect={onFileChange} onChange={onFileChange} />
-
+        <Input type="file" accept=".xlsx*" id={`reuploadFile-${name}`} name={`reuploadFile-${name}`} className="modal-lic-upload" onSelect={onFileChange} onChange={onFileChange} />
       </div>
     </>
   );

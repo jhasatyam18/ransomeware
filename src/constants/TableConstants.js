@@ -60,6 +60,8 @@ export const QUIESCE_VMNAME_RENDERER = 'QUIESCE_VMNAME_RENDERER';
 export const DISK_REPLICATION_TYPE_ITEM_RENDERER = 'DISK_REPLICATION_TYPE_ITEM_RENDERER';
 export const PLATFORM_TYPE_ITEM_RENDERER = 'PREP_NODE_ITEM_RENDERER';
 export const EVENT_DESCRIPTION_RENDERER = 'EVENT_DESCRIPTION_RENDERER';
+export const JOBS_VM_NAME_RENDERER = 'JOBS_VM_NAME_RENDERER';
+export const REVERSE_SUMMARY_ENTITY_TYPE_RENDERER = 'REVERSE_SUMMARY_ENTITY_TYPE_RENDERER';
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
@@ -124,7 +126,7 @@ export const REPLICATION_JOBS = [
 ];
 
 export const RECOVERY_JOBS = [
-  { label: 'Virtual Machine', field: 'vmName', allowFilter: true, checked: true },
+  { label: 'Virtual Machine', field: 'vmName', itemRenderer: JOBS_VM_NAME_RENDERER, allowFilter: true, checked: true },
   { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Recovery Type', field: 'recoveryType', itemRenderer: RECOVERY_TYPE_ITEM_RENDERER, allowFilter: true, checked: true },
   { label: 'Recovery Point Time', field: 'recoveryPointTime', itemRenderer: DATE_ITEM_RENDERER, width: '2.3' },
@@ -142,7 +144,7 @@ export const PROTECTION_PLAN_RECOVERY_JOBS = [
 ];
 
 export const REPLICATION_VM_JOBS = [
-  { label: 'Virtual Machine', field: 'vmName', allowFilter: true, checked: true },
+  { label: 'Virtual Machine', field: 'vmName', itemRenderer: JOBS_VM_NAME_RENDERER, allowFilter: true, checked: true },
   { label: 'Iteration', field: 'iterationNumber' },
   { label: 'Changed', field: 'changedSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Transferred', field: 'transferredSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
@@ -155,9 +157,10 @@ export const REPLICATION_VM_JOBS = [
 // Table fields for recovery virtual machines
 export const TABLE_RECOVERY_VMS = [
   { label: 'name', field: 'name' },
-  { label: 'Username', field: 'virtualDisks', itemRenderer: VM_USERNAME_ITEM_RENDERER },
-  { label: 'Password', field: 'guestOS', itemRenderer: VM_UPASSWORD_ITEM_RENDERER },
-  { label: 'status', field: 'recoveryStatus' },
+  { label: 'Username', field: 'virtualDisks', itemRenderer: VM_USERNAME_ITEM_RENDERER, info: 'info.recovery.username' },
+  { label: 'Password', field: 'guestOS', itemRenderer: VM_UPASSWORD_ITEM_RENDERER, info: 'info.recovery.password' },
+  { label: 'Point In Time', field: 'currentSnapshotTime', itemRenderer: RECOVERY_CHECKPOINT_OPTION_RENDERER, width: 3 },
+  { label: 'status', field: 'recoveryStatus', width: 1.1 },
 ];
 
 // Table fields for protection plan vise replication
@@ -318,7 +321,6 @@ export const REPLICATION_PRIOPITY = [
 export const CHECKPOINTS_JOBS = [
   { label: 'Workload Name', field: 'workloadName', allowFilter: true, checked: true },
   { label: 'Job Type', field: 'jobType', allowFilter: true, checked: true },
-  { label: 'Size', field: 'checkpointSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Duration', field: 'startTime', itemRenderer: TIME_DURATION_RENDERER },
   { label: 'Sync Time', field: 'syncTime', itemRenderer: DATE_ITEM_RENDERER },
   { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER, allowFilter: true, checked: true },
@@ -336,7 +338,6 @@ export const RECOVERY_CHECKPOINTS = [
 
 export const VM_RECOVERY_CHECKPOINTS = [
   { label: 'Name', field: 'workloadName', allowFilter: true, checked: true, width: 2 },
-  { label: 'Size', field: 'size', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Created At', field: 'creationTime', itemRenderer: DATE_ITEM_RENDERER },
   { label: 'Expires On', field: 'expirationTime', itemRenderer: DATE_ITEM_RENDERER },
   { label: 'Checkpoint Status', field: 'checkpointStatus', allowFilter: true, checked: true, itemRenderer: CHECKPOINT_RECOVERY_JOB_ITEM_RENDERER },
@@ -346,4 +347,86 @@ export const VM_RECOVERY_CHECKPOINTS = [
 export const VMWARE_QUIESCE_SNAPSHOT = [
   { label: 'Virtual Machine', field: 'name', itemRenderer: QUIESCE_VMNAME_RENDERER },
   { label: 'Enable', itemRenderer: QUIESCE_SOURCE_SNAPSHOT_RENDERER },
+];
+
+export const PROTECTION_PLAN_COLUMNS = [
+  { header: 'Name', field: 'name' },
+  { header: 'Protection Site', field: 'protectedSite.name' },
+  { header: 'Recovery Site', field: 'recoverySite.name' },
+  { header: 'Replication Interval', field: 'replicationInterval', type: 'time' },
+  { header: 'Status', field: 'status' },
+  { header: 'Recovery Status', field: 'recoveryStatus' },
+];
+
+export const SITE_COLUMNS = [
+  { header: 'Name', field: 'name' },
+  { header: 'Site Type', field: 'siteType' },
+  { header: 'Description', field: 'description' },
+  { header: 'Platform', field: 'platformDetails.platformType' },
+  { header: 'Location', field: 'platformDetails', type: 'location' },
+  { header: 'Node', field: 'node.name' },
+];
+
+export const NODE_COLUMNS = [
+  { header: 'Name', field: 'name' },
+  { header: 'Hostname', field: 'hostname' },
+  { header: 'Type', field: 'nodeType' },
+  { header: 'Platform Type', field: 'platformType' },
+  { header: 'Ports', field: 'managementPort', type: 'port-renderer' },
+  { header: 'Status', field: 'status' },
+];
+
+export const EVENTS_COLUMNS = [
+  { header: 'Date', field: 'timeStamp', type: 'date' },
+  { header: 'Topic', field: 'topic' },
+  { header: 'Lavel', field: 'severity' },
+  { header: 'Event Type', field: 'type' },
+  { header: 'Description', field: 'description' },
+  { header: 'User', field: 'generator' },
+];
+
+export const ALERTS_COLUMNS = [
+  { header: 'Title', field: 'title' },
+  { header: 'Severity', field: 'severity' },
+  { header: 'Created', field: 'createdTime', type: 'date' },
+  { header: 'Last Updated', field: 'updatedTime', type: 'date' },
+  { header: 'Status', field: 'isAcknowledge', type: 'alert-status' },
+];
+
+export const PROTECTED_VMS_COLUMNS = [
+  { header: 'Names', field: 'name' },
+  { header: 'Plan', field: 'planName' },
+  { header: 'Iteration', field: 'totalIteration' },
+  { header: 'Changed', field: 'totalChangedSize', type: 'size' },
+  { header: 'Transferred', field: 'totalTransferredSize', type: 'size' },
+  { header: 'Reduction(%)', field: 'dataReductionRatio' },
+  { header: 'Recovery Status', field: 'recoveryStatus' },
+];
+
+export const REPLICATION_JOB_COLUMNS = [
+  { header: 'Virtual Machine', field: 'vmName' },
+  { header: 'Iteration', field: 'iterationNumber' },
+  { header: 'Changed', field: 'changedSize', type: 'size' },
+  { header: 'Transferred', field: 'transferredSize', type: 'size' },
+  { header: 'Job Status', field: 'status' },
+  { header: 'Sync Status', field: 'syncStatus' },
+  { header: 'Sync Time', field: 'currentSnapshotTime', type: 'date' },
+];
+
+export const RECOVERY_JOB_COLUMNS = [
+  { header: 'Virtual Machine', field: 'vmName' },
+  { header: 'Start Time', field: 'startTime', type: 'date' },
+  { header: 'End Time', field: 'endTime', type: 'date' },
+  { header: 'Duration', field: 'duration', type: 'duration' },
+  { header: 'Recovery Type', field: 'recoveryType' },
+  { header: 'Job Status', field: 'status' },
+  { header: 'IP Address', field: 'publicIP' },
+];
+
+export const TABLE_REVERSE_VM = [
+  { label: 'Workload', field: 'name' },
+  { label: 'os', field: 'guestOS', itemRenderer: OS_TYPE_ITEM_RENDERER },
+  { label: 'Storage', field: 'virtualDisks', itemRenderer: VM_SIZE_ITEM_RENDERER },
+  { label: 'Replication Type', field: 'replicationType' },
+  { label: 'description', field: 'description', width: 3 },
 ];

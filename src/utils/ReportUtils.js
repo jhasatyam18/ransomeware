@@ -1,13 +1,15 @@
-import JsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-import i18n from 'i18next';
 import * as ExcelJS from 'exceljs';
 import * as FileSaver from 'file-saver';
-import { BLUE, LIGHT_NAVY_BLUE, LIGHT_GREY, REPORT_TYPES, DARK_NAVY_BLUE, EXCEL_WORKSHEET_TABLE_HEADER_CELL, EXCEL_WORKSHEET_TITLE, ALPHABETS, BORDER_STYLE } from '../constants/ReportConstants';
-import { calculateChangedData, formatTime, getAppDateFormat, getStorageWithUnit } from './AppUtils';
-import { getCookie } from './CookieUtils';
+import i18n from 'i18next';
+import JsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { NUMBER, PLATFORM_TYPES, REPORT_DURATION, STATIC_KEYS, PLAYBOOK_NAMES } from '../constants/InputConstants';
+import { ALPHABETS, BLUE, BORDER_STYLE, DARK_NAVY_BLUE, EXCEL_WORKSHEET_TABLE_HEADER_CELL, EXCEL_WORKSHEET_TITLE, LIGHT_GREY, LIGHT_NAVY_BLUE, REPORT_TYPES } from '../constants/ReportConstants';
+import { ALERTS_COLUMNS, EVENTS_COLUMNS, NODE_COLUMNS, PROTECTED_VMS_COLUMNS, PROTECTION_PLAN_COLUMNS, RECOVERY_JOB_COLUMNS, REPLICATION_JOB_COLUMNS, SITE_COLUMNS } from '../constants/TableConstants';
 import { APPLICATION_API_USER } from '../constants/UserConstant';
-import { PLAYBOOK_NAMES } from '../constants/InputConstants';
+import { calculateChangedData, convertMinutesToDaysHourFormat, formatTime, getAppDateFormat, getStorageWithUnit } from './AppUtils';
+import { getCookie } from './CookieUtils';
+import { getValue } from './InputUtils';
 
 /**
  * Create empty pdf document object
@@ -21,26 +23,52 @@ export function createPDFDoc() {
  * Add table to pdf document by id
  * @param {*} id
  */
-export function addTableFromHtml(doc, id, title) {
-  const elem = document.getElementById(id);
-  if (elem) {
-    doc.addPage();
-    doc.text(title, 20, 30);
-    const res = doc.autoTableHtmlToJson(elem);
-    autoTable(doc, {
-      head: [res.columns],
-      body: res.data,
-      theme: 'grid',
-      options: {
-        startY: doc.lastAutoTable.finalY + 45,
-        rowPageBreak: 'auto',
-        margin: { top: 160, left: 5 },
-        bodyStyles: { valign: 'top' },
-        styles: { overflow: 'linebreak', cellWidth: 'wrap' },
-        columnStyles: { text: { cellWidth: 'auto' } },
-      },
-    });
+
+export function addTableFromData(doc, columns, title, data) {
+  if (data.length <= 0) {
+    return;
   }
+  doc.addPage();
+  doc.text(title, 20, 30);
+  const rows = data.map((item) => columns.map((col) => {
+    const keys = (col.field.split('.'));
+    let value = getValueFromNestedObject(item, keys);
+    if (value === null || value === '') {
+      value = '-';
+    } else if (col.type) {
+      value = convertValueAccordingToType(value, col.type, item);
+    }
+    if (typeof value === 'string' && value.length > NUMBER.TWO_HUNDRED) {
+      const words = value.split(' ').slice(0, 5);
+      value = `${words.join(' ')}...`;
+    }
+    return value;
+  }));
+  const columnHeaders = columns.map((col) => col.header);
+  autoTable(doc, {
+    head: [
+      [
+        {
+          content: title,
+          colSpan: 1,
+          styles: { fontSize: 14, fillColor: 'white', textColor: 'black' },
+        },
+      ],
+    ],
+  });
+  autoTable(doc, {
+    head: [columnHeaders],
+    body: rows,
+    theme: 'grid',
+    options: {
+      startY: doc.lastAutoTable.finalY + 45,
+      rowPageBreak: 'auto',
+      margin: { top: 160, left: 5 },
+      bodyStyles: { valign: 'top' },
+      styles: { overflow: 'linebreak', cellWidth: 'wrap' },
+      columnStyles: { text: { cellWidth: 'auto' } },
+    },
+  });
 }
 
 export function addHeading(doc, title) {
@@ -155,28 +183,37 @@ export function addFooters(doc) {
   for (let i = 1; i <= pageCount; i += 1) {
     doc.setPage(i);
     doc.text(`Page No - ${String(i)}`, 20, doc.internal.pageSize.height - 10);
-    doc.text(i18n.t('report.pdf.title'), 250, doc.internal.pageSize.height - 10);
+    doc.text(i18n.t('report.pdf.title'), 330, doc.internal.pageSize.height - 10);
   }
 }
 
-export async function exportTableToExcel(dashboard) {
-  const arrayOfIDS = ['rpt-nodes', 'rpt-sites', 'rpt-protection_plans', 'rpt-protected_machines', 'rpt-replication_jobs', 'rpt-recovery_jobs', 'rpt-events', 'rpt-alerts'];
-  const nameOfWorksheet = ['Node', 'Sites', 'Protection Plans', 'Protected Machine', 'Replication Jobs', 'Recovery Jobs', 'Events', 'Alerts'];
+const columnsMapping = {
+  protectedVMS: PROTECTED_VMS_COLUMNS,
+  replication: REPLICATION_JOB_COLUMNS,
+  sites: SITE_COLUMNS,
+  plans: PROTECTION_PLAN_COLUMNS,
+  nodes: NODE_COLUMNS,
+  alerts: ALERTS_COLUMNS,
+  events: EVENTS_COLUMNS,
+  recovery: RECOVERY_JOB_COLUMNS,
+};
+
+export async function exportTableToExcel(dashboard, data) {
+  const nameOfWorksheet = ['nodes', 'sites', 'plans', 'protectedVMS', 'replication', 'recovery', 'events', 'alerts'];
   const workbook = new ExcelJS.Workbook();
   workbook.views = [{ x: 0, y: 0, width: 5000, firstSheet: 0, activeTab: 0, visibility: 'visible' }];
   const base64ImgUrl = await getBase64FromUrl(REPORT_TYPES.HEADER_IMG_URL);
   worksheetSummary(workbook, dashboard, base64ImgUrl);
-  for (let a = 0; a < arrayOfIDS.length; a += 1) {
-    const oTable = document.getElementById(arrayOfIDS[a]);
-    // gets rows of table
-    if (oTable) {
-      const rowLength = oTable.rows.length;
-      const worksheet = workbook.addWorksheet(nameOfWorksheet[a], { pageSetup: { paperSize: 5, orientation: 'landscape' } });
-      addRowColToWS(workbook, worksheet, rowLength, oTable, nameOfWorksheet[a], base64ImgUrl);
+  for (let a = 0; a < nameOfWorksheet.length; a += 1) {
+    const worksheetName = nameOfWorksheet[a];
+    if (data[worksheetName] && data[worksheetName].length > 0) {
+      const worksheet = workbook.addWorksheet(worksheetName, { pageSetup: { paperSize: 5, orientation: 'landscape' } });
+      worksheet.columns = columnsMapping[worksheetName].map((col) => ({ header: col.header, key: col.field }));
+      addDataToWorksheet(worksheet, columnsMapping[worksheetName], data[worksheetName], workbook, base64ImgUrl, worksheetName);
     }
   }
-  workbook.xlsx.writeBuffer().then((data) => {
-    const blob = new Blob([data], { type: REPORT_TYPES.EXCEL_BLOBTYPE });
+  workbook.xlsx.writeBuffer().then((d) => {
+    const blob = new Blob([d], { type: REPORT_TYPES.EXCEL_BLOBTYPE });
     const someDate = new Date();
     const dateFormated = getAppDateFormat(someDate, false);
 
@@ -189,50 +226,6 @@ function worksheetSummary(wb, dashboard, base64ImgUrl) {
   const worksheet = workbook.addWorksheet('Summary', { pageSetup: { paperSize: 5, orientation: 'landscape' } });
   addingHeaderItemToWorksheet(16, workbook, worksheet, base64ImgUrl, 'System Overview');
   summaryInfo(worksheet, dashboard);
-}
-
-function addRowColToWS(wb, ws, rowLength, Table, title, base64ImgUrl) {
-  const worksheet = ws;
-  const workbook = wb;
-  addingHeaderItemToWorksheet(Table, workbook, worksheet, base64ImgUrl, title);
-  if (rowLength > 0) {
-    // loops through rows
-    for (let i = 0; i < rowLength; i += 1) {
-      // gets cells of current row
-      const oCells = Table.rows.item(i).cells;
-      // to get the length of column of current row
-      const cellLength = oCells.length;
-      const columns = [];
-      // loops through each column in current row
-      const row = {};
-      const val = [];
-      for (let j = 0; j < cellLength; j += 1) {
-        // get your cell info here
-        const cellVal = oCells.item(j).innerText;
-        if (i > 0) {
-          const f = Table.rows.item(0).cells;
-          const b = f.item(j).innerText;
-          if (b) {
-            // to add value to the column key
-            row[b] = cellVal;
-          }
-        } else {
-          columns.push({ header: cellVal, key: cellVal, style: { font: { name: 'Century Gothic' }, alignment: { vertical: 'middle', horizontal: 'center' } } });
-          val.push(cellVal);
-        }
-      }
-      if (i > 0) {
-        // adds rows to the worksheet
-        worksheet.addRow(row);
-      } else {
-        // adds column header of the worksheet
-        worksheet.columns = columns;
-        // to set the first row of the worksheet
-        worksheet.getRow(5).values = val;
-      }
-      AdjustColumnWidth(worksheet);
-    }
-  }
 }
 
 function AdjustColumnWidth(ws) {
@@ -268,6 +261,7 @@ function addingStyleToWorksheet(ws) {
     worksheet.getCell(key).font = { color: { argb: LIGHT_GREY } };
   });
 }
+
 /**
  *
  * @param {*} oTable
@@ -362,7 +356,7 @@ function getExcelData(dashboard) {
     { mergeCell: 'F19:H19', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: `${parseInt(dataReduction, 10)}%` },
     { mergeCell: 'J17:L18', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'RPO', fontSize: 8 },
     { mergeCell: 'J19:L19', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: formatTime(rpo) },
-    { mergeCell: 'N17:P18', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'RPO', fontSize: 8 },
+    { mergeCell: 'N17:P18', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'RTO', fontSize: 8 },
     { mergeCell: 'N19:P19', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: formatTime(rto) },
   ];
   return excel;
@@ -401,4 +395,194 @@ export async function exportIssues(data) {
 
     FileSaver.saveAs(blob, `${PLAYBOOK_NAMES.ISSUES}-${dateFormated}.xlsx`);
   });
+}
+
+function formatTimeValue(value) {
+  // Convert milliseconds to readable time
+  const milliseconds = value * 1000;
+  const date = new Date(milliseconds);
+  return date.toLocaleString();
+}
+
+function formatSize(size) {
+  const KB = 1024;
+  const MB = KB * 1024;
+  const GB = MB * 1024;
+
+  if (size < MB) {
+    return `${(size / KB).toFixed(2)} KB`;
+  }
+  if (size >= MB && size < GB) {
+    return `${(size / MB).toFixed(2)} MB`;
+  }
+  return `${(size / GB).toFixed(2)} GB`;
+}
+
+function convertValueAccordingToType(value, type, data = {}) {
+  switch (type) {
+    case REPORT_DURATION.SIZE:
+      return formatSize(value);
+    case REPORT_DURATION.DATE:
+      return formatTimeValue(value);
+    case REPORT_DURATION.TIME:
+      return convertMinutesToDaysHourFormat(value);
+    case REPORT_DURATION.DURATION:
+      return timeDuration(data);
+    case REPORT_DURATION.LOCATION:
+      return SetLocationAccordingToPlatform(data);
+    case STATIC_KEYS.REPORT_STATUS_TYPE:
+      return SetAlertStatus(data);
+    case STATIC_KEYS.PORTS_RENDERER:
+      return getPortsOfNode(data);
+    default:
+      return value;
+  }
+}
+
+function addDataToWorksheet(worksheet, columns, data, workbook, base64ImgUrl, header) {
+  addingHeaderItemToWorksheet(columns.length - 1, workbook, worksheet, base64ImgUrl, header.toUpperCase());
+  const headerRow = columns.map((col) => col.header);
+  const heading = worksheet.addRow(headerRow);
+  heading.eachCell((cell) => {
+    const headerCell = cell;
+    headerCell.font = {
+      color: { rgb: '000' },
+      bold: true,
+    };
+    headerCell.alignment = {
+      vertical: 'middle',
+      horizontal: 'center',
+    };
+  });
+  data.forEach((item) => {
+    const row = {};
+    columns.forEach((col) => {
+      const keys = (col.field.split('.'));
+      let value = getValueFromNestedObject(item, keys);
+      if (value === null || value === '') {
+        value = '-';
+      } else if (col.type) {
+        value = convertValueAccordingToType(value, col.type, item);
+      }
+      if (typeof value === 'string') {
+        const words = value.split(' ');
+        if (words.length > NUMBER.TWO_HUNDRED) {
+          value = `${words.slice(0, 5).join(' ')}...`;
+        }
+      }
+      row[col.field] = value;
+    });
+    const dataRow = worksheet.addRow(row);
+    dataRow.eachCell((cell) => {
+      const dataCell = cell;
+      dataCell.alignment = {
+        vertical: 'middle',
+        horizontal: 'center',
+      };
+    });
+  });
+  AdjustColumnWidth(worksheet);
+}
+
+function getValueFromNestedObject(item, keys) {
+  return keys.reduce((acc, key) => acc && acc[key], item);
+}
+
+export function getReportDurationOptions() {
+  return [
+    { label: 'Custom', value: REPORT_DURATION.CUSTOM },
+    { label: 'Current Week', value: REPORT_DURATION.WEEK },
+    { label: 'Current Month', value: REPORT_DURATION.MONTH },
+    { label: 'Current Year', value: REPORT_DURATION.YEAR },
+  ];
+}
+
+export const showReportDurationDate = (user) => {
+  const { values } = user;
+  const durationType = getValue(STATIC_KEYS.REPORT_DURATION_TYPE, values);
+  if (durationType === REPORT_DURATION.CUSTOM) {
+    return true;
+  }
+  return false;
+};
+
+export function getStartDate(type) {
+  const today = new Date();
+  switch (type) {
+    case REPORT_DURATION.WEEK:
+      const day = today.getDay();
+      const diff = today.getDate() - day + (day === 0 ? -6 : 1);
+      today.setDate(diff);
+      break;
+    case REPORT_DURATION.MONTH:
+      today.setDate(1);
+      break;
+    case REPORT_DURATION.YEAR:
+      today.setMonth(0, 1);
+      break;
+    default:
+      break;
+  }
+  today.setHours(0, 0, 0, 0);
+  return today.getTime();
+}
+
+export function setMinDateForReport({ user }) {
+  const { values } = user;
+  const startDate = getValue(STATIC_KEYS.REPORT_DURATION_START_DATE, values);
+  return startDate === '' ? new Date() : startDate;
+}
+
+export function timeDuration(data) {
+  const { startTime, endTime } = data;
+  if (endTime === 0) {
+    return formatTimeValue(startTime);
+  }
+  if (startTime && endTime) {
+    const sDate = new Date(startTime * 1000);
+    const eDate = new Date(endTime * 1000);
+    const duration = formatTime(Math.ceil(eDate - sDate) / 1000);
+    return duration;
+  }
+  return '-';
+}
+
+export function SetLocationAccordingToPlatform(data) {
+  const { availZone, hostname, region, platformType } = data.platformDetails;
+  if (platformType === PLATFORM_TYPES.VMware) {
+    return hostname;
+  }
+  if (platformType === PLATFORM_TYPES.Azure) {
+    return region;
+  }
+  return availZone;
+}
+
+export function SetAlertStatus(data = {}) {
+  const isAcknowledged = data.isAcknowledge;
+  if (isAcknowledged) {
+    return 'Acknowledged';
+  }
+  return 'Not Acknowledged';
+}
+
+function getPortsOfNode(data) {
+  const mgmtPort = data.managementPort;
+  const replCtrlPort = data.replicationCtrlPort;
+  const replDataPort = data.replicationDataPort;
+  let replPort = 0;
+  if (mgmtPort === 0 && replCtrlPort === 0 && replDataPort === 0) {
+    return '-';
+  }
+  if (replCtrlPort !== 0 && replDataPort !== 0) {
+    replPort = `${replCtrlPort}, ${replDataPort}`;
+  } else if (replCtrlPort !== 0) {
+    replPort = replCtrlPort;
+  } else if (replDataPort !== 0) {
+    replPort = replDataPort;
+  }
+  if (mgmtPort === 0) {
+    return replPort;
+  }
+  return `${mgmtPort}, ${replPort}`;
 }

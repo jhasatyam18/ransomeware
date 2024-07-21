@@ -11,3 +11,4 @@ export const USERNAME_REGEX = /^[a-zA-Z0-9\-_]{5,20}$/;
 // the group ([0-9A-F]{2}[:-]) is repeated 5 times which gives us ex: 00:50:56:09:f2.
 // Then again same character set [0-9A-F] that is repeated 2 times ex : 00:50:56:09:f2:36
 export const MAC_ADDRESS = /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/;
+export const POSITIVE_NUMBERS_REGEX = '^[0-9]+$';

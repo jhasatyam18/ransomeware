@@ -120,6 +120,15 @@ export const STATIC_KEYS = {
   VMWARE_QUIESCE_KEY: '-vmConfig.general.IsVMwareQuiescing',
   DMTREE_SEARCH_FOLDER_KEY: 'DMTREE_SEARCH_FOLDER_KER',
   PLAYBOOK_CONFIG_VALIDATING: 'configValidating',
+  REPORT_DURATION_START_DATE: 'report.duration.startDate',
+  REPORT_DURATION_END_DATE: 'report.duration.endDate',
+  REPORT_DURATION_TYPE: 'report.duration.type',
+  UI_REVERSE_RECOVERY_ENTITY: 'ui.reverse.recovery.entity',
+  REVERSE_VALIDATE_FAILED_ENTITIE: 'reverse.validate.failedEntitie',
+  FULL: 'Full',
+  DM_REVERSED: '-dm-reversed',
+  REPORT_STATUS_TYPE: 'alert-status',
+  PORTS_RENDERER: 'port-renderer',
 };
 
 // Recovery time in minutes
@@ -248,4 +257,27 @@ export const VMWARE_OS_DISK_DEVICE_KEYS = [2000, 3000, 32000];
 export const CONSTANT_NUMBERS = {
   TWENTY_FIVE: 25,
   ZERO: 0,
+  ONE: '1',
 };
+export const REPORT_DURATION = {
+  CUSTOM: 'custom',
+  WEEK: 'week',
+  MONTH: 'month',
+  YEAR: 'year',
+  SIZE: 'size',
+  TIME: 'time',
+  DATE: 'date',
+  DURATION: 'duration',
+  LOCATION: 'location',
+};
+
+export const NUMBER = {
+  TWO_HUNDRED: 200,
+};
+
+export const REVERSE_ENTITY_TYPE = {
+  MAINTAIN_ORIGINAL: 'maintain-original',
+  CREATE_NEW_COPY: 'create-new',
+};
+
+export const RECOVERY_ENTITY_OPTIONS = [{ label: 'Maintain Original Copy', value: 'maintain-original' }, { label: 'Create New Copy', value: 'create-new' }];

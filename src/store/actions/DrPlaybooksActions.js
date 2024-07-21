@@ -2,7 +2,7 @@ import * as Types from '../../constants/actionTypes';
 import { API_BULK_GENERATE, API_GET_BULK_PLANS, API_GET_CONFIG_TEMPLATE_BY_ID, API_GET_PLAN_DIFF, API_UPDATE_ISPLAYBOOK_DOWNLOAD_STATUS, API_UPLOAD_TEMPLATED, API_VALIDATE_TEMPLATE, CREATE_PLAN_FROM_PLAYBOOK } from '../../constants/ApiConstants';
 import { PLAYBOOK_IN_VALIDATED } from '../../constants/AppStatus';
 import { FIELDS } from '../../constants/FieldsConstant';
-import { PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
+import { PLATFORM_TYPES, PLAYBOOK_TYPE, STATIC_KEYS } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { MODAL_RECONFIGURE_PLAYBOOK, MODAL_TEMPLATE_SHOW_PPLAN_CHANGES } from '../../constants/Modalconstant';
 import { PLAYBOOK_LIST } from '../../constants/RouterConstants';
@@ -11,7 +11,7 @@ import { getValue } from '../../utils/InputUtils';
 import { checkPlanConfigurationChanges, checkVmRecoveryConfigurationChanges, validateField } from '../../utils/validationUtils';
 import { addMessage } from './MessageActions';
 import { closeModal, openModal } from './ModalActions';
-import { clearValues, hideApplicationLoader, refresh, showApplicationLoader, valueChange } from './UserActions';
+import { hideApplicationLoader, refresh, showApplicationLoader, valueChange } from './UserActions';
 
 /**
  *
@@ -295,6 +295,7 @@ export function onCreatePlanFromPlaybook(id) {
           link.click();
         }
         dispatch(closeModal());
+        dispatch(closeModal());
         dispatch(refresh());
       }
     },
@@ -353,7 +354,7 @@ export function downloadRecoveryPlaybook(id) {
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
-        dispatch(addMessage('Playbook Configured Successfully', MESSAGE_TYPES.SUCCESS));
+        dispatch(addMessage('Playbook Credentials downloaded Successfully', MESSAGE_TYPES.SUCCESS));
         const { name = 'undefined' } = json;
         if (typeof name !== 'undefined') {
           const result = `/playbooks/download/${json.name}`;
@@ -386,6 +387,8 @@ export function playbookFetchPlanDiff(id, playbook) {
           const data = d;
           data.guestOS = json.currentPlanConfiguration[0].protectedEntities.virtualMachines[ind].guestOS;
           data.firmwareType = json.currentPlanConfiguration[0].protectedEntities.virtualMachines[ind].firmwareType;
+          data.replPostScript = json.currentPlanConfiguration[0].protectedEntities.virtualMachines[ind].postScript;
+          data.replPreScript = json.currentPlanConfiguration[0].protectedEntities.virtualMachines[ind].preScript;
           prevObj[data.sourceMoref] = data;
         });
         const currObj = {};
@@ -394,12 +397,22 @@ export function playbookFetchPlanDiff(id, playbook) {
           const data = d;
           data.guestOS = json.updatedPlanConfiguration[0].protectedEntities.virtualMachines[ind].guestOS;
           data.firmwareType = json.updatedPlanConfiguration[0].protectedEntities.virtualMachines[ind].firmwareType;
+          data.replPostScript = json.updatedPlanConfiguration[0].protectedEntities.virtualMachines[ind].postScript;
+          data.replPreScript = json.updatedPlanConfiguration[0].protectedEntities.virtualMachines[ind].preScript;
           currObj[data.sourceMoref] = data;
         });
 
         dispatch(checkVmRecoveryConfigurationChanges({ prevArr: prevObj, currentArr: currObj, recoveryPlatform: json.updatedPlanConfiguration[0].recoverySite.platformDetails.platformType, condition: 'sourceMoref', key: 'ans' }));
         if (playbook) {
-          const options = { title: 'Reconfigure Plan', playbookId: playbook.id, confirmAction: onCreatePlanFromPlaybook, message: `Are you sure want to configure protection plan from ${playbook.name} playbook ?`, footerLabel: 'Reconfigure Protection Plan', color: 'success', size: 'lg', planName: json.updatedPlanConfiguration[0].name, planId: id };
+          const { planConfigurations } = playbook;
+          const disabledVMsName = {};
+          if (planConfigurations[0].planValidationResponse !== '') {
+            const validationResponse = JSON.parse(planConfigurations[0].planValidationResponse);
+            validationResponse.forEach((vm, index) => {
+              disabledVMsName[index] = { ...vm, changeTracking: false };
+            });
+          }
+          const options = { title: 'Reconfigure Plan', playbookId: playbook.id, confirmAction: onCreatePlanFromPlaybook, message: `Are you sure want to configure protection plan from ${playbook.name} playbook ?`, footerLabel: 'Reconfigure Protection Plan', color: 'success', size: 'lg', planName: json.updatedPlanConfiguration[0].name, planId: id, disabledVMs: disabledVMsName };
           dispatch(openModal(MODAL_RECONFIGURE_PLAYBOOK, options));
           return;
         }
@@ -447,8 +460,7 @@ export function configurePlaybookGenerate() {
           if (typeof name !== 'undefined') {
             downloadDateModifiedPlaybook(name);
           }
-          dispatch(closeModal());
-          dispatch(clearValues());
+          dispatch(closeModal(true));
           dispatch(refresh());
         }
       },
@@ -477,8 +489,7 @@ export function uploadFiles(file, apiUrl, msg1, msg2, method) {
         if (msg2) {
           dispatch(addMessage(msg2, MESSAGE_TYPES.SUCCESS));
         }
-        dispatch(closeModal());
-        dispatch(clearValues());
+        dispatch(closeModal(true));
         dispatch(refresh());
       }
     }, (err) => {
@@ -507,17 +518,26 @@ export function updateIsPlaybookDownloadedStatus(playbookId) {
 }
 
 export function downloadPlaybooks(data, dispatch) {
-  const { playbookStatus, name, id } = data;
-  if (typeof name !== 'undefined') {
-    if (playbookStatus === PLAYBOOK_IN_VALIDATED) {
-      dispatch(updateIsPlaybookDownloadedStatus(id));
+  const { playbookStatus, id } = data;
+  const payload = { playbookType: PLAYBOOK_TYPE.PLAN, playbookID: `${id}` };
+  const obj = createPayload(API_TYPES.POST, payload);
+  callAPI(API_BULK_GENERATE, obj).then((json) => {
+    if (json) {
+      if (json.name && typeof json.name !== 'undefined') {
+        if (playbookStatus === PLAYBOOK_IN_VALIDATED) {
+          dispatch(updateIsPlaybookDownloadedStatus(id));
+        }
+        const downloadURL = `${window.location.protocol}//${window.location.host}/playbooks/${json.name}`;
+        const link = document.createElement('a');
+        link.href = downloadURL;
+        link.click();
+        dispatch(refresh());
+      }
     }
-    const downloadURL = `${window.location.protocol}//${window.location.host}/playbooks/${name}`;
-    const link = document.createElement('a');
-    link.href = downloadURL;
-    link.click();
-    dispatch(refresh());
-  }
+  },
+  (err) => {
+    dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+  });
 }
 
 export function downloadDateModifiedPlaybook(name) {

@@ -9,7 +9,7 @@ import { closeModal } from '../../store/actions/ModalActions';
 import { configureBandwidth } from '../../store/actions/ThrottlingAction';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { getValue } from '../../utils/InputUtils';
-import { getBandwidthPayload } from '../../utils/PayloadUtil';
+import { getBandwidthPayload, getTimeZoneFromDate } from '../../utils/PayloadUtil';
 
 class ModalBandwidthConfig extends Component {
   constructor() {
@@ -104,7 +104,7 @@ class ModalBandwidthConfig extends Component {
             </div>
             <div className="form__input">
               <Row>
-                <Col sm={2}>
+                <Col sm={1}>
                   {' '}
                 </Col>
                 <Col sm={8} className="padding-left-20">
@@ -122,7 +122,7 @@ class ModalBandwidthConfig extends Component {
             </div>
             <div className="form__input">
               <Row>
-                <Col sm={2}>
+                <Col sm={1}>
                   {' '}
                 </Col>
                 <Col sm={8} className="padding-left-20">
@@ -134,6 +134,15 @@ class ModalBandwidthConfig extends Component {
               </Row>
             </div>
           </div>
+          {!timeDisabled
+            ? (
+              <Row className="mb-3">
+                <Col sm={4}>{t('time.zone')}</Col>
+                <Col sm={6} className="padding-left-30 ml-5 text-secondary">
+                  {getTimeZoneFromDate()}
+                </Col>
+              </Row>
+            ) : null}
         </div>
       </CardBody>
     );

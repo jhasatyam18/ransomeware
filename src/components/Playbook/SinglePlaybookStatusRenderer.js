@@ -4,9 +4,8 @@ import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Popover, PopoverBody } from 'reactstrap';
 import { PLAYBOOKS_STATUS, PLAYBOOK_IN_VALIDATED, TEMPLATE_STATUS } from '../../constants/AppStatus';
-import { MODAL_CONFIRMATION_WARNING, MODAL_TEMPLATE_ERROR } from '../../constants/Modalconstant';
+import { MODAL_CBT_CONFIRMATION, MODAL_CONFIRMATION_WARNING, MODAL_TEMPLATE_ERROR } from '../../constants/Modalconstant';
 import { KEY_CONSTANTS } from '../../constants/UserConstant';
-import { clearValues } from '../../store/actions';
 import { onCreatePlanFromPlaybook, playbookFetchPlanDiff, validatePlaybook } from '../../store/actions/DrPlaybooksActions';
 import { closeModal, openModal } from '../../store/actions/ModalActions';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
@@ -49,8 +48,7 @@ function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispat
     configureLabel = t('configure');
   }
   const onClose = () => {
-    dispatch(closeModal());
-    dispatch(clearValues());
+    dispatch(closeModal(true));
   };
 
   const onCreatePplanClick = () => {
@@ -73,12 +71,22 @@ function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispat
       e.preventDefault();
       return;
     }
-    const options = { title: t('confirm.playbook.plan.config'), footerComponent: createPlanFooter, confirmAction: onCreatePlanFromPlaybook, message: `Are you sure want to configure protection plan from ${playbook.name} playbook ?`, id, footerLabel: 'Create Protection Plan', color: 'success', size: 'lg' };
+    let options = { title: t('confirm.playbook.plan.config'), footerComponent: createPlanFooter, confirmAction: onCreatePlanFromPlaybook, message: `Are you sure want to configure protection plan from ${playbook.name} playbook ?`, id, footerLabel: 'Create Protection Plan', color: 'success', size: 'lg' };
     if (planConfigurations[0]?.planID > 0) {
       dispatch(playbookFetchPlanDiff(id, playbook));
       return;
     }
-    dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
+    if (typeof planConfigurations[0].planValidationResponse === 'undefined' || planConfigurations[0].planValidationResponse === '') {
+      dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
+    } else {
+      const validationResponse = JSON.parse(planConfigurations[0].planValidationResponse);
+      const disabledVMsName = {};
+      validationResponse.forEach((vm, index) => {
+        disabledVMsName[index] = { ...vm, changeTracking: false };
+      });
+      options = { title: 'Change Block Tracking (CBT) Confirmation', selectedVMs: disabledVMsName, confirmAction: onCreatePlanFromPlaybook, id, size: 'lg' };
+      dispatch(openModal(MODAL_CBT_CONFIRMATION, options));
+    }
   };
 
   const onErrorValidateClick = (e) => {
@@ -188,7 +196,7 @@ function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispat
       // for playbook listing page
       return (
         <>
-          <p onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} id={`plybook-in-validate-${playbook.id}`} className="invalidate_warn_sts margin-0 padding-left-7 text-warning">{t('title.in.validated')}</p>
+          <p onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} id={`plybook-in-validate-${playbook.id}`} className="invalidate_warn_sts margin-0 padding-left-20 text-warning">{t('title.in.validated')}</p>
           {renderPopOver(t('playbook.invalidate.error'), `plybook-in-validate-${playbook.id}`)}
         </>
       );
@@ -219,14 +227,14 @@ function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispat
           {renderConfigure()}
         </div>
       </div>
-      <div className="bulk_status_text_parent padding-left-18">
+      <div className="bulk_status_text_parent padding-left-27">
         <div className="template_status_text">
           Uploaded
         </div>
-        <div aria-hidden className="template_status_text padding-left-10 " onClick={validateOnClick}>
+        <div aria-hidden className={`template_status_text ${configureLabel === 'Reconfigured' ? 'padding-left-10' : ''}`} onClick={validateOnClick}>
           {validateLable}
         </div>
-        <div aria-hidden className="template_status_text padding-right-2" onClick={configureOnClick}>
+        <div aria-hidden className={`template_status_text padding-right ${configureLabel === 'Reconfigured' ? '' : 'pr-2'}`} onClick={configureOnClick}>
           {configureLabel}
         </div>
       </div>

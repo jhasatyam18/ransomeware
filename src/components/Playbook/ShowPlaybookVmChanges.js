@@ -147,24 +147,24 @@ function ShowPlaybookVmChanges(props) {
       <Card className="margin-5">
         <CardHeader style={{ backgroundColor: '#2a3042', border: '1px solid #464952' }}>
           <Row>
-            <Col sm={6}>
+            <Col sm={(add || deletedData) ? 6 : 11}>
               <span aria-hidden className="link_color" onClick={toggle}>
                 {id}
               </span>
             </Col>
 
             {add ? (
-              <Col sm={6} className="d-flex flex-row-reverse">
-                <Badge id={`status-${id}-added`} className="font-size-13 badge-soft-success" color="success" pill>{t('added')}</Badge>
+              <Col sm={5} className="d-flex flex-row-reverse">
+                <Badge id={`status-${id}-added`} className="font-size-13 badge-soft-success pt-2" color="success" pill>{t('added')}</Badge>
               </Col>
             ) : null}
             {deletedData ? (
               <Col sm={6} className="d-flex flex-row-reverse">
-                <Badge id={`status-${id}-added`} className="font-size-13 badge-soft-danger " color="danger" pill>{t('deleted')}</Badge>
+                <Badge id={`status-${id}-added`} className="font-size-13 badge-soft-danger pt-2" color="danger" pill>{t('deleted')}</Badge>
               </Col>
             ) : null}
             {!deletedData ? (
-              <Col sm={6} className="d-flex flex-row-reverse">
+              <Col sm={1} className="d-flex flex-row-reverse">
                 {renderIcon()}
               </Col>
             ) : null}

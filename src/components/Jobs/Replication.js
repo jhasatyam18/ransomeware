@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, Col, Container, Form, Label, Row } from 'reactstrap';
-import { API_PROTECTOIN_PLAN_REPLICATION_JOBS, API_REPLICATION_JOBS, API_REPLICATION_VM_JOBS, API_PROTECTTION_PLAN_REPLICATION_VM_JOBS, API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS } from '../../constants/ApiConstants';
+import { API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS, API_PROTECTOIN_PLAN_REPLICATION_JOBS, API_PROTECTTION_PLAN_REPLICATION_VM_JOBS, API_REPLICATION_JOBS, API_REPLICATION_VM_JOBS } from '../../constants/ApiConstants';
 import { REPLICATION_JOB_TYPE } from '../../constants/InputConstants';
+import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { REPLICATION_JOBS, REPLICATION_VM_JOBS, TABLE_FILTER_TEXT } from '../../constants/TableConstants';
-import { changeReplicationJobType, setReplicationJobs } from '../../store/actions/JobActions';
+import { changeReplicationJobType, setDiskReplicationJobs, setReplicationJobs } from '../../store/actions/JobActions';
+import { addMessage } from '../../store/actions/MessageActions';
+import { callAPI } from '../../utils/ApiUtils';
 import DMBreadCrumb from '../Common/DMBreadCrumb';
 import DMAPIPaginator from '../Table/DMAPIPaginator';
 import DMTable from '../Table/DMTable';
-import { callAPI } from '../../utils/ApiUtils';
 import ProtectionPlanReplications from './ProtectionPlanReplications';
-import { addMessage } from '../../store/actions/MessageActions';
-import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 
 class Replication extends Component {
   constructor() {
@@ -89,7 +89,7 @@ class Replication extends Component {
 
   renderDiskJobs() {
     const { jobs, protectionplanID, dispatch } = this.props;
-    const { replication } = jobs;
+    const { diskReplication } = jobs;
     const url = (protectionplanID === 0 ? API_REPLICATION_JOBS : API_PROTECTOIN_PLAN_REPLICATION_JOBS.replace('<id>', protectionplanID));
     return (
       <>
@@ -105,8 +105,9 @@ class Replication extends Component {
                 filterHelpText={TABLE_FILTER_TEXT.REPLICATION_JOBS}
                 apiUrl={url}
                 isParameterizedUrl={protectionplanID === 0 ? 'false' : 'true'}
-                storeFn={setReplicationJobs}
+                storeFn={setDiskReplicationJobs}
                 name="replicationDisks"
+                fetchInInterval
               />
             </div>
           </Col>
@@ -114,7 +115,7 @@ class Replication extends Component {
         <DMTable
           dispatch={dispatch}
           columns={REPLICATION_JOBS}
-          data={replication}
+          data={diskReplication}
         />
 
       </>
@@ -141,6 +142,7 @@ class Replication extends Component {
                 isParameterizedUrl={protectionplanID === 0 ? 'false' : 'true'}
                 storeFn={setReplicationJobs}
                 name="replicationVMs"
+                fetchInInterval
               />
             </div>
           </Col>

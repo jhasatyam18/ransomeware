@@ -2,7 +2,7 @@ import { t } from 'i18next';
 import { API_FETCH_VMWARE_LOCATION } from '../constants/ApiConstants';
 import { JOB_INIT_FAILED, JOB_INIT_SYNC_FAILED, NODE_STATUS_ONLINE } from '../constants/AppStatus';
 import { FIELDS, FIELD_TYPE } from '../constants/FieldsConstant';
-import { EMAIL, EXCLUDE_KEYS_CONSTANTS, EXCLUDE_KEYS_RECOVERY_CONFIGURATION, PLATFORM_TYPES, RECOVERY_STATUS, SCRIPT_TYPE, STATIC_KEYS, SUPPORTED_FIRMWARE, SUPPORTED_GUEST_OS, UI_WORKFLOW, VMWARE_OS_DISK_DEVICE_KEYS } from '../constants/InputConstants';
+import { EMAIL, EXCLUDE_KEYS_CONSTANTS, EXCLUDE_KEYS_RECOVERY_CONFIGURATION, PLATFORM_TYPES, RECOVERY_STATUS, REVERSE_ENTITY_TYPE, SCRIPT_TYPE, STATIC_KEYS, SUPPORTED_FIRMWARE, SUPPORTED_GUEST_OS, UI_WORKFLOW, VMWARE_OS_DISK_DEVICE_KEYS } from '../constants/InputConstants';
 import { STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMORY, STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
 import { STORE_KEYS } from '../constants/StoreKeyConstants';
 import { MAC_ADDRESS } from '../constants/ValidationConstants';
@@ -1187,10 +1187,11 @@ export function getMatchingFirmwareType(value) {
 export function showRevPrefix(user) {
   const { values } = user;
   const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
-  if (workflow !== UI_WORKFLOW.REVERSE_PLAN) {
-    return false;
+  const revEntityType = getValue(STATIC_KEYS.UI_REVERSE_RECOVERY_ENTITY, values);
+  if (workflow === UI_WORKFLOW.REVERSE_PLAN && revEntityType === REVERSE_ENTITY_TYPE.CREATE_NEW_COPY) {
+    return true;
   }
-  return true;
+  return false;
 }
 
 /**
@@ -1317,6 +1318,7 @@ export function defaultRecoveryCheckpointForVm({ user, dispatch, recoveryCheckpo
   const { values } = user;
   const uniqueCheckpointValue = getValue('ui.unique.checkpoint.field', values);
   let checkpointObj = {};
+  let checkPointHasCommonPoint = false;
   if (uniqueCheckpointValue !== '' && typeof recoveryCheckpoint !== 'undefined' && recoveryCheckpoint.length > 0) {
     for (let i = 0; i < recoveryCheckpoint.length; i += 1) {
       const checkpoint = recoveryCheckpoint[i];
@@ -1329,9 +1331,16 @@ export function defaultRecoveryCheckpointForVm({ user, dispatch, recoveryCheckpo
         const changedValue = { label: resp, value: checkpoint.id };
         dispatch(valueChange(`${checkpoint.workloadID}-recovery-checkpoint`, changedValue));
         checkpointObj = { label: resp, value: checkpoint.id };
+        checkPointHasCommonPoint = true;
         break;
       }
     }
+  }
+
+  // if a checkpoint does not have a common checkpoint and if that checkpoint has some value then clear that value
+  // on common checkpoint change
+  if (!checkPointHasCommonPoint && recoveryCheckpoint?.length > 0) {
+    dispatch(valueChange(`${recoveryCheckpoint[1].workloadID}-recovery-checkpoint`, ''));
   }
   return checkpointObj;
 }

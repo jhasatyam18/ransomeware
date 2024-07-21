@@ -5,7 +5,7 @@ import { FIELDS } from '../constants/FieldsConstant';
 import { CHECKPOINT_TYPE, PLATFORM_TYPES, RECOVERY_STATUS, STATIC_KEYS, UI_WORKFLOW } from '../constants/InputConstants';
 import { MESSAGE_TYPES } from '../constants/MessageConstants';
 import { STORE_KEYS } from '../constants/StoreKeyConstants';
-import { GENERAL_PLATFORM_KEYS, PLAN_KEYS } from '../constants/UserConstant';
+import { GENERAL_PLATFORM_KEYS, PLAN_KEYS, REC_SCRIPTS, REP_SCRIPTS } from '../constants/UserConstant';
 import { IP_REGEX } from '../constants/ValidationConstants';
 import { addErrorMessage, hideApplicationLoader, removeErrorMessage, showApplicationLoader, valueChange } from '../store/actions';
 import { setVMGuestOSInfo } from '../store/actions/DrPlanActions';
@@ -59,7 +59,7 @@ export function validateField(field, fieldKey, value, dispatch, user, emptyField
 
 export function isEmpty({ value }) {
   let val = value;
-  if (typeof value === 'object') {
+  if (typeof value === 'object' && value !== null) {
     if (value.length > 0) {
       val = value;
     } else {
@@ -611,13 +611,14 @@ export async function validateReversePlan({ user, dispatch }) {
       dispatch(addMessage('Recovery site is not reachable. Please select a different recovery site.', MESSAGE_TYPES.ERROR));
       return false;
     }
-    if (response.failedEntities === null) {
+    if (response.failedEntities === null || response.failedEntities.length === 0) {
       return true;
     }
     if (response.failedEntities.length !== 0) {
       const { failedEntities } = response;
       const failureObj = {};
       const errorMsg = [];
+      dispatch(valueChange(STATIC_KEYS.REVERSE_VALIDATE_FAILED_ENTITIE, failedEntities));
       failedEntities.forEach((element) => {
         const { failedEntity } = element;
         const { failureMessage } = element;
@@ -636,9 +637,8 @@ export async function validateReversePlan({ user, dispatch }) {
           }
         });
       }
-      dispatch(addMessage(i18n.t('error.reverse.validation', { error: errorMsg.join('') }), MESSAGE_TYPES.ERROR));
+      return true;
     }
-    return false;
   } catch (err) {
     dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     return false;
@@ -720,7 +720,7 @@ function validateVMwareNicConfig(dispatch, user, options) {
   const adapterType = getValue(`${networkKey}-adapterType`, values) || '';
   const macAddress = getValue(`${networkKey}-macAddress`, values) || '';
   const staticip = getValue(`${networkKey}-isPublic`, values) || '';
-  if (network === '' || network === '-') {
+  if (network === '' || network === '-' || network?.value === '') {
     dispatch(addMessage('Select network', MESSAGE_TYPES.ERROR));
     return false;
   }
@@ -785,7 +785,7 @@ function validateAzureNicConfig(dispatch, user, options) {
   const subnet = getValue(`${networkKey}-subnet`, values) || '';
   const pubIP = getValue(`${networkKey}-publicIP`, values) || '';
   const network = getValue(`${networkKey}-network`, values) || '';
-  if (network === '') {
+  if (network === '' || network?.value === '') {
     dispatch(addMessage('Please select the network', MESSAGE_TYPES.ERROR));
     return false;
   }
@@ -1221,7 +1221,11 @@ export function checkVmRecoveryConfigurationChanges({ prevArr, currentArr, recov
         const prev = prevArr[prevObjKey[i]];
         const curr = currentArr[prevObjKey[i]];
         let generalRes = [];
+        let recoveryScriptRes = [];
+        let replicationScriptRes = [];
         generalRes = [{ title: i18n.t('label'), value: [i18n.t('previousVal'), i18n.t('updatedVal')] }, ...checkDiff(prev, curr, recoveryPlatform, 'GENERAL')];
+        recoveryScriptRes = [{ title: i18n.t('label'), value: [i18n.t('previousVal'), i18n.t('updatedVal')] }, ...checkDiff(prev, curr, recoveryPlatform, 'REC_SCRIPTS')];
+        replicationScriptRes = [{ title: i18n.t('label'), value: [i18n.t('previousVal'), i18n.t('updatedVal')] }, ...checkDiff(prev, curr, recoveryPlatform, 'REP_SCRIPTS')];
         const netRes = checkNetworkDiff(prev.networks, curr.networks, recoveryPlatform);
         const netChanges = [...netRes.arr1];
         if (generalRes.length > 1) {
@@ -1232,6 +1236,18 @@ export function checkVmRecoveryConfigurationChanges({ prevArr, currentArr, recov
             obj.changes[`${prev[condition]}-name-${prev.instanceName}`] = [];
           }
           obj.changes[`${prev[condition]}-name-${prev.instanceName}`] = [...obj.changes[`${prev[condition]}-name-${prev.instanceName}`], ...netChanges];
+        }
+        if (replicationScriptRes.length > 1) {
+          if (generalRes.length === 1 && netChanges.length <= 0) {
+            obj.changes[`${prev[condition]}-name-${prev.instanceName}`] = [];
+          }
+          obj.changes[`${prev[condition]}-name-${prev.instanceName}`] = [...obj.changes[`${prev[condition]}-name-${prev.instanceName}`], { title: 'Replication Scripts', values: replicationScriptRes }];
+        }
+        if (recoveryScriptRes.length > 1) {
+          if (generalRes.length === 1 && netChanges.length === 0 && replicationScriptRes.length <= 1) {
+            obj.changes[`${prev[condition]}-name-${prev.instanceName}`] = [];
+          }
+          obj.changes[`${prev[condition]}-name-${prev.instanceName}`] = [...obj.changes[`${prev[condition]}-name-${prev.instanceName}`], { title: 'Recovery Scripts', values: recoveryScriptRes }];
         }
       } else {
         // if it doesn't have previous vm then add it in delete section
@@ -1244,7 +1260,11 @@ export function checkVmRecoveryConfigurationChanges({ prevArr, currentArr, recov
       if (!prevArr[currObjKey[j]]) {
         const curr = currentArr[currObjKey[j]];
         let generalRes = [];
+        let recoveryScriptRes = [];
+        let replicationScriptRes = [];
         generalRes = [{ title: 'Label', value: 'Values' }, ...checkDiff(curr, undefined, recoveryPlatform, 'GENERAL')];
+        recoveryScriptRes = [{ title: i18n.t('label'), value: 'Values' }, ...checkDiff(curr, undefined, recoveryPlatform, 'REC_SCRIPTS')];
+        replicationScriptRes = [{ title: i18n.t('label'), value: 'Values' }, ...checkDiff(curr, undefined, recoveryPlatform, 'REP_SCRIPTS')];
         const netRes = checkNetworkDiff([], curr.networks, recoveryPlatform);
         const netChanges = [...netRes.arr1];
         if (generalRes.length > 1) {
@@ -1255,6 +1275,18 @@ export function checkVmRecoveryConfigurationChanges({ prevArr, currentArr, recov
             obj.add[`${curr[condition]}-name-${curr.instanceName}`] = [];
           }
           obj.add[`${curr[condition]}-name-${curr.instanceName}`] = [...obj.add[`${curr[condition]}-name-${curr.instanceName}`], ...netChanges];
+        }
+        if (replicationScriptRes.length > 1) {
+          if (generalRes.length === 1 && netChanges.length <= 0) {
+            obj.add[`${curr[condition]}-name-${curr.instanceName}`] = [];
+          }
+          obj.add[`${curr[condition]}-name-${curr.instanceName}`] = [...obj.add[`${curr[condition]}-name-${curr.instanceName}`], { title: 'Replication Scripts', values: replicationScriptRes }];
+        }
+        if (recoveryScriptRes.length > 1) {
+          if (generalRes.length === 1 && netChanges.length <= 0 && recoveryScriptRes.length <= 1) {
+            obj.add[`${curr[condition]}-name-${curr.instanceName}`] = [];
+          }
+          obj.add[`${curr[condition]}-name-${curr.instanceName}`] = [...obj.add[`${curr[condition]}-name-${curr.instanceName}`], { title: 'Recovery Scripts', values: recoveryScriptRes }];
         }
       }
     }
@@ -1270,7 +1302,7 @@ export function checkNetworkDiff(prevNet, currNet, recoveryPlatform) {
     currNet.forEach((net, i) => {
       let resObj = [...checkDiff(net, undefined, recoveryPlatform, 'NETWORK')];
       if (resObj.length > 0) {
-        resObj = [{ title: i18n.t('label'), value: [i18n.t('previousVal'), i18n.t('updatedVal')] }, ...resObj];
+        resObj = [{ title: i18n.t('label'), value: 'Values' }, ...resObj];
         arr1 = [...arr1, { title: `Nic- ${i + 1}`, values: resObj }];
       }
     });
@@ -1330,21 +1362,30 @@ export function checkDiff(prevObj, currObj, recoveryPlatform, type) {
   } else if (recoveryPlatform === PLATFORM_TYPES.GCP) {
     keyObj = GENERAL_PLATFORM_KEYS.GCP;
   }
+  keyObj.REC_SCRIPTS = REC_SCRIPTS;
+  keyObj.REP_SCRIPTS = REP_SCRIPTS;
 
   if (type === 'GENERAL') {
     platformKeys = keyObj.GENERAL;
-  } else {
+  } else if (type === 'NETWORK') {
     platformKeys = keyObj.NETWORK;
+  } else if (type === 'REC_SCRIPTS') {
+    platformKeys = keyObj.REC_SCRIPTS;
+  } else if (type === 'REP_SCRIPTS') {
+    platformKeys = keyObj.REP_SCRIPTS;
   }
 
   for (let i = 0; i < platformKeys.length; i += 1) {
     const key = platformKeys[i];
     const prevVal = prevObj?.[key];
     if (!currObj) {
-      obj.title = i18n.t(key) || key;
-      obj.value = prevVal;
-      arr.push(obj);
-      obj = {};
+      // Need to apply one more condition because if the value is empty still it is getting pushed in array and because of that in difference modal that field is rendering.
+      if (prevVal !== '') {
+        obj.title = i18n.t(key) || key;
+        obj.value = prevVal;
+        arr.push(obj);
+        obj = {};
+      }
     } else {
       const currVal = currObj[key];
       if (typeof prevVal === 'string') {
@@ -1418,14 +1459,17 @@ export function validateCheckpointSelection(user, vms, dispatch) {
     const vm = selectedVMs[i];
     const checkpoint = getValue(`${vm}-recovery-checkpoint`, values);
     if (typeof checkpoint.value === 'undefined' || checkpoint.value === '') {
+      const field = FIELDS['ui.vm.recovery.checkpoints'];
+      const { shouldShow } = field;
+      const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
+      if (showField) {
+        validateField(field, `${vm}-recovery-checkpoint`, getValue(`${vm}-recovery-checkpoint`, values), dispatch, user);
+      }
       checkpointRequiredVM.push(vms[vm].name);
+      dispatch(addMessage(`Please select point in time checkpoint for ${checkpointRequiredVM.join(', ')}`, MESSAGE_TYPES.ERROR));
       checkpointFlag = true;
     }
   }
-  if (checkpointFlag) {
-    dispatch(addMessage(`${i18n.t('checkpoint.selection.error.msg')} ${checkpointRequiredVM.join(', ')}.`, MESSAGE_TYPES.ERROR));
-    return false;
-  }
 
-  return true;
+  return !checkpointFlag;
 }

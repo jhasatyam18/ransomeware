@@ -5,8 +5,9 @@ import { onProtectSiteChange, updateAvailabilityZones } from '../store/actions/S
 import { onLimitChange, onTimeLimitChange } from '../store/actions/ThrottlingAction';
 import { loadTreeChildData, onDiffReverseChanges, onScriptChange } from '../store/actions/UserActions';
 import { showSystemAgentWarningText } from '../utils/AppUtils';
-import { defaultRecoveryCheckpointForVm, disableSiteSelection, enableNodeTypeVM, getAvailibilityZoneOptions, getCheckpointDurationOption, getCheckRentaintionOption, getDefaultRecoverySite, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getReportProtectionPlans, getSiteNodeOptions, getSitesOptions, getSubnetOptions, getVmCheckpointOptions, getVMwareVMSelectionData, isPlatformTypeAWS, isPlatformTypeAzure, isPlatformTypeGCP, isPlatformTypeVMware, onVmRecoveryCheckpointOptionChange, revShowRemoveCheckpointOption, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort, showDifferentialReverseCheckbox, showInstallCloudPackageOption, showRecipientEmailField, showReverseReplType, showRevPrefix, userRoleOptions } from '../utils/InputUtils';
+import { commonCheckpointOptions, defaultRecoveryCheckpointForVm, disableSiteSelection, enableNodeTypeVM, getAvailibilityZoneOptions, getCheckpointDurationOption, getCheckRentaintionOption, getDefaultRecoverySite, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getReportProtectionPlans, getSiteNodeOptions, getSitesOptions, getSubnetOptions, getVmCheckpointOptions, getVMwareVMSelectionData, isPlatformTypeAWS, isPlatformTypeAzure, isPlatformTypeGCP, isPlatformTypeVMware, onCommonCheckpointChange, onVmRecoveryCheckpointOptionChange, revShowRemoveCheckpointOption, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort, showDifferentialReverseCheckbox, showInstallCloudPackageOption, showRecipientEmailField, showReverseReplType, showRevPrefix, userRoleOptions } from '../utils/InputUtils';
 import { getErrorMessage, getFieldInfo, getLabel } from '../utils/LocallUtils';
+import { getReportDurationOptions, setMinDateForReport, showReportDurationDate } from '../utils/ReportUtils';
 import { disableRecoveryCheckpointField, isEmpty, isEmptyNum, showReverseWarningText, validateCheckpointFields, validateDrSiteSelection, validatePassword, validatePlanSiteSelection, validateReplicationInterval, validateReplicationValue } from '../utils/validationUtils';
 import { NOTE_TEXT } from './DMNoteConstant';
 import { STATIC_KEYS } from './InputConstants';
@@ -218,16 +219,19 @@ export const FIELDS = {
   'report.system.includeAlerts': { label: 'report.includeAlerts', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
   'report.protectionPlan.protectionPlans': { label: 'report.protectionPlans', type: FIELD_TYPE.SELECT, shouldShow: true, options: (user) => getReportProtectionPlans(user), defaultValue: 0 },
   // 'report.protectionPlan.sites': { label: 'Sites', description: 'Include sites in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: true },
-  'report.protectionPlan.includeProtectedVMS': { label: 'report.includeProtectedVMS', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
-  'report.protectionPlan.includeReplicationJobs': { label: 'report.includeReplicationJobs', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
-  'report.protectionPlan.includeRecoveryJobs': { label: 'report.includeRecoveryJobs', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'report.protectionPlan.includeProtectedVMS': { label: 'report.includeProtectedVMS', description: 'Add sites in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'report.protectionPlan.includeReplicationJobs': { label: 'report.includeReplicationJobs', description: 'Add replication jobs in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'report.protectionPlan.includeRecoveryJobs': { label: 'report.includeRecoveryJobs', description: 'Add recovery jobs in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'report.duration.type': { label: 'report.duration', type: FIELD_TYPE.SELECT, shouldShow: true, options: (user) => getReportDurationOptions(user), defaultValue: 'month' },
+  'report.duration.startDate': { label: 'report.startDate', COMPONENT: DATE_PICKER_COMP, type: FIELD_TYPE.CUSTOM, shouldShow: (user) => showReportDurationDate(user), validate: (value, user) => isEmpty(value, user), maxDate: true },
+  'report.duration.endDate': { label: 'report.endDate', COMPONENT: DATE_PICKER_COMP, type: FIELD_TYPE.CUSTOM, shouldShow: (user) => showReportDurationDate(user), validate: (value, user) => isEmpty(value, user), maxDate: true, minDate: ({ user }) => setMinDateForReport({ user }) },
   // Reverse
   'reverse.name': { label: 'name', placeHolderText: 'Name', type: FIELD_TYPE.LABEL, shouldShow: true },
   'reverse.protectedSite': { label: 'protect.site', placeHolderText: 'Protect Site', type: FIELD_TYPE.LABEL, shouldShow: true },
   'reverse.recoverySite': { label: 'recovery.site', placeHolderText: 'Recovery Site', type: FIELD_TYPE.SELECT, options: (user, fieldKey) => getSitesOptions(user, fieldKey), errorMessage: 'Select recovery site.', shouldShow: true, validate: (user) => validateDrSiteSelection(user), defaultValue: (user) => getDefaultRecoverySite(user), errorFunction: ({ user, value, fieldKey }) => validatePlanSiteSelection({ user, value, fieldKey }) },
   'reverse.replType': { label: 'reverse.replType', type: FIELD_TYPE.SELECT, errorMessage: 'Replication type required', shouldShow: (user) => showReverseReplType(user), validate: (value, user) => isEmpty(value, user), options: [{ label: 'Full Incremental', value: STATIC_KEYS.FULL_INCREMENTAL }, { label: 'Differential', value: STATIC_KEYS.DIFFERENTIAL }], defaultValue: STATIC_KEYS.DIFFERENTIAL },
   'reverse.interval': { label: 'replication.interval', placeHolderText: 'Replication Interval', type: FIELD_TYPE.LABEL, shouldShow: true },
-  'reverse.suffix': { label: 'reverse.suffix', placeHolderText: 'Recovery Machines Suffix', type: FIELD_TYPE.TEXT, shouldShow: (user) => showRevPrefix(user), validate: (value, user) => isEmpty(value, user), errorMessage: 'Recovery machines suffix is required' },
+  'reverse.suffix': { label: 'reverse.suffix', placeHolderText: 'Recovery Machines Suffix', type: FIELD_TYPE.TEXT, shouldShow: (user) => showRevPrefix(user), validate: (value, user) => isEmpty(value, user), errorMessage: 'Recovery machines suffix is required', fieldInfo: 'Original source VM name will be renamed as VM name-<SUFFIX>' },
   // Throttling
   'throttling.isLimitEnabled': { label: 'throttling.isLimitEnabled', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: false, onChange: (user, dispatch) => onLimitChange(user, dispatch) },
   'throttling.bandwidthLimit': { label: 'throttling.bandwidthLimit', description: 'Bandwidth in Mbps', defaultValue: 0, min: 0, max: 1000, type: FIELD_TYPE.RANGE, errorMessage: 'Bandwidth is required', shouldShow: true, validate: (value, user) => isEmpty(value, user) },
@@ -277,5 +281,6 @@ export const FIELDS = {
     label: 'password', placeHolderText: 'Enter Password', type: FIELD_TYPE.PASSWORD, patterns: [PASSWORD_REGEX], errorMessage: 'Password should have atleast 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character and be at least 8 characters long and max of 32 characters.', shouldShow: true, fieldInfo: 'info.reset.password',
   },
   'ui.reset.disk.replication': { label: 'Select All', type: FIELD_TYPE.CHECKBOX, shouldShow: true, default: false },
+  'ui.common.checkpoint': { shouldShow: true, type: FIELD_TYPE.SELECT_SEARCH, options: (user) => commonCheckpointOptions(user), validate: true, errorMessage: '', onChange: ({ value, fieldKey, dispatch }) => onCommonCheckpointChange({ value, dispatch, fieldKey }), fieldInfo: 'common.checkpoint.info' },
 
 };

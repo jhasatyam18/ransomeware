@@ -26,6 +26,7 @@ class ModalNicConfig extends Component {
     this.state = { oldConfig: {} };
     this.onSave = this.onSave.bind(this);
     this.onCancel = this.onCancel.bind(this);
+    this.showWarningMessage = this.showWarningMessage.bind(this);
   }
 
   componentDidMount() {
@@ -44,6 +45,26 @@ class ModalNicConfig extends Component {
     const { dispatch } = this.props;
     this.resetInitialData();
     dispatch(closeModal());
+  }
+
+  showWarningMessage() {
+    const { user, options, t } = this.props;
+    const { index } = options;
+    const { values } = user;
+    const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+    const showPublicChk = index === 0;
+    const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
+    if (workflow !== UI_WORKFLOW.EDIT_PLAN || !showPublicChk) {
+      return null;
+    }
+    return (
+      <p>
+        <i className="fas fa-exclamation-triangle icon__warning padding-right-7" aria-hidden="true" />
+        <snap className="text-warning ">
+          {recoveryPlatform === PLATFORM_TYPES.Azure ? t('reconfig.plan.azure.target') : t('reconfig.plan.aws.target')}
+        </snap>
+      </p>
+    );
   }
 
   storeInitialData() {
@@ -170,6 +191,7 @@ class ModalNicConfig extends Component {
           <Card>
             <SimpleBar className="modal_nic_simplbar">
               <CardBody>
+                {this.showWarningMessage()}
                 <Form>
                   <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-vpcId`} field={vpc} user={user} />
                   {this.renderCopyConfigCheckbox()}
@@ -231,7 +253,7 @@ class ModalNicConfig extends Component {
     const { user, dispatch, options, t } = this.props;
     const { values } = user;
     const { networkKey } = options;
-    const networkField = { label: '', description: '', type: FIELD_TYPE.SELECT_SEARCH, shouldShow: true, defaultValue: false, options: (u, f) => getWMwareNetworkOptions(u, f), fieldInfo: 'info.vmware.network' };
+    const networkField = { label: '', description: '', type: FIELD_TYPE.SELECT_SEARCH, shouldShow: true, defaultValue: false, options: (u, f) => getWMwareNetworkOptions(u, f), fieldInfo: 'info.vmware.network', validate: (value, u) => isEmpty(value, u), errorMessage: 'Select Network' };
     const AdapterField = { label: '', description: '', type: FIELD_TYPE.SELECT, options: (u, f) => getVMwareAdpaterOption(u, f), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select Adapter Type', shouldShow: true, fieldInfo: 'info.vmware.adapter.type' };
     const MacAddressField = { label: '', description: '', type: FIELD_TYPE.TEXT, options: (u, f) => getVPCOptions(u, f), shouldShow: true, fieldInfo: 'info.vmware.mac.address' };
     const staticIP = { fieldInfo: 'info.protectionplan.network.vmware.staticip', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.SELECT, shouldShow: true, errorMessage: 'Configure static IP Address', validate: (v, u) => isEmpty(v, u) };
@@ -250,7 +272,7 @@ class ModalNicConfig extends Component {
                   <Col sm={4}>
                     {t('title.network.name')}
                   </Col>
-                  <Col sm={8}>
+                  <Col sm={8} className="zIndex-100">
                     <DMSearchSelect hideLabel user={user} dispatch={dispatch} fieldKey={`${networkKey}-network`} field={networkField} />
                   </Col>
                 </Row>
@@ -340,6 +362,7 @@ class ModalNicConfig extends Component {
         <Container>
           <Card>
             <CardBody>
+              {this.showWarningMessage()}
               <Form>
                 <DMSearchSelect dispatch={dispatch} fieldKey={`${networkKey}-network`} field={networkField} user={user} />
                 <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-subnet`} field={subnetField} user={user} />

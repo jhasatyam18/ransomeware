@@ -114,13 +114,13 @@ class ProfileMenu extends Component {
               {t('About')}
             </DropdownItem>
             <div className="dropdown-divider" />
-            <DropdownItem>
-              <a href={`${window.location.origin}/docs/index.html`} rel="noreferrer" target="_blank" className="drop-down-menu-color">
+            <a href={`${window.location.origin}/docs/index.html`} rel="noreferrer" target="_blank" className="drop-down-menu-color">
+              <DropdownItem>
                 <i className="fa fa-book font-size-16 align-middle mr-1" />
                 &nbsp;&nbsp;
                 {t('Documentation')}
-              </a>
-            </DropdownItem>
+              </DropdownItem>
+            </a>
             <div className="dropdown-divider" />
             { id === 0 ? null : this.renderChangePassword()}
             <Link to="/logout" className="dropdown-item" onClick={this.logout}>

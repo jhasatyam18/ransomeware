@@ -257,12 +257,12 @@ class DRPlanDetails extends Component {
     const isReverseActionDisabled = this.disableReverse(protectionPlan);
     let actions = [];
     if (platformType === protectedSitePlatform && localVMIP !== recoverySite.node.hostname) {
-      actions.push({ label: 'Start', action: startPlan, id: protectionPlan.id, disabled: this.disableStart(protectionPlan) });
-      actions.push({ label: 'Stop', action: stopPlan, id: protectionPlan.id, disabled: this.disableStop(protectionPlan) });
-      actions.push({ label: 'Edit', action: openEditProtectionPlanWizard, id: protectionPlan, disabled: this.disableEdit() });
-      actions.push({ label: 'Resync Disk Replication', action: onResetDiskReplicationClick, id: protectionPlan, disabled: isServerActionDisabled, navigate: PROTECTION_PLANS_PATH });
-      actions.push({ label: 'Remove', action: deletePlanConfirmation, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS || !hasRequestedPrivileges(user, ['protectionplan.delete']), navigate: PROTECTION_PLANS_PATH });
-      actions.push({ label: 'Download Plan Playbook', action: playbookExport, id: protectionPlan, disabled: this.disableEdit() });
+      actions.push({ label: 'Start', action: startPlan, id: protectionPlan.id, disabled: this.disableStart(protectionPlan), icon: 'fa fa-play' });
+      actions.push({ label: 'Stop', action: stopPlan, id: protectionPlan.id, disabled: this.disableStop(protectionPlan), icon: 'fa fa-stop' });
+      actions.push({ label: 'Edit', action: openEditProtectionPlanWizard, id: protectionPlan, disabled: this.disableEdit(), icon: 'fa fa-edit' });
+      actions.push({ label: 'Resync Disk Replication', action: onResetDiskReplicationClick, id: protectionPlan, disabled: isServerActionDisabled, navigate: PROTECTION_PLANS_PATH, icon: 'fa fa-retweet' });
+      actions.push({ label: 'Download Plan Playbook', action: playbookExport, id: protectionPlan, disabled: this.disableEdit(), icon: 'fa fa-download' });
+      actions.push({ label: 'Remove', action: deletePlanConfirmation, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS || !hasRequestedPrivileges(user, ['protectionplan.delete']), navigate: PROTECTION_PLANS_PATH, icon: 'fa fa-trash' });
     } else if (localVMIP === recoverySite.node.hostname) {
       actions = [{ label: 'recover', action: openRecoveryWizard, icon: 'fa fa-plus', disabled: !recovered || !hasRequestedPrivileges(user, ['recovery.full']) },
         { label: 'Migrate', action: openMigrationWizard, icon: 'fa fa-clone', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.migration']) },
@@ -275,7 +275,7 @@ class DRPlanDetails extends Component {
       // no action to add
     }
     return (
-      <DropdownActions title={t('actions')} dispatch={dispatch} actions={actions} />
+      <DropdownActions title={t('actions')} dispatch={dispatch} actions={actions} uniqueID="drplan-details-actions" />
     );
   }
 

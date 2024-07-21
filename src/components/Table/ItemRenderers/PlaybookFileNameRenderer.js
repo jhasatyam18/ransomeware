@@ -8,11 +8,9 @@ function PlaybookFileNameRenderer({ data, field }) {
   const path = PLAYBOOK_DETAILS_PAGE.replace(':name', id);
 
   return (
-    <p className="margin-top-2">
-      <Link to={`${path}`}>
-        {fileName}
-      </Link>
-    </p>
+    <Link to={`${path}`}>
+      {fileName}
+    </Link>
   );
 }
 

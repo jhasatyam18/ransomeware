@@ -6,6 +6,7 @@ import DMField from '../Shared/DMField';
 import { FIELDS } from '../../constants/FieldsConstant';
 
 function ReportSideBar(props) {
+  const { user, dispatch, t } = props;
   function renderFields(fields) {
     return (
       <Row>
@@ -17,14 +18,14 @@ function ReportSideBar(props) {
   }
 
   function renderProtectionPlanOptions(filterKey) {
-    const { user, dispatch } = props;
     const fields = Object.keys(FIELDS).filter((key) => key.indexOf(filterKey) !== -1);
     const rFields = [];
     fields.forEach((field) => {
+      const disabled = (field === 'report.system.includeSystemOverView');
       rFields.push(
         (
           <Col sm={4}>
-            <DMField dispatch={dispatch} user={user} fieldKey={field} key={`rpt-${field}`} />
+            <DMField dispatch={dispatch} user={user} fieldKey={field} key={`rpt-${field}`} disabled={disabled} />
           </Col>),
       );
     });
@@ -33,14 +34,19 @@ function ReportSideBar(props) {
 
   return (
     <>
-      <Label className="text-muted">System</Label>
+      <Label className="text-muted">{t('report.system')}</Label>
       <div>
         {renderProtectionPlanOptions('report.system')}
       </div>
       <hr />
-      <Label className="text-muted">Protection Plans</Label>
+      <Label className="text-muted">{t('protection.plans')}</Label>
       <div>
         {renderProtectionPlanOptions('report.protectionPlan')}
+      </div>
+      <hr />
+      <Label className="text-muted mt-2">{t('report.duration.heading')}</Label>
+      <div>
+        {renderProtectionPlanOptions('report.duration')}
       </div>
     </>
   );

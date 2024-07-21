@@ -6,7 +6,6 @@ import { Input } from 'reactstrap';
 import { API_GET_CONFIG_TEMPLATE_BY_ID } from '../../constants/ApiConstants';
 import { NOTE_TEXT } from '../../constants/DMNoteConstant';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
-import { clearValues } from '../../store/actions';
 import { playbookExport } from '../../store/actions/DrPlanActions';
 import { deletePlaybook, downloadPlaybooks, uploadFiles } from '../../store/actions/DrPlaybooksActions';
 import { closeModal, openModal } from '../../store/actions/ModalActions';
@@ -40,8 +39,7 @@ function SinglePlaybookActions({ data, dispatch, t, user }) {
   };
 
   const onClose = () => {
-    dispatch(closeModal());
-    dispatch(clearValues());
+    dispatch(closeModal(true));
   };
 
   const renderEditFooter = () => (
@@ -58,7 +56,7 @@ function SinglePlaybookActions({ data, dispatch, t, user }) {
         {t('edit.playbook.warn.msg', { name })}
       </span>
       <p className="margin-top-5">
-        <small aria-hidden className="link_color" onClick={onExport}>[click here]</small>
+        <span aria-hidden className="link_color" onClick={onExport}>[click here]</span>
         { t('title.download.configured.excel')}
       </p>
     </>
@@ -77,9 +75,9 @@ function SinglePlaybookActions({ data, dispatch, t, user }) {
           {t('title.upload.playbook')}
         </span>
         <label htmlFor={`reuploadFile-${name}`} className="margin-left-10 link_color">
-          <FontAwesomeIcon size="md" icon={faUpload} />
+          <FontAwesomeIcon size="xl" icon={faUpload} />
         </label>
-        <Input type="file" accept="xlsx/*" id={`reuploadFile-${name}`} name={`reuploadFile-${name}`} className="modal-lic-upload" onSelect={onFileChange} onChange={onFileChange} />
+        <Input type="file" accept=".xlsx*" id={`reuploadFile-${name}`} name={`reuploadFile-${name}`} className="modal-lic-upload" onSelect={onFileChange} onChange={onFileChange} />
       </div>
     </>
   );

@@ -3,18 +3,18 @@ import { withTranslation } from 'react-i18next';
 import { Col, Container, Label, Row } from 'reactstrap';
 import { API_UPLOAD_RECOVERY_CRED } from '../../constants/ApiConstants';
 import { RECOVERY_STATUS } from '../../constants/AppStatus';
-import { FIELD_TYPE } from '../../constants/FieldsConstant';
+import { FIELDS } from '../../constants/FieldsConstant';
 import { CHECKPOINT_TYPE, CONSTANT_NUMBERS, PLAYBOOK_TYPE, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { STORE_KEYS } from '../../constants/StoreKeyConstants';
-import { RECOVERY_CHECKPOINT_OPTION_RENDERER, TABLE_FILTER_TEXT, TABLE_RECOVERY_VMS } from '../../constants/TableConstants';
+import { TABLE_FILTER_TEXT, TABLE_RECOVERY_VMS } from '../../constants/TableConstants';
 import { hideApplicationLoader, showApplicationLoader, valueChange } from '../../store/actions';
 import { setRecoveryVMDetails } from '../../store/actions/DrPlanActions';
 import { addMessage } from '../../store/actions/MessageActions';
 import { handleProtectVMSeletion, handleSelectAllRecoveryVMs } from '../../store/actions/SiteActions';
 import { getUrlPath } from '../../utils/ApiUtils';
 import { filterData } from '../../utils/AppUtils';
-import { commonCheckpointOptions, getValue, onCommonCheckpointChange } from '../../utils/InputUtils';
+import { getValue } from '../../utils/InputUtils';
 import DMField from '../Shared/DMField';
 import DMSearchSelect from '../Shared/DMSearchSelect';
 import DMToolTip from '../Shared/DMToolTip';
@@ -183,11 +183,11 @@ class RecoveryMachines extends Component {
 
   renderCommonCheckpointOption() {
     const { dispatch, user, t } = this.props;
-    const commonCheckpointField = { shouldShow: true, type: FIELD_TYPE.SELECT_SEARCH, options: () => commonCheckpointOptions(user), validate: true, errorMessage: '', onChange: ({ value, fieldKey }) => onCommonCheckpointChange({ value, dispatch, fieldKey }) };
+    const commonCheckpointField = FIELDS['ui.common.checkpoint'];
     return (
       <Row className="margin-top-20">
         <Col sm={4} className="padding-left-30">{t('select.point.in.time')}</Col>
-        <Col sm={4}>
+        <Col sm={5}>
           <DMSearchSelect className="w-20" fieldKey="ui.unique.checkpoint.field" field={commonCheckpointField} user={user} dispatch={dispatch} hideLabel />
         </Col>
       </Row>
@@ -213,7 +213,6 @@ class RecoveryMachines extends Component {
     const vms = getValue(STORE_KEYS.UI_RECOVERY_VMS, values);
     let selectedVMs = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
     const data = (hasFilterString ? searchData : vms);
-    const pointInTime = { label: t('test.recovery.pointInTime'), field: 'recoveryStatus', itemRenderer: RECOVERY_CHECKPOINT_OPTION_RENDERER, width: 4 };
     const planHasCheckpoints = getValue(STATIC_KEYS.UI_RECOVERY_CHECKPOINTS_BY_VM_ID, values) || [];
     let title = '';
     if (!selectedVMs) {
@@ -221,16 +220,21 @@ class RecoveryMachines extends Component {
     }
     const isMigrationWorkflow = getValue('ui.isMigration.workflow', values);
     const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values) || '';
-    const checkpointWarning = getValue(STORE_KEYS.UI_CHECKPOINT_SELECT_WARNING, values);
+    const checkpointWarning = t('recovery.checkpoint.onchange.warn');
     let columns = [];
     if (workflow === UI_WORKFLOW.CLEANUP_TEST_RECOVERY) {
-      columns = TABLE_RECOVERY_VMS.filter((col) => col.label !== 'Username' && col.label !== 'Password');
+      columns = TABLE_RECOVERY_VMS.filter((col) => col.label !== 'Username' && col.label !== 'Password' && col.label !== 'Point In Time')
+        .map((col) => ({ ...col }));
+      columns[0].width = '7';
+      columns[1].width = '4';
     } else if ((workflow === UI_WORKFLOW.TEST_RECOVERY || workflow === UI_WORKFLOW.RECOVERY) && recoveryType === CHECKPOINT_TYPE.POINT_IN_TIME) {
       // Recovery type is point-in-time then add option to select checkpoint column
       columns = [...TABLE_RECOVERY_VMS];
-      columns.splice(3, 0, pointInTime);
+      columns[3].field = '';
     } else {
-      columns = TABLE_RECOVERY_VMS;
+      columns = TABLE_RECOVERY_VMS.map((el) => ({ ...el }));
+      columns[3].field = 'currentSnapshotTime';
+      columns[3].width = '2';
     }
     if (isMigrationWorkflow) {
       title = t('title.machines.migration');
@@ -264,7 +268,7 @@ class RecoveryMachines extends Component {
             <>
               {this.RenderOptions()}
               {recoveryType === CHECKPOINT_TYPE.POINT_IN_TIME && this.renderCommonCheckpointOption()}
-              {checkpointWarning ? renderWarningMsg() : null}
+              {recoveryType === CHECKPOINT_TYPE.POINT_IN_TIME ? renderWarningMsg() : null}
             </>
           )
           : null}
@@ -275,7 +279,7 @@ class RecoveryMachines extends Component {
           <Col sm={12} className="padding-left-30">
             {isMigrationWorkflow ? <DMField dispatch={dispatch} user={user} fieldKey="ui.automate.migration" key="ui.automate.migration" /> : null}
           </Col>
-          <Col sm={6} className="margin-left-30">
+          <Col sm={5} className="margin-left-30">
             <DMTPaginator
               id="recoverymachine"
               defaultLayout="true"
@@ -287,8 +291,9 @@ class RecoveryMachines extends Component {
               filterHelpText={TABLE_FILTER_TEXT.TABLE_RECOVERY_VMS}
             />
           </Col>
+          <Col sm={2} />
           {workflow !== UI_WORKFLOW.CLEANUP_TEST_RECOVERY ? (
-            <Col sm={5}>
+            <Col sm={4} className="margin-left-13">
               <div className="container-display-recovery">
                 <div href="#">
                   <label htmlFor="credentialUpload" className="label text-success" title={recFileName}>

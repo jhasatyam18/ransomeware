@@ -2,12 +2,12 @@ import React from 'react';
 import { withTranslation } from 'react-i18next';
 import { Col, Input, Row } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
-import { uploadFiles } from '../../store/actions/DrPlaybooksActions';
-import { hideApplicationLoader, showApplicationLoader } from '../../store/actions';
 import { API_GET_CONFIG_TEMPLATE_BY_ID } from '../../constants/ApiConstants';
+import { hideApplicationLoader, showApplicationLoader } from '../../store/actions';
+import { uploadFiles } from '../../store/actions/DrPlaybooksActions';
 import { closeModal } from '../../store/actions/ModalActions';
-import PlaybookPlanIssues from '../Playbook/PlaybookPlanIssues';
 import { exportIssues } from '../../utils/ReportUtils';
+import PlaybookPlanIssues from '../Playbook/PlaybookPlanIssues';
 
 function ModalPlaybookError({ dispatch, options, t }) {
   const { playbook } = options;
@@ -49,7 +49,7 @@ function ModalPlaybookError({ dispatch, options, t }) {
       <Col sm={12}>
         <div className="modal-footer">
           <label type="button" className="btn btn-success" htmlFor="fileUpload">{t('title.error.reupload')}</label>
-          <Input type="file" id="fileUpload" name="fileUpload" className="modal-lic-upload" onSelect={onFileChange} onChange={onFileChange} />
+          <Input type="file" accept=".xlsx*" id="fileUpload" name="fileUpload" className="modal-lic-upload" onSelect={onFileChange} onChange={onFileChange} />
           <button type="button" className="btn btn-secondary" onClick={async () => { await exportIssuesToExcel(); }}>
             {t('export.identified.issues')}
           </button>

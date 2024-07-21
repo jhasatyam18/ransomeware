@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, Col, Container, Row } from 'reactstrap';
-import DMTable from '../Table/DMTable';
+import { API_RECOVERY_CHECKPOINT_JOBS } from '../../constants/ApiConstants';
+import { CHECKPOINTS_JOBS } from '../../constants/TableConstants';
+import { setRecoveryCheckpointJobs } from '../../store/actions/checkpointActions';
 import DMBreadCrumb from '../Common/DMBreadCrumb';
 import DMAPIPaginator from '../Table/DMAPIPaginator';
-import { CHECKPOINTS_JOBS } from '../../constants/TableConstants';
-import { API_RECOVERY_CHECKPOINT_JOBS } from '../../constants/ApiConstants';
-import { setRecoveryCheckpointJobs } from '../../store/actions/checkpointActions';
+import DMTable from '../Table/DMTable';
 
 class RecoveryCheckPointsJobs extends Component {
   render() {

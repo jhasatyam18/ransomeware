@@ -311,8 +311,7 @@ export function configureUser(payload, isUpdate = false) {
       } else {
         dispatch(addMessage('User configuration successful', MESSAGE_TYPES.SUCCESS));
         dispatch(fetchUsers());
-        dispatch(clearValues());
-        dispatch(closeModal());
+        dispatch(closeModal(true));
       }
     },
     (err) => {
@@ -583,7 +582,13 @@ export function getUserInfo(nodeKey) {
   return (dispatch) => {
     let username = getCookie(APPLICATION_API_USER);
     const uid = getCookie(APPLICATION_UID);
-    if ((username === '' || typeof username === 'undefined') && (typeof uid === 'undefined' || uid === '')) {
+    /**
+     * condition to check user name is for the saml on it's first renderes i.e after login as username is not get set, after getting the json data below we set saml username and id on the browser
+       condition to check id is on refresh for saml user i.e if the user is logged in through saml and does refresh then it's username and id is already set on the browser
+       in that case if the id is 0 then also fetch saml user
+    */
+
+    if ((username === '' || typeof username === 'undefined') || (typeof uid !== 'undefined' && uid === '0')) {
       username = SAML.DEFAULT_USERNAME;
     }
     const url = `${API_USERS}?username=${username}`;
@@ -1019,10 +1024,12 @@ export function getStorageForVMware({ fieldKey, hostMoref }) {
       networkURL = `api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Network},${VMWARE_OBJECT.DistributedVirtualPortgroup}&entity=${hostMoref}`;
       storageURL = `api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Datastore}&entity=${hostMoref}`;
       entityKey = `${hostMoref}`;
-    } else {
+    } else if (fieldVal !== '' && fieldVal.value !== '') {
       networkURL = `api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Network},${VMWARE_OBJECT.DistributedVirtualPortgroup}&entity=${fieldVal.value}`;
       storageURL = `api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Datastore}&entity=${fieldVal.value}`;
       entityKey = `${fieldVal.value}`;
+    } else {
+      return;
     }
 
     const apis = [dispatch(fetchVMwareComputeResource(storageURL, fieldKey, VMWARE_OBJECT.Network, entityKey)), dispatch(fetchVMwareNetwork(networkURL, fieldKey, VMWARE_OBJECT.Datastore, entityKey))];

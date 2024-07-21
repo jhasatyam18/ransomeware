@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect, useSelector } from 'react-redux';
 import { Button, ButtonGroup, Col, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Row } from 'reactstrap';
-import { API_LIMIT_HUNDRED } from '../../constants/UserConstant';
+import { MILI_SECONDS_TIME } from '../../constants/EventConstant';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
+import { API_LIMIT_HUNDRED } from '../../constants/UserConstant';
 import { hideApplicationLoader, showApplicationLoader } from '../../store/actions';
 import { addMessage } from '../../store/actions/MessageActions';
 import { callAPI } from '../../utils/ApiUtils';
 
 function DMAPIPaginator(props) {
-  const { pageLimit = API_LIMIT_HUNDRED } = props;
+  const { pageLimit = API_LIMIT_HUNDRED, fetchInInterval = undefined } = props;
   const emptyPageInfo = { limit: pageLimit, currentPage: 0, hasNext: false, hasPrev: false, nextOffset: 0, pageRecords: 0, totalPages: 0, totalRecords: 0 };
   const [pageInfo, setPageInfo] = useState(emptyPageInfo);
   const [currentP, setCurrentPage] = useState(emptyPageInfo.currentPage);
@@ -19,6 +20,9 @@ function DMAPIPaginator(props) {
   const [forceUpdate, setForceUpdate] = useState(1);
   const [searchStr, setSearchStr] = useState('');
   const refresh = useSelector((state) => state.user.context.refresh);
+  const timerRef = useRef(null);
+  const searchStrRef = useRef(searchStr);
+  const pageNummRef = useRef(currentP);
 
   const getBaseURL = () => {
     if (isParameterizedUrl === 'true') {
@@ -46,10 +50,26 @@ function DMAPIPaginator(props) {
     return url;
   };
 
-  const fetchData = (offset = 0) => {
+  const fetchData = (offset = 0, onPgaeChange) => {
     const url = getUrl(offset);
-    dispatch(showApplicationLoader(url, 'loading...'));
-    dispatch(storeFn([]));
+
+    /**
+    * if there is a continuous fetching of data in an interval then loader comes and it's gets annoying for user to see it continuous
+      hence removed loader also
+    */
+
+    if (!fetchInInterval || onPgaeChange) {
+      dispatch(showApplicationLoader(url, 'loading...'));
+    }
+
+    /**
+    * if there is a continuous fetching of data in an interval then table shows empty until it fetches the data
+      hence for interval removed confition to empty the data
+    */
+
+    if (!fetchInInterval || onPgaeChange) {
+      dispatch(storeFn([]));
+    }
     callAPI(url).then((json) => {
       dispatch(hideApplicationLoader(url));
       const { records, ...others } = json;
@@ -71,21 +91,32 @@ function DMAPIPaginator(props) {
       setCurrentPage(1);
       const cols = Array.from(columns);
       setFilterColumns(cols.filter((c) => c.allowFilter));
+      setIntervalToFetch();
     }
     return () => {
       isUnmounting = true;
+      dispatch(storeFn([]));
+      if (typeof fetchInInterval !== 'undefined') {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
     };
   }, [refresh]);
 
+  useEffect(() => {
+    searchStrRef.current = searchStr;
+    pageNummRef.current = currentP;
+  }, [searchStr, currentP]);
+
   const onNext = () => {
     const { nextOffset } = pageInfo;
-    fetchData(nextOffset);
+    fetchData(nextOffset, true);
     setCurrentPage((currentP + 1));
   };
 
   const onBack = () => {
     const { currentPage, limit } = pageInfo;
-    fetchData((currentPage * limit) - (limit * 2));
+    fetchData((currentPage * limit) - (limit * 2), true);
     setCurrentPage(currentP - 1);
   };
 
@@ -109,6 +140,18 @@ function DMAPIPaginator(props) {
       onSearch();
     }
   };
+
+  function setIntervalToFetch() {
+    if (fetchInInterval) {
+      if (timerRef.current === null) {
+        timerRef.current = setInterval(() => {
+          if ((searchStrRef.current === '' && searchStrRef.current.length === 0) && pageNummRef.current === 1) {
+            fetchData(0);
+          }
+        }, MILI_SECONDS_TIME.TWENTY_THOUSAND_MS);
+      }
+    }
+  }
 
   const setCurrentPageValue = (e) => {
     const { totalPages } = pageInfo;

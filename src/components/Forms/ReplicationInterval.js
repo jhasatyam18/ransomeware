@@ -106,7 +106,7 @@ function ReplicationInterval(props) {
                 <option key="replication-hours" value="0">
                   Hours
                 </option>
-                {renderOptions(buildRangeOptions(0, 23, ''), 'Hour')}
+                {renderOptions(buildRangeOptions(1, 23, ''), 'Hour')}
               </Input>
             </Col>
             <Col sm={4}>

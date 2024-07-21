@@ -8,7 +8,7 @@ import {
 import { withTranslation } from 'react-i18next';
 
 const DropdownActions = (props) => {
-  const { actions, dispatch, t, className } = props;
+  const { actions, dispatch, t, className, uniqueID = 'unique-dropdown-action-id' } = props;
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const toggle = () => setDropdownOpen((prevState) => !prevState);
   const { title } = props;
@@ -25,10 +25,10 @@ const DropdownActions = (props) => {
         className="d-inline-block"
       >
         <DropdownToggle>
-          <span id="drplan-details-actions" className="d-none d-xl-inline-block ml-2 mr-1">
+          <span id={uniqueID} className="d-none d-xl-inline-block ml-2 mr-1">
             {title}
           </span>
-          <i className="bx bx-chevron-down" />
+          <i className="bx bx-chevron-down" id={`${uniqueID}-icon`} />
         </DropdownToggle>
         <DropdownMenu right>
           {actions.map((item) => {
