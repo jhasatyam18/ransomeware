@@ -1031,7 +1031,12 @@ export function getStorageForVMware({ fieldKey, hostMoref }) {
     } else {
       return;
     }
-
+    const key = fieldKey.split('.general.hostMoref');
+    const networkKey = `${key[0]}.network.net1`;
+    const eths = getValue(networkKey, values) || [];
+    for (let index = 0; index < eths.length; index += 1) {
+      dispatch(valueChange(`${networkKey}-eth-${index}-network`, ''));
+    }
     const apis = [dispatch(fetchVMwareComputeResource(storageURL, fieldKey, VMWARE_OBJECT.Network, entityKey)), dispatch(fetchVMwareNetwork(networkURL, fieldKey, VMWARE_OBJECT.Datastore, entityKey))];
     return Promise.all(apis).then(
       () => new Promise((resolve) => resolve()),

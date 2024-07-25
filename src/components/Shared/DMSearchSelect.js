@@ -19,11 +19,7 @@ class DMSearchSelect extends Component {
     const { fieldKey, user, field, dispatch } = this.props;
     const { defaultValue } = field;
     const { values } = user;
-    const fieldValue = getValue(fieldKey, values);
-    if (fieldValue !== '' && typeof fieldValue === 'object') {
-      this.setState({ value: fieldValue });
-      dispatch(valueChange(fieldKey, fieldValue));
-    }
+    let fieldValue = getValue(fieldKey, values);
 
     if (!fieldValue && defaultValue) {
       let defaultVal;
@@ -32,20 +28,10 @@ class DMSearchSelect extends Component {
       } else {
         defaultVal = defaultValue;
       }
-      this.setState({ value: defaultVal });
-      dispatch(valueChange(fieldKey, defaultVal));
+      fieldValue = defaultVal;
     }
-    const { options } = field;
-    if (typeof options === 'function') {
-      const optionValues = options(user, fieldKey) || [];
-      optionValues.map((val) => {
-        if (val.value === fieldValue.value) {
-          dispatch(valueChange(fieldKey, val));
-          this.setState({ value: val });
-        }
-      });
-    }
-    this.clearValueIfNotInOption(fieldValue);
+
+    this.clearValueIfNotInOption(fieldValue, fieldKey);
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -53,7 +39,7 @@ class DMSearchSelect extends Component {
     const { values } = user;
     const { value } = prevState;
     const nextValue = getValue(fieldKey, values);
-    if (nextValue.value !== value.value) {
+    if (nextValue?.value !== value?.value) {
       // if user first have selected empty value because of which field had error and parent component have selected value then error does not get clear
       // below code is to clear error from the field if value is changed from it's parent component
       if (typeof nextValue === 'object' && nextValue.value !== '') {
@@ -100,14 +86,19 @@ class DMSearchSelect extends Component {
     validateField(field, fieldKey, selectedOption, dispatch, user);
   };
 
-  clearValueIfNotInOption(fieldValue) {
+  clearValueIfNotInOption(fieldValue, fieldKey) {
+    const { dispatch } = this.props;
     if (fieldValue && fieldValue !== '' && Object.keys(fieldValue).length > 0) {
       const options = this.getOptions() || [];
       const { value } = fieldValue;
       const valueInOption = options.find((option) => option.value === value);
-      if (options.length > 0 && !valueInOption) {
-        this.setState({ value: '' });
+      if (options.length > 0 && valueInOption) {
+        dispatch(valueChange(fieldKey, valueInOption));
+        this.setState({ value: valueInOption });
       }
+    } else {
+      this.setState({ value: '' });
+      dispatch(valueChange(fieldKey, { value: '' }));
     }
   }
 
