@@ -263,22 +263,25 @@ export function validateVMConfiguration({ user, dispatch }) {
     return false;
   }
   // validate Network
-  return validateNetworkConfig(user, dispatch);
+  return dispatch(validateNetworkConfig());
 }
 
-export function validateNetworkConfig(user, dispatch) {
-  const { values } = user;
-  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
-  switch (recoveryPlatform) {
-    case PLATFORM_TYPES.AWS:
-      return validateAWSNetworks(user, dispatch);
-    case PLATFORM_TYPES.GCP:
-      return validateGCPNetwork(user, dispatch);
-    case PLATFORM_TYPES.Azure:
-      return validateAzureNetwork(user, dispatch);
-    default:
-      return validateVMware(user, dispatch);
-  }
+export function validateNetworkConfig() {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+    switch (recoveryPlatform) {
+      case PLATFORM_TYPES.AWS:
+        return validateAWSNetworks(user, dispatch);
+      case PLATFORM_TYPES.GCP:
+        return validateGCPNetwork(user, dispatch);
+      case PLATFORM_TYPES.Azure:
+        return validateAzureNetwork(user, dispatch);
+      default:
+        return validateVMware(user, dispatch);
+    }
+  };
 }
 
 export function validateGCPNetwork(user, dispatch) {
