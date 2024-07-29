@@ -62,6 +62,9 @@ export const PLATFORM_TYPE_ITEM_RENDERER = 'PREP_NODE_ITEM_RENDERER';
 export const EVENT_DESCRIPTION_RENDERER = 'EVENT_DESCRIPTION_RENDERER';
 export const JOBS_VM_NAME_RENDERER = 'JOBS_VM_NAME_RENDERER';
 export const REVERSE_SUMMARY_ENTITY_TYPE_RENDERER = 'REVERSE_SUMMARY_ENTITY_TYPE_RENDERER';
+export const REPLICATION_TYPE_OPTION_RENDERER = 'REPLICATION_TYPE_OPTION_RENDERER';
+export const ENTITY_TYPE_OPTION_RENDERER = 'ENTITY_TYPE_OPTION_RENDERER';
+export const REVERSE_VM_DESCRIPTION_RENDERER = 'REVERSE_VM_DESCRIPTION_RENDERER';
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
@@ -427,6 +430,7 @@ export const TABLE_REVERSE_VM = [
   { label: 'Workload', field: 'name' },
   { label: 'os', field: 'guestOS', itemRenderer: OS_TYPE_ITEM_RENDERER },
   { label: 'Storage', field: 'virtualDisks', itemRenderer: VM_SIZE_ITEM_RENDERER },
-  { label: 'Replication Type', field: 'replicationType' },
-  { label: 'description', field: 'description', width: 3 },
+  { label: 'Entity Type', field: '', itemRenderer: ENTITY_TYPE_OPTION_RENDERER },
+  { label: 'Replication Type', itemRenderer: REPLICATION_TYPE_OPTION_RENDERER },
+  { label: 'description', field: 'description', width: 3, itemRenderer: REVERSE_VM_DESCRIPTION_RENDERER },
 ];

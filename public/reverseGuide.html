@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Datamotive | Reverse Guide</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body class="m-3" style="background-color: #2E3548; color: white;">
+  <div style="width: 100%; padding-left: 10%;">
+  <div>
+    <p class="mb-3">Failback Behaviour</p>
+  </div>
+  <div class="pl-3">
+    <p class="mb-0"><small>Datamotive solution prescribes appropriate Entity Type and Replication Type depending on the
+        state of system and infrastructure.</small></p>
+    <p class="text-warning mb-3"><small><i class="fa-solid fa-triangle-exclamation mr-2"></i></small><Small>Making changes to the prescribed values may incur additional storage consumption
+        and time required for replication. This in-turn may result into higher costs.</Small></p>
+    <p class="mb-0"><Small>Following use cases describe resultant target infrastructure storage and virtual instances
+        after performing "Reverse" operation.</Small></p>
+    <p class="mb-2 mt-2">
+      <small class="font-weight-bold">Case 1: </small>
+      <small>Entity Type: Maintain Original, Replication Type: Differential</small>
+    </p>
+    <table class="text-white" style="width: 75%;border: 1px solid #404659;">
+      <thead>
+        <tr style="border: 1px solid #404659;">
+          <th class="p-0 pl-2 pb-2" style="width: 20%;border: 1px solid #404659"><small class="font-weight-bold">TYPE</small></th>
+          <th class="p-0 pl-2 pb-2" style="width: 20%;border: 1px solid #404659"><small class="font-weight-bold">PLATFORM</small></th>
+          <th class="p-0 pl-2 pb-2"><small class="font-weight-bold">INFRASTRUCTURE STATE</small></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border: 1px solid #404659;">
+          <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;"><small class="pb-0">Target Instance</small></td>
+          <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;"><small>All</small></td>
+          <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;">
+            <small>
+            <ul>
+              <li>Original Instance</li>
+            </ul>
+            </small>
+          </td>
+        </tr>
+        <tr style="border: 1px solid #404659;">
+          <td rowspan="3" class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;"><small>Target Storage</small></td>
+          <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;"><small>VMware</small></td>
+          <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;">
+            <small>
+            <ul>
+              <li>Original VM will get reverted to last replicated snapshot.</li>
+              <li>Any externally created snapshots after the last replicated snapshot will get deleted.</li>
+              <li><span class="font-weight-bold">Differential</span> data will be written back to same Virtual Disks.</li>
+            </ul>
+            </small>
+          </td>
+        </tr>
+        <tr style="border: 1px solid #404659;">
+          <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;"><small>AWS</small></td>
+          <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;">
+            <small>
+            <ul>
+              <li>Original EBS Volumes will get detached and deleted.</li>
+              <li>New snapshot will be created from last replicated snapshot.</li>
+              <li><span class="font-weight-bold">Differential</span> data will be written back to new
+                  snapshot.</li>
+            </ul>
+          </small>
+          </td>
+        </tr>
+        <tr style="border: 1px solid #404659;">
+          <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;"><small>Azure</small></td>
+          <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;">
+            <small>
+            <ul>
+              <li>Original managed disks will get detached and deleted.</li>
+              <li>New page blobs or managed disk (disks greater than 8TB) will be created from last replicated
+                  snapshot. </li>
+              <li><span class="font-weight-bold">Differential</span> data will be written back to new page blob
+                  or managed disk.</li>
+            </ul>
+          </small>
+          </td>
+        </tr>
+        <tr style="border: 1px solid #404659;">
+          <td class="p-0 pl-2" style="border: 1px solid #404659;"><small>Impact</small></td>
+          <td class="p-0 pl-2" style="border: 1px solid #404659;"><small>All</small></td>
+          <td class="p-0 pl-2" style="border: 1px solid #404659;">
+            <small>
+            <ul>
+              <li>None</li>
+            </ul>
+          </small>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="mb-2 mt-3">
+      <small class="font-weight-bold">Case 2: </small>
+      <small>Entity Type: Maintain Original, Replication Type: Full </small>
+    </p>
+    <table class="text-white" style="width: 75%;">
+      <thead>
+        <tr style="border: 1px solid #404659;">
+          <th class="p-0 pl-2 pb-2" style="width: 20%;border: 1px solid #404659"><small class="font-weight-bold">TYPE</small></th>
+          <th class="p-0 pl-2 pb-2" style="width: 20%;border: 1px solid #404659"><small class="font-weight-bold">PLATFORM</small></th>
+          <th class="p-0 pl-2 pb-2"><small class="font-weight-bold">INFRASTRUCTURE STATE</small></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border: 1px solid #404659;">
+          <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;"><small>Target Instance</small></td>
+          <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;"><small>All</small></td>
+          <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;">
+            <small>
+            <ul>
+              <li>Original Instance</li>
+            </ul>
+            </small>
+          </td>
+        </tr>
+        <tr style="border: 1px solid #404659;">
+          <td rowspan="3" class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;"><small>Target Storage</small></td>
+          <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;"><small>VMware</small></td>
+          <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;">
+            <small>
+            <ul>
+              <li>Original disks will get detached and deleted.</li>
+              <li>New Virtual Disks will be created & attached to the instance.</li>
+              <li><span class="font-weight-bold">Full</span> data will be written back to new Virtual
+                  Disks.</li>
+            </ul>
+          </small>
+          </td>
+        </tr>
+        <tr style="border: 1px solid #404659;">
+          <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;"><small>AWS</small></td>
+          <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;">
+            <small>
+            <ul>
+              <li>Original EBS Volumes will get detached and deleted.</li>
+              <li>New replication snapshot will be created. </li>
+              <li><span class="font-weight-bold">Full</span> data will be written back to new snapshot.
+              </li>
+            </ul>
+          </small>
+          </td>
+        </tr>
+        <tr style="border: 1px solid #404659;">
+          <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;"><small>Azure</small></td>
+          <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;">
+            <small>
+            <ul>
+              <li>Original managed disks will get detached and deleted.</li>
+              <li>New page blob or managed disk (disks greater than 8TB) will be created.</li>
+              <li><span class="font-weight-bold">Full</span> data will be written back to new page blob or
+                  managed disk.</li>
+            </ul>
+          </small>
+          </td>
+        </tr>
+        <tr style="border: 1px solid #404659;">
+          <td class="p-0 pl-2" style="border: 1px solid #404659;"><small>Impact</small></td>
+          <td class="p-0 pl-2" style="border: 1px solid #404659;"><small>All</small></td>
+          <td class="p-0 pl-2" style="border: 1px solid #404659;">
+            <small>
+            <ul>
+              <li class="font-weight-bold">Full data will be used for egress charges.</li>
+            </ul>
+            </small>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  <p class="mb-2 mt-3">
+    <small class="font-weight-bold">Case 3: </small>
+    <small>Entity Type: Create New Copy, Replication Type: Differential</small>
+  </p>
+  <table class="text-white" style="width: 75%;">
+    <thead>
+      <tr style="border: 1px solid #404659;">
+        <th class="p-0 pl-2 pb-2" style="width: 20%;border: 1px solid #404659"><small class="font-weight-bold">TYPE</small></th>
+        <th class="p-0 pl-2 pb-2" style="width: 20%;border: 1px solid #404659"><small class="font-weight-bold">PLATFORM</small></th>
+        <th class="p-0 pl-2 pb-2"><small class="font-weight-bold">INFRASTRUCTURE STATE</small></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border: 1px solid #404659;">
+        <td rowspan="2" class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;"><small>Target Instance</small></td>
+        <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;"><small>VMware</small></td>
+        <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;">
+          <small>
+          <ul>
+            <li>New Instance with suffix "-dm-reversed" will get cloned from last replicated snapshot.</li>
+            <li>Original instance with its data will remain in system.</li>
+          </ul>
+        </small>
+        </td>
+      </tr>
+      <tr>
+        <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;">
+          <p class="p-0"><small>AWS,</small></p>
+          <p class="p-0"><small>Azure</small></p>
+        </td>
+        <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;">
+          <small>
+          <ul>
+            <li>New Instance with suffix "-dm-reversed" will get created.</li>
+            <li>Original instance with its data will remain in system.</li>
+          </ul>
+        </small>
+        </td>
+      </tr>
+      <tr style="border: 1px solid #404659;">
+        <td rowspan="3" class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;"><small>Target Storage</small></td>
+        <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;"><small>VMware</small></td>
+        <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;">
+          <small>
+          <ul>
+            <li><span class="font-weight-bold">Differential</span> data will be written back to newly cloned
+                VM.</li>
+          </ul>
+        </small>
+        </td>
+      </tr>
+      <tr style="border: 1px solid #404659;">
+        <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;"><small>AWS</small></td>
+        <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;">
+          <small>
+          <ul>
+            <li>New replication snapshot will get created from last replicated snapshot.</li>
+            <li><span class="font-weight-bold">Differential</span> data will be written back to new snapshot.</li>
+          </ul>
+        </small>
+        </td>
+      </tr>
+      <tr style="border: 1px solid #404659;">
+        <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;"><small>Azure</small></td>
+        <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;">
+          <small>
+          <ul>
+            <li>New replication page blob or managed disk (disks greater than 8TB) will get created from last
+                replicated snapshot.</li>
+            <li>New page blob or managed disk (disks greater than 8TB) will be created.</li>
+            <li><span class="font-weight-bold">Differential</span> data will be written back to new page blob
+                or managed disk.</li>
+          </ul>
+        </small>
+        </td>
+      </tr>
+      <tr style="border: 1px solid #404659;">
+        <td class="p-0 pl-2" style="border: 1px solid #404659;"><small>Impact</small></td>
+        <td class="p-0 pl-2" style="border: 1px solid #404659;"><small>All</small></td>
+        <td class="p-0 pl-2" style="border: 1px solid #404659;">
+          <small>
+          <ul>
+            <li class="font-weight-bold">Additional storage size equal to the provisioned storage size of the
+                instance, compute resources and IPs will be required.</li>
+          </ul>
+        </small>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="mb-2 mt-3">
+  <small class="font-weight-bold">Case 4: </small>
+  <small>Entity Type: Create New Copy, Replication Type: Full</small>
+  </p>
+  <table class="text-white" style="width: 75%;">
+    <thead>
+      <tr style="border: 1px solid #404659;">
+        <th class="p-0 pl-2 pb-2" style="width: 20%;border: 1px solid #404659"><small class="font-weight-bold">TYPE</small></th>
+        <th class="p-0 pl-2 pb-2" style="width: 20%;border: 1px solid #404659"><small class="font-weight-bold">PLATFORM</small></th>
+        <th class="p-0 pl-2 pb-2"><small class="font-weight-bold">INFRASTRUCTURE STATE</small></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border: 1px solid #404659;">
+        <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;"><small>Target Instance</small></td>
+        <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;"><small>All</small></td>
+        <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;">
+          <small>
+          <ul>
+            <li>A new VM with suffix "-dm-reversed" will get created.</li>
+            <li>Original VM with its data will remain in system.</li>
+          </ul>
+        </small>
+        </td>
+      </tr>
+      <tr style="border: 1px solid #404659;">
+        <td rowspan="3" class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;"><small>Target Storage</small></td>
+        <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;"><small>VMware</small></td>
+        <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;">
+          <small>
+          <ul>
+            <li>New Virtual Disks will be created & attached to the instance.</li>
+            <li><span class="font-weight-bold">Full</span> data will be written back to new Virtual
+                Disks.</li>
+          </ul>
+        </small>
+        </td>
+      </tr>
+      <tr style="border: 1px solid #404659;">
+        <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;"><small>AWS</small></td>
+        <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;">
+          <small>
+          <ul>
+            <li>New replication snapshot will be created.</li>
+            <li><span class="font-weight-bold">Full</span> data will be written back to new snapshot.
+            </li>
+          </ul>
+        </small>
+        </td>
+      </tr>
+      <tr style="border: 1px solid #404659;">
+        <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;"><small>Azure</small></td>
+        <td class="font-weight-light p-0 pl-2" style="border: 1px solid #404659;">
+          <small>
+          <ul>
+            <li>New page blob or managed disk (disks greater than 8TB) will be created.</li>
+            <li><span class="font-weight-bold">Full</span> data will be written back to new page blob or
+                managed disk.</li>
+          </ul>
+        </small>
+        </td>
+      </tr>
+      <tr style="border: 1px solid #404659;">
+        <td class="p-0 pl-2" style="border: 1px solid #404659;"><small>Impact</small></td>
+        <td class="p-0 pl-2" style="border: 1px solid #404659;"><small>All</small></td>
+        <td class="p-0 pl-2" style="border: 1px solid #404659;">
+          <small>
+          <ul>
+            <li class="font-weight-bold">Additional storage size equal to the provisioned storage size of the
+                instance, compute resources and IPs will be required. Full data will be used for egress charges.
+            </li>
+          </ul>
+        </small>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+</body>
+
+</html>

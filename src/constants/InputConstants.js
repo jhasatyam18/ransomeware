@@ -129,6 +129,10 @@ export const STATIC_KEYS = {
   DM_REVERSED: '-dm-reversed',
   REPORT_STATUS_TYPE: 'alert-status',
   PORTS_RENDERER: 'port-renderer',
+  UI_REVERSE_RECOMMENDED_DATA: 'mapped.reverse.replication.data',
+  REVERSE_VALIDATION_FAILED_MSG: 'original source entity not found',
+  REPLICATION_TYPE: 'replicationType',
+  ENTITY_TYPE: 'entityType',
 };
 
 // Recovery time in minutes
@@ -281,3 +285,15 @@ export const REVERSE_ENTITY_TYPE = {
 };
 
 export const RECOVERY_ENTITY_OPTIONS = [{ label: 'Maintain Original Copy', value: 'maintain-original' }, { label: 'Create New Copy', value: 'create-new' }];
+
+export const REVERSE_REPLICATION_TYPE = {
+  DIFFERENTIAL: 'differential',
+  FULL: 'full',
+};
+
+export const MAPPING_REVERSE_RECOMMENDED_DATA = {
+  differential: 'Differential',
+  full: 'Full',
+  'maintain-original': 'Maintain Original',
+  'create-new': 'Create New Copy',
+};

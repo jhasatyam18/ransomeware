@@ -17,7 +17,7 @@ import { setCookie } from '../../utils/CookieUtils';
 import { getMatchingFirmwareType, getMatchingInsType, getMatchingOSType, getValue, getVMInstanceFromEvent, getVMMorefFromEvent, isSamePlatformPlan } from '../../utils/InputUtils';
 import { getCreateDRPlanPayload, getEditProtectionPlanPayload, getRecoveryPayload, getResetDiskReplicationPayload, getReversePlanPayload, getVMConfigPayload } from '../../utils/PayloadUtil';
 import { fetchByDelay } from '../../utils/SlowFetch';
-import { changedVMRecoveryConfigurations } from '../../utils/validationUtils';
+import { changedVMRecoveryConfigurations, validateReversePlan } from '../../utils/validationUtils';
 import { addAssociatedIPForAzure, addAssociatedReverseIP } from './AwsActions';
 import { fetchCheckpointsByPlanId, fetchLatestReplicationJob, getVmCheckpoints, setPplanRecoveryCheckpointData } from './checkpointActions';
 import { downloadDateModifiedPlaybook, onPlanPlaybookExport } from './DrPlaybooksActions';
@@ -1680,7 +1680,7 @@ function setVMDetails(vmDetails, protectedVMInfo) {
 }
 
 function setReverseData(json) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     const { id, protectedSite, recoverySite } = json;
     const { platformDetails } = recoverySite;
     const protectedSitePlatform = protectedSite.platformDetails.platformType;
@@ -1730,7 +1730,9 @@ function setReverseData(json) {
           dispatch(setVMGuestOSInfo(selectedVMs));
           // for giving selection of vm in wizard if vm selection is not their then remove this
           // dispatch(valueChange('ui.site.vms', data));
+          const { user } = getState();
           dispatch(openWizard(REVERSE_WIZARDS.options, REVERSE_WIZARDS.steps));
+          validateReversePlan({ user, dispatch });
           return new Promise((resolve) => resolve());
         },
         (err) => {

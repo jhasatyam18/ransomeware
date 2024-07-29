@@ -1,5 +1,5 @@
 import { FIELDS } from '../constants/FieldsConstant';
-import { CHECKPOINT_TYPE, MINUTES_CONVERSION, PLATFORM_TYPES, RECOVERY_ENTITY_TYPES, REVERSE_ENTITY_TYPE, STATIC_KEYS, UI_WORKFLOW } from '../constants/InputConstants';
+import { CHECKPOINT_TYPE, MINUTES_CONVERSION, PLATFORM_TYPES, RECOVERY_ENTITY_TYPES, REVERSE_ENTITY_TYPE, REVERSE_REPLICATION_TYPE, STATIC_KEYS, UI_WORKFLOW } from '../constants/InputConstants';
 import { STORE_KEYS } from '../constants/StoreKeyConstants';
 import { TIME_CONSTANTS } from '../constants/UserConstant';
 import { convertMemoryToMb, getAWSNetworkIDFromName, getValue, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort } from './InputUtils';
@@ -340,7 +340,7 @@ export function getReversePlanPayload(user) {
   const { values } = user;
   const sites = getValue('ui.values.sites', values);
   const drplan = getValue('ui.reverse.drPlan', values);
-  const selectedRSite = getValue('reverse.recoverySite', values);
+  const selectedRSite = getValue('reverse.recoverySite', values) || drplan.recoverySite.id;
   const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   const rSite = sites.filter((site) => getFilteredObject(site, selectedRSite, 'id'))[0];
   let suffixFlag = false;
@@ -365,7 +365,7 @@ export function getReversePlanPayload(user) {
   }
   drplan.recoverySite = rSite;
   drplan.recoveryEntities.instanceDetails = getVMConfigPayload(user);
-  drplan.replicationInterval = getReplicationInterval(getValue(STATIC_KEYS.REPLICATION_INTERVAL_TYPE, values), getValue('drplan.replicationInterval', values));
+  drplan.replicationInterval = getReplicationInterval(getValue(STATIC_KEYS.REPLICATION_INTERVAL_TYPE, values), getValue('drplan.replicationInterval', values)) || drplan.replicationInterval;
   drplan.startTime = getUnixTimeFromDate(drplan.startTime);
   drplan.recoveryPointConfiguration = getRecoveryPointConfiguration(user);
   return drplan;
@@ -560,16 +560,11 @@ function setVMProperties(vm, values, protectedSite) {
     const quiesce = getValue(`${vm.moref}${STATIC_KEYS.VMWARE_QUIESCE_KEY}`, values);
     vmConfig.isVMwareQuiescing = quiesce;
   }
-  const failedEntity = getValue(STATIC_KEYS.REVERSE_VALIDATE_FAILED_ENTITIE, values);
   const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
   let isDifferential = workflow === UI_WORKFLOW.REVERSE_PLAN;
-  if (failedEntity !== '') {
-    for (let i = 0; i < failedEntity.length; i += 1) {
-      if (failedEntity[i].failedEntity === vm.moref) {
-        isDifferential = false;
-        break;
-      }
-    }
+  const replType = getValue(`${vm.moref}-replication.type`, values);
+  if (replType && replType === REVERSE_REPLICATION_TYPE.FULL) {
+    isDifferential = false;
   }
   vmConfig.isDifferential = isDifferential;
   return vmConfig;

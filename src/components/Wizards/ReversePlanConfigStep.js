@@ -3,6 +3,7 @@ import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardTitle, Form } from 'reactstrap';
 import { getValue } from '../../utils/InputUtils';
 import DMField from '../Shared/DMField';
+import ReverseRecoveryEntity from './ReverseRecoveryEntity';
 
 class ReversePlanConfigStep extends Component {
   render() {
@@ -25,6 +26,7 @@ class ReversePlanConfigStep extends Component {
               <DMField dispatch={dispatch} user={user} fieldKey="reverse.protectedSite" text={protectedSiteName} />
               <DMField dispatch={dispatch} user={user} fieldKey="reverse.recoverySite" />
             </Form>
+            <ReverseRecoveryEntity {...this.props} />
           </CardBody>
         </Card>
       </>
