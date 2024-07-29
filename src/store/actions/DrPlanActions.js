@@ -1136,7 +1136,7 @@ export function setPublicIPWhileEdit(isPublicIP, publicip, networkKey, index, va
     publicIp = 'false';
   }
   if (publicIp !== '' && publicIp !== 'false' && publicIp !== 'true') {
-    dispatch(addAssociatedIPForAzure({ ip: publicIp, id: publicIp, fieldKey: `${networkKey}-eth-${index}`, values }));
+    dispatch(addAssociatedIPForAzure({ ip: publicIp, id: publicIp, fieldKey: `${networkKey}-eth-${index}` }));
   }
   return { publicIp };
 }
