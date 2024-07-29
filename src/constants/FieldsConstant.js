@@ -12,6 +12,7 @@ import { disableRecoveryCheckpointField, isEmpty, isEmptyNum, showReverseWarning
 import { NOTE_TEXT } from './DMNoteConstant';
 import { STATIC_KEYS } from './InputConstants';
 import { EMAIL_REGEX, FQDN_REGEX, HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX, PASSWORD_REGEX, USERNAME_REGEX } from './ValidationConstants';
+import { defaultEntityTypeForVm, defaultReplicationTypeForVm, getVmEntityTypeOptions, getVmReplicationTypeOptions, hasWarning } from '../utils/ReverseReplicationUtils';
 
 export const CONFIURE_SITE_GROUP = ['configureSite.platformDetails.type', 'configureSite.platformDetails.platformName'];
 export const REPLICATION_INTERVAL_COMP = 'REPLICATION_INTERVAL_COMP';
@@ -282,5 +283,6 @@ export const FIELDS = {
   },
   'ui.reset.disk.replication': { label: 'Select All', type: FIELD_TYPE.CHECKBOX, shouldShow: true, default: false },
   'ui.common.checkpoint': { shouldShow: true, type: FIELD_TYPE.SELECT_SEARCH, options: (user) => commonCheckpointOptions(user), validate: true, errorMessage: '', onChange: ({ value, fieldKey, dispatch }) => onCommonCheckpointChange({ value, dispatch, fieldKey }), fieldInfo: 'common.checkpoint.info' },
-
+  'ui.vm.replication.type': { label: '', shouldShow: true, type: FIELD_TYPE.SELECT, options: (user, fieldKey, dispatch) => getVmReplicationTypeOptions(user, fieldKey, dispatch), validate: ({ value }) => isEmpty({ value }), errorMessage: 'Please select replication type', defaultValue: (user, fieldKey, dispatch) => defaultReplicationTypeForVm({ user, fieldKey, dispatch }), hasWarningFunc: (user, fieldKey, fieldName) => hasWarning(user, fieldKey, fieldName) },
+  'ui.vm.entity.type': { label: '', shouldShow: true, type: FIELD_TYPE.SELECT, options: (user, fieldKey, dispatch) => getVmEntityTypeOptions(user, fieldKey, dispatch), validate: ({ value }) => isEmpty({ value }), errorMessage: 'Please select entity type', defaultValue: (user, fieldKey, dispatch) => defaultEntityTypeForVm({ user, fieldKey, dispatch }), hasWarningFunc: (user, fieldKey, fieldName) => hasWarning(user, fieldKey, fieldName) },
 };

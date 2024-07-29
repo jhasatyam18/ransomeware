@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
-import { Card, CardBody, CardTitle, Col, Container, Label, Row } from 'reactstrap';
+import { Col, Container, Label, Row } from 'reactstrap';
 import { valueChange } from '../../store/actions';
 import DMToolTip from '../Shared/DMToolTip';
 import { getValue } from '../../utils/InputUtils';
@@ -60,6 +60,7 @@ function ReverseRecoveryEntity(props) {
             <p className="text-warning font-weight-bold">{t('warning')}</p>
             <ul className="text-warning">
               <li>{t('create.new.warning.one')}</li>
+              <li>{t('create.new.warning.two')}</li>
             </ul>
           </div>
         )}
@@ -68,26 +69,23 @@ function ReverseRecoveryEntity(props) {
   );
 
   const RenderOptions = () => (
-    <Card className="padding-20">
-      <CardTitle>{t('Reverse Protection Plan')}</CardTitle>
-      <CardBody>
-        <Row className="mb-4">
-          <Col sm={4}>{t('Recovery Entity Type')}</Col>
-          <Col sm={7}>
-            <div className="form-check-inline pr-4">
-              <input type="radio" id="original" className="form-check-input" name="entityType" value={REVERSE_ENTITY_TYPE.MAINTAIN_ORIGINAL} checked={reverseEntityType === REVERSE_ENTITY_TYPE.MAINTAIN_ORIGINAL} onChange={(e) => onRecoveryEntityChange(e.target.value)} />
-              <Label className="form-check-label" htmlFor="original">{t('Maintain Original')}</Label>
-            </div>
-            <div className="form-check-inline">
-              <input type="radio" id="new" className="form-check-input" name="entityType" value={REVERSE_ENTITY_TYPE.CREATE_NEW_COPY} checked={reverseEntityType === REVERSE_ENTITY_TYPE.CREATE_NEW_COPY} onChange={(e) => onRecoveryEntityChange(e.target.value)} />
-              <Label className="form-check-label fs-30" htmlFor="new">{t('Create New Copy')}</Label>
-            </div>
-          </Col>
-          <Col sm={1} className="pl-4"><DMToolTip tooltip={t('entity.type.info')} /></Col>
-        </Row>
-        {RenderMessage()}
-      </CardBody>
-    </Card>
+    <>
+      <Row className="mb-4">
+        <Col sm={4} className="pl-1">{t('Recovery Entity Type')}</Col>
+        <Col sm={6}>
+          <div className="form-check-inline pr-4">
+            <input type="radio" id="original" className="form-check-input" name="entityType" value={REVERSE_ENTITY_TYPE.MAINTAIN_ORIGINAL} checked={reverseEntityType === REVERSE_ENTITY_TYPE.MAINTAIN_ORIGINAL} onChange={(e) => onRecoveryEntityChange(e.target.value)} />
+            <Label className="form-check-label" htmlFor="original">{t('Maintain Original')}</Label>
+          </div>
+          <div className="form-check-inline">
+            <input type="radio" id="new" className="form-check-input" name="entityType" value={REVERSE_ENTITY_TYPE.CREATE_NEW_COPY} checked={reverseEntityType === REVERSE_ENTITY_TYPE.CREATE_NEW_COPY} onChange={(e) => onRecoveryEntityChange(e.target.value)} />
+            <Label className="form-check-label fs-30" htmlFor="new">{t('Create New Copy')}</Label>
+          </div>
+        </Col>
+        <Col sm={1} className="pl-5 ml-4"><DMToolTip tooltip={t('entity.type.info')} /></Col>
+      </Row>
+      {RenderMessage()}
+    </>
   );
 
   return (

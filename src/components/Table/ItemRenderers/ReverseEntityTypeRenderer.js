@@ -1,6 +1,6 @@
 import React from 'react';
 import { withTranslation } from 'react-i18next';
-import { REVERSE_ENTITY_TYPE, STATIC_KEYS } from '../../../constants/InputConstants';
+import { MAPPING_REVERSE_RECOMMENDED_DATA, REVERSE_ENTITY_TYPE, STATIC_KEYS } from '../../../constants/InputConstants';
 import { getValue } from '../../../utils/InputUtils';
 import { getStorageWithUnit } from '../../../utils/AppUtils';
 
@@ -23,12 +23,8 @@ const ReverseEntityTypeRenderer = (props) => {
   if (!VMEntityType) {
     return resp;
   }
-  const VMEntityTypeMapper = {
-    'maintain-original': 'Maintain Original',
-    'create-new': 'Create New',
-  };
 
-  const entityType = VMEntityTypeMapper[VMEntityType] || VMEntityType;
+  const entityType = MAPPING_REVERSE_RECOMMENDED_DATA[VMEntityType] || VMEntityType;
 
   if (VMEntityType === REVERSE_ENTITY_TYPE.MAINTAIN_ORIGINAL) {
     resp = entityType;
