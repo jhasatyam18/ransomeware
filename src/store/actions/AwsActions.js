@@ -117,8 +117,10 @@ export function onAwsVPCChange({ value, fieldKey }) {
   };
 }
 
-export function addAssociatedIPForAzure({ fieldKey, ip, id, values }) {
-  return (dispatch) => {
+export function addAssociatedIPForAzure({ fieldKey, ip, id }) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
     if (typeof ip === 'undefined' || ip === '' || typeof id === 'undefined' || id === '') {
       return;
     }
