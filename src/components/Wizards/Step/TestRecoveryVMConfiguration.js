@@ -110,9 +110,24 @@ function TestRecoveryVMConfiguration(props) {
     </>
   );
 
+  const renderScriptWarning = () => {
+    if (workFlow !== UI_WORKFLOW.REVERSE_PLAN) {
+      return null;
+    }
+    return (
+      <p>
+        <i className="fas fa-exclamation-triangle icon__warning padding-right-7" aria-hidden="true" />
+        <span className="text-warning ">
+          {t('script.warning.reverse')}
+        </span>
+      </p>
+    );
+  };
+
   return (
     <Card>
       <CardBody>
+        {renderScriptWarning()}
         {workFlow === UI_WORKFLOW.TEST_RECOVERY ? renderTestRecoveryItems() : null}
         {renderNodes()}
       </CardBody>

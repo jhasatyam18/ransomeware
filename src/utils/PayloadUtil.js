@@ -366,8 +366,16 @@ export function getReversePlanPayload(user) {
   drplan.recoverySite = rSite;
   drplan.recoveryEntities.instanceDetails = getVMConfigPayload(user);
   drplan.replicationInterval = getReplicationInterval(getValue(STATIC_KEYS.REPLICATION_INTERVAL_TYPE, values), getValue('drplan.replicationInterval', values)) || drplan.replicationInterval;
-  drplan.startTime = getUnixTimeFromDate(drplan.startTime);
+  drplan.startTime = getUnixTimeFromDate(getValue('drplan.startTime', values) || drplan.startTime);
   drplan.recoveryPointConfiguration = getRecoveryPointConfiguration(user);
+  drplan.preScript = getValue('drplan.preScript', values);
+  drplan.postScript = getValue('drplan.postScript', values);
+  drplan.replPreScript = getValue('drplan.replPreScript', values);
+  drplan.replPostScript = getValue('drplan.replPostScript', values);
+  drplan.scriptTimeout = getValue('drplan.scriptTimeout', values);
+  drplan.preInputs = getValue('drplan.preInputs', values);
+  drplan.postInputs = getValue('drplan.postInputs', values);
+  drplan.bootDelay = getValue('drplan.bootDelay', values);
   return drplan;
 }
 

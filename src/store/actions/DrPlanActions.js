@@ -1305,6 +1305,7 @@ export function openVMReconfigWizard(vmMoref, pPlan, selectedVMS, alerts) {
         dispatch(valueChange('ui.selected.protection.plan', pPlan));
         dispatch(valueChange('drplan.recoverySite', pPlan.recoverySite.id));
         dispatch(setProtectionPlanVMConfig(selectedVMS, pPlan));
+        dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.SINGLE_VM_EDIT));
         if (isSamePlatformPlan(pPlan)) {
           dispatch(onRecoverSiteChange({ value: pPlan.recoverySite.id }));
         } else {
@@ -1692,6 +1693,10 @@ function setReverseData(json) {
       dispatch(valueChange('ui.recovery.plan', json));
       dispatch(valueChange('drplan.removeCheckpoint', true));
       dispatch(setPplanRecoveryCheckpointData(json.recoveryPointConfiguration));
+      dispatch(valueChange('drplan.replPreScript', json.replPreScript));
+      dispatch(valueChange('drplan.replPostScript', json.replPostScript));
+      dispatch(valueChange('drplan.preScript', json.preScript));
+      dispatch(valueChange('drplan.postScript', json.postScript));
       dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.REVERSE_PLAN));
       if (!json.enableDifferentialReverse) {
         dispatch(valueChange('reverse.replType', STATIC_KEYS.FULL_INCREMENTAL));
@@ -1723,6 +1728,8 @@ function setReverseData(json) {
                   dispatch(valueChange(`${vm.moref}${STATIC_KEYS.VMWARE_QUIESCE_KEY}`, true));
                 }
                 dispatch(setRecoveryVMDetails(vm.moref));
+                dispatch(valueChange(`${vm.moref}-protection.scripts.preScript`, vm.preScript));
+                dispatch(valueChange(`${vm.moref}-protection.scripts.postScript`, vm.postScript));
               }
             });
           });
