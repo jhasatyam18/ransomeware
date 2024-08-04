@@ -855,5 +855,6 @@
   "entity.type": "Entity Type",
   "replication.type": "Replication Type",
   "impact": "Impact",
-  "recommended": "Recommended"
+  "recommended": "Recommended",
+  "script.warning.reverse": "Please check and correct all the scripts depending on new source and target sites."
 }
