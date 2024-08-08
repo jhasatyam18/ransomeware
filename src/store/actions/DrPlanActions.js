@@ -1090,7 +1090,7 @@ function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch, user) {
         if (ins.networks && ins.networks.length > 0) {
           ins.networks.forEach((net, index) => {
             dispatch(valueChange(`${networkKey}-eth-${index}-id`, net.id));
-            const { publicIp } = setPublicIPWhileEdit(net.isPublicIP, net.publicIP, networkKey, index, values, dispatch);
+            const { publicIp } = setPublicIPWhileEdit(net.isPublicIP, net.publicIP, networkKey, index, dispatch);
             const network = getNetworkIDFromName(net.network, values);
             dispatch(valueChange(`${networkKey}-eth-${index}-network`, network));
             const subnet = getSubnetIDFromName(net.Subnet, values, network);
@@ -1599,7 +1599,7 @@ export function setAzureVMRecoveryData(vmMoref, protectection) {
           ins.networks.forEach((net, index) => {
             dispatch(valueChange(`${networkKey}-eth-${index}-id`, net.id));
             // TODO: Code refactor required, all vm level data setting must happen through one function only.
-            const { publicIp } = setPublicIPWhileEdit(net.isPublicIP, net.publicIP, networkKey, index, values, dispatch);
+            const { publicIp } = setPublicIPWhileEdit(net.isPublicIP, net.publicIP, networkKey, index, dispatch);
             const network = getNetworkIDFromName(net.network, values);
             dispatch(valueChange(`${networkKey}-eth-${index}-network`, network));
             const subnet = getSubnetIDFromName(net.Subnet, values, network);
