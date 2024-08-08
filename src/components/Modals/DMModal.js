@@ -33,6 +33,7 @@ import ModalTroubleShooting from './ModalTroubleShooting';
 import ModalVMwareQuiesce from './ModalVMwareQuiesce';
 import PlaybookGenerateModal from './PlaybookGenerateModal';
 import PlaybookUploadModal from './PlaybookUploadModal';
+import ModalReverseChangesWarning from './ModalReverseChangesWarning';
 
 function DMModal(props) {
   const { modal, user, dispatch } = props;
@@ -113,6 +114,8 @@ function DMModal(props) {
           return <ModalVMwareQuiesce dispatch={dispatch} user={user} />;
         case MODALS.MODAL_RESET_DISK_REPLICATION:
           return <ResetDiskReplicationModal dispatch={dispatch} user={user} options={options} />;
+        case MODALS.MODAL_REVERSE_CHANGES_WARNING:
+          return <ModalReverseChangesWarning dispatch={dispatch} user={user} {...props} />;
         default:
           return (<div>404</div>);
       }

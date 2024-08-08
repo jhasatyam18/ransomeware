@@ -29,7 +29,9 @@ class ReversePlanSummary extends Component {
     let replicationInterval = '';
     let protectedSiteName = '';
     let selectedVMs = {};
-    const col = TABLE_REVERSE_VM.filter((_, index) => index !== 4).map((el) => ({ ...el }));
+    const col = TABLE_REVERSE_VM.filter((_, index) => index !== 3 && index !== 5).map((el) => ({ ...el }));
+    col[3].field = 'replicationType';
+    col[3].customCSS = 'text-capitalize';
     col.push({ label: 'Recovery Entity Type', field: 'virtualDisks', itemRenderer: REVERSE_SUMMARY_ENTITY_TYPE_RENDERER, width: 3 });
     if (drPlan) {
       name = drPlan.name;
@@ -45,7 +47,7 @@ class ReversePlanSummary extends Component {
         }
       });
     });
-    const updateVMs = selectedVMs.map((el) => ({ ...el, replicationType: el.isDifferential ? 'Differential' : 'Full' }));
+    const updateVMs = selectedVMs.map((el) => ({ ...el, replicationType: getValue(`${el.moref}-replication.type`, values) }));
     selectedVMs = [...updateVMs];
     size = getStorageWithUnit(size);
     return (
