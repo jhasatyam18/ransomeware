@@ -336,6 +336,7 @@ export function startRecovery() {
           msg = i18n.t('recovery.loader.msg');
         }
         dispatch(addMessage(msg, MESSAGE_TYPES.SUCCESS));
+        dispatch(refresh());
       }
     },
     (err) => {

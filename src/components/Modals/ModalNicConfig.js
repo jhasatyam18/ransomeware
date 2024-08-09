@@ -273,7 +273,7 @@ class ModalNicConfig extends Component {
                   <Col sm={4}>
                     {t('title.network.name')}
                   </Col>
-                  <Col sm={8} className="zIndex-100">
+                  <Col sm={8}>
                     <DMSearchSelect hideLabel user={user} dispatch={dispatch} fieldKey={`${networkKey}-network`} field={networkField} />
                   </Col>
                 </Row>
