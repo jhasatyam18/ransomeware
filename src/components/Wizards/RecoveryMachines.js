@@ -42,6 +42,16 @@ class RecoveryMachines extends Component {
     }
   }
 
+  componentDidUpdate() {
+    const { user } = this.props;
+    const { recoveryType } = this.state;
+    const { values } = user;
+    const updatedValue = getValue(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, values) || 0;
+    if (recoveryType !== updatedValue) {
+      this.setState({ recoveryType: updatedValue });
+    }
+  }
+
   onFilter(criteria) {
     const { user } = this.props;
     const { values } = user;
@@ -157,9 +167,9 @@ class RecoveryMachines extends Component {
   RenderOptions() {
     const { t, user } = this.props;
     const { values } = user;
-    const { recoveryType } = this.state;
+    const { recoveryType, dataToDisplay } = this.state;
     const disablePointInTime = getValue(STATIC_KEYS.IS_POINT_IN_TIME_DISABLED, values);
-    const disableLatest = getValue(STATIC_KEYS.DISABLE_RECOVERY_FROM_LATEST, values);
+    const disableLatest = dataToDisplay.length > 0 ? dataToDisplay?.every((el) => el.resetIteration === true) : false;
     return (
       <Row className="margin-top-20">
         <Col sm={4} className="padding-left-30">{t('recover.from')}</Col>

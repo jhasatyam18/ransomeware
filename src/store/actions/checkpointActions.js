@@ -1,16 +1,18 @@
 import { t } from 'i18next';
 import * as Types from '../../constants/actionTypes';
 import { API_CHECKPOINT_TAKE_ACTION, API_GET_SELECTED_CHECKPOINTS, API_PROTECTTION_PLAN_REPLICATION_VM_JOBS, API_RECOVERY_CHECKPOINT, API_RECOVERY_CHECKPOINT_BY_VM, API_REPLICATION_VM_JOBS, API_UPDAT_RECOVERY_CHECKPOINT_BY_ID } from '../../constants/ApiConstants';
-import { MINUTES_CONVERSION, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
+import { CHECKPOINT_TYPE, MINUTES_CONVERSION, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { MODAL_CONFIRMATION_WARNING, MODAL_PRESERVE_CHECKPOINT } from '../../constants/Modalconstant';
 import { STORE_KEYS } from '../../constants/StoreKeyConstants';
+import { RECOVERY_WIZARDS } from '../../constants/WizardConstants';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { getValue } from '../../utils/InputUtils';
 import { setRecoveryVMDetails } from './DrPlanActions';
 import { addMessage } from './MessageActions';
 import { closeModal, openModal } from './ModalActions';
 import { clearValues, hideApplicationLoader, refresh, showApplicationLoader, valueChange } from './UserActions';
+import { openWizard } from './WizardActions';
 
 export function setRecoveryCheckpointJobs(checkpointJobs) {
   return {
@@ -561,12 +563,22 @@ export function fetchLatestReplicationJob(data) {
         if (json.hasError) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
+          let allVMsRecoveredSuccessfully = true;
           json.forEach((vm, ind) => {
             if (vm.moref === vms[ind].vmmoref) {
               vms[ind].currentSnapshotTime = vm.currentSnapshotTime;
+              vms[ind].resetIteration = vm.resetIteration;
+              if (!vm.resetIteration && allVMsRecoveredSuccessfully) {
+                allVMsRecoveredSuccessfully = false;
+              }
             }
           });
           dispatch(valueChange('ui.recovery.vms', vms));
+          if (allVMsRecoveredSuccessfully) {
+            dispatch(valueChange(STATIC_KEYS.DISABLE_RECOVERY_FROM_LATEST, true));
+            dispatch(valueChange(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, CHECKPOINT_TYPE.POINT_IN_TIME));
+          }
+          dispatch(openWizard(RECOVERY_WIZARDS.options, RECOVERY_WIZARDS.steps));
         }
       },
       (err) => {
