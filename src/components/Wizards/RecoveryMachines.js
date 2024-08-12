@@ -46,8 +46,8 @@ class RecoveryMachines extends Component {
     const { user } = this.props;
     const { recoveryType } = this.state;
     const { values } = user;
-    const updatedValue = getValue(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, values) || 0;
-    if (recoveryType !== updatedValue) {
+    const updatedValue = getValue(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, values);
+    if (recoveryType !== updatedValue && updatedValue !== '') {
       this.setState({ recoveryType: updatedValue });
     }
   }
@@ -101,8 +101,10 @@ class RecoveryMachines extends Component {
     } else if (value === CHECKPOINT_TYPE.POINT_IN_TIME) {
       recVms.forEach((vm) => {
         const virtualMachine = vm;
-        if (typeof vm.recoveryStatus !== 'undefined' && (vm.recoveryStatus === RECOVERY_STATUS.RECOVERED || vm.isRemovedFromPlan === true)) {
+        if (typeof vm.recoveryStatus !== 'undefined' && (vm.recoveryStatus === RECOVERY_STATUS.RECOVERED || vm.isRemovedFromPlan === true || vm.recoveryStatus === RECOVERY_STATUS.MIGRATED) && workflow === UI_WORKFLOW.TEST_RECOVERY) {
           // below code is to enable vm selection for point-in-time even if it's recovered
+          virtualMachine.isDisabled = true;
+        } else {
           virtualMachine.isDisabled = false;
         }
         data.push(virtualMachine);

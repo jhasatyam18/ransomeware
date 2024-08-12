@@ -134,6 +134,7 @@ export const STATIC_KEYS = {
   REVERSE_VALIDATION_FAILED_MSG: 'original source entity not found',
   REPLICATION_TYPE: 'replicationType',
   ENTITY_TYPE: 'entityType',
+  VM_LATEST_REPLICATION_JOBS: 'ui.latest.vm.replication.jobs',
 };
 
 // Recovery time in minutes
