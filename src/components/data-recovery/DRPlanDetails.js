@@ -264,7 +264,7 @@ class DRPlanDetails extends Component {
       actions.push({ label: 'Download Plan Playbook', action: playbookExport, id: protectionPlan, disabled: this.disableEdit(), icon: 'fa fa-download' });
       actions.push({ label: 'Remove', action: deletePlanConfirmation, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS || !hasRequestedPrivileges(user, ['protectionplan.delete']), navigate: PROTECTION_PLANS_PATH, icon: 'fa fa-trash' });
     } else if (localVMIP === recoverySite.node.hostname) {
-      actions = [{ label: 'recover', action: openRecoveryWizard, icon: 'fa fa-plus', disabled: !recovered || !hasRequestedPrivileges(user, ['recovery.full']) },
+      actions = [{ label: 'recover', action: openRecoveryWizard, icon: 'fa fa-plus', disabled: !recovered || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED || !hasRequestedPrivileges(user, ['recovery.full']) },
         { label: 'Migrate', action: openMigrationWizard, icon: 'fa fa-clone', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.migration']) },
         { label: 'Reverse', action: openReverseWizard, icon: 'fa fa-backward', disabled: isReverseActionDisabled },
         { label: 'Test Recovery', action: openTestRecoveryWizard, icon: 'fa fa-check', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.test']) },

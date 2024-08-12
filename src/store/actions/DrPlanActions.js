@@ -252,6 +252,8 @@ export function onProtectionPlanChange({ value, allowDeleted, planRecoveryStatus
           const info = json.protectedEntities.virtualMachines || [];
           const rEntities = json.recoveryEntities.instanceDetails || [];
           const planHasCheckpoints = getValue(STATIC_KEYS.UI_RECOVERY_CHECKPOINTS_BY_VM_ID, values) || [];
+          const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
+          const checkpointType = getValue(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, values);
           info.forEach((vm) => {
             rEntities.forEach((rE) => {
               if (vm.moref === rE.sourceMoref) {
@@ -264,7 +266,7 @@ export function onProtectionPlanChange({ value, allowDeleted, planRecoveryStatus
                 if (typeof vm.recoveryStatus !== 'undefined' && (vm.recoveryStatus === RECOVERY_STATUS.MIGRATED || vm.recoveryStatus === RECOVERY_STATUS.RECOVERED || vm.isRemovedFromPlan === true)) {
                   // if plan is recovered and vm's has checkpoint then render point-int-time recovery option
                   // if point-in-time recovery option is rendered then show/enable recovered vm checkbox
-                  if (Object.keys(planHasCheckpoints).length > 0 && typeof planRecoveryStatus !== 'undefined' && planRecoveryStatus === RECOVERY_STATUS.RECOVERED && vm.recoveryStatus === RECOVERY_STATUS.RECOVERED) {
+                  if (Object.keys(planHasCheckpoints).length > 0 && typeof planRecoveryStatus !== 'undefined' && vm.recoveryStatus === RECOVERY_STATUS.RECOVERED && workflow !== UI_WORKFLOW.TEST_RECOVERY && checkpointType === CHECKPOINT_TYPE.POINT_IN_TIME) {
                     machine.isDisabled = false;
                   } else if (typeof allowDeleted === 'undefined' || !allowDeleted) {
                     machine.isDisabled = true;
@@ -279,7 +281,9 @@ export function onProtectionPlanChange({ value, allowDeleted, planRecoveryStatus
           });
           dispatch(valueChange(STORE_KEYS.UI_RECOVERY_VMS, data));
           // to fetch latest replication job to sho in recovery, test-recovery and migration wizard
-          dispatch(fetchLatestReplicationJob(data));
+          if (workflow !== UI_WORKFLOW.MIGRATION) {
+            dispatch(fetchLatestReplicationJob(data));
+          }
         }
       },
       (err) => {
