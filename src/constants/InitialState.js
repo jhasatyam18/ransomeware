@@ -34,7 +34,7 @@ const INITIAL_STATE = {
   drPlaybooks: { templates: [], selectedPlaybook: {}, playbook: {} },
   modal: [],
   wizard: { steps: [], show: false, options: { title: '' } },
-  jobs: { replication: [], diskReplication: [], recovery: [], replicationType: REPLICATION_JOB_TYPE.PLAN, recoveryType: RECOVERY_JOB_TYPE.PLAN, checkpointJobs: [], recoveryCheckpoints: {}, selectedCheckpoints: {}, vmCheckpoint: [], checkpointType: RECOVERY_CHECKPOINT_TYPE.PLAN },
+  jobs: { replication: [], diskReplication: [], recovery: [], replicationType: REPLICATION_JOB_TYPE.PLAN, recoveryType: RECOVERY_JOB_TYPE.PLAN, checkpointJobs: [], recoveryCheckpoints: {}, selectedCheckpoints: {}, vmCheckpoint: [], checkpointType: RECOVERY_CHECKPOINT_TYPE.PLAN, checkpointCount: 0 },
   dashboard: {
     titles: {},
     replicationStats: { completed: 0, running: 0, failures: 0, copies: 0, changeRate: 0, dataReduction: 0, rpo: 0, inSync: 0, notInsync: 0, changedRate: 0 },

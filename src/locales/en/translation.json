@@ -642,7 +642,7 @@
   "info.recipient.email.address": "Email address, this email will be used to recieve the test email",
   "info.recepient.checkbox": "Run a Dry Run: Send a Test Email to Double-Check Your Configuration!",
   "emailConfiguration.isValidate": "Test Configuration",
-  "recovery.checkpoint.onchange.warn": "Recovering VMs with different checkpoints may lead to inconsistencies in overall application state, Reverse differential will not be supported when recovered from a checkpoint.",
+  "recovery.checkpoint.onchange.warn": "Recovering VMs with different checkpoints may lead to inconsistencies in overall application state. Reverse differential will not be supported when recovered from a checkpoint.",
   "test.recovery.recovery.configuration": "Recovery Configuration",
   "test.recovery.prev.recovery.configuration": "Previous Test Recovery Configuration",
   "title.system.validation": "System Validation",
@@ -856,5 +856,6 @@
   "replication.type": "Replication Type",
   "impact": "Impact",
   "recommended": "Recommended",
-  "script.warning.reverse": "Please check and correct all the scripts depending on new source and target sites."
+  "script.warning.reverse": "Please check and correct all the scripts depending on new source and target sites.",
+  "pit.recovery.warning": "After recovering a virtual machine from a point-in-time checkpoint, it cannot be recovered again with the latest replicated data"
 }

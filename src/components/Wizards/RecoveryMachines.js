@@ -260,9 +260,16 @@ class RecoveryMachines extends Component {
 
     const renderWarningMsg = () => (
       <>
-        <div className="padding-left-20 card_note_warning">
-          {checkpointWarning}
-        </div>
+        {workflow === UI_WORKFLOW.RECOVERY ? (
+          <ul className="card_note_warning">
+            <li>{checkpointWarning}</li>
+            <li>{t('pit.recovery.warning')}</li>
+          </ul>
+        ) : (
+          <div className="padding-left-20 card_note_warning">
+            {checkpointWarning}
+          </div>
+        )}
       </>
     );
 

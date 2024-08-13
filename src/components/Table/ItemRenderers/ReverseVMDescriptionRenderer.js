@@ -1,7 +1,7 @@
 import React from 'react';
-import { getValue } from '../../../utils/InputUtils';
 import { REVERSE_ENTITY_TYPE, REVERSE_REPLICATION_TYPE } from '../../../constants/InputConstants';
 import { getStorageWithUnit } from '../../../utils/AppUtils';
+import { getValue } from '../../../utils/InputUtils';
 import { hasWarning } from '../../../utils/ReverseReplicationUtils';
 
 const ReverseVMDescriptionRenderer = ({ data, user, field }) => {
@@ -39,7 +39,8 @@ const ReverseVMDescriptionRenderer = ({ data, user, field }) => {
     val = `Additional ${size} storage, compute resources and IPs will be required. Full data will be used for egress charges.`;
   }
   if (data[field]) {
-    val = `${data[field]} ( ${val} )`;
+    // make the first letter capital
+    val = `${data[field].charAt(0).toUpperCase() + data[field].slice(1)} ( ${val} )`;
   } else if (!data[field] && val.length === 0) {
     val = '-';
   }
