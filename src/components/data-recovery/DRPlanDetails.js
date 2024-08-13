@@ -39,6 +39,7 @@ class DRPlanDetails extends Component {
     const params = Object.fromEntries(urlParams.entries());
     dispatch(fetchDRPlanById(parts[parts.length - 1], params));
     dispatch(fetchCheckpointsByPlanId(parts[parts.length - 1]));
+    dispatch(setActiveTab('1'));
   }
 
   disableEdit() {
