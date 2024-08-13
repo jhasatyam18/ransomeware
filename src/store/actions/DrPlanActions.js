@@ -17,7 +17,7 @@ import { setCookie } from '../../utils/CookieUtils';
 import { getMatchingFirmwareType, getMatchingInsType, getMatchingOSType, getValue, getVMInstanceFromEvent, getVMMorefFromEvent, isSamePlatformPlan } from '../../utils/InputUtils';
 import { getCreateDRPlanPayload, getEditProtectionPlanPayload, getRecoveryPayload, getResetDiskReplicationPayload, getReversePlanPayload, getVMConfigPayload } from '../../utils/PayloadUtil';
 import { fetchByDelay } from '../../utils/SlowFetch';
-import { changedVMRecoveryConfigurations } from '../../utils/validationUtils';
+import { changedVMRecoveryConfigurations, validateReversePlan } from '../../utils/validationUtils';
 import { addAssociatedIPForAzure, addAssociatedReverseIP } from './AwsActions';
 import { fetchCheckpointsByPlanId, fetchLatestReplicationJob, getVmCheckpoints, setPplanRecoveryCheckpointData } from './checkpointActions';
 import { downloadDateModifiedPlaybook, onPlanPlaybookExport } from './DrPlaybooksActions';
@@ -252,6 +252,8 @@ export function onProtectionPlanChange({ value, allowDeleted, planRecoveryStatus
           const info = json.protectedEntities.virtualMachines || [];
           const rEntities = json.recoveryEntities.instanceDetails || [];
           const planHasCheckpoints = getValue(STATIC_KEYS.UI_RECOVERY_CHECKPOINTS_BY_VM_ID, values) || [];
+          const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
+          const checkpointType = getValue(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, values);
           info.forEach((vm) => {
             rEntities.forEach((rE) => {
               if (vm.moref === rE.sourceMoref) {
@@ -264,7 +266,7 @@ export function onProtectionPlanChange({ value, allowDeleted, planRecoveryStatus
                 if (typeof vm.recoveryStatus !== 'undefined' && (vm.recoveryStatus === RECOVERY_STATUS.MIGRATED || vm.recoveryStatus === RECOVERY_STATUS.RECOVERED || vm.isRemovedFromPlan === true)) {
                   // if plan is recovered and vm's has checkpoint then render point-int-time recovery option
                   // if point-in-time recovery option is rendered then show/enable recovered vm checkbox
-                  if (Object.keys(planHasCheckpoints).length > 0 && typeof planRecoveryStatus !== 'undefined' && planRecoveryStatus === RECOVERY_STATUS.RECOVERED && vm.recoveryStatus === RECOVERY_STATUS.RECOVERED) {
+                  if (Object.keys(planHasCheckpoints).length > 0 && typeof planRecoveryStatus !== 'undefined' && vm.recoveryStatus === RECOVERY_STATUS.RECOVERED && workflow !== UI_WORKFLOW.TEST_RECOVERY && checkpointType === CHECKPOINT_TYPE.POINT_IN_TIME) {
                     machine.isDisabled = false;
                   } else if (typeof allowDeleted === 'undefined' || !allowDeleted) {
                     machine.isDisabled = true;
@@ -279,7 +281,9 @@ export function onProtectionPlanChange({ value, allowDeleted, planRecoveryStatus
           });
           dispatch(valueChange(STORE_KEYS.UI_RECOVERY_VMS, data));
           // to fetch latest replication job to sho in recovery, test-recovery and migration wizard
-          dispatch(fetchLatestReplicationJob(data));
+          if (workflow !== UI_WORKFLOW.MIGRATION) {
+            dispatch(fetchLatestReplicationJob(data));
+          }
         }
       },
       (err) => {
@@ -336,6 +340,7 @@ export function startRecovery() {
           msg = i18n.t('recovery.loader.msg');
         }
         dispatch(addMessage(msg, MESSAGE_TYPES.SUCCESS));
+        dispatch(refresh());
       }
     },
     (err) => {
@@ -1090,7 +1095,7 @@ function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch, user) {
         if (ins.networks && ins.networks.length > 0) {
           ins.networks.forEach((net, index) => {
             dispatch(valueChange(`${networkKey}-eth-${index}-id`, net.id));
-            const { publicIp } = setPublicIPWhileEdit(net.isPublicIP, net.publicIP, networkKey, index, values, dispatch);
+            const { publicIp } = setPublicIPWhileEdit(net.isPublicIP, net.publicIP, networkKey, index, dispatch);
             const network = getNetworkIDFromName(net.network, values);
             dispatch(valueChange(`${networkKey}-eth-${index}-network`, network));
             const subnet = getSubnetIDFromName(net.Subnet, values, network);
@@ -1136,7 +1141,7 @@ export function setPublicIPWhileEdit(isPublicIP, publicip, networkKey, index, va
     publicIp = 'false';
   }
   if (publicIp !== '' && publicIp !== 'false' && publicIp !== 'true') {
-    dispatch(addAssociatedIPForAzure({ ip: publicIp, id: publicIp, fieldKey: `${networkKey}-eth-${index}`, values }));
+    dispatch(addAssociatedIPForAzure({ ip: publicIp, id: publicIp, fieldKey: `${networkKey}-eth-${index}` }));
   }
   return { publicIp };
 }
@@ -1305,6 +1310,7 @@ export function openVMReconfigWizard(vmMoref, pPlan, selectedVMS, alerts) {
         dispatch(valueChange('ui.selected.protection.plan', pPlan));
         dispatch(valueChange('drplan.recoverySite', pPlan.recoverySite.id));
         dispatch(setProtectionPlanVMConfig(selectedVMS, pPlan));
+        dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.SINGLE_VM_EDIT));
         if (isSamePlatformPlan(pPlan)) {
           dispatch(onRecoverSiteChange({ value: pPlan.recoverySite.id }));
         } else {
@@ -1598,7 +1604,7 @@ export function setAzureVMRecoveryData(vmMoref, protectection) {
           ins.networks.forEach((net, index) => {
             dispatch(valueChange(`${networkKey}-eth-${index}-id`, net.id));
             // TODO: Code refactor required, all vm level data setting must happen through one function only.
-            const { publicIp } = setPublicIPWhileEdit(net.isPublicIP, net.publicIP, networkKey, index, values, dispatch);
+            const { publicIp } = setPublicIPWhileEdit(net.isPublicIP, net.publicIP, networkKey, index, dispatch);
             const network = getNetworkIDFromName(net.network, values);
             dispatch(valueChange(`${networkKey}-eth-${index}-network`, network));
             const subnet = getSubnetIDFromName(net.Subnet, values, network);
@@ -1680,7 +1686,7 @@ function setVMDetails(vmDetails, protectedVMInfo) {
 }
 
 function setReverseData(json) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     const { id, protectedSite, recoverySite } = json;
     const { platformDetails } = recoverySite;
     const protectedSitePlatform = protectedSite.platformDetails.platformType;
@@ -1692,6 +1698,10 @@ function setReverseData(json) {
       dispatch(valueChange('ui.recovery.plan', json));
       dispatch(valueChange('drplan.removeCheckpoint', true));
       dispatch(setPplanRecoveryCheckpointData(json.recoveryPointConfiguration));
+      dispatch(valueChange('drplan.replPreScript', json.replPreScript));
+      dispatch(valueChange('drplan.replPostScript', json.replPostScript));
+      dispatch(valueChange('drplan.preScript', json.preScript));
+      dispatch(valueChange('drplan.postScript', json.postScript));
       dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.REVERSE_PLAN));
       if (!json.enableDifferentialReverse) {
         dispatch(valueChange('reverse.replType', STATIC_KEYS.FULL_INCREMENTAL));
@@ -1723,6 +1733,8 @@ function setReverseData(json) {
                   dispatch(valueChange(`${vm.moref}${STATIC_KEYS.VMWARE_QUIESCE_KEY}`, true));
                 }
                 dispatch(setRecoveryVMDetails(vm.moref));
+                dispatch(valueChange(`${vm.moref}-protection.scripts.preScript`, vm.preScript));
+                dispatch(valueChange(`${vm.moref}-protection.scripts.postScript`, vm.postScript));
               }
             });
           });
@@ -1730,7 +1742,9 @@ function setReverseData(json) {
           dispatch(setVMGuestOSInfo(selectedVMs));
           // for giving selection of vm in wizard if vm selection is not their then remove this
           // dispatch(valueChange('ui.site.vms', data));
+          const { user } = getState();
           dispatch(openWizard(REVERSE_WIZARDS.options, REVERSE_WIZARDS.steps));
+          validateReversePlan({ user, dispatch });
           return new Promise((resolve) => resolve());
         },
         (err) => {

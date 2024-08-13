@@ -15,6 +15,9 @@ import { API_TYPES, callAPI, createPayload } from './ApiUtils';
 import { convertMinutesToDaysHourFormat } from './AppUtils';
 import { createVMConfigStackObject, excludeKeys, getValue, isAWSCopyNic, validateMacAddressForVMwareNetwork } from './InputUtils';
 import { getRecoveryPayload, getRecoveryPointTimePeriod, getReplicationInterval, getReversePlanPayload, getVMNetworkConfig, getVMwareNetworkConfig } from './PayloadUtil';
+import { setRecommendedData } from './ReverseReplicationUtils';
+import { openModal } from '../store/actions/ModalActions';
+import { MODAL_REVERSE_CHANGES_WARNING } from '../constants/Modalconstant';
 
 export function isRequired(value) {
   if (!value) {
@@ -153,9 +156,9 @@ export const checkCBTStatus = ({ user, dispatch }) => {
 export async function validateDRPlanProtectData({ user, dispatch }) {
   const { values } = user;
   const vmwareVMS = getValue('ui.site.vmware.selectedvms', values);
+  const workFlow = getValue(STATIC_KEYS.UI_WORKFLOW, values) || '';
   if (typeof vmwareVMS !== 'undefined' && vmwareVMS) {
     // Below code is to fetch the datacenter from the the source dev center and in case of test recovery we don't want it
-    const workFlow = getValue(STATIC_KEYS.UI_WORKFLOW, values) || '';
     if (workFlow !== UI_WORKFLOW.TEST_RECOVERY) {
       const vmwareVMSKeys = Object.keys(vmwareVMS);
       if (!vmwareVMSKeys || vmwareVMSKeys.length === 0) {
@@ -177,6 +180,24 @@ export async function validateDRPlanProtectData({ user, dispatch }) {
     return false;
   }
   dispatch(setVMGuestOSInfo(vms));
+  if (workFlow === UI_WORKFLOW.REVERSE_PLAN) {
+    let showWarnigForChanges = false;
+    const recommendedData = getValue(STATIC_KEYS.UI_REVERSE_RECOMMENDED_DATA, values);
+    if (recommendedData && Object.keys(recommendedData).length > 0) {
+      Object.keys(recommendedData).forEach((el) => {
+        const entityType = getValue(`${el}-vmConfig.general.entityType`, values);
+        const replicationType = getValue(`${el}-replication.type`, values);
+        if (recommendedData[el].replicationType !== replicationType || recommendedData[el].entityType !== entityType) {
+          showWarnigForChanges = true;
+        }
+      });
+    }
+    if (showWarnigForChanges) {
+      const options = { title: 'Replication Settings Override Alert', size: 'xl' };
+      dispatch(openModal(MODAL_REVERSE_CHANGES_WARNING, options));
+      return false;
+    }
+  }
   return true;
 }
 
@@ -263,22 +284,25 @@ export function validateVMConfiguration({ user, dispatch }) {
     return false;
   }
   // validate Network
-  return validateNetworkConfig(user, dispatch);
+  return dispatch(validateNetworkConfig());
 }
 
-export function validateNetworkConfig(user, dispatch) {
-  const { values } = user;
-  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
-  switch (recoveryPlatform) {
-    case PLATFORM_TYPES.AWS:
-      return validateAWSNetworks(user, dispatch);
-    case PLATFORM_TYPES.GCP:
-      return validateGCPNetwork(user, dispatch);
-    case PLATFORM_TYPES.Azure:
-      return validateAzureNetwork(user, dispatch);
-    default:
-      return validateVMware(user, dispatch);
-  }
+export function validateNetworkConfig() {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+    switch (recoveryPlatform) {
+      case PLATFORM_TYPES.AWS:
+        return validateAWSNetworks(user, dispatch);
+      case PLATFORM_TYPES.GCP:
+        return validateGCPNetwork(user, dispatch);
+      case PLATFORM_TYPES.Azure:
+        return validateAzureNetwork(user, dispatch);
+      default:
+        return validateVMware(user, dispatch);
+    }
+  };
 }
 
 export function validateGCPNetwork(user, dispatch) {
@@ -612,6 +636,7 @@ export async function validateReversePlan({ user, dispatch }) {
       return false;
     }
     if (response.failedEntities === null || response.failedEntities.length === 0) {
+      setRecommendedData(user, dispatch, []);
       return true;
     }
     if (response.failedEntities.length !== 0) {
@@ -619,6 +644,7 @@ export async function validateReversePlan({ user, dispatch }) {
       const failureObj = {};
       const errorMsg = [];
       dispatch(valueChange(STATIC_KEYS.REVERSE_VALIDATE_FAILED_ENTITIE, failedEntities));
+      setRecommendedData(user, dispatch, failedEntities);
       failedEntities.forEach((element) => {
         const { failedEntity } = element;
         const { failureMessage } = element;

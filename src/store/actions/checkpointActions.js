@@ -1,7 +1,7 @@
 import { t } from 'i18next';
 import * as Types from '../../constants/actionTypes';
-import { API_CHECKPOINT_TAKE_ACTION, API_GET_SELECTED_CHECKPOINTS, API_PROTECTTION_PLAN_REPLICATION_VM_JOBS, API_RECOVERY_CHECKPOINT, API_RECOVERY_CHECKPOINT_BY_VM, API_REPLICATION_VM_JOBS, API_UPDAT_RECOVERY_CHECKPOINT_BY_ID } from '../../constants/ApiConstants';
-import { MINUTES_CONVERSION, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
+import { API_CHECKPOINT_TAKE_ACTION, API_GET_SELECTED_CHECKPOINTS, API_RECOVERY_CHECKPOINT, API_RECOVERY_CHECKPOINT_BY_VM, API_REPLICATION_VM_JOBS, API_UPDAT_RECOVERY_CHECKPOINT_BY_ID } from '../../constants/ApiConstants';
+import { CHECKPOINT_TYPE, MINUTES_CONVERSION, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { MODAL_CONFIRMATION_WARNING, MODAL_PRESERVE_CHECKPOINT } from '../../constants/Modalconstant';
 import { STORE_KEYS } from '../../constants/StoreKeyConstants';
@@ -34,7 +34,11 @@ export function createPayloadForCheckpoints(checkpointid, user) {
   const checkpontPayloadArray = [];
   const checkpointKeys = Object.keys(checkpointid);
   checkpointKeys.forEach((k) => {
-    const obj = checkpointid[k];
+    const { id, creationTime, affiliatedNodeKey } = checkpointid[k];
+    const obj = {};
+    obj.id = id;
+    obj.creationTime = creationTime;
+    obj.affiliatedNodeKey = affiliatedNodeKey;
     obj.isPreserved = true;
     obj.preserveDescription = getValue('checkpoint.preserve', values);
     checkpontPayloadArray.push(obj);
@@ -330,7 +334,7 @@ export function getVmCheckpoints(planId, moref) {
               }
             });
             dispatch(valueChange(STATIC_KEYS.UI_COMMON_CHECKPOINT_OPTIONS, uniqueCheckpointScheduleTime));
-            const latestReplicationOfVms = await fetchVMsLatestReplicaionJob(planId, moref, dispatch);
+            const latestReplicationOfVms = await fetchVMsLatestReplicaionJob(moref, dispatch);
             latestReplicationOfVms.forEach((latestJob) => {
               if (typeof vmCheckpoints[latestJob.vmMoref] !== 'undefined' && vmCheckpoints[latestJob.vmMoref].length > 0) {
                 vmCheckpoints[latestJob.vmMoref].unshift(latestJob);
@@ -388,11 +392,11 @@ export async function fetchVmCheckpoint(planId, moref, offset = 0, dispatch) {
    * @param {*} dispatch
    * @returns latest successfull replication job of the vm's
    */
-export async function fetchVMsLatestReplicaionJob(planId, moref, dispatch) {
+export async function fetchVMsLatestReplicaionJob(moref, dispatch) {
   try {
-    let url = API_PROTECTTION_PLAN_REPLICATION_VM_JOBS.replace('<id>', planId);
-    url = `${url}&vmMorefs=${moref}&latest=true`;
+    const url = `${API_REPLICATION_VM_JOBS}?latest=true&vmMorefs=${moref}`;
     const res = await callAPI(url);
+    dispatch(valueChange(STATIC_KEYS.VM_LATEST_REPLICATION_JOBS, res));
     return res;
   } catch (err) {
     dispatch(hideApplicationLoader('job_data'));
@@ -547,31 +551,25 @@ export function recoveryConfigOnCheckpointChanges(selectedCheckpointsId, selecte
  */
 
 export function fetchLatestReplicationJob(data) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
     const vms = data;
-    const vmmoref = [];
-    vms.forEach((vm) => {
-      vmmoref.push(vm.moref);
-    });
-    const url = `${API_REPLICATION_VM_JOBS}?latest=true&vmMorefs=${vmmoref.join(',')}`;
-    dispatch(showApplicationLoader('fetching-latest-repl-job', 'Fetching Latest Replication Job'));
-    return callAPI(url)
-      .then((json) => {
-        dispatch(hideApplicationLoader('fetching-latest-repl-job'));
-        if (json.hasError) {
-          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
-        } else {
-          json.forEach((vm, ind) => {
-            if (vm.moref === vms[ind].vmmoref) {
-              vms[ind].currentSnapshotTime = vm.currentSnapshotTime;
-            }
-          });
-          dispatch(valueChange('ui.recovery.vms', vms));
+    const latestReplicationData = getValue(STATIC_KEYS.VM_LATEST_REPLICATION_JOBS, values) || [];
+    let allVMsRecoveredSuccessfully = true;
+    latestReplicationData.forEach((vm, ind) => {
+      if (vm.moref === vms[ind].vmmoref) {
+        vms[ind].currentSnapshotTime = vm.currentSnapshotTime;
+        vms[ind].resetIteration = vm.resetIteration;
+        if (!vm.resetIteration && allVMsRecoveredSuccessfully) {
+          allVMsRecoveredSuccessfully = false;
         }
-      },
-      (err) => {
-        dispatch(hideApplicationLoader('fetching-latest-repl-job'));
-        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-      });
+      }
+    });
+    dispatch(valueChange('ui.recovery.vms', vms));
+    if (allVMsRecoveredSuccessfully) {
+      dispatch(valueChange(STATIC_KEYS.DISABLE_RECOVERY_FROM_LATEST, true));
+      dispatch(valueChange(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, CHECKPOINT_TYPE.POINT_IN_TIME));
+    }
   };
 }

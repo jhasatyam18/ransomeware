@@ -21,7 +21,6 @@ export const RECOVERY_SUMMARY = 'RECOVERY_SUMMARY';
 export const TEST_RECOVERY_CLEANUP_SUMMARY = 'TEST_RECOVERY_CLEANUP_SUMMARY';
 export const PROTECTION_PLAN_SUMMARY_STEP = 'PROTECTION_PLAN_SUMMARY_STEP';
 export const RECOVERY_PROTECT_VM_STEP = 'RECOVERY_PROTECT_VM_STEP';
-export const MIGRATION_GENERAL_STEP = 'MIGRATION_GENERAL_STEP';
 export const RECOVERY_CONFIG = 'RECOEVRY_CONFIG';
 export const TEST_RECOVERY_CONFIG_STEP = 'TEST_RECOVERY_CONFIG_STEP';
 export const TEST_RECOVERY_CONFIG_SCRIPTS = 'TEST_RECOVERY_CONFIG_SCRIPTS';
@@ -35,7 +34,6 @@ export const REVERSE_VM_STEP = 'REVERSE_VM_STEP';
 export const REVERSE_RECOVERY_ENTITY_STEP = 'REVERSE_RECOVERY_ENTITY_STEP';
 export const REVERSE_VM_REPL_INFO_STEP = 'REVERSE_VM_REPL_INFO_STEP';
 
-export const MIGRATION_GENERAL_STEP_FIELDS = ['recovery.protectionplanID'];
 export const REVERSE_RECOVERY_CONFIGURATION_STEP = ['reverse.recoverySite'];
 export const REVERSE_RECOVERY_ENTITY_STEP_FIELDS = ['reverse.suffix'];
 
@@ -92,10 +90,8 @@ export const REVERSE_WIZARDS = {
   steps: [
     { label: 'Reverse Plan', title: '', component: REVERSE_CONFIG_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: REVERSE_RECOVERY_CONFIGURATION_STEP },
     { label: 'Virtual Machines', title: '', component: REVERSE_VM_STEP, validate: (user, dispatch) => validateDRPlanProtectData({ user, dispatch }), isAsync: true, onUpdate: (user, dispatch) => checkCBTStatus({ user, dispatch }) },
-    { label: 'Recovery Entity', title: '', component: REVERSE_RECOVERY_ENTITY_STEP, validate: (user, dispatch, fields) => noValidate(user, dispatch, fields) },
     { label: 'Recovery Configuration', title: '', component: TEST_RECOVERY_CONFIG_STEP, validate: (user, dispatch) => validateVMConfiguration({ user, dispatch }) },
-    { label: 'Boot Order', title: '', component: DRPLAN_BOOT_ORDER_STEP, validate: (user, dispatch) => validateReversePlan({ user, dispatch }) },
-    { label: 'Replication Info', title: '', component: REVERSE_VM_REPL_INFO_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
+    { label: 'Boot Order', title: '', component: DRPLAN_BOOT_ORDER_STEP, validate: (user, dispatch) => noValidate({ user, dispatch }) },
     { label: 'Replication Configuration', title: '', component: REPLICATION_CONFIGURATION_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: DRPLAN_PROTECTION_CONFIG_STEP_FIELDS },
     { label: 'Scripts', title: '', component: DRPLAN_SCRIPT_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
     { label: 'Point In Time Configuration', component: DRPLAN_RECOVERY_CHECKPOINT_CONFIG, validate: (user, dispatch, fields) => validateRecoveryCheckpointData(user, dispatch, fields), fields: RECOVERY_CHECKPOINTS_FIELDS },

@@ -54,7 +54,8 @@ class ModalNicConfig extends Component {
     const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
     const showPublicChk = index === 0;
     const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
-    if (workflow !== UI_WORKFLOW.EDIT_PLAN || !showPublicChk) {
+    const flow = (workflow !== UI_WORKFLOW.EDIT_PLAN && workflow !== UI_WORKFLOW.REVERSE_PLAN && workflow !== UI_WORKFLOW.SINGLE_VM_EDIT);
+    if (flow || !showPublicChk) {
       return null;
     }
     return (
@@ -272,7 +273,7 @@ class ModalNicConfig extends Component {
                   <Col sm={4}>
                     {t('title.network.name')}
                   </Col>
-                  <Col sm={8} className="zIndex-100">
+                  <Col sm={8}>
                     <DMSearchSelect hideLabel user={user} dispatch={dispatch} fieldKey={`${networkKey}-network`} field={networkField} />
                   </Col>
                 </Row>

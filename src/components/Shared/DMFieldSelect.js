@@ -21,11 +21,11 @@ class DMFieldSelect extends Component {
     const { defaultValue } = field;
     const { values } = user;
     const fieldValue = getValue(fieldKey, values);
-    if (typeof fieldValue !== 'undefined') {
+    if (fieldValue && typeof fieldValue !== 'undefined') {
       this.setState({ value: fieldValue });
     }
 
-    if (!fieldValue && typeof fieldValue !== 'undefined') {
+    if (!fieldValue && typeof fieldValue !== 'undefined' && typeof defaultValue !== 'function') {
       this.setState({ value: defaultValue });
       dispatch(valueChange(fieldKey, defaultValue));
     }
@@ -33,7 +33,7 @@ class DMFieldSelect extends Component {
     if (!fieldValue && defaultValue) {
       let defaultVal;
       if (typeof defaultValue === 'function') {
-        defaultVal = defaultValue(user);
+        defaultVal = defaultValue(user, fieldKey);
       } else {
         defaultVal = defaultValue;
       }
@@ -143,14 +143,15 @@ class DMFieldSelect extends Component {
   }
 
   render() {
-    const { field, fieldKey, user, hideLabel, disabled } = this.props;
-    const { shouldShow } = field;
+    const { field, fieldKey, user, hideLabel, disabled, fieldName } = this.props;
+    const { shouldShow, hasWarningFunc } = field;
     const { value } = this.state;
     const { errors } = user;
     const hasErrors = !!(errors && errors[fieldKey] !== undefined);
     const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
     if (!showField) return null;
     const css = hideLabel ? '' : 'row mb-4 form-group';
+    const hasWarning = typeof hasWarningFunc !== 'undefined' && (typeof hasWarningFunc === 'function' ? hasWarningFunc(user, fieldKey, fieldName) : hasWarningFunc);
     const fieldDisabled = (typeof field.disabled !== 'undefined' && typeof field.disabled === 'function' ? field.disabled(user, fieldKey) : null);
     const shouldDisabled = (fieldDisabled !== null ? fieldDisabled : disabled);
     return (
@@ -160,7 +161,7 @@ class DMFieldSelect extends Component {
           <Col sm={hideLabel ? 12 : 8}>
             <Row>
               <Col sm={11}>
-                <Input type="select" id={fieldKey} onSelect={this.handleChange} className="form-control form-control-sm custom-select" onChange={this.handleChange} value={value} invalid={hasErrors} disabled={shouldDisabled} onBlur={this.onBlur}>
+                <Input type="select" id={fieldKey} onSelect={this.handleChange} className={`form-control form-control-sm custom-select ${hasWarning ? 'border border-warning' : ''}`} onChange={this.handleChange} value={value} invalid={hasErrors} disabled={shouldDisabled} onBlur={this.onBlur}>
                   <option key={`${fieldKey}-default`} value="">  </option>
                   {this.renderOptions()}
                 </Input>

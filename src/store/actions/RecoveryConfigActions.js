@@ -213,7 +213,7 @@ function setNetworkConfig(sourceConfig, targetVM, user, dispatch) {
           if (recoveryPlatform === PLATFORM_TYPES.VMware) {
             network = { label: network, value: networkPlatformID };
           } else if (recoveryPlatform === PLATFORM_TYPES.Azure) {
-            const { publicIp } = setPublicIPWhileEdit(isPublicIP, publicIP, networkKey, index, values, dispatch);
+            const { publicIp } = setPublicIPWhileEdit(isPublicIP, publicIP, networkKey, index, dispatch);
             network = getNetworkIDFromName(network, values);
             subnet = getSubnetIDFromName(subnet, values, network);
             if (publicIp === 'true' || publicIp === 'false' || publicIP !== '') {

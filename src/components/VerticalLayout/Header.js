@@ -127,7 +127,7 @@ function Header(props) {
       <header id="page-topbar">
         <div className="navbar-header">
           <div className="d-flex">
-            <div className="navbar-brand-box">
+            <div className="navbar-brand-box pl-2 pr-5">
               <Link to="/" className="logo logo-light">
                 <span className="logo-sm">
                   <img src={dmlogo} className="logo-size" alt="DATAMOTIVE" />

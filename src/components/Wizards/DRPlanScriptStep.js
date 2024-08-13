@@ -7,6 +7,8 @@ import DMFieldText from '../Shared/DMFieldText';
 import DMFieldSelect from '../Shared/DMFieldSelect';
 import DMFieldNumber from '../Shared/DMFieldNumber';
 import DMToolTip from '../Shared/DMToolTip';
+import { STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
+import { getValue } from '../../utils/InputUtils';
 
 function DRPlanScriptStep(props) {
   const { dispatch, user, t } = props;
@@ -41,8 +43,25 @@ function DRPlanScriptStep(props) {
     }
   }
 
+  const renderScriptWarning = () => {
+    const { values } = user;
+    const workFlow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
+    if (workFlow !== UI_WORKFLOW.REVERSE_PLAN) {
+      return null;
+    }
+    return (
+      <p>
+        <i className="fas fa-exclamation-triangle icon__warning padding-right-7" aria-hidden="true" />
+        <span className="text-warning ">
+          {t('script.warning.reverse')}
+        </span>
+      </p>
+    );
+  };
+
   return (
     <Container fluid className="padding-10">
+      {renderScriptWarning()}
       <Label>{t('replication.script.message')}</Label>
       <Row>
         <Col sm={5}>

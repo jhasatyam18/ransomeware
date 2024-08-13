@@ -87,7 +87,7 @@ export function setVMwareTargetData(args) {
   return (dispatch) => {
     const [fieldKey, datastore, hostMoref] = args;
     dispatch(getComputeResources(`${fieldKey}.folderPath`, datastore));
-    dispatch(getStorageForVMware({ fieldKey: `${fieldKey}.hostMoref`, hostMoref }));
+    dispatch(getStorageForVMware({ fieldKey: `${fieldKey}.hostMoref`, hostMoref, isNotChange: true }));
   };
 }
 
