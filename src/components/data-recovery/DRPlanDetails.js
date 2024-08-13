@@ -247,13 +247,12 @@ class DRPlanDetails extends Component {
     const { drPlans, dispatch, t, user, jobs } = this.props;
     const { platformType, localVMIP } = user;
     const { protectionPlan } = drPlans;
-    const { vmCheckpoint } = jobs;
+    const { checkpointCount } = jobs;
     const { protectedSite, recoverySite } = protectionPlan;
     const protectedSitePlatform = protectedSite.platformDetails.platformType;
-    const planHaCheckpoints = vmCheckpoint.length > 0 || false;
+    const planHaCheckpoints = checkpointCount > 0 || false;
     const isServerActionDisabled = (protectionPlan.recoveryStatus === RECOVERY_STATUS.RECOVERED || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED);
-    const recoveredWithCheckpoints = planHaCheckpoints;
-    const recovered = recoveredWithCheckpoints || !(protectionPlan.recoveryStatus === RECOVERY_STATUS.RECOVERED || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED);
+    const recovered = planHaCheckpoints || !(protectionPlan.recoveryStatus === RECOVERY_STATUS.RECOVERED || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED);
     const isReverseActionDisabled = this.disableReverse(protectionPlan);
     let actions = [];
     if (platformType === protectedSitePlatform && localVMIP !== recoverySite.node.hostname) {
