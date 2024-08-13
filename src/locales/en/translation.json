@@ -857,5 +857,5 @@
   "impact": "Impact",
   "recommended": "Recommended",
   "script.warning.reverse": "Please check and correct all the scripts depending on new source and target sites.",
-  "pit.recovery.warning": "After recovering a virtual machine from a point-in-time checkpoint, it cannot be recovered again with the latest replicated data"
+  "pit.recovery.warning": "After recovering a virtual machine from a point-in-time checkpoint, it cannot be recovered again with the latest replicated data."
 }
