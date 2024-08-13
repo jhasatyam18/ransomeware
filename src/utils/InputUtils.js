@@ -1350,7 +1350,7 @@ export function defaultRecoveryCheckpointForVm({ user, dispatch, recoveryCheckpo
  * @param object containing value and fieldkey
  * @returns
  */
-export function onVmRecoveryCheckpointOptionChange({ value, fieldKey, selectedOption }) {
+export function onVmRecoveryCheckpointOptionChange({ fieldKey, selectedOption }) {
   return (dispatch, getState) => {
     const { user } = getState();
     const { values } = user;
@@ -1370,6 +1370,7 @@ export function onVmRecoveryCheckpointOptionChange({ value, fieldKey, selectedOp
     } else {
       dispatch(valueChange(STORE_KEYS.UI_CHECKPOINT_SELECT_WARNING, ''));
     }
+    const { value } = selectedOption;
     checkpointIds.push(value);
     dispatch(recoveryConfigOnCheckpointChanges(checkpointIds, vmMoref[0]));
   };
