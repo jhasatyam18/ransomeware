@@ -19,7 +19,7 @@ import { getCreateDRPlanPayload, getEditProtectionPlanPayload, getRecoveryPayloa
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { changedVMRecoveryConfigurations, validateReversePlan } from '../../utils/validationUtils';
 import { addAssociatedIPForAzure, addAssociatedReverseIP } from './AwsActions';
-import { fetchCheckpointsByPlanId, fetchLatestReplicationJob, getVmCheckpoints, setPplanRecoveryCheckpointData } from './checkpointActions';
+import { fetchCheckpointsByPlanId, fetchLatestReplicationJob, fetchVMsLatestReplicaionJob, getVmCheckpoints, setPplanRecoveryCheckpointData } from './checkpointActions';
 import { downloadDateModifiedPlaybook, onPlanPlaybookExport } from './DrPlaybooksActions';
 import { fetchReplicationJobsByPplanId } from './JobActions';
 import { addMessage } from './MessageActions';
@@ -280,10 +280,7 @@ export function onProtectionPlanChange({ value, allowDeleted, planRecoveryStatus
             });
           });
           dispatch(valueChange(STORE_KEYS.UI_RECOVERY_VMS, data));
-          // to fetch latest replication job to sho in recovery, test-recovery and migration wizard
-          if (workflow !== UI_WORKFLOW.MIGRATION) {
-            dispatch(fetchLatestReplicationJob(data));
-          }
+          dispatch(fetchLatestReplicationJob(data));
         }
       },
       (err) => {
@@ -411,34 +408,48 @@ export function openMigrationWizard() {
   return (dispatch, getState) => {
     const { drPlans } = getState();
     const { protectionPlan } = drPlans;
-    const { id, recoverySite, protectedSite, recoveryPointConfiguration } = protectionPlan;
+    const { id, recoverySite, protectedSite, recoveryPointConfiguration, recoveryEntities } = protectionPlan;
     const { platformDetails } = recoverySite;
     const { isRecoveryCheckpointEnabled } = recoveryPointConfiguration;
+    const allVmMorefs = [];
+    recoveryEntities.instanceDetails.forEach((el) => allVmMorefs.push(el.sourceMoref));
     dispatch(clearValues());
-    setTimeout(() => {
-      dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.MIGRATION));
-      dispatch(valueChange('ui.values.recoveryPlatform', platformDetails.platformType));
-      dispatch(fetchDrPlans('ui.values.drplan'));
-      dispatch(valueChange('ui.isMigration.workflow', true));
-      // set recovery plan id
-      dispatch(valueChange('recovery.protectionplanID', id));
-      dispatch(valueChange('ui.recovery.plan', protectionPlan));
-      // fetch VMs for drPlan
+    // fetch replication jobs for migration to show in the migration wizard
+    // for other flow latest replications are fetched while fetching checkpoint options
+    // but for migration we don't fetch checkpoints as PIT is not available for migration
+    // hence added call to fetch replication here
+    const apis = [fetchVMsLatestReplicaionJob(allVmMorefs.join(','), dispatch)];
+    return Promise.all(apis).then(
+      () => {
+        dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.MIGRATION));
+        dispatch(valueChange('ui.values.recoveryPlatform', platformDetails.platformType));
+        dispatch(fetchDrPlans('ui.values.drplan'));
+        dispatch(valueChange('ui.isMigration.workflow', true));
+        // set recovery plan id
+        dispatch(valueChange('recovery.protectionplanID', id));
+        dispatch(valueChange('ui.recovery.plan', protectionPlan));
+        // fetch VMs for drPlan
 
-      dispatch(onProtectionPlanChange({ value: id }));
-      // set is test recovery flag to false
-      if (platformDetails.platformType === PLATFORM_TYPES.Azure) {
-        dispatch(fetchNetworks(recoverySite.id, undefined));
-      }
-      dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.MIGRATION));
-      dispatch(valueChange(STORE_KEYS.RECOVERY_CHECKPOINTING_ENABLED, isRecoveryCheckpointEnabled));
-      let { steps } = MIGRATION_WIZARDS;
-      if (protectedSite.platformDetails.platformType === PLATFORM_TYPES.VMware && platformDetails.platformType === PLATFORM_TYPES.VMware) {
-        steps = removeStepsFromWizard(steps, STEPS.RECOVERY_CONFIG);
-      }
+        dispatch(onProtectionPlanChange({ value: id }));
+        // set is test recovery flag to false
+        if (platformDetails.platformType === PLATFORM_TYPES.Azure) {
+          dispatch(fetchNetworks(recoverySite.id, undefined));
+        }
+        dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.MIGRATION));
+        dispatch(valueChange(STORE_KEYS.RECOVERY_CHECKPOINTING_ENABLED, isRecoveryCheckpointEnabled));
+        let { steps } = MIGRATION_WIZARDS;
+        if (protectedSite.platformDetails.platformType === PLATFORM_TYPES.VMware && platformDetails.platformType === PLATFORM_TYPES.VMware) {
+          steps = removeStepsFromWizard(steps, STEPS.RECOVERY_CONFIG);
+        }
 
-      dispatch(openWizard(MIGRATION_WIZARDS.options, steps));
-    }, 1000);
+        dispatch(openWizard(MIGRATION_WIZARDS.options, steps));
+        return new Promise((resolve) => resolve());
+      },
+      (err) => {
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+        return new Promise((resolve) => resolve());
+      },
+    );
   };
 }
 

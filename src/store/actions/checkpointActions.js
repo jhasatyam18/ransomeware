@@ -342,6 +342,8 @@ export function getVmCheckpoints(planId, moref) {
             });
             dispatch(valueChange(STATIC_KEYS.UI_RECOVERY_CHECKPOINTS_BY_VM_ID, vmCheckpoints));
             dispatch(valueChange(`${planId}-has-checkpoint`, vmCheckpoints.length > 0));
+          } else {
+            fetchVMsLatestReplicaionJob(moref, dispatch);
           }
           return new Promise((resolve) => resolve());
         },
@@ -462,6 +464,7 @@ export function fetchCheckpointsByPlanId(planId, key) {
           dispatch(valueChange(key, true));
         }
         dispatch(setVmlevelCheckpoints(res.records));
+        dispatch(setCheckpointCount(res.records.length));
       } else {
         dispatch(setVmlevelCheckpoints([]));
       }
@@ -557,19 +560,29 @@ export function fetchLatestReplicationJob(data) {
     const vms = data;
     const latestReplicationData = getValue(STATIC_KEYS.VM_LATEST_REPLICATION_JOBS, values) || [];
     let allVMsRecoveredSuccessfully = true;
-    latestReplicationData.forEach((vm, ind) => {
-      if (vm.moref === vms[ind].vmmoref) {
-        vms[ind].currentSnapshotTime = vm.currentSnapshotTime;
-        vms[ind].resetIteration = vm.resetIteration;
-        if (!vm.resetIteration && allVMsRecoveredSuccessfully) {
+
+    vms.forEach((vm, ind) => {
+      const filterData = latestReplicationData.filter((ltsRepl) => vm.moref === ltsRepl.vmMoref);
+      if (filterData.length > 0) {
+        vms[ind].currentSnapshotTime = filterData[0].currentSnapshotTime;
+        vms[ind].resetIteration = filterData[0].resetIteration;
+        if (!filterData[0].resetIteration && allVMsRecoveredSuccessfully) {
           allVMsRecoveredSuccessfully = false;
         }
       }
     });
+
     dispatch(valueChange('ui.recovery.vms', vms));
     if (allVMsRecoveredSuccessfully) {
       dispatch(valueChange(STATIC_KEYS.DISABLE_RECOVERY_FROM_LATEST, true));
       dispatch(valueChange(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, CHECKPOINT_TYPE.POINT_IN_TIME));
     }
+  };
+}
+
+export function setCheckpointCount(count) {
+  return {
+    type: Types.SET_CHECKPOINT_COUNT,
+    count,
   };
 }

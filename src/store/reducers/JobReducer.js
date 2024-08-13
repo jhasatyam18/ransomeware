@@ -46,6 +46,10 @@ export default function jobs(state = INITIAL_STATE.jobs, action) {
       return {
         ...state, checkpointType: action.checkpointType,
       };
+    case Types.SET_CHECKPOINT_COUNT:
+      return {
+        ...state, checkpointCount: action.count,
+      };
     default:
       return state;
   }
