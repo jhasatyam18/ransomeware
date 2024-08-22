@@ -297,14 +297,11 @@ class DRPlanDetails extends Component {
     return null;
   }
 
-  renderRecoveryCheckpoint(isRecoveryCheckpointEnabled) {
+  renderRecoveryCheckpoint() {
     const { user } = this.props;
     const { drPlanDetailActiveTab } = user;
     const activeTab = drPlanDetailActiveTab;
     const { t } = this.props;
-    if (!isRecoveryCheckpointEnabled) {
-      return null;
-    }
     return (
       <>
         <NavItem>
@@ -317,18 +314,14 @@ class DRPlanDetails extends Component {
   }
 
   render() {
-    const { drPlans, dispatch, t, user, jobs } = this.props;
+    const { drPlans, dispatch, t, user } = this.props;
     const { drPlanDetailActiveTab } = user;
     const { protectionPlan } = drPlans;
-    const { vmCheckpoint } = jobs;
     const activeTab = drPlanDetailActiveTab;
     if (!protectionPlan || Object.keys(protectionPlan).length === 0) {
       return null;
     }
-    const { name, protectedSite, recoverySite, id, recoveryPointConfiguration } = protectionPlan;
-    const { isRecoveryCheckpointEnabled } = recoveryPointConfiguration;
-    const planHasRecoveryCheckpoints = vmCheckpoint.length > 0;
-    const checkpointTabs = isRecoveryCheckpointEnabled || planHasRecoveryCheckpoints;
+    const { name, protectedSite, recoverySite, id } = protectionPlan;
     return (
       <>
         <Container fluid>
@@ -380,19 +373,17 @@ class DRPlanDetails extends Component {
                     <span className="d-none d-sm-block">{t('Configuration')}</span>
                   </NavLink>
                 </NavItem>
-                {checkpointTabs ? (
-                  <NavItem>
-                    <NavLink className={`${classnames({ active: activeTab === PLAN_DETAIL_TABS.FIVE })} cursor-pointer`} onClick={() => { this.toggleTab(PLAN_DETAIL_TABS.FIVE); }}>
-                      <span className="d-none d-sm-block">{t('point.in.time.checkpoint')}</span>
-                    </NavLink>
-                  </NavItem>
-                ) : null}
+                <NavItem>
+                  <NavLink className={`${classnames({ active: activeTab === PLAN_DETAIL_TABS.FIVE })} cursor-pointer`} onClick={() => { this.toggleTab(PLAN_DETAIL_TABS.FIVE); }}>
+                    <span className="d-none d-sm-block">{t('point.in.time.checkpoint')}</span>
+                  </NavLink>
+                </NavItem>
                 <NavItem>
                   <NavLink className={`${classnames({ active: activeTab === PLAN_DETAIL_TABS.THREE })} cursor-pointer`} onClick={() => { this.toggleTab(PLAN_DETAIL_TABS.THREE); }}>
                     <span className="d-none d-sm-block">{t('replication.jobs')}</span>
                   </NavLink>
                 </NavItem>
-                {this.renderRecoveryCheckpoint(checkpointTabs)}
+                {this.renderRecoveryCheckpoint()}
                 {this.renderRecoveryJobs()}
               </Nav>
               <TabContent activeTab={activeTab}>
