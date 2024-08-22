@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 import { Col, Container, Label, Row } from 'reactstrap';
 import { API_UPLOAD_RECOVERY_CRED } from '../../constants/ApiConstants';
 import { RECOVERY_STATUS } from '../../constants/AppStatus';
@@ -167,18 +168,18 @@ class RecoveryMachines extends Component {
   };
 
   RenderOptions() {
-    const { t, user } = this.props;
+    const { t, user, drPlans } = this.props;
     const { values } = user;
-    const { recoveryType, dataToDisplay } = this.state;
+    const { allVmRecovered } = drPlans;
+    const { recoveryType } = this.state;
     const disablePointInTime = getValue(STATIC_KEYS.IS_POINT_IN_TIME_DISABLED, values);
-    const disableLatest = dataToDisplay.length > 0 ? dataToDisplay?.every((el) => el.resetIteration === true) : false;
     return (
       <Row className="margin-top-20">
         <Col sm={4} className="padding-left-30">{t('recover.from')}</Col>
         <Col sm={8}>
           <div className="form-check-inline pr-4 pl-3">
             <p className="form-check-label">
-              <input type="radio" disabled={disableLatest} className="form-check-input" name="recoveryType" value={CHECKPOINT_TYPE.LATEST} checked={recoveryType === CHECKPOINT_TYPE.LATEST} onChange={(e) => this.onCheckointTypeChange(e.target.value)} />
+              <input type="radio" disabled={allVmRecovered} className="form-check-input" name="recoveryType" value={CHECKPOINT_TYPE.LATEST} checked={recoveryType === CHECKPOINT_TYPE.LATEST} onChange={(e) => this.onCheckointTypeChange(e.target.value)} />
               {t('test.recovery.latest')}
             </p>
           </div>
@@ -346,4 +347,8 @@ class RecoveryMachines extends Component {
   }
 }
 
-export default (withTranslation()(RecoveryMachines));
+function mapStateToProps(state) {
+  const { drPlans } = state;
+  return { drPlans };
+}
+export default connect(mapStateToProps)(withTranslation()(RecoveryMachines));

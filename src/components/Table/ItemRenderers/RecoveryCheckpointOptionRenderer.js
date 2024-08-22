@@ -11,7 +11,7 @@ function RecveryCheckpointOptionRenderer({ data, user, dispatch, field }) {
   const isAutoMigrate = getValue('ui.automate.migration', values);
   const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values) || '';
 
-  if (isAutoMigrate) {
+  if (isAutoMigrate && data.recoveryStatus === '') {
     return '-';
   }
 

@@ -334,14 +334,22 @@ export function getVmCheckpoints(planId, moref) {
               }
             });
             dispatch(valueChange(STATIC_KEYS.UI_COMMON_CHECKPOINT_OPTIONS, uniqueCheckpointScheduleTime));
+            let allVMsRecoveredSuccessfully = true;
             const latestReplicationOfVms = await fetchVMsLatestReplicaionJob(moref, dispatch);
             latestReplicationOfVms.forEach((latestJob) => {
               if (typeof vmCheckpoints[latestJob.vmMoref] !== 'undefined' && vmCheckpoints[latestJob.vmMoref].length > 0) {
                 vmCheckpoints[latestJob.vmMoref].unshift(latestJob);
+                if (!latestJob.resetIteration && allVMsRecoveredSuccessfully) {
+                  allVMsRecoveredSuccessfully = false;
+                }
               }
             });
             dispatch(valueChange(STATIC_KEYS.UI_RECOVERY_CHECKPOINTS_BY_VM_ID, vmCheckpoints));
             dispatch(valueChange(`${planId}-has-checkpoint`, vmCheckpoints.length > 0));
+            if (allVMsRecoveredSuccessfully) {
+              dispatch(valueChange(STATIC_KEYS.DISABLE_RECOVERY_FROM_LATEST, true));
+              dispatch(valueChange(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, CHECKPOINT_TYPE.POINT_IN_TIME));
+            }
           } else {
             fetchVMsLatestReplicaionJob(moref, dispatch);
           }
@@ -543,39 +551,6 @@ export function recoveryConfigOnCheckpointChanges(selectedCheckpointsId, selecte
           dispatch(hideApplicationLoader('reseting-configuration'));
           dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
         });
-    }
-  };
-}
-
-/**
- * sets latest replication job's data per VM to show in recovery, test-recoveyr and migration wizard
- * @param {*} data -> Array of VM object
- * @returns
- */
-
-export function fetchLatestReplicationJob(data) {
-  return (dispatch, getState) => {
-    const { user } = getState();
-    const { values } = user;
-    const vms = data;
-    const latestReplicationData = getValue(STATIC_KEYS.VM_LATEST_REPLICATION_JOBS, values) || [];
-    let allVMsRecoveredSuccessfully = true;
-
-    vms.forEach((vm, ind) => {
-      const filterData = latestReplicationData.filter((ltsRepl) => vm.moref === ltsRepl.vmMoref);
-      if (filterData.length > 0) {
-        vms[ind].currentSnapshotTime = filterData[0].currentSnapshotTime;
-        vms[ind].resetIteration = filterData[0].resetIteration;
-        if (!filterData[0].resetIteration && allVMsRecoveredSuccessfully) {
-          allVMsRecoveredSuccessfully = false;
-        }
-      }
-    });
-
-    dispatch(valueChange('ui.recovery.vms', vms));
-    if (allVMsRecoveredSuccessfully) {
-      dispatch(valueChange(STATIC_KEYS.DISABLE_RECOVERY_FROM_LATEST, true));
-      dispatch(valueChange(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, CHECKPOINT_TYPE.POINT_IN_TIME));
     }
   };
 }

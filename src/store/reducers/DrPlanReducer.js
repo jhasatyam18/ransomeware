@@ -1,5 +1,5 @@
-import INITIAL_STATE from '../../constants/InitialState';
 import * as Types from '../../constants/actionTypes';
+import INITIAL_STATE from '../../constants/InitialState';
 
 export default function drPlans(state = INITIAL_STATE.drPlans, action) {
   switch (action.type) {
@@ -17,6 +17,10 @@ export default function drPlans(state = INITIAL_STATE.drPlans, action) {
     case Types.FETCH_DR_PLAN_DETAILS:
       return {
         ...state, protectionPlan: action.protectionPlan,
+      };
+    case Types.AL_VM_RECOVERED_IN_PLAN:
+      return {
+        ...state, allVmRecovered: action.allVmRecovered,
       };
     default:
       return state;

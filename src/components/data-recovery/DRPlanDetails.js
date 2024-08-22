@@ -247,7 +247,7 @@ class DRPlanDetails extends Component {
   renderActions() {
     const { drPlans, dispatch, t, user, jobs } = this.props;
     const { platformType, localVMIP } = user;
-    const { protectionPlan } = drPlans;
+    const { protectionPlan, allVmRecovered } = drPlans;
     const { checkpointCount } = jobs;
     const { protectedSite, recoverySite } = protectionPlan;
     const protectedSitePlatform = protectedSite.platformDetails.platformType;
@@ -265,9 +265,9 @@ class DRPlanDetails extends Component {
       actions.push({ label: 'Remove', action: deletePlanConfirmation, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS || !hasRequestedPrivileges(user, ['protectionplan.delete']), navigate: PROTECTION_PLANS_PATH, icon: 'fa fa-trash' });
     } else if (localVMIP === recoverySite.node.hostname) {
       actions = [{ label: 'recover', action: openRecoveryWizard, icon: 'fa fa-plus', disabled: !recovered || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED || !hasRequestedPrivileges(user, ['recovery.full']) },
-        { label: 'Migrate', action: openMigrationWizard, icon: 'fa fa-clone', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.migration']) },
+        { label: 'Migrate', action: openMigrationWizard, icon: 'fa fa-clone', disabled: allVmRecovered || !hasRequestedPrivileges(user, ['recovery.migration']) },
         { label: 'Reverse', action: openReverseWizard, icon: 'fa fa-backward', disabled: isReverseActionDisabled },
-        { label: 'Test Recovery', action: openTestRecoveryWizard, icon: 'fa fa-check', disabled: isServerActionDisabled || !hasRequestedPrivileges(user, ['recovery.test']) },
+        { label: 'Test Recovery', action: openTestRecoveryWizard, icon: 'fa fa-check', disabled: allVmRecovered || !hasRequestedPrivileges(user, ['recovery.test']) },
         { label: 'Cleanup Test Recoveries', action: openCleanupTestRecoveryWizard, icon: 'fa fa-broom', disabled: !hasRequestedPrivileges(user, ['recovery.test']) },
         { label: 'Download Credentials Playbook', action: downloadRecoveryPlaybook, id: protectionPlan.id, icon: 'fa fa-download' },
       ];

@@ -19,7 +19,7 @@ import { getCreateDRPlanPayload, getEditProtectionPlanPayload, getRecoveryPayloa
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { changedVMRecoveryConfigurations, validateReversePlan } from '../../utils/validationUtils';
 import { addAssociatedIPForAzure, addAssociatedReverseIP } from './AwsActions';
-import { fetchCheckpointsByPlanId, fetchLatestReplicationJob, fetchVMsLatestReplicaionJob, getVmCheckpoints, setPplanRecoveryCheckpointData } from './checkpointActions';
+import { fetchCheckpointsByPlanId, fetchVMsLatestReplicaionJob, getVmCheckpoints, setPplanRecoveryCheckpointData } from './checkpointActions';
 import { downloadDateModifiedPlaybook, onPlanPlaybookExport } from './DrPlaybooksActions';
 import { fetchReplicationJobsByPplanId } from './JobActions';
 import { addMessage } from './MessageActions';
@@ -208,7 +208,7 @@ export function fetchDRPlanById(id, params) {
     const url = API_FETCH_DR_PLAN_BY_ID.replace('<id>', id);
     const obj = createPayload();
     dispatch(showApplicationLoader('FETCHING_PROTECTION_PLAN_DETAILS', 'Loading protection plan details'));
-    return callAPI(url, obj).then((json) => {
+    return callAPI(url, obj).then(async (json) => {
       dispatch(hideApplicationLoader('FETCHING_PROTECTION_PLAN_DETAILS'));
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
@@ -219,6 +219,11 @@ export function fetchDRPlanById(id, params) {
         if (typeof params !== 'undefined' && Object.keys(params).length > 0 && params.reset) {
           dispatch(onResetDiskReplicationClick());
         }
+        const allRecoveryInstanceMoref = [];
+        json.recoveryEntities.instanceDetails.forEach((el) => allRecoveryInstanceMoref.push(el.sourceMoref));
+        const latestReplication = await fetchVMsLatestReplicaionJob(allRecoveryInstanceMoref.join(','), dispatch) || [];
+        const allVMsRecovered = latestReplication.length > 0 ? latestReplication.every((repl) => repl.resetIteration === true) : false;
+        dispatch(setAllVmRecovered(allVMsRecovered));
       }
     },
     (err) => {
@@ -235,7 +240,7 @@ export function drPlanDetailsFetched(protectionPlan) {
   };
 }
 
-export function onProtectionPlanChange({ value, allowDeleted, planRecoveryStatus }) {
+export function onProtectionPlanChange({ value, allowDeleted }) {
   return (dispatch, getState) => {
     const url = API_FETCH_DR_PLAN_BY_ID.replace('<id>', value);
     dispatch(showApplicationLoader(API_FETCH_DR_PLAN_BY_ID, 'Fetching protection plan details...'));
@@ -251,9 +256,11 @@ export function onProtectionPlanChange({ value, allowDeleted, planRecoveryStatus
           let applyToAllFlag = true;
           const info = json.protectedEntities.virtualMachines || [];
           const rEntities = json.recoveryEntities.instanceDetails || [];
-          const planHasCheckpoints = getValue(STATIC_KEYS.UI_RECOVERY_CHECKPOINTS_BY_VM_ID, values) || [];
+          // const planHasCheckpoints = getValue(STATIC_KEYS.UI_RECOVERY_CHECKPOINTS_BY_VM_ID, values) || [];
           const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
-          const checkpointType = getValue(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, values);
+          const latestReplicationData = getValue(STATIC_KEYS.VM_LATEST_REPLICATION_JOBS, values) || [];
+          const checkPointType = getValue(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, values);
+          const allVmsCheckpointById = getValue(STATIC_KEYS.UI_RECOVERY_CHECKPOINTS_BY_VM_ID, values);
           info.forEach((vm) => {
             rEntities.forEach((rE) => {
               if (vm.moref === rE.sourceMoref) {
@@ -263,11 +270,20 @@ export function onProtectionPlanChange({ value, allowDeleted, planRecoveryStatus
                   applyToAllFlag = false;
                 }
                 machine.name = rE.instanceName;
+                // have added reset replication code here
+                // here we will get the resetIteration value of a vm through which we can decide to enable checkbox or not
+                const filterData = latestReplicationData.filter((ltsRepl) => vm.moref === ltsRepl.vmMoref);
+                if (filterData.length > 0) {
+                  machine.currentSnapshotTime = filterData[0].currentSnapshotTime;
+                  machine.resetIteration = filterData[0].resetIteration;
+                }
                 if (typeof vm.recoveryStatus !== 'undefined' && (vm.recoveryStatus === RECOVERY_STATUS.MIGRATED || vm.recoveryStatus === RECOVERY_STATUS.RECOVERED || vm.isRemovedFromPlan === true)) {
-                  // if plan is recovered and vm's has checkpoint then render point-int-time recovery option
-                  // if point-in-time recovery option is rendered then show/enable recovered vm checkbox
-                  if (Object.keys(planHasCheckpoints).length > 0 && typeof planRecoveryStatus !== 'undefined' && vm.recoveryStatus === RECOVERY_STATUS.RECOVERED && workflow !== UI_WORKFLOW.TEST_RECOVERY && checkpointType === CHECKPOINT_TYPE.POINT_IN_TIME) {
-                    machine.isDisabled = false;
+                  if (Object.keys(allVmsCheckpointById).length > 0 && allVmsCheckpointById[vm.moref].length > 0 && checkPointType === CHECKPOINT_TYPE.POINT_IN_TIME && vm.recoveryStatus !== RECOVERY_STATUS.MIGRATED) {
+                    if (workflow === UI_WORKFLOW.RECOVERY || (workflow === UI_WORKFLOW.TEST_RECOVERY && vm.recoveryStatus === '')) {
+                      machine.isDisabled = false;
+                    } else {
+                      machine.isDisabled = true;
+                    }
                   } else if (typeof allowDeleted === 'undefined' || !allowDeleted) {
                     machine.isDisabled = true;
                   }
@@ -280,7 +296,6 @@ export function onProtectionPlanChange({ value, allowDeleted, planRecoveryStatus
             });
           });
           dispatch(valueChange(STORE_KEYS.UI_RECOVERY_VMS, data));
-          dispatch(fetchLatestReplicationJob(data));
         }
       },
       (err) => {
@@ -481,10 +496,6 @@ export function openRecoveryWizard() {
         dispatch(valueChange('ui.recovery.plan', protectionPlan));
         dispatch(valueChange('ui.values.recoveryPlatform', platformDetails.platformType));
         dispatch(valueChange('ui.values.protectionPlatform', protectedSite.platformDetails.platformType));
-        if (recoveryStatus === RECOVERY_STATUS.RECOVERED) {
-          dispatch(valueChange(STATIC_KEYS.DISABLE_RECOVERY_FROM_LATEST, true));
-          dispatch(valueChange(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, CHECKPOINT_TYPE.POINT_IN_TIME));
-        }
         // fetch VMs for drPlan
         dispatch(onProtectionPlanChange({ value: id, planRecoveryStatus: recoveryStatus }));
         dispatch(valueChange('recovery.discardPartialChanges', false));
@@ -1869,5 +1880,12 @@ export function onResetLinkCLick(plan) {
     const { hostname } = node;
     const link = `https://${hostname}:5000/protection/plan/details/${id}?reset=true`;
     window.open(link);
+  };
+}
+
+export function setAllVmRecovered(allVmRecovered) {
+  return {
+    type: Types.AL_VM_RECOVERED_IN_PLAN,
+    allVmRecovered,
   };
 }
