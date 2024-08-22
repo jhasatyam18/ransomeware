@@ -4,20 +4,20 @@ import { API_VALIDATE_MIGRATION, API_VALIDATE_RECOVERY, API_VALIDATE_REVERSE_PLA
 import { FIELDS } from '../constants/FieldsConstant';
 import { CHECKPOINT_TYPE, PLATFORM_TYPES, RECOVERY_STATUS, STATIC_KEYS, UI_WORKFLOW } from '../constants/InputConstants';
 import { MESSAGE_TYPES } from '../constants/MessageConstants';
+import { MODAL_REVERSE_CHANGES_WARNING } from '../constants/Modalconstant';
 import { STORE_KEYS } from '../constants/StoreKeyConstants';
 import { GENERAL_PLATFORM_KEYS, PLAN_KEYS, REC_SCRIPTS, REP_SCRIPTS } from '../constants/UserConstant';
 import { IP_REGEX } from '../constants/ValidationConstants';
 import { addErrorMessage, hideApplicationLoader, removeErrorMessage, showApplicationLoader, valueChange } from '../store/actions';
 import { setVMGuestOSInfo } from '../store/actions/DrPlanActions';
 import { addMessage } from '../store/actions/MessageActions';
+import { openModal } from '../store/actions/ModalActions';
 import { getVMwareVMSProps } from '../store/actions/UserActions';
 import { API_TYPES, callAPI, createPayload } from './ApiUtils';
 import { convertMinutesToDaysHourFormat } from './AppUtils';
 import { createVMConfigStackObject, excludeKeys, getValue, isAWSCopyNic, validateMacAddressForVMwareNetwork } from './InputUtils';
 import { getRecoveryPayload, getRecoveryPointTimePeriod, getReplicationInterval, getReversePlanPayload, getVMNetworkConfig, getVMwareNetworkConfig } from './PayloadUtil';
 import { setRecommendedData } from './ReverseReplicationUtils';
-import { openModal } from '../store/actions/ModalActions';
-import { MODAL_REVERSE_CHANGES_WARNING } from '../constants/Modalconstant';
 
 export function isRequired(value) {
   if (!value) {
@@ -1150,7 +1150,7 @@ export const showReverseWarningText = (user) => {
   if (workflow === UI_WORKFLOW.REVERSE_PLAN && revReplType === STATIC_KEYS.DIFFERENTIAL && protectionPlatform === PLATFORM_TYPES.VMware) {
     return true;
   }
-  if (enableReverse && recoveryPlatform === PLATFORM_TYPES.VMware) {
+  if (enableReverse && recoveryPlatform === PLATFORM_TYPES.VMware && protectionPlatform !== recoveryPlatform) {
     return true;
   }
   return false;
