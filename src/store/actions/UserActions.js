@@ -1109,8 +1109,9 @@ export function onDiffReverseChanges({ value }) {
     const { user } = getState();
     const { values } = user;
     const recoveryPlatform = getValue('ui.values.recoveryPlatform', values) || '';
+    const protectedSite = getValue('ui.values.protectionPlatform', values);
     if (value) {
-      if (recoveryPlatform !== '' && recoveryPlatform === PLATFORM_TYPES.VMware) {
+      if (recoveryPlatform !== '' && recoveryPlatform === PLATFORM_TYPES.VMware && protectedSite !== recoveryPlatform) {
         dispatch(valueChange('recoveryPointConfiguration.isRecoveryCheckpointEnabled', false));
         dispatch(valueChange(STORE_KEYS.UI_DISABLE_RECOVERY_CHECKPOINT, true));
       }
