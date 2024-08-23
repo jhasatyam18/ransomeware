@@ -682,3 +682,36 @@ span.flatpickr-weekday {
   font-size: smaller;
   padding: 4px;
 }
+
+.rec_status_error_Div{
+  width: 200px;
+}
+@media (min-width: 600px) and (max-width:899px) {
+  .rec_status_error_Div {
+    width: 100px;
+  }
+}
+
+@media (min-width: 900px) {
+  .rec_status_error_Div {
+      width: 200px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .rec_status_error_Div {
+      width: 200px;
+  }
+}
+
+@media (min-width: 1450px) {
+  .rec_status_error_Div {
+      width: 370px;
+  }
+}
+
+@media (min-width:2000) {
+  .rec_status_error_Div{
+    width: 100%;
+  }
+}

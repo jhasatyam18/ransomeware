@@ -90,7 +90,7 @@ function StepStatus(props) {
           <p className="step_time">
             {resp}
             {st.status === JOB_FAILED ? (
-              <p aria-hidden onClick={showFullErrorText}>
+              <p aria-hidden onClick={showFullErrorText} className="rec_status_error_Div">
                 {`${errormsg}`}
                   &nbsp;
                 <span className="link_color">{show ? 'Less' : 'More'}</span>
