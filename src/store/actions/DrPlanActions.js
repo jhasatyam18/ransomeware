@@ -1725,11 +1725,6 @@ function setReverseData(json) {
       dispatch(valueChange('drplan.preScript', json.preScript));
       dispatch(valueChange('drplan.postScript', json.postScript));
       dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.REVERSE_PLAN));
-      if (!json.enableDifferentialReverse) {
-        dispatch(valueChange('reverse.replType', STATIC_KEYS.FULL_INCREMENTAL));
-      } else {
-        dispatch(valueChange('reverse.replType', STATIC_KEYS.DIFFERENTIAL));
-      }
       const apis = [dispatch(fetchSites('ui.values.sites')), dispatch(fetchNetworks(recoverySite.id, undefined)), dispatch(fetchScript()), dispatch(fetchDrPlans('ui.values.drplan')), dispatch(fetchCheckpointsByPlanId(id, `${id}-has-checkpoints`))];
       return Promise.all(apis).then(
         () => {
@@ -1821,7 +1816,7 @@ export function setReverseConfig(protectionPlan) {
     dispatch(valueChange('drplan.enableDifferentialReverse', protectionPlan.enableDifferentialReverse));
     if (protectionPlan.enableDifferentialReverse) {
       // if target is vmware then only disable differential with checkpoint but if protected and recovery site are same then disable checkpointing if the differential is enabled
-      if (recoverySitePlatform !== '' && recoverySitePlatform === PLATFORM_TYPES.VMware && recoverySitePlatform !== protectedSite) {
+      if (recoverySitePlatform !== '' && recoverySitePlatform === PLATFORM_TYPES.VMware && recoverySitePlatform !== protectedSite.platformDetails.platformType) {
         dispatch(valueChange('recoveryPointConfiguration.isRecoveryCheckpointEnabled', false));
         dispatch(valueChange(STORE_KEYS.UI_DISABLE_RECOVERY_CHECKPOINT, true));
       }
