@@ -1145,11 +1145,6 @@ export const showReverseWarningText = (user) => {
   const enableReverse = getValue('drplan.enableDifferentialReverse', values) || '';
   const recoveryPlatform = getValue('ui.values.recoveryPlatform', values) || '';
   const protectionPlatform = getValue('ui.values.protectionPlatform', values) || '';
-  const revReplType = getValue('reverse.replType', values) || '';
-  const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values) || '';
-  if (workflow === UI_WORKFLOW.REVERSE_PLAN && revReplType === STATIC_KEYS.DIFFERENTIAL && protectionPlatform === PLATFORM_TYPES.VMware) {
-    return true;
-  }
   if (enableReverse && recoveryPlatform === PLATFORM_TYPES.VMware && protectionPlatform !== recoveryPlatform) {
     return true;
   }

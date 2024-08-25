@@ -152,7 +152,6 @@
   "report.includeNodes": "Nodes",
   "report.export.pdf": "Exporting data to pdf.",
   "report.export.excel": "Exporting data to excel.",
-  "reverse.replType": "Replication Type",
   "reverse.suffix": "Recovery Machines Suffix",
   "recovery.installSystemAgent": "Install System Agents",
   "recovery.installCloudPkg": "Install Cloud Packages",
