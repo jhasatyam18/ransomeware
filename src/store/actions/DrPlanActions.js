@@ -221,7 +221,7 @@ export function fetchDRPlanById(id, params) {
         }
         const allRecoveryInstanceMoref = [];
         json.recoveryEntities.instanceDetails.forEach((el) => allRecoveryInstanceMoref.push(el.sourceMoref));
-        const latestReplication = await fetchVMsLatestReplicaionJob(allRecoveryInstanceMoref.join(','), dispatch) || [];
+        const latestReplication = await fetchVMsLatestReplicaionJob(allRecoveryInstanceMoref.join(','), dispatch, STATIC_KEYS.LATEST_REPLICATION_JOBS) || [];
         const allVMsRecovered = latestReplication.length > 0 ? latestReplication.every((repl) => repl.resetIteration === true) : false;
         dispatch(setAllVmRecovered(allVMsRecovered));
       }
@@ -433,7 +433,7 @@ export function openMigrationWizard() {
     // for other flow latest replications are fetched while fetching checkpoint options
     // but for migration we don't fetch checkpoints as PIT is not available for migration
     // hence added call to fetch replication here
-    const apis = [fetchVMsLatestReplicaionJob(allVmMorefs.join(','), dispatch)];
+    const apis = [fetchVMsLatestReplicaionJob(allVmMorefs.join(','), dispatch, STATIC_KEYS.LATEST_COMPLETED_REPL_JOBS)];
     return Promise.all(apis).then(
       () => {
         dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.MIGRATION));
