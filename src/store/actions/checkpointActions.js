@@ -335,23 +335,27 @@ export function getVmCheckpoints(planId, moref) {
             });
             dispatch(valueChange(STATIC_KEYS.UI_COMMON_CHECKPOINT_OPTIONS, uniqueCheckpointScheduleTime));
             let allVMsRecoveredSuccessfully = true;
-            const latestReplicationOfVms = await fetchVMsLatestReplicaionJob(moref, dispatch);
-            latestReplicationOfVms.forEach((latestJob) => {
-              if (typeof vmCheckpoints[latestJob.vmMoref] !== 'undefined' && vmCheckpoints[latestJob.vmMoref].length > 0) {
-                vmCheckpoints[latestJob.vmMoref].unshift(latestJob);
-                if (!latestJob.resetIteration && allVMsRecoveredSuccessfully) {
-                  allVMsRecoveredSuccessfully = false;
+            const latestReplicationOfVms = await fetchVMsLatestReplicaionJob(moref, dispatch, STATIC_KEYS.LATEST_REPLICATION_JOBS);
+            if (latestReplicationOfVms.length > 0) {
+              latestReplicationOfVms.forEach((latestJob) => {
+                if (typeof vmCheckpoints[latestJob.vmMoref] !== 'undefined' && vmCheckpoints[latestJob.vmMoref].length > 0) {
+                  vmCheckpoints[latestJob.vmMoref].unshift(latestJob);
+                  if (!latestJob.resetIteration && allVMsRecoveredSuccessfully) {
+                    allVMsRecoveredSuccessfully = false;
+                  }
                 }
-              }
-            });
+              });
+            }
             dispatch(valueChange(STATIC_KEYS.UI_RECOVERY_CHECKPOINTS_BY_VM_ID, vmCheckpoints));
             dispatch(valueChange(`${planId}-has-checkpoint`, vmCheckpoints.length > 0));
             if (allVMsRecoveredSuccessfully) {
               dispatch(valueChange(STATIC_KEYS.DISABLE_RECOVERY_FROM_LATEST, true));
               dispatch(valueChange(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, CHECKPOINT_TYPE.POINT_IN_TIME));
+            } else {
+              await fetchVMsLatestReplicaionJob(moref, dispatch, STATIC_KEYS.LATEST_COMPLETED_REPL_JOBS);
             }
           } else {
-            fetchVMsLatestReplicaionJob(moref, dispatch);
+            await fetchVMsLatestReplicaionJob(moref, dispatch, STATIC_KEYS.LATEST_COMPLETED_REPL_JOBS);
           }
           return new Promise((resolve) => resolve());
         },
@@ -402,9 +406,9 @@ export async function fetchVmCheckpoint(planId, moref, offset = 0, dispatch) {
    * @param {*} dispatch
    * @returns latest successfull replication job of the vm's
    */
-export async function fetchVMsLatestReplicaionJob(moref, dispatch) {
+export async function fetchVMsLatestReplicaionJob(moref, dispatch, criteria) {
   try {
-    const url = `${API_REPLICATION_VM_JOBS}?latest=true&vmMorefs=${moref}`;
+    const url = `${API_REPLICATION_VM_JOBS}?${criteria}&vmMorefs=${moref}`;
     const res = await callAPI(url);
     dispatch(valueChange(STATIC_KEYS.VM_LATEST_REPLICATION_JOBS, res));
     return res;
