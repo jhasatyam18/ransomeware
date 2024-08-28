@@ -150,7 +150,7 @@ class DMFieldText extends Component {
     const { type } = this.state;
     const value = this.getFieldValue();
     const hasErrors = !!(errors && errors[fieldKey] !== undefined);
-    const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
+    const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user, fieldKey) : shouldShow);
     const css = hideLabel ? '' : 'row mb-4 form-group';
     if (!showField) return null;
     const placeH = placeHolderText || '';

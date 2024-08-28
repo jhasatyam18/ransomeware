@@ -10,6 +10,7 @@ import { getStorageForVMware, onScriptChange, valueChange } from '../store/actio
 import { onAwsStorageTypeChange } from '../store/actions/AwsActions';
 import { recoveryConfigOnCheckpointChanges } from '../store/actions/checkpointActions';
 import { getLabelWithResourceGrp } from './AppUtils';
+import { getAwsHostAffinityOptions, getAwsHostMorefLabel, getAwsTenancyOptionBy, getAwsTenancyOptions, showHostByIdOrArnErrorMessage, showTenancyOptions, validateAWSHostMoref } from './AwsUtils';
 import { isEmpty, isMemoryValueValid } from './validationUtils';
 
 export function getValue(key, values) {
@@ -517,6 +518,14 @@ export function getAwsVMConfig(vm) {
         children: {
           [`${key}-vmConfig.general.guestOS`]: { label: 'GuestOS Family', fieldInfo: 'info.protectionplan.resource.guest.os', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select guest operating system', shouldShow: true, options: (u) => getSupportedOSTypes(u) },
           [`${key}-vmConfig.general.firmwareType`]: { label: 'Firmware Type', fieldInfo: 'info.protectionplan.resource.firmware', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select Firmware type', shouldShow: true, options: (u) => getFirmwareTypes(u) },
+          // Tenancy fields
+          [`${key}-vmConfig.general.tenancy`]: { label: 'Tenancy', fieldInfo: 'info.protectionplan.aws.tenancy', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select tenancy type', shouldShow: true, options: (u) => getAwsTenancyOptions(u), defaultValue: 'shared' },
+          [`${key}-vmConfig.general.hostType`]: { label: 'Target host by', fieldInfo: 'info.protectionplan.aws.tenancyBy', type: FIELD_TYPE.SELECT, validate: null, errorMessage: 'Select target host by type', shouldShow: (u, f) => showTenancyOptions(u, f), options: (u) => getAwsTenancyOptionBy(u), hideComponent: (u, f) => showTenancyOptions(u, f), defaultValue: '' },
+          [`${key}-vmConfig.general.hostMoref`]: { label: (u, f) => getAwsHostMorefLabel(u, f), fieldInfo: 'info.protectionplan.aws.host.arn', type: FIELD_TYPE.TEXT, validate: (value, user) => validateAWSHostMoref(value, user), errorMessage: 'Enter id or arn', errorFunction: ({ user, fieldKey }) => showHostByIdOrArnErrorMessage({ user, fieldKey }), shouldShow: (u, f) => showTenancyOptions(u, f), hideComponent: (u, f) => showTenancyOptions(u, f) },
+          [`${key}-vmConfig.general.affinity`]: { label: 'Target Affinity', fieldInfo: 'info.protectionplan.aws.host.affinity', type: FIELD_TYPE.SELECT, defaultValue: '', errorMessage: 'Select Affinity', shouldShow: (u, f) => showTenancyOptions(u, f), hideComponent: (u, f) => showTenancyOptions(u, f), options: (u, f) => getAwsHostAffinityOptions(u, f) },
+          [`${key}-vmConfig.general.image`]: { label: 'Associated AMI', fieldInfo: 'info.protectionplan.aws.ami', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Enter associated AMI', shouldShow: (u, f) => showTenancyOptions(u, f), hideComponent: (u, f) => showTenancyOptions(u, f) },
+          [`${key}-vmConfig.general.license`]: { label: 'License Manager', fieldInfo: 'info.protectionplan.aws.license', type: FIELD_TYPE.TEXT, shouldShow: (u, f) => showTenancyOptions(u, f), hideComponent: (u, f) => showTenancyOptions(u, f) },
+          // Tenancy Field end
           [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', fieldInfo: 'info.protectionplan.instance.type', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
           [`${key}-vmConfig.general.volumeType`]: { label: 'Volume Type', fieldInfo: 'info.protectionplan.instance.volume.type.aws', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select volume type.', shouldShow: true, options: (u) => getStorageTypeOptions(u), onChange: (user, dispatch) => onAwsStorageTypeChange(user, dispatch), disabled: (u, f) => shouldDisableStorageType(u, f) },
           [`${key}-vmConfig.general.volumeIOPS`]: { label: 'Volume IOPS', fieldInfo: 'info.protectionplan.instance.volume.iops.aws', type: FIELD_TYPE.NUMBER, errorMessage: 'Provide volume IOPS.', disabled: (u, f) => shouldEnableAWSIOPS(u, f), min: 0 },

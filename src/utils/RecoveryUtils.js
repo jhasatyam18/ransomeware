@@ -1,12 +1,13 @@
 import { FIELD_TYPE } from '../constants/FieldsConstant';
-import { COPY_CONFIG, PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../constants/InputConstants';
+import { AWS_TARGET_HOST_TYPES, AWS_TENANCY_TYPES, COPY_CONFIG, PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../constants/InputConstants';
 import { MESSAGE_TYPES } from '../constants/MessageConstants';
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP } from '../constants/StackConstants';
 import { addMessage } from '../store/actions/MessageActions';
 import { getLabelWithResourceGrp, getMemoryInfo } from './AppUtils';
+import { getAwsHostAffinityOptions, getAwsHostMorefLabel, getAwsTenancyOptionBy, getAwsTenancyOptions, showTenancyOptions } from './AwsUtils';
 import { getAzureGeneralSettings, getEncryptionKeyOptions, getInstanceTypeOptions, getNetworkOptions, getRecoveryScript, getReplicationScript, getValue, getVMwareGeneralSettings, shouldEnableAWSEncryption, getGCPNetworkValue } from './InputUtils';
 import { getSourceConfig } from './PayloadUtil';
-import { isEmpty } from './validationUtils';
+import { isEmpty, noValidate } from './validationUtils';
 
 export function createVMTestRecoveryConfig(vm, user, dispatch) {
   const { values } = user;
@@ -33,6 +34,14 @@ function getAWSVMTestConfig(vm, workflow) {
     title: 'General',
     children: {
       [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', fieldInfo: 'info.protectionplan.instance.type', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
+      // Tenancy fields
+      [`${key}-vmConfig.general.tenancy`]: { label: 'Tenancy', fieldInfo: 'info.protectionplan.aws.tenancy', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select tenancy type', shouldShow: true, options: (u) => getAwsTenancyOptions(u), defaultValue: 'Select' },
+      [`${key}-vmConfig.general.hostType`]: { label: 'Target host by', fieldInfo: 'info.protectionplan.aws.tenancyBy', type: FIELD_TYPE.SELECT, validate: (value, user) => noValidate(value, user), errorMessage: 'Select Target host by type', shouldShow: (u, f) => showTenancyOptions(u, f), options: (u) => getAwsTenancyOptionBy(u), hideComponent: (u, f) => showTenancyOptions(u, f) },
+      [`${key}-vmConfig.general.hostMoref`]: { label: (u, f) => getAwsHostMorefLabel(u, f), fieldInfo: 'info.protectionplan.aws.host.arn', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Enter id/arn', shouldShow: (u, f) => showTenancyOptions(u, f), hideComponent: (u, f) => showTenancyOptions(u, f) },
+      [`${key}-vmConfig.general.affinity`]: { label: 'Target Affinity', fieldInfo: 'info.protectionplan.aws.host.affinity', type: FIELD_TYPE.SELECT, defaultValue: 'Off', validate: (value, user) => isEmpty(value, user), errorMessage: 'Select Affinity', shouldShow: (u, f) => showTenancyOptions(u, f), hideComponent: (u, f) => showTenancyOptions(u, f), options: (u, f) => getAwsHostAffinityOptions(u, f) },
+      [`${key}-vmConfig.general.image`]: { label: 'Associated AMI', fieldInfo: 'info.protectionplan.aws.ami', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Enter associated AMI', shouldShow: (u, f) => showTenancyOptions(u, f), hideComponent: (u, f) => showTenancyOptions(u, f) },
+      [`${key}-vmConfig.general.license`]: { label: 'License Manager', fieldInfo: 'info.protectionplan.aws.license', type: FIELD_TYPE.TEXT, shouldShow: (u, f) => showTenancyOptions(u, f), hideComponent: (u, f) => showTenancyOptions(u, f) },
+      // Tenancy Field end
     },
   },
   {
@@ -146,7 +155,7 @@ export function getRecoveryInfoForVM({ sourceMoref, user, configToCopy, recovery
 
 function getGeneralConfig({ sourceConfig, user, workFlow }) {
   const { values } = user;
-  const { instanceType, volumeType, volumeIOPS, tags, folderPath, hostMoref, datastoreMoref, numCPU, datacenterMoref, securityGroup, availZone } = sourceConfig;
+  const { instanceType, volumeType, volumeIOPS, tags, folderPath, hostMoref, datastoreMoref, numCPU, datacenterMoref, securityGroup, availZone, tenancy, hostType, affinity, image, license } = sourceConfig;
   const { memoryMB } = sourceConfig;
   let recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
   // if the workflow is to see last successfull test recovery then recovery platform will be the local platform
@@ -168,7 +177,20 @@ function getGeneralConfig({ sourceConfig, user, workFlow }) {
   let keys = [];
   switch (recoveryPlatform) {
     case PLATFORM_TYPES.AWS:
+      if (typeof tenancy !== 'undefined' && tenancy === AWS_TENANCY_TYPES.Dedicated_Host) {
+        // add the tenancy keys
+        keys = [
+          ...keys,
+          { title: 'Tenancy', value: tenancy },
+          { title: 'Target Host Type', value: hostType },
+          { title: (hostType === AWS_TARGET_HOST_TYPES.Host_Resource_Group ? 'Host Resource Group' : 'Host ID'), value: hostMoref },
+          { title: 'Affinity', value: affinity },
+          { title: 'AMI', value: image },
+          { title: 'License', value: license },
+        ];
+      }
       keys = [
+        ...keys,
         { title: 'instance.type', value: instanceType },
         { title: 'volume.type', value: volumeType },
         { title: 'volume.iops', value: volumeIOPS },

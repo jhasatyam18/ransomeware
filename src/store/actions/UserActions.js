@@ -1079,6 +1079,13 @@ export function setInstanceDetails(key, ins) {
     dispatch(valueChange(`${key}-vmConfig.general.bootOrder`, ins.bootPriority));
     dispatch(valueChange(`${key}-vmConfig.scripts.preScript`, ins.preScript));
     dispatch(valueChange(`${key}-vmConfig.scripts.postScript`, ins.postScript));
+    // for aws
+    dispatch(valueChange(`${key}-vmConfig.general.tenancy`, ins.tenancy));
+    dispatch(valueChange(`${key}-vmConfig.general.hostType`, ins.hostType));
+    dispatch(valueChange(`${key}-vmConfig.general.hostMoref`, ins.hostMoref));
+    dispatch(valueChange(`${key}-vmConfig.general.affinity`, ins.affinity));
+    dispatch(valueChange(`${key}-vmConfig.general.image`, ins.image));
+    dispatch(valueChange(`${key}-vmConfig.general.license`, ins.license));
   };
 }
 

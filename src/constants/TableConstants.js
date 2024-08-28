@@ -68,6 +68,7 @@ export const REVERSE_VM_DESCRIPTION_RENDERER = 'REVERSE_VM_DESCRIPTION_RENDERER'
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
+export const VM_TENANCY_ITEM_RENDERER = 'VM_TENANCY_ITEM_RENDERER';
 
 export const TABLE_HEADER_SITES = [
   { label: 'site.name', field: 'name', itemRenderer: SITE_NAME_LINK_RENDERER },
@@ -113,6 +114,15 @@ export const TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG = [
   { label: 'Instance Type', field: 'instanceType', itemRenderer: VMInstanceItemRenderer },
   { label: 'Volume Type', field: 'volumeType' },
   { label: 'Placement Info', field: '', itemRenderer: VM_PLACEMENT_INFO_ITEM_RENDERER },
+  { label: 'Network', field: 'instanceDetails', itemRenderer: VM_NETWORK_INFO_ITEM_RENDERER },
+  { label: 'Boot Order', field: 'bootPriority' },
+];
+
+export const TABLE_AWS_PROTECTION_PLAN_VMS_RECOVERY_CONFIG = [
+  { label: 'name', field: 'instanceName' },
+  { label: 'Instance Type', field: 'instanceType', itemRenderer: VMInstanceItemRenderer },
+  { label: 'Volume Type', field: 'volumeType' },
+  { label: 'Placement Info', field: '', itemRenderer: VM_TENANCY_ITEM_RENDERER },
   { label: 'Network', field: 'instanceDetails', itemRenderer: VM_NETWORK_INFO_ITEM_RENDERER },
   { label: 'Boot Order', field: 'bootPriority' },
 ];

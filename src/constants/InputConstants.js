@@ -303,3 +303,15 @@ export const MAPPING_REVERSE_RECOMMENDED_DATA = {
   'maintain-original': 'Maintain Original',
   'create-new': 'Create New Copy',
 };
+
+export const AWS_TENANCY_TYPES = {
+  // Shared: 'Select',
+  Shared: 'shared',
+  // dedicated: 'dedicated',
+  Dedicated_Host: 'host',
+};
+
+export const AWS_TARGET_HOST_TYPES = {
+  Host_ID: 'Standalone',
+  Host_Resource_Group: 'Cluster',
+};

@@ -155,7 +155,9 @@ export function getVMConfigPayload(user) {
     }
 
     let hostMoref = getValue(`${key}-vmConfig.general.hostMoref`, values) || '';
-    hostMoref = hostMoref.value || '';
+    if (recoveryPlatform === PLATFORM_TYPES.VMware) {
+      hostMoref = hostMoref.value || '';
+    }
     let datastoreMoref = getValue(`${key}-vmConfig.general.dataStoreMoref`, values) || '';
     datastoreMoref = datastoreMoref.value || '';
     let numCPU = getValue(`${key}-vmConfig.general.numcpu`, values);
@@ -202,10 +204,17 @@ export function getVMConfigPayload(user) {
     const encryptionKey = getValue(`${key}-vmConfig.general.encryptionKey`, values) || '';
     const planEntityType = getValue(STATIC_KEYS.UI_REVERSE_RECOVERY_ENTITY, values);
     const recoveryEntityType = getValue(`${key}-vmConfig.general.entityType`, values) || planEntityType;
+    const tenancy = getValue(`${key}-vmConfig.general.tenancy`, values) || '';
+    const hostType = getValue(`${key}-vmConfig.general.hostType`, values) || '';
+    const affinity = getValue(`${key}-vmConfig.general.affinity`, values) || '';
+    const image = getValue(`${key}-vmConfig.general.image`, values) || '';
+    const license = getValue(`${key}-vmConfig.general.license`, values) || '';
+
+    // const hostMoref = getValue(`${key}-vmConfig.general.hostMoref`, values) || ''
     if (typeof id !== 'undefined' && id !== '') {
-      instanceDetails.push({ sourceMoref, id, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, encryptionKey, recoveryEntityType });
+      instanceDetails.push({ sourceMoref, id, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, encryptionKey, recoveryEntityType, tenancy, hostType, affinity, image, license });
     } else {
-      instanceDetails.push({ sourceMoref, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, encryptionKey, recoveryEntityType });
+      instanceDetails.push({ sourceMoref, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, encryptionKey, recoveryEntityType, tenancy, hostType, affinity, image, license });
     }
   });
   return instanceDetails;
@@ -506,7 +515,10 @@ export function getSourceConfig(key, user) {
       folderPath = folderPath.label;
     }
   }
-  const hostMoref = getValue(`${key}-vmConfig.general.hostMoref`, values);
+  let hostMoref = getValue(`${key}-vmConfig.general.hostMoref`, values);
+  if (typeof hostMoref === 'object' && hostMoref.value) {
+    hostMoref = hostMoref.value;
+  }
   const datastoreMoref = getValue(`${key}-vmConfig.general.dataStoreMoref`, values);
   let numCPU = getValue(`${key}-vmConfig.general.numcpu`, values) || 0;
   numCPU = parseInt(numCPU, 10);
@@ -540,12 +552,19 @@ export function getSourceConfig(key, user) {
   if (recoveryPlatform === PLATFORM_TYPES.Azure) {
     availZone = getValue(`${key}-vmConfig.general.availibility.zone`, values);
   }
+
+  const tenancy = getValue(`${key}-vmConfig.general.tenancy`, values) || '';
+  const hostType = getValue(`${key}-vmConfig.general.hostType`, values) || '';
+  const affinity = getValue(`${key}-vmConfig.general.affinity`, values) || '';
+  const image = getValue(`${key}-vmConfig.general.image`, values) || '';
+  const license = getValue(`${key}-vmConfig.general.license`, values) || '';
+
   const securityGroup = joinArray(sgs, ',');
   const preScript = getValue(`${key}-vmConfig.scripts.preScript`, values);
   const postScript = getValue(`${key}-vmConfig.scripts.postScript`, values);
   const repPreScript = getValue(`${key}-protection.scripts.preScript`, values) || '';
   const repPostScript = getValue(`${key}-protection.scripts.postScript`, values) || '';
-  const genC = { instanceType, availZone, folderPath, volumeType, securityGroup, volumeIOPS, tags, memoryMB, hostMoref: hostMoref.value, datastoreMoref: datastoreMoref.value, numCPU, datacenterMoref, encryptionKey };
+  const genC = { tenancy, hostType, affinity, image, license, instanceType, availZone, folderPath, volumeType, securityGroup, volumeIOPS, tags, memoryMB, hostMoref, datastoreMoref: datastoreMoref.value, numCPU, datacenterMoref, encryptionKey };
   const scripts = { preScript, postScript, repPostScript, repPreScript };
   return { ...genC, networks, ...scripts };
 }

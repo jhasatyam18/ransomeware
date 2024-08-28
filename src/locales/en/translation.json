@@ -866,5 +866,11 @@
   "pit.disk.resize.warning.text": "Taking action on this alert will delete all the available point-in-time checkpoints of {{vmName}} on VMware infra. ",
   "reset.credential.password": "Enter {{userName}}'s password",
   "no.new.notification": "No new notification",
+  "info.protectionplan.aws.tenancy": "Shared Tenancy: Instances run on shared hardware with other customers. Ideal for cost-effective, standard workloads. Dedicated Host: Provides a physical server dedicated to your use. Suitable for compliance, licensing needs, or specific hardware requirements.",
+  "info.protectionplan.aws.tenancyBy": "Host: to deploy instance on a dedicated host. Host Resource Group: to deploy instance on the host resource group, in this case depending on instance configuration dedicated host will be auto selected.",
+  "info.protectionplan.aws.host.arn": "To Deploy workload on Dedicated Host provide the Dedicated Host ID. To Deploy workload on Host Resource Group provide the Host Resource Group ARN.",
+  "info.protectionplan.aws.host.affinity":"When affinity is set to Host, an instance launched onto a specific host always restarts on the same host if stopped.",
+  "info.protectionplan.aws.ami": "AMI Id which is associated with self-managed license.",
+  "info.protectionplan.aws.license": "License configurations are AWS License Manager rule-sets that are associated with instances at launch to enforce license compliance. If no value is specified the value of the AMI will be used if associated.",
   "test.recovery.ip.warning.msg":"To configure Static IP please specify credentials of local administrator account."
 }

@@ -114,7 +114,7 @@ export function validateSteps(user, dispatch, fields, staticFields, emptyFields 
   fields.map((fieldKey) => {
     const field = staticFields ? staticFields[fieldKey] : FIELDS[fieldKey];
     const { shouldShow } = field;
-    const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
+    const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user, fieldKey) : shouldShow);
     if (showField) {
       if (!validateField(field, fieldKey, getValue(fieldKey, values), dispatch, user, emptyFields)) {
         isClean = false;
