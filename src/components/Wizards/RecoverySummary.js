@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { Card, CardBody, CardTitle, Col, Row } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
-import DMTable from '../Table/DMTable';
-import { getValue } from '../../utils/InputUtils';
-import { getStorageWithUnit } from '../../utils/AppUtils';
+import { Card, CardBody, CardTitle, Col, Row } from 'reactstrap';
 import { STATIC_KEYS } from '../../constants/InputConstants';
 import { TABLE_PROTECT_VM_VMWARE } from '../../constants/TableConstants';
+import { getStorageWithUnit } from '../../utils/AppUtils';
+import { getValue } from '../../utils/InputUtils';
+import DMTable from '../Table/DMTable';
 
 class RecoverySummary extends Component {
   getRecoveryType() {
@@ -49,7 +49,7 @@ class RecoverySummary extends Component {
     Object.keys(selectedVMs).forEach((key) => {
       data.push(selectedVMs[key]);
       selectedVMs[key].virtualDisks.forEach((disk) => {
-        if (typeof disk.isDeleted !== 'undefined' && !disk.isDeleted && typeof disk.size !== 'undefined') {
+        if ((typeof selectedVMs[key].isDeleted !== 'undefined' && selectedVMs[key].isDeleted) || (typeof disk.isDeleted !== 'undefined' && !disk.isDeleted && typeof disk.size !== 'undefined')) {
           size += disk.size;
         }
       });

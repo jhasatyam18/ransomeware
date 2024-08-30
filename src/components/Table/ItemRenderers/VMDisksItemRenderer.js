@@ -20,6 +20,8 @@ function VMDisksItemRenderer(props) {
   virtualDisks = virtualDisks.filter((el) => {
     if (!el.isDeleted) {
       return el;
+    } if (data.isDeleted) {
+      return el;
     }
   });
 
