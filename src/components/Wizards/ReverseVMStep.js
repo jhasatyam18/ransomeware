@@ -43,7 +43,7 @@ function ReverseVMStep(props) {
   }
   const columns = TABLE_REVERSE_VM.filter((col) => col.label !== 'Storage' && col.label !== 'os');
   const onRecommendedData = () => {
-    const options = { title: 'Confirmation', confirmAction: applyRecommendedDataToAllVM, message: 'Are you sure want to apply suggested configuration in all VMs ?' };
+    const options = { title: 'Confirmation', confirmAction: applyRecommendedDataToAllVM, message: 'Are you sure you want to apply suggested configuration in all VMs ?' };
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   };
 

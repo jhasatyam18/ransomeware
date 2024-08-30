@@ -165,8 +165,10 @@ export function deletePlan(id, history) {
 }
 
 export function deletePlanConfirmation(id) {
-  return (dispatch) => {
-    const options = { title: 'Confirmation', confirmAction: deletePlan, message: 'Are you sure want to delete  ?', render: PPLAN_REMOVE_CHECKPOINT_RENDERER, id };
+  return (dispatch, getState) => {
+    const { drPlans } = getState();
+    const { protectionPlan } = drPlans;
+    const options = { title: 'Confirmation', confirmAction: deletePlan, message: `Are you sure you want to delete ${protectionPlan.name} ?`, render: PPLAN_REMOVE_CHECKPOINT_RENDERER, id };
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   };
 }

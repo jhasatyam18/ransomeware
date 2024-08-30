@@ -12,7 +12,7 @@ function EmailRecipientItemRenderer({ data, dispatch, user }) {
   }
 
   function onDelete() {
-    const options = { title: 'Confirmation', confirmAction: deleteRecipient, message: `Are you sure want to delete email recipient - ${data.emailAddress} ?`, id: data.ID };
+    const options = { title: 'Confirmation', confirmAction: deleteRecipient, message: `Are you sure you want to delete email recipient - ${data.emailAddress} ?`, id: data.ID };
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   }
 

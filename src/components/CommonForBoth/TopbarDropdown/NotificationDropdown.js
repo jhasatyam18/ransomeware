@@ -41,10 +41,10 @@ class NotificationDropdown extends Component {
   }
 
   renderAlerts() {
-    const { alerts } = this.props;
+    const { alerts, t } = this.props;
     const { unread } = alerts;
     if (unread.length === 0) {
-      return null;
+      return <p className="ml-3 text-secondary">{t('no.new.notification')}</p>;
     }
     const notifications = (unread.length > 4 ? unread.slice(0, 4) : unread);
     return (
@@ -123,7 +123,7 @@ class NotificationDropdown extends Component {
               </Row>
             </div>
 
-            <SimpleBar className="max-h-230 min-h-100">
+            <SimpleBar className="max-h-230 min-h-50">
               <Link to="notifications" className="text-reset notification-item" />
               {this.renderAlerts()}
             </SimpleBar>

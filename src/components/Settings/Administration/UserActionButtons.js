@@ -29,7 +29,7 @@ const UserActionButtons = (props) => {
 
   const onRemoveUser = () => {
     const selectedUserKey = Object.keys(selectedUsers);
-    const options = { title: t('confirmation'), confirmAction: removeUser, message: `Are you sure want to remove selected user - ${selectedUsers[selectedUserKey].username} ?`, id: selectedUsers[selectedUserKey].id };
+    const options = { title: t('confirmation'), confirmAction: removeUser, message: `Are you sure you want to remove selected user - ${selectedUsers[selectedUserKey].username} ?`, id: selectedUsers[selectedUserKey].id };
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   };
 
