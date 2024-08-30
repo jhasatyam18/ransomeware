@@ -1,11 +1,11 @@
 import React from 'react';
 import { withTranslation } from 'react-i18next';
-import DMFieldText from '../../Shared/DMFieldText';
 import { FIELD_TYPE } from '../../../constants/FieldsConstant';
-import { openModal } from '../../../store/actions/ModalActions';
 import { MODAL_APPLY_CREDENTIALS } from '../../../constants/Modalconstant';
-import { valueChange } from '../../../store/actions';
 import { STORE_KEYS } from '../../../constants/StoreKeyConstants';
+import { valueChange } from '../../../store/actions';
+import { openModal } from '../../../store/actions/ModalActions';
+import DMFieldText from '../../Shared/DMFieldText';
 
 function VMPasswordItemRenderer({ data, user, dispatch, t }) {
   const onApplyCredentialsClick = () => {
@@ -20,7 +20,7 @@ function VMPasswordItemRenderer({ data, user, dispatch, t }) {
       '-'
     );
   }
-  const username = { label: '', placeHolderText: 'Enter password', type: FIELD_TYPE.PASSWORD, validate: null, errorMessage: 'Enter username.', shouldShow: true };
+  const username = { label: '', placeHolderText: 'Enter password', type: FIELD_TYPE.PASSWORD, validate: null, errorMessage: 'Enter Password.', shouldShow: true };
   if (user && dispatch && data && data.guestOS) {
     return (
       <div className="text-right">

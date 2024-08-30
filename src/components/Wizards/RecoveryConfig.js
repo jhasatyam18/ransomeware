@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Card, CardBody, CardTitle, Col, Form, Label, Row } from 'reactstrap';
-import DMToolTip from '../Shared/DMToolTip';
-import { valueChange } from '../../store/actions';
 import { PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
+import { valueChange } from '../../store/actions';
 import { getValue } from '../../utils/InputUtils';
 import DMField from '../Shared/DMField';
+import DMToolTip from '../Shared/DMToolTip';
 
 class RecoveryConfig extends Component {
   componentDidMount() {
@@ -61,7 +61,7 @@ class RecoveryConfig extends Component {
     const renderCheckbox = (key, label) => {
       const checked = this.getCheckboxValue(key);
       return (
-        <Row className={recoveryPlatform !== PLATFORM_TYPES.VMware ? 'margin-bottom-20' : ''}>
+        <Row>
           <Label for="dm-checkbox" className="col-sm-4 col-form-Label">
             {t(label)}
           </Label>
@@ -89,8 +89,25 @@ class RecoveryConfig extends Component {
             <CardTitle>{t('Tools Installation')}</CardTitle>
             <Form className="form_w mt-3">
               {renderCheckbox('recovery.installSystemAgent', 'recovery.installSystemAgent') }
-              <DMField dispatch={dispatch} user={user} fieldKey="ui.installSystemAgent.warning" />
+              {recoveryPlatform === PLATFORM_TYPES.VMware ? (
+                <>
+                  <p className="mb-0 text-warning margin-top-10">
+                    <i className="fas fa-xs mb-10 mt-0 fa-exclamation-triangle padding-right-6" />
+                    {t('recover.cloud.agent.ip.warning')}
+                  </p>
+                  <p className="mb-0 text-warning">
+                    <i className="fas fa-xs mb-10 fa-exclamation-triangle padding-right-6" />
+                    {t('recover.cloud.agent.warning')}
+                  </p>
+                </>
+              ) : null}
               <DMField dispatch={dispatch} user={user} fieldKey="recovery.installCloudPkg" />
+              {recoveryPlatform !== PLATFORM_TYPES.VMware ? (
+                <p className="mb-0 text-warning">
+                  <i className="fas fa-xs mb-10 fa-exclamation-triangle padding-right-6" />
+                  {t('recover.common.installation.warning')}
+                </p>
+              ) : null}
               {showOptionToDiscard ? (
                 <>
                   {renderWarningText()}

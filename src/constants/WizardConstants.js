@@ -79,7 +79,7 @@ export const TEST_RECOVERY_WIZARDS = {
   options: { title: 'Test Recovery', onFinish: startRecovery },
   steps: [
     { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateVMSelection(user, dispatch) },
-    { label: 'Test Recovery Configuration', title: '', component: TEST_RECOVERY_CONFIG_STEP, validate: (user, dispatch) => validateVMConfiguration({ user, dispatch }) },
+    { label: 'Test Recovery Configuration', title: '', component: TEST_RECOVERY_CONFIG_STEP, validate: (user, dispatch) => validateVMConfiguration({ user, dispatch, doNotShowPopup: true }) },
     { label: 'Tools and Scripts', title: '', component: TEST_RECOVERY_CONFIG_SCRIPTS, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), isAsync: true },
     { label: 'Summary', title: '', component: RECOVERY_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch) }],
 };

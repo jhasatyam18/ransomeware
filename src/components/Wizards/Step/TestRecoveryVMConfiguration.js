@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 import { Card, CardBody } from 'reactstrap';
-import { copyInstanceConfiguration, resetInstanceConfiguration, fetchLastTestRecovery } from '../../../store/actions/RecoveryConfigActions';
-import DMAccordion from '../../Shared/DMAccordion';
-import DMNote from '../../Common/DMNote';
-import { getValue } from '../../../utils/InputUtils';
-import { createVMTestRecoveryConfig } from '../../../utils/RecoveryUtils';
 import { NOTE_TEXT } from '../../../constants/DMNoteConstant';
 import { CHECKPOINT_TYPE, COPY_CONFIG, STATIC_KEYS, UI_WORKFLOW } from '../../../constants/InputConstants';
 import { valueChange } from '../../../store/actions';
+import { copyInstanceConfiguration, fetchLastTestRecovery, resetInstanceConfiguration } from '../../../store/actions/RecoveryConfigActions';
+import { getValue } from '../../../utils/InputUtils';
+import { createVMTestRecoveryConfig } from '../../../utils/RecoveryUtils';
+import DMNote from '../../Common/DMNote';
+import DMAccordion from '../../Shared/DMAccordion';
 
 function TestRecoveryVMConfiguration(props) {
   const { user, dispatch, t } = props;
@@ -81,7 +81,23 @@ function TestRecoveryVMConfiguration(props) {
     }
   }
 
-  const renderNote = () => <DMNote title="Info" info="test.recovery.note" subText="test.recovery.staticIP.warning" color={NOTE_TEXT.INFO} open />;
+  const renderNote = () => {
+    const ipWarningMessage = getValue(STATIC_KEYS.TEST_RECOVERY_IP_WARNING_MSG, values);
+    return (
+      <>
+        <DMNote title="Info" info="test.recovery.note" subText="test.recovery.staticIP.warning" color={NOTE_TEXT.INFO} open />
+        {ipWarningMessage ? (
+          <>
+            <p className=" text-warning rec_ip_validation_div">
+              <i className="fas fa-exclamation-triangle" />
+          &nbsp;&nbsp;&nbsp;
+              {ipWarningMessage}
+            </p>
+          </>
+        ) : null}
+      </>
+    );
+  };
 
   const prevRecoveryConfigOpt = () => {
     if (isPointInTime !== CHECKPOINT_TYPE.POINT_IN_TIME) {

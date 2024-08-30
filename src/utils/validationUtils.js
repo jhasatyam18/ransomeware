@@ -134,7 +134,6 @@ export function validateDrSiteSelection({ user, fieldKey, value, dispatch }) {
   if (`${value}` === `${otherFieldValue}`) {
     return true;
   }
-
   // if both recovery and protected site are diffrent then remove error from the other field
   if (errors[otherField] && otherFieldValue !== '') {
     dispatch(removeErrorMessage(otherField));
@@ -165,7 +164,6 @@ export async function validateDRPlanProtectData({ user, dispatch }) {
         dispatch(addMessage('Select virtual machine.', MESSAGE_TYPES.ERROR));
         return false;
       }
-
       try {
         const res = await getVMwareVMSProps(vmwareVMS, dispatch, user);
         return res;
@@ -179,6 +177,7 @@ export async function validateDRPlanProtectData({ user, dispatch }) {
     dispatch(addMessage('Select virtual machine.', MESSAGE_TYPES.ERROR));
     return false;
   }
+
   dispatch(setVMGuestOSInfo(vms));
   if (workFlow === UI_WORKFLOW.REVERSE_PLAN) {
     let showWarnigForChanges = false;
@@ -219,7 +218,8 @@ export async function validateMigrationVMs({ user, dispatch }) {
   const { values } = user;
 
   const validateSelectedVms = validateVMSelection(user, dispatch);
-  if (validateSelectedVms) {
+  const isUserNamePasswordValidated = validateUsernamePassword(user, dispatch);
+  if (validateSelectedVms && isUserNamePasswordValidated) {
     const initialCheckPass = validateVMConfiguration({ user, dispatch });
     if (initialCheckPass) {
       try {
@@ -251,7 +251,7 @@ export async function validateMigrationVMs({ user, dispatch }) {
   return true;
 }
 
-export function validateVMConfiguration({ user, dispatch }) {
+export function validateVMConfiguration({ user, dispatch, doNotShowPopup }) {
   const { values } = user;
   const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   // let fields = {};
@@ -279,6 +279,10 @@ export function validateVMConfiguration({ user, dispatch }) {
       vmName.push(`${emptyFields.join(', ')} of ${vms[vm].name}`);
     }
   });
+  const isUserNamePasswordValidated = validateUsernamePassword(user, dispatch, doNotShowPopup);
+  if (!isUserNamePasswordValidated) {
+    return false;
+  }
   if (vmName.length > 0) {
     dispatch(addMessage(`Please fill the required field(s) ${vmName.join(' , ')}`, MESSAGE_TYPES.ERROR));
     return false;
@@ -441,7 +445,7 @@ export function validateVMware(user, dispatch) {
   const { values } = user;
   const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   let isClean = true;
-  let message = '';
+  const message = [];
   Object.keys(vms).forEach((vm) => {
     if (isRemovedOrRecoveredVM(vms[vm])) {
       return;
@@ -449,21 +453,21 @@ export function validateVMware(user, dispatch) {
     const netConfigs = getVMwareNetworkConfig(`${vm}`, values);
     const vmName = vms[vm].name;
     if (netConfigs.length === 0) {
-      message = `${vmName}: Network configuration required`;
+      message.push(`${vmName}: Network configuration required`);
       isClean = false;
     }
     for (let i = 0; i < netConfigs.length; i += 1) {
       if (netConfigs[i].network === '' || typeof netConfigs[i].network === 'undefined') {
         isClean = false;
-        message = `${vmName}: network is  missing for Nic-${i}`;
+        message.push(`${vmName}: network is  missing for Nic-${i}`);
       } else if (typeof netConfigs[i].adapterType === 'undefined') {
         isClean = false;
-        message = `${vmName}: adapterType missing for Nic-${i}`;
+        message.push(`${vmName}: adapterType missing for Nic-${i}`);
       }
     }
   });
   if (!isClean) {
-    dispatch(addMessage(message, MESSAGE_TYPES.ERROR));
+    dispatch(addMessage(message.join(', '), MESSAGE_TYPES.ERROR));
   }
   return isClean;
 }
@@ -545,10 +549,11 @@ export function validateAzureNetwork(user, dispatch) {
   return isClean;
 }
 
-export async function validateRecoveryVMs({ user, dispatch }) {
+export async function validateRecoveryVMs({ user, dispatch, doNotShowPopup }) {
   const { values } = user;
   const isVMSelected = validateVMSelection(user, dispatch);
-  if (isVMSelected) {
+  const isUserNamePasswordValidated = validateUsernamePassword(user, dispatch, doNotShowPopup);
+  if (isVMSelected && isUserNamePasswordValidated) {
     const initialCheckPass = validateVMConfiguration({ user, dispatch });
     if (initialCheckPass) {
       try {
@@ -1044,11 +1049,71 @@ export function validateVMSelection(user, dispatch) {
     return false;
   }
   const recoveryPath = getValue(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, values);
+  const isUserNamePasswordValidated = validateUsernamePassword(user, dispatch);
+  if (!isUserNamePasswordValidated) {
+    return false;
+  }
   // Recovery checkpoint based on point-in-time is already set for recovery on Commn checkpoint changes
   if (recoveryPath === CHECKPOINT_TYPE.POINT_IN_TIME) {
     return validateCheckpointSelection(user, vms, dispatch);
   }
   return true;
+}
+
+export function validateUsernamePassword(user, dispatch, doNotShowPopup) {
+  const { values } = user;
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
+  const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
+  let isClean = true;
+  switch (recoveryPlatform) {
+    case PLATFORM_TYPES.VMware:
+      isClean = validatedVMwareStaticIp({ user, dispatch, workflow, values, doNotShowPopup });
+      break;
+    default:
+      break;
+  }
+  return isClean;
+}
+
+export function validatedVMwareStaticIp({ dispatch, workflow, values, doNotShowPopup }) {
+  const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
+  let isClean = true;
+  if (Object.keys(vms).length > 0 && (workflow === UI_WORKFLOW.RECOVERY || workflow === UI_WORKFLOW.MIGRATION || workflow === UI_WORKFLOW.TEST_RECOVERY)) {
+    Object.keys(vms).forEach((vm) => {
+      const netConfigs = getVMwareNetworkConfig(`${vm}`, values);
+      if (netConfigs.length > 0) {
+        for (let i = 0; i < netConfigs.length; i += 1) {
+          if (netConfigs[i].isPublicIP === 'true') {
+            const userName = getValue(`${vm}-username`, values);
+            const password = getValue(`${vm}-password`, values);
+            if (!userName) {
+              dispatch(addErrorMessage(`${vm}-username`, 'Please enter username'));
+              isClean = false;
+            }
+            if (!password) {
+              dispatch(addErrorMessage(`${vm}-password`, 'please enter password'));
+              isClean = false;
+            }
+            break;
+          }
+        }
+      }
+    });
+  }
+  if (!isClean) {
+    if (!doNotShowPopup) {
+      dispatch(addMessage(i18n.t('test.recovery.ip.warning.msg'), MESSAGE_TYPES.ERROR));
+    }
+    if (workflow === UI_WORKFLOW.TEST_RECOVERY) {
+      dispatch(valueChange(STATIC_KEYS.TEST_RECOVERY_IP_WARNING_MSG, i18n.t('test.recovery.ip.warning.msg')));
+    }
+  } else {
+    const ipWarningMessage = getValue(STATIC_KEYS.TEST_RECOVERY_IP_WARNING_MSG, values);
+    if (ipWarningMessage) {
+      dispatch(valueChange(STATIC_KEYS.TEST_RECOVERY_IP_WARNING_MSG, ''));
+    }
+  }
+  return isClean;
 }
 
 export function changedVMRecoveryConfigurations(payload, user, dispatch) {

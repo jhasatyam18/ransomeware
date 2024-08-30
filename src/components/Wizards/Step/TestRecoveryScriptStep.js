@@ -3,16 +3,17 @@ import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Card, CardBody, CardTitle, Col, Form, Label, Row } from 'reactstrap';
 import { PLATFORM_TYPES } from '../../../constants/InputConstants';
-import { getValue } from '../../../utils/InputUtils';
 import { valueChange } from '../../../store/actions';
-import DMToolTip from '../../Shared/DMToolTip';
+import { getValue } from '../../../utils/InputUtils';
 import DMField from '../../Shared/DMField';
+import DMToolTip from '../../Shared/DMToolTip';
 
 function TestRecoveryScriptStep(props) {
   const { user, dispatch, t } = props;
+  const { values } = user;
+  const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
 
   const getCheckboxValue = (key) => {
-    const { values } = user;
     const fieldValue = getValue(key, values);
     if (typeof fieldValue !== 'boolean') {
       return false;
@@ -30,8 +31,6 @@ function TestRecoveryScriptStep(props) {
 
   const renderCheckbox = (key, label) => {
     const checked = getCheckboxValue(key);
-    const { values } = user;
-    const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
     return (
       <Row className={recoveryPlatform !== PLATFORM_TYPES.VMware ? 'margin-bottom-20' : ''}>
         <Label for="dm-checkbox" className="col-sm-4 col-form-Label">
@@ -59,8 +58,25 @@ function TestRecoveryScriptStep(props) {
         <CardTitle>{t('tools.installation')}</CardTitle>
         <Form className="form_w">
           { renderCheckbox('recovery.installSystemAgent', 'recovery.installSystemAgent') }
-          <DMField dispatch={dispatch} user={user} fieldKey="ui.installSystemAgent.warning" />
+          {recoveryPlatform === PLATFORM_TYPES.VMware ? (
+            <>
+              <p className="mb-0 text-warning margin-top-10">
+                <i className="fas fa-xs mb-10 mt-0 fa-exclamation-triangle padding-right-6" />
+                {t('recover.cloud.agent.ip.warning')}
+              </p>
+              <p className="mb-0 text-warning">
+                <i className="fas fa-xs mb-10 fa-exclamation-triangle padding-right-6" />
+                {t('recover.cloud.agent.warning')}
+              </p>
+            </>
+          ) : null}
           <DMField dispatch={dispatch} user={user} fieldKey="recovery.installCloudPkg" />
+          {recoveryPlatform !== PLATFORM_TYPES.VMware ? (
+            <p className="mb-0 text-warning">
+              <i className="fas fa-xs mb-10 fa-exclamation-triangle padding-right-6" />
+              {t('recover.common.installation.warning')}
+            </p>
+          ) : null}
         </Form>
         <hr />
         <CardTitle>{t('pplan.scripts')}</CardTitle>

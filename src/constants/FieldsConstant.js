@@ -4,13 +4,11 @@ import { onProtectionPlanChange } from '../store/actions/DrPlanActions';
 import { onProtectSiteChange, updateAvailabilityZones } from '../store/actions/SiteActions';
 import { onLimitChange, onTimeLimitChange } from '../store/actions/ThrottlingAction';
 import { loadTreeChildData, onDiffReverseChanges, onScriptChange } from '../store/actions/UserActions';
-import { showSystemAgentWarningText } from '../utils/AppUtils';
 import { commonCheckpointOptions, defaultRecoveryCheckpointForVm, disableSiteSelection, enableNodeTypeVM, getAvailibilityZoneOptions, getCheckpointDurationOption, getCheckRentaintionOption, getDefaultRecoverySite, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getReportProtectionPlans, getSiteNodeOptions, getSitesOptions, getSubnetOptions, getVmCheckpointOptions, getVMwareVMSelectionData, isPlatformTypeAWS, isPlatformTypeAzure, isPlatformTypeGCP, isPlatformTypeVMware, onCommonCheckpointChange, onVmRecoveryCheckpointOptionChange, revShowRemoveCheckpointOption, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort, showDifferentialReverseCheckbox, showInstallCloudPackageOption, showRecipientEmailField, showRevPrefix, userRoleOptions } from '../utils/InputUtils';
 import { getErrorMessage, getFieldInfo, getLabel } from '../utils/LocallUtils';
 import { getReportDurationOptions, setMinDateForReport, showReportDurationDate } from '../utils/ReportUtils';
 import { defaultEntityTypeForVm, defaultReplicationTypeForVm, getVmEntityTypeOptions, getVmReplicationTypeOptions, hasWarning } from '../utils/ReverseReplicationUtils';
 import { disableRecoveryCheckpointField, isEmpty, isEmptyNum, showReverseWarningText, validateCheckpointFields, validateDrSiteSelection, validatePassword, validatePlanSiteSelection, validateReplicationInterval, validateReplicationValue } from '../utils/validationUtils';
-import { NOTE_TEXT } from './DMNoteConstant';
 import { STATIC_KEYS } from './InputConstants';
 import { EMAIL_REGEX, FQDN_REGEX, HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX, PASSWORD_REGEX, USERNAME_REGEX } from './ValidationConstants';
 
@@ -152,7 +150,6 @@ export const FIELDS = {
   'recovery.vmNames': { label: 'recovery.names', placeHolderText: '', type: FIELD_TYPE.PASSWORD, validate: null, errorMessage: '', shouldShow: false },
   'recovery.installSystemAgent': { label: 'recovery.installSystemAgent', placeHolderText: '', type: FIELD_TYPE.CHECKBOX, validate: null, errorMessage: '', defaultValue: false, fieldInfo: 'info.recovery.system.agent' },
   'recovery.installCloudPkg': { label: 'recovery.installCloudPkg', placeHolderText: '', type: FIELD_TYPE.CHECKBOX, validate: null, errorMessage: '', shouldShow: (u) => showInstallCloudPackageOption(u), defaultValue: false, fieldInfo: 'info.recovery.install.cloud.packages' },
-  'ui.installSystemAgent.warning': { type: FIELD_TYPE.STATICTEXT, shouldShow: (user) => showSystemAgentWarningText(user), text: i18n.t('recover.cloud.agent.warning'), icon: 'fas fa-exclamation-triangle', textType: NOTE_TEXT.WARNING, className: 'card_node mb-2' },
   'recovery.removeFromAD': { label: 'recovery.removeFromAD', placeHolderText: '', type: FIELD_TYPE.CHECKBOX, validate: null, errorMessage: '', shouldShow: true, defaultValue: false, fieldInfo: 'info.recovery.remove.windows.ad' },
   'ui.values.replication.interval.type': {
     label: 'Unit', placeHolderText: 'Select replication unit', type: FIELD_TYPE.SELECT, options: [{ label: 'Days', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_DAY }, { label: 'Hours', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_HOUR }, { label: 'Minutes', value: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_MIN }], validate: (value, user) => isEmpty(value, user), errorMessage: 'Invalid replication interval.', shouldShow: true, defaultValue: STATIC_KEYS.REPLICATION_INTERVAL_TYPE_MIN,
