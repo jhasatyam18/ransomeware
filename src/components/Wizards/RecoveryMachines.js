@@ -79,15 +79,21 @@ class RecoveryMachines extends Component {
     const recVms = getValue(STORE_KEYS.UI_RECOVERY_VMS, values);
     const data = [];
     if (value === CHECKPOINT_TYPE.LATEST) {
-      recVms.forEach((vm) => {
-        const virtualMachine = vm;
-        if (typeof vm.recoveryStatus !== 'undefined' && (vm.recoveryStatus === RECOVERY_STATUS.MIGRATED || vm.recoveryStatus === RECOVERY_STATUS.RECOVERED || vm.isRemovedFromPlan === true)) {
-          // hide checkbox if the vm is recovered
-          virtualMachine.isDisabled = true;
-          // if the recovered vm is selected in point-in-time and the user clicks on latest then remove recovered vm from selected vm
-          delete vms[vm.moref];
-        }
-        data.push(virtualMachine);
+      const recoveryPlan = getValue('ui.recovery.plan', values);
+      const { protectedEntities } = recoveryPlan;
+      const { virtualMachines } = protectedEntities;
+      virtualMachines.forEach((plnvm) => {
+        recVms.forEach((vm) => {
+          if (plnvm.moref === vm.moref) {
+            const virtualMachine = vm;
+            virtualMachine.virtualDisks = plnvm.virtualDisks;
+            if (typeof vm.recoveryStatus !== 'undefined' && (vm.recoveryStatus === RECOVERY_STATUS.MIGRATED || vm.recoveryStatus === RECOVERY_STATUS.RECOVERED || vm.isRemovedFromPlan === true)) {
+              virtualMachine.isDisabled = true;
+              delete vms[vm.moref];
+            }
+            data.push(virtualMachine);
+          }
+        });
       });
       dispatch(valueChange(STORE_KEYS.UI_RECOVERY_VMS, data));
       dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, vms));
@@ -100,22 +106,32 @@ class RecoveryMachines extends Component {
       // REMOVE CHECKPOINT WARNING TEXT
       dispatch(valueChange(STORE_KEYS.UI_CHECKPOINT_SELECT_WARNING, ''));
     } else if (value === CHECKPOINT_TYPE.POINT_IN_TIME) {
-      recVms.forEach((vm) => {
-        const virtualMachine = vm;
-        if (typeof vm.recoveryStatus !== 'undefined' && (vm.recoveryStatus === RECOVERY_STATUS.RECOVERED || vm.isRemovedFromPlan === true || vm.recoveryStatus === RECOVERY_STATUS.MIGRATED) && workflow === UI_WORKFLOW.TEST_RECOVERY) {
-          // below code is to enable vm selection for point-in-time even if it's recovered
-          virtualMachine.isDisabled = true;
-        } else {
-          virtualMachine.isDisabled = false;
-        }
-        data.push(virtualMachine);
-      });
-      dispatch(valueChange(STORE_KEYS.UI_RECOVERY_VMS, data));
-      const plan = getValue(STORE_KEYS.UI_CHECKPOINT_PLAN, values);
-      if (Object.keys(plan).length > 0) {
-        Object.keys(vms).forEach((vm) => {
-          dispatch(setRecoveryVMDetails(vm, plan));
+      const checkpointPlan = getValue(STORE_KEYS.UI_CHECKPOINT_PLAN, values);
+      if (Object.keys(checkpointPlan).length > 0) {
+        const { protectedEntities } = checkpointPlan;
+        const { virtualMachines } = protectedEntities;
+        virtualMachines.forEach((plnvm) => {
+          recVms.forEach((vm) => {
+            if (plnvm.moref === vm.moref) {
+              const virtualMachine = vm;
+              virtualMachine.virtualDisks = plnvm.virtualDisks;
+              if (typeof vm.recoveryStatus !== 'undefined' && (vm.recoveryStatus === RECOVERY_STATUS.RECOVERED || vm.isRemovedFromPlan === true || vm.recoveryStatus === RECOVERY_STATUS.MIGRATED) && workflow === UI_WORKFLOW.TEST_RECOVERY) {
+                // below code is to enable vm selection for point-in-time even if it's recovered
+                virtualMachine.isDisabled = true;
+              } else {
+                virtualMachine.isDisabled = false;
+              }
+              data.push(virtualMachine);
+            }
+          });
         });
+        dispatch(valueChange(STORE_KEYS.UI_RECOVERY_VMS, data));
+        const plan = getValue(STORE_KEYS.UI_CHECKPOINT_PLAN, values);
+        if (Object.keys(plan).length > 0) {
+          Object.keys(vms).forEach((vm) => {
+            dispatch(setRecoveryVMDetails(vm, plan));
+          });
+        }
       }
     }
   }

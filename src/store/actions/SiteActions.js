@@ -279,8 +279,6 @@ export function handleProtectVMSeletion(data, isSelected, primaryKey) {
     if (isSelected) {
       if (!selectedVMs || selectedVMs.length === 0 || !selectedVMs[data[primaryKey]]) {
         const newVMs = { ...selectedVMs, [data[primaryKey]]: data };
-        dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, newVMs));
-        dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, newVMs));
         dispatch(valueChange(`${data[primaryKey]}-vmConfig.general.guestOS`, getMatchingOSType(data.guestOS)));
         dispatch(valueChange(`${data[primaryKey]}-vmConfig.general.firmwareType`, getMatchingFirmwareType(data.firmwareType)));
         dispatch(valueChange(`${data[primaryKey]}-vmConfig.recovery.status`, data.recoveryStatus));
@@ -288,10 +286,20 @@ export function handleProtectVMSeletion(data, isSelected, primaryKey) {
           const plan = getValue(STORE_KEYS.UI_CHECKPOINT_PLAN, values);
           if (Object.keys(plan).length > 0) {
             dispatch(setRecoveryVMDetails(data[primaryKey], plan));
+            const { protectedEntities } = plan;
+            const { virtualMachines } = protectedEntities;
+            Object.keys(newVMs).forEach((moref) => {
+              virtualMachines.forEach((machine) => {
+                if (machine.moref === moref) {
+                  newVMs[moref].virtualDisks = machine.virtualDisks;
+                }
+              });
+            });
           }
         } else {
           dispatch(setRecoveryVMDetails(data[primaryKey]));
         }
+        dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, newVMs));
       }
     } else if (selectedVMs[data[primaryKey]]) {
       const newVMs = selectedVMs;
@@ -323,6 +331,15 @@ export function handleSelectAllRecoveryVMs(value, data) {
             dispatch(setRecoveryVMDetails(vm.moref));
           } else if (Object.keys(plan).length > 0) {
             dispatch(setRecoveryVMDetails(vm.moref, plan));
+            const { protectedEntities } = plan;
+            const { virtualMachines } = protectedEntities;
+            Object.keys(selectedVMs).forEach((moref) => {
+              virtualMachines.forEach((machine) => {
+                if (machine.moref === moref) {
+                  selectedVMs[moref].virtualDisks = machine.virtualDisks;
+                }
+              });
+            });
           }
           dispatch(valueChange(`${vm.moref}-vmConfig.recovery.status`, vm.recoveryStatus));
         }
