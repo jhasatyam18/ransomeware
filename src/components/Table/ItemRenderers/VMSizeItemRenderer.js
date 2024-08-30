@@ -1,5 +1,5 @@
-import React from 'react';
 import 'boxicons';
+import React from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { getStorageWithUnit } from '../../../utils/AppUtils';
@@ -10,7 +10,7 @@ function VMSizeItemRenderer(props) {
   const { virtualDisks = [] } = data;
   if (virtualDisks !== null) {
     virtualDisks.forEach((disk) => {
-      if (typeof disk.isDeleted !== 'undefined' && !disk.isDeleted && typeof disk.size !== 'undefined') {
+      if ((typeof data.isDeleted !== 'undefined' && data.isDeleted) || (typeof disk.isDeleted !== 'undefined' && !disk.isDeleted && typeof disk.size !== 'undefined')) {
         size += disk.size;
       }
     });
