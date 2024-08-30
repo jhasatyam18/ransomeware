@@ -14,6 +14,7 @@ import { addMessage } from '../../store/actions/MessageActions';
 import { callAPI } from '../../utils/ApiUtils';
 import { getRecoveryCheckpointSummary } from '../../utils/AppUtils';
 import { getValue } from '../../utils/InputUtils';
+import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
 import ActionButton from '../Common/ActionButton';
 import DMBreadCrumb from '../Common/DMBreadCrumb';
 import DropdownActions from '../Common/DropdownActions';
@@ -81,8 +82,8 @@ function RecoveryCheckpoints(props) {
       if (checkpointType === RECOVERY_CHECKPOINT_TYPE.PRESERVED_CHECKPOINTS) {
         return <ActionButton label="Delete Checkpoint" onClick={() => dispatch(openDeleteCheckpointModal())} icon="fa fa-trash" t={t} key="delet" isDisabled={selectedCheckpointsKeys.length === 0} />;
       }
-      actions = [{ label: t('preserve'), action: preserveCheckpoint, icon: 'fa fa-plus', disabled: disablePreserve, id: selectedCheckpoints },
-        { label: t('delete'), action: openDeleteCheckpointModal, icon: 'fa fa-trash', disabled: disableDelete, id: selectedCheckpoints }];
+      actions = [{ label: t('preserve'), action: preserveCheckpoint, icon: 'fa fa-plus', disabled: disablePreserve || !hasRequestedPrivileges(user, ['checkpoint.edit']), id: selectedCheckpoints },
+        { label: t('delete'), action: openDeleteCheckpointModal, icon: 'fa fa-trash', disabled: disableDelete || !hasRequestedPrivileges(user, ['checkpoint.delete']), id: selectedCheckpoints }];
     } else {
       return null;
     }

@@ -859,6 +859,7 @@
   "recommended": "Recommended",
   "script.warning.reverse": "Please check and correct all the scripts depending on new source and target sites.",
   "pit.recovery.warning": "After recovering a virtual machine from a point-in-time checkpoint, it cannot be recovered again with the latest replicated data.",
+  "pit.disk.resize.warning.text": "Taking action on this alert will delete all the available point-in-time checkpoints of {{vmName}} on VMware infra. ",
   "reset.credential.password": "Enter {{userName}}'s password",
   "no.new.notification": "No new notification",
   "test.recovery.ip.warning.msg":"To configure Static IP please specify credentials of local administrator account."

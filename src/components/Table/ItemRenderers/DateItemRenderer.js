@@ -5,8 +5,9 @@ import { JOB_COMPLETION_STATUS } from '../../../constants/AppStatus';
 import { MODAL_PRESERVE_CHECKPOINT } from '../../../constants/Modalconstant';
 import { KEY_CONSTANTS } from '../../../constants/UserConstant';
 import { openModal } from '../../../store/actions/ModalActions';
+import { hasRequestedPrivileges } from '../../../utils/PrivilegeUtils';
 
-function DateItemRenderer({ data, field, dispatch, t }) {
+function DateItemRenderer({ data, field, dispatch, t, user }) {
   const fieldArray = ['currentSnapshotTime', 'lastSyncTime'];
   const time = data[field] * 1000;
   const { isPreserveCheckpoint } = data;
@@ -36,25 +37,29 @@ function DateItemRenderer({ data, field, dispatch, t }) {
     return (
       <>
         {resp}
-        { isPreserveCheckpoint
-          ? (
-            <small
-              aria-hidden
-              className="checkpoint_preserved_text"
-            >
-              ( Preserved )
-            </small>
-          )
-          : (
-            <small
-              aria-hidden
-              onClick={onPreserveCheckpoint}
-              className="checkpoint_preserve_text"
-            >
-              ( Click To Preserve )
+        { hasRequestedPrivileges(user, ['checkpoint.edit']) ? (
+          <>
+            {isPreserveCheckpoint
+              ? (
+                <small
+                  aria-hidden
+                  className="checkpoint_preserved_text"
+                >
+                  ( Preserved )
+                </small>
+              )
+              : (
+                <small
+                  aria-hidden
+                  onClick={onPreserveCheckpoint}
+                  className="checkpoint_preserve_text"
+                >
+                  ( Click To Preserve )
 
-            </small>
-          )}
+                </small>
+              )}
+          </>
+        ) : null}
       </>
     );
   }

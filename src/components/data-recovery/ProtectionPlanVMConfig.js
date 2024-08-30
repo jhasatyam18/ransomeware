@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import { Col, Form, Label, Row } from 'reactstrap';
 import { PLATFORM_TYPES } from '../../constants/InputConstants';
 import { TABLE_FILTER_TEXT, TABLE_PROTECTION_PLAN_VMS, TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG } from '../../constants/TableConstants';
+import { filterData } from '../../utils/AppUtils';
 import DMTable from '../Table/DMTable';
 import DMTPaginator from '../Table/DMTPaginator';
-import { filterData } from '../../utils/AppUtils';
 
 function ProtectionPlanVMConfig(props) {
   const [viewProtection, setViewProtection] = useState(true);

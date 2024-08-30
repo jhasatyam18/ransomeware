@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { withRouter } from 'react-router-dom';
-import { getItemRendererComponent } from '../../utils/ComponentFactory';
 import { closeModal } from '../../store/actions/ModalActions';
+import { getItemRendererComponent } from '../../utils/ComponentFactory';
 
 class ConfirmationModal extends Component {
   constructor() {
@@ -70,10 +70,10 @@ class ConfirmationModal extends Component {
             <div className="row">
               {!component ? (
                 <>
-                  <div className="col-sm-3 confirmation-icon">
+                  <div className="col-sm-1 confirmation-icon">
                     <i className="fas fa-exclamation-triangle" />
                   </div>
-                  <div className="col-sm-8 confirmation_modal_msg">
+                  <div className="col-sm-9 confirmation_modal_msg">
                     {message}
                     {this.modalItemRenderer()}
                   </div>

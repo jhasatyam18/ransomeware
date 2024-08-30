@@ -216,11 +216,11 @@ export function fetchDRPlanById(id, params) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
         dispatch(drPlanDetailsFetched(json));
-        dispatch(closeModal());
         // if plan details is rendered thorugh reset url then open reset disk replication modal
         if (typeof params !== 'undefined' && Object.keys(params).length > 0 && params.reset) {
           dispatch(onResetDiskReplicationClick());
         }
+
         const allRecoveryInstanceMoref = [];
         json.recoveryEntities.instanceDetails.forEach((el) => allRecoveryInstanceMoref.push(el.sourceMoref));
         const latestReplication = await fetchVMsLatestReplicaionJob(allRecoveryInstanceMoref.join(','), dispatch, STATIC_KEYS.LATEST_REPLICATION_JOBS) || [];

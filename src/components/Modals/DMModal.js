@@ -5,6 +5,7 @@ import { closeModal } from '../../store/actions/ModalActions';
 import ConfirmationModal from './ConfirmationModal';
 import ModalAbout from './ModalAbout';
 import ModalAlertDetails from './ModalAlertDetails';
+import ModalApplyCredentials from './ModalApplyCredentials';
 import ModalBandwidthConfig from './ModalBandwidthConfig';
 import ModalCBTConfirmation from './ModalCBTConfirmation';
 import ModalChangeNodePassword from './ModalChangeNodePassword';
@@ -19,11 +20,11 @@ import ModalLocationTree from './ModalLocationTree';
 import ModalNicConfig from './ModalNicConfig';
 import ModalPlaybookError from './ModalPlaybookError';
 import ModalPlaybookReconfigure from './ModalPlaybookReconfigure';
-import ModalApplyCredentials from './ModalApplyCredentials';
 import ModalPreserveCheckpoint from './ModalPreserveCheckpoint';
 import ModalReplicationPriority from './ModalReplicationPriority';
 import ModalResetCredentials from './ModalResetCredentials';
 import ResetDiskReplicationModal from './ModalResetDiskReplication';
+import ModalReverseChangesWarning from './ModalReverseChangesWarning';
 import ModalScripts from './ModalScripts';
 import ModalShowResetedVms from './ModalShowResetVm';
 import ModalShowSummary from './ModalShowSummary';
@@ -33,7 +34,6 @@ import ModalTroubleShooting from './ModalTroubleShooting';
 import ModalVMwareQuiesce from './ModalVMwareQuiesce';
 import PlaybookGenerateModal from './PlaybookGenerateModal';
 import PlaybookUploadModal from './PlaybookUploadModal';
-import ModalReverseChangesWarning from './ModalReverseChangesWarning';
 
 function DMModal(props) {
   const { modal, user, dispatch } = props;

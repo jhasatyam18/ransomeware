@@ -2,17 +2,17 @@ import classnames from 'classnames';
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import SimpleBar from 'simplebar-react';
 import { Card, CardBody, Col, Container, Form, Input, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
-import DateItemRenderer from '../Table/ItemRenderers/DateItemRenderer';
-import EventLevelItemRenderer from '../Table/ItemRenderers/EventLevelItemRenderer';
-import { acknowledgeAlert, takeVMAction } from '../../store/actions/AlertActions';
-import { closeModal } from '../../store/actions/ModalActions';
-import { getCookie } from '../../utils/CookieUtils';
+import SimpleBar from 'simplebar-react';
 import { CHECKPOINT_ACTION_EVENT, MONITOR_NODE_AUTH, PPLAN_EVENTS, VM_CONFIG_ACTION_EVENT, VM_DISK_ACTION_EVENT } from '../../constants/EventConstant';
 import { APPLICATION_API_USER } from '../../constants/UserConstant';
+import { acknowledgeAlert, takeVMAction } from '../../store/actions/AlertActions';
+import { closeModal } from '../../store/actions/ModalActions';
+import { refresh, valueChange } from '../../store/actions/UserActions';
+import { getCookie } from '../../utils/CookieUtils';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
-import { refresh } from '../../store/actions/UserActions';
+import DateItemRenderer from '../Table/ItemRenderers/DateItemRenderer';
+import EventLevelItemRenderer from '../Table/ItemRenderers/EventLevelItemRenderer';
 
 /**
  * Component to render Alert details.
@@ -27,10 +27,12 @@ class ModalAlertDetails extends Component {
   }
 
   handleChange = (e) => {
+    const { dispatch } = this.props;
     this.setState({
       ackMessage: e.target.value,
       error: '',
     });
+    dispatch(valueChange('alert.acknowledge.message', e.target.value));
   };
 
   onClose() {
@@ -39,17 +41,13 @@ class ModalAlertDetails extends Component {
   }
 
   takeAction = () => {
-    const { alerts, dispatch, t } = this.props;
-    const { associatedEvent, selected } = alerts;
+    const { dispatch, t } = this.props;
     const { ackMessage } = this.state;
-    const user = getCookie(APPLICATION_API_USER);
     if (ackMessage.length === 0) {
       this.setState({ error: t('required.acknowledge.message') });
       return;
     }
-    selected.acknowledgeMessage = ackMessage;
-    selected.acknowledgeBy = user;
-    dispatch(takeVMAction(selected, associatedEvent));
+    dispatch(takeVMAction());
   };
 
   acknowledgeAndClose() {
