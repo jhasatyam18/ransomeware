@@ -3,8 +3,8 @@ import SimpleBar from 'simplebar-react';
 import { CardBody, Form } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
 import { FIELDS } from '../../constants/FieldsConstant';
-import DMField from '../Shared/DMField';
 import { closeModal } from '../../store/actions/ModalActions';
+import DMFieldText from '../Shared/DMFieldText';
 import { getKeyStruct } from '../../utils/PayloadUtil';
 import { API_USER_RESET } from '../../constants/ApiConstants';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
@@ -20,8 +20,9 @@ const ModalResetCredentials = (props) => {
   const { options } = modal;
   const [tempPass, setTempPass] = useState('');
   const [copied, setCopied] = useState(false);
-  const fields = Object.keys(FIELDS).filter((key) => key.indexOf('reset') !== -1);
-
+  const userName = getCookie(APPLICATION_API_USER) || '';
+  const field = FIELDS['reset.oldPassword'];
+  field.placeHolderText = t('reset.credential.password', { userName });
   const onClose = () => {
     dispatch(closeModal(true));
   };
@@ -69,9 +70,7 @@ const ModalResetCredentials = (props) => {
         <SimpleBar className="max-h-400">
           <CardBody className="modal-card-body">
             <Form>
-              {
-                fields.map((field) => (<DMField dispatch={dispatch} user={user} fieldKey={field} key={`reset-${field}`} />))
-              }
+              <DMFieldText dispatch={dispatch} fieldKey="reset.oldPassword" field={field} user={user} hideLabel />
               {renderTempPassword()}
             </Form>
           </CardBody>

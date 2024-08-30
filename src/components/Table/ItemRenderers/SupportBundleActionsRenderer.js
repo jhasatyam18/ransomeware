@@ -6,7 +6,7 @@ import { MODAL_CONFIRMATION_WARNING } from '../../../constants/Modalconstant';
 
 function SupportBundleActionsRenderer({ data, dispatch }) {
   function onDelete() {
-    const options = { title: 'Confirmation', confirmAction: deleteSupportBundle, message: `Are you sure want to delete support bundle ${data.name} ?`, id: data.id };
+    const options = { title: 'Confirmation', confirmAction: deleteSupportBundle, message: `Are you sure you want to delete support bundle ${data.name} ?`, id: data.id };
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   }
 

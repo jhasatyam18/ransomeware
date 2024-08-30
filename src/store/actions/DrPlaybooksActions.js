@@ -412,7 +412,7 @@ export function playbookFetchPlanDiff(id, playbook) {
               disabledVMsName[index] = { ...vm, changeTracking: false };
             });
           }
-          const options = { title: 'Reconfigure Plan', playbookId: playbook.id, confirmAction: onCreatePlanFromPlaybook, message: `Are you sure want to configure protection plan from ${playbook.name} playbook ?`, footerLabel: 'Reconfigure Protection Plan', color: 'success', size: 'lg', planName: json.updatedPlanConfiguration[0].name, planId: id, disabledVMs: disabledVMsName };
+          const options = { title: 'Reconfigure Plan', playbookId: playbook.id, confirmAction: onCreatePlanFromPlaybook, message: `Are you sure you want to configure protection plan from ${playbook.name} playbook ?`, footerLabel: 'Reconfigure Protection Plan', color: 'success', size: 'lg', planName: json.updatedPlanConfiguration[0].name, planId: id, disabledVMs: disabledVMsName };
           dispatch(openModal(MODAL_RECONFIGURE_PLAYBOOK, options));
           return;
         }

@@ -550,7 +550,7 @@
   "title.dm.role": "Datamotive Role",
   "info.saml.entity.id": "Datamotive Service Provider entity ID",
   "info.saml.metadata": "Click to download Datamotive service provider metadata file",
-  "info.remove.idp.config": "Are you sure want to remove the identity provider configuration?",
+  "info.remove.idp.config": "Are you sure you want to remove the identity provider configuration?",
   "info.idp.name": "Identity provider name",
   "info.idp.metadataurl": "The Metadata URL is used for fetching the necessary information about the Identity Provider (IdP) to establish a SAML-based Single Sign-On (SSO). Either provide Metadata URL or upload Metadata File.",
   "info.idp.metadatafile": "The Metadata File is used for setting up the SAML-based Single Sign-On (SSO) with the Identity Provider (IdP). Either provide Metadata URL or upload Metadata File.",
@@ -618,7 +618,7 @@
   "upload.configured.playbook": "Uploading configured playbook...",
   "playbook.download.success": "Playbook uploaded successfully.",
   "upload.configured.playbooks": "Upload Configured Playbook",
-  "confirm.remove.playbook": "Are you sure want to remove {{name}} playbook ?",
+  "confirm.remove.playbook": "Are you sure you want to remove {{name}} playbook ?",
   "export.identified.issues": "Download Identified Issues",
   "title.progress": "Progress",
   "title.playbook.how.fix.title": "How to fix",
@@ -859,5 +859,7 @@
   "recommended": "Recommended",
   "script.warning.reverse": "Please check and correct all the scripts depending on new source and target sites.",
   "pit.recovery.warning": "After recovering a virtual machine from a point-in-time checkpoint, it cannot be recovered again with the latest replicated data.",
+  "reset.credential.password": "Enter {{userName}}'s password",
+  "no.new.notification": "No new notification",
   "test.recovery.ip.warning.msg":"To configure Static IP please specify credentials of local administrator account."
 }

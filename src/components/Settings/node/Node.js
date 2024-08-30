@@ -45,19 +45,23 @@ class Node extends Component {
     const { dispatch, settings } = this.props;
     const { selectedNodes } = settings;
     const selectedNodeKey = Object.keys(selectedNodes);
-    const options = { title: 'Confirmation', confirmAction: removeNode, message: 'Are you sure want to remove selected nodes ?', id: selectedNodes[selectedNodeKey].id };
+    const options = { title: 'Confirmation', confirmAction: removeNode, message: `Are you sure you want to remove ${selectedNodes[selectedNodeKey].name} ?`, id: selectedNodes[selectedNodeKey].id };
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   }
 
   onOfflineNode() {
-    const { dispatch } = this.props;
-    const options = { title: 'Confirmation', confirmAction: moveNodesToOffline, message: 'Are you sure you want make selected nodes Offline ?' };
+    const { dispatch, settings } = this.props;
+    const { selectedNodes } = settings;
+    const nodes = Object.values(selectedNodes).map((item) => item.name);
+    const options = { title: 'Confirmation', confirmAction: moveNodesToOffline, message: `Are you sure you want to make selected node(s) Offline ${nodes.join(', ')} ?` };
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   }
 
   onOnlineNode() {
-    const { dispatch } = this.props;
-    const options = { title: 'Confirmation', confirmAction: moveNodesToOnline, message: 'Are you sure you want make selected nodes Online ?' };
+    const { dispatch, settings } = this.props;
+    const { selectedNodes } = settings;
+    const nodes = Object.values(selectedNodes).map((item) => item.name);
+    const options = { title: 'Confirmation', confirmAction: moveNodesToOnline, message: `Are you sure you want to make selected node(s) Online ${nodes.join(', ')} ?` };
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   }
 

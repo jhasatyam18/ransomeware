@@ -135,7 +135,7 @@ function SinglePlaybookDetailsPage(props) {
   );
 
   const onValidate = () => {
-    const options = { title: 'Validate Playbook', confirmAction: validatePlaybook, message: `Are you sure want to validate ${playbook.name} ?`, id, footerLabel: 'Validate', color: 'success', size: 'lg' };
+    const options = { title: 'Validate Playbook', confirmAction: validatePlaybook, message: `Are you sure you want to validate ${playbook.name} ?`, id, footerLabel: 'Validate', color: 'success', size: 'lg' };
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   };
 
@@ -161,7 +161,7 @@ function SinglePlaybookDetailsPage(props) {
       e.preventDefault();
       return;
     }
-    const options = { title: t('confirm.playbook.plan.config'), footerComponent: createPlanFooter, confirmAction: onCreatePlanFromPlaybook, message: `Are you sure want to configure protection plan from ${playbook.name} playbook ?`, id, footerLabel: 'Create Protection Plan', color: 'success', size: 'lg' };
+    const options = { title: t('confirm.playbook.plan.config'), footerComponent: createPlanFooter, confirmAction: onCreatePlanFromPlaybook, message: `Are you sure you want to configure protection plan from ${playbook.name} playbook ?`, id, footerLabel: 'Create Protection Plan', color: 'success', size: 'lg' };
     if (planConfigurations[0]?.planID > 0) {
       dispatch(playbookFetchPlanDiff(id, playbook));
       return;
@@ -170,7 +170,7 @@ function SinglePlaybookDetailsPage(props) {
   };
 
   const onRemove = () => {
-    const options = { title: t('confirm.confirmation'), confirmAction: deletePlaybook, message: `Are you sure want to remove ${name} playbook ?`, id, size: 'lg' };
+    const options = { title: t('confirm.confirmation'), confirmAction: deletePlaybook, message: `Are you sure you want to remove ${name} playbook ?`, id, size: 'lg' };
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   };
 

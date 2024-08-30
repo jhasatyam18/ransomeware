@@ -214,7 +214,7 @@ export function openDeleteCheckpointModal() {
     selectedCheckpointKey.forEach((el) => {
       ids.push(selectedCheckpoints[el].id);
     });
-    const options = { title: 'Confirmation', confirmAction: removeCheckpoint, message: 'Are you sure want to remove selected Checkpoint ?', id: ids.join(',') };
+    const options = { title: 'Confirmation', confirmAction: removeCheckpoint, message: 'Are you sure you want to remove selected Checkpoint ?', id: ids.join(',') };
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   };
 }

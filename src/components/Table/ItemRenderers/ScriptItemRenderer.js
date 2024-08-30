@@ -10,7 +10,7 @@ export default function ScriptItemRenderer({ data, dispatch, user }) {
     return '-';
   }
   const onDelete = () => {
-    const options = { title: 'Confirmation', confirmAction: deleteScript, message: `Are you sure want to delete script ${data.name} ?`, id: data.ID };
+    const options = { title: 'Confirmation', confirmAction: deleteScript, message: `Are you sure you want to delete script ${data.name} ?`, id: data.ID };
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   };
 
