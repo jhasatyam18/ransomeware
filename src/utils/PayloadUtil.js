@@ -477,7 +477,12 @@ export function getVMwareNetworkConfig(key, values) {
     const network = getValue(`${networkKey}-eth-${index}-network`, values);
     const adapterType = `${getValue(`${networkKey}-eth-${index}-adapterType`, values)}`;
     const macAddress = `${getValue(`${networkKey}-eth-${index}-macAddress-value`, values)}`;
-    networks.push({ network: network.label, adapterType, macAddress });
+    const isPublicIP = `${getValue(`${networkKey}-eth-${index}-isPublic`, values)}`;
+    const netmask = `${getValue(`${networkKey}-eth-${index}-netmask`, values)}`;
+    const gateway = `${getValue(`${networkKey}-eth-${index}-gateway`, values)}`;
+    const dnsserver = `${getValue(`${networkKey}-eth-${index}-dnsserver`, values)}`;
+    const publicIP = `${getValue(`${networkKey}-eth-${index}-publicIP`, values)}`;
+    networks.push({ network: network.label, adapterType, macAddress, isPublicIP, dnsserver, netmask, gateway, publicIP });
   }
   return networks;
 }

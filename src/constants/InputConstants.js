@@ -135,6 +135,7 @@ export const STATIC_KEYS = {
   REPLICATION_TYPE: 'replicationType',
   ENTITY_TYPE: 'entityType',
   VM_LATEST_REPLICATION_JOBS: 'ui.latest.vm.replication.jobs',
+  TEST_RECOVERY_IP_WARNING_MSG: 'test.recovery.ip.warning.msg',
   LATEST_REPLICATION_JOBS: 'latest=true',
   LATEST_COMPLETED_REPL_JOBS: 'status=completed&latest=true',
 };
