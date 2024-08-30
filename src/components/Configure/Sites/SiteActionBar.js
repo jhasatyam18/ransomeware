@@ -42,8 +42,9 @@ class SiteActionBar extends Component {
   }
 
   deleteSelectedSites() {
-    const { dispatch } = this.props;
-    const options = { title: 'Alert', confirmAction: deleteSites, message: 'Are you sure want to delete selected sites ?' };
+    const { dispatch, selectedSites } = this.props;
+    const sites = Object.values(selectedSites).map((item) => item.name);
+    const options = { title: 'Alert', confirmAction: deleteSites, message: `Are you sure you want to delete ${sites.join(', ')} ?` };
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   }
 

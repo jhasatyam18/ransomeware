@@ -71,7 +71,7 @@ function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispat
       e.preventDefault();
       return;
     }
-    let options = { title: t('confirm.playbook.plan.config'), footerComponent: createPlanFooter, confirmAction: onCreatePlanFromPlaybook, message: `Are you sure want to configure protection plan from ${playbook.name} playbook ?`, id, footerLabel: 'Create Protection Plan', color: 'success', size: 'lg' };
+    let options = { title: t('confirm.playbook.plan.config'), footerComponent: createPlanFooter, confirmAction: onCreatePlanFromPlaybook, message: `Are you sure you want to configure protection plan from ${playbook.name} playbook ?`, id, footerLabel: 'Create Protection Plan', color: 'success', size: 'lg' };
     if (planConfigurations[0]?.planID > 0) {
       dispatch(playbookFetchPlanDiff(id, playbook));
       return;
@@ -104,7 +104,7 @@ function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispat
       e.preventDefault();
       return;
     }
-    const options = { title: t('title.validate.playbook'), confirmAction: validatePlaybook, message: `Are you sure want to Validate ${playbook.name} ?`, id: playbook.id, footerLabel: t('validate'), color: 'success', size: 'lg' };
+    const options = { title: t('title.validate.playbook'), confirmAction: validatePlaybook, message: `Are you sure you want to Validate ${playbook.name} ?`, id: playbook.id, footerLabel: t('validate'), color: 'success', size: 'lg' };
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   };
 

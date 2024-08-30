@@ -34,7 +34,7 @@ function DRPlanActionBar(props) {
     const { dispatch, selectedPlans } = props;
     const selectedPlansKey = Object.keys(selectedPlans);
     const plan = selectedPlans[selectedPlansKey[0]];
-    const options = { title: 'Confirmation', confirmAction: deletePlan, message: 'Are you sure want to delete  ?', render: PPLAN_REMOVE_CHECKPOINT_RENDERER, id: plan.id };
+    const options = { title: 'Confirmation', confirmAction: deletePlan, message: `Are you sure you want to delete ${plan.name} ?`, render: PPLAN_REMOVE_CHECKPOINT_RENDERER, id: plan.id };
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   };
 
