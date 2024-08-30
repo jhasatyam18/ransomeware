@@ -527,20 +527,30 @@ export function recoveryConfigOnCheckpointChanges(selectedCheckpointsId, selecte
               obj = { ...checkpointPlan };
             }
             if (Object.keys(obj).length > 0) {
-              const { recoveryEntities } = obj;
+              const { recoveryEntities, protectedEntities } = obj;
               const { instanceDetails } = recoveryEntities;
+              const { virtualMachines } = protectedEntities;
               if (Object.keys(checkpointRecConfigs).length > 0) {
                 checkpointRecConfigs.forEach((el) => {
                   for (let i = 0; i < instanceDetails.length; i += 1) {
                     if (el.workloadID === instanceDetails[i].sourceMoref) {
                       const newInstanceDetails = JSON.parse(el.targetWorkloadConfig);
+                      const sourceWorkloadConfig = JSON.parse(el.sourceWorkloadConfig);
                       newInstanceDetails.sourceMoref = instanceDetails[i].sourceMoref;
+                      sourceWorkloadConfig.moref = virtualMachines[i].moref;
                       instanceDetails[i] = newInstanceDetails;
+                      virtualMachines[i] = sourceWorkloadConfig;
+                      if (Object.keys(selecetdVms).includes(instanceDetails[i].sourceMoref)) {
+                        selecetdVms[instanceDetails[i].sourceMoref].virtualDisks = sourceWorkloadConfig.virtualDisks;
+                      }
                     }
                   }
                 });
               }
               dispatch(valueChange(STORE_KEYS.UI_CHECKPOINT_PLAN, obj));
+              if (Object.keys(selecetdVms).length > 0) {
+                dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, selecetdVms));
+              }
               if (typeof selectedVmMoref !== 'undefined') {
                 dispatch(setRecoveryVMDetails(selectedVmMoref, obj));
               } else if (Object.keys(selecetdVms).length > 0) {
