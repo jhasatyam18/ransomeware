@@ -1,9 +1,9 @@
 import { t } from 'i18next';
+import { RECOVERY_STATUS } from '../constants/AppStatus';
 import { PLATFORM_TYPES, STATIC_KEYS } from '../constants/InputConstants';
 import * as RPATH from '../constants/RouterConstants';
 import { getCheckpointTimeFromMinute } from '../store/actions/checkpointActions';
 import { getAzureNetworkOptions, getValue } from './InputUtils';
-import { RECOVERY_STATUS } from '../constants/AppStatus';
 
 const KEY_NAME = 'datamotive';
 let startValue = 1;

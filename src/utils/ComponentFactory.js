@@ -24,6 +24,8 @@ import DiskReplicationTypeItemRenderer from '../components/Table/ItemRenderers/D
 import DownloadPlaybookFromPlanList from '../components/Table/ItemRenderers/DownloadPlaybookFromPlanList';
 import DRPlanNameItemRenderer from '../components/Table/ItemRenderers/DRPlanNameItemRenderer';
 import EmailRecipientItemRenderer from '../components/Table/ItemRenderers/EmailRecipientItemRenderer';
+import EntityTypeOptionRenderer from '../components/Table/ItemRenderers/EntityTypeOptionRenderer';
+import EventDescriptionRenderer from '../components/Table/ItemRenderers/EventDescriptionRenderer';
 import EventLevelItemRenderer from '../components/Table/ItemRenderers/EventLevelItemRenderer';
 import LicenseActionItemRenderer from '../components/Table/ItemRenderers/LicenseActionItemRenderer';
 import LicenseStatusItemRender from '../components/Table/ItemRenderers/LicenseStatusItemRender';
@@ -50,6 +52,10 @@ import RecoveryStatusRenderer from '../components/Table/ItemRenderers/RecoverySt
 import RecoveryTypeItemRenderer from '../components/Table/ItemRenderers/RecoveryTypeItemRenderer';
 import ReplicationIntervalItemRenderer from '../components/Table/ItemRenderers/ReplicationIntervalItemRenderer';
 import ReplicationPriorityItemRenderer from '../components/Table/ItemRenderers/ReplicationPriorityItemRenderer';
+import ReplicationTypeOptionRenderer from '../components/Table/ItemRenderers/ReplicationTypeOptionRenderer';
+import JobsVMNameRenderer from '../components/Table/ItemRenderers/ReplicationVMNameRenderer';
+import ReverseEntityTypeRenderer from '../components/Table/ItemRenderers/ReverseEntityTypeRenderer';
+import ReverseVMDescriptionRenderer from '../components/Table/ItemRenderers/ReverseVMDescriptionRenderer';
 import RoleItemRenderer from '../components/Table/ItemRenderers/RoleItemRenderer';
 import ScriptItemRenderer from '../components/Table/ItemRenderers/ScriptItemRenderer';
 import ServerPortItemRenderer from '../components/Table/ItemRenderers/ServerPortItemRenderer';
@@ -75,13 +81,7 @@ import VMUsernameItemRenderer from '../components/Table/ItemRenderers/VMUsername
 import { DATE_PICKER_COMP, FIELDS, FIELD_TYPE, MULTISELECT_ITEM_COMP, REPLICATION_INTERVAL_COMP, TIME_PICKER_COMP } from '../constants/FieldsConstant';
 import { PPLAN_REMOVE_CHECKPOINT_RENDERER } from '../constants/Modalconstant';
 import { STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMORY, STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
-import { ALERT_ACK_ITEM_RENDERER, CHECKPOINTS_LINK_RENDERER, CHECKPOINT_RECOVERY_JOB_ITEM_RENDERER, DATE_ITEM_RENDERER, DISK_REPLICATION_TYPE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, EMAIL_RECIPIENT_ACTION_ITEM_RENDER, EVENT_DESCRIPTION_RENDERER, EVENT_LEVEL_ITEM_RENDERER, LICENSE_ACTION_ITEM_RENDERER, LICENSE_STATUS_ITEM_RENDER, LICENSE_USAGE_ITEM_RENDERER, NODE_ACTION_RENDERER, NODE_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDERER, PLATFORM_TYPE_ITEM_RENDERER, PLAYBOOK_ACTION_RENDERER, PLAYBOOK_CHANGES_RENDERER, PLAYBOOK_CONFIGURE_RENDERER, PLAYBOOK_FILENAME_RENDERER, PLAYBOOK_ITEM_RENDERER, PLAYBOOK_PLAN_NAME_LINK_RENDERER, PLAYBOOK_PLAN_STATUS_RENDERER, PLAYBOOK_RENDER_ISSUES_COLUMN, PRESERVE_CHECKPOINT, PROTECTED_VM_ACTIONS_ITEM_ITEM_RENDERER, PROTECTION_SITE_LINK_ITEM_RENDERER, QUIESCE_SOURCE_SNAPSHOT_RENDERER, QUIESCE_VMNAME_RENDERER, RECOVERY_CHECKPOINT_OPTION_RENDERER, RECOVERY_SITE_LINK_ITEM_RENDERER, RECOVERY_STATUS_ITEM_RENDERER, RECOVERY_STATUS_RENDERER, RECOVERY_TYPE_ITEM_RENDERER, REPLICATION_INTERVAL_ITEM_RENDERER, REPLICATION_PRIORITY_RENDERER, JOBS_VM_NAME_RENDERER, ROLE_ITEM_RENDERER, SCRIPT_ITEM_RENDERER, SERVER_PORT_ITEM_RENDERER, SINGLE_PLAYBOOK_STATUS_RENDERER, SITE_LOCATION_ITEM_RENDERER, SITE_NAME_LINK_RENDERER, SIZE_ITEM_RENDERER, SSH_RDP_ITEM_RENDERER, STATUS_ITEM_RENDERER, SUPPORT_BUNDLE_ACTION_ITEM_RENDERER, THROTTLING_ACTION_ITEM_RENDER, THROTTLING_TIME_ITEM_RENDER, TIME_DURATION_RENDERER, TRANSFER_SIZE_ITEM_RENDERER, VIEW_ALERT_INFO_RENDERER, VM_BOOT_ORDER_ITEM_RENDER, VM_DISK_ITEM_RENDERER, VM_NETWORK_INFO_ITEM_RENDERER, VM_PLACEMENT_INFO_ITEM_RENDERER, VM_SIZE_ITEM_RENDERER, VM_UPASSWORD_ITEM_RENDERER, VM_USERNAME_ITEM_RENDERER, REVERSE_SUMMARY_ENTITY_TYPE_RENDERER, REPLICATION_TYPE_OPTION_RENDERER, ENTITY_TYPE_OPTION_RENDERER, REVERSE_VM_DESCRIPTION_RENDERER } from '../constants/TableConstants';
-import EventDescriptionRenderer from '../components/Table/ItemRenderers/EventDescriptionRenderer';
-import JobsVMNameRenderer from '../components/Table/ItemRenderers/ReplicationVMNameRenderer';
-import ReverseEntityTypeRenderer from '../components/Table/ItemRenderers/ReverseEntityTypeRenderer';
-import ReplicationTypeOptionRenderer from '../components/Table/ItemRenderers/ReplicationTypeOptionRenderer';
-import EntityTypeOptionRenderer from '../components/Table/ItemRenderers/EntityTypeOptionRenderer';
-import ReverseVMDescriptionRenderer from '../components/Table/ItemRenderers/ReverseVMDescriptionRenderer';
+import { ALERT_ACK_ITEM_RENDERER, CHECKPOINTS_LINK_RENDERER, CHECKPOINT_RECOVERY_JOB_ITEM_RENDERER, DATE_ITEM_RENDERER, DISK_REPLICATION_TYPE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, EMAIL_RECIPIENT_ACTION_ITEM_RENDER, ENTITY_TYPE_OPTION_RENDERER, EVENT_DESCRIPTION_RENDERER, EVENT_LEVEL_ITEM_RENDERER, JOBS_VM_NAME_RENDERER, LICENSE_ACTION_ITEM_RENDERER, LICENSE_STATUS_ITEM_RENDER, LICENSE_USAGE_ITEM_RENDERER, NODE_ACTION_RENDERER, NODE_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDERER, PLATFORM_TYPE_ITEM_RENDERER, PLAYBOOK_ACTION_RENDERER, PLAYBOOK_CHANGES_RENDERER, PLAYBOOK_CONFIGURE_RENDERER, PLAYBOOK_FILENAME_RENDERER, PLAYBOOK_ITEM_RENDERER, PLAYBOOK_PLAN_NAME_LINK_RENDERER, PLAYBOOK_PLAN_STATUS_RENDERER, PLAYBOOK_RENDER_ISSUES_COLUMN, PRESERVE_CHECKPOINT, PROTECTED_VM_ACTIONS_ITEM_ITEM_RENDERER, PROTECTION_SITE_LINK_ITEM_RENDERER, QUIESCE_SOURCE_SNAPSHOT_RENDERER, QUIESCE_VMNAME_RENDERER, RECOVERY_CHECKPOINT_OPTION_RENDERER, RECOVERY_SITE_LINK_ITEM_RENDERER, RECOVERY_STATUS_ITEM_RENDERER, RECOVERY_STATUS_RENDERER, RECOVERY_TYPE_ITEM_RENDERER, REPLICATION_INTERVAL_ITEM_RENDERER, REPLICATION_PRIORITY_RENDERER, REPLICATION_TYPE_OPTION_RENDERER, REVERSE_SUMMARY_ENTITY_TYPE_RENDERER, REVERSE_VM_DESCRIPTION_RENDERER, ROLE_ITEM_RENDERER, SCRIPT_ITEM_RENDERER, SERVER_PORT_ITEM_RENDERER, SINGLE_PLAYBOOK_STATUS_RENDERER, SITE_LOCATION_ITEM_RENDERER, SITE_NAME_LINK_RENDERER, SIZE_ITEM_RENDERER, SSH_RDP_ITEM_RENDERER, STATUS_ITEM_RENDERER, SUPPORT_BUNDLE_ACTION_ITEM_RENDERER, THROTTLING_ACTION_ITEM_RENDER, THROTTLING_TIME_ITEM_RENDER, TIME_DURATION_RENDERER, TRANSFER_SIZE_ITEM_RENDERER, VIEW_ALERT_INFO_RENDERER, VM_BOOT_ORDER_ITEM_RENDER, VM_DISK_ITEM_RENDERER, VM_NETWORK_INFO_ITEM_RENDERER, VM_PLACEMENT_INFO_ITEM_RENDERER, VM_SIZE_ITEM_RENDERER, VM_UPASSWORD_ITEM_RENDERER, VM_USERNAME_ITEM_RENDERER } from '../constants/TableConstants';
 
 export function getStackComponent(dispatch, user, children, conf, data) {
   const field = children[conf];
@@ -132,7 +132,7 @@ export function getItemRendererComponent({ render, data, field, user, dispatch, 
     case DR_PLAN_NAME_ITEM_RENDERER:
       return <DRPlanNameItemRenderer data={data} />;
     case DATE_ITEM_RENDERER:
-      return <DateItemRenderer data={data} field={field} dispatch={dispatch} />;
+      return <DateItemRenderer data={data} field={field} dispatch={dispatch} user={user} />;
     case STATUS_ITEM_RENDERER:
       return <StatusItemRenderer data={data} field={field} />;
     case TRANSFER_SIZE_ITEM_RENDERER:

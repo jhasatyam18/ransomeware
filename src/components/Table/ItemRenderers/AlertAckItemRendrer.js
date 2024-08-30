@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Col, Popover, PopoverBody, Row } from 'reactstrap';
+import { MESSAGE_TYPES } from '../../../constants/MessageConstants';
 import { MODAL_ALERT_DETAILS } from '../../../constants/Modalconstant';
 import { alertSelected, getAlertEvent } from '../../../store/actions/AlertActions';
+import { addMessage } from '../../../store/actions/MessageActions';
 import { openModal } from '../../../store/actions/ModalActions';
 import DateItemRenderer from './DateItemRenderer';
 
@@ -14,9 +16,17 @@ function AlertAckItemRenderer({ data, field }) {
   }
 
   function onViewDetails() {
-    dispatch(alertSelected(data));
-    dispatch(getAlertEvent(data.eventID));
-    dispatch(openModal(MODAL_ALERT_DETAILS, { title: data.title }));
+    const apis = [dispatch(alertSelected(data)), dispatch(getAlertEvent(data.eventID))];
+    return Promise.all(apis).then(
+      () => {
+        dispatch(openModal(MODAL_ALERT_DETAILS, { title: data.title }));
+        return new Promise((resolve) => resolve());
+      },
+      (err) => {
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+        return new Promise((resolve) => resolve());
+      },
+    );
   }
 
   let isAcknowledged = data[field];

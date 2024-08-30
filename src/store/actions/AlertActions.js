@@ -1,16 +1,19 @@
 import i18n from 'i18next';
-import { getValue } from '../../utils/InputUtils';
-import { MODAL_NODE_PASSWORD_CHANGE } from '../../constants/Modalconstant';
 import * as Types from '../../constants/actionTypes';
-import { API_ACKNOWLEDGE_ALERT, API_ACKNOWLEDGE_NODE_ALERT, API_ALERT_TAKE_VM_ACTION, API_FETCH_ALERTS, API_FETCH_DR_PLAN_BY_ID, API_FETCH_EVENT_BY_ID, API_FETCH_UNREAD_ALERTS, API_NODE_ALERTS } from '../../constants/ApiConstants';
-import { EVENT_LEVELS, PPLAN_EVENTS, MONITOR_NODE_AUTH, VM_CONFIG_ACTION_EVENT, VM_DISK_ACTION_EVENT, CHECKPOINT_ACTION_EVENT } from '../../constants/EventConstant';
+import { API_ACKNOWLEDGE_ALERT, API_ACKNOWLEDGE_NODE_ALERT, API_ALERT_TAKE_VM_ACTION, API_FETCH_ALERTS, API_FETCH_DR_PLAN_BY_ID, API_FETCH_EVENT_BY_ID, API_FETCH_UNREAD_ALERTS, API_NODE_ALERTS, API_RECOVERY_CHECKPOINT_BY_VM } from '../../constants/ApiConstants';
+import { CHECKPOINT_ACTION_EVENT, EVENT_LEVELS, MONITOR_NODE_AUTH, PPLAN_EVENTS, VM_CONFIG_ACTION_EVENT, VM_DISK_ACTION_EVENT } from '../../constants/EventConstant';
+import { PLATFORM_TYPES } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
+import { MODAL_CONFIRMATION_WARNING, MODAL_NODE_PASSWORD_CHANGE } from '../../constants/Modalconstant';
+import { APPLICATION_API_USER } from '../../constants/UserConstant';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
+import { getCookie } from '../../utils/CookieUtils';
+import { getValue } from '../../utils/InputUtils';
+import { takeActionOnCheckpoint } from './checkpointActions';
 import { drPlanDetailsFetched, initReconfigureProtectedVM, openEditProtectionPlanWizard } from './DrPlanActions';
 import { addMessage } from './MessageActions';
 import { closeModal, openModal } from './ModalActions';
 import { hideApplicationLoader, refresh, showApplicationLoader, valueChange } from './UserActions';
-import { takeActionOnCheckpoint } from './checkpointActions';
 
 /**
  * Action to fetch all alerts
@@ -135,28 +138,53 @@ export function filterDataByType(data, type, action) {
   };
 }
 
-export function takeVMAction(alert, associatedEvent) {
-  return (dispatch) => {
+export function takeVMAction() {
+  return (dispatch, getState) => {
+    const { alerts, user } = getState();
+    const { selected, associatedEvent } = alerts;
+    const { values } = user;
+    const acknowledgeMessage = getValue('alert.acknowledge.message', values);
+    selected.acknowledgeMessage = acknowledgeMessage;
+    const acknowledgeUser = getCookie(APPLICATION_API_USER);
+    selected.user = acknowledgeUser;
     if (VM_DISK_ACTION_EVENT.indexOf(associatedEvent.type) !== -1) {
-      dispatch(takeActionOnVMAlert(alert, associatedEvent.id));
+      if (associatedEvent.type === 'monitor.vmdisksizemodified') {
+        dispatch(openModalOnDiskSizeModified());
+        return;
+      }
+      dispatch(takeActionOnDiskAlerts());
       dispatch(closeModal());
     }
     if (VM_CONFIG_ACTION_EVENT.indexOf(associatedEvent.type) !== -1) {
       dispatch(closeModal());
-      dispatch(initReconfigureProtectedVM(null, null, associatedEvent, alert));
+      dispatch(initReconfigureProtectedVM(null, null, associatedEvent, selected));
     }
     if (PPLAN_EVENTS.indexOf(associatedEvent.type) !== -1) {
       dispatch(closeModal());
-      dispatch(initEditPlanAction(associatedEvent, alert));
+      dispatch(initEditPlanAction(associatedEvent, selected));
     }
     if (MONITOR_NODE_AUTH.indexOf(associatedEvent.type) !== -1) {
       dispatch(closeModal());
-      dispatch(resetSystemCredentials(associatedEvent, alert));
+      dispatch(resetSystemCredentials(associatedEvent, selected));
     }
     if (CHECKPOINT_ACTION_EVENT.indexOf(associatedEvent.type) !== -1) {
-      dispatch(takeActionOnCheckpoint(alert, associatedEvent.id));
+      dispatch(takeActionOnCheckpoint(selected, associatedEvent.id));
       dispatch(closeModal());
     }
+  };
+}
+
+export function takeActionOnDiskAlerts() {
+  return (dispatch, getState) => {
+    const { alerts, user } = getState();
+    const { values } = user;
+    const { selected } = alerts;
+    const acknowledgeMessage = getValue('alert.acknowledge.message', values);
+    selected.acknowledgeMessage = acknowledgeMessage;
+    const acknowledgeUser = getCookie(APPLICATION_API_USER);
+    selected.user = acknowledgeUser;
+    dispatch(takeActionOnVMAlert(selected));
+    dispatch(closeModal());
   };
 }
 
@@ -300,5 +328,39 @@ export function setFilteredEvents(filteredData) {
 export function resetAlerts() {
   return {
     type: Types.RESET_ALERTS,
+  };
+}
+
+export function openModalOnDiskSizeModified() {
+  return async (dispatch, getState) => {
+    const { alerts } = getState();
+    const { associatedEvent, selected } = alerts;
+    const { impactedObjectURNs } = associatedEvent;
+    const commaSeparatedList = impactedObjectURNs.split(',');
+    const planDetails = commaSeparatedList.length > 0 ? commaSeparatedList[0].split(':') : [];
+    const planId = planDetails.length > 0 ? planDetails[planDetails.length - 1] : '';
+    const splitByComma = impactedObjectURNs.split(',');
+    const virtualMachineDetails = splitByComma.length >= 1 ? splitByComma[1] : [];
+    const splitByColon = virtualMachineDetails.length > 0 ? virtualMachineDetails.split(':') : [];
+    dispatch(showApplicationLoader('fetching_pplan', 'Loading... '));
+    const planData = await callAPI(API_FETCH_DR_PLAN_BY_ID.replace('<id>', planId));
+    const { recoverySite } = planData;
+    const { platformDetails } = recoverySite;
+    const { platformType } = platformDetails;
+    if (platformType && platformType === PLATFORM_TYPES.VMware) {
+      let url = API_RECOVERY_CHECKPOINT_BY_VM.replace('<id>', planId);
+      if (splitByColon.length > 0) {
+        url = url.replace('<moref>', `${splitByColon[splitByColon.length - 2]}:${splitByColon[splitByColon.length - 1]}`);
+      }
+      const vmHasCheckpoints = await callAPI(url);
+      dispatch(hideApplicationLoader('fetching_pplan', 'Loading... '));
+      if (vmHasCheckpoints.records.length > 0) {
+        const options = { title: 'Confirmation', confirmAction: takeActionOnDiskAlerts, message: i18n.t('pit.disk.resize.warning.text', { vmName: splitByColon[2] }), id: selected };
+        dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
+      }
+    } else {
+      dispatch(hideApplicationLoader('fetching_pplan', 'Loading... '));
+      dispatch(takeActionOnDiskAlerts());
+    }
   };
 }
