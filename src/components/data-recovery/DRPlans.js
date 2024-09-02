@@ -4,14 +4,14 @@ import { withTranslation } from 'react-i18next';
 import {
   Card, CardBody, Col, Container, Row,
 } from 'reactstrap';
-import { fetchPlaybooks } from '../../store/actions/DrPlaybooksActions';
-import DMTable from '../Table/DMTable';
-import DRPlanActionBar from './DRPlanActionBar';
-import DMBreadCrumb from '../Common/DMBreadCrumb';
 import { TABLE_FILTER_TEXT, TABLE_HEADER_DR_PLANS } from '../../constants/TableConstants';
 import { drPlansFetched, fetchDrPlans, handleDrPlanTableSelection, updateSelectedPlans } from '../../store/actions/DrPlanActions';
-import DMTPaginator from '../Table/DMTPaginator';
+import { fetchPlaybooks } from '../../store/actions/DrPlaybooksActions';
 import { filterData, processCriteria } from '../../utils/AppUtils';
+import DMBreadCrumb from '../Common/DMBreadCrumb';
+import DMTable from '../Table/DMTable';
+import DMTPaginator from '../Table/DMTPaginator';
+import DRPlanActionBar from './DRPlanActionBar';
 
 class DRPlans extends Component {
   constructor() {

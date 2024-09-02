@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Col, Form, Label, Row } from 'reactstrap';
@@ -22,6 +22,21 @@ function ProtectionPlanVMConfig(props) {
   const { instanceDetails } = recoveryEntities;
   let cols = TABLE_PROTECTION_PLAN_VMS;
   let configCols = TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG;
+
+  const setDataForDisplay = (data) => {
+    if (viewProtection) {
+      setDataToDisplay(data);
+    } else {
+      setConfigDataToDisplay(data);
+    }
+  };
+
+  useEffect(() => {
+    const vmData = (hasFilterString ? searchData : virtualMachines) || [];
+    const vmConfigData = (configHasFilterString ? configSearchData : instanceDetails) || [];
+    const data = viewProtection ? vmData : vmConfigData;
+    setDataForDisplay(data);
+  }, [searchData, virtualMachines, configSearchData, instanceDetails]);
 
   const renderOptions = () => (
     <Form className="padding-left-25">
@@ -61,14 +76,6 @@ function ProtectionPlanVMConfig(props) {
         setConfigHasFilterString(true);
         setConfigSearchData(newData);
       }
-    }
-  };
-
-  const setDataForDisplay = (data) => {
-    if (viewProtection) {
-      setDataToDisplay(data);
-    } else {
-      setConfigDataToDisplay(data);
     }
   };
 

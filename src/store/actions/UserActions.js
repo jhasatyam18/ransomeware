@@ -13,7 +13,7 @@ import { onInit } from '../../utils/HistoryUtil';
 import { getMatchingInsType, getValue, getVMwareLocationPath, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { acknowledgeNodeAlert, getUnreadAlerts } from './AlertActions';
-import { fetchDRPlanById, fetchDrPlans, setVMGuestOSInfo } from './DrPlanActions';
+import { drPlansFetched, fetchDRPlanById, fetchDrPlans, setVMGuestOSInfo } from './DrPlanActions';
 import { fetchPlaybookById, fetchPlaybooks } from './DrPlaybooksActions';
 import { fetchEmailConfig, fetchEmailRecipients } from './EmailActions';
 import { fetchRecoveryJobs, fetchReplicationJobs } from './JobActions';
@@ -346,6 +346,7 @@ export function refresh() {
     dispatch(refreshApplication());
     switch (pathname) {
       case PROTECTION_PLANS_PATH:
+        dispatch(drPlansFetched([]));
         dispatch(fetchDrPlans());
         dispatch(fetchPlaybooks());
         break;
