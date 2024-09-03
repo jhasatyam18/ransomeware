@@ -1,3 +1,5 @@
+import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Component } from 'react';
 import { Badge, Col, FormGroup, Input, Label, Row } from 'reactstrap';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
@@ -168,7 +170,7 @@ class CloudTags extends Component {
               <Col sm={12}>
                 <div className="wizard-header-options">
                   <div className="wizard-header-div">
-                    <box-icon name="plus-circle" color="white" onClick={this.addTags} />
+                    <FontAwesomeIcon size="lg" icon={faCirclePlus} className="pt-1" onClick={this.addTags} />
                   </div>
                 </div>
               </Col>

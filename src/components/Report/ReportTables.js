@@ -1,10 +1,12 @@
+import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 import { Card, CardBody, CardHeader, Col, Collapse, Row } from 'reactstrap';
+import { filterData } from '../../utils/AppUtils';
 import DMTable from '../Table/DMTable';
 import DMTPaginator from '../Table/DMTPaginator';
-import { filterData } from '../../utils/AppUtils';
 
 class ReportTables extends Component {
   constructor() {
@@ -41,8 +43,8 @@ class ReportTables extends Component {
     return (
       <div className="wizard-header-options">
         <div className="wizard-header-div">
-          {isOpen ? <box-icon name="chevron-down" color="white" onClick={this.toggle} style={{ height: 20 }} />
-            : <box-icon name="chevron-right" color="white" onClick={this.toggle} style={{ height: 20 }} />}
+          {isOpen ? <FontAwesomeIcon size="sm" icon={faChevronDown} onClick={this.toggle} />
+            : <FontAwesomeIcon size="sm" icon={faChevronRight} onClick={this.toggle} />}
         </div>
       </div>
     );

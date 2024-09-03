@@ -1,8 +1,10 @@
+import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
-import { openModal } from '../../../store/actions/ModalActions';
-import { deleteScript } from '../../../store/actions';
-import { hasRequestedPrivileges } from '../../../utils/PrivilegeUtils';
 import { MODAL_CONFIRMATION_WARNING, MODAL_USER_SCRIPT } from '../../../constants/Modalconstant';
+import { deleteScript } from '../../../store/actions';
+import { openModal } from '../../../store/actions/ModalActions';
+import { hasRequestedPrivileges } from '../../../utils/PrivilegeUtils';
 
 export default function ScriptItemRenderer({ data, dispatch, user }) {
   const hasPrivilege = hasRequestedPrivileges(user, ['script.create', 'script.delete']);
@@ -24,12 +26,12 @@ export default function ScriptItemRenderer({ data, dispatch, user }) {
       &nbsp;
       &nbsp;
       <a href="#" onClick={onEdit} className="text-info" title="Update">
-        <i className="fa fa-edit" />
+        <FontAwesomeIcon size="sm" icon={faEdit} />
       </a>
       &nbsp;
       &nbsp;
       <a href="#" onClick={onDelete} className="text-danger" title="Remove">
-        <i className="far fa-trash-alt" />
+        <FontAwesomeIcon size="sm" icon={faTrash} />
       </a>
     </div>
   );

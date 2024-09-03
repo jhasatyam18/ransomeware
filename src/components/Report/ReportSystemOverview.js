@@ -1,3 +1,5 @@
+import { faChevronDown, faChevronRight, faCloud, faDesktop, faHdd, faLayerGroup } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -28,8 +30,8 @@ class ReportSystemOverview extends Component {
     return (
       <div className="wizard-header-options">
         <div className="wizard-header-div">
-          {isOpen ? <box-icon name="chevron-down" color="white" onClick={this.toggle} style={{ height: 20 }} />
-            : <box-icon name="chevron-right" color="white" onClick={this.toggle} style={{ height: 20 }} />}
+          {isOpen ? <FontAwesomeIcon size="sm" icon={faChevronDown} onClick={this.toggle} />
+            : <FontAwesomeIcon size="sm" icon={faChevronRight} onClick={this.toggle} />}
         </div>
       </div>
     );
@@ -40,10 +42,10 @@ class ReportSystemOverview extends Component {
     const { titles } = dashboard;
     const { sites, vms, storage, protectionPlans } = titles;
     const data = [
-      { title: 'Sites', icon: 'cloud', description: sites },
-      { title: 'Protection Plans', icon: 'layer', description: protectionPlans },
-      { title: 'Protected Machines', icon: 'desktop', description: vms },
-      { title: 'Storage', icon: 'hdd', description: getStorageWithUnit(storage) },
+      { title: 'Sites', icon: faCloud, description: sites },
+      { title: 'Protection Plans', icon: faLayerGroup, description: protectionPlans },
+      { title: 'Protected Machines', icon: faDesktop, description: vms },
+      { title: 'Storage', icon: faHdd, description: getStorageWithUnit(storage) },
     ];
     return (
       <div key="rpt-system-overview" id="rpt-system-overview">
@@ -59,7 +61,7 @@ class ReportSystemOverview extends Component {
                 </Media>
 
                 <span className="align-self-center">
-                  <box-icon name={report.icon} size="lg" color={report.color ? report.color : 'white'} />
+                  <FontAwesomeIcon size="lg" icon={report.icon} color={report.color ? report.color : 'white'} className="h2" />
                 </span>
               </Media>
             </Col>

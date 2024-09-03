@@ -1,22 +1,23 @@
+import { faEdit, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect, useSelector } from 'react-redux';
-import { Card, CardBody, Col, Form, Row, Badge, Input } from 'reactstrap';
-import DMBreadCrumb from '../../Common/DMBreadCrumb';
-import DMField from '../../Shared/DMField';
-import RoleMapper from '../../Common/RoleMapper';
-import ActionButton from '../../Common/ActionButton';
+import { Badge, Card, CardBody, Col, Form, Input, Row } from 'reactstrap';
+import { API_SAML_METADATA } from '../../../constants/ApiConstants';
+import { FIELDS } from '../../../constants/FieldsConstant';
+// constants
+import { MODAL_CONFIRMATION_WARNING } from '../../../constants/Modalconstant';
+import { refreshApplication, valueChange } from '../../../store/actions';
 // actions
 import { deleteIDPConfiguration, fetchRegisteredIDP, saveIDPConfiguration, setRoleData, uploadMetadataFile } from '../../../store/actions/IdpActions';
-import { refreshApplication, valueChange } from '../../../store/actions';
+import { openModal } from '../../../store/actions/ModalActions';
 // utils
 import { getDatamotiveRoles, getValue } from '../../../utils/InputUtils';
 import { hasRequestedPrivileges } from '../../../utils/PrivilegeUtils';
-// constants
-import { MODAL_CONFIRMATION_WARNING } from '../../../constants/Modalconstant';
-import { openModal } from '../../../store/actions/ModalActions';
-import { FIELDS } from '../../../constants/FieldsConstant';
-import { API_SAML_METADATA } from '../../../constants/ApiConstants';
+import ActionButton from '../../Common/ActionButton';
+import DMBreadCrumb from '../../Common/DMBreadCrumb';
+import RoleMapper from '../../Common/RoleMapper';
+import DMField from '../../Shared/DMField';
 import DMToolTip from '../../Shared/DMToolTip';
 
 function IdentityProvider(props) {
@@ -182,10 +183,10 @@ function IdentityProvider(props) {
   }
 
   function renderGlobalActions() {
-    const actionIcon = idp.id !== 0 ? 'fa fa-edit' : 'fa fa-plus';
+    const actionIcon = idp.id !== 0 ? faEdit : faPlus;
     const actions = [
       { label: t('title.configure'), onClick: onIDPSave, icon: actionIcon, isDisabled: (!hasRequestedPrivileges(user, ['identityprovider.create'])), cssName: 'btn btn-success btm-sm margin-right-2' },
-      { label: 'title.cancel', onClick: onCancel, icon: 'fa fa-cancel' }];
+      { label: 'title.cancel', onClick: onCancel, icon: '' }];
     return (
       <>
         {getActionButtons(actions)}
@@ -246,8 +247,8 @@ function IdentityProvider(props) {
         <br />
         <br />
         <Col sm={12}>
-          <ActionButton label={t('edit')} onClick={onFormEdit} icon="fa fa-edit" isDisabled={!hasRequestedPrivileges(user, ['identityprovider.create'])} t={t} />
-          <ActionButton label={t('title.remove')} onClick={onDelete} icon="fa fa-trash" isDisabled={!hasRequestedPrivileges(user, ['identityprovider.create'])} t={t} />
+          <ActionButton label={t('edit')} onClick={onFormEdit} icon={faEdit} isDisabled={!hasRequestedPrivileges(user, ['identityprovider.create'])} t={t} />
+          <ActionButton label={t('title.remove')} onClick={onDelete} icon={faTrash} isDisabled={!hasRequestedPrivileges(user, ['identityprovider.create'])} t={t} />
           <br />
           <br />
         </Col>

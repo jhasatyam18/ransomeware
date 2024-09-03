@@ -1,10 +1,12 @@
+import { faCloud, faDesktop, faHdd, faLayerGroup } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Card, CardBody, Col, Media, Row } from 'reactstrap';
-import { API_DASHBOARD_TITLE, API_NODES } from '../../constants/ApiConstants';
 import * as Types from '../../constants/actionTypes';
+import { API_DASHBOARD_TITLE, API_NODES } from '../../constants/ApiConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { PROTECTION_PLANS_PATH, SITES_PATH } from '../../constants/RouterConstants';
 import { updateTitleInfo } from '../../store/actions/DashboardActions';
@@ -52,10 +54,10 @@ function DashboardTitles(props) {
   }, [refresh]);
 
   const reports = [
-    { title: t('sites'), icon: 'cloud', description: titles.siteCount, link: SITES_PATH },
-    { title: t('protection.plans'), icon: 'layer', description: titles.protectionPlans, link: PROTECTION_PLANS_PATH },
-    { title: t('protected.machines'), icon: 'desktop', description: titles.protectedVMs, link: '#' },
-    { title: t('protected.storage'), icon: 'hdd', description: getStorageWithUnit(titles.protectedStorage), link: '#' },
+    { title: t('sites'), icon: faCloud, description: titles.siteCount, link: SITES_PATH },
+    { title: t('protection.plans'), icon: faLayerGroup, description: titles.protectionPlans, link: PROTECTION_PLANS_PATH },
+    { title: t('protected.machines'), icon: faDesktop, description: titles.protectedVMs, link: '#' },
+    { title: t('protected.storage'), icon: faHdd, description: getStorageWithUnit(titles.protectedStorage), link: '#' },
   ];
 
   return (
@@ -78,7 +80,7 @@ function DashboardTitles(props) {
                   </Media>
                   <div className="mini-stat-icon avatar-sm rounded-circle align-self-center">
                     <span className="">
-                      <box-icon name={report.icon} size="lg" color={report.color ? report.color : 'white'} />
+                      <FontAwesomeIcon size="lg" icon={report.icon} color={report.color ? report.color : 'white'} className="pl-2 pt-1 h2" />
                     </span>
                   </div>
                 </Media>

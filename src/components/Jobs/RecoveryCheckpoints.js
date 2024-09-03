@@ -1,3 +1,4 @@
+import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -80,10 +81,10 @@ function RecoveryCheckpoints(props) {
     let actions = [];
     if (localVMIP === recoverySite.node.hostname) {
       if (checkpointType === RECOVERY_CHECKPOINT_TYPE.PRESERVED_CHECKPOINTS) {
-        return <ActionButton label="Delete Checkpoint" onClick={() => dispatch(openDeleteCheckpointModal())} icon="fa fa-trash" t={t} key="delet" isDisabled={selectedCheckpointsKeys.length === 0} />;
+        return <ActionButton label="Delete Checkpoint" onClick={() => dispatch(openDeleteCheckpointModal())} icon={faTrash} t={t} key="delet" isDisabled={selectedCheckpointsKeys.length === 0} />;
       }
-      actions = [{ label: t('preserve'), action: preserveCheckpoint, icon: 'fa fa-plus', disabled: disablePreserve || !hasRequestedPrivileges(user, ['checkpoint.edit']), id: selectedCheckpoints },
-        { label: t('delete'), action: openDeleteCheckpointModal, icon: 'fa fa-trash', disabled: disableDelete || !hasRequestedPrivileges(user, ['checkpoint.delete']), id: selectedCheckpoints }];
+      actions = [{ label: t('preserve'), action: preserveCheckpoint, icon: faPlus, disabled: disablePreserve || !hasRequestedPrivileges(user, ['checkpoint.edit']), id: selectedCheckpoints },
+        { label: t('delete'), action: openDeleteCheckpointModal, icon: faTrash, disabled: disableDelete || !hasRequestedPrivileges(user, ['checkpoint.delete']), id: selectedCheckpoints }];
     } else {
       return null;
     }

@@ -1,3 +1,5 @@
+import { faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Modal } from 'reactstrap';
 import * as MODALS from '../../constants/Modalconstant';
@@ -139,7 +141,7 @@ function DMModal(props) {
           {modalActions ? (
             <div className="wizard-header-options">
               <div className="wizard-header-div">
-                <box-icon name="x-circle" type="solid" color="white" style={{ width: 20 }} onClick={onClose} />
+                <FontAwesomeIcon size="lg" icon={faXmarkCircle} onClick={onClose} />
               </div>
             </div>
           ) : null}

@@ -1,4 +1,3 @@
-import 'boxicons';
 import React from 'react';
 import { withTranslation } from 'react-i18next';
 import { JOB_COMPLETION_STATUS } from '../../../constants/AppStatus';

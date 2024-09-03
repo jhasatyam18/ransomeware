@@ -1,3 +1,4 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 
 const ActionButton = (props) => {
@@ -8,7 +9,7 @@ const ActionButton = (props) => {
   }
   return (
     <button type="button" className={`${btnCss}`} onClick={onClick} disabled={isDisabled}>
-      <i className={icon} />
+      <FontAwesomeIcon size="sm" icon={icon} />
       &nbsp;&nbsp;
       {t(`${label}`)}
     </button>

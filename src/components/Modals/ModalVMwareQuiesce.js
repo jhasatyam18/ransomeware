@@ -1,3 +1,5 @@
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Col, Row } from 'reactstrap';
@@ -134,7 +136,7 @@ function ModalVMwareQuiesce(props) {
       />
       <span className="input-group-append">
         <div className="input-group-text bg-transparent">
-          <box-icon name="search" className="search__icon" size="15px" color="#FFF" onClick={() => onFilter(searchStr)} />
+          <FontAwesomeIcon size="sm" icon={faSearch} onClick={() => onFilter(searchStr)} />
         </div>
       </span>
     </div>

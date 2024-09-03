@@ -1,3 +1,5 @@
+import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardHeader, Col, Collapse, Row } from 'reactstrap';
@@ -32,8 +34,8 @@ function PlaybookPlanIssues({ data, t }) {
   const renderIcon = (fun, val) => (
     <div className="wizard-header-options">
       <div className="wizard-header-div">
-        {val ? <box-icon name="chevron-down" color="white" onClick={() => toggle(fun, val)} style={{ height: 20 }} />
-          : <box-icon name="chevron-right" color="white" onClick={() => toggle(fun, val)} style={{ height: 20 }} /> }
+        {val ? <FontAwesomeIcon size="sm" icon={faChevronDown} onClick={() => toggle(fun, val)} />
+          : <FontAwesomeIcon size="sm" icon={faChevronRight} onClick={() => toggle(fun, val)} />}
       </div>
     </div>
   );

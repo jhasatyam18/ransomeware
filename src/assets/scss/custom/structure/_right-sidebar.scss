@@ -60,3 +60,20 @@
     }
   }
 }
+
+.sidebar-fa {
+  position: relative;
+  top: 4px;
+  padding: 1px 0.8rem;
+}
+
+
+.fa-spin-hover:hover {
+  animation: spin 2s infinite linear;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}

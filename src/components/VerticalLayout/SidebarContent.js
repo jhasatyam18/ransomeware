@@ -1,3 +1,4 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import MetisMenu from 'metismenujs';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -38,7 +39,7 @@ class SidebarContent extends Component {
 
   renderIcon(item) {
     return (
-      <i className={item.icon} style={{ fontSize: 16, color: this.isActive(item.isActivePath.join(',')) }} />
+      <FontAwesomeIcon style={{ color: this.isActive(item.isActivePath.join(',')), fontSize: '16px' }} className="sidebar-fa" icon={item.icon} size="lg" />
     );
   }
 
@@ -48,7 +49,7 @@ class SidebarContent extends Component {
       <li key={`sidebar-item-${item.label}`}>
         <Link to={item.to} className="waves-effect" style={{ color: this.isActive(item.isActivePath.join(',')) }}>
           {this.renderIcon(item)}
-          <span>{t(item.label)}</span>
+          <span className="pt-3">{t(item.label)}</span>
         </Link>
       </li>
     );
@@ -61,8 +62,8 @@ class SidebarContent extends Component {
         return (
           <li key={`sidebarmenu-${menu.label}-${index + 1}`}>
             <Link to="/#" className="has-arrow waves-effect" style={{ color: this.isActive(menu.isActivePath.join(',')) }}>
-              <i className={menu.icon} style={{ fontSize: 16, color: this.isActive(menu.isActivePath.join(',')) }} />
-              <span>{t(menu.label)}</span>
+              <FontAwesomeIcon style={{ color: this.isActive(menu.isActivePath.join(',')), fontSize: '16px' }} className="sidebar-fa" icon={menu.icon} size="lg" />
+              <span className="pt-3">{t(menu.label)}</span>
             </Link>
             <ul className="sub-menu">
               {this.renderMenu(menu.subMenu)}

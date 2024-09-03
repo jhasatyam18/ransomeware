@@ -1,16 +1,15 @@
+import { faEdit, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
-import { openModal } from '../../../store/actions/ModalActions';
+import { FIELDS } from '../../../constants/FieldsConstant';
+import { STATIC_KEYS } from '../../../constants/InputConstants';
 import { MODAL_CONFIGURE_NEW_SITE, MODAL_CONFIRMATION_WARNING } from '../../../constants/Modalconstant';
-import { clearValues, valueChange, fetchRegions } from '../../../store/actions';
+import { clearValues, fetchRegions, valueChange } from '../../../store/actions';
+import { openModal } from '../../../store/actions/ModalActions';
 import { fetchNodes } from '../../../store/actions/NodeActions';
 import { deleteSites, fetchAvailibilityZones } from '../../../store/actions/SiteActions';
-
-import { FIELDS } from '../../../constants/FieldsConstant';
-import ActionButton from '../../Common/ActionButton';
-import { STATIC_KEYS } from '../../../constants/InputConstants';
 import { hasRequestedPrivileges } from '../../../utils/PrivilegeUtils';
+import ActionButton from '../../Common/ActionButton';
 
 class SiteActionBar extends Component {
   constructor() {
@@ -73,9 +72,9 @@ class SiteActionBar extends Component {
 
   render() {
     const { t, user } = this.props;
-    const actions = [{ label: 'New', onClick: this.createSite, icon: 'fa fa-plus', isDisabled: !hasRequestedPrivileges(user, ['site.create']) },
-      { label: 'Edit', onClick: this.reconfigureSite, icon: 'fa fa-edit', isDisabled: ((!hasRequestedPrivileges(user, ['site.edit'])) || this.shouldShowAction(true)) },
-      { label: 'remove', onClick: this.deleteSelectedSites, icon: 'fa fa-trash', isDisabled: (!hasRequestedPrivileges(user, ['site.delete']) || this.shouldShowAction(false)) }];
+    const actions = [{ label: 'New', onClick: this.createSite, icon: faPlus, isDisabled: !hasRequestedPrivileges(user, ['site.create']) },
+      { label: 'Edit', onClick: this.reconfigureSite, icon: faEdit, isDisabled: ((!hasRequestedPrivileges(user, ['site.edit'])) || this.shouldShowAction(true)) },
+      { label: 'remove', onClick: this.deleteSelectedSites, icon: faTrash, isDisabled: (!hasRequestedPrivileges(user, ['site.delete']) || this.shouldShowAction(false)) }];
     return (
       <div className="btn-toolbar padding-left-20">
         <div className="btn-group" role="group" aria-label="First group">
@@ -90,9 +89,5 @@ class SiteActionBar extends Component {
     );
   }
 }
-const propTypes = {
-  dispatch: PropTypes.func.isRequired,
-  selectedSites: PropTypes.any.isRequired,
-};
-SiteActionBar.propTypes = propTypes;
+
 export default (withTranslation()(SiteActionBar));

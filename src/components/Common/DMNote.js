@@ -1,3 +1,5 @@
+import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardHeader, Col, Collapse, Row } from 'reactstrap';
@@ -12,8 +14,8 @@ function DMNote(props) {
   const renderIcon = () => (
     <div className="wizard-header-options">
       <div className="wizard-header-div">
-        {isOpen ? <box-icon name="chevron-down" color="white" onClick={toggle} style={{ height: 20 }} />
-          : <box-icon name="chevron-right" color="white" onClick={toggle} style={{ height: 20 }} /> }
+        {isOpen ? <FontAwesomeIcon size="sm" icon={faChevronDown} onClick={toggle} className="text-white" />
+          : <FontAwesomeIcon size="sm" icon={faChevronRight} onClick={toggle} className="text-white" />}
       </div>
     </div>
   );

@@ -1,11 +1,13 @@
+import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardHeader, Col, Collapse, Container, Row } from 'reactstrap';
-import DMTable from '../Table/DMTable';
-import DMAPIPaginator from '../Table/DMAPIPaginator';
-import { setRecoveryCheckpoint, handleRecoveryCheckpointTableSelection } from '../../store/actions/checkpointActions';
-import { RECOVERY_CHECKPOINTS } from '../../constants/TableConstants';
 import { API_RECOVERY_CHECKPOINT_BY_VM } from '../../constants/ApiConstants';
+import { RECOVERY_CHECKPOINTS } from '../../constants/TableConstants';
+import { handleRecoveryCheckpointTableSelection, setRecoveryCheckpoint } from '../../store/actions/checkpointActions';
+import DMAPIPaginator from '../Table/DMAPIPaginator';
+import DMTable from '../Table/DMTable';
 
 function VmRecoveryCheckpoints(props) {
   const { user, protectionplanID, drPlans, jobs, dispatch, moref, vmName, renderActions } = props;
@@ -26,8 +28,8 @@ function VmRecoveryCheckpoints(props) {
   const renderIcon = () => (
     <div className="wizard-header-options">
       <div className="wizard-header-div">
-        {isOpen ? <box-icon name="chevron-down" color="white" onClick={() => toggle()} style={{ height: 20 }} />
-          : <box-icon name="chevron-right" color="white" onClick={() => toggle()} style={{ height: 20 }} /> }
+        {isOpen ? <FontAwesomeIcon size="sm" icon={faChevronDown} onClick={toggle} />
+          : <FontAwesomeIcon size="sm" icon={faChevronRight} onClick={toggle} />}
       </div>
     </div>
   );
@@ -87,7 +89,7 @@ function VmRecoveryCheckpoints(props) {
                 {vmName}
               </span>
             </Col>
-            <Col sm={6} className="d-flex flex-row-reverse">
+            <Col sm={6} className="d-flex flex-row-reverse margin-bottom-7">
               {renderIcon()}
             </Col>
           </Row>

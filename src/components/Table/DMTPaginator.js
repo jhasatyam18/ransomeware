@@ -1,5 +1,7 @@
+import { faChevronLeft, faChevronRight, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Component } from 'react';
-import { Button, ButtonGroup, Col, Row, Popover, PopoverBody } from 'reactstrap';
+import { Button, ButtonGroup, Col, Popover, PopoverBody, Row } from 'reactstrap';
 import { arraysAreNotEqual } from '../../utils/AppUtils';
 
 class DMTPaginator extends Component {
@@ -115,7 +117,7 @@ class DMTPaginator extends Component {
           />
           <span className="input-group-append">
             <div className="input-group-text bg-transparent">
-              <box-icon name="search" className="search__icon" size="15px" color="#FFF" onClick={this.onFilter} />
+              <FontAwesomeIcon size="sm" icon={faSearch} onClick={this.onFilter} />
             </div>
           </span>
           <Popover placement="bottom" isOpen={popoverOpen} target={id} style={{ backgroundColor: '#222736' }}>
@@ -142,7 +144,7 @@ class DMTPaginator extends Component {
         <Col className="padding-0 margin-0 display__flex__reverse">
           <ButtonGroup className="btn-group-sm padding-right-20">
             <Button disabled={disablePrevious} onClick={this.onBack}>
-              <box-icon type="solid" name="chevron-left" size="xs" />
+              <FontAwesomeIcon size="xs" icon={faChevronLeft} className="padding-4 pt-2" />
             </Button>
             <Button>
               {cP}
@@ -152,7 +154,7 @@ class DMTPaginator extends Component {
               {tPages}
             </Button>
             <Button disabled={disableNext} onClick={this.onNext}>
-              <box-icon type="solid" name="chevron-right" size="xs" />
+              <FontAwesomeIcon size="xs" icon={faChevronRight} className="padding-4 pt-2" />
             </Button>
 
           </ButtonGroup>

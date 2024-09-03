@@ -1,4 +1,3 @@
-import 'boxicons';
 import React from 'react';
 import { hasRequestedPrivileges } from '../../../utils/PrivilegeUtils';
 import { MODAL_SHOW_ENCRYPTION_KEY } from '../../../constants/Modalconstant';

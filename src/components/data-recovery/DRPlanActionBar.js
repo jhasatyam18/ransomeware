@@ -1,21 +1,22 @@
-import React from 'react';
+import { faEdit, faFileExcel, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import PropTypes from 'prop-types';
+import React from 'react';
 import { withTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
+import { PROTECTION_PLANS_STATUS, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
+import { MODAL_CONFIRMATION_WARNING, PPLAN_REMOVE_CHECKPOINT_RENDERER } from '../../constants/Modalconstant';
 import { PLAYBOOK_LIST } from '../../constants/RouterConstants';
+import { CREATE_DR_PLAN_WIZARDS } from '../../constants/WizardConstants';
 import { clearValues, fetchScript, valueChange } from '../../store/actions';
 import {
   deletePlan, openEditProtectionPlanWizard,
 } from '../../store/actions/DrPlanActions';
-import ActionButton from '../Common/ActionButton';
 import { openModal } from '../../store/actions/ModalActions';
-import { openWizard } from '../../store/actions/WizardActions';
 import { fetchSites } from '../../store/actions/SiteActions';
-import { MODAL_CONFIRMATION_WARNING, PPLAN_REMOVE_CHECKPOINT_RENDERER } from '../../constants/Modalconstant';
-import { CREATE_DR_PLAN_WIZARDS } from '../../constants/WizardConstants';
+import { openWizard } from '../../store/actions/WizardActions';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
-import { PROTECTION_PLANS_STATUS, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { isPlanRecovered } from '../../utils/validationUtils';
+import ActionButton from '../Common/ActionButton';
 
 function DRPlanActionBar(props) {
   const history = useHistory();
@@ -101,10 +102,10 @@ function DRPlanActionBar(props) {
 
   const renderGlobalActions = () => {
     const { user } = props;
-    const actions = [{ label: 'New', onClick: onCreate, icon: 'fa fa-plus', isDisabled: !hasRequestedPrivileges(user, ['protectionplan.edit']) },
-      { label: 'Edit', onClick: onEdit, icon: 'fa fa-edit', isDisabled: (!hasRequestedPrivileges(user, ['protectionplan.create']) || showEdit()) },
-      { label: 'remove', onClick: onDelete, icon: 'fa fa-trash', isDisabled: (!hasRequestedPrivileges(user, ['protectionplan.delete']) || disableDeletePlan(true)) },
-      { label: 'Playbooks', onClick: onTemplateClick, icon: 'fa fa-file-excel', isDisabled: !hasRequestedPrivileges(user, ['playbook.list']) }];
+    const actions = [{ label: 'New', onClick: onCreate, icon: faPlus, isDisabled: !hasRequestedPrivileges(user, ['protectionplan.edit']) },
+      { label: 'Edit', onClick: onEdit, icon: faEdit, isDisabled: (!hasRequestedPrivileges(user, ['protectionplan.create']) || showEdit()) },
+      { label: 'remove', onClick: onDelete, icon: faTrash, isDisabled: (!hasRequestedPrivileges(user, ['protectionplan.delete']) || disableDeletePlan(true)) },
+      { label: 'Playbooks', onClick: onTemplateClick, icon: faFileExcel, isDisabled: !hasRequestedPrivileges(user, ['playbook.list']) }];
     return (
       <>
         {getActionButtons(actions)}

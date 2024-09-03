@@ -1,4 +1,4 @@
-import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { faCircleXmark, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useRef, useState } from 'react';
 import { withTranslation } from 'react-i18next';
@@ -108,7 +108,7 @@ function DMTree(props) {
               />
               <span className="input-group-append" aria-hidden onClick={() => onSearchChange(null, true)}>
                 <div className="input-group-text bg-transparent">
-                  <box-icon name="search" className="search__icon" size="15px" color="#FFF" />
+                  <FontAwesomeIcon size="sm" className="search__icon" icon={faSearch} />
                 </div>
               </span>
             </div>

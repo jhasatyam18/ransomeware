@@ -1,9 +1,9 @@
-import { faFolderOpen, faFolder } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faChevronRight, faFolder, faFolderOpen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
+import { loadTreeChildData, valueChange } from '../../store/actions/UserActions';
 import { getValue } from '../../utils/InputUtils';
-import { valueChange, loadTreeChildData } from '../../store/actions/UserActions';
 import DMTree from './DMTree';
 
 function TreeNode(props) {
@@ -113,7 +113,7 @@ function TreeNode(props) {
     if (showChild === false) {
       return (
         <>
-          <box-icon name="chevron-right" id={`${node.key}-${node.title}`} color="white" onClick={handleCaretChenge} style={{ height: 20 }} />
+          <FontAwesomeIcon id={`${node.key}-${node.title}`} size="sm" icon={faChevronRight} onClick={handleCaretChenge} className="padding-4" />
           <a href="#" onClick={() => handleCaretChenge()} className="mr-2 ">
             <FontAwesomeIcon size="lg" icon={faFolder} />
           </a>
@@ -122,7 +122,7 @@ function TreeNode(props) {
     }
     return (
       <>
-        <box-icon name="chevron-down" id={`${node.key}-${node.title}`} color="white" onClick={handleCaretChenge} style={{ height: 20 }} />
+        <FontAwesomeIcon id={`${node.key}-${node.title}`} size="sm" icon={faChevronDown} onClick={handleCaretChenge} className="padding-4" />
         <a href="#" onClick={() => handleCaretChenge()} className="mr-2 ">
           <FontAwesomeIcon size="lg" icon={faFolderOpen} />
         </a>

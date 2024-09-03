@@ -1,15 +1,16 @@
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Card, CardBody, Container, Row } from 'reactstrap';
-import DMTable from '../../Table/DMTable';
+import { MODAL_GENERATE_SUPPORT_BUNDLE } from '../../../constants/Modalconstant';
+import { SUPPORT_BUNDLES } from '../../../constants/TableConstants';
+import { openModal } from '../../../store/actions/ModalActions';
+import { fetchSupportBundles, supportBundleFetched } from '../../../store/actions/SupportActions';
+import { hasRequestedPrivileges } from '../../../utils/PrivilegeUtils';
 import ActionButton from '../../Common/ActionButton';
 import DMBreadCrumb from '../../Common/DMBreadCrumb';
-import { fetchSupportBundles, supportBundleFetched } from '../../../store/actions/SupportActions';
-import { openModal } from '../../../store/actions/ModalActions';
-import { SUPPORT_BUNDLES } from '../../../constants/TableConstants';
-import { MODAL_GENERATE_SUPPORT_BUNDLE } from '../../../constants/Modalconstant';
-import { hasRequestedPrivileges } from '../../../utils/PrivilegeUtils';
+import DMTable from '../../Table/DMTable';
 
 class Support extends Component {
   constructor() {
@@ -44,7 +45,7 @@ class Support extends Component {
               <CardBody>
                 <DMBreadCrumb links={[{ label: 'tech.support', link: '#' }]} />
                 <Row className="padding-left-30">
-                  <ActionButton label="Generate" onClick={this.onGenerate} icon="fa fa-plus" isDisabled={!hasRequestedPrivileges(user, ['support.create'])} t={t} key="newsupportbundle" />
+                  <ActionButton label="Generate" onClick={this.onGenerate} icon={faPlus} isDisabled={!hasRequestedPrivileges(user, ['support.create'])} t={t} key="newsupportbundle" />
                 </Row>
                 <DMTable
                   dispatch={dispatch}

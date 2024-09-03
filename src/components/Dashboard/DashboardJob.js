@@ -3,6 +3,8 @@ import { withTranslation } from 'react-i18next';
 import { connect, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Card, CardBody, Col, Media, Row } from 'reactstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleArrowRight, faCircleCheck, faCircleInfo, faCircleXmark, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { addMessage } from '../../store/actions/MessageActions';
 import * as appStatus from '../../constants/AppStatus';
 import { MAX_RECOVERY_TIME } from '../../constants/InputConstants';
@@ -73,13 +75,13 @@ function DashBoardJob(props) {
   }
 
   // checks if the character length are more than 65 and render data accordingly.
-  const renderData = (data, css) => {
+  const renderData = (data, css, icon) => {
     const message = (data.recoveryType ? `Recovery for ${data.vmName} is ${data.status}.` : `Replication for ${data.vmName} is ${data.status}.`);
     return (
       <Media className="padding-10">
         <div className="mr-4">
           <h5 className="font-size-16">
-            <i className={`${css} font-size-14`} />
+            <FontAwesomeIcon size="sm" icon={icon} className={css} />
           </h5>
         </div>
         <Media body>
@@ -96,19 +98,20 @@ function DashBoardJob(props) {
   // checks the status and passes the css accordingly.
   const checkStatus = (data) => {
     const { status } = data;
+    // status = appStatus.PARTIALLY_COMPLETED;
     switch (status) {
       case appStatus.JOB_COMPLETION_STATUS:
-        return renderData(data, 'app_success bx bxs-check-circle');
+        return renderData(data, 'app_success', faCircleCheck);
       case appStatus.JOB_RUNNING_STATUS:
-        return renderData(data, 'app_primary bx bxs-right-arrow-circle bx-fade-right');
+        return renderData(data, 'app_primary', faCircleArrowRight);
       case appStatus.JOB_FAILED:
-        return renderData(data, 'app_danger bx bxs-x-circle');
+        return renderData(data, 'app_danger', faCircleXmark);
       case appStatus.JOB_IN_PROGRESS:
-        return renderData(data, 'app_primary bx bxs-right-arrow-circle bx-fade-right');
+        return renderData(data, 'app_primary', faCircleArrowRight);
       case appStatus.PARTIALLY_COMPLETED:
-        return renderData(data, 'app_warning fas fa-exclamation-triangle');
+        return renderData(data, 'app_warning', faTriangleExclamation);
       default:
-        return renderData(data, 'app_secondary bx-info-circle');
+        return renderData(data, 'app_secondary', faCircleInfo);
     }
   };
 

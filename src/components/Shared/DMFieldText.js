@@ -4,6 +4,8 @@ import { withTranslation } from 'react-i18next';
 import {
   Col, FormGroup, Row,
 } from 'reactstrap';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FIELD_TYPE } from '../../constants/FieldsConstant';
 import { valueChange } from '../../store/actions/UserActions';
 import { getValue } from '../../utils/InputUtils';
@@ -75,11 +77,11 @@ class DMFieldText extends Component {
     if (hidepassword || type !== FIELD_TYPE.PASSWORD) {
       return null;
     }
-    const icon = (state.type === FIELD_TYPE.PASSWORD ? 'hide' : 'show');
+    const icon = (state.type === FIELD_TYPE.PASSWORD ? faEyeSlash : faEye);
     const focused = state.isFocused;
     return (
       <span className={(focused && field.description) ? 'field-icon' : 'field-icon'}>
-        <box-icon name={icon} color="white" onClick={this.typeToggle} style={{ height: 16, width: 16 }} />
+        <FontAwesomeIcon size="sm" icon={icon} onClick={this.typeToggle} />
       </span>
     );
   }

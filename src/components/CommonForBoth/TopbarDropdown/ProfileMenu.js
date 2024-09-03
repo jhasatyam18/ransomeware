@@ -1,26 +1,23 @@
-import React, { Component } from 'react';
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+// users
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'prop-types';
-import {
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-} from 'reactstrap';
-import { Link } from 'react-router-dom';
-
+import React, { Component } from 'react';
 // i18n
 import { withTranslation } from 'react-i18next';
-
-// users
+import { Link } from 'react-router-dom';
+import {
+  Dropdown, DropdownItem, DropdownMenu, DropdownToggle,
+} from 'reactstrap';
+import { API_LOGOUT, API_SAML_LOGOUT } from '../../../constants/ApiConstants';
+import { MESSAGE_TYPES } from '../../../constants/MessageConstants';
+import { MODAL_ABOUT } from '../../../constants/Modalconstant';
+import { APPLICATION_API_USER } from '../../../constants/UserConstant';
 import { initChangePassword, logOutUser, removeCookies } from '../../../store/actions';
 import { addMessage } from '../../../store/actions/MessageActions';
 import { openModal } from '../../../store/actions/ModalActions';
-import { MODAL_ABOUT } from '../../../constants/Modalconstant';
-import { APPLICATION_API_USER } from '../../../constants/UserConstant';
-import { API_LOGOUT, API_SAML_LOGOUT } from '../../../constants/ApiConstants';
-import { MESSAGE_TYPES } from '../../../constants/MessageConstants';
-import { getCookie } from '../../../utils/CookieUtils';
 import { API_TYPES, callAPI, createPayload } from '../../../utils/ApiUtils';
+import { getCookie } from '../../../utils/CookieUtils';
 import { fetchByDelay } from '../../../utils/SlowFetch';
 
 class ProfileMenu extends Component {
@@ -105,7 +102,7 @@ class ProfileMenu extends Component {
             <span className="d-none d-xl-inline-block ml-2 mr-1 text-capitalize">
               {name}
             </span>
-            <i className="bx bx-chevron-down" />
+            <FontAwesomeIcon style={{ fontSize: '8px', padding: '1px' }} size="xs" icon={faChevronDown} />
           </DropdownToggle>
           <DropdownMenu right>
             <DropdownItem onClick={this.aboutModal}>

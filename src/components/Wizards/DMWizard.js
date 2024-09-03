@@ -1,3 +1,5 @@
+import { faWindowRestore, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Col, Modal, Row } from 'reactstrap';
@@ -228,10 +230,10 @@ class DMWizard extends React.Component {
             </h5>
             <div className="wizard-header-options">
               <div className="wizard-header-div">
-                <box-icon name="windows" color="white" onClick={this.onToggle} style={{ width: 20 }} />
+                <FontAwesomeIcon size="lg" icon={faWindowRestore} onClick={this.onToggle} className="pt-1" />
               </div>
               <div className="wizard-header-div">
-                <box-icon name="x-circle" type="solid" color="white" onClick={this.onClose} style={{ width: 20 }} />
+                <FontAwesomeIcon size="lg" icon={faXmarkCircle} onClick={this.onClose} className="pt-1" />
               </div>
             </div>
           </div>

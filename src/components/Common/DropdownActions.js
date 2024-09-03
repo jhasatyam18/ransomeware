@@ -1,11 +1,10 @@
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
-import {
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-} from 'reactstrap';
 import { withTranslation } from 'react-i18next';
+import {
+  Dropdown, DropdownItem, DropdownMenu, DropdownToggle,
+} from 'reactstrap';
 
 const DropdownActions = (props) => {
   const { actions, dispatch, t, className, uniqueID = 'unique-dropdown-action-id' } = props;
@@ -28,7 +27,7 @@ const DropdownActions = (props) => {
           <span id={uniqueID} className="d-none d-xl-inline-block ml-2 mr-1">
             {title}
           </span>
-          <i className="bx bx-chevron-down" id={`${uniqueID}-icon`} />
+          <FontAwesomeIcon style={{ fontSize: '8px', padding: '1px' }} size="xs" icon={faChevronDown} onClick={toggle} />
         </DropdownToggle>
         <DropdownMenu right>
           {actions.map((item) => {
@@ -36,7 +35,7 @@ const DropdownActions = (props) => {
             const labelID = label.replaceAll(' ', '');
             return (
               <DropdownItem right onClick={() => onActionClick(item)} disabled={disabled} className={!disabled ? 'text-white' : ''}>
-                <i className={icon} id={`${labelID}`} />
+                <FontAwesomeIcon size="sm" icon={icon} id={`${labelID}`} />
                 &nbsp;&nbsp;
                 {t(label)}
               </DropdownItem>

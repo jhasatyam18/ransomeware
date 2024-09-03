@@ -1,3 +1,4 @@
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -7,10 +8,10 @@ import { TABLE_EMAIL_RECIPIENTS } from '../../../constants/TableConstants';
 import { clearValues, valueChange } from '../../../store/actions';
 import { fetchEmailConfig, fetchEmailRecipients } from '../../../store/actions/EmailActions';
 import { openModal } from '../../../store/actions/ModalActions';
+import { hasRequestedPrivileges } from '../../../utils/PrivilegeUtils';
 import ActionButton from '../../Common/ActionButton';
 import DMBreadCrumb from '../../Common/DMBreadCrumb';
 import DMTable from '../../Table/DMTable';
-import { hasRequestedPrivileges } from '../../../utils/PrivilegeUtils';
 
 class EmailSettings extends Component {
   constructor() {
@@ -62,7 +63,7 @@ class EmailSettings extends Component {
                 <DMBreadCrumb links={[{ label: 'email.recipients', link: '#' }]} />
                 <div className="btn-toolbar padding-left-20">
                   <div className="btn-group" role="group" aria-label="First group">
-                    <ActionButton label="New" onClick={this.onConfigureRecipient} icon="fa fa-plus" isDisabled={!hasRequestedPrivileges(user, ['recipient.add'])} t={t} key="newRecipient" />
+                    <ActionButton label="New" onClick={this.onConfigureRecipient} icon={faPlus} isDisabled={!hasRequestedPrivileges(user, ['recipient.add'])} t={t} key="newRecipient" />
                   </div>
                 </div>
                 <DMTable
