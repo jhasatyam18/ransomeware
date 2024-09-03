@@ -1,6 +1,8 @@
+import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Component } from 'react';
-import { Badge, Col, FormGroup, Input, Row } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
+import { Badge, Col, FormGroup, Input, Row } from 'reactstrap';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { valueChange } from '../../store/actions';
 import { addMessage } from '../../store/actions/MessageActions';
@@ -154,7 +156,7 @@ class RoleMapper extends Component {
               <Col sm={12}>
                 <div className="wizard-header-options">
                   <div className="wizard-header-div padding-top-25">
-                    <box-icon name="plus-circle" color="white" onClick={this.addMapping} />
+                    <FontAwesomeIcon icon={faCirclePlus} size="lg" className="pt-2" onClick={this.addMapping} />
                   </div>
                 </div>
               </Col>

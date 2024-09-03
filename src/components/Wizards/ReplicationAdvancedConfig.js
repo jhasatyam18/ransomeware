@@ -1,3 +1,5 @@
+import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -42,8 +44,8 @@ function ReplicationAdvancedConfig(props) {
   const renderIcon = () => (
     <div className="wizard-header-options">
       <div className="wizard-header-div">
-        {showAdvanced ? <box-icon name="chevron-down" color="white" onClick={toggleAdvanced} style={{ height: 20 }} />
-          : <box-icon name="chevron-right" color="white" onClick={toggleAdvanced} style={{ height: 20 }} />}
+        {showAdvanced ? <FontAwesomeIcon size="sm" icon={faChevronDown} onClick={toggleAdvanced} />
+          : <FontAwesomeIcon size="sm" icon={faChevronRight} onClick={toggleAdvanced} />}
       </div>
     </div>
   );

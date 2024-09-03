@@ -1,19 +1,20 @@
+import { faExpand, faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'prop-types';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { addMessage } from '../../store/actions/MessageActions';
-import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { API_FETCH_SITES } from '../../constants/ApiConstants';
-import { callAPI } from '../../utils/ApiUtils';
-import { PLATFORM_TYPES } from '../../constants/InputConstants';
-import NotificationDropdown from '../CommonForBoth/TopbarDropdown/NotificationDropdown';
-import ProfileMenu from '../CommonForBoth/TopbarDropdown/ProfileMenu';
-import dmlogoname from '../../assets/images/logo_name.png';
 import dmlogo from '../../assets/images/dm_logo.png';
-
+import dmlogoname from '../../assets/images/logo_name.png';
+import { API_FETCH_SITES } from '../../constants/ApiConstants';
+import { PLATFORM_TYPES } from '../../constants/InputConstants';
+import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 // Redux Store
 import { changeLeftSidebarType, refresh } from '../../store/actions';
+import { addMessage } from '../../store/actions/MessageActions';
+import { callAPI } from '../../utils/ApiUtils';
+import NotificationDropdown from '../CommonForBoth/TopbarDropdown/NotificationDropdown';
+import ProfileMenu from '../CommonForBoth/TopbarDropdown/ProfileMenu';
 
 function Header(props) {
   const [vcIp, setVcIp] = useState('');
@@ -155,7 +156,7 @@ function Header(props) {
                 className="btn header-item noti-icon waves-effect"
                 data-toggle="refresh"
               >
-                <box-icon name="refresh" color="#a6b0cf" animation="spin-hover" />
+                <FontAwesomeIcon size="lg" icon={faRefresh} className="fa-spin-hover" />
               </button>
             </div>
             <div className="dropdown d-lg-inline-block ml-1">
@@ -165,7 +166,7 @@ function Header(props) {
                 className="btn header-item noti-icon waves-effect"
                 data-toggle="fullscreen"
               >
-                <box-icon name="fullscreen" color="#a6b0cf" />
+                <FontAwesomeIcon size="lg" icon={faExpand} />
               </button>
             </div>
 

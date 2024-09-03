@@ -1,4 +1,5 @@
-import 'boxicons';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Badge, Popover, PopoverBody } from 'reactstrap';
@@ -86,7 +87,7 @@ function StatusItemRenderer({ data, field, t, noPopOver, showDate }) {
       <div className="container" title={data.message}>
         <div className="row">
           <div className="col-2">
-            <box-icon color="yellow" name="check" />
+            <FontAwesomeIcon size="xs" icon={faCheck} className="padding-4" />
           </div>
           <div className="col-10">
             {resp}

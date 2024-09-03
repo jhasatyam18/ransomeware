@@ -1,4 +1,3 @@
-import 'boxicons';
 import React from 'react';
 
 function OsTypeItemRenderer({ data, className }) {

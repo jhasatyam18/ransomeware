@@ -1,13 +1,15 @@
+import { faCircleCheck, faCircleXmark, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Card, CardBody, Col, Media, Row } from 'reactstrap';
-import { addMessage } from '../../store/actions/MessageActions';
-import { EVENT_LEVELS } from '../../constants/EventConstant';
-import { EVENTS_PATH } from '../../constants/RouterConstants';
 import { API_FETCH_EVENTS } from '../../constants/ApiConstants';
+import { EVENT_LEVELS } from '../../constants/EventConstant';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
+import { EVENTS_PATH } from '../../constants/RouterConstants';
+import { addMessage } from '../../store/actions/MessageActions';
 import { callAPI } from '../../utils/ApiUtils';
 import Spinner from '../Common/Spinner';
 
@@ -53,13 +55,13 @@ function DashBoardEvents(props) {
     </>
   );
 
-  const renderData = (obj, css) => {
+  const renderData = (obj, css, icon) => {
     const { description } = obj;
     return (
       <Media className="padding-10">
         <div className="mr-4">
           <h5 className="font-size-16">
-            <i className={`bx ${css} font-size-14`} />
+            <FontAwesomeIcon size="sm" icon={icon} className={css} />
           </h5>
         </div>
         <Media body>
@@ -77,15 +79,15 @@ function DashBoardEvents(props) {
     const { level } = d;
     switch (level) {
       case EVENT_LEVELS.ALL:
-        return renderData(d, 'app_primary bxs-check-circle');
+        return renderData(d, 'app_primary', faCircleCheck);
       case EVENT_LEVELS.WARNING:
-        return renderData(d, 'app_warning bx bxs-error');
+        return renderData(d, 'app_warning', faTriangleExclamation);
       case EVENT_LEVELS.ERROR:
-        return renderData(d, 'app_danger bxs-x-circle');
+        return renderData(d, 'app_danger', faCircleXmark);
       case EVENT_LEVELS.CRITICAL:
-        return renderData(d, 'app_danger bxs-x-circle');
+        return renderData(d, 'app_danger', faCircleXmark);
       default:
-        return renderData(d, 'app_success bxs-check-circle');
+        return renderData(d, 'app_success', faCircleCheck);
     }
   };
 

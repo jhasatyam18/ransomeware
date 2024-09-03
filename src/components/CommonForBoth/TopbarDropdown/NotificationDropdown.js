@@ -1,3 +1,5 @@
+import { faBell } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -100,8 +102,8 @@ class NotificationDropdown extends Component {
             tag="button"
             id="page-header-notifications-dropdown"
           >
-            <box-icon name="bell" color="#a6b0cf" />
-            {this.renderAlertCount()}
+            <FontAwesomeIcon size="lg" icon={faBell} />
+            <span className="mr-2">{this.renderAlertCount()}</span>
           </DropdownToggle>
 
           <DropdownMenu className="dropdown-menu dropdown-menu-lg p-0" right>

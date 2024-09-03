@@ -1,3 +1,5 @@
+import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -23,8 +25,8 @@ function ShowPlaybookVmChanges(props) {
   const renderIcon = () => (
     <div className="wizard-header-options">
       <div className="wizard-header-div">
-        {isOpen ? <box-icon name="chevron-down" color="white" onClick={toggle} style={{ height: 20 }} />
-          : <box-icon name="chevron-right" color="white" onClick={toggle} style={{ height: 20 }} /> }
+        {isOpen ? <FontAwesomeIcon size="sm" icon={faChevronDown} onClick={toggle} />
+          : <FontAwesomeIcon size="sm" icon={faChevronRight} onClick={toggle} />}
       </div>
     </div>
   );

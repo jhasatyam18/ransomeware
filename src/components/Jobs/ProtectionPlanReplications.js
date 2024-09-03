@@ -1,7 +1,9 @@
+import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Component } from 'react';
 import { Card, CardBody, CardHeader, Col, Collapse, Row } from 'reactstrap';
-import DMTable from '../Table/DMTable';
 import { TABLE_PROTECTION_PLAN_REPLICATIONS } from '../../constants/TableConstants';
+import DMTable from '../Table/DMTable';
 
 class ProtectionPlanReplications extends Component {
   constructor() {
@@ -20,8 +22,8 @@ class ProtectionPlanReplications extends Component {
     return (
       <div className="wizard-header-options">
         <div className="wizard-header-div">
-          {isOpen ? <box-icon name="chevron-down" color="white" onClick={this.toggle} style={{ height: 20 }} />
-            : <box-icon name="chevron-right" color="white" onClick={this.toggle} style={{ height: 20 }} /> }
+          {isOpen ? <FontAwesomeIcon size="sm" icon={faChevronDown} onClick={this.toggle} />
+            : <FontAwesomeIcon size="sm" icon={faChevronRight} onClick={this.toggle} />}
         </div>
       </div>
     );

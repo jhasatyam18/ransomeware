@@ -1,19 +1,17 @@
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Component } from 'react';
-
+import { withTranslation } from 'react-i18next';
 // // Redux
 import { Link, withRouter } from 'react-router-dom';
-
-import { withTranslation } from 'react-i18next';
-import {
-  Row, Col, CardBody, Card, Container,
-  Input } from 'reactstrap';
-import { API_SAML } from '../../constants/ApiConstants';
-import ChangePassword from './ChangePassword';
+import { Card, CardBody, Col, Container, Input, Row } from 'reactstrap';
 import logo from '../../assets/images/logo.png';
 import logoName from '../../assets/images/name.png';
-import { getInfo, initResetPassword, login } from '../../store/actions';
-import { FIELD_TYPE } from '../../constants/FieldsConstant';
 import saml from '../../assets/images/saml.svg';
+import { API_SAML } from '../../constants/ApiConstants';
+import { FIELD_TYPE } from '../../constants/FieldsConstant';
+import { getInfo, initResetPassword, login } from '../../store/actions';
+import ChangePassword from './ChangePassword';
 import ResetPassword from './ResetPassword';
 
 class Login extends Component {
@@ -22,7 +20,6 @@ class Login extends Component {
     this.state = { username: '', password: '', type: FIELD_TYPE.PASSWORD, isFocused: false, userError: '', passwordError: '' };
     this.onSubmit = this.onSubmit.bind(this);
     this.togglePassword = this.togglePassword.bind(this);
-    this.showPassword = this.showPassword.bind(this);
     this.typeToggle = this.typeToggle.bind(this);
     this.onEnter = this.onEnter.bind(this);
   }
@@ -119,26 +116,14 @@ class Login extends Component {
     this.setState({ type: newType });
   }
 
-  showPassword() {
-    const { type, password } = this.state;
-    const icon = (type === FIELD_TYPE.PASSWORD ? 'bx bx-hide login-eye' : 'bx bx-show login-eye');
-    if (password.length !== 0) {
-      return (
-        <span className="login-icon">
-          <i className={icon} color="white" onKeyDown={this.togglePassword} aria-hidden="true" onClick={this.togglePassword} />
-        </span>
-      );
-    }
-  }
-
   showPasswordToggle() {
     const { type, isFocused, password } = this.state;
-    const icon = (type === FIELD_TYPE.PASSWORD ? 'hide' : 'show');
+    const icon = (type === FIELD_TYPE.PASSWORD ? faEyeSlash : faEye);
     const focused = isFocused;
     if (password && password.length > 0) {
       return (
         <span className={focused ? 'field-icon' : 'field-icon'}>
-          <box-icon name={icon} color="white" onClick={this.typeToggle} style={{ height: 16, width: 16 }} />
+          <FontAwesomeIcon size="sm" icon={icon} onClick={this.typeToggle} />
         </span>
       );
     }

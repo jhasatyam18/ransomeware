@@ -59,19 +59,21 @@
   .mm-active {
     > .has-arrow {
       &:after {
-        transform: rotate(90deg);
+        transform: rotate(-90deg);
       }
     }
   }
 
   .has-arrow {
     &:after {
-      content: "\e9e4";
-      font-family: "boxicons";
+      content: "\f078";
+      font-family: "Font Awesome 5 free";
       display: block;
       float: right;
       transition: transform 0.2s;
-      font-size: 1rem;
+      font-size: 0.6rem;
+      font-weight: 600;
+      margin-top: 4px;
     }
   }
 

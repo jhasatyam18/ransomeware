@@ -1,5 +1,7 @@
-import React, { Component } from 'react';
+import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { Col, Row } from 'reactstrap';
 import { getStackComponent } from '../../utils/ComponentFactory';
 
@@ -19,8 +21,8 @@ class DMStackView extends Component {
     return (
       <div className="wizard-header-options">
         <div className="wizard-header-div">
-          {openStack ? <box-icon id={`${vmMoref}-${title}-down`} name="chevron-down" color="white" onClick={this.toggle} style={{ height: 20, cursor: 'pointer' }} />
-            : <box-icon id={`${vmMoref}-${title}-right`} name="chevron-right" color="white" onClick={this.toggle} style={{ height: 20, cursor: 'pointer' }} />}
+          {openStack ? <FontAwesomeIcon style={{ fontSize: '10px' }} id={`${vmMoref}-${title}-down`} size="sm" icon={faChevronDown} onClick={this.toggle} />
+            : <FontAwesomeIcon style={{ fontSize: '10px' }} id={`${vmMoref}-${title}-right`} size="sm" icon={faChevronRight} onClick={this.toggle} />}
         </div>
       </div>
     );
@@ -57,7 +59,7 @@ class DMStackView extends Component {
     const { title, vmMoref } = this.props;
     return (
       <Row>
-        <Col sm={2} className="padding-right-0 padding-left-5">
+        <Col sm={2} className="padding-right-0 padding-bottom-5">
           {this.renderIcon()}
         </Col>
         <Col sm={10} className="padding-left-0">

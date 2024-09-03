@@ -1,13 +1,15 @@
+import { faChevronDown, faChevronRight, faHdd } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardHeader, Col, Collapse, Row } from 'reactstrap';
+import { PLATFORM_TYPES } from '../../constants/InputConstants';
 import { valueChange } from '../../store/actions';
 import { getStorageWithUnit } from '../../utils/AppUtils';
+import { getDiskLabel, getValue } from '../../utils/InputUtils';
+import { isVMRecovered } from '../../utils/validationUtils';
 import OsTypeItemRenderer from '../Table/ItemRenderers/OsTypeItemRenderer';
 import StatusItemRenderer from '../Table/ItemRenderers/StatusItemRenderer';
-import { getDiskLabel, getValue } from '../../utils/InputUtils';
-import { PLATFORM_TYPES } from '../../constants/InputConstants';
-import { isVMRecovered } from '../../utils/validationUtils';
 
 function RenderResetReplicationVms(props) {
   const { t, vmData, dispatch, user, selectedPlan } = props;
@@ -28,8 +30,8 @@ function RenderResetReplicationVms(props) {
   const renderIcon = () => (
     <div className="wizard-header-options">
       <div className="wizard-header-div">
-        {isOpen ? <box-icon name="chevron-down" color="white" onClick={toggle} style={{ height: 20 }} />
-          : <box-icon name="chevron-right" color="white" onClick={toggle} style={{ height: 20 }} /> }
+        {isOpen ? <FontAwesomeIcon size="sm" icon={faChevronDown} onClick={toggle} />
+          : <FontAwesomeIcon size="sm" icon={faChevronRight} onClick={toggle} />}
       </div>
     </div>
   );
@@ -65,7 +67,7 @@ function RenderResetReplicationVms(props) {
               <div className="custom-control custom-checkbox">
                 <input type="checkbox" className={`custom-control-input ${isReplicationReset === true ? 'checkbox_disabled' : ''}`} id={key} checked={value} name={key} onChange={(e) => handleChange(e, key)} disabled={isReplicationReset} />
                 <label className="custom-control-label  margin-right-8" htmlFor={key}>
-                  <box-icon name="hdd" size="sm" color="white" style={{ width: '17px', position: 'relative', top: '-3px' }} />
+                  <FontAwesomeIcon size="sm" icon={faHdd} />
                 </label>
                 <span className="margin-right-20">
                   {getDiskLabel(diskData, index, isVMwareSource)}

@@ -1,11 +1,13 @@
-import React, { Component } from 'react';
-import { Card, CardBody, CardHeader, Col, Collapse, Row } from 'reactstrap';
+import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
-import DMStackView from './DMStackView';
-import CopyConfig from '../Common/CopyConfig';
-import { getValue } from '../../utils/InputUtils';
+import { Card, CardBody, CardHeader, Col, Collapse, Row } from 'reactstrap';
 import { STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
+import { getValue } from '../../utils/InputUtils';
+import CopyConfig from '../Common/CopyConfig';
+import DMStackView from './DMStackView';
 
 class DMAccordion extends Component {
   constructor() {
@@ -73,8 +75,8 @@ class DMAccordion extends Component {
     return (
       <div className="wizard-header-options">
         <div className="wizard-header-div configured_icons">
-          {isOpen ? <box-icon name="chevron-down" color="white" onClick={this.toggle} style={{ height: 18, cursor: 'pointer' }} />
-            : <box-icon name="chevron-right" color="white" onClick={this.toggle} style={{ height: 18, cursor: 'pointer' }} /> }
+          {isOpen ? <FontAwesomeIcon size="sm" icon={faChevronDown} onClick={this.toggle} />
+            : <FontAwesomeIcon size="sm" icon={faChevronRight} onClick={this.toggle} />}
         </div>
       </div>
     );

@@ -1,3 +1,4 @@
+import { faBackward, faBroom, faCheck, faClone, faDownload, faEdit, faPlay, faPlus, faRetweet, faStop, faTrash } from '@fortawesome/free-solid-svg-icons';
 import classnames from 'classnames';
 import React, { Component, Suspense } from 'react';
 import { withTranslation } from 'react-i18next';
@@ -257,19 +258,19 @@ class DRPlanDetails extends Component {
     const isReverseActionDisabled = this.disableReverse(protectionPlan);
     let actions = [];
     if (platformType === protectedSitePlatform && localVMIP !== recoverySite.node.hostname) {
-      actions.push({ label: 'Start', action: startPlan, id: protectionPlan.id, disabled: this.disableStart(protectionPlan), icon: 'fa fa-play' });
-      actions.push({ label: 'Stop', action: stopPlan, id: protectionPlan.id, disabled: this.disableStop(protectionPlan), icon: 'fa fa-stop' });
-      actions.push({ label: 'Edit', action: openEditProtectionPlanWizard, id: protectionPlan, disabled: this.disableEdit(), icon: 'fa fa-edit' });
-      actions.push({ label: 'Resync Disk Replication', action: onResetDiskReplicationClick, id: protectionPlan, disabled: isServerActionDisabled, navigate: PROTECTION_PLANS_PATH, icon: 'fa fa-retweet' });
-      actions.push({ label: 'Download Plan Playbook', action: playbookExport, id: protectionPlan, disabled: this.disableEdit(), icon: 'fa fa-download' });
-      actions.push({ label: 'Remove', action: deletePlanConfirmation, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS || !hasRequestedPrivileges(user, ['protectionplan.delete']), navigate: PROTECTION_PLANS_PATH, icon: 'fa fa-trash' });
+      actions.push({ label: 'Start', action: startPlan, id: protectionPlan.id, disabled: this.disableStart(protectionPlan), icon: faPlay });
+      actions.push({ label: 'Stop', action: stopPlan, id: protectionPlan.id, disabled: this.disableStop(protectionPlan), icon: faStop });
+      actions.push({ label: 'Edit', action: openEditProtectionPlanWizard, id: protectionPlan, disabled: this.disableEdit(), icon: faEdit });
+      actions.push({ label: 'Resync Disk Replication', action: onResetDiskReplicationClick, id: protectionPlan, disabled: isServerActionDisabled, navigate: PROTECTION_PLANS_PATH, icon: faRetweet });
+      actions.push({ label: 'Download Plan Playbook', action: playbookExport, id: protectionPlan, disabled: this.disableEdit(), icon: faDownload });
+      actions.push({ label: 'Remove', action: deletePlanConfirmation, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS || !hasRequestedPrivileges(user, ['protectionplan.delete']), navigate: PROTECTION_PLANS_PATH, icon: faTrash });
     } else if (localVMIP === recoverySite.node.hostname) {
-      actions = [{ label: 'recover', action: openRecoveryWizard, icon: 'fa fa-plus', disabled: !recovered || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED || !hasRequestedPrivileges(user, ['recovery.full']) },
-        { label: 'Migrate', action: openMigrationWizard, icon: 'fa fa-clone', disabled: allVmRecovered || !hasRequestedPrivileges(user, ['recovery.migration']) },
-        { label: 'Reverse', action: openReverseWizard, icon: 'fa fa-backward', disabled: isReverseActionDisabled },
-        { label: 'Test Recovery', action: openTestRecoveryWizard, icon: 'fa fa-check', disabled: allVmRecovered || !hasRequestedPrivileges(user, ['recovery.test']) },
-        { label: 'Cleanup Test Recoveries', action: openCleanupTestRecoveryWizard, icon: 'fa fa-broom', disabled: !hasRequestedPrivileges(user, ['recovery.test']) },
-        { label: 'Download Credentials Playbook', action: downloadRecoveryPlaybook, id: protectionPlan.id, icon: 'fa fa-download' },
+      actions = [{ label: 'recover', action: openRecoveryWizard, icon: faPlus, disabled: !recovered || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED || !hasRequestedPrivileges(user, ['recovery.full']) },
+        { label: 'Migrate', action: openMigrationWizard, icon: faClone, disabled: allVmRecovered || !hasRequestedPrivileges(user, ['recovery.migration']) },
+        { label: 'Reverse', action: openReverseWizard, icon: faBackward, disabled: isReverseActionDisabled },
+        { label: 'Test Recovery', action: openTestRecoveryWizard, icon: faCheck, disabled: allVmRecovered || !hasRequestedPrivileges(user, ['recovery.test']) },
+        { label: 'Cleanup Test Recoveries', action: openCleanupTestRecoveryWizard, icon: faBroom, disabled: !hasRequestedPrivileges(user, ['recovery.test']) },
+        { label: 'Download Credentials Playbook', action: downloadRecoveryPlaybook, id: protectionPlan.id, icon: faDownload },
       ];
     } else {
       // no action to add

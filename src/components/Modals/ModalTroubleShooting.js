@@ -1,16 +1,18 @@
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 // import classnames from 'classnames';
 import { withTranslation } from 'react-i18next';
 import { Tbody, Th, Tr } from 'react-super-responsive-table';
-import { Card, CardBody, CardHeader, Col, Collapse, Container, Nav, NavItem, NavLink, Row, TabContent, TabPane, Table } from 'reactstrap';
+import { Card, CardBody, CardHeader, Col, Collapse, Container, Nav, NavItem, NavLink, Row, TabContent, Table, TabPane } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
-import { RECOVERY_TYPE } from '../../constants/InputConstants';
-import { closeModal } from '../../store/actions/ModalActions';
-import CopyText from '../Common/CopyText';
 import { API_FETCH_DR_PLAN_BY_ID } from '../../constants/ApiConstants';
-import { callAPI } from '../../utils/ApiUtils';
-import { addMessage } from '../../store/actions/MessageActions';
+import { RECOVERY_TYPE } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
+import { addMessage } from '../../store/actions/MessageActions';
+import { closeModal } from '../../store/actions/ModalActions';
+import { callAPI } from '../../utils/ApiUtils';
+import CopyText from '../Common/CopyText';
 
 function ModalTroubleShooting(props) {
   const { options, t, dispatch } = props;
@@ -126,7 +128,7 @@ function ModalTroubleShooting(props) {
                         </a>
                       </Col>
                       <Col sm={6} className="d-flex flex-row-reverse">
-                        <box-icon name="chevron-down" color="white" onClick={() => setToggleSystemCheck(((prev) => !prev))} style={{ height: 20 }} />
+                        <FontAwesomeIcon size="sm" icon={faChevronDown} onClick={() => setToggleSystemCheck(((prev) => !prev))} className="padding-4" />
                       </Col>
                     </Row>
                     <Collapse isOpen={toggleSystemCheck}>
@@ -178,7 +180,7 @@ function ModalTroubleShooting(props) {
                         </a>
                       </Col>
                       <Col sm={6} className="d-flex flex-row-reverse">
-                        <box-icon name="chevron-down" color="white" onClick={() => setToggleWindow(((prev) => !prev))} style={{ height: 20 }} />
+                        <FontAwesomeIcon size="sm" icon={faChevronDown} onClick={() => setToggleWindow(((prev) => !prev))} className="padding-4" />
                       </Col>
                     </Row>
                     <Collapse isOpen={toggleWindow}>
@@ -231,7 +233,7 @@ function ModalTroubleShooting(props) {
                         </a>
                       </Col>
                       <Col sm={6} className="d-flex flex-row-reverse">
-                        <box-icon name="chevron-down" color="white" onClick={() => setToggleFilesystems(((prev) => !prev))} style={{ height: 20 }} />
+                        <FontAwesomeIcon size="sm" icon={faChevronDown} onClick={() => setToggleFilesystems(((prev) => !prev))} className="padding-4" />
                       </Col>
                     </Row>
                     <Collapse isOpen={toggleFilesystems}>
@@ -362,7 +364,7 @@ function ModalTroubleShooting(props) {
                           </a>
                         </Col>
                         <Col sm={6} className="d-flex flex-row-reverse">
-                          <box-icon name="chevron-down" color="white" onClick={() => setToggle(((prev) => !prev))} style={{ height: 20 }} />
+                          <FontAwesomeIcon size="sm" icon={faChevronDown} onClick={() => setToggle(((prev) => !prev))} className="padding-4" />
                         </Col>
                       </Row>
                       <Collapse isOpen={toggle}>
@@ -458,7 +460,7 @@ function ModalTroubleShooting(props) {
                           </a>
                         </Col>
                         <Col sm={6} className="d-flex flex-row-reverse">
-                          <box-icon name="chevron-down" color="white" onClick={() => setToggleSystemCheck(((prev) => !prev))} style={{ height: 20 }} />
+                          <FontAwesomeIcon size="sm" icon={faChevronDown} onClick={() => setToggleSystemCheck(((prev) => !prev))} className="padding-4" />
                         </Col>
                       </Row>
                       <Collapse isOpen={toggleSystemCheck}>
@@ -512,7 +514,7 @@ function ModalTroubleShooting(props) {
                           </a>
                         </Col>
                         <Col sm={6} className="d-flex flex-row-reverse">
-                          <box-icon name="chevron-down" color="white" onClick={() => setToggleWindow(((prev) => !prev))} style={{ height: 20 }} />
+                          <FontAwesomeIcon size="sm" icon={faChevronDown} onClick={() => setToggleWindow(((prev) => !prev))} className="padding-4" />
                         </Col>
                       </Row>
                       <Collapse isOpen={toggleWindow}>
@@ -595,7 +597,7 @@ function ModalTroubleShooting(props) {
                           </a>
                         </Col>
                         <Col sm={6} className="d-flex flex-row-reverse">
-                          <box-icon name="chevron-down" color="white" onClick={() => setToggleFilesystems(((prev) => !prev))} style={{ height: 20 }} />
+                          <FontAwesomeIcon size="sm" icon={faChevronDown} onClick={() => setToggleFilesystems(((prev) => !prev))} className="padding-4" />
                         </Col>
                       </Row>
                       <Collapse isOpen={toggleFilesystems}>

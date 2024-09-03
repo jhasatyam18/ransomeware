@@ -1,15 +1,16 @@
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import React, { useEffect } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Card, CardBody, Container, Row } from 'reactstrap';
-import DMTable from '../../Table/DMTable';
-import DMBreadCrumb from '../../Common/DMBreadCrumb';
-import ActionButton from '../../Common/ActionButton';
+import { MODAL_INSTALL_NEW_LICENSE } from '../../../constants/Modalconstant';
 import { TABLE_LICENSES } from '../../../constants/TableConstants';
 import { fetchLicenses } from '../../../store/actions/LicenseActions';
 import { openModal } from '../../../store/actions/ModalActions';
-import { MODAL_INSTALL_NEW_LICENSE } from '../../../constants/Modalconstant';
 import { hasRequestedPrivileges } from '../../../utils/PrivilegeUtils';
+import ActionButton from '../../Common/ActionButton';
+import DMBreadCrumb from '../../Common/DMBreadCrumb';
+import DMTable from '../../Table/DMTable';
 
 function License(props) {
   const { dispatch, t, settings, user } = props;
@@ -37,7 +38,7 @@ function License(props) {
             <CardBody>
               <DMBreadCrumb links={[{ label: 'license', link: '#' }]} />
               <Row className="padding-left-30">
-                <ActionButton label="New" onClick={openInstallNewModal} icon="fa fa-plus" isDisabled={!hasRequestedPrivileges(user, ['license.create'])} t={t} key="newLicense" />
+                <ActionButton label="New" onClick={openInstallNewModal} icon={faPlus} isDisabled={!hasRequestedPrivileges(user, ['license.create'])} t={t} key="newLicense" />
               </Row>
               <DMTable
                 dispatch={dispatch}

@@ -1,11 +1,12 @@
+import { faEdit, faPlus, faTrash, faUndo } from '@fortawesome/free-solid-svg-icons';
 import React from 'react';
 import { withTranslation } from 'react-i18next';
-import ActionButton from '../../Common/ActionButton';
+import { MODAL_ADD_NEW_USER, MODAL_CONFIRMATION_WARNING, MODAL_RESET_CREDENTIALS } from '../../../constants/Modalconstant';
 import { clearValues, removeUser, valueChange } from '../../../store/actions';
 import { openModal } from '../../../store/actions/ModalActions';
-import { MODAL_ADD_NEW_USER, MODAL_CONFIRMATION_WARNING, MODAL_RESET_CREDENTIALS } from '../../../constants/Modalconstant';
 import { hasRequestedPrivileges } from '../../../utils/PrivilegeUtils';
 import { showUserActions } from '../../../utils/TableUtils';
+import ActionButton from '../../Common/ActionButton';
 
 const UserActionButtons = (props) => {
   const { t, user, dispatch, selectedUsers, roles } = props;
@@ -43,10 +44,10 @@ const UserActionButtons = (props) => {
   return (
     <>
       <div className="btn-group padding-left-20" role="group" aria-label="First group">
-        <ActionButton label="New" onClick={onAddNewUser} icon="fa fa-plus" t={t} key="newUserConfiguration" isDisabled={!hasRequestedPrivileges(user, ['user.create'])} />
-        <ActionButton label="Edit" onClick={onReconfigureUser} icon="fa fa-edit" t={t} key="addNewUser" isDisabled={(selUser === 0 || selUser > 1) || !hasRequestedPrivileges(user, ['user.edit']) || !showUserActions(selectedUsers)} />
-        <ActionButton label="remove" onClick={onRemoveUser} icon="fa fa-trash" t={t} key="removeUser" isDisabled={(selUser === 0 || selUser > 1) || !hasRequestedPrivileges(user, ['user.delete']) || !showUserActions(selectedUsers)} />
-        <ActionButton label="Reset Password" onClick={onReset} icon="bx bx-reset fa-lg" t={t} key="resetUserPassword" iconColor="#34c38f" isDisabled={(selUser === 0 || selUser > 1) || !hasRequestedPrivileges(user, ['user.resetpassword']) || !showUserActions(selectedUsers)} />
+        <ActionButton label="New" onClick={onAddNewUser} icon={faPlus} t={t} key="newUserConfiguration" isDisabled={!hasRequestedPrivileges(user, ['user.create'])} />
+        <ActionButton label="Edit" onClick={onReconfigureUser} icon={faEdit} t={t} key="addNewUser" isDisabled={(selUser === 0 || selUser > 1) || !hasRequestedPrivileges(user, ['user.edit']) || !showUserActions(selectedUsers)} />
+        <ActionButton label="remove" onClick={onRemoveUser} icon={faTrash} t={t} key="removeUser" isDisabled={(selUser === 0 || selUser > 1) || !hasRequestedPrivileges(user, ['user.delete']) || !showUserActions(selectedUsers)} />
+        <ActionButton label="Reset Password" onClick={onReset} icon={faUndo} t={t} key="resetUserPassword" iconColor="#34c38f" isDisabled={(selUser === 0 || selUser > 1) || !hasRequestedPrivileges(user, ['user.resetpassword']) || !showUserActions(selectedUsers)} />
       </div>
     </>
   );
