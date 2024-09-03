@@ -10,18 +10,25 @@ function VMTenancyTypeItemRenderer(props) {
   if (data.id) {
     selector = `placement-${data.id}`;
   }
+
   const renderPopOver = () => (
     <Popover placement="bottom" isOpen={popoverOpen} target={selector} style={{ backgroundColor: 'black', width: '300px' }}>
       <PopoverBody>
         <>
           <section>
-            {`Host Type  : ${data.hostType}`}
+            {`Tenancy  : ${data.tenancy}`}
           </section>
           <section>
-            {`Affinity   : ${data.affinity ? data.affinity : ''}`}
+            {`${data.affinity === '' ? '' : `Affinity: ${data.affinity}`}`}
           </section>
           <section>
-            {`${data.hostType === AWS_TARGET_HOST_TYPES.Host_ID ? 'Host ID' : 'Host Resource Group Arn :'}  : ${data.hostMoref}`}
+            {`${data.hostType !== '' ? 'Host Type:' : ''}  ${data.hostType}`}
+          </section>
+          <section>
+            {`${(data.hostMoref !== '' && data.hostType === AWS_TARGET_HOST_TYPES.Host_ID) ? `Host ID: ${data.hostMoref}` : ''}`}
+          </section>
+          <section>
+            {`${(data.hostMoref !== '' && data.hostType === AWS_TARGET_HOST_TYPES.Host_Resource_Group) ? `Host Resource Group: ${data.hostMoref}` : ''}`}
           </section>
         </>
       </PopoverBody>

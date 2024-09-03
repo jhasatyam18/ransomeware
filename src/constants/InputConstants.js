@@ -305,8 +305,7 @@ export const MAPPING_REVERSE_RECOMMENDED_DATA = {
 };
 
 export const AWS_TENANCY_TYPES = {
-  // Shared: 'Select',
-  Shared: 'shared',
+  Shared: 'default',
   // dedicated: 'dedicated',
   Dedicated_Host: 'host',
 };

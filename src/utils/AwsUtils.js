@@ -70,10 +70,10 @@ export function getAwsHostMorefLabel(user, fieldKey) {
     hostTypeKey = `${keys[0]}-vmConfig.general.hostType`;
   }
   const value = getValue(hostTypeKey, values);
-  if (value === AWS_TARGET_HOST_TYPES.Host_ID) {
-    return 'Target Host ID';
+  if (value === AWS_TARGET_HOST_TYPES.Host_Resource_Group) {
+    return 'Target Host Group Arn';
   }
-  return 'Target Host Group Arn';
+  return 'Target Host ID';
 }
 
 export function showHostByIdOrArnErrorMessage({ fieldKey, user }) {
