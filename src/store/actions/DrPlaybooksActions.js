@@ -146,7 +146,6 @@ export function deletePlaybook(id, history) {
           if (typeof history !== 'undefined') {
             history.push(PLAYBOOK_LIST);
           }
-          dispatch(refresh());
         }
       },
       (err) => {
