@@ -23,6 +23,11 @@
 -   To generate Markdown file of the word document use pandoc command : 
     pandoc -f docx -t markdown_mmd --toc --toc-depth=2 --extract-media=. -s Datamotive-User-Guide_1_2.docx -o index.md
 
+-   In markdown file (index.md) remove all content before #Introduction and add ##(double hash) to arrange table of content.
+
+-   First, delete the docs folder and commit the changes. Then, add the new docs folder using the force add command 
+    (git add -f docs), and commit it.
+
 # Run and build the documentation
 
 -   For seeing the documentation locally run 
@@ -30,3 +35,8 @@
 
 -   To create a build run 
     mkdocs build
+
+-   After the build, a 'site' folder will be created. Rename this folder to docs and replace the existing docs folder in your
+    project with it.
+
+-   For testing the documentation always make build from jenkins do not test it locally.
