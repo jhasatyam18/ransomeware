@@ -138,6 +138,7 @@ export const STATIC_KEYS = {
   TEST_RECOVERY_IP_WARNING_MSG: 'test.recovery.ip.warning.msg',
   LATEST_REPLICATION_JOBS: 'latest=true',
   LATEST_COMPLETED_REPL_JOBS: 'status=completed&latest=true',
+  RECOVERY_CREDENTIAL_EXCEL_FILE: 'ui.recovery.credentials.fileName',
 };
 
 // Recovery time in minutes
