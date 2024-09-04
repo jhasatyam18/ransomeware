@@ -44,9 +44,15 @@ export const PLAN_KEYS = [
   'isDedupe',
   'isEncryptionOnWire',
   'name',
-  'postScript',
   'preScript',
+  'preInputs',
+  'postScript',
+  'postInputs',
+  'replPreScript',
+  'replPostScript',
+  'scriptTimeout',
   'replicationInterval',
+  'enablePPlanLevelScheduling',
 ];
 
 export const PLAN_DETAIL_TABS = {
