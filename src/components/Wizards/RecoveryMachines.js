@@ -36,11 +36,13 @@ class RecoveryMachines extends Component {
     const { user } = this.props;
     const { values } = user;
     const selectedRecoveryType = getValue(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, values);
+    const excelCredFile = getValue(STATIC_KEYS.RECOVERY_CREDENTIAL_EXCEL_FILE, values);
     if (selectedRecoveryType !== '') {
       this.setState({ recoveryType: selectedRecoveryType });
     } else {
       this.setState({ recoveryType: CHECKPOINT_TYPE.LATEST });
     }
+    this.setState({ recFileName: excelCredFile });
   }
 
   componentDidUpdate() {
@@ -162,7 +164,6 @@ class RecoveryMachines extends Component {
         dispatch(hideApplicationLoader('UPLOADING_RECOVERY_CREDENTIALS'));
         dispatch(valueChange('ui.recovery.credentials.fileName', fileName));
         dispatch(addMessage('Recovery credentials uploaded successfully', MESSAGE_TYPES.SUCCESS));
-        e.target.value = '';
       } else {
         dispatch(hideApplicationLoader('UPLOADING_RECOVERY_CREDENTIALS'));
         response.text().then((text) => {
