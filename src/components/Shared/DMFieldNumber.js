@@ -69,8 +69,15 @@ class placeHolderNumber extends Component {
 
   onBlur = () => {
     const { fieldKey, dispatch, user, field } = this.props;
+    const { min, max } = field;
     const { value } = this.state;
-    dispatch(valueChange(fieldKey, parseInt(value, 10)));
+    let fieldValue = parseInt(value, 10);
+    if (min && fieldValue < min) {
+      fieldValue = min;
+    } else if (max && fieldValue > max) {
+      fieldValue = max;
+    }
+    dispatch(valueChange(fieldKey, fieldValue));
     validateField(field, fieldKey, value, dispatch, user);
   };
 
