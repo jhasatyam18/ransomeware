@@ -364,18 +364,33 @@ export function getAzureExternalIPOptions(user, fieldKey) {
   options.push({ label: 'None', value: false });
   options.push({ label: 'Auto', value: true });
   const ips = getValue(STATIC_KEYS.UI_RESERVE_IPS, values) || [];
+  const networkKey = fieldKey.replace('-publicIP', '');
+  const associatedIPs = getValue(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, values) || {};
+  const keys = Object.keys(associatedIPs);
+  let vmIpAlreadyInOpt = false;
+  let vmIps = [];
+  if (keys.length > 0) {
+    vmIps = keys.filter((k) => k === networkKey);
+  }
+
   ips.forEach((op) => {
     const { name } = op;
     const ipLabel = getLabelWithResourceGrp(name);
     options.push({ label: ipLabel, value: op.name.toLowerCase() });
+    /**
+     *check if the current option value is also available for vm ip
+      this situation of ip present in option and also for vm, will come if user selected ip and resync of vm is not done
+      because of which option have duplicate values.
+     */
+    if (vmIps.length > 0 && associatedIPs[vmIps[0]].value === op.name.toLowerCase()) {
+      vmIpAlreadyInOpt = true;
+    }
   });
-  if (typeof fieldKey !== 'undefined' && fieldKey !== null && fieldKey !== '' && fieldKey !== '-') {
-    const networkKey = fieldKey.replace('-publicIP', '');
-    const publicIP = getValue(fieldKey, values);
-    const associatedIPs = getValue(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, values) || {};
-    const keys = Object.keys(associatedIPs);
+  /**
+    * if ip is already present in option then do not add it
+  */
+  if (typeof fieldKey !== 'undefined' && fieldKey !== null && fieldKey !== '' && fieldKey !== '-' && !vmIpAlreadyInOpt) {
     if (keys.length > 0) {
-      const vmIps = keys.filter((k) => associatedIPs[k].fieldKey === networkKey && associatedIPs[k].value === publicIP);
       if (vmIps.length > 0) {
         vmIps.forEach((op) => {
           options.push({ label: associatedIPs[op].label, value: associatedIPs[op].value });
@@ -393,7 +408,6 @@ export function getAWSElasticIPOptions(user, fieldKey) {
   ips.forEach((op) => {
     options.push({ label: op.name, value: op.id });
   });
-  // const fieldValue = getValue(fieldKey, values);
   if (typeof fieldKey !== 'undefined' && fieldKey !== null && fieldKey !== '' && fieldKey !== '-') {
     const networkKey = fieldKey.replace('-network', '');
     const associatedIPs = getValue(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, values) || {};

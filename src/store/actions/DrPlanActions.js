@@ -1155,7 +1155,7 @@ function setAZUREVMDetails(selectedVMS, protectionPlan, dispatch, user) {
   });
 }
 
-export function setPublicIPWhileEdit(isPublicIP, publicip, networkKey, index, values, dispatch) {
+export function setPublicIPWhileEdit(isPublicIP, publicip, networkKey, index, dispatch) {
   let publicIp = '';
   if (isPublicIP) {
     publicIp = 'true';
