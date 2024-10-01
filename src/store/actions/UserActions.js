@@ -982,7 +982,6 @@ export function getComputeResources(fieldKey, dataCenterKey) {
     const responseData = getVMwareConfigDataForField(`ClusterComputeResource,${VMWARE_OBJECT.ComputeResource}`, entityKey, values);
     if (responseData !== null) {
       dispatch(valueChange(computeKey, responseData));
-      dispatch(closeModal());
       return;
     }
 
@@ -1002,7 +1001,6 @@ export function getComputeResources(fieldKey, dataCenterKey) {
         // set data
         dispatch(setVMwareAPIResponseData(`ClusterComputeResource,${VMWARE_OBJECT.ComputeResource}`, entityKey, res));
         dispatch(valueChange(computeKey, res));
-        dispatch(closeModal());
       }
     },
     (err) => {
