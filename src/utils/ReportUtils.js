@@ -111,7 +111,7 @@ export function addHeaderPage(doc) {
 export function systemOverview(doc, data) {
   const { titles, recoveryStats, replicationStats } = data;
   const { sites = 0, protectionPlans = 0, vms = 0, storage = 0 } = titles;
-  const { testExecutions = 0, fullRecovery = 0, migrations = 0 } = recoveryStats;
+  const { testExecutions = 0, fullRecovery = 0, migrations = 0, rto = 0 } = recoveryStats;
   const { completed, running, failures, dataReduction = 0, changedRate = 0, rpo = 0 } = replicationStats;
   autoTable(doc, {
     head: [
@@ -129,6 +129,7 @@ export function systemOverview(doc, data) {
       ['Protection Machines', `${vms}`],
       ['Protected Storage', getStorageWithUnit(storage)],
       ['Recovery Point Objective', formatTime(rpo)],
+      ['Recovery Time Objective', formatTime(rto)],
       [{ content: 'Replication Statistics', colSpan: 2, styles: { halign: 'center' } }],
       ['Completed', completed],
       ['Running', running],

@@ -1559,3 +1559,6 @@ export function validateCheckpointSelection(user, vms, dispatch) {
 
   return !checkpointFlag;
 }
+export function isDateEmpty({ value }) {
+  return !value || !(value instanceof Date); // instanceof Date operator checks the value is valid date obect or not
+}
