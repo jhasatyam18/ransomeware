@@ -806,7 +806,7 @@
   "aws.configure.replication.priority": "Configure Replication Priority",
   "total.disks": "Total Disks",
   "title.reset.replication": "Resync Disk Replication",
-  "reset.disk.warning": "Are you sure you want to resync replication for disk(s)?",
+  "reset.disk.warning": "Are you sure you want to resync replication for disk(s) ?",
   "reset.disk.warning.notice": "This operation cannot be reverted",
   "disk.repl.type.incremental": "Incremental",
   "disk.repl.type.full": "Full",
@@ -866,5 +866,17 @@
   "pit.disk.resize.warning.text": "Taking action on this alert will delete all the available point-in-time checkpoints of {{vmName}} on VMware infra. ",
   "reset.credential.password": "Enter {{userName}}'s password",
   "no.new.notification": "No new notification",
-  "test.recovery.ip.warning.msg":"To configure Static IP please specify credentials of local administrator account."
+  "test.recovery.ip.warning.msg":"To configure Static IP please specify credentials of local administrator account.",
+  "resync.summary": "Resync Summary",
+  "select.workloads.for.resync": "Select Workloads For Resync",
+  "select.disk.type": "Select Disk Type",
+  "os.disk": "OS Disk",
+  "data.disk": "Data Disk",
+  "all": "All",
+  "total.disk":"Total {{totalDisks}}",
+  "total.disk.size":"Total {{totalDiskSize}}",
+  "os.disk.count":"OS-Disks {{osDisks}}",
+  "os.disk.size":"OS-Disks {{osDisksSize}}",
+  "data.disk.size":"Data Disks {{dataDiskSize}}",
+  "data.disk.count":"Data Disks {{dataDisks}}"
 }

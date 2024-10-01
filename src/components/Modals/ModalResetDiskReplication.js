@@ -1,18 +1,24 @@
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import React, { useState, useEffect } from 'react';
+import { faSearch, faDatabase, faDesktop, faHdd } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Col, Row } from 'reactstrap';
+import { connect } from 'react-redux';
 import SimpleBar from 'simplebar-react';
-import { PLATFORM_TYPES } from '../../constants/InputConstants';
-import { clearValues, refresh } from '../../store/actions';
+import { clearValues, refresh, valueChange } from '../../store/actions';
+// import Select from 'react-select';
 import { onEditProtectionPlan } from '../../store/actions/DrPlanActions';
 import { closeModal } from '../../store/actions/ModalActions';
+import { setResyncIntialData } from '../../store/actions/ResyncDiskAction';
 import { getDiskLabel, getValue } from '../../utils/InputUtils';
 import RenderResetReplicationVMs from '../Common/RenderResetReplicationVMs';
+import ResyncDiskDropdown from '../Common/ResyncDiskDropdown';
+import { setDataForResyncSummary } from '../../utils/ResyncDiskUtils';
+import { PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
 
 function ResetDiskReplicationModal({ t, dispatch, options, user }) {
   const { selectedPlan } = options;
+  const { values } = user;
   const [searchStr, setsearchStr] = useState('');
   const { protectedEntities } = selectedPlan;
   const { virtualMachines } = protectedEntities;
@@ -86,30 +92,45 @@ function ResetDiskReplicationModal({ t, dispatch, options, user }) {
     return selectedVMS;
   };
 
-  const renderSelectedDiskName = (selectedVMS) => {
-    if (!selectedVMS) {
-      return null;
-    }
-    return Object.keys(selectedVMS).map((disk, index) => (
-      <div key={`selected-disk-${index + 1}`}>
-        <span className="padding-top-10">
-          {selectedVMS[disk].name}
-          : &nbsp;&nbsp;&nbsp;
-        </span>
-        <span className="text-muted">
-          {selectedVMS[disk].disks.join(', ')}
-        </span>
-      </div>
-    ));
-  };
-
   const renderSelectedDisks = () => {
-    const selectedVMS = getSelectedDisks();
+    const resyncSelectedData = getValue(STATIC_KEYS.UI_RESYNC_SUMMARY_DATA, values);
     return (
       <div className="padding-top-10">
-        {renderSelectedDiskName(selectedVMS)}
+        <p>{t('resync.summary')}</p>
+        <Row className="mb-3 ml-2">
+          <Col sm={3}>
+            <FontAwesomeIcon size="lg" icon={faDesktop} />
+            <span className="ml-2">{t('Workloads')}</span>
+          </Col>
+          <Col>{resyncSelectedData.vms}</Col>
+        </Row>
+        <Row className="mb-3 ml-2">
+          <Col>
+            <FontAwesomeIcon size="lg" icon={faHdd} />
+            <span className="ml-2">{t('Disks')}</span>
+          </Col>
+          <Col>{t('total.disk', { totalDisks: resyncSelectedData.disks })}</Col>
+          <Col>{t('os.disk.count', { osDisks: resyncSelectedData.osDisks })}</Col>
+          <Col>{t('data.disk.count', { dataDisks: resyncSelectedData.dataDisks })}</Col>
+        </Row>
+        <Row className="ml-2">
+          <Col>
+            <FontAwesomeIcon size="lg" icon={faDatabase} />
+            <span className="ml-2">{t('Storage')}</span>
+          </Col>
+          <Col>{t('total.disk.size', { totalDiskSize: resyncSelectedData.diskSize })}</Col>
+          <Col>{t('os.disk.size', { osDisksSize: resyncSelectedData.osSize })}</Col>
+          <Col>{t('data.disk.size', { dataDiskSize: resyncSelectedData.dataSize })}</Col>
+        </Row>
       </div>
     );
+  };
+
+  const setSummaryData = () => {
+    const resyncSelectedData = getValue(STATIC_KEYS.UI_RESYNC_SUMMARY_DATA, values);
+    const { totalVMs, selectedDiskCount, selectedDiskSize, osDisks, dataDisks, osSize, dataSize } = setDataForResyncSummary(virtualMachines, user);
+    dispatch(valueChange(STATIC_KEYS.UI_RESYNC_SUMMARY_DATA, { ...resyncSelectedData, vms: totalVMs, disks: selectedDiskCount, dataDisks, osDisks, diskSize: selectedDiskSize, osSize, dataSize }));
+    setConfirmation(true);
   };
 
   const renderModalFooter = () => {
@@ -126,7 +147,7 @@ function ResetDiskReplicationModal({ t, dispatch, options, user }) {
     return (
       <div className="modal-footer">
         <button type="button" className="btn btn-secondary" onClick={onCancel}>{t('title.cancel')}</button>
-        <button type="button" className="btn btn-success" onClick={() => setConfirmation(true)} disabled={disableConfirm}>{t('title.reset.replication')}</button>
+        <button type="button" className="btn btn-success" onClick={() => setSummaryData()} disabled={disableConfirm}>{t('title.reset.replication')}</button>
       </div>
     );
   };
@@ -134,16 +155,15 @@ function ResetDiskReplicationModal({ t, dispatch, options, user }) {
   const renderConfirmation = () => {
     if (showConfirmation) {
       return (
-        <div style={{ paddingLeft: '20%' }}>
+        <div style={{ paddingLeft: '15%' }}>
           <div className="container padding-20">
-            <div className="row">
-              <div className="col-sm-3 confirmation-icon">
-                <i className="fas fa-exclamation-triangle" />
+            <div className="row pt-4">
+              <div className="col-sm-1 confirmation-icon">
+                <p className="display-4"><i className="fas fa-exclamation-triangle icon__warning" /></p>
               </div>
-              <div className="col-sm-8 confirmation_modal_msg">
-                {t('reset.disk.warning')}
-                <br />
-                {t('reset.disk.warning.notice')}
+              <div className="col-sm-9 confirmation_modal_msg">
+                <p className="mb-0">{t('reset.disk.warning')}</p>
+                <p>{t('reset.disk.warning.notice')}</p>
                 {renderSelectedDisks()}
               </div>
             </div>
@@ -205,14 +225,42 @@ function ResetDiskReplicationModal({ t, dispatch, options, user }) {
     );
   };
 
+  const renderResyncSummary = () => {
+    if (showConfirmation) {
+      return null;
+    }
+    const { totalVMs, selectedDiskCount, selectedDiskSize } = setDataForResyncSummary(virtualMachines, user);
+    return (
+      <Row className="p-3 mt-4 mb-2">
+        <Col sm={2}>{t('resync.summary')}</Col>
+        <Col sm={2}>
+          <FontAwesomeIcon size="lg" icon={faDesktop} />
+          <span className="pl-3">{totalVMs}</span>
+        </Col>
+        <Col sm={2}>
+          <FontAwesomeIcon size="lg" icon={faHdd} />
+          <span className="pl-3">{`${selectedDiskCount} [${selectedDiskSize}]`}</span>
+        </Col>
+        <Col sm={6}>{renderFilter()}</Col>
+      </Row>
+    );
+  };
+
+  useEffect(() => {
+    let isUnmounting = false;
+    if (!isUnmounting) {
+      dispatch(setResyncIntialData(virtualMachines));
+    }
+    return () => {
+      isUnmounting = true;
+    };
+  }, []);
+
   return (
     <>
       {!showConfirmation && showWarningMsg()}
-      <Row>
-        <Col sm={6} className="padding-20 margin-left-10">
-          {renderFilter()}
-        </Col>
-      </Row>
+      <ResyncDiskDropdown vms={virtualMachines} dispatch={dispatch} showConfirmation={showConfirmation} user={user} />
+      {renderResyncSummary()}
       <SimpleBar style={{ minHeight: '40vh', maxHeight: '65vh' }}>
         {showConfirmation ? renderConfirmation()
           : vms.map((vm) => <RenderResetReplicationVMs vmData={vm} dispatch={dispatch} user={user} selectedPlan={selectedPlan} />)}
@@ -222,4 +270,8 @@ function ResetDiskReplicationModal({ t, dispatch, options, user }) {
   );
 }
 
-export default (withTranslation()(ResetDiskReplicationModal));
+function mapStateToProps(state) {
+  const { user } = state;
+  return { user };
+}
+export default connect(mapStateToProps)(withTranslation()(ResetDiskReplicationModal));

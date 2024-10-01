@@ -10,6 +10,7 @@ import { getDiskLabel, getValue } from '../../utils/InputUtils';
 import { isVMRecovered } from '../../utils/validationUtils';
 import OsTypeItemRenderer from '../Table/ItemRenderers/OsTypeItemRenderer';
 import StatusItemRenderer from '../Table/ItemRenderers/StatusItemRenderer';
+import { calculatePerVMDiskData } from '../../utils/ResyncDiskUtils';
 
 function RenderResetReplicationVms(props) {
   const { t, vmData, dispatch, user, selectedPlan } = props;
@@ -19,6 +20,7 @@ function RenderResetReplicationVms(props) {
   const { protectedSite } = selectedPlan;
   const isVMwareSource = protectedSite.platformType === PLATFORM_TYPES.VMware;
   const getVMidObj = getValue(`reset-repl-vm-id-${moref}`, values);
+  const { selectedDiskCount, selectedDiskSize } = calculatePerVMDiskData(vmData, virtualDisks, user);
   const toggle = () => {
     const isRecovered = isVMRecovered(vmData);
     if (isRecovered) {
@@ -106,15 +108,26 @@ function RenderResetReplicationVms(props) {
     );
   };
 
+  const showResync = () => {
+    const vmMoref = getValue(`reset-repl-vm-id-${vmData.moref}`, values);
+    let flag = false;
+    virtualDisks.forEach((d) => {
+      if (vmMoref[d.id] === true) {
+        flag = true;
+      }
+    });
+    return flag;
+  };
+
   return (
     <div key="dm-accordion-sksk">
       <Card className="margin-bottom-10">
         <CardHeader style={{ backgroundColor: '#2a3042', border: '1px solid #464952' }}>
           <Row>
             {renderIcon()}
-            <Col sm={9}>
+            <Col sm={11}>
               <Row>
-                <Col sm={5}>
+                <Col sm={3}>
                   <div className="stack_horizontally">
                     <OsTypeItemRenderer className="link_color" data={vmData} />
                     &nbsp;&nbsp;
@@ -124,12 +137,15 @@ function RenderResetReplicationVms(props) {
                   </div>
                 </Col>
                 <Col sm={3}>
-                  <span aria-hidden className="margin-right-30">
+                  <span aria-hidden>
                     {` ${t('total.disks')} -  ${calculateDisk()}`}
                   </span>
                 </Col>
                 <Col sm={3}>
                   {renderRecoveryStatus()}
+                </Col>
+                <Col sm={3}>
+                  {showResync() ? <span className="text-success pl-5">{`Resync Disks - ${selectedDiskCount} [${selectedDiskSize}]`}</span> : null }
                 </Col>
               </Row>
             </Col>

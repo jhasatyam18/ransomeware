@@ -139,6 +139,9 @@ export const STATIC_KEYS = {
   LATEST_REPLICATION_JOBS: 'latest=true',
   LATEST_COMPLETED_REPL_JOBS: 'status=completed&latest=true',
   RECOVERY_CREDENTIAL_EXCEL_FILE: 'ui.recovery.credentials.fileName',
+  UI_RESYNC_DISK_WORKLOAD: 'resyncDisk.workload',
+  UI_RESYNC_DISK_DISKTYPE: 'resyncDisk.diskType',
+  UI_RESYNC_SUMMARY_DATA: 'resyncSummary',
 };
 
 // Recovery time in minutes
@@ -304,4 +307,8 @@ export const MAPPING_REVERSE_RECOMMENDED_DATA = {
   full: 'Full',
   'maintain-original': 'Maintain Original',
   'create-new': 'Create New Copy',
+};
+
+export const RESYNC_DISKS_TYPES = {
+  all: 'All', os: 'OS', data: 'Data',
 };
