@@ -7,10 +7,9 @@ import { PLATFORM_TYPES } from '../../constants/InputConstants';
 import { valueChange } from '../../store/actions';
 import { getStorageWithUnit } from '../../utils/AppUtils';
 import { getDiskLabel, getValue } from '../../utils/InputUtils';
-import { isVMRecovered } from '../../utils/validationUtils';
 import OsTypeItemRenderer from '../Table/ItemRenderers/OsTypeItemRenderer';
 import StatusItemRenderer from '../Table/ItemRenderers/StatusItemRenderer';
-import { calculatePerVMDiskData } from '../../utils/ResyncDiskUtils';
+import { calculatePerVMDiskData, isVMRecoveredOrNotAvailable } from '../../utils/ResyncDiskUtils';
 
 function RenderResetReplicationVms(props) {
   const { t, vmData, dispatch, user, selectedPlan } = props;
@@ -22,7 +21,7 @@ function RenderResetReplicationVms(props) {
   const getVMidObj = getValue(`reset-repl-vm-id-${moref}`, values);
   const { selectedDiskCount, selectedDiskSize } = calculatePerVMDiskData(vmData, virtualDisks, user);
   const toggle = () => {
-    const isRecovered = isVMRecovered(vmData);
+    const isRecovered = isVMRecoveredOrNotAvailable(vmData);
     if (isRecovered) {
       return;
     }
@@ -111,6 +110,9 @@ function RenderResetReplicationVms(props) {
   const showResync = () => {
     const vmMoref = getValue(`reset-repl-vm-id-${vmData.moref}`, values);
     let flag = false;
+    if (isVMRecoveredOrNotAvailable(vmData)) {
+      return flag;
+    }
     virtualDisks.forEach((d) => {
       if (vmMoref[d.id] === true) {
         flag = true;
@@ -152,7 +154,7 @@ function RenderResetReplicationVms(props) {
           </Row>
           <Collapse isOpen={isOpen}>
             <Row className="padding-left-30">
-              {isVMRecovered(vmData) ? null : renderDisks()}
+              {isVMRecoveredOrNotAvailable(vmData) ? null : renderDisks()}
             </Row>
           </Collapse>
         </CardHeader>

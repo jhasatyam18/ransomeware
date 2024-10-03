@@ -8,6 +8,7 @@ import { onApplyAction, resetDiskData } from '../../store/actions/ResyncDiskActi
 import { getValue } from '../../utils/InputUtils';
 import { getSearchSelectStyle } from '../../utils/ApiUtils';
 import { RESYNC_DISKS_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
+import { isVMRecoveredOrNotAvailable } from '../../utils/ResyncDiskUtils';
 
 function ResyncDiskDropdown(props) {
   const { vms, dispatch, showConfirmation, user, t } = props;
@@ -24,7 +25,9 @@ function ResyncDiskDropdown(props) {
       if (vms && vms.length > 0) {
         workload.push({ value: RESYNC_DISKS_TYPES.all, label: t('all') });
         vms.forEach((vm) => {
-          workload.push({ value: vm.moref, label: vm.name });
+          if (!isVMRecoveredOrNotAvailable(vm)) {
+            workload.push({ value: vm.moref, label: vm.name });
+          }
         });
       }
       diskTypes.push({ value: RESYNC_DISKS_TYPES.all, label: t('all') });

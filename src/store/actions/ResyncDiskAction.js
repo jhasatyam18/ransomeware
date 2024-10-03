@@ -1,5 +1,5 @@
 import { RESYNC_DISKS_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
-import { setDataForResyncSummary } from '../../utils/ResyncDiskUtils';
+import { isVMRecoveredOrNotAvailable, setDataForResyncSummary } from '../../utils/ResyncDiskUtils';
 import { getValue } from '../../utils/InputUtils';
 import { updateValues, valueChange } from './UserActions';
 
@@ -22,18 +22,18 @@ export function setResyncIntialData(virtualMachines) {
     dispatch(updateValues(resyncSummary));
     let data = {};
     virtualMachines.forEach((vm) => {
-      let disks = {};
-      vm.virtualDisks.forEach((d) => {
-        if (d.isReplicationReset) {
-          disks = { ...disks, [d.id]: true };
-        } else {
-          disks = { ...disks, [d.id]: false };
-        }
-      });
+      if (!isVMRecoveredOrNotAvailable(vm)) {
+        let disks = {};
+        vm.virtualDisks.forEach((d) => {
+          if (!d.isDeleted) {
+            disks = { ...disks, [d.id]: d.isReplicationReset };
+          }
+        });
 
-      data = {
-        ...data, [`reset-repl-vm-id-${vm.moref}`]: { ...disks },
-      };
+        data = {
+          ...data, [`reset-repl-vm-id-${vm.moref}`]: { ...disks },
+        };
+      }
     });
     dispatch(updateValues(data));
   };
@@ -52,28 +52,32 @@ export function setResyncValues(workload, diskType, virtualMachines) {
     // workloads
     const isAllWorkloads = workload.some((item) => item.value === RESYNC_DISKS_TYPES.all);
     virtualMachines.forEach((vm) => {
-      let disks = {};
-      vm.virtualDisks.forEach((d, index) => {
-        if (isAll) {
-          disks = { ...disks, [d.id]: true };
-        } else if (includeOSDisks) {
-          disks = { ...disks, [d.id]: (index === 0) };
-        } else if (includeDataDisks) {
-          disks = { ...disks, [d.id]: (index !== 0) };
-        }
-      });
-      if (isAllWorkloads) {
-        data = {
-          ...data, [`reset-repl-vm-id-${vm.moref}`]: { ...disks },
-        };
-      } else {
-        workload.forEach((w) => {
-          if (w.value === vm.moref) {
-            data = {
-              ...data, [`reset-repl-vm-id-${vm.moref}`]: { ...disks },
-            };
+      if (!isVMRecoveredOrNotAvailable(vm)) {
+        let disks = {};
+        vm.virtualDisks.forEach((d, index) => {
+          if (!d.isDeleted) {
+            if (isAll) {
+              disks = { ...disks, [d.id]: true };
+            } else if (includeOSDisks) {
+              disks = { ...disks, [d.id]: (index === 0) };
+            } else if (includeDataDisks) {
+              disks = { ...disks, [d.id]: (index !== 0) };
+            }
           }
         });
+        if (isAllWorkloads) {
+          data = {
+            ...data, [`reset-repl-vm-id-${vm.moref}`]: { ...disks },
+          };
+        } else {
+          workload.forEach((w) => {
+            if (w.value === vm.moref) {
+              data = {
+                ...data, [`reset-repl-vm-id-${vm.moref}`]: { ...disks },
+              };
+            }
+          });
+        }
       }
     });
     dispatch(updateValues(data));
@@ -86,11 +90,15 @@ export function resetDiskData(virtualMachines) {
   return (dispatch) => {
     let data = {};
     virtualMachines.forEach((vm) => {
-      let disk = {};
-      vm.virtualDisks.forEach((d) => {
-        disk = { ...disk, [d.id]: false };
-      });
-      data = { ...data, [`reset-repl-vm-id-${vm.moref}`]: { ...disk } };
+      if (!isVMRecoveredOrNotAvailable(vm)) {
+        let disk = {};
+        vm.virtualDisks.forEach((d) => {
+          if (!d.isDeleted) {
+            disk = { ...disk, [d.id]: d.isReplicationReset };
+          }
+        });
+        data = { ...data, [`reset-repl-vm-id-${vm.moref}`]: { ...disk } };
+      }
     });
     dispatch(updateValues(data));
     dispatch(valueChange(STATIC_KEYS.UI_RESYNC_SUMMARY_DATA, { vms: 0, disks: 0, dataDisks: 0, osDisks: 0, diskSize: '0KB', osSize: '0KB', dataSize: '0KB' }));

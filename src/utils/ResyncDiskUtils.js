@@ -1,6 +1,14 @@
 import { getStorageWithUnit } from './AppUtils';
 import { getValue } from './InputUtils';
 
+export const isVMRecoveredOrNotAvailable = (vm) => {
+  const { recoveryStatus, isRemovedFromPlan, isDeleted } = vm;
+  if (recoveryStatus === 'Migrated' || recoveryStatus === 'Recovered' || isRemovedFromPlan || isDeleted) {
+    return true;
+  }
+  return false;
+};
+
 export function setDataForResyncSummary(virtualMachines, user) {
   const { values } = user;
   let selectedDiskSize = 0;
@@ -11,24 +19,26 @@ export function setDataForResyncSummary(virtualMachines, user) {
   let dataDisks = 0;
   let totalVMs = 0;
   virtualMachines.forEach((vm) => {
-    const vmMoref = getValue(`reset-repl-vm-id-${vm.moref}`, values);
-    let vmHasSelectedDisks = false;
-    vm.virtualDisks.forEach((d, index) => {
-      if (vmMoref[d.id] === true) {
-        vmHasSelectedDisks = true;
-        if (index === 0) {
-          osSize += d.size;
-          osDisks += 1;
-        } else {
-          dataSize += d.size;
-          dataDisks += 1;
+    if (!isVMRecoveredOrNotAvailable(vm)) {
+      const vmMoref = getValue(`reset-repl-vm-id-${vm.moref}`, values);
+      let vmHasSelectedDisks = false;
+      vm.virtualDisks.forEach((d, index) => {
+        if (!d.isDeleted && vmMoref[d.id] === true) {
+          vmHasSelectedDisks = true;
+          if (index === 0) {
+            osSize += d.size;
+            osDisks += 1;
+          } else {
+            dataSize += d.size;
+            dataDisks += 1;
+          }
+          selectedDiskSize += d.size;
+          selectedDiskCount += 1;
         }
-        selectedDiskSize += d.size;
-        selectedDiskCount += 1;
+      });
+      if (vmHasSelectedDisks) {
+        totalVMs += 1;
       }
-    });
-    if (vmHasSelectedDisks) {
-      totalVMs += 1;
     }
   });
   selectedDiskSize = getStorageWithUnit(selectedDiskSize);
@@ -43,7 +53,7 @@ export const calculatePerVMDiskData = (vmData, virtualDisks, user) => {
   let selectedDiskSize = 0;
   virtualDisks.forEach((d) => {
     const vmMoref = getValue(`reset-repl-vm-id-${vmData.moref}`, values);
-    if (vmMoref[d.id] === true) {
+    if (!d.isDeleted && vmMoref[d.id] === true) {
       selectedDiskCount += 1;
       selectedDiskSize += d.size;
     }

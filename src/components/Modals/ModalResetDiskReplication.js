@@ -257,10 +257,10 @@ function ResetDiskReplicationModal({ t, dispatch, options, user }) {
   }, []);
   return (
     <>
-      {!showConfirmation && showWarningMsg()}
-      <ResyncDiskDropdown vms={virtualMachines} dispatch={dispatch} showConfirmation={showConfirmation} user={user} />
-      {renderResyncSummary()}
       <SimpleBar className={`${showConfirmation ? '' : 'resync_modal_height resync_font_size'}`}>
+        {!showConfirmation && showWarningMsg()}
+        {virtualMachines.length > 1 && <ResyncDiskDropdown vms={virtualMachines} dispatch={dispatch} showConfirmation={showConfirmation} user={user} />}
+        {renderResyncSummary()}
         {showConfirmation ? renderConfirmation()
           : vms.map((vm) => <RenderResetReplicationVMs vmData={vm} dispatch={dispatch} user={user} selectedPlan={selectedPlan} />)}
       </SimpleBar>

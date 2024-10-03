@@ -37,14 +37,15 @@
 
 .resync_modal_height {
   max-height: 64vh;
+  min-height: 40vh;
   @media (max-height: 902px) {
-    max-height: 60vh;
+    max-height: 65vh;
   }
   @media (max-height: 775px) {
-    max-height: 42vh;
+    max-height: 62vh;
   }
   @media (max-height: 635px) {
-    max-height: 30vh;
+    max-height: 55vh;
   }
 }
 
