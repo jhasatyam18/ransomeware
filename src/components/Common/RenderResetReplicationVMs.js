@@ -60,12 +60,12 @@ function RenderResetReplicationVms(props) {
     }
     return (
       <>
-        <Col sm={4}>
+        <Col sm={3}>
           &nbsp;
         </Col>
         <Col sm={7}>
           <Row>
-            <Col sm={4}>
+            <Col sm={5}>
               <div className="custom-control custom-checkbox">
                 <input type="checkbox" className={`custom-control-input ${isReplicationReset === true ? 'checkbox_disabled' : ''}`} id={key} checked={value} name={key} onChange={(e) => handleChange(e, key)} disabled={isReplicationReset} />
                 <label className="custom-control-label  margin-right-8" htmlFor={key}>
@@ -124,14 +124,14 @@ function RenderResetReplicationVms(props) {
       <Card className="margin-bottom-10">
         <CardHeader style={{ backgroundColor: '#2a3042', border: '1px solid #464952' }}>
           <Row>
-            {renderIcon()}
-            <Col sm={11}>
+            <Col sm={12}>
               <Row>
-                <Col sm={3}>
+                <Col sm={2}>
                   <div className="stack_horizontally">
+                    {renderIcon()}
                     <OsTypeItemRenderer className="link_color" data={vmData} />
                     &nbsp;&nbsp;
-                    <span aria-hidden className="link_color margin-right-30" onClick={toggle}>
+                    <span aria-hidden className="link_color" onClick={toggle}>
                       {name}
                     </span>
                   </div>
@@ -141,11 +141,11 @@ function RenderResetReplicationVms(props) {
                     {` ${t('total.disks')} -  ${calculateDisk()}`}
                   </span>
                 </Col>
-                <Col sm={3}>
+                <Col sm={5}>
                   {renderRecoveryStatus()}
                 </Col>
-                <Col sm={3}>
-                  {showResync() ? <span className="text-success pl-5">{`Resync Disks - ${selectedDiskCount} [${selectedDiskSize}]`}</span> : null }
+                <Col sm={2}>
+                  {showResync() ? <span className="text-success">{t('per.vm.resync.disk', { selectedDiskCount, selectedDiskSize })}</span> : null }
                 </Col>
               </Row>
             </Col>

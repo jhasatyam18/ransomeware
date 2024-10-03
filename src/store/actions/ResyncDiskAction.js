@@ -24,7 +24,11 @@ export function setResyncIntialData(virtualMachines) {
     virtualMachines.forEach((vm) => {
       let disks = {};
       vm.virtualDisks.forEach((d) => {
-        disks = { ...disks, [d.id]: false };
+        if (d.isReplicationReset) {
+          disks = { ...disks, [d.id]: true };
+        } else {
+          disks = { ...disks, [d.id]: false };
+        }
       });
 
       data = {

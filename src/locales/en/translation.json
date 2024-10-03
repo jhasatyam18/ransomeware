@@ -878,5 +878,6 @@
   "os.disk.count":"OS-Disks {{osDisks}}",
   "os.disk.size":"OS-Disks {{osDisksSize}}",
   "data.disk.size":"Data Disks {{dataDiskSize}}",
-  "data.disk.count":"Data Disks {{dataDisks}}"
+  "data.disk.count":"Data Disks {{dataDisks}}",
+  "per.vm.resync.disk": "Resync Disks - {{selectedDiskCount}} [{{selectedDiskSize}}]"
 }

@@ -95,7 +95,7 @@ function ResetDiskReplicationModal({ t, dispatch, options, user }) {
   const renderSelectedDisks = () => {
     const resyncSelectedData = getValue(STATIC_KEYS.UI_RESYNC_SUMMARY_DATA, values);
     return (
-      <div className="padding-top-10">
+      <div className="padding-top-10 resync_font_size">
         <p>{t('resync.summary')}</p>
         <Row className="mb-3 ml-2">
           <Col sm={3}>
@@ -255,13 +255,12 @@ function ResetDiskReplicationModal({ t, dispatch, options, user }) {
       isUnmounting = true;
     };
   }, []);
-
   return (
     <>
       {!showConfirmation && showWarningMsg()}
       <ResyncDiskDropdown vms={virtualMachines} dispatch={dispatch} showConfirmation={showConfirmation} user={user} />
       {renderResyncSummary()}
-      <SimpleBar style={{ minHeight: '40vh', maxHeight: '65vh' }}>
+      <SimpleBar className={`${showConfirmation ? '' : 'resync_modal_height resync_font_size'}`}>
         {showConfirmation ? renderConfirmation()
           : vms.map((vm) => <RenderResetReplicationVMs vmData={vm} dispatch={dispatch} user={user} selectedPlan={selectedPlan} />)}
       </SimpleBar>
