@@ -12,7 +12,7 @@ import { hideApplicationLoader, showApplicationLoader } from '../../store/action
 import { getValue } from '../../utils/InputUtils';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
 import { exportTableToExcel } from '../../utils/ReportUtils';
-import { isEmpty } from '../../utils/validationUtils';
+import { isDateEmpty, isEmpty } from '../../utils/validationUtils';
 import DMBreadCrumb from '../Common/DMBreadCrumb';
 import ReportSideBar from './ReportSideBar';
 import ReportSystemOverview from './ReportSystemOverview';
@@ -51,12 +51,12 @@ class Report extends Component {
     const startDate = getValue(STATIC_KEYS.REPORT_DURATION_START_DATE, values);
     const endDate = getValue(STATIC_KEYS.REPORT_DURATION_END_DATE, values);
     const durationType = getValue(STATIC_KEYS.REPORT_DURATION_TYPE, values);
-    if (durationType === REPORT_DURATION.CUSTOM && (isEmpty({ value: startDate }) || isEmpty({ value: endDate }))) {
+    if (durationType === REPORT_DURATION.CUSTOM && (isDateEmpty({ value: startDate }) || isDateEmpty({ value: endDate }))) {
       const date = new Date();
-      if (isEmpty({ value: startDate }) && isEmpty({ value: endDate })) {
+      if (isDateEmpty({ value: startDate }) && isDateEmpty({ value: endDate })) {
         dispatch(valueChange(STATIC_KEYS.REPORT_DURATION_START_DATE, date));
         dispatch(valueChange(STATIC_KEYS.REPORT_DURATION_END_DATE, date));
-      } else if (isEmpty({ value: endDate })) {
+      } else if (isDateEmpty({ value: endDate })) {
         dispatch(valueChange(STATIC_KEYS.REPORT_DURATION_END_DATE, date));
       } else {
         dispatch(valueChange(STATIC_KEYS.REPORT_DURATION_START_DATE, date));
