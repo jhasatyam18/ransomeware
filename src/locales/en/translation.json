@@ -806,7 +806,7 @@
   "aws.configure.replication.priority": "Configure Replication Priority",
   "total.disks": "Total Disks",
   "title.reset.replication": "Resync Disk Replication",
-  "reset.disk.warning": "Are you sure you want to resync replication for disk(s)?",
+  "reset.disk.warning": "Are you sure you want to resync replication for disk(s) ?",
   "reset.disk.warning.notice": "This operation cannot be reverted",
   "disk.repl.type.incremental": "Incremental",
   "disk.repl.type.full": "Full",
@@ -872,5 +872,18 @@
   "info.protectionplan.aws.host.affinity":"When affinity is set to Host, an instance launched onto a specific host always restarts on the same host if stopped.",
   "info.protectionplan.aws.ami": "AMI Id which is associated with self-managed license.",
   "info.protectionplan.aws.license": "License configurations are AWS License Manager rule-sets that are associated with instances at launch to enforce license compliance. If no value is specified the value of the AMI will be used if associated.",
-  "test.recovery.ip.warning.msg":"To configure Static IP please specify credentials of local administrator account."
+  "test.recovery.ip.warning.msg":"To configure Static IP please specify credentials of local administrator account.",
+  "resync.summary": "Resync Summary",
+  "select.workloads.for.resync": "Select Workloads For Resync",
+  "select.disk.type": "Select Disk Type",
+  "os.disk": "OS Disk",
+  "data.disk": "Data Disk",
+  "all": "All",
+  "total.disk":"Total {{totalDisks}}",
+  "total.disk.size":"Total {{totalDiskSize}}",
+  "os.disk.count":"OS-Disks {{osDisks}}",
+  "os.disk.size":"OS-Disks {{osDisksSize}}",
+  "data.disk.size":"Data Disks {{dataDiskSize}}",
+  "data.disk.count":"Data Disks {{dataDisks}}",
+  "per.vm.resync.disk": "Resync Disks - {{selectedDiskCount}} [{{selectedDiskSize}}]"
 }

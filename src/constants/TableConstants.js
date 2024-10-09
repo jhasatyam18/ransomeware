@@ -65,6 +65,7 @@ export const REVERSE_SUMMARY_ENTITY_TYPE_RENDERER = 'REVERSE_SUMMARY_ENTITY_TYPE
 export const REPLICATION_TYPE_OPTION_RENDERER = 'REPLICATION_TYPE_OPTION_RENDERER';
 export const ENTITY_TYPE_OPTION_RENDERER = 'ENTITY_TYPE_OPTION_RENDERER';
 export const REVERSE_VM_DESCRIPTION_RENDERER = 'REVERSE_VM_DESCRIPTION_RENDERER';
+export const DR_PLAN_RECOVERY_STATUS_RENDERER = 'DR_PLAN_RECOVERY_STATUS_RENDERER';
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
@@ -85,7 +86,7 @@ export const TABLE_HEADER_DR_PLANS = [
   { label: 'recovery.site', field: 'recoverySite.name', itemRenderer: RECOVERY_SITE_LINK_ITEM_RENDERER },
   { label: 'replication.interval', field: 'replicationInterval', itemRenderer: REPLICATION_INTERVAL_ITEM_RENDERER },
   { label: 'status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
-  { label: 'Recovery Status', field: 'recoveryStatus', itemRenderer: STATUS_ITEM_RENDERER },
+  { label: 'Recovery Status', field: 'recoveryStatus', itemRenderer: DR_PLAN_RECOVERY_STATUS_RENDERER },
   { label: 'Playbook', field: '', itemRenderer: PLAYBOOK_ITEM_RENDERER },
 ];
 export const TABLE_PROTECT_VM_VMWARE = [

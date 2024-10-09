@@ -7,9 +7,9 @@ import { PLATFORM_TYPES } from '../../constants/InputConstants';
 import { valueChange } from '../../store/actions';
 import { getStorageWithUnit } from '../../utils/AppUtils';
 import { getDiskLabel, getValue } from '../../utils/InputUtils';
-import { isVMRecovered } from '../../utils/validationUtils';
 import OsTypeItemRenderer from '../Table/ItemRenderers/OsTypeItemRenderer';
 import StatusItemRenderer from '../Table/ItemRenderers/StatusItemRenderer';
+import { calculatePerVMDiskData, isVMRecoveredOrNotAvailable } from '../../utils/ResyncDiskUtils';
 
 function RenderResetReplicationVms(props) {
   const { t, vmData, dispatch, user, selectedPlan } = props;
@@ -19,8 +19,9 @@ function RenderResetReplicationVms(props) {
   const { protectedSite } = selectedPlan;
   const isVMwareSource = protectedSite.platformType === PLATFORM_TYPES.VMware;
   const getVMidObj = getValue(`reset-repl-vm-id-${moref}`, values);
+  const { selectedDiskCount, selectedDiskSize } = calculatePerVMDiskData(vmData, virtualDisks, user);
   const toggle = () => {
-    const isRecovered = isVMRecovered(vmData);
+    const isRecovered = isVMRecoveredOrNotAvailable(vmData);
     if (isRecovered) {
       return;
     }
@@ -58,12 +59,12 @@ function RenderResetReplicationVms(props) {
     }
     return (
       <>
-        <Col sm={4}>
+        <Col sm={3}>
           &nbsp;
         </Col>
         <Col sm={7}>
           <Row>
-            <Col sm={4}>
+            <Col sm={5}>
               <div className="custom-control custom-checkbox">
                 <input type="checkbox" className={`custom-control-input ${isReplicationReset === true ? 'checkbox_disabled' : ''}`} id={key} checked={value} name={key} onChange={(e) => handleChange(e, key)} disabled={isReplicationReset} />
                 <label className="custom-control-label  margin-right-8" htmlFor={key}>
@@ -106,37 +107,54 @@ function RenderResetReplicationVms(props) {
     );
   };
 
+  const showResync = () => {
+    const vmMoref = getValue(`reset-repl-vm-id-${vmData.moref}`, values);
+    let flag = false;
+    if (isVMRecoveredOrNotAvailable(vmData)) {
+      return flag;
+    }
+    virtualDisks.forEach((d) => {
+      if (vmMoref[d.id] === true) {
+        flag = true;
+      }
+    });
+    return flag;
+  };
+
   return (
     <div key="dm-accordion-sksk">
       <Card className="margin-bottom-10">
         <CardHeader style={{ backgroundColor: '#2a3042', border: '1px solid #464952' }}>
           <Row>
-            {renderIcon()}
-            <Col sm={9}>
+            <Col sm={12}>
               <Row>
-                <Col sm={5}>
+                <Col sm={2}>
                   <div className="stack_horizontally">
+                    {renderIcon()}
                     <OsTypeItemRenderer className="link_color" data={vmData} />
                     &nbsp;&nbsp;
-                    <span aria-hidden className="link_color margin-right-30" onClick={toggle}>
+                    <span aria-hidden className="link_color" onClick={toggle}>
                       {name}
                     </span>
                   </div>
                 </Col>
                 <Col sm={3}>
-                  <span aria-hidden className="margin-right-30">
+                  <span aria-hidden>
                     {` ${t('total.disks')} -  ${calculateDisk()}`}
                   </span>
                 </Col>
-                <Col sm={3}>
+                <Col sm={5}>
                   {renderRecoveryStatus()}
+                </Col>
+                <Col sm={2}>
+                  {showResync() ? <span className="text-success">{t('per.vm.resync.disk', { selectedDiskCount, selectedDiskSize })}</span> : null }
                 </Col>
               </Row>
             </Col>
           </Row>
           <Collapse isOpen={isOpen}>
             <Row className="padding-left-30">
-              {isVMRecovered(vmData) ? null : renderDisks()}
+              {isVMRecoveredOrNotAvailable(vmData) ? null : renderDisks()}
             </Row>
           </Collapse>
         </CardHeader>

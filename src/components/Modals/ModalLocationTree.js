@@ -26,6 +26,7 @@ function ModalLocationTree(props) {
   };
   const onConfigure = () => {
     dispatch(getComputeResources(fieldKey));
+    dispatch(closeModal());
   };
   function renderFooter() {
     return (

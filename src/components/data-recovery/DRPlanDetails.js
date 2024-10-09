@@ -207,10 +207,15 @@ class DRPlanDetails extends Component {
   renderRecoveryStatus() {
     const { drPlans } = this.props;
     const { protectionPlan } = drPlans;
-    const { recoveryStatus } = protectionPlan;
+    const { recoveryStatus, reverseStatus } = protectionPlan;
     if (recoveryStatus) {
       return (
         <span className="badge badge-success margin-right-5">{recoveryStatus.toUpperCase()}</span>
+      );
+    }
+    if (reverseStatus) {
+      return (
+        <span className="badge badge-info margin-right-5">{reverseStatus.toUpperCase()}</span>
       );
     }
   }
