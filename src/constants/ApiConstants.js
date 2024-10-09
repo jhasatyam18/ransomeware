@@ -146,3 +146,13 @@ export const API_UPLOAD_IDP_CONFIG = 'api/v1/idp/upload';
 
 // CBT
 export const API_GET_VMWARE_VMS = 'api/v1/sites/<id>/vms?details=true&vms=vmstring';
+
+// Refresh Recovery Status
+export const API_REFRESH_RECOVERY_VMS = 'api/v1/jobs/recover/vms?refreshrequired=true&recoverytype=<recoveryType>';
+export const API_REFRESH_RECOVERY_OPS = 'api/v1/jobs/recover/refresh';
+
+export const REFRESH_OPS = {
+  validate: 'validate',
+  poll: 'poll',
+  update: 'update',
+};

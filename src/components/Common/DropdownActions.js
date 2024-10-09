@@ -7,7 +7,7 @@ import {
 } from 'reactstrap';
 
 const DropdownActions = (props) => {
-  const { actions, dispatch, t, className, uniqueID = 'unique-dropdown-action-id' } = props;
+  const { actions, dispatch, t, align, css, alignLeft, uniqueID = 'unique-dropdown-action-id' } = props;
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const toggle = () => setDropdownOpen((prevState) => !prevState);
   const { title } = props;
@@ -16,8 +16,38 @@ const DropdownActions = (props) => {
     dispatch(action(id));
   }
 
+  const renderLeft = () => (
+    <DropdownMenu style={{ right: 0, left: 'auto', minWidth: '200px' }}>
+      {actions.map((item) => {
+        const { label, disabled, icon } = item;
+        return (
+          <DropdownItem right onClick={() => onActionClick(item)} disabled={disabled} className={!disabled ? 'text-white' : ''}>
+            <i className={icon} />
+            &nbsp;&nbsp;
+            {t(label)}
+          </DropdownItem>
+        );
+      })}
+    </DropdownMenu>
+  );
+
+  const renderRight = () => (
+    <DropdownMenu right>
+      {actions.map((item) => {
+        const { label, disabled, icon } = item;
+        return (
+          <DropdownItem right onClick={() => onActionClick(item)} disabled={disabled} className={!disabled ? 'text-white' : ''}>
+            <i className={icon} />
+            &nbsp;&nbsp;
+            {t(label)}
+          </DropdownItem>
+        );
+      })}
+    </DropdownMenu>
+  );
+
   return (
-    <div className={className || 'display__flex__reverse'}>
+    <div className={`${align === 'left' ? '' : 'display__flex__reverse'} ${css}`}>
       <Dropdown
         isOpen={dropdownOpen}
         toggle={toggle}
@@ -29,19 +59,7 @@ const DropdownActions = (props) => {
           </span>
           <FontAwesomeIcon style={{ fontSize: '8px', padding: '1px' }} size="xs" icon={faChevronDown} onClick={toggle} />
         </DropdownToggle>
-        <DropdownMenu right>
-          {actions.map((item) => {
-            const { label, disabled, icon } = item;
-            const labelID = label.replaceAll(' ', '');
-            return (
-              <DropdownItem right onClick={() => onActionClick(item)} disabled={disabled} className={!disabled ? 'text-white' : ''}>
-                <FontAwesomeIcon size="sm" icon={icon} id={`${labelID}`} />
-                &nbsp;&nbsp;
-                {t(label)}
-              </DropdownItem>
-            );
-          })}
-        </DropdownMenu>
+        {alignLeft === 0 ? renderLeft() : renderRight()}
       </Dropdown>
     </div>
   );

@@ -1,0 +1,74 @@
+import { faCheckCircle, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useState } from 'react';
+import { withTranslation } from 'react-i18next';
+import { Col, Popover, PopoverBody, Row } from 'reactstrap';
+import SimpleBar from 'simplebar-react';
+import { DETAILED_STEP_COMPONENTS } from '../../constants/AppStatus';
+import { STATIC_KEYS } from '../../constants/InputConstants';
+
+function RenderDetailedSteps(props) {
+  const { parseData, id, t, name, css } = props;
+  const [popOver, setPopOver] = useState({});
+  const renderPopOver = (hoverInfo, key, isOpen) => (
+    <Popover placement="bottom" isOpen={popOver[isOpen]} target={key} style={{ backgroundColor: 'black', color: 'white', border: 'none', width: '200px', textAlign: 'left' }}>
+      <PopoverBody>
+        <SimpleBar style={{ maxHeight: '100px', minHeight: '30px' }}>
+          {hoverInfo}
+        </SimpleBar>
+      </PopoverBody>
+    </Popover>
+  );
+
+  const renderIcons = (value) => (value === STATIC_KEYS.REC_STEP_PASS ? (
+    <span className="text-success margin-right-5">
+      <FontAwesomeIcon size="sm" icon={faCheckCircle} />
+    </span>
+  ) : (
+    <>
+      <span className="text-danger margin-right-5">
+        <FontAwesomeIcon size="sm" icon={faCircleXmark} />
+      </span>
+    </>
+  ));
+
+  if (name === DETAILED_STEP_COMPONENTS.PENDING_STATUS_STEPS) {
+    if (parseData.length === 0) {
+      return null;
+    }
+    return (
+      parseData.map((pd, ind) => {
+        const key = `${ind}-${pd.message}`;
+        return (
+          <div
+            className={`${css} d-flex`}
+            id={`rec-step-${id}-${key}`}
+          >
+            {renderIcons(pd.result)}
+            <Row className="w-100">
+              <Col sm={5}>{ `${t(pd.name)}`}</Col>
+              <Col sm={7} className="text-align-right">{`: ${pd.message}`}</Col>
+            </Row>
+          </div>
+        );
+      })
+    );
+  }
+  return (
+    <ul className="rec_step_list" style={{ listStyleType: 'none' }}>
+      {parseData.map((pd) => {
+        const key = Object.keys(pd);
+        const detailedStepStatus = pd[key[0]].result;
+        return (
+          <li id={`rec-step-${id}-${key}`} onMouseEnter={() => setPopOver({ [key]: true })} onMouseLeave={() => setPopOver({ [key]: false })}>
+            { `${t(key)}`}
+            {renderIcons(detailedStepStatus)}
+            {renderPopOver(pd[key[0]].message, `rec-step-${id}-${key}`, key)}
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+export default (withTranslation()(RenderDetailedSteps));

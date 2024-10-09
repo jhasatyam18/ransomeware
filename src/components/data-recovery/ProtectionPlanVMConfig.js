@@ -3,7 +3,7 @@ import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Col, Form, Label, Row } from 'reactstrap';
 import { PLATFORM_TYPES } from '../../constants/InputConstants';
-import { TABLE_FILTER_TEXT, TABLE_PROTECTION_PLAN_VMS, TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG, TABLE_AWS_PROTECTION_PLAN_VMS_RECOVERY_CONFIG } from '../../constants/TableConstants';
+import { TABLE_AWS_PROTECTION_PLAN_VMS_RECOVERY_CONFIG, TABLE_FILTER_TEXT, TABLE_PROTECTION_PLAN_VMS, TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG } from '../../constants/TableConstants';
 import { filterData } from '../../utils/AppUtils';
 import DMTable from '../Table/DMTable';
 import DMTPaginator from '../Table/DMTPaginator';

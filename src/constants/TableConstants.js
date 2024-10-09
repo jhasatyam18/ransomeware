@@ -66,6 +66,7 @@ export const REPLICATION_TYPE_OPTION_RENDERER = 'REPLICATION_TYPE_OPTION_RENDERE
 export const ENTITY_TYPE_OPTION_RENDERER = 'ENTITY_TYPE_OPTION_RENDERER';
 export const REVERSE_VM_DESCRIPTION_RENDERER = 'REVERSE_VM_DESCRIPTION_RENDERER';
 export const DR_PLAN_RECOVERY_STATUS_RENDERER = 'DR_PLAN_RECOVERY_STATUS_RENDERER';
+export const LATEST_REFRESH_RECOVERY_STATUS = 'LATEST_REFRESH_RECOVERY_STATUS';
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
@@ -444,4 +445,13 @@ export const TABLE_REVERSE_VM = [
   { label: 'Entity Type', field: '', itemRenderer: ENTITY_TYPE_OPTION_RENDERER },
   { label: 'Replication Type', itemRenderer: REPLICATION_TYPE_OPTION_RENDERER },
   { label: 'description', field: 'description', width: 3, itemRenderer: REVERSE_VM_DESCRIPTION_RENDERER },
+];
+
+export const TABLE_REFRESH_RECOVERY_STATUS = [
+  { label: 'Workload', field: 'vmName', width: '2' },
+  { label: 'Protection Plan', field: 'protectionPlanName' },
+  { label: 'Boot Order', field: 'bootOrder' },
+  { label: 'Recovery Time', field: 'startTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Last Known Recovery Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
+  { label: 'Latest Recovery Status', field: 'refreshedRecoveryStatus', itemRenderer: LATEST_REFRESH_RECOVERY_STATUS, width: '2.9' },
 ];

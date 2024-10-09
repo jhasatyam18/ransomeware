@@ -3,15 +3,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Col, Row } from 'reactstrap';
-import SimpleBar from 'simplebar-react';
 import { connect } from 'react-redux';
+import SimpleBar from 'simplebar-react';
 import { PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
 import { clearValues, refresh, valueChange } from '../../store/actions';
 import { onEditProtectionPlan } from '../../store/actions/DrPlanActions';
 import { closeModal } from '../../store/actions/ModalActions';
+import { setResyncIntialData } from '../../store/actions/ResyncDiskAction';
 import { getDiskLabel, getValue } from '../../utils/InputUtils';
 import RenderResetReplicationVMs from '../Common/RenderResetReplicationVMs';
-import { setResyncIntialData } from '../../store/actions/ResyncDiskAction';
 import ResyncDiskDropdown from '../Common/ResyncDiskDropdown';
 import { setDataForResyncSummary } from '../../utils/ResyncDiskUtils';
 

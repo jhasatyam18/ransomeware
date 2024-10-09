@@ -10,6 +10,7 @@ export const UI_WORKFLOW = {
   RECOVERY: 'RECOVERY',
   RESET_DISK_REPLICATION: 'RESET_DISK_REPLICATION',
   SINGLE_VM_EDIT: 'SINGLE_VM_EDIT',
+  REFRESH_RECOVERY: 'REFRESH_RECOVERY',
 };
 
 export const PLATFORM_TYPES = {
@@ -142,6 +143,12 @@ export const STATIC_KEYS = {
   UI_RESYNC_DISK_WORKLOAD: 'resyncDisk.workload',
   UI_RESYNC_DISK_DISKTYPE: 'resyncDisk.diskType',
   UI_RESYNC_SUMMARY_DATA: 'resyncSummary',
+  // refresh recovery
+  UI_REFRESH_STATUS_VMS: 'ui.refresh.status.vms',
+  UI_REFRESH_SELECTED_VMS: 'ui.refresh.selected.vms',
+  UI_REFRESH_VALIDATION_OBJ: 'ui.refresh.validation.obj',
+  UI_REFRESH_OP_STATE: 'refresh.status.operation.state',
+  PENDING_STATUS_CLEANUP_RECOVERY: 'pending.status.cleanup.recovary',
 };
 
 // Recovery time in minutes
@@ -319,4 +326,18 @@ export const AWS_TARGET_HOST_TYPES = {
 };
 export const RESYNC_DISKS_TYPES = {
   all: 'All', os: 'OS', data: 'Data',
+};
+
+export const REF_REC_REFRESH_CONSTANT = {
+  GLOBAL: 'global',
+  REF_REC_VM_DATA: 'ref_rec_vm_data',
+};
+
+export const REFRESH_RECOVERY_TYPE_FILTER = {
+  TEST_RECOVERY: 'test recovery',
+  RECOVERY: 'full recovery,migration',
+};
+
+export const RECOVERY_STEPS = {
+  VALIDATION_INSTANCE_FOR_RECOVERY: 'Validating Instance for recovery',
 };

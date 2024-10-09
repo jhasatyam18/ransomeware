@@ -7,7 +7,7 @@ import { Col, Popover, PopoverBody, Row } from 'reactstrap';
 import { API_RESCOVERY_JOB_STATUS_STEPS } from '../../../constants/ApiConstants';
 import { JOB_COMPLETION_STATUS, JOB_FAILED } from '../../../constants/AppStatus';
 import { MILI_SECONDS_TIME } from '../../../constants/EventConstant';
-import { RECOVERY_GUEST_OS, RECOVERY_STATUS, STATIC_KEYS, UI_WORKFLOW } from '../../../constants/InputConstants';
+import { RECOVERY_GUEST_OS, RECOVERY_STATUS, RECOVERY_STEPS, STATIC_KEYS, UI_WORKFLOW } from '../../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../../constants/MessageConstants';
 import { MODAL_SUMMARY, MODAL_TROUBLESHOOTING_WINDOW } from '../../../constants/Modalconstant';
 import { addMessage } from '../../../store/actions/MessageActions';
@@ -38,7 +38,7 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
     if (typeof data !== 'undefined' && data.step !== '') {
       const step = JSON.parse(data.step);
       step.forEach((element) => {
-        if (typeof element.data !== 'undefined' && element.data !== '') {
+        if (typeof element.data !== 'undefined' && element.data !== '' && element.name === RECOVERY_STEPS.VALIDATION_INSTANCE_FOR_RECOVERY) {
           const parseData = JSON.parse(element.data);
           parseData.forEach((pd) => {
             const key = Object.keys(pd);
@@ -61,17 +61,19 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
       let step = [];
       if (json.step !== '' && typeof json.step !== 'undefined') {
         step = JSON.parse(json.step);
-        step.forEach((element) => {
-          if (element.data !== '') {
-            const parseData = JSON.parse(element.data);
-            for (let j = 0; j < parseData.length; j += 1) {
-              if (parseData[j].result === STATIC_KEYS.REC_STEP_FAIL) {
-                setDetailedStepError(true);
-                break;
+        if (step.length > 0 && json.name === RECOVERY_STEPS.VALIDATION_INSTANCE_FOR_RECOVERY) {
+          step.forEach((element) => {
+            if (element.data !== '') {
+              const parseData = JSON.parse(element.data);
+              for (let j = 0; j < parseData.length; j += 1) {
+                if (parseData[j].result === STATIC_KEYS.REC_STEP_FAIL) {
+                  setDetailedStepError(true);
+                  break;
+                }
               }
             }
-          }
-        });
+          });
+        }
       }
       setSteps(step);
       setjobdata(json);
@@ -153,31 +155,33 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
   };
   return (
     <>
-      <Row>
-        <Col sm={6}>
-          <StatusItemRenderer data={jobdata} field={field} />
-        </Col>
-        <Col sm={6}>
-          <Row>
-            <Col sm={4} className="show_details">
-              {renderShowProgress()}
-            </Col>
-            <Col sm={4}>
-              <i title="View Recovery Configuration" className="fas fa-info-circle info__icon test_summary_icon" aria-hidden="true" onClick={onClick} style={{ height: 20, cursor: 'pointer' }} />
-            </Col>
-            {((data.status === RECOVERY_STATUS.FAILED || detailedStepError) && data.guestOS === RECOVERY_GUEST_OS.WINDOWS) ? (
-              <Col sm={4} className="padding-left-5" title="Troubleshooting Steps">
-                <i title="Troubleshooting Steps" className="fas fa-exclamation-triangle icon__warning" aria-hidden="true" onClick={openTroubleshootingWindow} style={{ height: 20, cursor: 'pointer' }} />
+      <div className="rec_job_parent">
+        <Row>
+          <Col lg={8}>
+            <StatusItemRenderer data={jobdata} field={field} />
+          </Col>
+          <Col sm={4}>
+            <Row>
+              <Col sm={3} className="show_details margin-left-8 margin-right-5">
+                {renderShowProgress()}
               </Col>
-            ) : null}
-          </Row>
-        </Col>
-      </Row>
-      <Row className=" padding-left-2">
-        <Col sm={12}>
-          {toggle ? <StepStatus steps={steps} data={jobdata} /> : null}
-        </Col>
-      </Row>
+              <Col sm={3}>
+                <i title="View Recovery Configuration" className="fas fa-info-circle info__icon test_summary_icon" aria-hidden="true" onClick={onClick} style={{ height: 20, cursor: 'pointer' }} />
+              </Col>
+              {((data.status === RECOVERY_STATUS.FAILED || detailedStepError) && data.guestOS === RECOVERY_GUEST_OS.WINDOWS) ? (
+                <Col sm={3} className="padding-left-5" title="Troubleshooting Steps">
+                  <i title="Troubleshooting Steps" className="fas fa-exclamation-triangle icon__warning" aria-hidden="true" onClick={openTroubleshootingWindow} style={{ height: 20, cursor: 'pointer' }} />
+                </Col>
+              ) : null}
+            </Row>
+          </Col>
+        </Row>
+        <Row className=" padding-left-2">
+          <Col sm={12}>
+            {toggle === true ? <StepStatus steps={steps} data={jobdata} /> : null}
+          </Col>
+        </Row>
+      </div>
     </>
   );
 }

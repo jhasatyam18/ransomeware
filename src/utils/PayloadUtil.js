@@ -666,3 +666,31 @@ export function getLocalTimeZone() {
   // It will return IANA Local time zone "(Asia/Calcutta)"
   return `${timeZone}`;
 }
+
+export function createRefreshStatusPayload(user) {
+  const { values } = user;
+  const refreshSelectedVMS = getValue(STATIC_KEYS.UI_REFRESH_SELECTED_VMS, values);
+  const payload = {};
+  const plansMap = {};
+  Object.keys(refreshSelectedVMS).forEach((key) => {
+    const vm = refreshSelectedVMS[key];
+    const { protectionPlanID, id, recoveryType } = vm;
+    // Check if the plan exists, if not create it
+    if (!plansMap[protectionPlanID]) {
+      plansMap[protectionPlanID] = {
+        protectionPlanID,
+        recoveryVMCSPResp: [],
+      };
+    }
+
+    // Add VM details to the corresponding plan
+    plansMap[protectionPlanID].recoveryVMCSPResp.push({
+      vmMoref: refreshSelectedVMS[key].vmMoref,
+      recoveryJobID: id, // vm recovery job ID
+      recoveryType,
+    });
+  });
+
+  payload.recoveryPPlans = Object.values(plansMap);
+  return payload;
+}
