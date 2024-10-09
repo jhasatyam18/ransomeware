@@ -8,7 +8,7 @@ import { DATE_ITEM_RENDERER, RECOVERY_JOBS, REPLICATION_VM_JOBS, TABLE_ALERTS, T
 import { valueChange } from '../../store/actions';
 import { fetchDrPlans } from '../../store/actions/DrPlanActions';
 import { exportReportToPDF, generateAuditReport, getCriteria, resetReport } from '../../store/actions/ReportActions';
-import { hideApplicationLoader, showApplicationLoader } from '../../store/actions/UserActions';
+import { clearValues, hideApplicationLoader, showApplicationLoader } from '../../store/actions/UserActions';
 import { getValue } from '../../utils/InputUtils';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
 import { exportTableToExcel } from '../../utils/ReportUtils';
@@ -37,6 +37,7 @@ class Report extends Component {
   componentWillUnmount() {
     const { dispatch } = this.props;
     dispatch(resetReport());
+    dispatch(clearValues());
   }
 
   toggleCollapse = () => {
