@@ -108,7 +108,11 @@ class RecoveryMachines extends Component {
       // REMOVE CHECKPOINT WARNING TEXT
       dispatch(valueChange(STORE_KEYS.UI_CHECKPOINT_SELECT_WARNING, ''));
     } else if (value === CHECKPOINT_TYPE.POINT_IN_TIME) {
-      const checkpointPlan = getValue(STORE_KEYS.UI_CHECKPOINT_PLAN, values);
+      let checkpointPlan = getValue(STORE_KEYS.UI_CHECKPOINT_PLAN, values);
+      if (Object.keys(checkpointPlan).length === 0) {
+        // case where no plan data set
+        checkpointPlan = getValue('ui.recovery.plan', values);
+      }
       if (Object.keys(checkpointPlan).length > 0) {
         const { protectedEntities } = checkpointPlan;
         const { virtualMachines } = protectedEntities;
