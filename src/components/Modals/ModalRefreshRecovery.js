@@ -58,14 +58,10 @@ function ModalRefreshRecovery(props) {
     }
     return () => {
       isUnmounting = true;
-      isUnmounting = true;
+      clearInterval(timerId.current);
+      timerId.current = null;
     };
   }, [dataLoadState]);
-
-  useEffect(() => () => {
-    clearInterval(timerId.current);
-    timerId.current = null;
-  }, [validationState]);
 
   const onClose = () => {
     dispatch(closeModal());

@@ -903,5 +903,6 @@
   "summary":"Summary",
   "full.test.workload.selection.warn":"Workloads have been selected from both Full Recovery/Migration and Test Recovery. Please choose workloads from either Full Recovery/Migration or Test Recovery.",
   "please.select.vm":"Please select a virtual machine",
-  "per.vm.resync.disk": "Resync Disks - {{selectedDiskCount}} [{{selectedDiskSize}}]"
+  "per.vm.resync.disk": "Resync Disks - {{selectedDiskCount}} [{{selectedDiskSize}}]",
+  "get.latest.recovery.status":"Get Latest Recovery Status"
 }
