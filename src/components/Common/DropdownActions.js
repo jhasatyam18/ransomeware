@@ -19,9 +19,10 @@ const DropdownActions = (props) => {
   const renderLeft = () => (
     <DropdownMenu style={{ right: 0, left: 'auto', minWidth: '200px' }}>
       {actions.map((item) => {
-        const { label, disabled, icon } = item;
+        const { label, disabled, icon, id } = item;
+        const labelID = label.replaceAll(' ', '');
         return (
-          <DropdownItem right onClick={() => onActionClick(item)} disabled={disabled} className={!disabled ? 'text-white' : ''}>
+          <DropdownItem right id={id || `dropdownItem-${labelID}`} onClick={() => onActionClick(item)} disabled={disabled} className={!disabled ? 'text-white' : ''}>
             <i className={icon} />
             &nbsp;&nbsp;
             {t(label)}
@@ -34,9 +35,10 @@ const DropdownActions = (props) => {
   const renderRight = () => (
     <DropdownMenu right>
       {actions.map((item) => {
-        const { label, disabled, icon } = item;
+        const { label, disabled, icon, id } = item;
+        const labelID = label.replaceAll(' ', '');
         return (
-          <DropdownItem right onClick={() => onActionClick(item)} disabled={disabled} className={!disabled ? 'text-white' : ''}>
+          <DropdownItem right id={id || `dropdownItem-${labelID}`} onClick={() => onActionClick(item)} disabled={disabled} className={!disabled ? 'text-white' : ''}>
             <i className={icon} />
             &nbsp;&nbsp;
             {t(label)}
@@ -51,10 +53,10 @@ const DropdownActions = (props) => {
       <Dropdown
         isOpen={dropdownOpen}
         toggle={toggle}
-        className="d-inline-block"
+        className={`d-inline-block ${uniqueID}`}
       >
         <DropdownToggle>
-          <span id={uniqueID} className="d-none d-xl-inline-block ml-2 mr-1">
+          <span className="d-none d-xl-inline-block ml-2 mr-1">
             {title}
           </span>
           <FontAwesomeIcon style={{ fontSize: '8px', padding: '1px' }} size="xs" icon={faChevronDown} onClick={toggle} />
