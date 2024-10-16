@@ -399,6 +399,9 @@ export async function exportIssues(data) {
 }
 
 function formatTimeValue(value) {
+  if (value === 0) {
+    return '-';
+  }
   // Convert milliseconds to readable time
   const milliseconds = value * 1000;
   const date = new Date(milliseconds);
