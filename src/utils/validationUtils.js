@@ -29,6 +29,10 @@ export function isRequired(value) {
 export function validateField(field, fieldKey, value, dispatch, user, emptyFields = []) {
   const { patterns, validate, errorMessage } = field;
   const { errors } = user;
+  let { label } = field;
+  if (typeof label !== 'undefined' && typeof label === 'function') {
+    label = label(user, fieldKey);
+  }
   if (patterns) {
     let isValid = false;
     patterns.forEach((pattern) => {
@@ -41,7 +45,7 @@ export function validateField(field, fieldKey, value, dispatch, user, emptyField
     });
     if (!isValid) {
       dispatch(addErrorMessage(fieldKey, errorMessage));
-      emptyFields.push(`${field.label}`);
+      emptyFields.push(`${label}`);
       return false;
     }
   }
@@ -49,7 +53,7 @@ export function validateField(field, fieldKey, value, dispatch, user, emptyField
     const hasError = validate({ value, dispatch, user, fieldKey });
     if (hasError) {
       dispatch(addErrorMessage(fieldKey, errorMessage));
-      emptyFields.push(`${field.label}`);
+      emptyFields.push(`${label}`);
       return false;
     }
   }

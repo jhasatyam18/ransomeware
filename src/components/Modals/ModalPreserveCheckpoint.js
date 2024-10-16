@@ -4,10 +4,10 @@ import { Container } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
 import { FIELD_TYPE } from '../../constants/FieldsConstant';
 import { removeErrorMessage } from '../../store/actions';
-import { createPayloadForCheckpoints, updateRecoveryCheckpoint } from '../../store/actions/checkpointActions';
+import { createPayloadForCheckpoints, PreserveCheckpointError, updateRecoveryCheckpoint, validatedCheckpointDescription } from '../../store/actions/checkpointActions';
 import { closeModal } from '../../store/actions/ModalActions';
 import { getValue } from '../../utils/InputUtils';
-import { isEmpty, validateField } from '../../utils/validationUtils';
+import { validateField } from '../../utils/validationUtils';
 import DMFieldText from '../Shared/DMFieldText';
 
 function ModalPreserveCheckpoint({ dispatch, options, user, t }) {
@@ -24,7 +24,7 @@ function ModalPreserveCheckpoint({ dispatch, options, user, t }) {
     textData.push(text);
   });
   const key = 'checkpoint.preserve';
-  const textField = { label: '', validate: ({ value }) => isEmpty({ value, user }), placeHolderText: 'Reason to preserve snapshot ', type: FIELD_TYPE.TEXT, shouldShow: true, errorMessage: 'Reason to preserve a checkpoint is mandatory', fieldInfo: 'Provide reason to preserve checkpoint' };
+  const textField = { label: '', validate: ({ value }) => validatedCheckpointDescription({ value, user }), errorFunction: ({ fieldKey }) => PreserveCheckpointError({ user, fieldKey }), placeHolderText: 'Reason to preserve snapshot ', type: FIELD_TYPE.TEXT, shouldShow: true, errorMessage: 'Reason to preserve a checkpoint is mandatory', fieldInfo: 'Provide reason to preserve checkpoint' };
   const onClose = () => {
     dispatch(closeModal());
     dispatch(removeErrorMessage(key));

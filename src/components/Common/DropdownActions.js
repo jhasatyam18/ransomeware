@@ -23,7 +23,7 @@ const DropdownActions = (props) => {
         const labelID = label.replaceAll(' ', '');
         return (
           <DropdownItem right id={id || `dropdownItem-${labelID}`} onClick={() => onActionClick(item)} disabled={disabled} className={!disabled ? 'text-white' : ''}>
-            <i className={icon} />
+            <FontAwesomeIcon size="sm" icon={icon} id={`${labelID}`} />
             &nbsp;&nbsp;
             {t(label)}
           </DropdownItem>
@@ -39,7 +39,7 @@ const DropdownActions = (props) => {
         const labelID = label.replaceAll(' ', '');
         return (
           <DropdownItem right id={id || `dropdownItem-${labelID}`} onClick={() => onActionClick(item)} disabled={disabled} className={!disabled ? 'text-white' : ''}>
-            <i className={icon} />
+            <FontAwesomeIcon size="sm" icon={icon} id={`${labelID}`} />
             &nbsp;&nbsp;
             {t(label)}
           </DropdownItem>

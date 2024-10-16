@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import {
-  Col, FormGroup, Row,
+  Col, FormGroup, Input, Row,
 } from 'reactstrap';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -162,14 +162,14 @@ class DMFieldText extends Component {
             <Row>
               <Col sm={11}>
                 <div>
-                  <input
+                  <Input
                     type={type}
                     className="form-control"
                     id={fieldKey}
                     value={value}
                     onBlur={this.onBlur}
                     onChange={this.handleChange}
-                    // invalid={hasErrors}
+                    invalid={hasErrors}
                     autoComplete="none"
                     placeholder={placeH}
                     onFocus={() => this.handleFocus(true)}
