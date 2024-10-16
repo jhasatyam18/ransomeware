@@ -147,7 +147,7 @@ export function deletePlan(id, history) {
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
-        dispatch(addMessage(json.message, MESSAGE_TYPES.SUCCESS));
+        dispatch(addMessage(i18n.t('plan.delete.msg'), MESSAGE_TYPES.SUCCESS));
         dispatch(closeModal());
         fetchByDelay(dispatch, fetchDrPlans, 1000);
         dispatch(updateSelectedPlans({}));

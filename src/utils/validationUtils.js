@@ -409,14 +409,6 @@ export function validateAWSNetworks(user, dispatch) {
       // }
     }
 
-    const vpcSet = [...new Set(vpc)];
-    // nics with different vpcid
-    if (vpcSet.length > 1) {
-      message = `${vmName}: All nics of an instance must belong to same VPC.`;
-      messages.push(message);
-      isClean = false;
-    }
-
     const zoneSet = [...new Set(zones)];
     // nics with different vpcid
     if (zoneSet.length > 1) {
