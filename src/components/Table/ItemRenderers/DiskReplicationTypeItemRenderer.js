@@ -2,9 +2,9 @@ import { withTranslation } from 'react-i18next';
 
 function DiskReplicationTypeItemRenderer(props) {
   const { t, data, field } = props;
-  let type = data[field];
+  const type = data[field];
   if (type === '') {
-    type = 'incremental';
+    return '-';
   }
   return t(`disk.repl.type.${type}`);
 }

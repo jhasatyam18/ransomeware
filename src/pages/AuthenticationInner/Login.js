@@ -93,14 +93,14 @@ class Login extends Component {
   onBlurusername = () => {
     const { username } = this.state;
     if (username === '') {
-      this.setState({ userError: 'This Fiels is Invalid' });
+      this.setState({ userError: 'This Field is Invalid' });
     }
   };
 
   onBlurpassword = () => {
     const { password } = this.state;
     if (password === '') {
-      this.setState({ passwordError: 'This Fiels is Invalid' });
+      this.setState({ passwordError: 'This Field is Invalid' });
     }
   };
 

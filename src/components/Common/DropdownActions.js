@@ -17,7 +17,7 @@ const DropdownActions = (props) => {
   }
 
   const renderLeft = () => (
-    <DropdownMenu style={{ right: 0, left: 'auto', minWidth: '200px' }}>
+    <DropdownMenu style={{ right: 0, left: 'auto', minWidth: '215px' }}>
       {actions.map((item) => {
         const { label, disabled, icon, id } = item;
         const labelID = label.replaceAll(' ', '');

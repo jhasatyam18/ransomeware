@@ -4,12 +4,14 @@ import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Col, Popover, PopoverBody, Row } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
+import { DATA_GRID_SHORT_TEXT_LENGTH } from '../../constants/UserConstant';
 import { DETAILED_STEP_COMPONENTS } from '../../constants/AppStatus';
 import { STATIC_KEYS } from '../../constants/InputConstants';
 
 function RenderDetailedSteps(props) {
   const { parseData, id, t, name, css } = props;
   const [popOver, setPopOver] = useState({});
+  const [showErr, setShowErr] = useState({});
   const renderPopOver = (hoverInfo, key, isOpen) => (
     <Popover placement="bottom" isOpen={popOver[isOpen]} target={key} style={{ backgroundColor: 'black', color: 'white', border: 'none', width: '200px', textAlign: 'left' }}>
       <PopoverBody>
@@ -38,7 +40,7 @@ function RenderDetailedSteps(props) {
     }
     return (
       parseData.map((pd, ind) => {
-        const key = `${ind}-${pd.message}`;
+        const key = `${ind}-${pd.message.trim(' ')}`;
         return (
           <div
             className={`${css} d-flex`}
@@ -46,8 +48,28 @@ function RenderDetailedSteps(props) {
           >
             {renderIcons(pd.result)}
             <Row className="w-100">
-              <Col sm={5}>{ `${t(pd.name)}`}</Col>
-              <Col sm={7} className="text-align-right">{`: ${pd.message}`}</Col>
+              <Col sm={4} className="">
+                { `${t(pd.name)}`}
+              </Col>
+              <Col sm={8} className="text-align-right d-flex ">
+                :
+                <span
+                  className="ml-2"
+                  aria-hidden
+                  onClick={() => {
+                    setShowErr({ [pd.name.trim(' ')]: !showErr[pd.name.trim(' ')] });
+                  }}
+                >
+                  {pd.message.length > DATA_GRID_SHORT_TEXT_LENGTH && !showErr[pd.name.trim(' ')] ? (
+                    <span>
+                      {`${pd.message.substring(0, DATA_GRID_SHORT_TEXT_LENGTH)}
+                      ...`}
+                    </span>
+                  ) : pd.message}
+                  {pd.message.length > DATA_GRID_SHORT_TEXT_LENGTH ? <span className="link_color">{showErr[pd.name.trim(' ')] ? 'Less' : 'More'}</span> : null}
+                </span>
+
+              </Col>
             </Row>
           </div>
         );
