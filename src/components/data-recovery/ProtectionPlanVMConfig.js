@@ -103,7 +103,7 @@ function ProtectionPlanVMConfig(props) {
     } else if (platformType === PLATFORM_TYPES.Azure) {
       configCols = TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG;
     } else if (platformType === PLATFORM_TYPES.AWS) {
-      cols = TABLE_AWS_PROTECTION_PLAN_VMS_RECOVERY_CONFIG;
+      configCols = TABLE_AWS_PROTECTION_PLAN_VMS_RECOVERY_CONFIG;
     } else {
       const part1 = TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG.slice(0, TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG.length - 3);
       const part2 = TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG.slice(TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG.length - 2);
