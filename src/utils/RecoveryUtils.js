@@ -7,7 +7,7 @@ import { getLabelWithResourceGrp, getMemoryInfo } from './AppUtils';
 import { getAwsHostAffinityOptions, getAwsHostMorefLabel, getAwsTenancyOptionBy, getAwsTenancyOptions, showTenancyOptions } from './AwsUtils';
 import { getAzureGeneralSettings, getEncryptionKeyOptions, getInstanceTypeOptions, getNetworkOptions, getRecoveryScript, getReplicationScript, getValue, getVMwareGeneralSettings, shouldEnableAWSEncryption, getGCPNetworkValue } from './InputUtils';
 import { getSourceConfig } from './PayloadUtil';
-import { isEmpty, noValidate } from './validationUtils';
+import { isEmpty } from './validationUtils';
 
 export function createVMTestRecoveryConfig(vm, user, dispatch) {
   const { values } = user;
@@ -36,7 +36,7 @@ function getAWSVMTestConfig(vm, workflow) {
       [`${key}-vmConfig.general.instanceType`]: { label: 'Instance Type', fieldInfo: 'info.protectionplan.instance.type', type: FIELD_TYPE.SELECT_SEARCH, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select instance type.', shouldShow: true, options: (u) => getInstanceTypeOptions(u) },
       // Tenancy fields
       [`${key}-vmConfig.general.tenancy`]: { label: 'Tenancy', fieldInfo: 'info.protectionplan.aws.tenancy', type: FIELD_TYPE.SELECT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Select tenancy type', shouldShow: true, options: (u) => getAwsTenancyOptions(u), defaultValue: 'default' },
-      [`${key}-vmConfig.general.hostType`]: { label: 'Target host by', fieldInfo: 'info.protectionplan.aws.tenancyBy', type: FIELD_TYPE.SELECT, validate: (value, user) => noValidate(value, user), errorMessage: 'Select Target host by type', shouldShow: (u, f) => showTenancyOptions(u, f), options: (u) => getAwsTenancyOptionBy(u), hideComponent: (u, f) => showTenancyOptions(u, f) },
+      [`${key}-vmConfig.general.hostType`]: { label: 'Target host by', fieldInfo: 'info.protectionplan.aws.tenancyBy', type: FIELD_TYPE.SELECT, validate: null, errorMessage: '', shouldShow: (u, f) => showTenancyOptions(u, f), options: (u) => getAwsTenancyOptionBy(u), hideComponent: (u, f) => showTenancyOptions(u, f) },
       [`${key}-vmConfig.general.hostMoref`]: { label: (u, f) => getAwsHostMorefLabel(u, f), fieldInfo: 'info.protectionplan.aws.host.arn', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Enter id/arn', shouldShow: (u, f) => showTenancyOptions(u, f), hideComponent: (u, f) => showTenancyOptions(u, f) },
       [`${key}-vmConfig.general.affinity`]: { label: 'Target Affinity', fieldInfo: 'info.protectionplan.aws.host.affinity', type: FIELD_TYPE.SELECT, defaultValue: '', errorMessage: 'Select Affinity', shouldShow: (u, f) => showTenancyOptions(u, f), hideComponent: (u, f) => showTenancyOptions(u, f), options: (u, f) => getAwsHostAffinityOptions(u, f) },
       [`${key}-vmConfig.general.image`]: { label: 'Associated AMI', fieldInfo: 'info.protectionplan.aws.ami', type: FIELD_TYPE.TEXT, validate: (value, user) => isEmpty(value, user), errorMessage: 'Enter associated AMI', shouldShow: (u, f) => showTenancyOptions(u, f), hideComponent: (u, f) => showTenancyOptions(u, f) },
