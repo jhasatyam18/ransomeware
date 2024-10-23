@@ -13,6 +13,7 @@ import { onInit } from '../../utils/HistoryUtil';
 import { getMatchingInsType, getValue, getVMwareLocationPath, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { acknowledgeNodeAlert, getUnreadAlerts } from './AlertActions';
+import { fetchCheckpointsByPlanId } from './checkpointActions';
 import { drPlansFetched, fetchDRPlanById, fetchDrPlans, setVMGuestOSInfo } from './DrPlanActions';
 import { fetchPlaybookById, fetchPlaybooks } from './DrPlaybooksActions';
 import { fetchEmailConfig, fetchEmailRecipients } from './EmailActions';
@@ -404,6 +405,7 @@ export function detailPathChecks(pathname) {
     if (pathname.indexOf('protection/plan/details') !== -1) {
       const pathArray = pathname.split('/');
       dispatch(fetchDRPlanById(pathArray[pathArray.length - 1]));
+      dispatch(fetchCheckpointsByPlanId(pathArray[pathArray.length - 1]));
       if (getValue(STORE_KEYS.RECOVERY_CHECKPOINT_JOB_LINK_INSTANCE, values)) {
         dispatch(valueChange(STORE_KEYS.RECOVERY_CHECKPOINT_JOB_LINK_INSTANCE, undefined));
       }

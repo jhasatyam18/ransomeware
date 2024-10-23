@@ -480,6 +480,7 @@ export function fetchCheckpointsByPlanId(planId, key) {
         dispatch(setCheckpointCount(res.records.length));
       } else {
         dispatch(setVmlevelCheckpoints([]));
+        dispatch(setCheckpointCount(0));
       }
     });
   };

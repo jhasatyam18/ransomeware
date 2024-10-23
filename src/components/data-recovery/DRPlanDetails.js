@@ -7,7 +7,7 @@ import { PLATFORM_TYPES, PROTECTION_PLANS_STATUS, RECOVERY_STATUS, REPLICATION_S
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { PLAN_DETAIL_TABS } from '../../constants/UserConstant';
 import { setActiveTab } from '../../store/actions';
-import { fetchCheckpointsByPlanId } from '../../store/actions/checkpointActions';
+import { fetchCheckpointsByPlanId, setCheckpointCount, setVmlevelCheckpoints } from '../../store/actions/checkpointActions';
 import { deletePlanConfirmation, fetchDRPlanById, onResetDiskReplicationClick, openCleanupTestRecoveryWizard, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, playbookExport, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
 import { downloadRecoveryPlaybook } from '../../store/actions/DrPlaybooksActions';
 import { convertMinutesToDaysHourFormat, getRecoveryCheckpointSummary } from '../../utils/AppUtils';
@@ -41,6 +41,12 @@ class DRPlanDetails extends Component {
     dispatch(fetchDRPlanById(parts[parts.length - 1], params));
     dispatch(fetchCheckpointsByPlanId(parts[parts.length - 1]));
     dispatch(setActiveTab('1'));
+  }
+
+  componentWillUnmount() {
+    const { dispatch } = this.props;
+    dispatch(setVmlevelCheckpoints([]));
+    dispatch(setCheckpointCount(0));
   }
 
   disableEdit() {
