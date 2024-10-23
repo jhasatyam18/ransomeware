@@ -149,6 +149,7 @@ export const STATIC_KEYS = {
   UI_REFRESH_VALIDATION_OBJ: 'ui.refresh.validation.obj',
   UI_REFRESH_OP_STATE: 'refresh.status.operation.state',
   PENDING_STATUS_CLEANUP_RECOVERY: 'pending.status.cleanup.recovary',
+  UI_LIST_DELETED_VMS: 'ui.list.deleted.vms',
 };
 
 // Recovery time in minutes
@@ -170,6 +171,7 @@ export const EXCLUDE_KEYS_RECOVERY_CONFIGURATION = {
   NETWORK_KEY: 'networkKey',
   BOOT_PRIORITY: 'bootPriority',
   INSTANCE_ID: 'instanceID',
+  DELETED_CHECKPOINT: 'deleteCheckpoint',
 };
 
 export const EXCLUDE_KEYS_CONSTANTS = {

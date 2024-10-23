@@ -425,7 +425,7 @@
   "title.checkpoint.count": " Checkpoint Count",
   "title.checkpoint.every": "Every",
   "title.checkpoint.retain": "Retain For",
-  "title.pplan.delete.checkpoint": "Remove Assosiated Recovery Checkpoints",
+  "title.pplan.delete.checkpoint": "Remove assosiated recovery checkpoints",
   "title.go.to.checkpoint": " Go to Checkpoint",
   "title.templates": "Playbooks",
   "info.aws.create.network.from.source": "Creates new subnet and security group on recovery site based on protected entity's configuration",
@@ -905,5 +905,8 @@
   "please.select.vm":"Please select a virtual machine",
   "per.vm.resync.disk": "Resync Disks - {{selectedDiskCount}} [{{selectedDiskSize}}]",
   "get.latest.recovery.status":"Get Latest Recovery Status",
-  "plan.delete.msg":"Protection Plan deleted successfully"
+  "plan.delete.msg":"Protection Plan deleted successfully",
+  "delete.vm.infra":"Delete recovery entity from targert infrastructure",
+  "vm.removal.confirmation":"Virtual Machine Removal Confirmation"
+
 }

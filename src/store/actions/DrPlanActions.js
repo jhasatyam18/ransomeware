@@ -6,7 +6,7 @@ import { DRPLAN_CONFIG_STEP } from '../../constants/DrplanConstants';
 import { MILI_SECONDS_TIME, MONITORING_DISK_CHANGES } from '../../constants/EventConstant';
 import { CHECKPOINT_TYPE, PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { MODAL_CONFIRMATION_WARNING, MODAL_RESET_DISK_REPLICATION, PPLAN_REMOVE_CHECKPOINT_RENDERER } from '../../constants/Modalconstant';
+import { MODAL_DELETE_VM_CONFIRMATON, MODAL_RESET_DISK_REPLICATION } from '../../constants/Modalconstant';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { STORE_KEYS } from '../../constants/StoreKeyConstants';
 import { APPLICATION_GETTING_STARTED_COMPLETED } from '../../constants/UserConstant';
@@ -19,7 +19,7 @@ import { getCreateDRPlanPayload, getEditProtectionPlanPayload, getRecoveryPayloa
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { changedVMRecoveryConfigurations, validateReversePlan } from '../../utils/validationUtils';
 import { addAssociatedIPForAzure, addAssociatedReverseIP } from './AwsActions';
-import { fetchCheckpointsByPlanId, fetchVMsLatestReplicaionJob, getVmCheckpoints, setPplanRecoveryCheckpointData } from './checkpointActions';
+import { fetchCheckpointsByPlanId, fetchVMsLatestReplicaionJob, getVmCheckpoints, setCheckpointCount, setPplanRecoveryCheckpointData, setVmlevelCheckpoints } from './checkpointActions';
 import { downloadDateModifiedPlaybook, onPlanPlaybookExport } from './DrPlaybooksActions';
 import { fetchReplicationJobsByPplanId } from './JobActions';
 import { addMessage } from './MessageActions';
@@ -138,9 +138,10 @@ export function deletePlan(id, history) {
     const planID = (typeof id === 'undefined' ? ids[0] : id);
     let url = API_DELETE_DR_PLAN.replace('<id>', planID);
     // To remove associated checkpoint while removing protection plan
-    const removeAssosiatedCheckpoints = getValue(`${planID}-delete-checkpoints`, values) || false;
-    url = `${url}?deleteRecoveryCheckpoint=${removeAssosiatedCheckpoints}`;
-    const obj = createPayload(API_TYPES.DELETE, {});
+    const removeAssosiatedCheckpoints = getValue('drplan.remove.checkpoint', values) || false;
+    const removeEntity = getValue('drplan.remove.entity', values) || false;
+    url = `${url}?deleteRecoveryCheckpoint=${removeAssosiatedCheckpoints}&deleteRecoveryEntity=${removeEntity}`;
+    const obj = createPayload(API_TYPES.DELETE, { });
     dispatch(showApplicationLoader(url, 'Removing protection plan...'));
     return callAPI(url, obj).then((json) => {
       dispatch(hideApplicationLoader(url));
@@ -152,6 +153,8 @@ export function deletePlan(id, history) {
         fetchByDelay(dispatch, fetchDrPlans, 1000);
         dispatch(updateSelectedPlans({}));
         dispatch(refreshPostActon(true));
+        dispatch(setVmlevelCheckpoints([]));
+        dispatch(setCheckpointCount(0));
         if (typeof history !== 'undefined') {
           history.push(PROTECTION_PLANS_PATH);
         }
@@ -161,15 +164,6 @@ export function deletePlan(id, history) {
       dispatch(hideApplicationLoader(url));
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
-  };
-}
-
-export function deletePlanConfirmation(id) {
-  return (dispatch, getState) => {
-    const { drPlans } = getState();
-    const { protectionPlan } = drPlans;
-    const options = { title: 'Confirmation', confirmAction: deletePlan, message: `Are you sure you want to delete ${protectionPlan.name} ?`, render: PPLAN_REMOVE_CHECKPOINT_RENDERER, id };
-    dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   };
 }
 
@@ -694,7 +688,7 @@ export function setProtectionPlanDataForUpdate(selectedPlan, isEventAction = fal
     dispatch(showApplicationLoader('UPDATE_PROTECTION_PLAN', 'Loading protection plan data...'));
     const wiz = UPDATE_PROTECTION_PLAN_WIZARDS;
     wiz.options.title = `Reconfigure Plan - ${selectedPlan.name}`;
-    wiz.options.onFinish = onEditProtectionPlan;
+    wiz.options.onFinish = onEditProtectionPlanClick;
     const apis = [dispatch(setProtectionPlanVMsForUpdate(selectedPlan, isEventAction, event))];
     return Promise.all(apis)
       .then(
@@ -712,6 +706,38 @@ export function setProtectionPlanDataForUpdate(selectedPlan, isEventAction = fal
         },
       );
   };
+}
+
+export function onEditProtectionPlanClick() {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const selectedPlan = getValue('ui.selected.protection.plan', values);
+    const removedVmsName = vmIsRemovedFromPlan(values);
+    if (Object.keys(removedVmsName).length === 0) {
+      dispatch(onEditProtectionPlan());
+    } else {
+      dispatch(valueChange(STATIC_KEYS.UI_LIST_DELETED_VMS, removedVmsName));
+      const options = { title: i18n.t('vm.removal.confirmation'), confirmAction: onEditProtectionPlan, message: 'Are you sure you want to delete these virtual machines from the protection plan?', css: 'confirmation', protectionPlan: selectedPlan, vmName: removedVmsName };
+      dispatch(openModal(MODAL_DELETE_VM_CONFIRMATON, options));
+    }
+  };
+}
+
+export function vmIsRemovedFromPlan(values) {
+  const selectedPlan = getValue('ui.selected.protection.plan', values);
+  const { protectedEntities } = selectedPlan;
+  const { virtualMachines } = protectedEntities;
+  let selectedVMS = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
+  selectedVMS = Object.keys(selectedVMS);
+  const removedVmsName = {};
+  virtualMachines.forEach((ins) => {
+    const { moref } = ins;
+    if (selectedVMS.indexOf(moref) === -1) {
+      removedVmsName[moref] = ins;
+    }
+  });
+  return removedVmsName;
 }
 
 export function onEditProtectionPlan() {
@@ -1891,5 +1917,14 @@ export function setAllVmRecovered(allVmRecovered) {
   return {
     type: Types.AL_VM_RECOVERED_IN_PLAN,
     allVmRecovered,
+  };
+}
+
+export function onDeleteProtectionPlanClick() {
+  return (dispatch, getState) => {
+    const { drPlans } = getState();
+    const { protectionPlan } = drPlans;
+    const options = { title: i18n.t('confirmation'), confirmAction: deletePlan, message: `Are you sure you want to delete protection plan ${protectionPlan.name} ?`, id: protectionPlan.id, css: 'confirmation', protectionPlan };
+    dispatch(openModal(MODAL_DELETE_VM_CONFIRMATON, options));
   };
 }

@@ -469,8 +469,10 @@ export function getEditProtectionPlanPayload(user, sites) {
     vm = setVMProperties(vm, values, result.drplan.protectedSite);
     result.drplan.protectedEntities.VirtualMachines.push(vm);
   });
+  addDeletedVmInProtectedEntity(result.drplan.protectedEntities.VirtualMachines, values);
   result.drplan.protectedEntities.Name = 'dummy';
   result.drplan.recoveryEntities.instanceDetails = getVMConfigPayload(user);
+  addDeletedVmInRecoveryEntity(result.drplan.recoveryEntities.instanceDetails, values);
   result.drplan.replicationInterval = getReplicationInterval(getValue(STATIC_KEYS.REPLICATION_INTERVAL_TYPE, values), getValue('drplan.replicationInterval', values));
   result.drplan.startTime = getUnixTimeFromDate(result.drplan.startTime);
   result.drplan.protectedEntityType = getRecoveryEntityType();
@@ -693,4 +695,35 @@ export function createRefreshStatusPayload(user) {
 
   payload.recoveryPPlans = Object.values(plansMap);
   return payload;
+}
+
+export function addDeletedVmInProtectedEntity(virtualMachines, values) {
+  const deletedvms = getValue(STATIC_KEYS.UI_LIST_DELETED_VMS, values);
+  if (deletedvms && Object.keys(deletedvms).length > 0) {
+    Object.keys(deletedvms).forEach((delVm) => {
+      const obj = JSON.parse(JSON.stringify(deletedvms[delVm]));
+      obj.isRemovedFromPlan = true;
+      virtualMachines.push(obj);
+    });
+  }
+}
+
+export function addDeletedVmInRecoveryEntity(payloadInstancedetails, values) {
+  const deletedvms = getValue(STATIC_KEYS.UI_LIST_DELETED_VMS, values);
+  if (deletedvms && Object.keys(deletedvms).length > 0) {
+    const selectedPlan = getValue('ui.selected.protection.plan', values);
+    const { recoveryEntities } = selectedPlan;
+    const { instanceDetails } = recoveryEntities;
+    const deleteEntity = getValue('drplan.remove.entity', values) || false;
+    const deleteCheckpoint = getValue('drplan.remove.checkpoint', values) || false;
+    instanceDetails.forEach((ins) => {
+      const { sourceMoref } = ins;
+      if (Object.keys(deletedvms).indexOf(sourceMoref) !== -1) {
+        const obj = JSON.parse(JSON.stringify(ins));
+        obj.deleteInstance = deleteEntity;
+        obj.deleteCheckpoint = deleteCheckpoint;
+        payloadInstancedetails.push(obj);
+      }
+    });
+  }
 }

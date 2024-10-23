@@ -39,6 +39,7 @@ import PlaybookGenerateModal from './PlaybookGenerateModal';
 import PlaybookUploadModal from './PlaybookUploadModal';
 import ModalRefreshRecovery from './ModalRefreshRecovery';
 import InformationModal from './ModalInformation';
+import ModalDeleteVmConfirmation from './ModalDeleteVmConfirmation';
 
 function DMModal(props) {
   const { modal, dispatch, user } = props;
@@ -134,6 +135,8 @@ function DMModal(props) {
           return <ModalRefreshRecovery dispatch={dispatch} user={user} {...props} options={options} />;
         case MODALS.INFORMATION_MODAL:
           return <InformationModal {...props} />;
+        case MODALS.MODAL_DELETE_VM_CONFIRMATON:
+          return <ModalDeleteVmConfirmation dispatch={dispatch} {...props} />;
         default:
           return (<div>404</div>);
       }
