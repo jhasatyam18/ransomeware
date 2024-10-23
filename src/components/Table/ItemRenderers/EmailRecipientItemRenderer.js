@@ -18,7 +18,7 @@ function EmailRecipientItemRenderer({ data, dispatch, user }) {
 
   function onModify() {
     dispatch(clearValues());
-    const options = { title: 'Email Recipient', config: data, isUpdate: true, id: data.ID };
+    const options = { title: 'Email Recipient', config: data, isUpdate: true, id: data.ID, size: 'lg' };
     Object.keys(data).forEach((key) => {
       dispatch(valueChange(`emailRecipient.${key}`, data[key]));
     });

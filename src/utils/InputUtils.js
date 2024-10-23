@@ -635,16 +635,25 @@ export function shouldShowNodeReplicationPort(user) {
 
 export function getEventOptions() {
   return [
-    { label: 'Recovery', value: 'Recovery' },
-    { label: 'Migration', value: 'Migration' },
-    { label: 'Replication', value: 'Replication' },
-    { label: 'License', value: 'License' },
-    { label: 'ProtectionPlan', value: 'ProtectionPlan' },
-    { label: 'Site', value: 'Site' },
-    { label: 'Node', value: 'Node' },
-    { label: 'Credential', value: 'Credential' },
-    { label: 'Monitoring', value: 'Monitoring' },
     { label: 'Changed Block Tracking', value: 'ChangedBlockTracking' },
+    { label: 'Cloudwatch', value: 'Cloudwatch' },
+    { label: 'Credential', value: 'Credential' },
+    { label: 'Identity Provider', value: 'IdentityProvider' },
+    { label: 'License', value: 'License' },
+    { label: 'Migration', value: 'Migration' },
+    { label: 'Monitoring', value: 'Monitoring' },
+    { label: 'Node', value: 'Node' },
+    { label: 'Playbook', value: 'Playbook' },
+    { label: 'Point In Time Checkpoint', value: 'PointInTimeCheckpoint' },
+    { label: 'ProtectionPlan', value: 'ProtectionPlan' },
+    { label: 'Recovery', value: 'Recovery' },
+    { label: 'Replication', value: 'Replication' },
+    { label: 'Script', value: 'Script' },
+    { label: 'Service', value: 'Service' },
+    { label: 'Site', value: 'Site' },
+    { label: 'Test Recovery', value: 'TestRecovery' },
+    { label: 'Test Recovery Cleanup', value: 'TestRecoveryCleanup' },
+    { label: 'User', value: 'User' },
   ];
 }
 

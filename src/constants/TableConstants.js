@@ -24,6 +24,7 @@ export const SERVER_PORT_ITEM_RENDERER = 'SERVER_PORT_ITEM_RENDERER';
 export const NODE_NAME_ITEM_RENDERER = 'NODE_NAME_ITEM_RENDERER';
 export const NODE_ACTION_RENDERER = 'NODE_ACTION_RENDERER';
 export const EMAIL_RECIPIENT_ACTION_ITEM_RENDER = 'EMAIL_RECIPIENT_ACTION_ITEM_RENDER';
+export const EMAIL_SUBSCRIBED_EVENT_ITEM_RENDER = 'EMAIL_SUBSCRIBED_EVENT_ITEM_RENDER';
 export const VM_BOOT_ORDER_ITEM_RENDER = 'VM_BOOT_ORDER_ITEM_RENDER';
 export const LICENSE_USAGE_ITEM_RENDERER = 'LICENSE_USAGE_ITEM_RENDERER';
 export const LICENSE_ACTION_ITEM_RENDERER = 'LICENSE_ACTION_ITEM_RENDERER';
@@ -241,8 +242,8 @@ export const SUPPORT_BUNDLES = [
 
 // Table fields for email recipients
 export const TABLE_EMAIL_RECIPIENTS = [
-  { label: 'Email', field: 'emailAddress', width: 3 },
-  { label: 'Subscribed Events', field: 'subscribedEvents', width: 5 },
+  { label: 'Email', field: 'emailAddress', width: 2 },
+  { label: 'Subscribed Events', field: 'subscribedEvents', width: 5, itemRenderer: EMAIL_SUBSCRIBED_EVENT_ITEM_RENDER },
   { label: 'Actions', field: 'emailAddress', itemRenderer: EMAIL_RECIPIENT_ACTION_ITEM_RENDER, width: 2 },
 ];
 
