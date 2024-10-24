@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { JOB_IN_PROGRESS, JOB_RUNNING_STATUS, PARTIALLY_COMPLETED } from '../../../constants/AppStatus';
 import DMProgressBar from './DMProgressBar';
-import { JOB_RUNNING_STATUS, JOB_IN_PROGRESS, PARTIALLY_COMPLETED } from '../../../constants/AppStatus';
 
 function TransferSizeItemRenderer({ data, field }) {
   let completed = 0;
@@ -13,10 +13,9 @@ function TransferSizeItemRenderer({ data, field }) {
     if (field === 'transferSize') {
       bytes = data.changedTransfer;
     }
-
     const convertedData = calculateSize(bytes);
-    setSize(convertedData);
-  }, []);
+    setSize(convertedData === '-' ? '' : convertedData);
+  }, [data[field]]);
 
   function calculateSize(bytes) {
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];

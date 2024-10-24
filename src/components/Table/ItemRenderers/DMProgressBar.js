@@ -14,9 +14,7 @@ const DMProgressBar = (props) => {
         {' '}
         {completed}
         %
-        (
-        {typeof size !== 'undefined' ? size : ''}
-        )
+        {typeof size !== 'undefined' && size ? ` (${size}) ` : ''}
       </PopoverBody>
     </Popover>
   );
