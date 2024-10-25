@@ -218,6 +218,7 @@ export const FIELDS = {
   'report.protectionPlan.protectionPlans': { label: 'report.protectionPlans', type: FIELD_TYPE.SELECT, shouldShow: true, options: (user) => getReportProtectionPlans(user), errorMessage: 'Select protection plan.', validate: (value, user) => isEmpty(value, user), defaultValue: 0 },
   // 'report.protectionPlan.sites': { label: 'Sites', description: 'Include sites in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: true },
   'report.protectionPlan.includeProtectedVMS': { label: 'report.includeProtectedVMS', description: 'Add sites in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
+  'report.protectionPlan.includeCheckpoints': { label: 'report.includeCheckpoints', description: 'Add sites in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
   'report.protectionPlan.includeReplicationJobs': { label: 'report.includeReplicationJobs', description: 'Add replication jobs in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
   'report.protectionPlan.includeRecoveryJobs': { label: 'report.includeRecoveryJobs', description: 'Add recovery jobs in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
   'report.duration.type': { label: 'report.duration', type: FIELD_TYPE.SELECT, shouldShow: true, options: (user) => getReportDurationOptions(user), defaultValue: 'month' },

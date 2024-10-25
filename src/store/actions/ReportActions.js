@@ -1,5 +1,5 @@
 import * as Types from '../../constants/actionTypes';
-import { API_FETCH_ALERTS, API_FETCH_DR_PLANS, API_FETCH_DR_PLAN_BY_ID, API_FETCH_EVENTS, API_FETCH_SITES, API_NODES, API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS, API_PROTECTTION_PLAN_REPLICATION_VM_JOBS, API_RECOVERY_JOBS, API_RECOVERY_PLAN_RECOVERY_JOBS, API_REPLICATION_VM_JOBS } from '../../constants/ApiConstants';
+import { API_FETCH_ALERTS, API_FETCH_DR_PLANS, API_FETCH_DR_PLAN_BY_ID, API_FETCH_EVENTS, API_FETCH_SITES, API_NODES, API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS, API_PROTECTTION_PLAN_REPLICATION_VM_JOBS, API_RECOVERY_JOBS, API_RECOVERY_PLAN_RECOVERY_JOBS, API_REPLICATION_VM_JOBS, API_UPDAT_RECOVERY_CHECKPOINT_BY_ID } from '../../constants/ApiConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { callAPI } from '../../utils/ApiUtils';
 import { getAppDateFormat } from '../../utils/AppUtils';
@@ -9,7 +9,7 @@ import { fetchDashboardTitles, fetchRecoveryStats, fetchReplicationStats } from 
 import { addMessage } from './MessageActions';
 import { hideApplicationLoader, showApplicationLoader } from './UserActions';
 import { API_MAX_RECORD_LIMIT } from '../../constants/UserConstant';
-import { ALERTS_COLUMNS, EVENTS_COLUMNS, NODE_COLUMNS, PROTECTED_VMS_COLUMNS, PROTECTION_PLAN_COLUMNS, RECOVERY_JOB_COLUMNS, REPLICATION_JOB_COLUMNS, SITE_COLUMNS } from '../../constants/TableConstants';
+import { ALERTS_COLUMNS, EVENTS_COLUMNS, NODE_COLUMNS, PROTECTED_VMS_COLUMNS, PROTECTION_PLAN_COLUMNS, RECOVERY_JOB_COLUMNS, REPLICATION_JOB_COLUMNS, SITE_COLUMNS, TABLE_REPORTS_CHECKPOINTS } from '../../constants/TableConstants';
 import { REPORT_DURATION, STATIC_KEYS } from '../../constants/InputConstants';
 
 export function generateAuditReport() {
@@ -147,7 +147,7 @@ export function reportFetchAlerts(data = [], offSet = 0, criteria) {
 /**
  * @returns Fetch and set replication job info for report
  */
-export function reportFetchReplicationJobs(id, data = [], offset = 0, criteria = {}, limit) {
+export function reportFetchReplicationJobs(id, data = [], offset = 0, criteria = {}, limit, totalFetched = 0) {
   return (dispatch) => {
     const { startDate, endDate } = criteria;
     const url = (isPlanSpecificData(id) ? `${API_PROTECTTION_PLAN_REPLICATION_VM_JOBS.replace('<id>', id)}&limit=${API_MAX_RECORD_LIMIT}&offset=${offset}&starttime=${startDate}&endtime=${endDate}` : `${API_REPLICATION_VM_JOBS}?limit=${limit || API_MAX_RECORD_LIMIT}&offset=${offset}&starttime=${startDate}&endtime=${endDate}`);
@@ -155,8 +155,8 @@ export function reportFetchReplicationJobs(id, data = [], offset = 0, criteria =
     callAPI(url)
       .then((json) => {
         if (json.hasNext === true) {
-          const maxLimit = (json.totalRecords - json.limit);
-          dispatch(reportFetchReplicationJobs(id, [...data, ...json.records], json.nextOffset, criteria, maxLimit));
+          const tFetched = totalFetched + json.limit;
+          dispatch(reportFetchReplicationJobs(id, [...data, ...json.records], json.nextOffset, criteria, limit, tFetched));
         } else {
           dispatch(setReportObject('replication', [...data, ...json.records]));
           dispatch(hideApplicationLoader('replication_report', 'Generating audit report...'));
@@ -283,6 +283,9 @@ function getRequiredReportObjects(criteria, dispatch) {
   if (criteria.includeRecoveryJobs) {
     apis.push(dispatch(reportFetchRecoveryJobs(criteria.protectionPlanID, [], 0, criteria)));
   }
+  if (criteria.includeCheckpoints) {
+    apis.push(dispatch(reportFetchCheckpoints(criteria.protectionPlanID, [], 0, criteria)));
+  }
   return apis;
 }
 
@@ -332,6 +335,7 @@ export function getCriteria(user) {
     includeProtectedVMS: getValue('report.protectionPlan.includeProtectedVMS', values),
     protectionPlanID: getValue('report.protectionPlan.protectionPlans', values),
     durationType: getValue(STATIC_KEYS.REPORT_DURATION_TYPE, values),
+    includeCheckpoints: getValue('report.protectionPlan.includeCheckpoints', values),
   };
 }
 
@@ -376,6 +380,10 @@ export function exportReportToPDF() {
         const columns = RECOVERY_JOB_COLUMNS;
         addTableFromData(doc, columns, 'Recovery Jobs', recovery);
       }
+      if (criteria.includeCheckpoints) {
+        const columns = TABLE_REPORTS_CHECKPOINTS;
+        addTableFromData(doc, columns, 'Point In Time Checkpoints', result.point_in_time_checkpoints);
+      }
       const d = new Date();
       addFooters(doc);
       exportDoc(doc, `Datamotive-report-${getAppDateFormat(d, true)}`);
@@ -388,4 +396,27 @@ export function exportReportToPDF() {
 
 function isPlanSpecificData(id) {
   return !(`${id}` === '0' || `${id}` === '');
+}
+
+export function reportFetchCheckpoints(id, data = [], offset = 0, criteria = {}, limit, totalFetched = 0) {
+  return (dispatch) => {
+    const { startDate, endDate } = criteria;
+    const apiQuery = `limit=${limit || API_MAX_RECORD_LIMIT}&offset=${offset}&starttime=${startDate}&endtime=${endDate}`;
+    const url = isPlanSpecificData(id) ? `${API_UPDAT_RECOVERY_CHECKPOINT_BY_ID}?planID=${id}&${apiQuery}` : `${API_UPDAT_RECOVERY_CHECKPOINT_BY_ID}?${apiQuery}`;
+    dispatch(showApplicationLoader('report_checkpoints', 'generating checkpoints'));
+    callAPI(url)
+      .then((json) => {
+        if (json.hasNext === true) {
+          const tFetched = totalFetched + json.limit;
+          dispatch(reportFetchCheckpoints(id, [...data, ...json.records], json.nextOffset, criteria, limit, tFetched));
+        } else {
+          dispatch(setReportObject('point_in_time_checkpoints', [...data, ...json.records]));
+          dispatch(hideApplicationLoader('report_checkpoints', 'Generating audit report...'));
+        }
+      },
+      (err) => {
+        dispatch(hideApplicationLoader('report_checkpoints', 'Generating audit report...'));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  };
 }

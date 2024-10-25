@@ -5,7 +5,7 @@ import JsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { NUMBER, PLATFORM_TYPES, REPORT_DURATION, STATIC_KEYS, PLAYBOOK_NAMES, NODE_TYPES } from '../constants/InputConstants';
 import { ALPHABETS, BLUE, BORDER_STYLE, DARK_NAVY_BLUE, EXCEL_WORKSHEET_TABLE_HEADER_CELL, EXCEL_WORKSHEET_TITLE, LIGHT_GREY, LIGHT_NAVY_BLUE, REPORT_TYPES } from '../constants/ReportConstants';
-import { ALERTS_COLUMNS, EVENTS_COLUMNS, NODE_COLUMNS, PROTECTED_VMS_COLUMNS, PROTECTION_PLAN_COLUMNS, RECOVERY_JOB_COLUMNS, REPLICATION_JOB_COLUMNS, SITE_COLUMNS } from '../constants/TableConstants';
+import { ALERTS_COLUMNS, EVENTS_COLUMNS, NODE_COLUMNS, PROTECTED_VMS_COLUMNS, PROTECTION_PLAN_COLUMNS, RECOVERY_JOB_COLUMNS, REPLICATION_JOB_COLUMNS, SITE_COLUMNS, TABLE_REPORTS_CHECKPOINTS } from '../constants/TableConstants';
 import { APPLICATION_API_USER } from '../constants/UserConstant';
 import { calculateChangedData, convertMinutesToDaysHourFormat, formatTime, getAppDateFormat, getStorageWithUnit } from './AppUtils';
 import { getCookie } from './CookieUtils';
@@ -29,7 +29,7 @@ export function addTableFromData(doc, columns, title, data) {
     return;
   }
   doc.addPage();
-  doc.text(title, 20, 30);
+  doc.text(title, 10, 30);
   const rows = data.map((item) => columns.map((col) => {
     const keys = (col.field.split('.'));
     let value = getValueFromNestedObject(item, keys);
@@ -41,6 +41,8 @@ export function addTableFromData(doc, columns, title, data) {
     if (typeof value === 'string' && value.length > NUMBER.TWO_HUNDRED) {
       const words = value.split(' ').slice(0, 5);
       value = `${words.join(' ')}...`;
+    } else if (typeof value === 'boolean' || value instanceof Boolean) {
+      value = value ? 'Yes' : 'No';
     }
     return value;
   }));
@@ -60,8 +62,9 @@ export function addTableFromData(doc, columns, title, data) {
     head: [columnHeaders],
     body: rows,
     theme: 'grid',
+    tableWidth: 576, // Wrap the table width according to content
+    margin: { top: 50, left: 10 }, // Centered horizontally
     styles: { fontSize: 8 },
-    margin: { top: 50, left: 14, right: 14 },
   });
 }
 
@@ -191,10 +194,11 @@ const columnsMapping = {
   alerts: ALERTS_COLUMNS,
   events: EVENTS_COLUMNS,
   recovery: RECOVERY_JOB_COLUMNS,
+  point_in_time_checkpoints: TABLE_REPORTS_CHECKPOINTS,
 };
 
 export async function exportTableToExcel(dashboard, data) {
-  const nameOfWorksheet = ['nodes', 'sites', 'plans', 'protectedVMS', 'replication', 'recovery', 'events', 'alerts'];
+  const nameOfWorksheet = ['nodes', 'sites', 'plans', 'protectedVMS', 'replication', 'recovery', 'events', 'alerts', 'point_in_time_checkpoints'];
   const workbook = new ExcelJS.Workbook();
   workbook.views = [{ x: 0, y: 0, width: 5000, firstSheet: 0, activeTab: 0, visibility: 'visible' }];
   const base64ImgUrl = await getBase64FromUrl(REPORT_TYPES.HEADER_IMG_URL);
@@ -202,7 +206,7 @@ export async function exportTableToExcel(dashboard, data) {
   for (let a = 0; a < nameOfWorksheet.length; a += 1) {
     const worksheetName = nameOfWorksheet[a];
     if (data[worksheetName] && data[worksheetName].length > 0) {
-      const worksheet = workbook.addWorksheet(worksheetName, { pageSetup: { paperSize: 5, orientation: 'landscape' } });
+      const worksheet = workbook.addWorksheet(worksheetName.split('_').join(' '), { pageSetup: { paperSize: 5, orientation: 'landscape' } });
       worksheet.columns = columnsMapping[worksheetName].map((col) => ({ header: col.header, key: col.field }));
       addDataToWorksheet(worksheet, columnsMapping[worksheetName], data[worksheetName], workbook, base64ImgUrl, worksheetName);
     }
@@ -490,7 +494,7 @@ function convertValueAccordingToType(value, type, data = {}) {
 }
 
 function addDataToWorksheet(worksheet, columns, data, workbook, base64ImgUrl, header) {
-  addingHeaderItemToWorksheet(columns.length - 1, workbook, worksheet, base64ImgUrl, header.toUpperCase());
+  addingHeaderItemToWorksheet(columns.length - 1, workbook, worksheet, base64ImgUrl, header.split('_').join(' ').toUpperCase());
   const headerRow = columns.map((col) => col.header);
   const heading = worksheet.addRow(headerRow);
   heading.eachCell((cell) => {

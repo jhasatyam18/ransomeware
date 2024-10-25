@@ -150,6 +150,7 @@
   "report.includeRecoveryJobs": "Recovery Jobs",
   "report.pdf.title": "Datamotive Solution Report | © 2024 All Rights Reserved | Confidential | www.datamotive.io",
   "report.includeNodes": "Nodes",
+  "report.includeCheckpoints":"Point In Time Checkpoints",
   "report.export.pdf": "Exporting data to pdf.",
   "report.export.excel": "Exporting data to excel.",
   "reverse.suffix": "Recovery Machines Suffix",

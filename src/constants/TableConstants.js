@@ -457,3 +457,20 @@ export const TABLE_REFRESH_RECOVERY_STATUS = [
   { label: 'Last Known Recovery Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
   { label: 'Latest Recovery Status', field: 'refreshedRecoveryStatus', itemRenderer: LATEST_REFRESH_RECOVERY_STATUS, width: '2.9' },
 ];
+
+export const TABLE_REPORTS_CARD_CHECKPOINT = [
+  { label: 'Plan Name', field: 'protectionPlanName' },
+  { label: 'VM Name', field: 'workloadName' },
+  { label: 'Created At', field: 'creationTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Expires On', field: 'expirationTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Checkpoint Status', field: 'checkpointStatus' },
+  { label: 'Preserved', field: 'isPreserved', itemRenderer: PRESERVE_CHECKPOINT },
+];
+export const TABLE_REPORTS_CHECKPOINTS = [
+  { header: 'Plan Name', field: 'protectionPlanName' },
+  { header: 'VM Name', field: 'workloadName' },
+  { header: 'Created At', field: 'creationTime', type: 'date' },
+  { header: 'Expires On', field: 'expirationTime', type: 'date' },
+  { header: 'Checkpoint Status', field: 'checkpointStatus' },
+  { header: 'Preserved', field: 'isPreserved' },
+];
