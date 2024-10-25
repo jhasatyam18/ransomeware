@@ -637,7 +637,6 @@ export function getEventOptions() {
   return [
     { label: 'Changed Block Tracking', value: 'ChangedBlockTracking' },
     { label: 'Cloudwatch', value: 'Cloudwatch' },
-    { label: 'Credential', value: 'Credential' },
     { label: 'Identity Provider', value: 'IdentityProvider' },
     { label: 'License', value: 'License' },
     { label: 'Migration', value: 'Migration' },
