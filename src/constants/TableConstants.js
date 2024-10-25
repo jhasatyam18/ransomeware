@@ -1,5 +1,6 @@
 import VMInstanceItemRenderer from '../components/Table/ItemRenderers/VMInstanceItemRenderer';
 import { getRecoveryVMName } from '../utils/TableUtils';
+import { REPORT_DURATION, STATIC_KEYS } from './InputConstants';
 
 export const OS_TYPE_ITEM_RENDERER = 'OS_TYPE_ITEM_RENDERER';
 export const VM_SIZE_ITEM_RENDERER = 'VM_SIZE_ITEM_RENDERER';
@@ -369,9 +370,9 @@ export const PROTECTION_PLAN_COLUMNS = [
   { header: 'Name', field: 'name' },
   { header: 'Protection Site', field: 'protectedSite.name' },
   { header: 'Recovery Site', field: 'recoverySite.name' },
-  { header: 'Replication Interval', field: 'replicationInterval', type: 'time' },
+  { header: 'Replication Interval', field: 'replicationInterval', type: REPORT_DURATION.TIME },
   { header: 'Status', field: 'status' },
-  { header: 'Recovery Status', field: 'recoveryStatus' },
+  { header: 'Recovery Status', field: 'rStatus', type: STATIC_KEYS.RECOVER_STATUS },
 ];
 
 export const SITE_COLUMNS = [
@@ -379,7 +380,7 @@ export const SITE_COLUMNS = [
   { header: 'Site Type', field: 'siteType' },
   { header: 'Description', field: 'description' },
   { header: 'Platform', field: 'platformDetails.platformType' },
-  { header: 'Location', field: 'platformDetails', type: 'location' },
+  { header: 'Location', field: 'platformDetails', type: REPORT_DURATION.LOCATION },
   { header: 'Node', field: 'node.name' },
 ];
 
@@ -388,12 +389,13 @@ export const NODE_COLUMNS = [
   { header: 'Hostname', field: 'hostname' },
   { header: 'Type', field: 'nodeType' },
   { header: 'Platform Type', field: 'platformType' },
-  { header: 'Ports', field: 'managementPort', type: 'port-renderer' },
+  { header: 'Version', field: 'version' },
+  { header: 'Ports', field: 'managementPort', type: STATIC_KEYS.PORTS_RENDERER },
   { header: 'Status', field: 'status' },
 ];
 
 export const EVENTS_COLUMNS = [
-  { header: 'Date', field: 'timeStamp', type: 'date' },
+  { header: 'Date', field: 'timeStamp', type: REPORT_DURATION.DATE },
   { header: 'Topic', field: 'topic' },
   { header: 'Lavel', field: 'severity' },
   { header: 'Event Type', field: 'type' },
@@ -402,39 +404,38 @@ export const EVENTS_COLUMNS = [
 ];
 
 export const ALERTS_COLUMNS = [
-  { header: 'Title', field: 'title' },
+  { header: 'Title', field: 'alertTitle', type: STATIC_KEYS.ALERT_TITLE },
   { header: 'Severity', field: 'severity' },
-  { header: 'Created', field: 'createdTime', type: 'date' },
-  { header: 'Last Updated', field: 'updatedTime', type: 'date' },
-  { header: 'Status', field: 'isAcknowledge', type: 'alert-status' },
+  { header: 'Created', field: 'createdTime', type: REPORT_DURATION.DATE },
+  { header: 'Last Updated', field: 'updatedTime', type: REPORT_DURATION.DATE },
+  { header: 'Status', field: 'isAcknowledge', type: STATIC_KEYS.REPORT_STATUS_TYPE },
 ];
 
 export const PROTECTED_VMS_COLUMNS = [
   { header: 'Names', field: 'name' },
   { header: 'Plan', field: 'planName' },
   { header: 'Iteration', field: 'totalIteration' },
-  { header: 'Changed', field: 'totalChangedSize', type: 'size' },
-  { header: 'Transferred', field: 'totalTransferredSize', type: 'size' },
+  { header: 'Changed', field: 'totalChangedSize', type: REPORT_DURATION.SIZE },
+  { header: 'Transferred', field: 'totalTransferredSize', type: REPORT_DURATION.SIZE },
   { header: 'Reduction(%)', field: 'dataReductionRatio' },
   { header: 'Recovery Status', field: 'recoveryStatus' },
 ];
 
 export const REPLICATION_JOB_COLUMNS = [
-  { header: 'Virtual Machine', field: 'vmName' },
+  { header: 'Virtual Machine', field: 'vmName_syncStatus', type: STATIC_KEYS.REPLICATION_JOB_VM_NAME },
   { header: 'Iteration', field: 'iterationNumber' },
-  { header: 'Changed', field: 'changedSize', type: 'size' },
-  { header: 'Transferred', field: 'transferredSize', type: 'size' },
+  { header: 'Changed', field: 'changedSize', type: REPORT_DURATION.SIZE },
+  { header: 'Transferred', field: 'transferredSize', type: REPORT_DURATION.SIZE },
   { header: 'Job Status', field: 'status' },
-  { header: 'Sync Status', field: 'syncStatus' },
-  { header: 'Sync Time', field: 'currentSnapshotTime', type: 'date' },
+  { header: 'Replication Duration', field: 'duration', type: REPORT_DURATION.DURATION },
+  { header: 'Sync Time', field: 'currentSnapshotTime', type: REPORT_DURATION.DATE },
 ];
 
 export const RECOVERY_JOB_COLUMNS = [
   { header: 'Virtual Machine', field: 'vmName' },
-  { header: 'Start Time', field: 'startTime', type: 'date' },
-  { header: 'End Time', field: 'endTime', type: 'date' },
-  { header: 'Duration', field: 'duration', type: 'duration' },
+  { header: 'Timings and Duration', field: 'date_duration', type: STATIC_KEYS.RECOVERY_DATE_DURATION },
   { header: 'Recovery Type', field: 'recoveryType' },
+  { header: 'Recovery Point Time', field: 'recoveryPointTime', type: REPORT_DURATION.DATE },
   { header: 'Job Status', field: 'status' },
   { header: 'IP Address', field: 'publicIP' },
 ];

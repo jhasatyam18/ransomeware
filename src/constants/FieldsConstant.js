@@ -215,7 +215,7 @@ export const FIELDS = {
   'report.system.includeNodes': { label: 'report.includeNodes', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
   'report.system.includeEvents': { label: 'report.includeEvents', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
   'report.system.includeAlerts': { label: 'report.includeAlerts', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
-  'report.protectionPlan.protectionPlans': { label: 'report.protectionPlans', type: FIELD_TYPE.SELECT, shouldShow: true, options: (user) => getReportProtectionPlans(user), defaultValue: 0 },
+  'report.protectionPlan.protectionPlans': { label: 'report.protectionPlans', type: FIELD_TYPE.SELECT, shouldShow: true, options: (user) => getReportProtectionPlans(user), errorMessage: 'Select protection plan.', validate: (value, user) => isEmpty(value, user), defaultValue: 0 },
   // 'report.protectionPlan.sites': { label: 'Sites', description: 'Include sites in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true, defaultValue: true },
   'report.protectionPlan.includeProtectedVMS': { label: 'report.includeProtectedVMS', description: 'Add sites in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },
   'report.protectionPlan.includeReplicationJobs': { label: 'report.includeReplicationJobs', description: 'Add replication jobs in report ', type: FIELD_TYPE.CHECKBOX, shouldShow: true },

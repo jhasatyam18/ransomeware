@@ -63,6 +63,10 @@ class Report extends Component {
         dispatch(valueChange(STATIC_KEYS.REPORT_DURATION_START_DATE, date));
       }
     }
+    const protectionPlan = getValue('report.protectionPlan.protectionPlans', values);
+    if (typeof protectionPlan === 'undefined' || protectionPlan === '') {
+      return;
+    }
     dispatch(valueChange('report.system.includeSystemOverView', true));
     dispatch(generateAuditReport());
     if (openCollapse) {

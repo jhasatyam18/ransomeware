@@ -3,7 +3,7 @@ import * as FileSaver from 'file-saver';
 import i18n from 'i18next';
 import JsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { NUMBER, PLATFORM_TYPES, REPORT_DURATION, STATIC_KEYS, PLAYBOOK_NAMES } from '../constants/InputConstants';
+import { NUMBER, PLATFORM_TYPES, REPORT_DURATION, STATIC_KEYS, PLAYBOOK_NAMES, NODE_TYPES } from '../constants/InputConstants';
 import { ALPHABETS, BLUE, BORDER_STYLE, DARK_NAVY_BLUE, EXCEL_WORKSHEET_TABLE_HEADER_CELL, EXCEL_WORKSHEET_TITLE, LIGHT_GREY, LIGHT_NAVY_BLUE, REPORT_TYPES } from '../constants/ReportConstants';
 import { ALERTS_COLUMNS, EVENTS_COLUMNS, NODE_COLUMNS, PROTECTED_VMS_COLUMNS, PROTECTION_PLAN_COLUMNS, RECOVERY_JOB_COLUMNS, REPLICATION_JOB_COLUMNS, SITE_COLUMNS } from '../constants/TableConstants';
 import { APPLICATION_API_USER } from '../constants/UserConstant';
@@ -51,7 +51,7 @@ export function addTableFromData(doc, columns, title, data) {
         {
           content: title,
           colSpan: 1,
-          styles: { fontSize: 14, fillColor: 'white', textColor: 'black' },
+          styles: { fontSize: 12, fillColor: 'white', textColor: 'black' },
         },
       ],
     ],
@@ -60,14 +60,8 @@ export function addTableFromData(doc, columns, title, data) {
     head: [columnHeaders],
     body: rows,
     theme: 'grid',
-    options: {
-      startY: doc.lastAutoTable.finalY + 45,
-      rowPageBreak: 'auto',
-      margin: { top: 160, left: 5 },
-      bodyStyles: { valign: 'top' },
-      styles: { overflow: 'linebreak', cellWidth: 'wrap' },
-      columnStyles: { text: { cellWidth: 'auto' } },
-    },
+    styles: { fontSize: 8 },
+    margin: { top: 50, left: 14, right: 14 },
   });
 }
 
@@ -327,7 +321,7 @@ function getExcelData(dashboard) {
   const { titles, replicationStats, recoveryStats } = dashboard;
   const { sites, vms, storage, protectionPlans } = titles;
   const { running, completed, failures, changedRate, dataReduction, rpo } = replicationStats;
-  const { fullRecovery, migration, tsestExecutions, rto } = recoveryStats;
+  const { fullRecovery, migrations, testExecutions, rto } = recoveryStats;
   const excel = [
     { mergeCell: 'B6:D7', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'Sites', fontSize: 8 },
     { mergeCell: 'B8:D9', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: sites },
@@ -346,11 +340,11 @@ function getExcelData(dashboard) {
     { mergeCell: 'G13:H14', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'Failure', fontSize: 8 },
     { mergeCell: 'G15:H15', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: failures },
     { mergeCell: 'J13:L14', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'Test Recovery', fontSize: 8 },
-    { mergeCell: 'J15:L15', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: tsestExecutions },
+    { mergeCell: 'J15:L15', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: testExecutions },
     { mergeCell: 'M13:N14', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'Recovery', fontSize: 8 },
     { mergeCell: 'M15:N15', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: fullRecovery },
     { mergeCell: 'O13:P14', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'Migration', fontSize: 8 },
-    { mergeCell: 'O15:P15', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: migration },
+    { mergeCell: 'O15:P15', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: migrations },
     { mergeCell: 'B17:D18', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'Change Rate', fontSize: 8 },
     { mergeCell: 'B19:D19', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: calculateChangedData(changedRate) },
     { mergeCell: 'F17:H18', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'Data Reduction', fontSize: 8 },
@@ -422,6 +416,50 @@ function formatSize(size) {
   return `${(size / GB).toFixed(2)} GB`;
 }
 
+export function getRecoveryStatus(data) {
+  let { recoveryStatus, reverseStatus } = data;
+
+  if (recoveryStatus) {
+    recoveryStatus = recoveryStatus.charAt(0).toUpperCase() + recoveryStatus.slice(1);
+    return recoveryStatus;
+  }
+  if (reverseStatus) {
+    reverseStatus = reverseStatus.charAt(0).toUpperCase() + reverseStatus.slice(1);
+    return reverseStatus;
+  }
+  return '-';
+}
+
+export function getAlertTitleWithOccurrence(data) {
+  const { title, occurrence } = data;
+  if (!title) {
+    return '-';
+  }
+  if (occurrence && occurrence > 1) {
+    return `${title} (${occurrence})`;
+  }
+  return title;
+}
+
+export function getVMNameWithSyncStatus(data) {
+  const { vmName, syncStatus } = data;
+  if (!syncStatus && vmName) {
+    return vmName;
+  }
+  if (vmName && syncStatus) {
+    return `${vmName}\n \n ${syncStatus}`;
+  }
+  return '-';
+}
+
+export function getRecoveryTimingAndDuration(data) {
+  const { startTime = 0, endTime = 0 } = data;
+  const start = formatTimeValue(startTime);
+  const end = formatTimeValue(endTime);
+  const duration = timeDuration(data);
+  return `${start} - ${end} - ${duration}`;
+}
+
 function convertValueAccordingToType(value, type, data = {}) {
   switch (type) {
     case REPORT_DURATION.SIZE:
@@ -438,6 +476,14 @@ function convertValueAccordingToType(value, type, data = {}) {
       return SetAlertStatus(data);
     case STATIC_KEYS.PORTS_RENDERER:
       return getPortsOfNode(data);
+    case STATIC_KEYS.RECOVER_STATUS:
+      return getRecoveryStatus(data);
+    case STATIC_KEYS.ALERT_TITLE:
+      return getAlertTitleWithOccurrence(data);
+    case STATIC_KEYS.REPLICATION_JOB_VM_NAME:
+      return getVMNameWithSyncStatus(data);
+    case STATIC_KEYS.RECOVERY_DATE_DURATION:
+      return getRecoveryTimingAndDuration(data);
     default:
       return value;
   }
@@ -575,9 +621,13 @@ function getPortsOfNode(data) {
   const replCtrlPort = data.replicationCtrlPort;
   const replDataPort = data.replicationDataPort;
   let replPort = 0;
+  if (mgmtPort === 0 && replCtrlPort === 0 && replDataPort === 0 && data.nodeType === NODE_TYPES.PrepNode) {
+    return '5985-5986';
+  }
   if (mgmtPort === 0 && replCtrlPort === 0 && replDataPort === 0) {
     return '-';
   }
+
   if (replCtrlPort !== 0 && replDataPort !== 0) {
     replPort = `${replCtrlPort}, ${replDataPort}`;
   } else if (replCtrlPort !== 0) {

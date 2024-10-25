@@ -149,7 +149,11 @@ export const STATIC_KEYS = {
   UI_REFRESH_VALIDATION_OBJ: 'ui.refresh.validation.obj',
   UI_REFRESH_OP_STATE: 'refresh.status.operation.state',
   PENDING_STATUS_CLEANUP_RECOVERY: 'pending.status.cleanup.recovary',
+  RECOVER_STATUS: 'recoveryStatus',
+  ALERT_TITLE: 'alertTitle',
   UI_LIST_DELETED_VMS: 'ui.list.deleted.vms',
+  REPLICATION_JOB_VM_NAME: 'repliction_vm',
+  RECOVERY_DATE_DURATION: 'recovery_date_duration',
 };
 
 // Recovery time in minutes
