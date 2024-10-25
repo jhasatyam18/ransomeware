@@ -256,7 +256,7 @@ export function onProtectionPlanChange({ value, allowDeleted }) {
           const workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
           const latestReplicationData = getValue(STATIC_KEYS.VM_LATEST_REPLICATION_JOBS, values) || [];
           const checkPointType = getValue(STATIC_KEYS.UI_CHECKPOINT_RECOVERY_TYPE, values);
-          const allVmsCheckpointById = getValue(STATIC_KEYS.UI_RECOVERY_CHECKPOINTS_BY_VM_ID, values);
+          const allVmsCheckpointById = getValue(STATIC_KEYS.UI_RECOVERY_CHECKPOINTS_BY_VM_ID, values) || {};
           info.forEach((vm) => {
             rEntities.forEach((rE) => {
               if (vm.moref === rE.sourceMoref) {
@@ -274,7 +274,13 @@ export function onProtectionPlanChange({ value, allowDeleted }) {
                   machine.resetIteration = filterData[0].resetIteration;
                 }
                 if (typeof vm.recoveryStatus !== 'undefined' && (vm.recoveryStatus === RECOVERY_STATUS.MIGRATED || vm.recoveryStatus === RECOVERY_STATUS.RECOVERED || vm.isRemovedFromPlan === true)) {
-                  if (Object.keys(allVmsCheckpointById).length > 0 && allVmsCheckpointById[vm.moref].length > 0 && checkPointType === CHECKPOINT_TYPE.POINT_IN_TIME && vm.recoveryStatus !== RECOVERY_STATUS.MIGRATED) {
+                  if (Object.keys(allVmsCheckpointById).length > 0
+                   // vm has checkpoint
+                   && (allVmsCheckpointById[vm.moref] && allVmsCheckpointById[vm.moref].length > 0)
+                   // check type if all vm's are recovered type will be PIT
+                   && checkPointType === CHECKPOINT_TYPE.POINT_IN_TIME
+                   //  migrated vm's should not be allowed
+                   && vm.recoveryStatus !== RECOVERY_STATUS.MIGRATED) {
                     if (workflow === UI_WORKFLOW.RECOVERY || (workflow === UI_WORKFLOW.TEST_RECOVERY && vm.recoveryStatus === '')) {
                       machine.isDisabled = false;
                     } else {
