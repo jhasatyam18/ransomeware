@@ -1,3 +1,4 @@
+import { t } from 'i18next';
 import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Popover, PopoverBody } from 'reactstrap';
@@ -47,7 +48,7 @@ function VMTenancyTypeItemRenderer(props) {
   }
   return (
     <>
-      {data.tenancy}
+      {t(`aws.dedicated.host.${data.tenancy}`)}
     </>
   );
 }

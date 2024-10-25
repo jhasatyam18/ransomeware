@@ -334,7 +334,7 @@ export function validateGCPNetwork(user, dispatch) {
     } else {
       for (let i = 0; i < netConfigs.length; i += 1) {
         if (netConfigs[i].subnet === '') {
-          message = `${vmName}: Network configure missing for nic-${i}`;
+          message = `${vmName}: Network configure missing for nic-${i + 1}`;
           isClean = false;
         }
         if (typeof netConfigs.privateIP !== 'undefined' && netConfigs.privateIP !== '') {
@@ -393,12 +393,12 @@ export function validateAWSNetworks(user, dispatch) {
     for (let i = 0; i < netConfigs.length; i += 1) {
       if (netConfigs[i].subnet === '') {
         isClean = false;
-        message = `${vmName}: Subnet missing for Nic-${i}`;
+        message = `${vmName}: Subnet missing for Nic-${i + 1}`;
         messages.push(message);
       }
       if (netConfigs[i].securityGroups === '' || typeof netConfigs[i].securityGroups === 'undefined') {
         isClean = false;
-        message = `${vmName}: SecurityGroup missing for Nic-${i}`;
+        message = `${vmName}: SecurityGroup missing for Nic-${i + 1}`;
         messages.push(message);
       }
       if (typeof netConfigs[i].network !== 'undefined' && netConfigs[i].network !== '') {
@@ -455,7 +455,7 @@ export function validateVMware(user, dispatch) {
     for (let i = 0; i < netConfigs.length; i += 1) {
       if (netConfigs[i].network === '' || typeof netConfigs[i].network === 'undefined') {
         isClean = false;
-        message.push(`${vmName}: network is  missing for Nic-${i}`);
+        message.push(`${vmName}: network is  missing for Nic-${i + 1}`);
       } else if (typeof netConfigs[i].adapterType === 'undefined') {
         isClean = false;
         message.push(`${vmName}: adapterType missing for Nic-${i}`);
@@ -494,7 +494,7 @@ export function validateAzureNetwork(user, dispatch) {
       for (let i = 0; i < netConfigs.length; i += 1) {
         if (netConfigs[i].subnet === '') {
           isClean = false;
-          message = `${vmName}: Network configure missing for nic-${i}`;
+          message = `${vmName}: Network configure missing for nic-${i + 1}`;
           messages.push(message);
         }
         if (typeof netConfigs[i].privateIP !== 'undefined' && netConfigs[i].privateIP !== '') {

@@ -908,6 +908,7 @@
   "get.latest.recovery.status":"Get Latest Recovery Status",
   "plan.delete.msg":"Protection Plan deleted successfully",
   "delete.vm.infra":"Delete recovery entity from targert infrastructure",
-  "vm.removal.confirmation":"Virtual Machine Removal Confirmation"
+  "vm.removal.confirmation":"Virtual Machine Removal Confirmation",
+  "aws.dedicated.host.default":"Shared"
 
 }
