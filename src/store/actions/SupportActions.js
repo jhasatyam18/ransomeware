@@ -1,13 +1,12 @@
 // actions
 import * as Types from '../../constants/actionTypes';
-// constants
-import { API_DELETE_SUPPORT_BUNDLE, API_SUPPORT_BUNDLE } from '../../constants/ApiConstants';
+import { hideApplicationLoader, refresh, showApplicationLoader } from './UserActions';
+import { addMessage } from './MessageActions';
+import { closeModal } from './ModalActions';
+import { API_DELETE_SUPPORT_BUNDLE, API_SUPPORT_BUNDLE, API_SUPPORT_BUNDLE_BY_ID } from '../../constants/ApiConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 // Util
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
-import { addMessage } from './MessageActions';
-import { closeModal } from './ModalActions';
-import { hideApplicationLoader, refresh, showApplicationLoader } from './UserActions';
 
 /**
  * Fetch all the available support bundles
@@ -27,6 +26,25 @@ export function fetchSupportBundles() {
       },
       (err) => {
         dispatch(hideApplicationLoader(API_SUPPORT_BUNDLE));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  };
+}
+
+export function fetchSupportBundlesById(id) {
+  return (dispatch) => {
+    dispatch(showApplicationLoader(API_SUPPORT_BUNDLE_BY_ID, 'Loading support bundles...'));
+    return callAPI(API_SUPPORT_BUNDLE_BY_ID.replace('<id>', id))
+      .then((json) => {
+        dispatch(hideApplicationLoader(API_SUPPORT_BUNDLE_BY_ID));
+        if (json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          return json;
+        }
+      },
+      (err) => {
+        dispatch(hideApplicationLoader(API_SUPPORT_BUNDLE_BY_ID));
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
   };
@@ -71,7 +89,6 @@ export function generateSupportBundle(bundle) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
           dispatch(addMessage('Generate new support bundle started. Use support bundle list for more details.', MESSAGE_TYPES.INFO));
-          dispatch(fetchSupportBundles());
           dispatch(refresh());
         }
       },

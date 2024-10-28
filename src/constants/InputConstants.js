@@ -299,6 +299,7 @@ export const REPORT_DURATION = {
 
 export const NUMBER = {
   TWO_HUNDRED: 200,
+  FIVE_THOUSAND: 5000,
 };
 
 export const REVERSE_ENTITY_TYPE = {

@@ -89,6 +89,7 @@ export const API_CHECKPOINT_TAKE_ACTION = 'api/v1/alerts/action/<id>/checkpoint'
 // sb
 export const API_DELETE_SUPPORT_BUNDLE = 'api/v1/support/bundle/<id>';
 export const API_SUPPORT_BUNDLE = 'api/v1/support/bundle';
+export const API_SUPPORT_BUNDLE_BY_ID = 'api/v1/support/bundle/<id>';
 
 // nodes
 export const API_NODES = 'api/v1/nodes';
