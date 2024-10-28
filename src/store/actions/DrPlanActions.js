@@ -1856,8 +1856,8 @@ export function setReverseConfig(protectionPlan) {
     dispatch(valueChange('drplan.isDeDupe', protectionPlan.isDeDupe));
     dispatch(valueChange('drplan.enableDifferentialReverse', protectionPlan.enableDifferentialReverse));
     if (protectionPlan.enableDifferentialReverse) {
-      // if target is vmware then only disable differential with checkpoint but if protected and recovery site are same then disable checkpointing if the differential is enabled
-      if (recoverySitePlatform !== '' && recoverySitePlatform === PLATFORM_TYPES.VMware && recoverySitePlatform !== protectedSite.platformDetails.platformType) {
+      // if target is vmware  disable differential with checkpoint
+      if (recoverySitePlatform !== '' && recoverySitePlatform === PLATFORM_TYPES.VMware) {
         dispatch(valueChange('recoveryPointConfiguration.isRecoveryCheckpointEnabled', false));
         dispatch(valueChange(STORE_KEYS.UI_DISABLE_RECOVERY_CHECKPOINT, true));
       }

@@ -1205,8 +1205,7 @@ export const showReverseWarningText = (user) => {
   const { values } = user;
   const enableReverse = getValue('drplan.enableDifferentialReverse', values) || '';
   const recoveryPlatform = getValue('ui.values.recoveryPlatform', values) || '';
-  const protectionPlatform = getValue('ui.values.protectionPlatform', values) || '';
-  if (enableReverse && recoveryPlatform === PLATFORM_TYPES.VMware && protectionPlatform !== recoveryPlatform) {
+  if (enableReverse && recoveryPlatform === PLATFORM_TYPES.VMware) {
     return true;
   }
   return false;
