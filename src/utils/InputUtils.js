@@ -935,7 +935,7 @@ export function getWMwareNetworkOptions(u, f) {
   const key = f.split(splitKey);
   const [moref] = key;
   const netOpt = `${moref}.general.network`;
-  const res = values[netOpt];
+  const res = values[netOpt] || [];
   return res;
 }
 
