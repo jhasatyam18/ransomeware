@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, Col, Container, Form, Label, Row } from 'reactstrap';
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
 import DropdownActions from '../Common/DropdownActions';
 import { API_PROTECTION_PLAN_RECOVERY_JOBS_STATUS, API_RECOVERY_JOBS } from '../../constants/ApiConstants';
 import { RECOVERY_JOB_TYPE } from '../../constants/InputConstants';
@@ -93,8 +94,8 @@ class Recovery extends Component {
   }
 
   renderActions() {
-    const { dispatch, t, protectionplanID } = this.props;
-    const actions = [{ label: 'Refresh recovery status', action: this.openRefreshRecovery, id: protectionplanID, disabled: false, icon: faRefresh }];
+    const { dispatch, t, protectionplanID, user } = this.props;
+    const actions = [{ label: 'Refresh recovery status', action: this.openRefreshRecovery, id: protectionplanID, disabled: !hasRequestedPrivileges(user, ['recovery.full']), icon: faRefresh }];
 
     return (
       <DropdownActions css="margin-top-10 mb-0 ml-1" title={t('actions')} dispatch={dispatch} actions={actions} align="left" alignLeft={0} />

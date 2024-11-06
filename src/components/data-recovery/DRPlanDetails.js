@@ -264,7 +264,7 @@ class DRPlanDetails extends Component {
     const { protectedSite, recoverySite } = protectionPlan;
     const protectedSitePlatform = protectedSite.platformDetails.platformType;
     const planHaCheckpoints = checkpointCount > 0 || false;
-    const isServerActionDisabled = (protectionPlan.recoveryStatus === RECOVERY_STATUS.RECOVERED || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED);
+    const isServerActionDisabled = (protectionPlan.recoveryStatus === RECOVERY_STATUS.RECOVERED || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED || !hasRequestedPrivileges(user, ['protectionplan.edit']));
     const recovered = planHaCheckpoints || !(protectionPlan.recoveryStatus === RECOVERY_STATUS.RECOVERED || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED);
     const isReverseActionDisabled = this.disableReverse(protectionPlan);
     let actions = [];
