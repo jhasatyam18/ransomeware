@@ -32,7 +32,8 @@ export function addTableFromData(doc, columns, title, data) {
   doc.text(title, 10, 30);
   const rows = data.map((item) => columns.map((col) => {
     const keys = (col.field.split('.'));
-    let value = getValueFromNestedObject(item, keys);
+    const secondaryKeys = (col.secondaryField?.split('.'));
+    let value = getValueFromNestedObject(item, keys, secondaryKeys);
     if (value === null || value === '') {
       value = '-';
     } else if (col.type) {
@@ -512,7 +513,8 @@ function addDataToWorksheet(worksheet, columns, data, workbook, base64ImgUrl, he
     const row = {};
     columns.forEach((col) => {
       const keys = (col.field.split('.'));
-      let value = getValueFromNestedObject(item, keys);
+      const secondaryKeys = (col.secondaryField?.split('.'));
+      let value = getValueFromNestedObject(item, keys, secondaryKeys);
       if (value === null || value === '') {
         value = '-';
       } else if (col.type) {
@@ -538,8 +540,12 @@ function addDataToWorksheet(worksheet, columns, data, workbook, base64ImgUrl, he
   AdjustColumnWidth(worksheet);
 }
 
-function getValueFromNestedObject(item, keys) {
-  return keys.reduce((acc, key) => acc && acc[key], item);
+function getValueFromNestedObject(item, keys, secondaryKeys) {
+  let val = keys.reduce((acc, key) => acc && acc[key], item);
+  if ((val === '' || val === null) && secondaryKeys) {
+    val = secondaryKeys.reduce((acc, k) => acc && acc[k], item);
+  }
+  return val;
 }
 
 export function getReportDurationOptions() {

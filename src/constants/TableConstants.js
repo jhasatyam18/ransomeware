@@ -298,12 +298,12 @@ export const TABLE_UPLOAD_SCRIPTS = [
 
 // table filter help text
 export const TABLE_FILTER_TEXT = {
-  TABLE_ALERTS: 'Data can be filtered on following fields <br/> title, severity, eventType <br /> example:  warning or <br /> severity=warning:eventType=replication',
-  TABLE_EVENTS: 'Data can be filtered on following fields <br/> topic, severity, type and description <br /> example: warning or topic=recovery:severity=warning',
-  REPLICATION_JOBS: 'Data can be filtered on following fields <br/> vmName, diskId and status <br /> example: windows or vmName=windows-10:diskId=2001',
-  REPLICATION_VM_JOBS: 'Data can be filtered on following fields <br/> vmName, iterationNumber, status and syncStatus <br /> example: Windows or vmName=windows',
-  TABLE_PROTECT_VM_VMWARE: 'Data can be filtered on following fields <br/> name and guestOS <br /> example: Windows or name=DBServer:guestOS=windows',
-  TABLE_RECOVERY_VMS: 'Data can be filtered on following fields <br/> name <br /> example: Windows or name=DBServer',
+  TABLE_ALERTS: 'Data can be filtered on following fields title, severity, eventType example:  warning or severity=warning:eventType=replication',
+  TABLE_EVENTS: 'Data can be filtered on following fields topic, severity, type and description example: warning or topic=recovery:severity=warning',
+  REPLICATION_JOBS: 'Data can be filtered on following fields vmName, diskId and status example: windows or vmName=windows-10:diskId=2001',
+  REPLICATION_VM_JOBS: 'Data can be filtered on following fields vmName, iterationNumber, status and syncStatus example: Windows or vmName=windows',
+  TABLE_PROTECT_VM_VMWARE: 'Data can be filtered on following fields name and guestOS example: Windows or name=DBServer:guestOS=windows',
+  TABLE_RECOVERY_VMS: 'Data can be filtered on following fields name example: Windows or name=DBServer',
   TABLE_HEADER_DR_PLANS: 'Data can be filtered on following fields :- Name, Status, Recovery Status, Protection Site, Recovery Site',
   TABLE_PROTECTION_PLAN_VMS: 'Data can be filtered on following fields :- Name, OS, Disk, Status',
   TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG: 'Data can be filtered on following fields :- Name, Instance Type',
@@ -437,7 +437,7 @@ export const RECOVERY_JOB_COLUMNS = [
   { header: 'Recovery Type', field: 'recoveryType' },
   { header: 'Recovery Point Time', field: 'recoveryPointTime', type: REPORT_DURATION.DATE },
   { header: 'Job Status', field: 'status' },
-  { header: 'IP Address', field: 'publicIP' },
+  { header: 'IP Address', field: 'publicIP', secondaryField: 'privateIP' },
 ];
 
 export const TABLE_REVERSE_VM = [
