@@ -6,7 +6,7 @@ import { withTranslation } from 'react-i18next';
 import { Link, withRouter } from 'react-router-dom';
 import { Card, CardBody, Col, Container, Input, Row } from 'reactstrap';
 import logo from '../../assets/images/logo.png';
-import logoName from '../../assets/images/name.png';
+import logoName from '../../assets/images/logo_title.png';
 import saml from '../../assets/images/saml.svg';
 import { API_SAML } from '../../constants/ApiConstants';
 import { FIELD_TYPE } from '../../constants/FieldsConstant';
