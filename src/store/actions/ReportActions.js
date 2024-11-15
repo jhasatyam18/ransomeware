@@ -108,19 +108,22 @@ export function reportFetchPlans(id) {
 export function reportFetchEvents(data = [], offSet = 0, criteria) {
   const { startDate, endDate } = criteria;
   const url = `${API_FETCH_EVENTS}?offset=${offSet}&limit=${API_MAX_RECORD_LIMIT}&starttime=${startDate}&endtime=${endDate}`;
-  return (dispatch) => (
+  return (dispatch) => {
+    dispatch(showApplicationLoader('Fetching_events', 'Loading events...'));
     callAPI(url)
       .then((json) => {
         if (json.hasNext === true) {
           dispatch(reportFetchEvents([...data, ...json.records], json.nextOffset, criteria));
         } else {
           dispatch(setReportObject('events', [...data, ...json.records]));
+          dispatch(hideApplicationLoader('Fetching_events'));
         }
       },
       (err) => {
+        dispatch(hideApplicationLoader('Fetching_events'));
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-      })
-  );
+      });
+  };
 }
 
 /**
@@ -159,10 +162,11 @@ export function reportFetchReplicationJobs(id, data = [], offset = 0, criteria =
           dispatch(reportFetchReplicationJobs(id, [...data, ...json.records], json.nextOffset, criteria, limit, tFetched));
         } else {
           dispatch(setReportObject('replication', [...data, ...json.records]));
-          dispatch(hideApplicationLoader('replication_report', 'Generating audit report...'));
+          dispatch(hideApplicationLoader('replication_report'));
         }
       },
       (err) => {
+        dispatch(hideApplicationLoader('replication_report'));
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
   };
@@ -373,7 +377,9 @@ export function exportReportToPDF() {
         addTableFromData(doc, columns, 'Alerts', alerts);
       }
       if (criteria.includeReplicationJobs) {
-        const columns = REPLICATION_JOB_COLUMNS;
+        const columns = [...REPLICATION_JOB_COLUMNS]
+          .filter((col) => col.header !== 'Sync Status');
+        columns[0] = { header: 'Virtual Machine', field: 'vmName_syncStatus', type: STATIC_KEYS.REPLICATION_JOB_VM_NAME };
         addTableFromData(doc, columns, 'Replication Jobs', replication);
       }
       if (criteria.includeRecoveryJobs) {

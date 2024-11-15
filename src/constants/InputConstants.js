@@ -154,6 +154,8 @@ export const STATIC_KEYS = {
   UI_LIST_DELETED_VMS: 'ui.list.deleted.vms',
   REPLICATION_JOB_VM_NAME: 'repliction_vm',
   RECOVERY_DATE_DURATION: 'recovery_date_duration',
+  STARTED: 'Started',
+  RUNNING: 'Running',
 };
 
 // Recovery time in minutes
@@ -295,11 +297,13 @@ export const REPORT_DURATION = {
   DATE: 'date',
   DURATION: 'duration',
   LOCATION: 'location',
+  REPLICATION_STATUS: 'replicationStatus',
 };
 
 export const NUMBER = {
   TWO_HUNDRED: 200,
   FIVE_THOUSAND: 5000,
+  ONE_HUNDRED: 100,
 };
 
 export const REVERSE_ENTITY_TYPE = {

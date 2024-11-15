@@ -233,7 +233,10 @@ function AdjustColumnWidth(ws) {
   worksheet.columns.forEach((col) => {
     const column = col;
     const lengths = column.values.map((v) => { if (v) { return v.toString().length + 6; } });
-    const maxLength = Math.max(...lengths.filter((v) => typeof v === 'number'));
+    let maxLength = Math.max(...lengths.filter((v) => typeof v === 'number'));
+    if (maxLength > NUMBER.ONE_HUNDRED) {
+      maxLength = NUMBER.ONE_HUNDRED;
+    }
     column.width = maxLength;
   });
   addingStyleToWorksheet(worksheet);
@@ -247,6 +250,7 @@ function addingStyleToWorksheet(ws) {
     column.border = BORDER_STYLE;
     column.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: DARK_NAVY_BLUE }, bgColor: { argb: DARK_NAVY_BLUE } };
     column.font = { color: { argb: LIGHT_GREY } };
+    column.alignment = { wrapText: true, horizontal: 'center', vertical: 'middle' };
   });
   // apply blue font color and light blue background color in the header of the table
   EXCEL_WORKSHEET_TABLE_HEADER_CELL.map((key) => {
@@ -465,6 +469,13 @@ export function getRecoveryTimingAndDuration(data) {
   return `${start} - ${end} - ${duration}`;
 }
 
+export function getReplicationStatus(data) {
+  if (data.status === STATIC_KEYS.STARTED) {
+    return STATIC_KEYS.RUNNING;
+  }
+  return data.status;
+}
+
 function convertValueAccordingToType(value, type, data = {}) {
   switch (type) {
     case REPORT_DURATION.SIZE:
@@ -489,6 +500,8 @@ function convertValueAccordingToType(value, type, data = {}) {
       return getVMNameWithSyncStatus(data);
     case STATIC_KEYS.RECOVERY_DATE_DURATION:
       return getRecoveryTimingAndDuration(data);
+    case REPORT_DURATION.REPLICATION_STATUS:
+      return getReplicationStatus(data);
     default:
       return value;
   }
@@ -525,6 +538,8 @@ function addDataToWorksheet(worksheet, columns, data, workbook, base64ImgUrl, he
         if (words.length > NUMBER.TWO_HUNDRED) {
           value = `${words.slice(0, 5).join(' ')}...`;
         }
+      } else if (typeof value === 'boolean' || value instanceof Boolean) {
+        value = value ? 'Yes' : 'No';
       }
       row[col.field] = value;
     });

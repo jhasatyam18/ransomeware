@@ -371,7 +371,7 @@ export const PROTECTION_PLAN_COLUMNS = [
   { header: 'Protection Site', field: 'protectedSite.name' },
   { header: 'Recovery Site', field: 'recoverySite.name' },
   { header: 'Replication Interval', field: 'replicationInterval', type: REPORT_DURATION.TIME },
-  { header: 'Status', field: 'status' },
+  { header: 'Status', field: 'replStatus', type: REPORT_DURATION.REPLICATION_STATUS },
   { header: 'Recovery Status', field: 'rStatus', type: STATIC_KEYS.RECOVER_STATUS },
 ];
 
@@ -422,11 +422,12 @@ export const PROTECTED_VMS_COLUMNS = [
 ];
 
 export const REPLICATION_JOB_COLUMNS = [
-  { header: 'Virtual Machine', field: 'vmName_syncStatus', type: STATIC_KEYS.REPLICATION_JOB_VM_NAME },
+  { header: 'Virtual Machine', field: 'vmName' },
   { header: 'Iteration', field: 'iterationNumber' },
   { header: 'Changed', field: 'changedSize', type: REPORT_DURATION.SIZE },
   { header: 'Transferred', field: 'transferredSize', type: REPORT_DURATION.SIZE },
   { header: 'Job Status', field: 'status' },
+  { header: 'Sync Status', field: 'syncStatus' },
   { header: 'Replication Duration', field: 'duration', type: REPORT_DURATION.DURATION },
   { header: 'Sync Time', field: 'currentSnapshotTime', type: REPORT_DURATION.DATE },
 ];
