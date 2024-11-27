@@ -1,5 +1,5 @@
 import { API_LATEST_TEST_RECOVERY_PPLAN } from '../../constants/ApiConstants';
-import { COPY_CONFIG, PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
+import { COPY_CONFIG, PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW, AWS_TENANCY_TYPES } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { APP_SET_TIMEOUT } from '../../constants/UserConstant';
 import { callAPI } from '../../utils/ApiUtils';
@@ -55,7 +55,7 @@ export function copyInstanceConfiguration({ sourceVM, targetVMs, configToCopy, s
 }
 
 function setGeneralConfiguration(sourceConfig, targetVM, user, dispatch) {
-  const { volumeType, volumeIOPS, tags, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, availZone, securityGroups = '', encryptionKey } = sourceConfig;
+  const { volumeType, volumeIOPS, tags, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, availZone, securityGroups = '', encryptionKey, tenancy, hostType, affinity, image, license } = sourceConfig;
   let { instanceType, folderPath, securityGroup = '' } = sourceConfig;
   const { values } = user;
   const memory = getMemoryInfo(memoryMB);
@@ -78,11 +78,32 @@ function setGeneralConfiguration(sourceConfig, targetVM, user, dispatch) {
       [`${targetVM}-vmConfig.general.numcpu`]: numCPU || 2,
       [`${targetVM}-vmConfig.general-memory`]: parseInt(memory[0], 10) || 2,
       [`${targetVM}-vmConfig.general-unit`]: memory[1] || '',
+      [`${targetVM}-vmConfig.general.hostMoref`]: { label: hostMoref, value: hostMoref },
     };
   } else {
     folderPath = { label: folderPath, value: folderPath };
     instanceType = { label: instanceType, value: instanceType };
   }
+
+  if (typeof tenancy !== 'undefined' && tenancy === AWS_TENANCY_TYPES.Dedicated_Host) {
+    generalConfig = {
+      ...generalConfig,
+      // add the tenancy keys
+      [`${targetVM}-vmConfig.general.tenancy`]: tenancy,
+      [`${targetVM}-vmConfig.general.hostType`]: hostType,
+      [`${targetVM}-vmConfig.general.hostMoref`]: hostMoref,
+      [`${targetVM}-vmConfig.general.affinity`]: affinity,
+      [`${targetVM}-vmConfig.general.image`]: image,
+      [`${targetVM}-vmConfig.general.license`]: license,
+    };
+  }
+  if (typeof tenancy !== 'undefined' && tenancy === AWS_TENANCY_TYPES.Shared) {
+    generalConfig = {
+      ...generalConfig,
+      [`${targetVM}-vmConfig.general.tenancy`]: tenancy,
+    };
+  }
+
   let networkTags = [];
   if (securityGroup) {
     networkTags = securityGroup.split(',');
@@ -91,7 +112,6 @@ function setGeneralConfiguration(sourceConfig, targetVM, user, dispatch) {
     ...generalConfig,
     [`${targetVM}-vmConfig.general.instanceType`]: instanceType || '',
     [`${targetVM}-vmConfig.general.volumeType`]: volumeType || '',
-    [`${targetVM}-vmConfig.general.hostMoref`]: { label: hostMoref, value: hostMoref },
     [`${targetVM}-vmConfig.general.dataStoreMoref`]: { label: datastoreMoref, value: datastoreMoref },
     [`${targetVM}-vmConfig.general.datacenterMoref`]: datacenterMoref || '',
     [`${targetVM}-vmConfig.general.folderPath`]: folderPath || '',
@@ -101,6 +121,11 @@ function setGeneralConfiguration(sourceConfig, targetVM, user, dispatch) {
     [`${targetVM}-vmConfig.general.tags`]: tagsData || '',
     [`${targetVM}-vmConfig.general.availibility.zone`]: availZone || '',
     [`${targetVM}-vmConfig.network.securityGroup`]: networkTags || '',
+    [`${targetVM}-vmConfig.network.securityGroup`]: networkTags || '',
+    [`${targetVM}-vmConfig.network.securityGroup`]: networkTags || '',
+    [`${targetVM}-vmConfig.network.securityGroup`]: networkTags || '',
+    [`${targetVM}-vmConfig.network.securityGroup`]: networkTags || '',
+
   };
   return generalConfig;
 }
@@ -204,14 +229,21 @@ function setNetworkConfig(sourceConfig, targetVM, user, dispatch) {
     if (nics && nics.length > 0) {
       for (let index = 0; index < networks.length; index += 1) {
         if (typeof networks[index] !== 'undefined' && networks[index]) {
-          const { vpcId = '', Subnet = '', networkTier = '', isFromSource, securityGroups, adapterType, networkMoref, networkPlatformID, isPublicIP = '' } = networks[index];
-          let { subnet, network, publicIP } = networks[index];
+          const { vpcId = '', Subnet = '', networkTier = '', isFromSource, securityGroups, adapterType, networkMoref, networkPlatformID } = networks[index];
+          let { subnet, network, publicIP, isPublicIP = '', dns = '', netmask = '', gateway = '' } = networks[index];
           let sgs = (securityGroups ? securityGroups.split(',') : []);
           if (typeof subnet === 'undefined' || subnet === '' && Subnet !== '') {
             subnet = Subnet;
           }
           if (recoveryPlatform === PLATFORM_TYPES.VMware) {
             network = { label: network, value: networkPlatformID };
+            if (workflow !== UI_WORKFLOW.TEST_RECOVERY) {
+              isPublicIP = false;
+              publicIP = '';
+              dns = '';
+              netmask = '';
+              gateway = '';
+            }
           } else if (recoveryPlatform === PLATFORM_TYPES.Azure) {
             const { publicIp } = setPublicIPWhileEdit(isPublicIP, publicIP, networkKey, index, dispatch);
             network = getNetworkIDFromName(network, values);
@@ -227,7 +259,7 @@ function setNetworkConfig(sourceConfig, targetVM, user, dispatch) {
               sgs = { label, value: securityGroups };
             }
           }
-          const nwCon = setNetworkConfigValues({ key, index, vpcId, subnet, availZone, isPublicIP, publicIP, network, networkTier, isFromSource, sgs, adapterType, networkMoref });
+          const nwCon = setNetworkConfigValues({ key, index, vpcId, subnet, availZone, isPublicIP, publicIP, network, networkTier, isFromSource, sgs, adapterType, networkMoref, dns, netmask, gateway });
 
           networkConfig = { ...networkConfig, ...nwCon };
         }
@@ -246,7 +278,7 @@ function setNetworkConfig(sourceConfig, targetVM, user, dispatch) {
  * @returns object network config
  */
 
-export function setNetworkConfigValues({ key, index, vpcId, subnet, availZone, publicIP, isPublicIP, network, networkTier, isFromSource, sgs, adapterType, networkMoref }) {
+export function setNetworkConfigValues({ key, index, vpcId, subnet, availZone, publicIP, isPublicIP, network, networkTier, isFromSource, sgs, adapterType, networkMoref, dns, netmask, gateway }) {
   const nwCon = {
     [`${key}-eth-${index}-vpcId`]: vpcId || '',
     [`${key}-eth-${index}-subnet`]: subnet || '',
@@ -259,6 +291,9 @@ export function setNetworkConfigValues({ key, index, vpcId, subnet, availZone, p
     [`${key}-eth-${index}-adapterType`]: adapterType || '',
     [`${key}-eth-${index}-networkMoref`]: networkMoref || '',
     [`${key}-eth-${index}-publicIP`]: publicIP || '',
+    [`${key}-eth-${index}-dnsserver`]: dns || '',
+    [`${key}-eth-${index}-gateway`]: gateway || '',
+    [`${key}-eth-${index}-netmask`]: netmask || '',
   };
   return nwCon;
 }

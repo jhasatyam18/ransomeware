@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Col, FormFeedback, FormGroup, Input, Label, Row,
-} from 'reactstrap';
+import { Col, FormFeedback, FormGroup, Input, Label, Row } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
 import DMToolTip from './DMToolTip';
 import { getValue } from '../../utils/InputUtils';
@@ -119,14 +117,18 @@ class DMFieldSelect extends Component {
   }
 
   renderLabel() {
-    const { t, hideLabel, field } = this.props;
+    const { t, hideLabel, field, user, fieldKey } = this.props;
     const { label } = field;
     if (hideLabel) {
       return null;
     }
+    let labelKey = label;
+    if (typeof label === 'function') {
+      labelKey = label({ fieldKey, user });
+    }
     return (
       <Label for="horizontal-firstname-Input" className="col-sm-4 col-form-Label">
-        {t(label)}
+        {t(labelKey)}
       </Label>
     );
   }
@@ -148,7 +150,7 @@ class DMFieldSelect extends Component {
     const { value } = this.state;
     const { errors } = user;
     const hasErrors = !!(errors && errors[fieldKey] !== undefined);
-    const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
+    const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user, fieldKey) : shouldShow);
     if (!showField) return null;
     const css = hideLabel ? '' : 'row mb-4 form-group';
     const hasWarning = typeof hasWarningFunc !== 'undefined' && (typeof hasWarningFunc === 'function' ? hasWarningFunc(user, fieldKey, fieldName) : hasWarningFunc);

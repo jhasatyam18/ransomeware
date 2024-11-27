@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import {
-  Col, FormGroup, Row,
+  Col, FormGroup, Input, Row,
 } from 'reactstrap';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -150,7 +150,7 @@ class DMFieldText extends Component {
     const { type } = this.state;
     const value = this.getFieldValue();
     const hasErrors = !!(errors && errors[fieldKey] !== undefined);
-    const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
+    const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user, fieldKey) : shouldShow);
     const css = hideLabel ? '' : 'row mb-4 form-group';
     if (!showField) return null;
     const placeH = placeHolderText || '';
@@ -162,14 +162,14 @@ class DMFieldText extends Component {
             <Row>
               <Col sm={11}>
                 <div>
-                  <input
+                  <Input
                     type={type}
                     className="form-control"
                     id={fieldKey}
                     value={value}
                     onBlur={this.onBlur}
                     onChange={this.handleChange}
-                    // invalid={hasErrors}
+                    invalid={hasErrors}
                     autoComplete="none"
                     placeholder={placeH}
                     onFocus={() => this.handleFocus(true)}

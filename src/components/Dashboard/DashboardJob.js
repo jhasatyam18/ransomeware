@@ -109,6 +109,7 @@ function DashBoardJob(props) {
       case appStatus.JOB_IN_PROGRESS:
         return renderData(data, 'app_primary', faCircleArrowRight);
       case appStatus.PARTIALLY_COMPLETED:
+      case appStatus.PENDING_STATUS:
         return renderData(data, 'app_warning', faTriangleExclamation);
       default:
         return renderData(data, 'app_secondary', faCircleInfo);

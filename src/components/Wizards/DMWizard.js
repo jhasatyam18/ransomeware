@@ -197,14 +197,19 @@ class DMWizard extends React.Component {
 
   renderFooter() {
     const { currentStep } = this.state;
-    const { wizard } = this.props;
+    const { wizard, dispatch, user } = this.props;
     const { steps } = wizard;
+    const { disableNext, footerClssName } = steps[currentStep];
+    let isNextDisabled = false;
+    if (typeof disableNext === 'function') {
+      isNextDisabled = disableNext({ dispatch, user });
+    }
     const nextLabel = (currentStep === steps.length - 1 ? 'Finish' : 'Next');
     const nextCss = (nextLabel === 'Finish' ? 'btn-success' : 'btn-secondary');
     // for first step in wizard hide back button
     const showBackButton = (currentStep !== 0);
     return (
-      <div className="modal-footer">
+      <div className={`modal-footer ${isNextDisabled ? footerClssName : ''}`}>
         {showBackButton ? <button type="button" className="btn btn-secondary" onClick={this.onBack}>Back </button> : null}
         <button type="button" className={`btn ${nextCss}`} onClick={(nextLabel === 'Next' ? this.onNext : this.onFinish)}>
           { nextLabel }

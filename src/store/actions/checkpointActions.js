@@ -1,4 +1,5 @@
 import { t } from 'i18next';
+import { isEmpty } from '../../utils/validationUtils';
 import * as Types from '../../constants/actionTypes';
 import { API_CHECKPOINT_TAKE_ACTION, API_GET_SELECTED_CHECKPOINTS, API_RECOVERY_CHECKPOINT, API_RECOVERY_CHECKPOINT_BY_VM, API_REPLICATION_VM_JOBS, API_UPDAT_RECOVERY_CHECKPOINT_BY_ID } from '../../constants/ApiConstants';
 import { CHECKPOINT_TYPE, MINUTES_CONVERSION, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
@@ -479,6 +480,7 @@ export function fetchCheckpointsByPlanId(planId, key) {
         dispatch(setCheckpointCount(res.records.length));
       } else {
         dispatch(setVmlevelCheckpoints([]));
+        dispatch(setCheckpointCount(0));
       }
     });
   };
@@ -574,4 +576,24 @@ export function setCheckpointCount(count) {
     type: Types.SET_CHECKPOINT_COUNT,
     count,
   };
+}
+
+export function PreserveCheckpointError({ user, fieldKey }) {
+  const { values } = user;
+  const text = getValue(fieldKey, values);
+  if (isEmpty({ value: text, user })) {
+    return 'Please provide a reason to preserve checkpoint';
+  } if (text.length > 255) {
+    return 'Text should be less than 255 character';
+  }
+}
+
+export function validatedCheckpointDescription({ value, user }) {
+  const empty = isEmpty({ value, user });
+  if (empty) {
+    return empty;
+  } if (value.length > 255) {
+    return true;
+  }
+  return false;
 }

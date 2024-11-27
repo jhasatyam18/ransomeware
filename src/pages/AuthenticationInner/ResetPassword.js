@@ -4,7 +4,7 @@ import { withTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { validatedNewAndCnfmPass } from '../../utils/validationUtils';
 import logo from '../../assets/images/logo.png';
-import logoName from '../../assets/images/name.png';
+import logoName from '../../assets/images/logo_title.png';
 import { getValue } from '../../utils/InputUtils';
 import { resetCredetials } from '../../store/actions';
 import ResetPasswordField from './ResetPasswordField';

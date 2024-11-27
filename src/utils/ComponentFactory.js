@@ -1,4 +1,7 @@
 import React from 'react';
+import DMFieldText from '../components/Shared/DMFieldText';
+import VMTenancyTypeItemRenderer from '../components/Table/ItemRenderers/VMTenancyTypeItemRenderer';
+import LatestRefeshRecoveryStatus from '../components/Table/ItemRenderers/LatestRefeshRecoveryStatus';
 import CloudTags from '../components/Common/CloudTags';
 import Memory from '../components/Common/InstanceMemory';
 import Location from '../components/Common/Location';
@@ -19,7 +22,6 @@ import AlertAckItemRenderer from '../components/Table/ItemRenderers/AlertAckItem
 import CheckpoinLinkRenderer from '../components/Table/ItemRenderers/CheckpointLinkRenderer';
 import CheckpointRecoveryJobItemRenderer from '../components/Table/ItemRenderers/CheckpointRecoveryJobItemRenderer';
 import DateItemRenderer from '../components/Table/ItemRenderers/DateItemRenderer';
-import DeletCheckpointPlanCheckbox from '../components/Table/ItemRenderers/DeletCheckpointPlanCheckbox';
 import DiskReplicationTypeItemRenderer from '../components/Table/ItemRenderers/DiskReplicationTypeItemRenderer';
 import DownloadPlaybookFromPlanList from '../components/Table/ItemRenderers/DownloadPlaybookFromPlanList';
 import DRPlanNameItemRenderer from '../components/Table/ItemRenderers/DRPlanNameItemRenderer';
@@ -79,9 +81,10 @@ import VMPlacementInfoItemRenderer from '../components/Table/ItemRenderers/VMPla
 import VMSizeItemRenderer from '../components/Table/ItemRenderers/VMSizeItemRenderer';
 import VMUsernameItemRenderer from '../components/Table/ItemRenderers/VMUsernameItemRenderer';
 import { DATE_PICKER_COMP, FIELDS, FIELD_TYPE, MULTISELECT_ITEM_COMP, REPLICATION_INTERVAL_COMP, TIME_PICKER_COMP } from '../constants/FieldsConstant';
-import { PPLAN_REMOVE_CHECKPOINT_RENDERER } from '../constants/Modalconstant';
 import { STACK_COMPONENT_LOCATION, STACK_COMPONENT_MEMORY, STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP, STACK_COMPONENT_TAGS } from '../constants/StackConstants';
-import { ALERT_ACK_ITEM_RENDERER, CHECKPOINTS_LINK_RENDERER, CHECKPOINT_RECOVERY_JOB_ITEM_RENDERER, DATE_ITEM_RENDERER, DISK_REPLICATION_TYPE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, EMAIL_RECIPIENT_ACTION_ITEM_RENDER, ENTITY_TYPE_OPTION_RENDERER, EVENT_DESCRIPTION_RENDERER, EVENT_LEVEL_ITEM_RENDERER, JOBS_VM_NAME_RENDERER, LICENSE_ACTION_ITEM_RENDERER, LICENSE_STATUS_ITEM_RENDER, LICENSE_USAGE_ITEM_RENDERER, NODE_ACTION_RENDERER, NODE_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDERER, PLATFORM_TYPE_ITEM_RENDERER, PLAYBOOK_ACTION_RENDERER, PLAYBOOK_CHANGES_RENDERER, PLAYBOOK_CONFIGURE_RENDERER, PLAYBOOK_FILENAME_RENDERER, PLAYBOOK_ITEM_RENDERER, PLAYBOOK_PLAN_NAME_LINK_RENDERER, PLAYBOOK_PLAN_STATUS_RENDERER, PLAYBOOK_RENDER_ISSUES_COLUMN, PRESERVE_CHECKPOINT, PROTECTED_VM_ACTIONS_ITEM_ITEM_RENDERER, PROTECTION_SITE_LINK_ITEM_RENDERER, QUIESCE_SOURCE_SNAPSHOT_RENDERER, QUIESCE_VMNAME_RENDERER, RECOVERY_CHECKPOINT_OPTION_RENDERER, RECOVERY_SITE_LINK_ITEM_RENDERER, RECOVERY_STATUS_ITEM_RENDERER, RECOVERY_STATUS_RENDERER, RECOVERY_TYPE_ITEM_RENDERER, REPLICATION_INTERVAL_ITEM_RENDERER, REPLICATION_PRIORITY_RENDERER, REPLICATION_TYPE_OPTION_RENDERER, REVERSE_SUMMARY_ENTITY_TYPE_RENDERER, REVERSE_VM_DESCRIPTION_RENDERER, ROLE_ITEM_RENDERER, SCRIPT_ITEM_RENDERER, SERVER_PORT_ITEM_RENDERER, SINGLE_PLAYBOOK_STATUS_RENDERER, SITE_LOCATION_ITEM_RENDERER, SITE_NAME_LINK_RENDERER, SIZE_ITEM_RENDERER, SSH_RDP_ITEM_RENDERER, STATUS_ITEM_RENDERER, SUPPORT_BUNDLE_ACTION_ITEM_RENDERER, THROTTLING_ACTION_ITEM_RENDER, THROTTLING_TIME_ITEM_RENDER, TIME_DURATION_RENDERER, TRANSFER_SIZE_ITEM_RENDERER, VIEW_ALERT_INFO_RENDERER, VM_BOOT_ORDER_ITEM_RENDER, VM_DISK_ITEM_RENDERER, VM_NETWORK_INFO_ITEM_RENDERER, VM_PLACEMENT_INFO_ITEM_RENDERER, VM_SIZE_ITEM_RENDERER, VM_UPASSWORD_ITEM_RENDERER, VM_USERNAME_ITEM_RENDERER } from '../constants/TableConstants';
+import { ALERT_ACK_ITEM_RENDERER, CHECKPOINTS_LINK_RENDERER, CHECKPOINT_RECOVERY_JOB_ITEM_RENDERER, DATE_ITEM_RENDERER, DISK_REPLICATION_TYPE_ITEM_RENDERER, DR_PLAN_NAME_ITEM_RENDERER, DR_PLAN_RECOVERY_STATUS_RENDERER, EMAIL_RECIPIENT_ACTION_ITEM_RENDER, EMAIL_SUBSCRIBED_EVENT_ITEM_RENDER, ENTITY_TYPE_OPTION_RENDERER, EVENT_DESCRIPTION_RENDERER, EVENT_LEVEL_ITEM_RENDERER, JOBS_VM_NAME_RENDERER, LATEST_REFRESH_RECOVERY_STATUS, LICENSE_ACTION_ITEM_RENDERER, LICENSE_STATUS_ITEM_RENDER, LICENSE_USAGE_ITEM_RENDERER, NODE_ACTION_RENDERER, NODE_NAME_ITEM_RENDERER, OS_TYPE_ITEM_RENDERER, PLATFORM_TYPE_ITEM_RENDERER, PLAYBOOK_ACTION_RENDERER, PLAYBOOK_CHANGES_RENDERER, PLAYBOOK_CONFIGURE_RENDERER, PLAYBOOK_FILENAME_RENDERER, PLAYBOOK_ITEM_RENDERER, PLAYBOOK_PLAN_NAME_LINK_RENDERER, PLAYBOOK_PLAN_STATUS_RENDERER, PLAYBOOK_RENDER_ISSUES_COLUMN, PRESERVE_CHECKPOINT, PROTECTED_VM_ACTIONS_ITEM_ITEM_RENDERER, PROTECTION_SITE_LINK_ITEM_RENDERER, QUIESCE_SOURCE_SNAPSHOT_RENDERER, QUIESCE_VMNAME_RENDERER, RECOVERY_CHECKPOINT_OPTION_RENDERER, RECOVERY_SITE_LINK_ITEM_RENDERER, RECOVERY_STATUS_ITEM_RENDERER, RECOVERY_STATUS_RENDERER, RECOVERY_TYPE_ITEM_RENDERER, REPLICATION_INTERVAL_ITEM_RENDERER, REPLICATION_PRIORITY_RENDERER, REPLICATION_TYPE_OPTION_RENDERER, REVERSE_SUMMARY_ENTITY_TYPE_RENDERER, REVERSE_VM_DESCRIPTION_RENDERER, ROLE_ITEM_RENDERER, SCRIPT_ITEM_RENDERER, SERVER_PORT_ITEM_RENDERER, SINGLE_PLAYBOOK_STATUS_RENDERER, SITE_LOCATION_ITEM_RENDERER, SITE_NAME_LINK_RENDERER, SIZE_ITEM_RENDERER, SSH_RDP_ITEM_RENDERER, STATUS_ITEM_RENDERER, SUPPORT_BUNDLE_ACTION_ITEM_RENDERER, THROTTLING_ACTION_ITEM_RENDER, THROTTLING_TIME_ITEM_RENDER, TIME_DURATION_RENDERER, TRANSFER_SIZE_ITEM_RENDERER, VIEW_ALERT_INFO_RENDERER, VM_BOOT_ORDER_ITEM_RENDER, VM_DISK_ITEM_RENDERER, VM_NETWORK_INFO_ITEM_RENDERER, VM_PLACEMENT_INFO_ITEM_RENDERER, VM_SIZE_ITEM_RENDERER, VM_TENANCY_ITEM_RENDERER, VM_UPASSWORD_ITEM_RENDERER, VM_USERNAME_ITEM_RENDERER } from '../constants/TableConstants';
+import { DrPlanRecoveryStatusRenderer } from '../components/Table/ItemRenderers/DRPlanRecoveryStatusRenderer';
+import EmailSubscribedEventRenderer from '../components/Table/ItemRenderers/EmailSubscribedEventRenderer';
 
 export function getStackComponent(dispatch, user, children, conf, data) {
   const field = children[conf];
@@ -102,6 +105,8 @@ export function getStackComponent(dispatch, user, children, conf, data) {
       return <Location dispatch={dispatch} fieldKey={conf} field={children[conf]} user={user} hideLabel="true" />;
     case STACK_COMPONENT_MEMORY:
       return <Memory dispatch={dispatch} fieldKey={conf} field={children[conf]} user={user} hideLabel="true" />;
+    case FIELD_TYPE.TEXT:
+      return <DMFieldText dispatch={dispatch} fieldKey={conf} field={children[conf]} user={user} hideLabel="true" />;
     default:
       return <DMFieldSelect dispatch={dispatch} fieldKey={conf} field={children[conf]} user={user} hideLabel="true" />;
   }
@@ -123,7 +128,7 @@ export function getFieldComponents(dispatch, fieldKey, user, component, hideLabe
   }
 }
 
-export function getItemRendererComponent({ render, data, field, user, dispatch, options }) {
+export function getItemRendererComponent({ render, data, field, user, dispatch }) {
   switch (render) {
     case OS_TYPE_ITEM_RENDERER:
       return <OsTypeItemRenderer data={data} />;
@@ -167,6 +172,8 @@ export function getItemRendererComponent({ render, data, field, user, dispatch, 
       return <NodeNameItemRenderer data={data} />;
     case EMAIL_RECIPIENT_ACTION_ITEM_RENDER:
       return <EmailRecipientItemRenderer data={data} dispatch={dispatch} user={user} />;
+    case EMAIL_SUBSCRIBED_EVENT_ITEM_RENDER:
+      return <EmailSubscribedEventRenderer data={data} dispatch={dispatch} user={user} />;
     case THROTTLING_ACTION_ITEM_RENDER:
       return <ThrottlingItemRenderer data={data} dispatch={dispatch} user={user} />;
     case NODE_ACTION_RENDERER:
@@ -229,8 +236,6 @@ export function getItemRendererComponent({ render, data, field, user, dispatch, 
       return <CheckpoinLinkRenderer data={data} dispatch={dispatch} user={user} field={field} />;
     case CHECKPOINT_RECOVERY_JOB_ITEM_RENDERER:
       return <CheckpointRecoveryJobItemRenderer data={data} field={field} />;
-    case PPLAN_REMOVE_CHECKPOINT_RENDERER:
-      return <DeletCheckpointPlanCheckbox user={user} dispatch={dispatch} options={options} />;
     case PLAYBOOK_PLAN_STATUS_RENDERER:
       return <PlaybookPlanStatusRenderer data={data} field={field} dispatch={dispatch} user={user} />;
     case PLAYBOOK_ITEM_RENDERER:
@@ -255,6 +260,12 @@ export function getItemRendererComponent({ render, data, field, user, dispatch, 
       return <EntityTypeOptionRenderer data={data} dispatch={dispatch} user={user} field={field} />;
     case REVERSE_VM_DESCRIPTION_RENDERER:
       return <ReverseVMDescriptionRenderer data={data} user={user} field={field} />;
+    case VM_TENANCY_ITEM_RENDERER:
+      return <VMTenancyTypeItemRenderer data={data} user={user} field={field} />;
+    case DR_PLAN_RECOVERY_STATUS_RENDERER:
+      return <DrPlanRecoveryStatusRenderer data={data} user={user} field={field} />;
+    case LATEST_REFRESH_RECOVERY_STATUS:
+      return <LatestRefeshRecoveryStatus data={data} user={user} field={field} />;
     default:
       return (<div> 404 </div>);
   }

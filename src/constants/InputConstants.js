@@ -10,6 +10,7 @@ export const UI_WORKFLOW = {
   RECOVERY: 'RECOVERY',
   RESET_DISK_REPLICATION: 'RESET_DISK_REPLICATION',
   SINGLE_VM_EDIT: 'SINGLE_VM_EDIT',
+  REFRESH_RECOVERY: 'REFRESH_RECOVERY',
 };
 
 export const PLATFORM_TYPES = {
@@ -139,6 +140,22 @@ export const STATIC_KEYS = {
   LATEST_REPLICATION_JOBS: 'latest=true',
   LATEST_COMPLETED_REPL_JOBS: 'status=completed&latest=true',
   RECOVERY_CREDENTIAL_EXCEL_FILE: 'ui.recovery.credentials.fileName',
+  UI_RESYNC_DISK_WORKLOAD: 'resyncDisk.workload',
+  UI_RESYNC_DISK_DISKTYPE: 'resyncDisk.diskType',
+  UI_RESYNC_SUMMARY_DATA: 'resyncSummary',
+  // refresh recovery
+  UI_REFRESH_STATUS_VMS: 'ui.refresh.status.vms',
+  UI_REFRESH_SELECTED_VMS: 'ui.refresh.selected.vms',
+  UI_REFRESH_VALIDATION_OBJ: 'ui.refresh.validation.obj',
+  UI_REFRESH_OP_STATE: 'refresh.status.operation.state',
+  PENDING_STATUS_CLEANUP_RECOVERY: 'pending.status.cleanup.recovary',
+  RECOVER_STATUS: 'recoveryStatus',
+  ALERT_TITLE: 'alertTitle',
+  UI_LIST_DELETED_VMS: 'ui.list.deleted.vms',
+  REPLICATION_JOB_VM_NAME: 'repliction_vm',
+  RECOVERY_DATE_DURATION: 'recovery_date_duration',
+  STARTED: 'Started',
+  RUNNING: 'Running',
 };
 
 // Recovery time in minutes
@@ -160,6 +177,7 @@ export const EXCLUDE_KEYS_RECOVERY_CONFIGURATION = {
   NETWORK_KEY: 'networkKey',
   BOOT_PRIORITY: 'bootPriority',
   INSTANCE_ID: 'instanceID',
+  DELETED_CHECKPOINT: 'deleteCheckpoint',
 };
 
 export const EXCLUDE_KEYS_CONSTANTS = {
@@ -279,10 +297,13 @@ export const REPORT_DURATION = {
   DATE: 'date',
   DURATION: 'duration',
   LOCATION: 'location',
+  REPLICATION_STATUS: 'replicationStatus',
 };
 
 export const NUMBER = {
   TWO_HUNDRED: 200,
+  FIVE_THOUSAND: 5000,
+  ONE_HUNDRED: 100,
 };
 
 export const REVERSE_ENTITY_TYPE = {
@@ -302,4 +323,32 @@ export const MAPPING_REVERSE_RECOMMENDED_DATA = {
   full: 'Full',
   'maintain-original': 'Maintain Original',
   'create-new': 'Create New Copy',
+};
+
+export const AWS_TENANCY_TYPES = {
+  Shared: 'default',
+  // dedicated: 'dedicated',
+  Dedicated_Host: 'host',
+};
+
+export const AWS_TARGET_HOST_TYPES = {
+  Host_ID: 'Standalone',
+  Host_Resource_Group: 'Cluster',
+};
+export const RESYNC_DISKS_TYPES = {
+  all: 'All', os: 'OS', data: 'Data',
+};
+
+export const REF_REC_REFRESH_CONSTANT = {
+  GLOBAL: 'global',
+  REF_REC_VM_DATA: 'ref_rec_vm_data',
+};
+
+export const REFRESH_RECOVERY_TYPE_FILTER = {
+  TEST_RECOVERY: 'test recovery',
+  RECOVERY: 'full recovery,migration',
+};
+
+export const RECOVERY_STEPS = {
+  VALIDATION_INSTANCE_FOR_RECOVERY: 'Validating Instance for recovery',
 };

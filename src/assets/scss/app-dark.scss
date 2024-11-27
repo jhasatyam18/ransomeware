@@ -174,3 +174,19 @@
   padding: 10px;
   background-color: #222736;
 }
+.refreshModal {
+  height: 60vh;
+}
+
+.refresh-modal {
+  max-width: 80%;
+  width: 80%;
+}
+
+.fw-bold{
+  font-weight: bold;
+}
+.unclickable {
+  pointer-events: none;
+  opacity: 0.8;
+}

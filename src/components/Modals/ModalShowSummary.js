@@ -95,8 +95,8 @@ function ModalShowSummary(props) {
 
   const renderFooter = () => (
     <div className="modal-footer">
-      <button type="button" className="btn btn-secondary" onClick={onClose}>Close </button>
-      {!showSummary ? <button type="button" className="btn btn-success" onClick={onApply}>Apply</button> : null}
+      <button type="button" className="btn btn-secondary" onClick={onClose} id="showSummary_close_button">Close </button>
+      {!showSummary ? <button type="button" className="btn btn-success" onClick={onApply} id="showSummary_apply_button">Apply</button> : null}
     </div>
   );
 

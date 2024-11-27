@@ -9,7 +9,7 @@ function VMDisksItemRenderer(props) {
   let { virtualDisks = [] } = data;
   const [popoverOpen, setPopoverOpen] = useState(false);
   let name = data.name.replace(/\s/g, '');
-  name = name.replace(/[^a-zA-Z ]/g, '');
+  name = name.replace(/[^a-zA-Z0-9 ]/g, '');
   let key = '';
   if (name) {
     key = `disk-${name}-${id}`;

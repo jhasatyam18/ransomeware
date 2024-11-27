@@ -89,6 +89,7 @@ export const API_CHECKPOINT_TAKE_ACTION = 'api/v1/alerts/action/<id>/checkpoint'
 // sb
 export const API_DELETE_SUPPORT_BUNDLE = 'api/v1/support/bundle/<id>';
 export const API_SUPPORT_BUNDLE = 'api/v1/support/bundle';
+export const API_SUPPORT_BUNDLE_BY_ID = 'api/v1/support/bundle/<id>';
 
 // nodes
 export const API_NODES = 'api/v1/nodes';
@@ -146,3 +147,13 @@ export const API_UPLOAD_IDP_CONFIG = 'api/v1/idp/upload';
 
 // CBT
 export const API_GET_VMWARE_VMS = 'api/v1/sites/<id>/vms?details=true&vms=vmstring';
+
+// Refresh Recovery Status
+export const API_REFRESH_RECOVERY_VMS = 'api/v1/jobs/recover/vms?refreshrequired=true&recoverytype=<recoveryType>';
+export const API_REFRESH_RECOVERY_OPS = 'api/v1/jobs/recover/refresh';
+
+export const REFRESH_OPS = {
+  validate: 'validate',
+  poll: 'poll',
+  update: 'update',
+};
