@@ -8,8 +8,8 @@ import { commonCheckpointOptions, defaultRecoveryCheckpointForVm, disableSiteSel
 import { getErrorMessage, getFieldInfo, getLabel } from '../utils/LocallUtils';
 import { getReportDurationOptions, setMinDateForReport, showReportDurationDate } from '../utils/ReportUtils';
 import { defaultEntityTypeForVm, defaultReplicationTypeForVm, getVmEntityTypeOptions, getVmReplicationTypeOptions, hasWarning } from '../utils/ReverseReplicationUtils';
-import { disableRecoveryCheckpointField, isEmpty, isEmptyNum, showReverseWarningText, validateCheckpointFields, validateDrSiteSelection, validatePassword, validatePlanSiteSelection, validateReplicationInterval, validateReplicationValue } from '../utils/validationUtils';
-import { STATIC_KEYS } from './InputConstants';
+import { disableRecoveryCheckpointField, isEmpty, showReverseWarningText, validateCheckpointFields, validateDrSiteSelection, validatePassword, validatePlanSiteSelection, validateReplicationInterval, validateReplicationValue } from '../utils/validationUtils';
+import { CONSTANT_NUMBERS, STATIC_KEYS } from './InputConstants';
 import { EMAIL_REGEX, FQDN_REGEX, HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX, PASSWORD_REGEX, USERNAME_REGEX } from './ValidationConstants';
 
 export const CONFIURE_SITE_GROUP = ['configureSite.platformDetails.type', 'configureSite.platformDetails.platformName'];
@@ -195,7 +195,7 @@ export const FIELDS = {
   'emailConfiguration.smtpHost': {
     label: 'emailConfiguration.smtpHost', placeHolderText: 'SMTP host name', type: FIELD_TYPE.TEXT, errorMessage: 'Enter valid smtp host or ip address', shouldShow: true, validate: (value, user) => isEmpty(value, user), fieldInfo: 'info.email.smtp.host' },
   'emailConfiguration.smtpPort': {
-    label: 'emailConfiguration.smtpPort', placeHolderText: 'SMTP port', type: FIELD_TYPE.NUMBER, errorMessage: 'Enter valid smtp port', shouldShow: true, validate: (value, user) => isEmptyNum(value, user), fieldInfo: 'info.email.smtp.port', defaultValue: 1, min: 1 },
+    label: 'emailConfiguration.smtpPort', placeHolderText: 'SMTP port', type: FIELD_TYPE.NUMBER, errorMessage: 'Enter valid smtp port', shouldShow: true, fieldInfo: 'info.email.smtp.port', defaultValue: CONSTANT_NUMBERS.MIN_VALUE, min: CONSTANT_NUMBERS.MIN_VALUE, max: CONSTANT_NUMBERS.MAX_PORT_VALUE },
   'emailConfiguration.insecureSkipVerify': {
     label: 'emailConfiguration.insecureSkipVerify', placeHolderText: '', type: FIELD_TYPE.CHECKBOX, shouldShow: true, fieldInfo: 'info.email.skip.ssl' },
   'emailConfiguration.isValidate': {

@@ -890,7 +890,6 @@
   "reset.selection": "Reset selected workloads",
   "confirm.recovery.status.update":"Confirm Recovery Status Update",
   "pending.reason":"Why recovery status move to Pending Platform Checks ?",
-  "pending.reason.description":"Status checks on the platform  sometimes may take longer than expected. If the process exceeds 20 minutes, Datamotive will change the recovery state to Pending CSP Verification.",
   "pending.resolution.step.title":"How to update the recovery status.",
   "pending.resolution.step.1":" Login to cloud console and confirm the system checks have passed.",
   "pending.resolution.step.2":"Review the system screenshot to confirm the Operating System has booted successfully.",

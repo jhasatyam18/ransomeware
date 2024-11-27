@@ -1,6 +1,6 @@
+import { STATIC_KEYS } from '../../constants/InputConstants';
 import { getLabelWithResourceGrp } from '../../utils/AppUtils';
 import { getValue, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
-import { STATIC_KEYS } from '../../constants/InputConstants';
 import { valueChange } from './UserActions';
 
 export function onAwsStorageTypeChange({ value, fieldKey }) {
@@ -128,7 +128,7 @@ export function addAssociatedIPForAzure({ fieldKey, ip, id }) {
     const hasKey = Object.keys(ips).filter((key) => ips[key].ip === ip);
     if (hasKey.length === 0) {
       const ipLabel = getLabelWithResourceGrp(ip);
-      ips = { ...ips, [ip]: { label: ipLabel, value: id, fieldKey } };
+      ips = { ...ips, [fieldKey]: { label: ipLabel, value: id, fieldKey } };
       dispatch(valueChange(STATIC_KEYS.UI_ASSOCIATED_RESERVE_IPS, ips));
     }
   };

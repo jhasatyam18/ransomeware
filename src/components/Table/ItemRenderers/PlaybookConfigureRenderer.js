@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Popover, PopoverBody } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
+import { convertMinutesToDaysHourFormat } from '../../../utils/AppUtils';
 
 function PlaybookConfigureRenderer({ data, t }) {
   const { protectedEntitiesCount, protectionPlansCount, planConfigurations } = data;
@@ -11,6 +12,7 @@ function PlaybookConfigureRenderer({ data, t }) {
   const [vm, setVmOpen] = useState(false);
   const [rpoOpen, setRpoOpen] = useState(false);
   const { rpo } = planConfigurations[0];
+  const formatedRPO = convertMinutesToDaysHourFormat(rpo);
   const renderPopOver = (hoverInfo, key, open) => (
     <Popover placement="bottom" isOpen={open} target={key} style={{ backgroundColor: '#fff', borderRadius: '8px', color: 'black', border: 'none', width: '120px', textAlign: 'center' }}>
       <PopoverBody>
@@ -32,9 +34,9 @@ function PlaybookConfigureRenderer({ data, t }) {
         <span className="padding-left-3" id={`playbook-vm-configuration-${data.id}`} onMouseEnter={() => setVmOpen(true)} onMouseLeave={() => setVmOpen(false)}>{protectedEntitiesCount}</span>
         {renderPopOver(t('virtual.machine'), `playbook-vm-configuration-${data.id}`, vm)}
       </div>
-      <div>
+      <div className="w-50">
         <span id={`playbook-rpo-configuration-${data.id}`} onMouseEnter={() => setRpoOpen(true)} onMouseLeave={() => setRpoOpen(false)}>
-          {`${rpo} Minute(s)`}
+          {`${formatedRPO}`}
         </span>
         {renderPopOver(t('rpo'), `playbook-rpo-configuration-${data.id}`, rpoOpen)}
       </div>

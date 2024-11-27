@@ -318,7 +318,7 @@ export const PLAYBOOKS = [
 
 export const PLAYBOOK_DETAILS = [
   { label: 'Protection Plan', field: 'name', itemRenderer: PLAYBOOK_PLAN_NAME_LINK_RENDERER },
-  { label: 'RPO', field: 'rpo' },
+  { label: 'RPO', field: 'rpo', itemRenderer: REPLICATION_INTERVAL_ITEM_RENDERER },
   { label: 'Protected Site', field: 'protectedSiteName' },
   { label: 'Recovery Site', field: 'recoverySiteName' },
   { label: 'Virtual Machines', field: 'protectedEntities' },

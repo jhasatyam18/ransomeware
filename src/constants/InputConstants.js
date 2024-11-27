@@ -286,6 +286,8 @@ export const CONSTANT_NUMBERS = {
   TWENTY_FIVE: 25,
   ZERO: 0,
   ONE: '1',
+  MAX_PORT_VALUE: 65355,
+  MIN_VALUE: 1,
 };
 export const REPORT_DURATION = {
   CUSTOM: 'custom',
