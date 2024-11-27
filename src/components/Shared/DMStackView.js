@@ -28,23 +28,39 @@ class DMStackView extends Component {
     );
   }
 
+  renderLabel(user, conf, label) {
+    let lbl = label;
+    if (typeof label === 'function') {
+      lbl = label(user, conf);
+    }
+    return lbl;
+  }
+
   renderChildren() {
     const { openStack } = this.props;
     const { configuration, dispatch, user } = this.props;
     if (openStack) {
       const { children } = configuration;
-      return Object.keys(children).map((conf, index) => (
-        <Row className="stack__view" key={`stack-view-row-${index * 1}`}>
-          <Col sm={4} className="key child">
-            <p>
-              {`${children[conf].label}`}
-            </p>
-          </Col>
-          <Col sm={8} className="value padding-top-10 padding-bottom-10">
-            {getStackComponent(dispatch, user, children, conf)}
-          </Col>
-        </Row>
-      ));
+      return Object.keys(children).map((conf) => {
+        // Add your condition here, for example, check if the label exists
+        const { hideComponent } = children[conf];
+        if (typeof hideComponent === 'function') {
+          const response = hideComponent(user, conf);
+          if (response === false) {
+            return null;
+          }
+        }
+        return (
+          <Row className="stack__view" key={`stack-view-row-${conf}`}>
+            <Col sm={4} className="key child">
+              <p>{this.renderLabel(user, conf, children[conf].label)}</p>
+            </Col>
+            <Col sm={8} className="value padding-top-10 padding-bottom-10">
+              {getStackComponent(dispatch, user, children, conf)}
+            </Col>
+          </Row>
+        );
+      });
     }
     return null;
   }

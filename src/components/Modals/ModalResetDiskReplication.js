@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { faSearch, faDatabase, faDesktop, faHdd } from '@fortawesome/free-solid-svg-icons';
+import { faDatabase, faDesktop, faHdd, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Col, Row } from 'reactstrap';
 import { connect } from 'react-redux';
 import SimpleBar from 'simplebar-react';
+import { PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
 import { clearValues, refresh, valueChange } from '../../store/actions';
-// import Select from 'react-select';
 import { onEditProtectionPlan } from '../../store/actions/DrPlanActions';
 import { closeModal } from '../../store/actions/ModalActions';
 import { setResyncIntialData } from '../../store/actions/ResyncDiskAction';
@@ -14,7 +14,6 @@ import { getDiskLabel, getValue } from '../../utils/InputUtils';
 import RenderResetReplicationVMs from '../Common/RenderResetReplicationVMs';
 import ResyncDiskDropdown from '../Common/ResyncDiskDropdown';
 import { setDataForResyncSummary } from '../../utils/ResyncDiskUtils';
-import { PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
 
 function ResetDiskReplicationModal({ t, dispatch, options, user }) {
   const { selectedPlan } = options;
@@ -26,6 +25,16 @@ function ResetDiskReplicationModal({ t, dispatch, options, user }) {
   const [showConfirmation, setConfirmation] = useState(false);
   const { protectedSite } = selectedPlan;
   const isVMwareSource = protectedSite.platformType === PLATFORM_TYPES.VMware;
+
+  useEffect(() => {
+    let isUnmounting = false;
+    if (!isUnmounting) {
+      dispatch(setResyncIntialData(virtualMachines));
+    }
+    return () => {
+      isUnmounting = true;
+    };
+  }, []);
   const onCancel = () => {
     dispatch(clearValues());
     dispatch(closeModal());
@@ -246,19 +255,10 @@ function ResetDiskReplicationModal({ t, dispatch, options, user }) {
     );
   };
 
-  useEffect(() => {
-    let isUnmounting = false;
-    if (!isUnmounting) {
-      dispatch(setResyncIntialData(virtualMachines));
-    }
-    return () => {
-      isUnmounting = true;
-    };
-  }, []);
   return (
     <>
+      {!showConfirmation && showWarningMsg()}
       <SimpleBar className={`${showConfirmation ? '' : 'resync_modal_height resync_font_size'}`}>
-        {!showConfirmation && showWarningMsg()}
         {virtualMachines.length > 1 && <ResyncDiskDropdown vms={virtualMachines} dispatch={dispatch} showConfirmation={showConfirmation} user={user} />}
         {renderResyncSummary()}
         {showConfirmation ? renderConfirmation()

@@ -1,5 +1,5 @@
 import { API_LATEST_TEST_RECOVERY_PPLAN } from '../../constants/ApiConstants';
-import { COPY_CONFIG, PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
+import { COPY_CONFIG, PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW, AWS_TENANCY_TYPES } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { APP_SET_TIMEOUT } from '../../constants/UserConstant';
 import { callAPI } from '../../utils/ApiUtils';
@@ -55,7 +55,7 @@ export function copyInstanceConfiguration({ sourceVM, targetVMs, configToCopy, s
 }
 
 function setGeneralConfiguration(sourceConfig, targetVM, user, dispatch) {
-  const { volumeType, volumeIOPS, tags, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, availZone, securityGroups = '', encryptionKey } = sourceConfig;
+  const { volumeType, volumeIOPS, tags, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, availZone, securityGroups = '', encryptionKey, tenancy, hostType, affinity, image, license } = sourceConfig;
   let { instanceType, folderPath, securityGroup = '' } = sourceConfig;
   const { values } = user;
   const memory = getMemoryInfo(memoryMB);
@@ -78,11 +78,32 @@ function setGeneralConfiguration(sourceConfig, targetVM, user, dispatch) {
       [`${targetVM}-vmConfig.general.numcpu`]: numCPU || 2,
       [`${targetVM}-vmConfig.general-memory`]: parseInt(memory[0], 10) || 2,
       [`${targetVM}-vmConfig.general-unit`]: memory[1] || '',
+      [`${targetVM}-vmConfig.general.hostMoref`]: { label: hostMoref, value: hostMoref },
     };
   } else {
     folderPath = { label: folderPath, value: folderPath };
     instanceType = { label: instanceType, value: instanceType };
   }
+
+  if (typeof tenancy !== 'undefined' && tenancy === AWS_TENANCY_TYPES.Dedicated_Host) {
+    generalConfig = {
+      ...generalConfig,
+      // add the tenancy keys
+      [`${targetVM}-vmConfig.general.tenancy`]: tenancy,
+      [`${targetVM}-vmConfig.general.hostType`]: hostType,
+      [`${targetVM}-vmConfig.general.hostMoref`]: hostMoref,
+      [`${targetVM}-vmConfig.general.affinity`]: affinity,
+      [`${targetVM}-vmConfig.general.image`]: image,
+      [`${targetVM}-vmConfig.general.license`]: license,
+    };
+  }
+  if (typeof tenancy !== 'undefined' && tenancy === AWS_TENANCY_TYPES.Shared) {
+    generalConfig = {
+      ...generalConfig,
+      [`${targetVM}-vmConfig.general.tenancy`]: tenancy,
+    };
+  }
+
   let networkTags = [];
   if (securityGroup) {
     networkTags = securityGroup.split(',');
@@ -91,7 +112,6 @@ function setGeneralConfiguration(sourceConfig, targetVM, user, dispatch) {
     ...generalConfig,
     [`${targetVM}-vmConfig.general.instanceType`]: instanceType || '',
     [`${targetVM}-vmConfig.general.volumeType`]: volumeType || '',
-    [`${targetVM}-vmConfig.general.hostMoref`]: { label: hostMoref, value: hostMoref },
     [`${targetVM}-vmConfig.general.dataStoreMoref`]: { label: datastoreMoref, value: datastoreMoref },
     [`${targetVM}-vmConfig.general.datacenterMoref`]: datacenterMoref || '',
     [`${targetVM}-vmConfig.general.folderPath`]: folderPath || '',
@@ -101,6 +121,11 @@ function setGeneralConfiguration(sourceConfig, targetVM, user, dispatch) {
     [`${targetVM}-vmConfig.general.tags`]: tagsData || '',
     [`${targetVM}-vmConfig.general.availibility.zone`]: availZone || '',
     [`${targetVM}-vmConfig.network.securityGroup`]: networkTags || '',
+    [`${targetVM}-vmConfig.network.securityGroup`]: networkTags || '',
+    [`${targetVM}-vmConfig.network.securityGroup`]: networkTags || '',
+    [`${targetVM}-vmConfig.network.securityGroup`]: networkTags || '',
+    [`${targetVM}-vmConfig.network.securityGroup`]: networkTags || '',
+
   };
   return generalConfig;
 }

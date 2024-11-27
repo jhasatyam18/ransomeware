@@ -25,6 +25,10 @@ export const JOB_MIGRATED = 'migrated';
 export const STATUS_STARTED = 'Started';
 export const PARTIALLY_COMPLETED = 'partially-completed';
 export const JOB_QUEUED = 'queued';
+export const PENDING_STATUS_STEP = 'Validating Instance Status from CSP';
+export const PENDING_STATUS = 'pending-csp-verification';
+export const VALIDATING = 'fetching latest status';
+export const PASS = 'Pass';
 
 export const DELETED_FROM_PLAN = 'isRemovedFromPlan';
 export const IS_DELETED = 'isDeleted';
@@ -57,4 +61,8 @@ export const PLAYBOOKS_STATUS = {
   PLAYBOOK_VALIDATED: 'configValidated',
   PLAYBOOK_PLAN_CREATED: 'configPlanCreated',
   PLAYBOOK_PLAN_RECONFIGURED: 'configPlanReconfigured',
+};
+
+export const DETAILED_STEP_COMPONENTS = {
+  PENDING_STATUS_STEPS: 'Validating Instance Status from CSP',
 };

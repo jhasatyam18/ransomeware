@@ -2,6 +2,7 @@ import { faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Modal } from 'reactstrap';
+import SimpleBar from 'simplebar-react';
 import * as MODALS from '../../constants/Modalconstant';
 import { closeModal } from '../../store/actions/ModalActions';
 import ConfirmationModal from './ConfirmationModal';
@@ -36,20 +37,32 @@ import ModalTroubleShooting from './ModalTroubleShooting';
 import ModalVMwareQuiesce from './ModalVMwareQuiesce';
 import PlaybookGenerateModal from './PlaybookGenerateModal';
 import PlaybookUploadModal from './PlaybookUploadModal';
+import ModalRefreshRecovery from './ModalRefreshRecovery';
+import InformationModal from './ModalInformation';
+import ModalDeleteVmConfirmation from './ModalDeleteVmConfirmation';
 
 function DMModal(props) {
-  const { modal, user, dispatch } = props;
+  const { modal, dispatch, user } = props;
+  const { show, options } = modal;
+  const { css, size, floatModalRight, width, modalActions } = options;
+  if (!show) {
+    return null;
+  }
 
   if (!modal || Object.keys(modal).length === 0) {
     return null;
   }
-  const { show, options } = modal;
-  const { css, modalActions, size } = options;
   const { content } = modal;
 
-  const onClose = () => {
-    dispatch(closeModal(true));
-  };
+  function onClose() {
+    if (Object.keys(options).length > 0) {
+      const { onModalClose, onCloseParams = [] } = options;
+      if (typeof onModalClose === 'function') {
+        dispatch(onModalClose(onCloseParams));
+      }
+    }
+    dispatch(closeModal());
+  }
 
   const renderContent = () => {
     if (content) {
@@ -118,6 +131,12 @@ function DMModal(props) {
           return <ResetDiskReplicationModal dispatch={dispatch} user={user} options={options} />;
         case MODALS.MODAL_REVERSE_CHANGES_WARNING:
           return <ModalReverseChangesWarning dispatch={dispatch} user={user} {...props} />;
+        case MODALS.MODAL_REFRESH_RECOVERY_STATUS:
+          return <ModalRefreshRecovery dispatch={dispatch} user={user} {...props} options={options} />;
+        case MODALS.INFORMATION_MODAL:
+          return <InformationModal {...props} />;
+        case MODALS.MODAL_DELETE_VM_CONFIRMATON:
+          return <ModalDeleteVmConfirmation dispatch={dispatch} {...props} />;
         default:
           return (<div>404</div>);
       }
@@ -131,23 +150,41 @@ function DMModal(props) {
 
   return (
     <>
-      <Modal isOpen centered scrollable className={css} size={size || ''}>
-        <div className="modal-header">
-          <h5 className="modal-title mt-0" id="DMMODAL">
-            {' '}
-            {options.title}
-            {' '}
-          </h5>
-          {modalActions ? (
-            <div className="wizard-header-options">
-              <div className="wizard-header-div">
-                <FontAwesomeIcon size="lg" icon={faXmarkCircle} onClick={onClose} />
+      {floatModalRight ? (
+        <Modal isOpen className={`${css} slide-in`} style={{ margin: '0px', float: 'right', width: `${width || '30%'}`, marginTop: '3px', overflow: 'hidden', background: 'inherit' }} size={size} centered={false}>
+          <div style={{ height: '97vh', background: 'inherit', verticalAlign: 'middle' }}>
+            <div className="modal-header">
+              <h4 className="modal-title mt-0" id="dmwizard">
+                {options.title}
+              </h4>
+              <div className="wizard-header-options">
+                <div className="wizard-header-div cursor-pointer">
+                  <box-icon name="x-circle" type="solid" color="white" onClick={onClose} style={{ width: 20, cursro: 'pointer' }} />
+                </div>
               </div>
             </div>
-          ) : null}
-        </div>
-        {renderContent()}
-      </Modal>
+            <SimpleBar style={{ maxHeight: '90vh', minHeight: '90vh', verticalAlign: 'middle' }}>
+              {renderContent(options)}
+            </SimpleBar>
+          </div>
+        </Modal>
+      ) : (
+        <Modal isOpen centered className={css} size={size}>
+          <div className="modal-header">
+            <h5 className="modal-title mt-0" id="DMMODAL">
+              {options.title}
+            </h5>
+            {modalActions ? (
+              <div className="wizard-header-options">
+                <div className="wizard-header-div cursor-pointer">
+                  <FontAwesomeIcon size="lg" icon={faXmarkCircle} onClick={onClose} />
+                </div>
+              </div>
+            ) : null}
+          </div>
+          {renderContent(options)}
+        </Modal>
+      )}
     </>
   );
 }

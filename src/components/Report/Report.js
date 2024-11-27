@@ -4,19 +4,19 @@ import { connect } from 'react-redux';
 import { Button, Card, CardBody, Col, Container, Row } from 'reactstrap';
 import { MILI_SECONDS_TIME } from '../../constants/EventConstant';
 import { REPORT_DURATION, STATIC_KEYS } from '../../constants/InputConstants';
-import { DATE_ITEM_RENDERER, RECOVERY_JOBS, REPLICATION_VM_JOBS, TABLE_ALERTS, TABLE_EVENTS, TABLE_HEADER_DR_PLANS, TABLE_HEADER_SITES, TABLE_NODES, TABLE_REPORT_PROTECTED_VMS } from '../../constants/TableConstants';
+import { DATE_ITEM_RENDERER, RECOVERY_JOBS, REPLICATION_VM_JOBS, TABLE_ALERTS, TABLE_EVENTS, TABLE_HEADER_DR_PLANS, TABLE_HEADER_SITES, TABLE_NODES, TABLE_REPORTS_CARD_CHECKPOINT, TABLE_REPORT_PROTECTED_VMS } from '../../constants/TableConstants';
 import { valueChange } from '../../store/actions';
 import { fetchDrPlans } from '../../store/actions/DrPlanActions';
 import { exportReportToPDF, generateAuditReport, getCriteria, resetReport } from '../../store/actions/ReportActions';
-import { hideApplicationLoader, showApplicationLoader } from '../../store/actions/UserActions';
+import { clearValues, hideApplicationLoader, showApplicationLoader } from '../../store/actions/UserActions';
 import { getValue } from '../../utils/InputUtils';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
 import { exportTableToExcel } from '../../utils/ReportUtils';
+import { isDateEmpty, isEmpty } from '../../utils/validationUtils';
 import DMBreadCrumb from '../Common/DMBreadCrumb';
 import ReportSideBar from './ReportSideBar';
 import ReportSystemOverview from './ReportSystemOverview';
 import ReportTables from './ReportTables';
-import { isDateEmpty, isEmpty } from '../../utils/validationUtils';
 
 class Report extends Component {
   constructor() {
@@ -37,6 +37,7 @@ class Report extends Component {
   componentWillUnmount() {
     const { dispatch } = this.props;
     dispatch(resetReport());
+    dispatch(clearValues());
   }
 
   toggleCollapse = () => {
@@ -61,6 +62,10 @@ class Report extends Component {
       } else {
         dispatch(valueChange(STATIC_KEYS.REPORT_DURATION_START_DATE, date));
       }
+    }
+    const protectionPlan = getValue('report.protectionPlan.protectionPlans', values);
+    if (typeof protectionPlan === 'undefined' || protectionPlan === '') {
+      return;
     }
     dispatch(valueChange('report.system.includeSystemOverView', true));
     dispatch(generateAuditReport());
@@ -124,7 +129,7 @@ class Report extends Component {
     const { printView } = this.state;
     const { user } = this.props;
     const criteria = getCriteria(user);
-    const { includeSystemOverView = false, includeNodes, includeEvents, includeAlerts, includeReplicationJobs, includeRecoveryJobs, includeProtectedVMS } = criteria;
+    const { includeSystemOverView = false, includeNodes, includeEvents, includeAlerts, includeReplicationJobs, includeRecoveryJobs, includeProtectedVMS, includeCheckpoints } = criteria;
     const jobsColumns = RECOVERY_JOBS.map((col) => ({ ...col }));
     jobsColumns.splice(1, 0, { label: 'Start Time', field: 'startTime', itemRenderer: DATE_ITEM_RENDERER }, { label: 'End Time', field: 'endTime', itemRenderer: DATE_ITEM_RENDERER });
     return (
@@ -138,6 +143,7 @@ class Report extends Component {
         {includeAlerts === true ? <ReportTables title="Alerts" columns={TABLE_ALERTS} dataSource="alerts" printView={printView} /> : null}
         {includeReplicationJobs === true ? <ReportTables title="Replication Jobs" columns={REPLICATION_VM_JOBS} dataSource="replication" printView={printView} /> : null}
         {includeRecoveryJobs === true ? <ReportTables title="Recovery Jobs" columns={jobsColumns} dataSource="recovery" printView={printView} /> : null}
+        {includeCheckpoints ? <ReportTables title="Point In Time Checkpoints" columns={TABLE_REPORTS_CARD_CHECKPOINT} dataSource="point_in_time_checkpoints" printView={printView} /> : null}
       </>
     );
   }

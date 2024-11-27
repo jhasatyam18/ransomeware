@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, Col, Container, Form, Label, Row } from 'reactstrap';
+import { faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
+import DropdownActions from '../Common/DropdownActions';
 import { API_PROTECTION_PLAN_RECOVERY_JOBS_STATUS, API_RECOVERY_JOBS } from '../../constants/ApiConstants';
 import { RECOVERY_JOB_TYPE } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { PROTECTION_PLAN_RECOVERY_JOBS, RECOVERY_JOBS } from '../../constants/TableConstants';
 import { changeRecoveryJobType, setRecoveryJobs } from '../../store/actions/JobActions';
 import { addMessage } from '../../store/actions/MessageActions';
+import { fetchRefreshRecoveryData } from '../../store/actions/RefreshRecoveryActions';
 import { callAPI } from '../../utils/ApiUtils';
 import DMBreadCrumb from '../Common/DMBreadCrumb';
 import DMAPIPaginator from '../Table/DMAPIPaginator';
@@ -18,6 +22,7 @@ class Recovery extends Component {
     super();
     this.state = { plansData: [] };
     this.changeJobType = this.changeJobType.bind(this);
+    this.openRefreshRecovery = this.openRefreshRecovery.bind(this);
   }
 
   componentDidMount() {
@@ -58,6 +63,13 @@ class Recovery extends Component {
     dispatch(changeRecoveryJobType(type));
   }
 
+  openRefreshRecovery() {
+    return () => {
+      const { protectionplanID, dispatch } = this.props;
+      dispatch(fetchRefreshRecoveryData(protectionplanID, true));
+    };
+  }
+
   renderOptions() {
     const { jobs, t } = this.props;
     const { recoveryType } = jobs;
@@ -81,6 +93,15 @@ class Recovery extends Component {
     );
   }
 
+  renderActions() {
+    const { dispatch, t, protectionplanID, user } = this.props;
+    const actions = [{ label: 'Refresh recovery status', action: this.openRefreshRecovery, id: protectionplanID, disabled: !hasRequestedPrivileges(user, ['recovery.full']), icon: faRefresh }];
+
+    return (
+      <DropdownActions css="margin-top-10 mb-0 ml-1" title={t('actions')} dispatch={dispatch} actions={actions} align="left" alignLeft={0} />
+    );
+  }
+
   renderVMJobs() {
     const { dispatch, protectionplanID, jobs, user } = this.props;
     const { recovery } = jobs;
@@ -92,6 +113,7 @@ class Recovery extends Component {
         <Row className="padding-left-20">
           <Col sm={5}>
             {this.renderOptions()}
+            {this.renderActions()}
           </Col>
           <Col sm={7}>
             <div className="padding-right-30">

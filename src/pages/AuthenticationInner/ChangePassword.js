@@ -5,7 +5,7 @@ import { Card, CardBody, Col, Container, Label, Row } from 'reactstrap';
 import { changeUserPassword } from '../../store/actions';
 // import images
 import logo from '../../assets/images/logo.png';
-import logoName from '../../assets/images/name.png';
+import logoName from '../../assets/images/logo_title.png';
 import DMFieldText from '../../components/Shared/DMFieldText';
 import { FIELD_TYPE } from '../../constants/FieldsConstant';
 import { PASSWORD_REGEX } from '../../constants/ValidationConstants';

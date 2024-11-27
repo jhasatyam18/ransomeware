@@ -3,7 +3,7 @@ import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Col, Form, Label, Row } from 'reactstrap';
 import { PLATFORM_TYPES } from '../../constants/InputConstants';
-import { TABLE_FILTER_TEXT, TABLE_PROTECTION_PLAN_VMS, TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG } from '../../constants/TableConstants';
+import { TABLE_AWS_PROTECTION_PLAN_VMS_RECOVERY_CONFIG, TABLE_FILTER_TEXT, TABLE_PROTECTION_PLAN_VMS, TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG } from '../../constants/TableConstants';
 import { filterData } from '../../utils/AppUtils';
 import DMTable from '../Table/DMTable';
 import DMTPaginator from '../Table/DMTPaginator';
@@ -102,6 +102,8 @@ function ProtectionPlanVMConfig(props) {
       configCols = [...part1, ...part2];
     } else if (platformType === PLATFORM_TYPES.Azure) {
       configCols = TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG;
+    } else if (platformType === PLATFORM_TYPES.AWS) {
+      configCols = TABLE_AWS_PROTECTION_PLAN_VMS_RECOVERY_CONFIG;
     } else {
       const part1 = TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG.slice(0, TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG.length - 3);
       const part2 = TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG.slice(TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG.length - 2);

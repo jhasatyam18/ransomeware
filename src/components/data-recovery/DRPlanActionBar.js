@@ -3,15 +3,16 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { withTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
+import { MODAL_DELETE_VM_CONFIRMATON } from '../../constants/Modalconstant';
+import { openModal } from '../../store/actions/ModalActions';
 import { PROTECTION_PLANS_STATUS, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
-import { MODAL_CONFIRMATION_WARNING, PPLAN_REMOVE_CHECKPOINT_RENDERER } from '../../constants/Modalconstant';
 import { PLAYBOOK_LIST } from '../../constants/RouterConstants';
 import { CREATE_DR_PLAN_WIZARDS } from '../../constants/WizardConstants';
 import { clearValues, fetchScript, valueChange } from '../../store/actions';
 import {
-  deletePlan, openEditProtectionPlanWizard,
+  deletePlan,
+  openEditProtectionPlanWizard,
 } from '../../store/actions/DrPlanActions';
-import { openModal } from '../../store/actions/ModalActions';
 import { fetchSites } from '../../store/actions/SiteActions';
 import { openWizard } from '../../store/actions/WizardActions';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
@@ -32,11 +33,11 @@ function DRPlanActionBar(props) {
   };
 
   const onDelete = () => {
-    const { dispatch, selectedPlans } = props;
+    const { selectedPlans, dispatch } = props;
     const selectedPlansKey = Object.keys(selectedPlans);
     const plan = selectedPlans[selectedPlansKey[0]];
-    const options = { title: 'Confirmation', confirmAction: deletePlan, message: `Are you sure you want to delete ${plan.name} ?`, render: PPLAN_REMOVE_CHECKPOINT_RENDERER, id: plan.id };
-    dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
+    const options = { title: 'Confirmation', confirmAction: deletePlan, message: `Are you sure you want to delete protection plan ${plan.name} ?`, id: plan.id, css: 'confirmation', protectionPlan: plan };
+    dispatch(openModal(MODAL_DELETE_VM_CONFIRMATON, options));
   };
 
   const onTemplateClick = () => {

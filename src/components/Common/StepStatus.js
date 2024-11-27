@@ -3,24 +3,23 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Col, Popover, PopoverBody, Row } from 'reactstrap';
-import SimpleBar from 'simplebar-react';
-import { JOB_COMPLETION_STATUS, JOB_FAILED, JOB_IN_PROGRESS } from '../../constants/AppStatus';
+import { Col, Row } from 'reactstrap';
+import { DETAILED_STEP_COMPONENTS, JOB_COMPLETION_STATUS, JOB_FAILED, JOB_IN_PROGRESS } from '../../constants/AppStatus';
 import { STATIC_KEYS } from '../../constants/InputConstants';
 import { DATA_GRID_SHORT_TEXT_LENGTH } from '../../constants/UserConstant';
-
+import RenderDetailedSteps from './RenderDetailedStep';
 /**
  *
  * @param {*} props is an object of data , apiURL
  * @returns render recovery jobs status in steps
  */
 function StepStatus(props) {
-  const { steps, data, t } = props;
+  const { steps, data,
+  } = props;
   const { id } = data;
   const shortFailureMsg = data.failureMessage ? data.failureMessage.substring(0, DATA_GRID_SHORT_TEXT_LENGTH) : '';
   const [errormsg, setErrorMsg] = useState(`${shortFailureMsg}...`);
   const [show, setshow] = useState(false);
-  const [popOver, setPopOver] = useState({});
   if (typeof steps === 'undefined' || steps === null || steps.length === 0) {
     return null;
   }
@@ -39,15 +38,7 @@ function StepStatus(props) {
     }
   };
 
-  const renderPopOver = (hoverInfo, key, isOpen) => (
-    <Popover placement="bottom" isOpen={popOver[isOpen]} target={key} style={{ backgroundColor: 'black', color: 'white', border: 'none', width: '200px', textAlign: 'left' }}>
-      <PopoverBody>
-        <SimpleBar style={{ maxHeight: '100px', minHeight: '30px' }}>
-          {hoverInfo}
-        </SimpleBar>
-      </PopoverBody>
-    </Popover>
-  );
+  const renderDetailedSteps = (parseData, name) => <RenderDetailedSteps parseData={parseData} id={id} name={name} css="pending_detailed_step_div" />;
 
   const showFullErrorText = () => {
     setshow(!show);
@@ -66,7 +57,14 @@ function StepStatus(props) {
       parseData = JSON.parse(st.data);
     }
 
-    if (parseData.length > 0) {
+    if (st.name === DETAILED_STEP_COMPONENTS.PENDING_STATUS_STEPS) {
+      parseData.forEach((pd) => {
+        const { result } = pd;
+        if (result === STATIC_KEYS.REC_STEP_FAIL) {
+          stepStatusWarn = true;
+        }
+      });
+    } else if (parseData.length > 0) {
       parseData.forEach((pd) => {
         const key = Object.keys(pd);
         const detailedStepStatus = pd[key[0]].result;
@@ -79,7 +77,7 @@ function StepStatus(props) {
     const convertTedTime = time * 1000;
     const d = new Date(convertTedTime);
     const resp = `${d.toLocaleTimeString()}`;
-    const stepDivClss = parseData.length > 0 ? 'step_msg_div_data' : 'step_msg_div';
+    const stepDivClss = parseData.length > 0 ? 'step_msg_div_data w-100' : 'step_msg_div';
     return (
       <div className="step_parent_div">
         <div className="step_icon_div">{renderIcon(st, stepStatusWarn)}</div>
@@ -99,29 +97,7 @@ function StepStatus(props) {
           </p>
           {parseData.length > 0
             ? (
-              <ul className="rec_step_list">
-                {parseData.map((pd) => {
-                  const key = Object.keys(pd);
-                  const detailedStepStatus = pd[key[0]].result;
-                  return (
-                    <li id={`rec-step-${id}-${key}`} onMouseEnter={() => setPopOver({ [key]: true })} onMouseLeave={() => setPopOver({ [key]: false })}>
-                      { `${t(key)}   `}
-                      {detailedStepStatus === STATIC_KEYS.REC_STEP_PASS ? (
-                        <span className="text-success">
-                          <FontAwesomeIcon size="sm" icon={faCheckCircle} />
-                        </span>
-                      ) : (
-                        <>
-                          <span className="text-danger">
-                            <FontAwesomeIcon size="sm" icon={faCircleXmark} />
-                          </span>
-                        </>
-                      )}
-                      {renderPopOver(pd[key[0]].message, `rec-step-${id}-${key}`, key)}
-                    </li>
-                  );
-                })}
-              </ul>
+              renderDetailedSteps(parseData, st.name)
             ) : null}
         </div>
       </div>

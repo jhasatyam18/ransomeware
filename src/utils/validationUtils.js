@@ -29,6 +29,10 @@ export function isRequired(value) {
 export function validateField(field, fieldKey, value, dispatch, user, emptyFields = []) {
   const { patterns, validate, errorMessage } = field;
   const { errors } = user;
+  let { label } = field;
+  if (typeof label !== 'undefined' && typeof label === 'function') {
+    label = label(user, fieldKey);
+  }
   if (patterns) {
     let isValid = false;
     patterns.forEach((pattern) => {
@@ -41,7 +45,7 @@ export function validateField(field, fieldKey, value, dispatch, user, emptyField
     });
     if (!isValid) {
       dispatch(addErrorMessage(fieldKey, errorMessage));
-      emptyFields.push(`${field.label}`);
+      emptyFields.push(`${label}`);
       return false;
     }
   }
@@ -49,7 +53,7 @@ export function validateField(field, fieldKey, value, dispatch, user, emptyField
     const hasError = validate({ value, dispatch, user, fieldKey });
     if (hasError) {
       dispatch(addErrorMessage(fieldKey, errorMessage));
-      emptyFields.push(`${field.label}`);
+      emptyFields.push(`${label}`);
       return false;
     }
   }
@@ -114,7 +118,7 @@ export function validateSteps(user, dispatch, fields, staticFields, emptyFields 
   fields.map((fieldKey) => {
     const field = staticFields ? staticFields[fieldKey] : FIELDS[fieldKey];
     const { shouldShow } = field;
-    const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user) : shouldShow);
+    const showField = typeof shouldShow === 'undefined' || (typeof shouldShow === 'function' ? shouldShow(user, fieldKey) : shouldShow);
     if (showField) {
       if (!validateField(field, fieldKey, getValue(fieldKey, values), dispatch, user, emptyFields)) {
         isClean = false;
@@ -330,7 +334,7 @@ export function validateGCPNetwork(user, dispatch) {
     } else {
       for (let i = 0; i < netConfigs.length; i += 1) {
         if (netConfigs[i].subnet === '') {
-          message = `${vmName}: Network configure missing for nic-${i}`;
+          message = `${vmName}: Network configure missing for nic-${i + 1}`;
           isClean = false;
         }
         if (typeof netConfigs.privateIP !== 'undefined' && netConfigs.privateIP !== '') {
@@ -389,12 +393,12 @@ export function validateAWSNetworks(user, dispatch) {
     for (let i = 0; i < netConfigs.length; i += 1) {
       if (netConfigs[i].subnet === '') {
         isClean = false;
-        message = `${vmName}: Subnet missing for Nic-${i}`;
+        message = `${vmName}: Subnet missing for Nic-${i + 1}`;
         messages.push(message);
       }
       if (netConfigs[i].securityGroups === '' || typeof netConfigs[i].securityGroups === 'undefined') {
         isClean = false;
-        message = `${vmName}: SecurityGroup missing for Nic-${i}`;
+        message = `${vmName}: SecurityGroup missing for Nic-${i + 1}`;
         messages.push(message);
       }
       if (typeof netConfigs[i].network !== 'undefined' && netConfigs[i].network !== '') {
@@ -407,14 +411,6 @@ export function validateAWSNetworks(user, dispatch) {
       //     vpc.push(subnets[j].vpcID);
       //   }
       // }
-    }
-
-    const vpcSet = [...new Set(vpc)];
-    // nics with different vpcid
-    if (vpcSet.length > 1) {
-      message = `${vmName}: All nics of an instance must belong to same VPC.`;
-      messages.push(message);
-      isClean = false;
     }
 
     const zoneSet = [...new Set(zones)];
@@ -459,7 +455,7 @@ export function validateVMware(user, dispatch) {
     for (let i = 0; i < netConfigs.length; i += 1) {
       if (netConfigs[i].network === '' || typeof netConfigs[i].network === 'undefined') {
         isClean = false;
-        message.push(`${vmName}: network is  missing for Nic-${i}`);
+        message.push(`${vmName}: network is  missing for Nic-${i + 1}`);
       } else if (typeof netConfigs[i].adapterType === 'undefined') {
         isClean = false;
         message.push(`${vmName}: adapterType missing for Nic-${i}`);
@@ -498,7 +494,7 @@ export function validateAzureNetwork(user, dispatch) {
       for (let i = 0; i < netConfigs.length; i += 1) {
         if (netConfigs[i].subnet === '') {
           isClean = false;
-          message = `${vmName}: Network configure missing for nic-${i}`;
+          message = `${vmName}: Network configure missing for nic-${i + 1}`;
           messages.push(message);
         }
         if (typeof netConfigs[i].privateIP !== 'undefined' && netConfigs[i].privateIP !== '') {
@@ -1209,8 +1205,7 @@ export const showReverseWarningText = (user) => {
   const { values } = user;
   const enableReverse = getValue('drplan.enableDifferentialReverse', values) || '';
   const recoveryPlatform = getValue('ui.values.recoveryPlatform', values) || '';
-  const protectionPlatform = getValue('ui.values.protectionPlatform', values) || '';
-  if (enableReverse && recoveryPlatform === PLATFORM_TYPES.VMware && protectionPlatform !== recoveryPlatform) {
+  if (enableReverse && recoveryPlatform === PLATFORM_TYPES.VMware) {
     return true;
   }
   return false;

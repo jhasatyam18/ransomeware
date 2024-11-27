@@ -155,7 +155,9 @@ export function getVMConfigPayload(user) {
     }
 
     let hostMoref = getValue(`${key}-vmConfig.general.hostMoref`, values) || '';
-    hostMoref = hostMoref.value || '';
+    if (recoveryPlatform === PLATFORM_TYPES.VMware) {
+      hostMoref = hostMoref.value || '';
+    }
     let datastoreMoref = getValue(`${key}-vmConfig.general.dataStoreMoref`, values) || '';
     datastoreMoref = datastoreMoref.value || '';
     let numCPU = getValue(`${key}-vmConfig.general.numcpu`, values);
@@ -202,10 +204,17 @@ export function getVMConfigPayload(user) {
     const encryptionKey = getValue(`${key}-vmConfig.general.encryptionKey`, values) || '';
     const planEntityType = getValue(STATIC_KEYS.UI_REVERSE_RECOVERY_ENTITY, values);
     const recoveryEntityType = getValue(`${key}-vmConfig.general.entityType`, values) || planEntityType;
+    const tenancy = getValue(`${key}-vmConfig.general.tenancy`, values) || '';
+    const hostType = getValue(`${key}-vmConfig.general.hostType`, values) || '';
+    const affinity = getValue(`${key}-vmConfig.general.affinity`, values) || '';
+    const image = getValue(`${key}-vmConfig.general.image`, values) || '';
+    const license = getValue(`${key}-vmConfig.general.license`, values) || '';
+
+    // const hostMoref = getValue(`${key}-vmConfig.general.hostMoref`, values) || ''
     if (typeof id !== 'undefined' && id !== '') {
-      instanceDetails.push({ sourceMoref, id, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, encryptionKey, recoveryEntityType });
+      instanceDetails.push({ sourceMoref, id, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, encryptionKey, recoveryEntityType, tenancy, hostType, affinity, image, license });
     } else {
-      instanceDetails.push({ sourceMoref, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, encryptionKey, recoveryEntityType });
+      instanceDetails.push({ sourceMoref, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, encryptionKey, recoveryEntityType, tenancy, hostType, affinity, image, license });
     }
   });
   return instanceDetails;
@@ -460,8 +469,10 @@ export function getEditProtectionPlanPayload(user, sites) {
     vm = setVMProperties(vm, values, result.drplan.protectedSite);
     result.drplan.protectedEntities.VirtualMachines.push(vm);
   });
+  addDeletedVmInProtectedEntity(result.drplan.protectedEntities.VirtualMachines, values);
   result.drplan.protectedEntities.Name = 'dummy';
   result.drplan.recoveryEntities.instanceDetails = getVMConfigPayload(user);
+  addDeletedVmInRecoveryEntity(result.drplan.recoveryEntities.instanceDetails, values);
   result.drplan.replicationInterval = getReplicationInterval(getValue(STATIC_KEYS.REPLICATION_INTERVAL_TYPE, values), getValue('drplan.replicationInterval', values));
   result.drplan.startTime = getUnixTimeFromDate(result.drplan.startTime);
   result.drplan.protectedEntityType = getRecoveryEntityType();
@@ -506,7 +517,10 @@ export function getSourceConfig(key, user) {
       folderPath = folderPath.label;
     }
   }
-  const hostMoref = getValue(`${key}-vmConfig.general.hostMoref`, values);
+  let hostMoref = getValue(`${key}-vmConfig.general.hostMoref`, values);
+  if (typeof hostMoref === 'object' && hostMoref.value) {
+    hostMoref = hostMoref.value;
+  }
   const datastoreMoref = getValue(`${key}-vmConfig.general.dataStoreMoref`, values);
   let numCPU = getValue(`${key}-vmConfig.general.numcpu`, values) || 0;
   numCPU = parseInt(numCPU, 10);
@@ -540,12 +554,19 @@ export function getSourceConfig(key, user) {
   if (recoveryPlatform === PLATFORM_TYPES.Azure) {
     availZone = getValue(`${key}-vmConfig.general.availibility.zone`, values);
   }
+
+  const tenancy = getValue(`${key}-vmConfig.general.tenancy`, values) || '';
+  const hostType = getValue(`${key}-vmConfig.general.hostType`, values) || '';
+  const affinity = getValue(`${key}-vmConfig.general.affinity`, values) || '';
+  const image = getValue(`${key}-vmConfig.general.image`, values) || '';
+  const license = getValue(`${key}-vmConfig.general.license`, values) || '';
+
   const securityGroup = joinArray(sgs, ',');
   const preScript = getValue(`${key}-vmConfig.scripts.preScript`, values);
   const postScript = getValue(`${key}-vmConfig.scripts.postScript`, values);
   const repPreScript = getValue(`${key}-protection.scripts.preScript`, values) || '';
   const repPostScript = getValue(`${key}-protection.scripts.postScript`, values) || '';
-  const genC = { instanceType, availZone, folderPath, volumeType, securityGroup, volumeIOPS, tags, memoryMB, hostMoref: hostMoref.value, datastoreMoref: datastoreMoref.value, numCPU, datacenterMoref, encryptionKey };
+  const genC = { tenancy, hostType, affinity, image, license, instanceType, availZone, folderPath, volumeType, securityGroup, volumeIOPS, tags, memoryMB, hostMoref, datastoreMoref: datastoreMoref.value, numCPU, datacenterMoref, encryptionKey };
   const scripts = { preScript, postScript, repPostScript, repPreScript };
   return { ...genC, networks, ...scripts };
 }
@@ -646,4 +667,63 @@ export function getLocalTimeZone() {
   const { timeZone } = Intl.DateTimeFormat().resolvedOptions();
   // It will return IANA Local time zone "(Asia/Calcutta)"
   return `${timeZone}`;
+}
+
+export function createRefreshStatusPayload(user) {
+  const { values } = user;
+  const refreshSelectedVMS = getValue(STATIC_KEYS.UI_REFRESH_SELECTED_VMS, values);
+  const payload = {};
+  const plansMap = {};
+  Object.keys(refreshSelectedVMS).forEach((key) => {
+    const vm = refreshSelectedVMS[key];
+    const { protectionPlanID, id, recoveryType } = vm;
+    // Check if the plan exists, if not create it
+    if (!plansMap[protectionPlanID]) {
+      plansMap[protectionPlanID] = {
+        protectionPlanID,
+        recoveryVMCSPResp: [],
+      };
+    }
+
+    // Add VM details to the corresponding plan
+    plansMap[protectionPlanID].recoveryVMCSPResp.push({
+      vmMoref: refreshSelectedVMS[key].vmMoref,
+      recoveryJobID: id, // vm recovery job ID
+      recoveryType,
+    });
+  });
+
+  payload.recoveryPPlans = Object.values(plansMap);
+  return payload;
+}
+
+export function addDeletedVmInProtectedEntity(virtualMachines, values) {
+  const deletedvms = getValue(STATIC_KEYS.UI_LIST_DELETED_VMS, values);
+  if (deletedvms && Object.keys(deletedvms).length > 0) {
+    Object.keys(deletedvms).forEach((delVm) => {
+      const obj = JSON.parse(JSON.stringify(deletedvms[delVm]));
+      obj.isRemovedFromPlan = true;
+      virtualMachines.push(obj);
+    });
+  }
+}
+
+export function addDeletedVmInRecoveryEntity(payloadInstancedetails, values) {
+  const deletedvms = getValue(STATIC_KEYS.UI_LIST_DELETED_VMS, values);
+  if (deletedvms && Object.keys(deletedvms).length > 0) {
+    const selectedPlan = getValue('ui.selected.protection.plan', values);
+    const { recoveryEntities } = selectedPlan;
+    const { instanceDetails } = recoveryEntities;
+    const deleteEntity = getValue('drplan.remove.entity', values) || false;
+    const deleteCheckpoint = getValue('drplan.remove.checkpoint', values) || false;
+    instanceDetails.forEach((ins) => {
+      const { sourceMoref } = ins;
+      if (Object.keys(deletedvms).indexOf(sourceMoref) !== -1) {
+        const obj = JSON.parse(JSON.stringify(ins));
+        obj.deleteInstance = deleteEntity;
+        obj.deleteCheckpoint = deleteCheckpoint;
+        payloadInstancedetails.push(obj);
+      }
+    });
+  }
 }

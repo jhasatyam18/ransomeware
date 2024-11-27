@@ -46,7 +46,7 @@ class EmailSettings extends Component {
 
   onConfigureRecipient() {
     const { dispatch } = this.props;
-    const options = { title: 'Email Recipient', config: null, isUpdate: false };
+    const options = { title: 'Email Recipient', config: null, isUpdate: false, size: 'lg' };
     dispatch(clearValues());
     dispatch(openModal(MODAL_EMAIL_RECIPIENTS_CONFIGURATION, options));
   }

@@ -90,7 +90,7 @@ function RecoveryCheckpoints(props) {
     }
 
     return (
-      <DropdownActions className="action_align_left" title={t('actions')} dispatch={dispatch} actions={actions} uniqueID="point-in-time-checkpoint-action" />
+      <DropdownActions align="left" title={t('actions')} dispatch={dispatch} actions={actions} uniqueID="point-in-time-checkpoint-action" />
     );
   };
 

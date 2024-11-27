@@ -97,7 +97,7 @@ class DMTPaginator extends Component {
   }
 
   renderFilter() {
-    const { showFilter, filterHelpText, id = 'datableSearch' } = this.props;
+    const { showFilter, filterHelpText, id } = this.props;
     const { popoverOpen } = this.state;
     if (showFilter && showFilter === 'true') {
       return (
@@ -105,7 +105,7 @@ class DMTPaginator extends Component {
           <input
             type="text"
             className="form-control"
-            id={id}
+            id={id || 'datableSearch'}
             placeholder="Search"
             onFocus={this.onFilterFocus}
             onBlur={this.onFilterBlur}
@@ -120,11 +120,13 @@ class DMTPaginator extends Component {
               <FontAwesomeIcon size="sm" icon={faSearch} onClick={this.onFilter} />
             </div>
           </span>
-          <Popover placement="bottom" isOpen={popoverOpen} target={id} style={{ backgroundColor: '#222736' }}>
-            <PopoverBody>
-              {this.getHelpText(filterHelpText)}
-            </PopoverBody>
-          </Popover>
+          {filterHelpText ? (
+            <Popover placement="bottom" isOpen={popoverOpen} target={id || 'datableSearch'} style={{ backgroundColor: '#222736' }}>
+              <PopoverBody>
+                {this.getHelpText(filterHelpText)}
+              </PopoverBody>
+            </Popover>
+          ) : null}
         </div>
       );
     }

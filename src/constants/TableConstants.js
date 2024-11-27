@@ -1,5 +1,6 @@
 import VMInstanceItemRenderer from '../components/Table/ItemRenderers/VMInstanceItemRenderer';
 import { getRecoveryVMName } from '../utils/TableUtils';
+import { REPORT_DURATION, STATIC_KEYS } from './InputConstants';
 
 export const OS_TYPE_ITEM_RENDERER = 'OS_TYPE_ITEM_RENDERER';
 export const VM_SIZE_ITEM_RENDERER = 'VM_SIZE_ITEM_RENDERER';
@@ -24,6 +25,7 @@ export const SERVER_PORT_ITEM_RENDERER = 'SERVER_PORT_ITEM_RENDERER';
 export const NODE_NAME_ITEM_RENDERER = 'NODE_NAME_ITEM_RENDERER';
 export const NODE_ACTION_RENDERER = 'NODE_ACTION_RENDERER';
 export const EMAIL_RECIPIENT_ACTION_ITEM_RENDER = 'EMAIL_RECIPIENT_ACTION_ITEM_RENDER';
+export const EMAIL_SUBSCRIBED_EVENT_ITEM_RENDER = 'EMAIL_SUBSCRIBED_EVENT_ITEM_RENDER';
 export const VM_BOOT_ORDER_ITEM_RENDER = 'VM_BOOT_ORDER_ITEM_RENDER';
 export const LICENSE_USAGE_ITEM_RENDERER = 'LICENSE_USAGE_ITEM_RENDERER';
 export const LICENSE_ACTION_ITEM_RENDERER = 'LICENSE_ACTION_ITEM_RENDERER';
@@ -66,9 +68,11 @@ export const REPLICATION_TYPE_OPTION_RENDERER = 'REPLICATION_TYPE_OPTION_RENDERE
 export const ENTITY_TYPE_OPTION_RENDERER = 'ENTITY_TYPE_OPTION_RENDERER';
 export const REVERSE_VM_DESCRIPTION_RENDERER = 'REVERSE_VM_DESCRIPTION_RENDERER';
 export const DR_PLAN_RECOVERY_STATUS_RENDERER = 'DR_PLAN_RECOVERY_STATUS_RENDERER';
+export const LATEST_REFRESH_RECOVERY_STATUS = 'LATEST_REFRESH_RECOVERY_STATUS';
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
+export const VM_TENANCY_ITEM_RENDERER = 'VM_TENANCY_ITEM_RENDERER';
 
 export const TABLE_HEADER_SITES = [
   { label: 'site.name', field: 'name', itemRenderer: SITE_NAME_LINK_RENDERER },
@@ -114,6 +118,15 @@ export const TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG = [
   { label: 'Instance Type', field: 'instanceType', itemRenderer: VMInstanceItemRenderer },
   { label: 'Volume Type', field: 'volumeType' },
   { label: 'Placement Info', field: '', itemRenderer: VM_PLACEMENT_INFO_ITEM_RENDERER },
+  { label: 'Network', field: 'instanceDetails', itemRenderer: VM_NETWORK_INFO_ITEM_RENDERER },
+  { label: 'Boot Order', field: 'bootPriority' },
+];
+
+export const TABLE_AWS_PROTECTION_PLAN_VMS_RECOVERY_CONFIG = [
+  { label: 'name', field: 'instanceName' },
+  { label: 'Instance Type', field: 'instanceType', itemRenderer: VMInstanceItemRenderer },
+  { label: 'Volume Type', field: 'volumeType' },
+  { label: 'Placement Info', field: '', itemRenderer: VM_TENANCY_ITEM_RENDERER },
   { label: 'Network', field: 'instanceDetails', itemRenderer: VM_NETWORK_INFO_ITEM_RENDERER },
   { label: 'Boot Order', field: 'bootPriority' },
 ];
@@ -230,8 +243,8 @@ export const SUPPORT_BUNDLES = [
 
 // Table fields for email recipients
 export const TABLE_EMAIL_RECIPIENTS = [
-  { label: 'Email', field: 'emailAddress', width: 3 },
-  { label: 'Subscribed Events', field: 'subscribedEvents', width: 5 },
+  { label: 'Email', field: 'emailAddress', width: 2 },
+  { label: 'Subscribed Events', field: 'subscribedEvents', width: 5, itemRenderer: EMAIL_SUBSCRIBED_EVENT_ITEM_RENDER },
   { label: 'Actions', field: 'emailAddress', itemRenderer: EMAIL_RECIPIENT_ACTION_ITEM_RENDER, width: 2 },
 ];
 
@@ -285,12 +298,12 @@ export const TABLE_UPLOAD_SCRIPTS = [
 
 // table filter help text
 export const TABLE_FILTER_TEXT = {
-  TABLE_ALERTS: 'Data can be filtered on following fields <br/> title, severity, eventType <br /> example:  warning or <br /> severity=warning:eventType=replication',
-  TABLE_EVENTS: 'Data can be filtered on following fields <br/> topic, severity, type and description <br /> example: warning or topic=recovery:severity=warning',
-  REPLICATION_JOBS: 'Data can be filtered on following fields <br/> vmName, diskId and status <br /> example: windows or vmName=windows-10:diskId=2001',
-  REPLICATION_VM_JOBS: 'Data can be filtered on following fields <br/> vmName, iterationNumber, status and syncStatus <br /> example: Windows or vmName=windows',
-  TABLE_PROTECT_VM_VMWARE: 'Data can be filtered on following fields <br/> name and guestOS <br /> example: Windows or name=DBServer:guestOS=windows',
-  TABLE_RECOVERY_VMS: 'Data can be filtered on following fields <br/> name <br /> example: Windows or name=DBServer',
+  TABLE_ALERTS: 'Data can be filtered on following fields title, severity, eventType example:  warning or severity=warning:eventType=replication',
+  TABLE_EVENTS: 'Data can be filtered on following fields topic, severity, type and description example: warning or topic=recovery:severity=warning',
+  REPLICATION_JOBS: 'Data can be filtered on following fields vmName, diskId and status example: windows or vmName=windows-10:diskId=2001',
+  REPLICATION_VM_JOBS: 'Data can be filtered on following fields vmName, iterationNumber, status and syncStatus example: Windows or vmName=windows',
+  TABLE_PROTECT_VM_VMWARE: 'Data can be filtered on following fields name and guestOS example: Windows or name=DBServer:guestOS=windows',
+  TABLE_RECOVERY_VMS: 'Data can be filtered on following fields name example: Windows or name=DBServer',
   TABLE_HEADER_DR_PLANS: 'Data can be filtered on following fields :- Name, Status, Recovery Status, Protection Site, Recovery Site',
   TABLE_PROTECTION_PLAN_VMS: 'Data can be filtered on following fields :- Name, OS, Disk, Status',
   TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG: 'Data can be filtered on following fields :- Name, Instance Type',
@@ -357,9 +370,9 @@ export const PROTECTION_PLAN_COLUMNS = [
   { header: 'Name', field: 'name' },
   { header: 'Protection Site', field: 'protectedSite.name' },
   { header: 'Recovery Site', field: 'recoverySite.name' },
-  { header: 'Replication Interval', field: 'replicationInterval', type: 'time' },
-  { header: 'Status', field: 'status' },
-  { header: 'Recovery Status', field: 'recoveryStatus' },
+  { header: 'Replication Interval', field: 'replicationInterval', type: REPORT_DURATION.TIME },
+  { header: 'Status', field: 'replStatus', type: REPORT_DURATION.REPLICATION_STATUS },
+  { header: 'Recovery Status', field: 'rStatus', type: STATIC_KEYS.RECOVER_STATUS },
 ];
 
 export const SITE_COLUMNS = [
@@ -367,7 +380,7 @@ export const SITE_COLUMNS = [
   { header: 'Site Type', field: 'siteType' },
   { header: 'Description', field: 'description' },
   { header: 'Platform', field: 'platformDetails.platformType' },
-  { header: 'Location', field: 'platformDetails', type: 'location' },
+  { header: 'Location', field: 'platformDetails', type: REPORT_DURATION.LOCATION },
   { header: 'Node', field: 'node.name' },
 ];
 
@@ -376,12 +389,13 @@ export const NODE_COLUMNS = [
   { header: 'Hostname', field: 'hostname' },
   { header: 'Type', field: 'nodeType' },
   { header: 'Platform Type', field: 'platformType' },
-  { header: 'Ports', field: 'managementPort', type: 'port-renderer' },
+  { header: 'Version', field: 'version' },
+  { header: 'Ports', field: 'managementPort', type: STATIC_KEYS.PORTS_RENDERER },
   { header: 'Status', field: 'status' },
 ];
 
 export const EVENTS_COLUMNS = [
-  { header: 'Date', field: 'timeStamp', type: 'date' },
+  { header: 'Date', field: 'timeStamp', type: REPORT_DURATION.DATE },
   { header: 'Topic', field: 'topic' },
   { header: 'Lavel', field: 'severity' },
   { header: 'Event Type', field: 'type' },
@@ -390,19 +404,19 @@ export const EVENTS_COLUMNS = [
 ];
 
 export const ALERTS_COLUMNS = [
-  { header: 'Title', field: 'title' },
+  { header: 'Title', field: 'alertTitle', type: STATIC_KEYS.ALERT_TITLE },
   { header: 'Severity', field: 'severity' },
-  { header: 'Created', field: 'createdTime', type: 'date' },
-  { header: 'Last Updated', field: 'updatedTime', type: 'date' },
-  { header: 'Status', field: 'isAcknowledge', type: 'alert-status' },
+  { header: 'Created', field: 'createdTime', type: REPORT_DURATION.DATE },
+  { header: 'Last Updated', field: 'updatedTime', type: REPORT_DURATION.DATE },
+  { header: 'Status', field: 'isAcknowledge', type: STATIC_KEYS.REPORT_STATUS_TYPE },
 ];
 
 export const PROTECTED_VMS_COLUMNS = [
   { header: 'Names', field: 'name' },
   { header: 'Plan', field: 'planName' },
   { header: 'Iteration', field: 'totalIteration' },
-  { header: 'Changed', field: 'totalChangedSize', type: 'size' },
-  { header: 'Transferred', field: 'totalTransferredSize', type: 'size' },
+  { header: 'Changed', field: 'totalChangedSize', type: REPORT_DURATION.SIZE },
+  { header: 'Transferred', field: 'totalTransferredSize', type: REPORT_DURATION.SIZE },
   { header: 'Reduction(%)', field: 'dataReductionRatio' },
   { header: 'Recovery Status', field: 'recoveryStatus' },
 ];
@@ -410,21 +424,21 @@ export const PROTECTED_VMS_COLUMNS = [
 export const REPLICATION_JOB_COLUMNS = [
   { header: 'Virtual Machine', field: 'vmName' },
   { header: 'Iteration', field: 'iterationNumber' },
-  { header: 'Changed', field: 'changedSize', type: 'size' },
-  { header: 'Transferred', field: 'transferredSize', type: 'size' },
+  { header: 'Changed', field: 'changedSize', type: REPORT_DURATION.SIZE },
+  { header: 'Transferred', field: 'transferredSize', type: REPORT_DURATION.SIZE },
   { header: 'Job Status', field: 'status' },
   { header: 'Sync Status', field: 'syncStatus' },
-  { header: 'Sync Time', field: 'currentSnapshotTime', type: 'date' },
+  { header: 'Replication Duration', field: 'duration', type: REPORT_DURATION.DURATION },
+  { header: 'Sync Time', field: 'currentSnapshotTime', type: REPORT_DURATION.DATE },
 ];
 
 export const RECOVERY_JOB_COLUMNS = [
   { header: 'Virtual Machine', field: 'vmName' },
-  { header: 'Start Time', field: 'startTime', type: 'date' },
-  { header: 'End Time', field: 'endTime', type: 'date' },
-  { header: 'Duration', field: 'duration', type: 'duration' },
+  { header: 'Timings and Duration', field: 'date_duration', type: STATIC_KEYS.RECOVERY_DATE_DURATION },
   { header: 'Recovery Type', field: 'recoveryType' },
+  { header: 'Recovery Point Time', field: 'recoveryPointTime', type: REPORT_DURATION.DATE },
   { header: 'Job Status', field: 'status' },
-  { header: 'IP Address', field: 'publicIP' },
+  { header: 'IP Address', field: 'publicIP', secondaryField: 'privateIP' },
 ];
 
 export const TABLE_REVERSE_VM = [
@@ -434,4 +448,30 @@ export const TABLE_REVERSE_VM = [
   { label: 'Entity Type', field: '', itemRenderer: ENTITY_TYPE_OPTION_RENDERER },
   { label: 'Replication Type', itemRenderer: REPLICATION_TYPE_OPTION_RENDERER },
   { label: 'description', field: 'description', width: 3, itemRenderer: REVERSE_VM_DESCRIPTION_RENDERER },
+];
+
+export const TABLE_REFRESH_RECOVERY_STATUS = [
+  { label: 'Workload', field: 'vmName', width: '2' },
+  { label: 'Protection Plan', field: 'protectionPlanName' },
+  { label: 'Boot Order', field: 'bootOrder' },
+  { label: 'Recovery Time', field: 'startTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Last Known Recovery Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
+  { label: 'Latest Recovery Status', field: 'refreshedRecoveryStatus', itemRenderer: LATEST_REFRESH_RECOVERY_STATUS, width: '2.9' },
+];
+
+export const TABLE_REPORTS_CARD_CHECKPOINT = [
+  { label: 'Plan Name', field: 'protectionPlanName' },
+  { label: 'VM Name', field: 'workloadName' },
+  { label: 'Created At', field: 'creationTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Expires On', field: 'expirationTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Checkpoint Status', field: 'checkpointStatus' },
+  { label: 'Preserved', field: 'isPreserved', itemRenderer: PRESERVE_CHECKPOINT },
+];
+export const TABLE_REPORTS_CHECKPOINTS = [
+  { header: 'Plan Name', field: 'protectionPlanName' },
+  { header: 'VM Name', field: 'workloadName' },
+  { header: 'Created At', field: 'creationTime', type: 'date' },
+  { header: 'Expires On', field: 'expirationTime', type: 'date' },
+  { header: 'Checkpoint Status', field: 'checkpointStatus' },
+  { header: 'Preserved', field: 'isPreserved' },
 ];

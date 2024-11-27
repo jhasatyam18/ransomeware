@@ -3,7 +3,7 @@ import { API_ADD_USER, API_AUTHENTICATE, API_AWS_REGIONS, API_AZURE_REGIONS, API
 import { APP_TYPE, NODE_TYPES, PLATFORM_TYPES, SAML, STATIC_KEYS, VMWARE_OBJECT } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { MODAL_USER_SCRIPT } from '../../constants/Modalconstant';
-import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PLAYBOOK_LIST, PROTECTION_PLANS_PATH, ROLES_SETTINGS_PATH, SITES_PATH, SUPPORT_BUNDLE_PATH, THROTTLING_SETTINGS_PATH, USER_SETTINGS_PATH } from '../../constants/RouterConstants';
+import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PLAYBOOK_LIST, PROTECTION_PLANS_PATH, ROLES_SETTINGS_PATH, SITES_PATH, THROTTLING_SETTINGS_PATH, USER_SETTINGS_PATH } from '../../constants/RouterConstants';
 import { STORE_KEYS } from '../../constants/StoreKeyConstants';
 import { APPLICATION_API_USER, APPLICATION_AUTHORIZATION, APPLICATION_UID } from '../../constants/UserConstant';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
@@ -13,6 +13,7 @@ import { onInit } from '../../utils/HistoryUtil';
 import { getMatchingInsType, getValue, getVMwareLocationPath, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
 import { fetchByDelay } from '../../utils/SlowFetch';
 import { acknowledgeNodeAlert, getUnreadAlerts } from './AlertActions';
+import { fetchCheckpointsByPlanId } from './checkpointActions';
 import { drPlansFetched, fetchDRPlanById, fetchDrPlans, setVMGuestOSInfo } from './DrPlanActions';
 import { fetchPlaybookById, fetchPlaybooks } from './DrPlaybooksActions';
 import { fetchEmailConfig, fetchEmailRecipients } from './EmailActions';
@@ -23,7 +24,6 @@ import { closeModal, openModal } from './ModalActions';
 import { fetchNodes } from './NodeActions';
 import { fetchRoles } from './RolesAction';
 import { fetchAvailibilityZones, fetchSites } from './SiteActions';
-import { fetchSupportBundles } from './SupportActions';
 import { fetchBandwidthConfig, fetchBandwidthReplNodes } from './ThrottlingAction';
 import { fetchSelectedVmsProperty, fetchVMwareComputeResource, fetchVMwareNetwork, getVMwareConfigDataForField, setVMwareAPIResponseData } from './VMwareActions';
 
@@ -368,9 +368,6 @@ export function refresh() {
       case LICENSE_SETTINGS_PATH:
         dispatch(fetchLicenses());
         break;
-      case SUPPORT_BUNDLE_PATH:
-        dispatch(fetchSupportBundles());
-        break;
       case NODES_PATH:
         dispatch(fetchNodes());
         break;
@@ -404,6 +401,7 @@ export function detailPathChecks(pathname) {
     if (pathname.indexOf('protection/plan/details') !== -1) {
       const pathArray = pathname.split('/');
       dispatch(fetchDRPlanById(pathArray[pathArray.length - 1]));
+      dispatch(fetchCheckpointsByPlanId(pathArray[pathArray.length - 1]));
       if (getValue(STORE_KEYS.RECOVERY_CHECKPOINT_JOB_LINK_INSTANCE, values)) {
         dispatch(valueChange(STORE_KEYS.RECOVERY_CHECKPOINT_JOB_LINK_INSTANCE, undefined));
       }
@@ -1077,6 +1075,13 @@ export function setInstanceDetails(key, ins) {
     dispatch(valueChange(`${key}-vmConfig.general.bootOrder`, ins.bootPriority));
     dispatch(valueChange(`${key}-vmConfig.scripts.preScript`, ins.preScript));
     dispatch(valueChange(`${key}-vmConfig.scripts.postScript`, ins.postScript));
+    // for aws
+    dispatch(valueChange(`${key}-vmConfig.general.tenancy`, ins.tenancy));
+    dispatch(valueChange(`${key}-vmConfig.general.hostType`, ins.hostType));
+    dispatch(valueChange(`${key}-vmConfig.general.hostMoref`, ins.hostMoref));
+    dispatch(valueChange(`${key}-vmConfig.general.affinity`, ins.affinity));
+    dispatch(valueChange(`${key}-vmConfig.general.image`, ins.image));
+    dispatch(valueChange(`${key}-vmConfig.general.license`, ins.license));
   };
 }
 
@@ -1108,9 +1113,9 @@ export function onDiffReverseChanges({ value }) {
     const { user } = getState();
     const { values } = user;
     const recoveryPlatform = getValue('ui.values.recoveryPlatform', values) || '';
-    const protectedSite = getValue('ui.values.protectionPlatform', values);
     if (value) {
-      if (recoveryPlatform !== '' && recoveryPlatform === PLATFORM_TYPES.VMware && protectedSite !== recoveryPlatform) {
+      if (recoveryPlatform !== '' && recoveryPlatform === PLATFORM_TYPES.VMware) {
+        // if target is vmware disable differential with checkpoint
         dispatch(valueChange('recoveryPointConfiguration.isRecoveryCheckpointEnabled', false));
         dispatch(valueChange(STORE_KEYS.UI_DISABLE_RECOVERY_CHECKPOINT, true));
       }

@@ -156,6 +156,7 @@ function CopyVMConfig(props) {
     return (
       <>
         <Select
+          inputId="copyConfig_workloads_select"
           options={targetVMs}
           isMulti={isMultiSelect}
           closeMenuOnSelect={false}
@@ -175,6 +176,7 @@ function CopyVMConfig(props) {
     return (
       <>
         <Select
+          inputId="copyConfig_configuration_select"
           options={config}
           isMulti={isMultiSelect}
           styles={getSearchSelectStyle(false)}

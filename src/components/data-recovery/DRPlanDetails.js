@@ -7,8 +7,8 @@ import { PLATFORM_TYPES, PROTECTION_PLANS_STATUS, RECOVERY_STATUS, REPLICATION_S
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { PLAN_DETAIL_TABS } from '../../constants/UserConstant';
 import { setActiveTab } from '../../store/actions';
-import { fetchCheckpointsByPlanId } from '../../store/actions/checkpointActions';
-import { deletePlanConfirmation, fetchDRPlanById, onResetDiskReplicationClick, openCleanupTestRecoveryWizard, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, playbookExport, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
+import { fetchCheckpointsByPlanId, setCheckpointCount, setVmlevelCheckpoints } from '../../store/actions/checkpointActions';
+import { fetchDRPlanById, onDeleteProtectionPlanClick, onResetDiskReplicationClick, openCleanupTestRecoveryWizard, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, playbookExport, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
 import { downloadRecoveryPlaybook } from '../../store/actions/DrPlaybooksActions';
 import { convertMinutesToDaysHourFormat, getRecoveryCheckpointSummary } from '../../utils/AppUtils';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
@@ -41,6 +41,12 @@ class DRPlanDetails extends Component {
     dispatch(fetchDRPlanById(parts[parts.length - 1], params));
     dispatch(fetchCheckpointsByPlanId(parts[parts.length - 1]));
     dispatch(setActiveTab('1'));
+  }
+
+  componentWillUnmount() {
+    const { dispatch } = this.props;
+    dispatch(setVmlevelCheckpoints([]));
+    dispatch(setCheckpointCount(0));
   }
 
   disableEdit() {
@@ -258,7 +264,7 @@ class DRPlanDetails extends Component {
     const { protectedSite, recoverySite } = protectionPlan;
     const protectedSitePlatform = protectedSite.platformDetails.platformType;
     const planHaCheckpoints = checkpointCount > 0 || false;
-    const isServerActionDisabled = (protectionPlan.recoveryStatus === RECOVERY_STATUS.RECOVERED || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED);
+    const isServerActionDisabled = (protectionPlan.recoveryStatus === RECOVERY_STATUS.RECOVERED || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED || !hasRequestedPrivileges(user, ['protectionplan.edit']));
     const recovered = planHaCheckpoints || !(protectionPlan.recoveryStatus === RECOVERY_STATUS.RECOVERED || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED);
     const isReverseActionDisabled = this.disableReverse(protectionPlan);
     let actions = [];
@@ -268,7 +274,7 @@ class DRPlanDetails extends Component {
       actions.push({ label: 'Edit', action: openEditProtectionPlanWizard, id: protectionPlan, disabled: this.disableEdit(), icon: faEdit });
       actions.push({ label: 'Resync Disk Replication', action: onResetDiskReplicationClick, id: protectionPlan, disabled: isServerActionDisabled, navigate: PROTECTION_PLANS_PATH, icon: faRetweet });
       actions.push({ label: 'Download Plan Playbook', action: playbookExport, id: protectionPlan, disabled: this.disableEdit(), icon: faDownload });
-      actions.push({ label: 'Remove', action: deletePlanConfirmation, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS || !hasRequestedPrivileges(user, ['protectionplan.delete']), navigate: PROTECTION_PLANS_PATH, icon: faTrash });
+      actions.push({ label: 'Remove', action: onDeleteProtectionPlanClick, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS || !hasRequestedPrivileges(user, ['protectionplan.delete']), navigate: PROTECTION_PLANS_PATH, icon: faTrash });
     } else if (localVMIP === recoverySite.node.hostname) {
       actions = [{ label: 'recover', action: openRecoveryWizard, icon: faPlus, disabled: !recovered || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED || !hasRequestedPrivileges(user, ['recovery.full']) },
         { label: 'Migrate', action: openMigrationWizard, icon: faClone, disabled: allVmRecovered || !hasRequestedPrivileges(user, ['recovery.migration']) },

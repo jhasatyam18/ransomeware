@@ -344,19 +344,27 @@ export function openModalOnDiskSizeModified() {
     const splitByColon = virtualMachineDetails.length > 0 ? virtualMachineDetails.split(':') : [];
     dispatch(showApplicationLoader('fetching_pplan', 'Loading... '));
     const planData = await callAPI(API_FETCH_DR_PLAN_BY_ID.replace('<id>', planId));
-    const { recoverySite } = planData;
+    const { recoverySite, protectedSite } = planData;
     const { platformDetails } = recoverySite;
     const { platformType } = platformDetails;
     if (platformType && platformType === PLATFORM_TYPES.VMware) {
       let url = API_RECOVERY_CHECKPOINT_BY_VM.replace('<id>', planId);
       if (splitByColon.length > 0) {
-        url = url.replace('<moref>', `${splitByColon[splitByColon.length - 2]}:${splitByColon[splitByColon.length - 1]}`);
+        if (protectedSite && protectedSite.platformDetails && protectedSite.platformDetails.platformType === PLATFORM_TYPES.AWS) {
+          // in case of AWS vmname:id is not required in payload
+          url = url.replace('<moref>', `${splitByColon[splitByColon.length - 1]}`);
+        } else {
+          url = url.replace('<moref>', `${splitByColon[splitByColon.length - 2]}:${splitByColon[splitByColon.length - 1]}`);
+        }
       }
       const vmHasCheckpoints = await callAPI(url);
       dispatch(hideApplicationLoader('fetching_pplan', 'Loading... '));
+      // if checkpoint then need to take confirmation from user
       if (vmHasCheckpoints.records.length > 0) {
         const options = { title: 'Confirmation', confirmAction: takeActionOnDiskAlerts, message: i18n.t('pit.disk.resize.warning.text', { vmName: splitByColon[2] }), id: selected };
         dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
+      } else {
+        dispatch(takeActionOnDiskAlerts());
       }
     } else {
       dispatch(hideApplicationLoader('fetching_pplan', 'Loading... '));
