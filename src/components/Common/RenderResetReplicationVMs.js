@@ -66,8 +66,8 @@ function RenderResetReplicationVms(props) {
           <Row>
             <Col sm={5}>
               <div className="custom-control custom-checkbox">
-                <input type="checkbox" className={`custom-control-input ${isReplicationReset === true ? 'checkbox_disabled' : ''}`} id={key} checked={value} name={key} onChange={(e) => handleChange(e, key)} disabled={isReplicationReset} />
-                <label className="custom-control-label  margin-right-8" htmlFor={key}>
+                <input type="checkbox" className={`custom-control-input ${isReplicationReset === true ? 'checkbox_disabled' : ''}`} id={`${name}-${index === 0 ? `os-disk-${index}` : `data-disk-${index}`}`} checked={value} name={key} onChange={(e) => handleChange(e, key)} disabled={isReplicationReset} />
+                <label className="custom-control-label  margin-right-8" htmlFor={`${name}-${index === 0 ? `os-disk-${index}` : `data-disk-${index}`}`}>
                   <FontAwesomeIcon size="sm" icon={faHdd} />
                 </label>
                 <span className="margin-right-20">

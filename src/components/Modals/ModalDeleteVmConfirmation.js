@@ -94,8 +94,9 @@ function DeletVMConfirmation(props) {
             <div className="pt-2 mb-1">
               <div className="custom-control custom-checkbox ">
                 <input type="checkbox" checked={removeEntity} className="custom-control-input" id="drplan.remove.entity" name="drplan.remove.entity" onChange={(e) => handleChange('drplan.remove.entity', e)} />
-                <label className="custom-control-label" htmlFor="drplan.remove.entity" />
-                <span style={{ fontSize: '12px' }}>{t('delete.vm.infra')}</span>
+                <label className="custom-control-label" htmlFor="drplan.remove.entity">
+                  <span style={{ fontSize: '12px' }}>{t('delete.vm.infra')}</span>
+                </label>
               </div>
             </div>
             {checkpointCount > 0
@@ -103,8 +104,9 @@ function DeletVMConfirmation(props) {
                 <div className="">
                   <div className="custom-control custom-checkbox ">
                     <input type="checkbox" disabled={removeEntity && platformType === PLATFORM_TYPES.VMware} checked={removeCheckpoint} className="custom-control-input" id="drplan.remove.checkpoint" name="drplan.remove.checkpoint" onChange={(e) => handleChange('drplan.remove.checkpoint', e)} />
-                    <label className="custom-control-label" htmlFor="drplan.remove.checkpoint" />
-                    <span style={{ fontSize: '12px' }}>{t('title.pplan.delete.checkpoint')}</span>
+                    <label className="custom-control-label" htmlFor="drplan.remove.checkpoint">
+                      <span style={{ fontSize: '12px' }}>{t('title.pplan.delete.checkpoint')}</span>
+                    </label>
                   </div>
                 </div>
               ) : null}

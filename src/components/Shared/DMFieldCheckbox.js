@@ -38,13 +38,13 @@ class DMFieldCheckbox extends Component {
   }
 
   renderLabel() {
-    const { t, hideLabel, field } = this.props;
+    const { t, hideLabel, field, fieldKey } = this.props;
     const { label } = field;
     if (hideLabel) {
       return null;
     }
     return (
-      <Label for="dm-checkbox" className="col-sm-4 col-form-Label">
+      <Label for="dm-checkbox" className="col-sm-4 col-form-Label" htmlFor={fieldKey}>
         {t(label)}
       </Label>
     );

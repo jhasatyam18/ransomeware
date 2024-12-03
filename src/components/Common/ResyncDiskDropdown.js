@@ -96,6 +96,7 @@ function ResyncDiskDropdown(props) {
         <Row className="pl-3">
           <Col sm={4}>
             <Select
+              inputId="resyncDisk_workloads_select"
               options={workloadOptions}
               isMulti={isMultiSelect}
               closeMenuOnSelect={false}
@@ -108,6 +109,7 @@ function ResyncDiskDropdown(props) {
           </Col>
           <Col sm={4}>
             <Select
+              inputId="resyncDisk_diskType_select"
               options={diskOptions}
               isMulti={isMultiSelect}
               styles={getSearchSelectStyle(false)}
