@@ -1534,7 +1534,6 @@ export function validateConfigureIDP(user, dispatch) {
 export function validateCheckpointSelection(user, vms, dispatch) {
   const { values } = user;
   let checkpointFlag = false;
-  const checkpointRequiredVM = [];
   const selectedVMs = Object.keys(vms);
   for (let i = 0; i < selectedVMs.length; i += 1) {
     const vm = selectedVMs[i];
@@ -1546,8 +1545,6 @@ export function validateCheckpointSelection(user, vms, dispatch) {
       if (showField) {
         validateField(field, `${vm}-recovery-checkpoint`, getValue(`${vm}-recovery-checkpoint`, values), dispatch, user);
       }
-      checkpointRequiredVM.push(vms[vm].name);
-      dispatch(addMessage(`Please select point in time checkpoint for ${checkpointRequiredVM.join(', ')}`, MESSAGE_TYPES.ERROR));
       checkpointFlag = true;
     }
   }
