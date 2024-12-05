@@ -647,6 +647,7 @@
   "info.recepient.checkbox": "Run a Dry Run: Send a Test Email to Double-Check Your Configuration!",
   "emailConfiguration.isValidate": "Test Configuration",
   "recovery.checkpoint.onchange.warn": "Recovering VMs with different checkpoints may lead to inconsistencies in overall application state. Reverse differential will not be supported when recovered from a checkpoint.",
+  "test.recovery.checkpoint.onchange.warn":"Recovering VMs with different checkpoints may lead to inconsistencies in overall application state.",
   "test.recovery.recovery.configuration": "Recovery Configuration",
   "test.recovery.prev.recovery.configuration": "Previous Test Recovery Configuration",
   "title.system.validation": "System Validation",

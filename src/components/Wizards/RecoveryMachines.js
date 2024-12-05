@@ -289,7 +289,7 @@ class RecoveryMachines extends Component {
           </ul>
         ) : (
           <div className="padding-left-20 card_note_warning">
-            {checkpointWarning}
+            {t('test.recovery.checkpoint.onchange.warn')}
           </div>
         )}
       </>
