@@ -12,7 +12,7 @@ import { addMessage } from '../../store/actions/MessageActions';
 import { getValue } from '../../utils/InputUtils';
 import { getRecoveryInfoForVM } from '../../utils/RecoveryUtils';
 import { getSearchSelectStyle } from '../../utils/ApiUtils';
-import { COPY_CONFIG, STATIC_KEYS } from '../../constants/InputConstants';
+import { COPY_CONFIG, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { MODAL_SHOW_RESETED_VMS, MODAL_SUMMARY } from '../../constants/Modalconstant';
 
@@ -132,7 +132,7 @@ function CopyVMConfig(props) {
    */
   const copyConfig = () => {
     const { targets, configToCopy, targetNames } = getTargetVmAndCopyConfigs();
-    const data = getRecoveryInfoForVM({ sourceMoref: ID, user, configToCopy, values });
+    const data = getRecoveryInfoForVM({ sourceMoref: ID, user, configToCopy, values, workFlow: UI_WORKFLOW.CREATE_PLAN });
     const options = { title: 'Copy Configuration', note: ' On confirmation configuration will get copied to the following instances.', data, reduxAction: copyInstanceConfiguration, reduxArgs: { sourceVM: ID, targetVMs: targets, configToCopy, dispatch }, targetNames, css: 'modal-lg' };
     dispatch(openModal(MODAL_SUMMARY, options));
   };

@@ -294,10 +294,9 @@ function getNetworkConfig({ sourceConfig, user, workFlow }) {
         ];
         if (workflow !== UI_WORKFLOW.CREATE_PLAN) {
           const configureguestos = publicIP !== '' && netmask !== '' && gateway !== '' && dns !== '';
-          keys = [...keys, { title: 'Private IP', value: privateIP },
+          keys = [...keys,
             { title: 'Mac Address', value: macAddress },
             { title: 'Configure Guest Network', value: configureguestos },
-            { title: 'PublicIP', value: publicIP },
             { title: 'Netmask', value: netmask },
             { title: 'Gateway', value: gateway },
             { title: 'DNS', value: dns },
@@ -329,6 +328,11 @@ function getNetworkConfig({ sourceConfig, user, workFlow }) {
         break;
       default:
         break;
+    }
+    // We don't have to show private IP if the flow is create plan copy config
+    if (workFlow !== UI_WORKFLOW.CREATE_PLAN) {
+      keys.push({ title: 'Private IP', value: privateIP });
+      keys.push({ title: 'Public IP', value: publicIP });
     }
     const nic = { title: `Nic-${index + 1}`, values: keys };
     netWorkKeys.push(nic);
