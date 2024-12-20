@@ -25,7 +25,6 @@ const Preview: React.FC<RendererProps> = (props) => {
     const upgradeHistoryNodeInfo = getValue(STATIC_KEYS.UPGRADE_HISTORY_PREVIEW_NODE_INFO, values) || '';
     const revertNodeInfo: UpgradeNodeInterface[] = [];
     let applicableNodes = [];
-    let currentMgmtNodeVersion = '';
     if (upgradeHistoryNodeInfo && workflow === STATIC_KEYS.REVERT) {
         applicableNodes = JSON.parse(upgradeHistoryNodeInfo?.applicableNodes);
         applicableNodes.forEach((applNode: UpgradeNodeInterface) => {
@@ -60,15 +59,11 @@ const Preview: React.FC<RendererProps> = (props) => {
 
     const nodeUpgradeVersion: NodeUpgradeVersionInterface = getValue(STATIC_KEYS.UI_PREVIEW_NODE_VERSION_INFO, values) || '';
 
-    let upgradedVersionAvailable = '';
     if (Object.keys(nodeUpgradeVersion).length === 0) {
         return null;
     }
-    const { component } = nodeUpgradeVersion.packages[0];
-    const { version } = component[0];
-    upgradedVersionAvailable = version;
     const upgradeNodeInfo: any = [];
-    if (upgradedVersionAvailable && workflow === STATIC_KEYS.UPGRADE) {
+    if (workflow === STATIC_KEYS.UPGRADE && Object.keys(nodeUpgradeVersion).length > 0) {
         const availablePackages = nodeUpgradeVersion.packages.map((pkg) => pkg.package);
         nodeInfo.map((nodeinf: NodeInterface) => {
             if ((nodeinf.nodeType === APP_CONSTANT.MANAGEMENT && nodeinf.isLocalNode && availablePackages.includes(APP_CONSTANT.MANAGEMENT)) || (nodeinf.nodeType !== APP_CONSTANT.MANAGEMENT && availablePackages.includes(nodeinf.nodeType))) {
@@ -81,9 +76,6 @@ const Preview: React.FC<RendererProps> = (props) => {
                         break;
                     }
                 }
-            }
-            if (nodeinf.nodeType === 'Management' && nodeinf.isLocalNode) {
-                currentMgmtNodeVersion = nodeinf.version;
             }
         });
     }
@@ -116,7 +108,7 @@ const Preview: React.FC<RendererProps> = (props) => {
     const renderFooter = () => {
         return (
             <>
-                {(upgradeNodeInfo.length !== 0 || revertNodeInfo.length !== 0) && currentMgmtNodeVersion <= upgradedVersionAvailable ? (
+                {upgradeNodeInfo.length !== 0 || revertNodeInfo.length !== 0 ? (
                     <div className="upgrade_concent_div" style={{ fontSize: '13px' }}>
                         <div className="padding-top-12">
                             <DMCheckbox field={inputField} fieldKey="upgrade.concent" dispatch={dispatch} user={user} disabled={!(revertNodeInfo.length > 0 || nodeInfo.length > 0)} />
@@ -127,14 +119,14 @@ const Preview: React.FC<RendererProps> = (props) => {
                         </div>
                     </div>
                 ) : null}
-                {currentMgmtNodeVersion > upgradedVersionAvailable ? (
+                {upgradeNodeInfo.length === 0 && revertNodeInfo.length === 0 ? (
                     <div style={{ fontSize: '13px', paddingTop: '12px' }}>
                         <span className="text-warning ">{t('preview.verify.node.version')}</span>
                     </div>
                 ) : null}
                 <div className="padding-10 d-flex flex-row-reverse">
                     <div>
-                        {(upgradeNodeInfo.length !== 0 || revertNodeInfo.length !== 0) && currentMgmtNodeVersion <= upgradedVersionAvailable ? <ActionButton cssName={`btn btn-success btn-sm margin-right-10 p-2 pl-3 pr-3`} isDisabled={!concent} label={`${nextLabel}`} onClick={onNextClick} /> : null}
+                        {upgradeNodeInfo.length !== 0 || revertNodeInfo.length !== 0 ? <ActionButton cssName={`btn btn-success btn-sm margin-right-10 p-2 pl-3 pr-3`} isDisabled={!concent} label={`${nextLabel}`} onClick={onNextClick} /> : null}
                         <ActionButton cssName="btn btn-secondary btn-sm p-2 pl-3 pr-3" label={`Cancel`} onClick={onCancelClick} />
                     </div>
                 </div>

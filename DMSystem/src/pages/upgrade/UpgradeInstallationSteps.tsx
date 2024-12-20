@@ -48,9 +48,6 @@ const UpgradeInstallationStep: React.FC<Props> = (props) => {
         }, 5000);
 
         return () => {
-            dispatch(setCurrentUpgradeStep(0));
-            dispatch(addUpgradeStep([]));
-            dispatch(valueChange(STATIC_KEYS.UI_UPGRADE_PAGE, ''));
             if (timerId.current !== null) {
                 clearInterval(timerId.current);
             }
