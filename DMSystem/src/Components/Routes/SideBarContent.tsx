@@ -1,0 +1,85 @@
+import React, { Component } from 'react';
+import MetisMenu from 'metismenujs';
+import { withTranslation, WithTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { SideBarMenuItem } from '../../interfaces/interfaces';
+import { getSideBarContents } from '../../utils/appUtils';
+import withRouter from './withRouter';
+
+interface SidebarContentProps extends WithTranslation {
+    type?: string;
+}
+
+class SidebarContent extends Component<SidebarContentProps> {
+    componentDidMount() {
+        this.initMenu();
+    }
+
+    componentDidUpdate(prevProps: SidebarContentProps) {
+        const { type } = this.props;
+        if (type !== prevProps.type) {
+            this.initMenu();
+        }
+    }
+
+    initMenu() {
+        new MetisMenu('#side-menu');
+    }
+
+    isActive(path1: string, path2?: string, path3?: string): string {
+        const { pathname } = window.location;
+        if (path1 === pathname || path2 === pathname || path3 === pathname) {
+            return '#FFF';
+        }
+        return '';
+    }
+
+    renderIcon(item: SideBarMenuItem) {
+        return <FontAwesomeIcon icon={item.icon} style={{ fontSize: 15, color: this.isActive(item.isActivePath.join(',')), padding: '8px 6px 0px 6px' }} />;
+    }
+
+    renderItem(item: SideBarMenuItem) {
+        const { t } = this.props;
+        return (
+            <li key={`sidebar-item-${item.label}`}>
+                <Link to={item.to} className="waves-effect" style={{ color: this.isActive(item.isActivePath.join(',')) }}>
+                    {this.renderIcon(item)}
+                    <span>{t(item.label)}</span>
+                </Link>
+            </li>
+        );
+    }
+
+    renderMenu(SideBarMenuItems: SideBarMenuItem[]) {
+        const { t } = this.props;
+        const sidebarMenu = SideBarMenuItems.map((menu, index) => {
+            if (menu.hasSubMenu && menu.subMenu) {
+                return (
+                    <li key={`sidebarmenu-${menu.label}-${index + 1}`}>
+                        <Link to="/#" className="has-arrow waves-effect" style={{ color: this.isActive(menu.isActivePath.join(',')) }}>
+                            <FontAwesomeIcon icon={menu.icon} style={{ fontSize: 15, color: this.isActive(menu.isActivePath.join(',')) }} />
+                            <span>{t(menu.label)}</span>
+                        </Link>
+                        <ul className="sub-menu">{this.renderMenu(menu.subMenu)}</ul>
+                    </li>
+                );
+            }
+            return this.renderItem(menu);
+        });
+        return sidebarMenu;
+    }
+
+    render() {
+        const SideBarMenuItems = getSideBarContents() as SideBarMenuItem[];
+        return (
+            <div id="sidebar-menu">
+                <ul className="metismenu list-unstyled" id="side-menu">
+                    {this.renderMenu(SideBarMenuItems)}
+                </ul>
+            </div>
+        );
+    }
+}
+
+export default withTranslation()(withRouter(SidebarContent));

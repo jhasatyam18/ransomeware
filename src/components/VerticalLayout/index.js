@@ -117,14 +117,16 @@ class Layout extends Component {
           <Header
             toggleMenuCallback={this.toggleMenuCallback}
           />
-          <Sidebar
-            theme={leftSideBarTheme}
-            type={leftSideBarType}
-            isMobile={isMobile}
-          />
-          <div className="main-content">
-            <div className="page-content">
-              {this.renderRoutes()}
+          <div className="d-flex">
+            <Sidebar
+              theme={leftSideBarTheme}
+              type={leftSideBarType}
+              isMobile={isMobile}
+            />
+            <div className="main-content" style={{ width: '100%' }}>
+              <div className="page-content">
+                {this.renderRoutes()}
+              </div>
             </div>
           </div>
           {/* <Footer /> */}

@@ -1,0 +1,8 @@
+node_modules/
+build/
+config/
+scripts/
+# src/assets/*
+# src\logo.svg
+# src/app.css
+# src/index.css

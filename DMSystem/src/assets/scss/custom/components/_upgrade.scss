@@ -1,0 +1,40 @@
+.upgrade_status_line {
+    position: relative;
+    top:9px;
+    width: 200px;
+    margin: 0 3px;
+    border-top: 1px solid $gray-500;
+}
+
+.upgrade_step-label{
+    width: 88%;
+    text-align: center;
+}
+
+.link-item{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: inherit;
+}
+
+.upgrade_end_step{
+    position: relative;
+    left: -22px;
+}
+
+.disabled_hr {
+    color: #7682a7;
+    border-top: 1px solid #7682a7;
+}
+
+.link_color{
+    color: $sidebar-menu-item-active-color;
+}
+
+.upgrade_concent_div{
+    position: relative;
+    left: -20px;
+    display: flex;
+    margin-top: 17px;
+}

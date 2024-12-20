@@ -1,0 +1,173 @@
+//Fonts
+@import "custom/fonts/fonts";
+ 
+//Core files
+@import "./node_modules/bootstrap/scss/functions";
+@import "./node_modules/bootstrap/scss/variables";
+@import "variables-dark";
+@import "./node_modules/bootstrap/scss/mixins.scss";
+
+// Structure
+@import "custom/structure/topbar";
+@import "custom/structure/page-head";
+@import "custom/structure/footer";
+@import "custom/structure/right-sidebar";
+@import "custom/structure/vertical";
+@import "custom/structure/horizontal-nav";
+@import "custom/structure/layouts";
+
+// Components
+@import "custom/components/waves";
+@import "custom/components/avatar";
+@import "custom/components/helper";
+@import "custom/components/preloader";
+@import "custom/components/forms";
+@import "custom/components/widgets";
+@import "custom/components/dashboard";
+@import "custom/components/upgrade";
+
+// Plugins
+@import "custom/plugins/custom-scrollbar";
+@import "custom/plugins/cropperjs";
+@import "custom/plugins/parsley";
+@import "custom/plugins/switch";
+@import "custom/plugins/timepicker";
+
+// Pages
+@import "custom/pages/authentication";
+
+
+// button bar
+.button__bar__border_right {
+  border-right: solid 1px;
+}
+
+.stack__view {
+  border: 1px solid $gray-400;
+  margin: 0px;
+  transition:visibility 1s linear,opacity 0.3s linear;
+  .key {
+    background-color: #2a3042;
+    padding-left: 10px;
+    padding-top: 10px;
+  }
+  .child {
+    padding-left: 40px;
+  }
+  .value {
+    background-color: #32394e;
+    padding-top: 10px;
+    padding-left: 15px;
+  }
+}
+
+.app_info{
+  color:$info;
+}
+
+.app_success{
+  color: $success;
+}
+
+.app_warning{
+  color: $warning;
+}
+
+.app_danger{
+  color: $danger;
+}
+
+.app_primary{
+  color: $primary;
+}
+
+.app_secondary{
+  color:$gray-800;
+}
+
+// upload license
+.upload__form {
+  display: flex;
+  width: calc(100% - 20px);
+  min-height: 140px;
+  padding: 5px;
+  margin: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  .upload__icon {
+    padding-bottom: 5px;
+    text-align: center;
+    color: white;
+  }
+  .details {
+    padding: 20px;
+    width: 100%;
+  }
+  .label {
+    cursor: pointer;
+  }
+  .upload__success__info {
+    padding-top: 15px;
+    color: $green;
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.upload__init, .upload__validating  {
+  border: 1px dashed white;
+}
+.upload__uploading {
+  border: 1px dashed $info;
+}
+.upload__success {    
+  border: 1px dashed $green;
+}
+.upload__error {
+  color: $red;
+  border: 1px dashed $red;
+}
+
+.text-danger-1 {
+  color: #c0392b;
+}
+
+.text-danger-2 {
+  color: #e74c3c;
+}
+
+.text-warning-1 {
+  color: #f1c40f;
+}
+
+.text-warning-2 {
+  color: #f39c12;
+}
+
+.text-white {
+ color: white;
+}
+
+// upload license
+.upload__script__form {
+  display: flex;
+  width: calc(100% - 20px);
+  min-height: 100px;
+  padding: 5px;
+  margin: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  .upload__icon {
+    padding-bottom: 5px;
+    text-align: center;
+    color: white;
+  }
+}
+
+.card-summary {
+  border: 1px solid #000;
+  padding: 10px;
+  background-color: #222736;
+}

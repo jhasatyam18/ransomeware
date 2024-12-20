@@ -3,7 +3,7 @@
 //
 
 #page-topbar {
-  position: fixed;
+  position: sticky;
   top: 0;
   right: 0;
   left: 0;
@@ -101,7 +101,7 @@
 
 .page-content {
   min-height: 100vh;
-  padding: calc(#{$header-height} + #{$grid-gutter-width})
+  padding: calc(24px)
     calc(#{$grid-gutter-width} / 2) $footer-height
     calc(#{$grid-gutter-width} / 2);
 }

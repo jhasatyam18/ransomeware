@@ -5,8 +5,7 @@ import { withTranslation } from 'react-i18next';
 import { connect, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Card, CardBody, Col, Media, Row } from 'reactstrap';
-import * as Types from '../../constants/actionTypes';
-import { API_DASHBOARD_TITLE, API_NODES } from '../../constants/ApiConstants';
+import { API_DASHBOARD_TITLE } from '../../constants/ApiConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { PROTECTION_PLANS_PATH, SITES_PATH } from '../../constants/RouterConstants';
 import { updateTitleInfo } from '../../store/actions/DashboardActions';
@@ -36,15 +35,6 @@ function DashboardTitles(props) {
       (err) => {
         if (isUnmounting) return;
         setLoading(false);
-        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-      });
-    callAPI(API_NODES)
-      .then((json) => {
-        if (isUnmounting) return;
-        dispatch({ type: Types.DASHBOARD_NODES_FETCHED, nodes: json });
-      },
-      (err) => {
-        if (isUnmounting) return;
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
 

@@ -63,6 +63,7 @@ export const DISK_REPLICATION_TYPE_ITEM_RENDERER = 'DISK_REPLICATION_TYPE_ITEM_R
 export const PLATFORM_TYPE_ITEM_RENDERER = 'PREP_NODE_ITEM_RENDERER';
 export const EVENT_DESCRIPTION_RENDERER = 'EVENT_DESCRIPTION_RENDERER';
 export const JOBS_VM_NAME_RENDERER = 'JOBS_VM_NAME_RENDERER';
+export const NODE_STATUS_RENDERER = 'NODE_STATUS_RENDERER';
 export const REVERSE_SUMMARY_ENTITY_TYPE_RENDERER = 'REVERSE_SUMMARY_ENTITY_TYPE_RENDERER';
 export const REPLICATION_TYPE_OPTION_RENDERER = 'REPLICATION_TYPE_OPTION_RENDERER';
 export const ENTITY_TYPE_OPTION_RENDERER = 'ENTITY_TYPE_OPTION_RENDERER';
@@ -227,7 +228,7 @@ export const TABLE_NODES = [
   { label: 'Platform Type ', field: 'platformType', itemRenderer: PLATFORM_TYPE_ITEM_RENDERER },
   { label: 'Version', field: 'version', ifEmptyShow: '-' },
   { label: 'Ports', field: 'managementPort', itemRenderer: SERVER_PORT_ITEM_RENDERER },
-  { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
+  { label: 'Status', field: 'status', itemRenderer: NODE_STATUS_RENDERER, width: 2 },
 ];
 
 // Table fields for support bundle
@@ -303,7 +304,6 @@ export const TABLE_FILTER_TEXT = {
   REPLICATION_JOBS: 'Data can be filtered on following fields vmName, diskId and status example: windows or vmName=windows-10:diskId=2001',
   REPLICATION_VM_JOBS: 'Data can be filtered on following fields vmName, iterationNumber, status and syncStatus example: Windows or vmName=windows',
   TABLE_PROTECT_VM_VMWARE: 'Data can be filtered on following fields name and guestOS example: Windows or name=DBServer:guestOS=windows',
-  TABLE_RECOVERY_VMS: 'Data can be filtered on following fields name example: Windows or name=DBServer',
   TABLE_HEADER_DR_PLANS: 'Data can be filtered on following fields :- Name, Status, Recovery Status, Protection Site, Recovery Site',
   TABLE_PROTECTION_PLAN_VMS: 'Data can be filtered on following fields :- Name, OS, Disk, Status',
   TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG: 'Data can be filtered on following fields :- Name, Instance Type',

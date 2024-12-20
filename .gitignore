@@ -28,6 +28,10 @@ package-lock.json
 .eslintcache
 debug.log
 /src/setupProxy.js
+/DMSystem/node_modules/
 
+/systemupgrade/node_modules/
+/DMSystem/node_modules/
+/DMSystem/build
 
 systemupgrade/node_modules/

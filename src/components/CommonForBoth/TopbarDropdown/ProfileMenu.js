@@ -1,4 +1,4 @@
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faCircleArrowUp } from '@fortawesome/free-solid-svg-icons';
 // users
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'prop-types';
@@ -13,6 +13,7 @@ import { API_LOGOUT, API_SAML_LOGOUT } from '../../../constants/ApiConstants';
 import { MESSAGE_TYPES } from '../../../constants/MessageConstants';
 import { MODAL_ABOUT } from '../../../constants/Modalconstant';
 import { APPLICATION_API_USER } from '../../../constants/UserConstant';
+// users
 import { initChangePassword, logOutUser, removeCookies } from '../../../store/actions';
 import { addMessage } from '../../../store/actions/MessageActions';
 import { openModal } from '../../../store/actions/ModalActions';
@@ -85,7 +86,7 @@ class ProfileMenu extends Component {
   render() {
     const { menu } = this.state;
     const { t, user } = this.props;
-    const { id } = user;
+    const { id, localVMIP } = user;
     const name = getCookie(APPLICATION_API_USER) || '';
     return (
       <>
@@ -120,6 +121,14 @@ class ProfileMenu extends Component {
             </a>
             <div className="dropdown-divider" />
             { id === 0 ? null : this.renderChangePassword()}
+            <a href={`https://${localVMIP}:${5004}/upgrade`} rel="noreferrer" target="_blank" className="drop-down-menu-color">
+              <DropdownItem>
+                <FontAwesomeIcon size="lg" icon={faCircleArrowUp} />
+                &nbsp;&nbsp;
+                {t('Upgrade')}
+              </DropdownItem>
+            </a>
+            <div className="dropdown-divider" />
             <Link to="/logout" className="dropdown-item" onClick={this.logout}>
               <i className="fas fa-power-off font-size-16 align-middle mr-1 text-danger" />
               &nbsp;&nbsp;

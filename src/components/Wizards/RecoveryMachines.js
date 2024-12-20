@@ -329,7 +329,7 @@ class RecoveryMachines extends Component {
               showFilter="true"
               onFilter={this.onFilter}
               columns={columns}
-              filterHelpText={TABLE_FILTER_TEXT.TABLE_RECOVERY_VMS}
+              filterHelpText={TABLE_FILTER_TEXT.TABLE_PROTECT_VM_VMWARE}
             />
           </Col>
           <Col sm={2} />

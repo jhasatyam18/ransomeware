@@ -15,6 +15,7 @@ import { addMessage } from '../../store/actions/MessageActions';
 import { callAPI } from '../../utils/ApiUtils';
 import NotificationDropdown from '../CommonForBoth/TopbarDropdown/NotificationDropdown';
 import ProfileMenu from '../CommonForBoth/TopbarDropdown/ProfileMenu';
+import WarningMessage from '../Dashboard/WarningMessage';
 
 function Header(props) {
   const [vcIp, setVcIp] = useState('');
@@ -126,6 +127,7 @@ function Header(props) {
   return (
     <>
       <header id="page-topbar">
+        <WarningMessage />
         <div className="navbar-header">
           <div className="d-flex">
             <div className="navbar-brand-box pl-2 pr-5">

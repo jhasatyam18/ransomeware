@@ -7,8 +7,9 @@ import { APPLICATION_GETTING_STARTED_COMPLETED } from '../../constants/UserConst
 import { NODES_PATH, PROTECTION_PLANS_PATH, SITES_PATH } from '../../constants/RouterConstants';
 
 function GettingStarted(props) {
-  const { dashboard, t } = props;
-  const { nodes, titles = {} } = dashboard;
+  const { dashboard, t, settings } = props;
+  const { titles = {} } = dashboard;
+  const { nodes } = settings;
   const { sites = 0, protectionPlans = -1 } = titles;
   const isNodesConfigured = nodes.length >= 2;
   const isSiteConfigured = sites >= 2;
@@ -60,7 +61,7 @@ function GettingStarted(props) {
 }
 
 function mapStateToProps(state) {
-  const { dashboard } = state;
-  return { dashboard };
+  const { dashboard, settings } = state;
+  return { dashboard, settings };
 }
 export default connect(mapStateToProps)(withTranslation()(GettingStarted));

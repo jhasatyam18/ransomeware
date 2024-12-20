@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, Badge, Col, Row } from 'reactstrap';
+import { fetchNodes } from '../../store/actions/NodeActions';
 import { getStorageWithUnit } from '../../utils/AppUtils';
 import { API_DASHBOARD_NODE_STATS } from '../../constants/ApiConstants';
 import { addMessage } from '../../store/actions/MessageActions';
@@ -26,6 +27,7 @@ function NodeInfo(props) {
         setNodes([]);
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
+    dispatch(fetchNodes());
     return () => {
       isUnmounting = true;
     };
@@ -129,7 +131,7 @@ function NodeInfo(props) {
 }
 
 function mapStateToProps(state) {
-  const { dashboard } = state;
-  return { dashboard };
+  const { dashboard, settings } = state;
+  return { dashboard, settings };
 }
 export default connect(mapStateToProps)(withTranslation()(NodeInfo));
