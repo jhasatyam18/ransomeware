@@ -28,6 +28,7 @@
     "preview.verify.node.version": "Please make sure the upgrade package version is greater than your current node version.",
     "upload.file.err":"Could not upload the file",
     "click.to.upgrade":" Click here to upgrade",
+    "click.to.revert":" Click here to revert",
     "name": "Name",
     "size": "Size",
     "upgrade_packages": "Upgrade Packages",
