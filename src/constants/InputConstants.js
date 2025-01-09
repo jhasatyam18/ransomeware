@@ -156,6 +156,7 @@ export const STATIC_KEYS = {
   RECOVERY_DATE_DURATION: 'recovery_date_duration',
   STARTED: 'Started',
   RUNNING: 'Running',
+  COMPLETED: 'completed',
   PREVIOUS: 'previous',
 };
 
@@ -301,6 +302,9 @@ export const REPORT_DURATION = {
   DURATION: 'duration',
   LOCATION: 'location',
   REPLICATION_STATUS: 'replicationStatus',
+  RECOVERY_JOB_STEPS: 'recovery_status_step_render',
+  REPORT_VMS_ITERATION: 'report_vm_iteration',
+  REPORT_VMS_SIZE: 'report_vm_size',
 };
 
 export const NUMBER = {

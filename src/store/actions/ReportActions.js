@@ -358,12 +358,12 @@ export function exportReportToPDF() {
       }
       const planColumn = PROTECTION_PLAN_COLUMNS;
       const siteColumn = SITE_COLUMNS;
-      addTableFromData(doc, planColumn, 'Protection Plans', plans);
-      addTableFromData(doc, siteColumn, 'Sites', sites);
       if (criteria.includeNodes) {
         const columns = NODE_COLUMNS;
         addTableFromData(doc, columns, 'Nodes', nodes);
       }
+      addTableFromData(doc, siteColumn, 'Sites', sites);
+      addTableFromData(doc, planColumn, 'Protection Plans', plans);
       if (criteria.includeProtectedVMS) {
         const columns = PROTECTED_VMS_COLUMNS;
         addTableFromData(doc, columns, 'Protected Machines', protectedVMS);

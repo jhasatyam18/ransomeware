@@ -39,7 +39,7 @@ export function addTableFromData(doc, columns, title, data) {
     } else if (col.type) {
       value = convertValueAccordingToType(value, col.type, item);
     }
-    if (typeof value === 'string' && value.length > NUMBER.TWO_HUNDRED) {
+    if (typeof value === 'string' && value.length > NUMBER.TWO_HUNDRED && col.type !== REPORT_DURATION.RECOVERY_JOB_STEPS) {
       const words = value.split(' ').slice(0, 5);
       value = `${words.join(' ')}...`;
     } else if (typeof value === 'boolean' || value instanceof Boolean) {
@@ -58,6 +58,7 @@ export function addTableFromData(doc, columns, title, data) {
         },
       ],
     ],
+    margin: { left: 5 },
   });
   autoTable(doc, {
     head: [columnHeaders],
@@ -124,10 +125,10 @@ export function systemOverview(doc, data) {
     body: [
       ['Sites', `${sites}`],
       ['Protection Plans', `${protectionPlans}`],
-      ['Protection Machines', `${vms}`],
+      ['Protected Machines', `${vms}`],
       ['Protected Storage', getStorageWithUnit(storage)],
-      ['Recovery Point Objective', formatTime(rpo)],
-      ['Recovery Time Objective', formatTime(rto)],
+      ['Recovery Point Objective (Average across All Protection Plan)', formatTime(rpo)],
+      ['Recovery Time Objective (Average across All Recoveries)', formatTime(rto)],
       [{ content: 'Replication Statistics', colSpan: 2, styles: { halign: 'center' } }],
       ['Completed', completed],
       ['Running', running],
@@ -466,7 +467,7 @@ export function getRecoveryTimingAndDuration(data) {
   const start = formatTimeValue(startTime);
   const end = formatTimeValue(endTime);
   const duration = timeDuration(data);
-  return `${start} - ${end} - ${duration}`;
+  return `${start}\n${end}\n${duration}`;
 }
 
 export function getReplicationStatus(data) {
@@ -475,6 +476,36 @@ export function getReplicationStatus(data) {
   }
   return data.status;
 }
+export function getRecoveryStatusStep(data = {}) {
+  if (!data || typeof data !== 'object') {
+    return '-';
+  }
+  const { status, step } = data;
+  const parsedSteps = JSON.parse(step);
+  const stepsText = parsedSteps.map((s) => {
+    const stepName = s.name || '';
+    const stepStatus = s.status === STATIC_KEYS.COMPLETED ? STATIC_KEYS.REC_STEP_PASS : STATIC_KEYS.REC_STEP_FAIL;
+    const stepTime = s.time * 1000;
+    let time = new Date(stepTime);
+    time = `${time.toLocaleTimeString()}` || '-';
+    return `* ${stepName} - ${stepStatus}\n  Time: ${time}`;
+  }).join('\n');
+  return `${status.charAt(0).toUpperCase() + status.slice(1)}\nSteps:\n${stepsText}`;
+}
+
+const getReportVMSIteration = (data, value) => {
+  if (!data.totalIteration) {
+    return '-';
+  }
+  return value;
+};
+
+const getReportVMSSizes = (data, value) => {
+  if (!data.totalIteration) {
+    return '-';
+  }
+  return formatSize(value);
+};
 
 function convertValueAccordingToType(value, type, data = {}) {
   switch (type) {
@@ -502,6 +533,12 @@ function convertValueAccordingToType(value, type, data = {}) {
       return getRecoveryTimingAndDuration(data);
     case REPORT_DURATION.REPLICATION_STATUS:
       return getReplicationStatus(data);
+    case REPORT_DURATION.RECOVERY_JOB_STEPS:
+      return getRecoveryStatusStep(data);
+    case REPORT_DURATION.REPORT_VMS_ITERATION:
+      return getReportVMSIteration(data, value);
+    case REPORT_DURATION.REPORT_VMS_SIZE:
+      return getReportVMSSizes(data, value);
     default:
       return value;
   }

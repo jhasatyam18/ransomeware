@@ -70,6 +70,8 @@ export const ENTITY_TYPE_OPTION_RENDERER = 'ENTITY_TYPE_OPTION_RENDERER';
 export const REVERSE_VM_DESCRIPTION_RENDERER = 'REVERSE_VM_DESCRIPTION_RENDERER';
 export const DR_PLAN_RECOVERY_STATUS_RENDERER = 'DR_PLAN_RECOVERY_STATUS_RENDERER';
 export const LATEST_REFRESH_RECOVERY_STATUS = 'LATEST_REFRESH_RECOVERY_STATUS';
+export const REPORT_VMS_ITERATION = 'REPORT_VMS_ITERATION';
+export const REPORT_DATA_REDUCTION_RATIO = 'REPORT_DATA_REDUCTION_RATIO';
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
@@ -264,12 +266,12 @@ export const TABLE_THROTTLING_NODES = [
 export const TABLE_REPORT_PROTECTED_VMS = [
   { label: 'Name', field: 'name' },
   { label: 'Plan', field: 'planName' },
-  { label: 'Iteration', field: 'totalIteration' },
-  { label: 'Changed', field: 'totalChangedSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
-  { label: 'Transferred', field: 'totalTransferredSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
-  { label: 'Reduction (%)', field: 'dataReductionRatio' },
+  { label: 'Iteration', field: 'totalIteration', itemRenderer: REPORT_VMS_ITERATION },
+  { label: 'Changed', field: 'totalChangedSize', itemRenderer: REPORT_DATA_REDUCTION_RATIO },
+  { label: 'Transferred', field: 'totalTransferredSize', itemRenderer: REPORT_DATA_REDUCTION_RATIO },
+  { label: 'Reduction (%)', field: 'dataReductionRatio', itemRenderer: REPORT_DATA_REDUCTION_RATIO },
   // { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
-  { label: 'Recovery Status', field: 'recoveryStatus' },
+  { label: 'Recovery Status', field: 'recoveryStatus', itemRenderer: REPORT_DATA_REDUCTION_RATIO },
 ];
 
 export const TABLE_LICENSES = [
@@ -414,10 +416,10 @@ export const ALERTS_COLUMNS = [
 export const PROTECTED_VMS_COLUMNS = [
   { header: 'Names', field: 'name' },
   { header: 'Plan', field: 'planName' },
-  { header: 'Iteration', field: 'totalIteration' },
-  { header: 'Changed', field: 'totalChangedSize', type: REPORT_DURATION.SIZE },
-  { header: 'Transferred', field: 'totalTransferredSize', type: REPORT_DURATION.SIZE },
-  { header: 'Reduction(%)', field: 'dataReductionRatio' },
+  { header: 'Iteration', field: 'totalIteration', type: REPORT_DURATION.REPORT_VMS_ITERATION },
+  { header: 'Changed', field: 'totalChangedSize', type: REPORT_DURATION.REPORT_VMS_SIZE },
+  { header: 'Transferred', field: 'totalTransferredSize', type: REPORT_DURATION.REPORT_VMS_SIZE },
+  { header: 'Reduction(%)', field: 'dataReductionRatio', type: REPORT_DURATION.REPORT_VMS_ITERATION },
   { header: 'Recovery Status', field: 'recoveryStatus' },
 ];
 
@@ -437,7 +439,7 @@ export const RECOVERY_JOB_COLUMNS = [
   { header: 'Timings and Duration', field: 'date_duration', type: STATIC_KEYS.RECOVERY_DATE_DURATION },
   { header: 'Recovery Type', field: 'recoveryType' },
   { header: 'Recovery Point Time', field: 'recoveryPointTime', type: REPORT_DURATION.DATE },
-  { header: 'Job Status', field: 'status' },
+  { header: 'Job Status', field: 'statusRecovery', type: REPORT_DURATION.RECOVERY_JOB_STEPS },
   { header: 'IP Address', field: 'publicIP', secondaryField: 'privateIP' },
 ];
 

@@ -135,10 +135,10 @@ class Report extends Component {
     return (
       <>
         {includeSystemOverView === true ? <ReportSystemOverview printView={printView} /> : null}
-        <ReportTables title="Protection Plans" columns={TABLE_HEADER_DR_PLANS} dataSource="plans" printView={printView} />
-        <ReportTables title="Sites" columns={TABLE_HEADER_SITES} dataSource="sites" printView={printView} />
-        {includeProtectedVMS === true ? <ReportTables title="Protected Machines" columns={TABLE_REPORT_PROTECTED_VMS} dataSource="protectedVMS" printView={printView} /> : null}
         {includeNodes === true ? <ReportTables title="Nodes" columns={TABLE_NODES} dataSource="nodes" printView={printView} /> : null}
+        <ReportTables title="Sites" columns={TABLE_HEADER_SITES} dataSource="sites" printView={printView} />
+        <ReportTables title="Protection Plans" columns={TABLE_HEADER_DR_PLANS} dataSource="plans" printView={printView} />
+        {includeProtectedVMS === true ? <ReportTables title="Protected Machines" columns={TABLE_REPORT_PROTECTED_VMS} dataSource="protectedVMS" printView={printView} /> : null}
         {includeEvents === true ? <ReportTables title="Events" columns={TABLE_EVENTS} dataSource="events" printView={printView} /> : null}
         {includeAlerts === true ? <ReportTables title="Alerts" columns={TABLE_ALERTS} dataSource="alerts" printView={printView} /> : null}
         {includeReplicationJobs === true ? <ReportTables title="Replication Jobs" columns={REPLICATION_VM_JOBS} dataSource="replication" printView={printView} /> : null}
