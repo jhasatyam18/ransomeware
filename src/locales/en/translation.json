@@ -467,7 +467,7 @@
   "info.protectionplan.resource.firmware": "FirmwareType: Select 'BIOS' for traditional systems or 'UEFI' for modern interfaces. The FirmwareType on target has to be same as source for the GuestOS boot. UEFI Secure (uefi_secure): Enables UEFI firmware with added security protocols for verified boot processes. UEFI vTPM (uefi_vTPM): UEFI firmware with Virtual Trusted Platform Module for enhanced hardware-based security features. UEFI Secure vTPM (uefi_secure_vTPM): Combines UEFI Secure Boot and vTPM for maximum security and integrity of the boot process.",
   "info.protectionplan.instance.volume.encrypt": "The AWS Key Management Service (KMS) is a comprehensive solution for creating and managing encryption keys to secure your data. Important Note: Once encryption is enabled for an instance, it cannot be reversed. Additionally, disk encryption on the target depends on the source disks being encrypted.",
   "info.protectionplan.enable.replication.scheduling": "Enables all virtual machines in this protection plan to be replicated with similar sync time. Without this option, a virtual machine's replication will try to get scheduled at the configured RPO, irrespective of the other virtual machine's replication status",
-  "test.recovery.staticIP.warning": "If Static IP is configured, make sure the provided IP addresses are available..",
+  "test.recovery.staticIP.warning": "If Static IP is configured, make sure the provided IP addresses are available.",
   "Created": "Created",
   "Purge": "Purge",
   "preserve": "Preserve",
@@ -912,6 +912,7 @@
   "delete.vm.infra":"Delete recovery instance from target infrastructure. [Recovered instances will not be deleted]",
   "vm.removal.confirmation":"Virtual Machine Removal Confirmation",
   "aws.dedicated.host.default":"Shared",
-  "node.versions.mismatch.warning": "Data sync for workloads is paused due to version mismatch on one or more Datamotive node(s). Upgrade applicable node(s) to version ({{localNodeversion}})."
+  "node.versions.mismatch.warning": "Data sync for workloads is paused due to version mismatch on one or more Datamotive node(s). Upgrade applicable node(s) to version ({{localNodeversion}}).",
+  "test.recovery.instance.warning": "An IP conflict can occur if a previous Test Recovery instance remains active. This will cause the Test Recovery operation to fail."
 
 }

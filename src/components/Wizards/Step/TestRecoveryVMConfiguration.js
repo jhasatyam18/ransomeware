@@ -95,6 +95,15 @@ function TestRecoveryVMConfiguration(props) {
             </p>
           </>
         ) : null}
+        {option === STATIC_KEYS.PREVIOUS ? (
+          <>
+            <p className=" text-warning rec_ip_validation_div">
+              <i className="fas fa-exclamation-triangle" />
+          &nbsp;&nbsp;&nbsp;
+              {t('test.recovery.instance.warning')}
+            </p>
+          </>
+        ) : null}
       </>
     );
   };

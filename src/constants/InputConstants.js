@@ -156,6 +156,7 @@ export const STATIC_KEYS = {
   RECOVERY_DATE_DURATION: 'recovery_date_duration',
   STARTED: 'Started',
   RUNNING: 'Running',
+  PREVIOUS: 'previous',
 };
 
 // Recovery time in minutes

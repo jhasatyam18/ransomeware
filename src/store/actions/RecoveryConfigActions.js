@@ -229,7 +229,7 @@ function setNetworkConfig(sourceConfig, targetVM, user, dispatch) {
     if (nics && nics.length > 0) {
       for (let index = 0; index < networks.length; index += 1) {
         if (typeof networks[index] !== 'undefined' && networks[index]) {
-          const { vpcId = '', Subnet = '', networkTier = '', isFromSource, securityGroups, adapterType, networkMoref, networkPlatformID } = networks[index];
+          const { vpcId = '', Subnet = '', networkTier = '', isFromSource, securityGroups, adapterType, networkMoref, networkPlatformID, macAddress } = networks[index];
           let { subnet, network, publicIP, isPublicIP = '', dns = '', netmask = '', gateway = '', privateIP = '' } = networks[index];
           let sgs = (securityGroups ? securityGroups.split(',') : []);
           if (typeof subnet === 'undefined' || subnet === '' && Subnet !== '') {
@@ -262,7 +262,7 @@ function setNetworkConfig(sourceConfig, targetVM, user, dispatch) {
               sgs = { label, value: securityGroups };
             }
           }
-          const nwCon = setNetworkConfigValues({ key, index, vpcId, subnet, availZone, isPublicIP, publicIP, network, networkTier, isFromSource, sgs, adapterType, networkMoref, dns, netmask, gateway, privateIP });
+          const nwCon = setNetworkConfigValues({ key, index, vpcId, subnet, availZone, isPublicIP, publicIP, network, networkTier, isFromSource, sgs, adapterType, networkMoref, dns, netmask, gateway, privateIP, macAddress });
 
           networkConfig = { ...networkConfig, ...nwCon };
         }
@@ -281,7 +281,7 @@ function setNetworkConfig(sourceConfig, targetVM, user, dispatch) {
  * @returns object network config
  */
 
-export function setNetworkConfigValues({ key, index, vpcId, subnet, availZone, publicIP, isPublicIP, network, networkTier, isFromSource, sgs, adapterType, networkMoref, dns, netmask, gateway, privateIP }) {
+export function setNetworkConfigValues({ key, index, vpcId, subnet, availZone, publicIP, isPublicIP, network, networkTier, isFromSource, sgs, adapterType, networkMoref, dns, netmask, gateway, privateIP, macAddress }) {
   const nwCon = {
     [`${key}-eth-${index}-vpcId`]: vpcId || '',
     [`${key}-eth-${index}-subnet`]: subnet || '',
@@ -298,6 +298,7 @@ export function setNetworkConfigValues({ key, index, vpcId, subnet, availZone, p
     [`${key}-eth-${index}-gateway`]: gateway || '',
     [`${key}-eth-${index}-netmask`]: netmask || '',
     [`${key}-eth-${index}-privateIP`]: privateIP || '',
+    [`${key}-eth-${index}-macAddress`]: macAddress || '',
   };
   return nwCon;
 }
