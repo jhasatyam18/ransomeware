@@ -5,14 +5,21 @@ import { withTranslation } from 'react-i18next';
 import {
   Dropdown, DropdownItem, DropdownMenu, DropdownToggle,
 } from 'reactstrap';
+import { withRouter, useHistory } from 'react-router-dom';
+import { CHANGE_ROUTE } from '../../constants/InputConstants';
 
 const DropdownActions = (props) => {
+  const history = useHistory();
   const { actions, dispatch, t, align, css, alignLeft, uniqueID = 'unique-dropdown-action-id' } = props;
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const toggle = () => setDropdownOpen((prevState) => !prevState);
   const { title } = props;
   function onActionClick(item) {
-    const { action, id } = item;
+    const { action, id, routePath } = item;
+    if (action === CHANGE_ROUTE) {
+      history.push(routePath);
+      return;
+    }
     dispatch(action(id));
   }
 
@@ -66,4 +73,4 @@ const DropdownActions = (props) => {
     </div>
   );
 };
-export default (withTranslation()(DropdownActions));
+export default (withTranslation()(withRouter(DropdownActions)));

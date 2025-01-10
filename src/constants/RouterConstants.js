@@ -7,6 +7,7 @@ export const PROTECTION_PLANS_PATH = '/protection/plans';
 export const PLAYBOOK_LIST = '/protection/plan/playbooks';
 export const PLAYBOOK_DETAILS_PAGE = '/protection/plan/playbook/:name';
 export const PROTECTION_PLAN_DETAILS_PATH = '/protection/plan/details/:id';
+export const PROTECTION_PLAN_CLEANUP_PATH = '/protection/plan/:id/cleanup';
 export const LOGOUT_PATH = '/logout';
 export const LOGIN_PATH = '/login';
 export const NODES_PATH = '/nodes';

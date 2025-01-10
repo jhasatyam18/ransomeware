@@ -5,7 +5,7 @@ import { withTranslation } from 'react-i18next';
 import Playbooks from '../Playbook/Playbooks';
 import SinglePlaybookDetailsPage from '../Playbook/SinglePlaybookDetailsPage';
 import { changePageTitle } from '../../utils/AppUtils';
-import { ALERTS_PATH, DASHBOARD_PATH, EVENTS_PATH, JOBS_PATH, LOGIN_PATH, NODES_PATH, PLAYBOOK_DETAILS_PAGE, PLAYBOOK_LIST, PROTECTION_PLANS_PATH, PROTECTION_PLAN_DETAILS_PATH, REPORTS_PATH, SETTINGS_PATH, SITES_PATH } from '../../constants/RouterConstants';
+import { ALERTS_PATH, DASHBOARD_PATH, EVENTS_PATH, JOBS_PATH, LOGIN_PATH, NODES_PATH, PLAYBOOK_DETAILS_PAGE, PLAYBOOK_LIST, PROTECTION_PLANS_PATH, PROTECTION_PLAN_CLEANUP_PATH, PROTECTION_PLAN_DETAILS_PATH, REPORTS_PATH, SETTINGS_PATH, SITES_PATH } from '../../constants/RouterConstants';
 import Login from '../../pages/AuthenticationInner/Login';
 // import Pages404 from '../../pages/Page-404';
 import DRPlans from '../data-recovery/DRPlans';
@@ -17,6 +17,7 @@ import Sidebar from './Sidebar';
 const Dashboard = React.lazy(() => import('../Dashboard/Dashboard'));
 const Sites = React.lazy(() => import('../Configure/Sites/Sites'));
 const DRPlanDetails = React.lazy(() => import('../data-recovery/DRPlanDetails'));
+const DRPlanCleanup = React.lazy(() => import('../data-recovery/DRPlanCleanup'));
 const Jobs = React.lazy(() => import('../Jobs/Jobs'));
 const Events = React.lazy(() => import('../Events/Events'));
 const Alerts = React.lazy(() => import('../Alerts/Alerts'));
@@ -81,6 +82,7 @@ class Layout extends Component {
           <Route path={SITES_PATH} render={() => <Sites user={user} sites={sites} dispatch={dispatch} />} />
           <Route path={PROTECTION_PLANS_PATH} render={() => <DRPlans user={user} sites={sites} dispatch={dispatch} drPlans={drPlans} />} />
           <Route path={PROTECTION_PLAN_DETAILS_PATH} render={() => <DRPlanDetails {...this.props} />} />
+          <Route path={PROTECTION_PLAN_CLEANUP_PATH} render={() => <DRPlanCleanup {...this.props} />} />
           <Route path={JOBS_PATH} render={() => <Jobs protectionplanID={0} {...this.props} />} />
           <Route path={EVENTS_PATH} render={() => <Events />} />
           <Route path={ALERTS_PATH} render={() => <Alerts />} />
