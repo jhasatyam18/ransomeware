@@ -10,7 +10,7 @@ import { alertsFetched, unreadAlertFetched } from '../../store/actions/AlertActi
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { API_FETCH_ALERTS, API_MARK_READ_ALL } from '../../constants/ApiConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { TABLE_ALERTS, TABLE_FILTER_TEXT } from '../../constants/TableConstants';
+import { ALERT_FILTERS, TABLE_ALERTS, TABLE_FILTER_TEXT } from '../../constants/TableConstants';
 /**
  * Component to render Alerts.
  */
@@ -35,7 +35,7 @@ class Alerts extends Component {
   }
 
   render() {
-    const { alerts, dispatch } = this.props;
+    const { alerts, dispatch, t } = this.props;
     const { data = [] } = alerts;
     const { initDone } = this.state;
     if (initDone === false) {
@@ -58,6 +58,8 @@ class Alerts extends Component {
                         apiUrl={API_FETCH_ALERTS}
                         storeFn={alertsFetched}
                         name="alerts"
+                        subFilter={ALERT_FILTERS}
+                        subFilterTitle={t('status')}
                       />
                     </div>
                   </Col>

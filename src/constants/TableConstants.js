@@ -477,3 +477,8 @@ export const TABLE_REPORTS_CHECKPOINTS = [
   { header: 'Checkpoint Status', field: 'checkpointStatus' },
   { header: 'Preserved', field: 'isPreserved' },
 ];
+
+export const ALERT_FILTERS = [
+  { label: 'Acknowledged', field: 'isAcknowledge', query: 'ack', value: '1', checked: false },
+  { label: 'Unacknowledged', field: 'isAcknowledge', query: 'ack', value: '0', checked: false },
+];
