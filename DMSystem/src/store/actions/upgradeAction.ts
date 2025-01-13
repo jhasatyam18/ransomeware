@@ -179,7 +179,7 @@ export function getUpgradeHistory() {
 
 export function getDownloadUpgradeProgress() {
     return (dispatch: Dispatch<any>) => {
-        dispatch(showApplicationLoader('fetch_download_package_Data', 'Loading dowloading status'));
+        dispatch(showApplicationLoader('fetch_download_package_Data', 'Loading upgrade progress'));
         return callAPI(API_GET_UPGRADE_DOWNLOAD).then(
             (json) => {
                 dispatch(hideApplicationLoader('fetch_download_package_Data'));
