@@ -3,20 +3,22 @@ import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Button, Card, CardBody, Col, Container, Row } from 'reactstrap';
 import { MILI_SECONDS_TIME } from '../../constants/EventConstant';
-import { REPORT_DURATION, STATIC_KEYS } from '../../constants/InputConstants';
-import { DATE_ITEM_RENDERER, RECOVERY_JOBS, REPLICATION_VM_JOBS, TABLE_ALERTS, TABLE_EVENTS, TABLE_HEADER_DR_PLANS, TABLE_HEADER_SITES, TABLE_NODES, TABLE_REPORTS_CARD_CHECKPOINT, TABLE_REPORT_PROTECTED_VMS } from '../../constants/TableConstants';
+import { PLATFORM_TYPES, REPORT_DURATION, STATIC_KEYS } from '../../constants/InputConstants';
+import { DATE_ITEM_RENDERER, RECOVERY_JOBS, REPLICATION_VM_JOBS, TABLE_ALERTS, TABLE_EVENTS, TABLE_HEADER_SITES, TABLE_NODES, TABLE_REPORTS_CARD_CHECKPOINT, TABLE_REPORT_PROTECTED_VMS, TABLE_REPORT_PROTECTION_PLAN } from '../../constants/TableConstants';
 import { valueChange } from '../../store/actions';
 import { fetchDrPlans } from '../../store/actions/DrPlanActions';
 import { exportReportToPDF, generateAuditReport, getCriteria, resetReport } from '../../store/actions/ReportActions';
 import { clearValues, hideApplicationLoader, showApplicationLoader } from '../../store/actions/UserActions';
 import { getValue } from '../../utils/InputUtils';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
-import { exportTableToExcel } from '../../utils/ReportUtils';
+import { exportTableToExcel, showSelectPlanError, showSiteDetails } from '../../utils/ReportUtils';
 import { isDateEmpty, isEmpty } from '../../utils/validationUtils';
 import DMBreadCrumb from '../Common/DMBreadCrumb';
 import ReportSideBar from './ReportSideBar';
 import ReportSystemOverview from './ReportSystemOverview';
 import ReportTables from './ReportTables';
+import { MESSAGE_TYPES } from '../../constants/MessageConstants';
+import { addMessage } from '../../store/actions/MessageActions';
 
 class Report extends Component {
   constructor() {
@@ -30,7 +32,6 @@ class Report extends Component {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch(fetchDrPlans(STATIC_KEYS.UI_PROTECTION_PLANS));
-    dispatch(valueChange('report.protectionPlan.protectionPlans', 0));
     dispatch(valueChange('report.system.includeSystemOverView', true));
   }
 
@@ -63,8 +64,8 @@ class Report extends Component {
         dispatch(valueChange(STATIC_KEYS.REPORT_DURATION_START_DATE, date));
       }
     }
-    const protectionPlan = getValue('report.protectionPlan.protectionPlans', values);
-    if (typeof protectionPlan === 'undefined' || protectionPlan === '') {
+    if (showSelectPlanError(user)) {
+      dispatch(addMessage('Please select protection plan', MESSAGE_TYPES.ERROR));
       return;
     }
     dispatch(valueChange('report.system.includeSystemOverView', true));
@@ -88,11 +89,21 @@ class Report extends Component {
   };
 
   exportToExcel = () => {
-    const { dispatch, dashboard, t, reports } = this.props;
+    const { dispatch, dashboard, t, reports, user } = this.props;
     const { result } = reports;
+    const { sites = [] } = result;
+    const { platformType } = user;
+    let siteDetails;
+    const localSite = sites.filter((site) => site.node.isLocalNode);
+    const { name } = localSite[0];
+    if (platformType === PLATFORM_TYPES.VMware) {
+      siteDetails = `${name}`;
+    } else {
+      siteDetails = showSiteDetails(sites);
+    }
     dispatch(showApplicationLoader('EXCEL_REPORT', t('report.export.excel')));
     setTimeout(() => {
-      exportTableToExcel(dashboard, result);
+      exportTableToExcel(dashboard, result, siteDetails, user);
     }, MILI_SECONDS_TIME.TEN_THOUSAND);
     setTimeout(() => {
       this.setState({ printView: false });
@@ -137,7 +148,7 @@ class Report extends Component {
         {includeSystemOverView === true ? <ReportSystemOverview printView={printView} /> : null}
         {includeNodes === true ? <ReportTables title="Nodes" columns={TABLE_NODES} dataSource="nodes" printView={printView} /> : null}
         <ReportTables title="Sites" columns={TABLE_HEADER_SITES} dataSource="sites" printView={printView} />
-        <ReportTables title="Protection Plans" columns={TABLE_HEADER_DR_PLANS} dataSource="plans" printView={printView} />
+        <ReportTables title="Protection Plans" columns={TABLE_REPORT_PROTECTION_PLAN} dataSource="plans" printView={printView} />
         {includeProtectedVMS === true ? <ReportTables title="Protected Machines" columns={TABLE_REPORT_PROTECTED_VMS} dataSource="protectedVMS" printView={printView} /> : null}
         {includeEvents === true ? <ReportTables title="Events" columns={TABLE_EVENTS} dataSource="events" printView={printView} /> : null}
         {includeAlerts === true ? <ReportTables title="Alerts" columns={TABLE_ALERTS} dataSource="alerts" printView={printView} /> : null}

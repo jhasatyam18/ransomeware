@@ -1,16 +1,16 @@
 import * as Types from '../../constants/actionTypes';
-import { API_FETCH_ALERTS, API_FETCH_DR_PLANS, API_FETCH_DR_PLAN_BY_ID, API_FETCH_EVENTS, API_FETCH_SITES, API_NODES, API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS, API_PROTECTTION_PLAN_REPLICATION_VM_JOBS, API_RECOVERY_JOBS, API_RECOVERY_PLAN_RECOVERY_JOBS, API_REPLICATION_VM_JOBS, API_UPDAT_RECOVERY_CHECKPOINT_BY_ID } from '../../constants/ApiConstants';
+import { API_FETCH_ALERTS, API_FETCH_DR_PLANS, API_FETCH_EVENTS, API_FETCH_SITES, API_NODES, API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS, API_RECOVERY_JOBS, API_REPLICATION_VM_JOBS, API_UPDAT_RECOVERY_CHECKPOINT_BY_ID } from '../../constants/ApiConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { callAPI } from '../../utils/ApiUtils';
 import { getAppDateFormat } from '../../utils/AppUtils';
 import { getValue } from '../../utils/InputUtils';
-import { addFooters, addHeaderPage, exportDoc, createPDFDoc, systemOverview, addTableFromData, getStartDate } from '../../utils/ReportUtils';
+import { addFooters, addHeaderPage, exportDoc, createPDFDoc, systemOverview, addTableFromData, getStartDate, showSiteDetails } from '../../utils/ReportUtils';
 import { fetchDashboardTitles, fetchRecoveryStats, fetchReplicationStats } from './DashboardActions';
 import { addMessage } from './MessageActions';
 import { hideApplicationLoader, showApplicationLoader } from './UserActions';
 import { API_MAX_RECORD_LIMIT } from '../../constants/UserConstant';
 import { ALERTS_COLUMNS, EVENTS_COLUMNS, NODE_COLUMNS, PROTECTED_VMS_COLUMNS, PROTECTION_PLAN_COLUMNS, RECOVERY_JOB_COLUMNS, REPLICATION_JOB_COLUMNS, SITE_COLUMNS, TABLE_REPORTS_CHECKPOINTS } from '../../constants/TableConstants';
-import { REPORT_DURATION, STATIC_KEYS } from '../../constants/InputConstants';
+import { PLATFORM_TYPES, REPORT_DURATION, STATIC_KEYS } from '../../constants/InputConstants';
 
 export function generateAuditReport() {
   return (dispatch, getState) => {
@@ -37,11 +37,8 @@ export function generateAuditReport() {
 /**
  * @returns Fetch and set sites info for report
  */
-export function reportFetchSites(id) {
+export function reportFetchSites() {
   return (dispatch) => {
-    if (isPlanSpecificData(id)) {
-      return;
-    }
     callAPI(API_FETCH_SITES)
       .then((json) => {
         if (json.hasError) {
@@ -78,20 +75,19 @@ export function reportFetchNodes() {
 /**
  * @returns Fetch and set protection plan info for report
  */
-export function reportFetchPlans(id) {
+export function reportFetchPlans(id, criteria) {
   return (dispatch) => {
-    const isPlanSpecific = isPlanSpecificData(id);
-    const url = (isPlanSpecific ? API_FETCH_DR_PLAN_BY_ID.replace('<id>', id) : API_FETCH_DR_PLANS);
+    if (typeof id === 'undefined' || id === '' || !id) {
+      return;
+    }
+    const { startDate, endDate } = criteria;
+    const url = (`${API_FETCH_DR_PLANS}?protectionplanid=${id}&planstats=true&starttime=${startDate}&endtime=${endDate}`);
     callAPI(url)
       .then((json) => {
         if (json.hasError) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
-          const data = isPlanSpecific ? [json] : json;
-          if (isPlanSpecific && data.length > 0) {
-            const { protectedSite, recoverySite } = data[0];
-            dispatch(setReportObject('sites', [protectedSite, recoverySite]));
-          }
+          const data = json;
           dispatch(setReportObject('plans', data));
           dispatch(setProtectedVMs(data, id));
         }
@@ -151,9 +147,12 @@ export function reportFetchAlerts(data = [], offSet = 0, criteria) {
  * @returns Fetch and set replication job info for report
  */
 export function reportFetchReplicationJobs(id, data = [], offset = 0, criteria = {}, limit, totalFetched = 0) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const replFilterOption = getValue('report.protectionPlan.replJobOption', values);
     const { startDate, endDate } = criteria;
-    const url = (isPlanSpecificData(id) ? `${API_PROTECTTION_PLAN_REPLICATION_VM_JOBS.replace('<id>', id)}&limit=${API_MAX_RECORD_LIMIT}&offset=${offset}&starttime=${startDate}&endtime=${endDate}` : `${API_REPLICATION_VM_JOBS}?limit=${limit || API_MAX_RECORD_LIMIT}&offset=${offset}&starttime=${startDate}&endtime=${endDate}`);
+    const url = (`${API_REPLICATION_VM_JOBS}?protectionplanid=${id}&limit=${limit || API_MAX_RECORD_LIMIT}&offset=${offset}&starttime=${startDate}&endtime=${endDate}${replFilterOption && replFilterOption !== 'all' ? `&searchstr=${replFilterOption}` : ''}&searchcol=syncStatus`);
     dispatch(showApplicationLoader('replication_report', 'generating replications'));
     callAPI(url)
       .then((json) => {
@@ -176,9 +175,12 @@ export function reportFetchReplicationJobs(id, data = [], offset = 0, criteria =
  * @returns Fetch and set recovery job info for report
  */
 export function reportFetchRecoveryJobs(id, data = [], offset = 0, criteria = {}) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const recFilterOption = getValue('report.protectionPlan.recoveryJobOption', values);
     const { startDate, endDate } = criteria;
-    const url = (isPlanSpecificData(id) ? `${API_RECOVERY_PLAN_RECOVERY_JOBS.replace('<id>', id)}&limit=${API_MAX_RECORD_LIMIT}&offset=${offset}&starttime=${startDate}&endtime=${endDate}` : `${API_RECOVERY_JOBS}?limit=${API_MAX_RECORD_LIMIT}&offset=${offset}&starttime=${startDate}&endtime=${endDate}`);
+    const url = (`${API_RECOVERY_JOBS}?protectionplanid=${id}&limit=${API_MAX_RECORD_LIMIT}&offset=${offset}&starttime=${startDate}&endtime=${endDate}${recFilterOption && recFilterOption !== 'all' ? `&recoverytype=${recFilterOption}` : ''}`);
     callAPI(url)
       .then((json) => {
         if (json.hasNext === true) {
@@ -266,7 +268,7 @@ export function resetReport() {
 }
 
 function getRequiredReportObjects(criteria, dispatch) {
-  const apis = [dispatch(reportFetchSites(criteria.protectionPlanID)), dispatch(reportFetchPlans(criteria.protectionPlanID))];
+  const apis = [dispatch(reportFetchSites()), dispatch(reportFetchPlans(criteria.protectionPlanID, criteria))];
   if (criteria.includeSystemOverView) {
     apis.push(dispatch(fetchRecoveryStats()));
     apis.push(dispatch(fetchReplicationStats()));
@@ -337,7 +339,7 @@ export function getCriteria(user) {
     includeReplicationJobs: getValue('report.protectionPlan.includeReplicationJobs', values),
     includeRecoveryJobs: getValue('report.protectionPlan.includeRecoveryJobs', values),
     includeProtectedVMS: getValue('report.protectionPlan.includeProtectedVMS', values),
-    protectionPlanID: getValue('report.protectionPlan.protectionPlans', values),
+    protectionPlanID: getValue(STATIC_KEYS.REPORT_PROTECTION_PLAN, values),
     durationType: getValue(STATIC_KEYS.REPORT_DURATION_TYPE, values),
     includeCheckpoints: getValue('report.protectionPlan.includeCheckpoints', values),
   };
@@ -347,11 +349,21 @@ export function exportReportToPDF() {
   return (dispatch, getState) => {
     const { user, dashboard, reports } = getState();
     const { result } = reports;
-    const { protectedVMS, replication, plans, sites, nodes, events, alerts, recovery } = result;
+    const { protectedVMS = [], replication = [], plans = [], sites = [], nodes = [], events = [], alerts = [], recovery = [] } = result;
+    const { platformType } = user;
+    let siteDetails;
+    const localSite = sites.filter((site) => site.node.isLocalNode);
+    const { name } = localSite[0];
+    if (platformType === PLATFORM_TYPES.VMware) {
+      siteDetails = `${name}`;
+    } else {
+      siteDetails = showSiteDetails(sites);
+    }
+
     try {
       const criteria = getCriteria(user, dispatch);
       const doc = createPDFDoc();
-      addHeaderPage(doc, criteria.startDate, criteria.endDate);
+      addHeaderPage(doc, sites, criteria.startDate, criteria.endDate);
       if (criteria.includeSystemOverView) {
         doc.addPage();
         systemOverview(doc, dashboard);
@@ -360,39 +372,39 @@ export function exportReportToPDF() {
       const siteColumn = SITE_COLUMNS;
       if (criteria.includeNodes) {
         const columns = NODE_COLUMNS;
-        addTableFromData(doc, columns, 'Nodes', nodes);
+        addTableFromData(doc, columns, 'Nodes', nodes, user);
       }
-      addTableFromData(doc, siteColumn, 'Sites', sites);
-      addTableFromData(doc, planColumn, 'Protection Plans', plans);
+      addTableFromData(doc, siteColumn, 'Sites', sites, user);
+      addTableFromData(doc, planColumn, 'Protection Plans', plans, user);
       if (criteria.includeProtectedVMS) {
         const columns = PROTECTED_VMS_COLUMNS;
-        addTableFromData(doc, columns, 'Protected Machines', protectedVMS);
+        addTableFromData(doc, columns, 'Protected Machines', protectedVMS, user);
       }
       if (criteria.includeEvents) {
         const columns = EVENTS_COLUMNS;
-        addTableFromData(doc, columns, 'Events', events);
+        addTableFromData(doc, columns, 'Events', events, user);
       }
       if (criteria.includeAlerts) {
         const columns = ALERTS_COLUMNS;
-        addTableFromData(doc, columns, 'Alerts', alerts);
+        addTableFromData(doc, columns, 'Alerts', alerts, user);
       }
       if (criteria.includeReplicationJobs) {
         const columns = [...REPLICATION_JOB_COLUMNS]
           .filter((col) => col.header !== 'Sync Status');
         columns[0] = { header: 'Virtual Machine', field: 'vmName_syncStatus', type: STATIC_KEYS.REPLICATION_JOB_VM_NAME };
-        addTableFromData(doc, columns, 'Replication Jobs', replication);
+        addTableFromData(doc, columns, 'Replication Jobs', replication, user);
       }
       if (criteria.includeRecoveryJobs) {
         const columns = RECOVERY_JOB_COLUMNS;
-        addTableFromData(doc, columns, 'Recovery Jobs', recovery);
+        addTableFromData(doc, columns, 'Recovery Jobs', recovery, user);
       }
       if (criteria.includeCheckpoints) {
         const columns = TABLE_REPORTS_CHECKPOINTS;
-        addTableFromData(doc, columns, 'Point In Time Checkpoints', result.point_in_time_checkpoints);
+        addTableFromData(doc, columns, 'Point In Time Checkpoints', result.point_in_time_checkpoints, user);
       }
       const d = new Date();
-      addFooters(doc);
-      exportDoc(doc, `Datamotive-report-${getAppDateFormat(d, true)}`);
+      addFooters(doc, sites);
+      exportDoc(doc, `DM-report-${siteDetails}-${getAppDateFormat(d, true)}`);
     } catch (error) {
       dispatch(hideApplicationLoader('PDF_REPORT'));
       dispatch(addMessage(error, MESSAGE_TYPES.ERROR));

@@ -70,6 +70,7 @@ export const ENTITY_TYPE_OPTION_RENDERER = 'ENTITY_TYPE_OPTION_RENDERER';
 export const REVERSE_VM_DESCRIPTION_RENDERER = 'REVERSE_VM_DESCRIPTION_RENDERER';
 export const DR_PLAN_RECOVERY_STATUS_RENDERER = 'DR_PLAN_RECOVERY_STATUS_RENDERER';
 export const LATEST_REFRESH_RECOVERY_STATUS = 'LATEST_REFRESH_RECOVERY_STATUS';
+export const REPORT_AVG_RPO_RENDERER = 'REPORT_AVG_RPO_RENDERER';
 export const REPORT_VMS_ITERATION = 'REPORT_VMS_ITERATION';
 export const REPORT_DATA_REDUCTION_RATIO = 'REPORT_DATA_REDUCTION_RATIO';
 
@@ -375,6 +376,8 @@ export const PROTECTION_PLAN_COLUMNS = [
   { header: 'Replication Interval', field: 'replicationInterval', type: REPORT_DURATION.TIME },
   { header: 'Status', field: 'replStatus', type: REPORT_DURATION.REPLICATION_STATUS },
   { header: 'Recovery Status', field: 'rStatus', type: STATIC_KEYS.RECOVER_STATUS },
+  { header: 'Average RPO', field: 'achievedAvgRPO', type: 'rpo-renderer' },
+  { header: 'Average RTO', field: 'achievedAvgRTO', type: 'rpo-renderer' },
 ];
 
 export const SITE_COLUMNS = [
@@ -390,7 +393,7 @@ export const NODE_COLUMNS = [
   { header: 'Name', field: 'name' },
   { header: 'Hostname', field: 'hostname' },
   { header: 'Type', field: 'nodeType' },
-  { header: 'Platform Type', field: 'platformType' },
+  { header: 'Platform Type', field: 'nodePlatformType', type: REPORT_DURATION.NODE_TYPE_RENDERER },
   { header: 'Version', field: 'version' },
   { header: 'Ports', field: 'managementPort', type: STATIC_KEYS.PORTS_RENDERER },
   { header: 'Status', field: 'status' },
@@ -473,9 +476,20 @@ export const TABLE_REPORTS_CHECKPOINTS = [
   { header: 'Plan Name', field: 'protectionPlanName' },
   { header: 'VM Name', field: 'workloadName' },
   { header: 'Created At', field: 'creationTime', type: 'date' },
-  { header: 'Expires On', field: 'expirationTime', type: 'date' },
+  { header: 'Expires On', field: 'expirationTime', type: REPORT_DURATION.CHECKPOINT_EXPIRATION_TIME },
   { header: 'Checkpoint Status', field: 'checkpointStatus' },
   { header: 'Preserved', field: 'isPreserved' },
+];
+
+export const TABLE_REPORT_PROTECTION_PLAN = [
+  { label: 'name', field: 'name', itemRenderer: DR_PLAN_NAME_ITEM_RENDERER },
+  { label: 'protected.name', field: 'protectedSite.name', itemRenderer: PROTECTION_SITE_LINK_ITEM_RENDERER },
+  { label: 'recovery.site', field: 'recoverySite.name', itemRenderer: RECOVERY_SITE_LINK_ITEM_RENDERER },
+  { label: 'replication.interval', field: 'replicationInterval', itemRenderer: REPLICATION_INTERVAL_ITEM_RENDERER },
+  { label: 'status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
+  { label: 'Recovery Status', field: 'recoveryStatus', itemRenderer: DR_PLAN_RECOVERY_STATUS_RENDERER },
+  { label: 'Average RPO', field: 'achievedAvgRPO', itemRenderer: REPORT_AVG_RPO_RENDERER },
+  { label: 'Average RTO', field: 'achievedAvgRTO', itemRenderer: REPORT_AVG_RPO_RENDERER },
 ];
 
 export const ALERT_FILTERS = [
