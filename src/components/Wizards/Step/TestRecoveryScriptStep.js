@@ -33,7 +33,7 @@ function TestRecoveryScriptStep(props) {
     const checked = getCheckboxValue(key);
     return (
       <Row className={recoveryPlatform !== PLATFORM_TYPES.VMware ? 'margin-bottom-20' : ''}>
-        <Label for="dm-checkbox" className="col-sm-4 col-form-Label">
+        <Label for="dm-checkbox" className="col-sm-4 col-form-Label" htmlFor={key}>
           {t(label)}
         </Label>
         <Col sm={8}>

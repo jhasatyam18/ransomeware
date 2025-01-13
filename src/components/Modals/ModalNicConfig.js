@@ -254,85 +254,61 @@ class ModalNicConfig extends Component {
     const { user, dispatch, options, t } = this.props;
     const { values } = user;
     const { networkKey } = options;
-    const networkField = { label: '', description: '', type: FIELD_TYPE.SELECT_SEARCH, shouldShow: true, defaultValue: false, options: (u, f) => getWMwareNetworkOptions(u, f), fieldInfo: 'info.vmware.network', validate: (value, u) => isEmpty(value, u), errorMessage: 'Select Network' };
-    const AdapterField = { label: '', description: '', type: FIELD_TYPE.SELECT, options: (u, f) => getVMwareAdpaterOption(u, f), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select Adapter Type', shouldShow: true, fieldInfo: 'info.vmware.adapter.type' };
-    const MacAddressField = { label: '', description: '', type: FIELD_TYPE.TEXT, options: (u, f) => getVPCOptions(u, f), shouldShow: true, fieldInfo: 'info.vmware.mac.address' };
-    const staticIP = { fieldInfo: 'info.protectionplan.network.vmware.staticip', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.SELECT, shouldShow: true, errorMessage: 'Configure static IP Address', validate: (v, u) => isEmpty(v, u) };
-    const ip = { label: '', description: '', type: FIELD_TYPE.TEXT, validate: (value, u) => isEmpty(value, u), errorMessage: 'Please provide IP address', shouldShow: true, fieldInfo: 'info.vmware.ip.addr' };
-    const subnet = { label: '', description: '', type: FIELD_TYPE.TEXT, validate: (value, u) => isEmpty(value, u), errorMessage: 'Please provide Subnet', shouldShow: true, fieldInfo: 'info.vmware.subnet' };
-    const gateway = { label: '', description: '', type: FIELD_TYPE.TEXT, validate: (value, u) => isEmpty(value, u), errorMessage: 'Please provide Gateway', shouldShow: true, fieldInfo: 'info.vmware.network.gateway' };
-    const dns = { label: '', description: '', type: FIELD_TYPE.TEXT, validate: (value, u) => isEmpty(value, u), errorMessage: 'Please provide DNS', shouldShow: true, fieldInfo: 'info.vmware.primary.dns' };
+    const networkField = { label: t('title.network.name'), description: '', type: FIELD_TYPE.SELECT_SEARCH, shouldShow: true, defaultValue: false, options: (u, f) => getWMwareNetworkOptions(u, f), fieldInfo: 'info.vmware.network', validate: (value, u) => isEmpty(value, u), errorMessage: 'Select Network' };
+    const AdapterField = { label: t('title.adapter.type'), description: '', type: FIELD_TYPE.SELECT, options: (u, f) => getVMwareAdpaterOption(u, f), validate: (value, u) => isEmpty(value, u), errorMessage: 'Select Adapter Type', shouldShow: true, fieldInfo: 'info.vmware.adapter.type' };
+    const MacAddressField = { label: t('title.mac.address'), description: '', type: FIELD_TYPE.TEXT, options: (u, f) => getVPCOptions(u, f), shouldShow: true, fieldInfo: 'info.vmware.mac.address' };
+    const staticIP = { label: t('title.staticip'), fieldInfo: 'info.protectionplan.network.vmware.staticip', placeHolderText: 'Assign New', description: '', type: FIELD_TYPE.SELECT, shouldShow: true, errorMessage: 'Configure static IP Address', validate: (v, u) => isEmpty(v, u) };
+    const ip = { label: t('title.ip'), description: '', type: FIELD_TYPE.TEXT, validate: (value, u) => isEmpty(value, u), errorMessage: 'Please provide IP address', shouldShow: true, fieldInfo: 'info.vmware.ip.addr' };
+    const subnet = { label: t('vmware.subnet'), description: '', type: FIELD_TYPE.TEXT, validate: (value, u) => isEmpty(value, u), errorMessage: 'Please provide Subnet', shouldShow: true, fieldInfo: 'info.vmware.subnet' };
+    const gateway = { label: t('gateway'), description: '', type: FIELD_TYPE.TEXT, validate: (value, u) => isEmpty(value, u), errorMessage: 'Please provide Gateway', shouldShow: true, fieldInfo: 'info.vmware.network.gateway' };
+    const dns = { label: t('dns'), description: '', type: FIELD_TYPE.TEXT, validate: (value, u) => isEmpty(value, u), errorMessage: 'Please provide DNS', shouldShow: true, fieldInfo: 'info.vmware.primary.dns' };
     const staticip = getValue(`${networkKey}-isPublic`, values);
     return (
       <Container>
-        <Card className="nic_modal_Width">
+        <Card>
           <SimpleBar style={{ maxHeight: '400px', minHeight: '220px' }}>
             <CardBody>
               <Form>
                 <Row>
-                  <Col sm={4}>
-                    {t('title.network.name')}
-                  </Col>
-                  <Col sm={8}>
-                    <DMSearchSelect hideLabel user={user} dispatch={dispatch} fieldKey={`${networkKey}-network`} field={networkField} />
+                  <Col sm={12}>
+                    <DMSearchSelect user={user} dispatch={dispatch} fieldKey={`${networkKey}-network`} field={networkField} />
                   </Col>
                 </Row>
                 <Row>
-                  <Col sm={4}>
-                    {t('title.adapter.type')}
-                  </Col>
-                  <Col sm={8}>
-                    <DMFieldSelect hideLabel dispatch={dispatch} fieldKey={`${networkKey}-adapterType`} field={AdapterField} user={user} />
+                  <Col sm={12}>
+                    <DMFieldSelect dispatch={dispatch} fieldKey={`${networkKey}-adapterType`} field={AdapterField} user={user} />
                   </Col>
                 </Row>
                 <Row>
-                  <Col sm={4}>
-                    {t('title.mac.address')}
-                  </Col>
-                  <Col sm={8}>
-                    <DMFieldText hideLabel dispatch={dispatch} fieldKey={`${networkKey}-macAddress`} field={MacAddressField} user={user} />
+                  <Col sm={12}>
+                    <DMFieldText dispatch={dispatch} fieldKey={`${networkKey}-macAddress`} field={MacAddressField} user={user} />
                   </Col>
                 </Row>
                 <Row style={{ marginTop: '10px' }}>
-                  <Col sm={4}>
-                    {t('title.staticip')}
-                  </Col>
-                  <Col sm={6}>
-                    <DMFieldCheckbox hideLabel dispatch={dispatch} fieldKey={`${networkKey}-isPublic`} field={staticIP} user={user} />
+                  <Col sm={12}>
+                    <DMFieldCheckbox dispatch={dispatch} fieldKey={`${networkKey}-isPublic`} field={staticIP} user={user} />
                   </Col>
                 </Row>
                 {staticip ? (
                   <>
                     <Row className="margin-top-15">
-                      <Col sm={4}>
-                        {t('title.ip')}
-                      </Col>
-                      <Col sm={8}>
-                        <DMFieldText hideLabel dispatch={dispatch} fieldKey={`${networkKey}-publicIP`} field={ip} user={user} />
+                      <Col sm={12}>
+                        <DMFieldText dispatch={dispatch} fieldKey={`${networkKey}-publicIP`} field={ip} user={user} />
                       </Col>
                     </Row>
                     <Row>
-                      <Col sm={4}>
-                        {t('vmware.subnet')}
-                      </Col>
-                      <Col sm={8}>
-                        <DMFieldText hideLabel dispatch={dispatch} fieldKey={`${networkKey}-netmask`} field={subnet} user={user} />
+                      <Col sm={12}>
+                        <DMFieldText dispatch={dispatch} fieldKey={`${networkKey}-netmask`} field={subnet} user={user} />
                       </Col>
                     </Row>
                     <Row>
-                      <Col sm={4}>
-                        {t('gateway')}
-                      </Col>
-                      <Col sm={8}>
-                        <DMFieldText hideLabel dispatch={dispatch} fieldKey={`${networkKey}-gateway`} field={gateway} user={user} />
+                      <Col sm={12}>
+                        <DMFieldText dispatch={dispatch} fieldKey={`${networkKey}-gateway`} field={gateway} user={user} />
                       </Col>
                     </Row>
                     <Row>
-                      <Col sm={4}>
-                        {t('dns')}
-                      </Col>
-                      <Col sm={8}>
-                        <DMFieldText hideLabel dispatch={dispatch} fieldKey={`${networkKey}-dnsserver`} field={dns} user={user} />
+                      <Col sm={12}>
+                        <DMFieldText dispatch={dispatch} fieldKey={`${networkKey}-dnsserver`} field={dns} user={user} />
                       </Col>
                     </Row>
                   </>
