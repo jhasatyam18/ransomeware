@@ -70,6 +70,7 @@ export const ENTITY_TYPE_OPTION_RENDERER = 'ENTITY_TYPE_OPTION_RENDERER';
 export const REVERSE_VM_DESCRIPTION_RENDERER = 'REVERSE_VM_DESCRIPTION_RENDERER';
 export const DR_PLAN_RECOVERY_STATUS_RENDERER = 'DR_PLAN_RECOVERY_STATUS_RENDERER';
 export const LATEST_REFRESH_RECOVERY_STATUS = 'LATEST_REFRESH_RECOVERY_STATUS';
+export const CLEANUP_SUMMARY_ROW_RENDERER = 'CLEANUP_SUMMARY_ROW_RENDERER';
 export const REPORT_VMS_ITERATION = 'REPORT_VMS_ITERATION';
 export const REPORT_DATA_REDUCTION_RATIO = 'REPORT_DATA_REDUCTION_RATIO';
 
@@ -476,4 +477,11 @@ export const TABLE_REPORTS_CHECKPOINTS = [
   { header: 'Expires On', field: 'expirationTime', type: 'date' },
   { header: 'Checkpoint Status', field: 'checkpointStatus' },
   { header: 'Preserved', field: 'isPreserved' },
+];
+
+export const TABLE_CLEANUP_DR_COPIES = [
+  { label: 'workload.name', field: 'workloadName', isParentRow: true },
+  { label: 'resources.for.deletion', field: 'resourcesForDeletion' },
+  { label: 'created.at', field: 'createdAt' },
+  { label: 'description', field: 'description' },
 ];

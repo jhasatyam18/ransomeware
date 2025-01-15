@@ -4,6 +4,8 @@ import { connect, useSelector } from 'react-redux';
 import { Card, CardBody, Col, Container, Form, Label, Row } from 'reactstrap';
 import { useParams } from 'react-router-dom';
 import DMBreadCrumb from '../Common/DMBreadCrumb';
+import DMCollapsibleTable from '../Common/DMCollapsibleTable';
+import ActionButton from '../Common/ActionButton';
 import { fetchDRPlanById } from '../../store/actions/DrPlanActions';
 import { PROTECTION_PLAN_DETAILS_PATH, PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { CLEANUP_DR } from '../../constants/InputConstants';
@@ -11,10 +13,13 @@ import { getValue } from '../../utils/InputUtils';
 import { valueChange } from '../../store/actions';
 import { addMessage } from '../../store/actions/MessageActions';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
+import { TABLE_CLEANUP_DR_COPIES } from '../../constants/TableConstants';
+import { cleanupToggleChildRow, handleCleanupTableSelection, setDummyData } from '../../store/actions/cleanupActions';
 
 function DRPlanCleanup({ drPlans, t, dispatch, user }) {
   const { values = {} } = user;
-  const { protectionPlan } = drPlans;
+  const { protectionPlan, cleanup = {} } = drPlans;
+  const { data = [], selectedResources = {} } = cleanup;
   const refresh = useSelector((state) => state.user.context.refresh);
   const [cleanupOptionType, setCleanupOptionType] = useState(CLEANUP_DR.TEST_RECOVERIES);
   const { id } = useParams();
@@ -28,6 +33,7 @@ function DRPlanCleanup({ drPlans, t, dispatch, user }) {
       dispatch(valueChange('ui.cleanup.type.value', CLEANUP_DR.TEST_RECOVERIES));
       setCleanupOptionType(CLEANUP_DR.TEST_RECOVERIES);
     }
+    dispatch(setDummyData());
 
     if (!protectionPlan) {
       dispatch(fetchDRPlanById(id));
@@ -83,6 +89,22 @@ function DRPlanCleanup({ drPlans, t, dispatch, user }) {
           />
           <Row className="margin-left-5">
             <Col sm={12}>{renderCleanupOptions()}</Col>
+            <Col sm={12} className="padding-top-5">
+              <ActionButton label="Cleanup" t={t} key="cleanupBtn" />
+            </Col>
+            <Col sm={12} className="padding-top-5 margin-top-5">
+              <DMCollapsibleTable
+                data={data}
+                columns={TABLE_CLEANUP_DR_COPIES}
+                isSelectable
+                tableID="cleanup-resources"
+                name="cleanup-resources"
+                primaryKey="id"
+                onSelect={handleCleanupTableSelection}
+                selectedData={selectedResources}
+                toggleRow={cleanupToggleChildRow}
+              />
+            </Col>
           </Row>
         </CardBody>
       </Card>
@@ -90,9 +112,9 @@ function DRPlanCleanup({ drPlans, t, dispatch, user }) {
   );
 }
 
-const mapStateToProps = (state) => ({
-  user: state.user,
-  drPlans: state.drPlans,
-});
+function mapStateToProps(state) {
+  const { drPlans, user } = state;
+  return { drPlans, user };
+}
 
 export default connect(mapStateToProps)(withTranslation()(DRPlanCleanup));
