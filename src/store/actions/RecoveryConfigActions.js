@@ -75,10 +75,10 @@ function setGeneralConfiguration(sourceConfig, targetVM, user, dispatch) {
     folderPath = [folderPath];
     fetchByDelay(dispatch, setVMwareTargetData, 2000, [`${targetVM}-vmConfig.general`, datacenterMoref, hostMoref]);
     generalConfig = {
-      [`${targetVM}-vmConfig.general.numcpu`]: numCPU || 2,
-      [`${targetVM}-vmConfig.general-memory`]: parseInt(memory[0], 10) || 2,
-      [`${targetVM}-vmConfig.general-unit`]: memory[1] || '',
-      [`${targetVM}-vmConfig.general.hostMoref`]: { label: hostMoref, value: hostMoref },
+      [`${targetVM}-vmConfig.general.numcpu`]: getValue(`${targetVM}-vmConfig.general.numcpu`, values) || numCPU || 2,
+      [`${targetVM}-vmConfig.general-memory`]: parseInt(getValue(`${targetVM}-vmConfig.general-memory`, values), 10) || parseInt(memory[0], 10) || 2,
+      [`${targetVM}-vmConfig.general-unit`]: getValue(`${targetVM}-vmConfig.general-unit`, values) || memory[1] || '',
+      [`${targetVM}-vmConfig.general.hostMoref`]: getValue(`${targetVM}-vmConfig.general.hostMoref`, values) || { label: hostMoref, value: hostMoref },
     };
   } else {
     folderPath = { label: folderPath, value: folderPath };
@@ -89,18 +89,18 @@ function setGeneralConfiguration(sourceConfig, targetVM, user, dispatch) {
     generalConfig = {
       ...generalConfig,
       // add the tenancy keys
-      [`${targetVM}-vmConfig.general.tenancy`]: tenancy,
-      [`${targetVM}-vmConfig.general.hostType`]: hostType,
-      [`${targetVM}-vmConfig.general.hostMoref`]: hostMoref,
-      [`${targetVM}-vmConfig.general.affinity`]: affinity,
-      [`${targetVM}-vmConfig.general.image`]: image,
-      [`${targetVM}-vmConfig.general.license`]: license,
+      [`${targetVM}-vmConfig.general.tenancy`]: getValue(`${targetVM}-vmConfig.general.tenancy`, values) || tenancy,
+      [`${targetVM}-vmConfig.general.hostType`]: getValue(`${targetVM}-vmConfig.general.hostType`, values) || hostType,
+      [`${targetVM}-vmConfig.general.hostMoref`]: getValue(`${targetVM}-vmConfig.general.hostMoref`, values) || hostMoref,
+      [`${targetVM}-vmConfig.general.affinity`]: getValue(`${targetVM}-vmConfig.general.affinity`, values) || affinity,
+      [`${targetVM}-vmConfig.general.image`]: getValue(`${targetVM}-vmConfig.general.image`, values) || image,
+      [`${targetVM}-vmConfig.general.license`]: getValue(`${targetVM}-vmConfig.general.license`, values) || license,
     };
   }
   if (typeof tenancy !== 'undefined' && tenancy === AWS_TENANCY_TYPES.Shared) {
     generalConfig = {
       ...generalConfig,
-      [`${targetVM}-vmConfig.general.tenancy`]: tenancy,
+      [`${targetVM}-vmConfig.general.tenancy`]: getValue(`${targetVM}-vmConfig.general.tenancy`, values) || tenancy,
     };
   }
 
@@ -137,7 +137,6 @@ export function resetGeneralConfig({ user, targetVM }) {
   const { values } = user;
   const flow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
   const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
-  const mem = getMemoryInfo();
   let generalConfig;
   if (flow === UI_WORKFLOW.TEST_RECOVERY) {
     switch (recoveryPlatform) {
@@ -159,7 +158,8 @@ export function resetGeneralConfig({ user, targetVM }) {
           [`${targetVM}-vmConfig.general.dataStoreMoref`]: '',
           [`${targetVM}-vmConfig.general.datacenterMoref`]: '',
           [`${targetVM}-vmConfig.general.numcpu`]: 2,
-          [`${targetVM}-vmConfig.general-memory`]: parseInt(mem[0], 10) || 2,
+          [`${targetVM}-vmConfig.general-memory`]: 0,
+          [`${targetVM}-vmConfig.general-unit`]: '',
         };
         break;
       case PLATFORM_TYPES.Azure:
@@ -182,8 +182,8 @@ export function resetGeneralConfig({ user, targetVM }) {
       [`${targetVM}-vmConfig.general.dataStoreMoref`]: '',
       [`${targetVM}-vmConfig.general.datacenterMoref`]: '',
       [`${targetVM}-vmConfig.general.numcpu`]: 2,
-      [`${targetVM}-vmConfig.general-memory`]: parseInt(mem[0], 10) || 2,
-      [`${targetVM}-vmConfig.general-unit`]: mem[1] || '',
+      [`${targetVM}-vmConfig.general-memory`]: 0,
+      [`${targetVM}-vmConfig.general-unit`]: '',
       [`${targetVM}-vmConfig.general.folderPath`]: '',
       [`${targetVM}-vmConfig.general.volumeType`]: '',
       [`${targetVM}-vmConfig.general.volumeIOPS`]: 0,
@@ -464,7 +464,6 @@ const resetNetworkConfigValues = ({ key, index }) => {
   };
   return nwCon;
 };
-
 export function resetNetworkConfig(targetVM, values) {
   const selectedVMs = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   const vm = selectedVMs[targetVM];
