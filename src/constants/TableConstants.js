@@ -440,7 +440,7 @@ export const REPLICATION_JOB_COLUMNS = [
 export const RECOVERY_JOB_COLUMNS = [
   { header: 'Virtual Machine', field: 'vmName' },
   { header: 'Timings and Duration', field: 'date_duration', type: STATIC_KEYS.RECOVERY_DATE_DURATION },
-  { header: 'Recovery Type', field: 'recoveryType' },
+  { header: 'Recovery Type', field: 'recoveryType', type: REPORT_DURATION.REPORT_RECOVERY_TYPE },
   { header: 'Recovery Point Time', field: 'recoveryPointTime', type: REPORT_DURATION.DATE },
   { header: 'Job Status', field: 'statusRecovery', type: REPORT_DURATION.RECOVERY_JOB_STEPS },
   { header: 'IP Address', field: 'publicIP', secondaryField: 'privateIP' },

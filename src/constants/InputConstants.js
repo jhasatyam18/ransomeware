@@ -311,6 +311,7 @@ export const REPORT_DURATION = {
   RECOVERY_JOB_STEPS: 'recovery_status_step_render',
   REPORT_VMS_ITERATION: 'report_vm_iteration',
   REPORT_VMS_SIZE: 'report_vm_size',
+  REPORT_RECOVERY_TYPE: 'recovery_type_rederer',
 };
 
 export const NUMBER = {
