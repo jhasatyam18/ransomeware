@@ -248,7 +248,7 @@ const DownloadPackages: React.FC<RendererProps & WithTranslation> = (props) => {
 
     function getDownloadUpgradeProgress(timerFunctionCall: undefined | boolean) {
         if (!timerFunctionCall) {
-            dispatch(showApplicationLoader('fetch_download_package_Data', 'Loading dowloading status'));
+            dispatch(showApplicationLoader('fetch_download_package_Data', 'Loading upgrade progress'));
         }
         return callAPI(API_GET_UPGRADE_DOWNLOAD).then(
             (json) => {

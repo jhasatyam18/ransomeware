@@ -20,7 +20,7 @@ const WarningMessage = (props) => {
       localNodeversion = localNodeversion < nodes[i].version ? nodes[i].version : localNodeversion;
     }
   }
-  const isUpgradeRequired = nodes.filter((el) => el.isUpgradeRequired);
+  const isUpgradeRequired = nodes.filter((el) => (el.isUpgradeRequired && el.status === 'online'));
   if (isUpgradeRequired.length === 0) return null;
   return (
     <Card className="mb-0">

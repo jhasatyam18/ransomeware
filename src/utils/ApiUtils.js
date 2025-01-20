@@ -113,3 +113,18 @@ export function getSearchSelectStyle(hasError) {
     }),
   };
 }
+
+export const removeSimilarQuery = (url, apiQuery) => {
+  let queryParam = '';
+  Object.keys(apiQuery).map((apiQ) => {
+    if (apiQuery[apiQ].length === 1) {
+      queryParam += `&${apiQ}=${apiQuery[apiQ][0]}`;
+    }
+  });
+
+  if (queryParam.length > 0) {
+    return `${url}${queryParam}`;
+  }
+
+  return url;
+};

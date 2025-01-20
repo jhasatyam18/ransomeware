@@ -3,16 +3,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useRef, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect, useSelector } from 'react-redux';
-import { Button, ButtonGroup, Col, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Row } from 'reactstrap';
+import { Button, ButtonGroup, CardTitle, Col, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Row } from 'reactstrap';
 import { MILI_SECONDS_TIME } from '../../constants/EventConstant';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { API_LIMIT_HUNDRED } from '../../constants/UserConstant';
 import { hideApplicationLoader, showApplicationLoader } from '../../store/actions';
 import { addMessage } from '../../store/actions/MessageActions';
-import { callAPI } from '../../utils/ApiUtils';
+import { callAPI, removeSimilarQuery } from '../../utils/ApiUtils';
 
 function DMAPIPaginator(props) {
-  const { pageLimit = API_LIMIT_HUNDRED, fetchInInterval = undefined } = props;
+  const { pageLimit = API_LIMIT_HUNDRED, fetchInInterval = undefined, subFilter = [], subFilterTitle = '' } = props;
   const emptyPageInfo = { limit: pageLimit, currentPage: 0, hasNext: false, hasPrev: false, nextOffset: 0, pageRecords: 0, totalPages: 0, totalRecords: 0 };
   const [pageInfo, setPageInfo] = useState(emptyPageInfo);
   const [currentP, setCurrentPage] = useState(emptyPageInfo.currentPage);
@@ -21,6 +21,7 @@ function DMAPIPaginator(props) {
   const [filterColumns, setFilterColumns] = useState([]);
   const [forceUpdate, setForceUpdate] = useState(1);
   const [searchStr, setSearchStr] = useState('');
+  const [apiQuery, setApiQuery] = useState({});
   const refresh = useSelector((state) => state.user.context.refresh);
   const timerRef = useRef(null);
   const searchStrRef = useRef(searchStr);
@@ -49,7 +50,7 @@ function DMAPIPaginator(props) {
         url = `${url}&searchstr=${encodedSearchStr}&searchcol=${searchFields}`;
       }
     }
-    return url;
+    return removeSimilarQuery(url, apiQuery);
   };
 
   const fetchData = (offset = 0, onPgaeChange) => {
@@ -92,8 +93,13 @@ function DMAPIPaginator(props) {
       fetchData(0);
       setCurrentPage(1);
       const cols = Array.from(columns);
-      setFilterColumns(cols.filter((c) => c.allowFilter));
+      const arr = [...cols.filter((c) => c.allowFilter), ...subFilter];
+      setFilterColumns(arr);
       setIntervalToFetch();
+      subFilter?.forEach((f) => {
+        addSubFilterQuery(f);
+      },
+      );
     }
     return () => {
       isUnmounting = true;
@@ -174,10 +180,13 @@ function DMAPIPaginator(props) {
   const updateFilterColumns = (field) => {
     const cols = [];
     filterColumns.forEach((f) => {
-      if (field.field === f.field) {
+      if (field.label === f.label) {
         const chF = f;
         chF.checked = !f.checked;
         cols.push(chF);
+        if (field?.query) {
+          addSubFilterQuery(chF);
+        }
       } else {
         cols.push(f);
       }
@@ -186,28 +195,70 @@ function DMAPIPaginator(props) {
     setForceUpdate(forceUpdate + 1);
   };
 
+  function addSubFilterQuery(obj) {
+    if (obj && obj.checked) {
+      setApiQuery({ ...apiQuery, [obj.query]: [...(apiQuery[obj.query] || []), obj.value] });
+    } else if (apiQuery[obj.query]) {
+      const apiQ = apiQuery[obj.query];
+      const ind = apiQ.indexOf(obj.value);
+      if (ind !== -1) {
+        apiQ.splice(ind, 1);
+      }
+      setApiQuery({ ...apiQuery, [obj.query]: apiQ });
+    }
+  }
+
   const renderColFilter = () => {
     const dropdownKey = `${forceUpdate}-filter`;
     return (
-      <Dropdown id={`filter-${name}`} isOpen={isOpenFilterCol} className="d-inline-block" key={dropdownKey} toggle={() => function et() { }}>
-        <DropdownToggle className="btn header-item waves-effect dropdown__col__filter" id="datagridColFilter" tag="button" toggle={() => toggleFilterCol(true)}>
+      <Dropdown
+        id={`filter-${name}`}
+        isOpen={isOpenFilterCol}
+        className="d-inline-block"
+        key={dropdownKey}
+        toggle={() => function et() { }}
+      >
+        <DropdownToggle
+          className="btn header-item waves-effect dropdown__col__filter"
+          id="datagridColFilter"
+          tag="button"
+          toggle={() => toggleFilterCol(true)}
+        >
           <a href="#" onClick={() => toggleFilterCol(true)}>
             <i className="fas fa-filter text-secondary" />
           </a>
         </DropdownToggle>
         <DropdownMenu right>
           {
-            filterColumns.map((col) => {
+            filterColumns.map((col, ind) => {
               const { label, field } = col;
               return (
-                <DropdownItem key={`filterItem-${field}`}>
-                  <div className="custom-control custom-checkbox">
-                    <input type="checkbox" className="custom-control-input" id={`${name}-${field}`} name={`${name}-${field}`} onChange={() => updateFilterColumns(col)} checked={col.checked === true} />
-                    <label className="custom-control-label" htmlFor={`${name}-${field}`}>
-                      {label}
-                    </label>
-                  </div>
-                </DropdownItem>
+                <>
+                  {subFilter.length > 0 && ind === filterColumns.length - subFilter.length && subFilterTitle.length > 0 ? (
+                    <>
+                      <hr className="mb-0" />
+                      <CardTitle className="ml-4 mt-2">{subFilterTitle}</CardTitle>
+                    </>
+                  ) : null}
+                  <DropdownItem key={`filterItem-${label}`}>
+                    <div className="custom-control custom-checkbox">
+                      <input
+                        type="checkbox"
+                        className="custom-control-input"
+                        id={`${label}-${field}`}
+                        name={`${label}-${field}`}
+                        onChange={() => updateFilterColumns(col)}
+                        checked={col.checked === true}
+                      />
+                      <label
+                        className="custom-control-label"
+                        htmlFor={`${label}-${field}`}
+                      >
+                        {label}
+                      </label>
+                    </div>
+                  </DropdownItem>
+                </>
               );
             })
           }

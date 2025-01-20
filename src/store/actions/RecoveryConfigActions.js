@@ -39,7 +39,7 @@ export function copyInstanceConfiguration({ sourceVM, targetVMs, configToCopy, s
             resp = { ...resp, ...repS };
             break;
           case COPY_CONFIG.REC_SCRIPT_CONFIG:
-            const recS = setRecoveryScripts(sourceConfig, targetVMs[targetVM]);
+            const recS = setRecoveryScripts(sourceConfig, targetVMs[targetVM], user);
             resp = { ...resp, ...recS };
             break;
           default:
@@ -75,10 +75,10 @@ function setGeneralConfiguration(sourceConfig, targetVM, user, dispatch) {
     folderPath = [folderPath];
     fetchByDelay(dispatch, setVMwareTargetData, 2000, [`${targetVM}-vmConfig.general`, datacenterMoref, hostMoref]);
     generalConfig = {
-      [`${targetVM}-vmConfig.general.numcpu`]: numCPU || 2,
-      [`${targetVM}-vmConfig.general-memory`]: parseInt(memory[0], 10) || 2,
-      [`${targetVM}-vmConfig.general-unit`]: memory[1] || '',
-      [`${targetVM}-vmConfig.general.hostMoref`]: { label: hostMoref, value: hostMoref },
+      [`${targetVM}-vmConfig.general.numcpu`]: getValue(`${targetVM}-vmConfig.general.numcpu`, values) || numCPU || 2,
+      [`${targetVM}-vmConfig.general-memory`]: parseInt(getValue(`${targetVM}-vmConfig.general-memory`, values), 10) || parseInt(memory[0], 10) || 2,
+      [`${targetVM}-vmConfig.general-unit`]: getValue(`${targetVM}-vmConfig.general-unit`, values) || memory[1] || '',
+      [`${targetVM}-vmConfig.general.hostMoref`]: getValue(`${targetVM}-vmConfig.general.hostMoref`, values) || { label: hostMoref, value: hostMoref },
     };
   } else {
     folderPath = { label: folderPath, value: folderPath };
@@ -89,18 +89,18 @@ function setGeneralConfiguration(sourceConfig, targetVM, user, dispatch) {
     generalConfig = {
       ...generalConfig,
       // add the tenancy keys
-      [`${targetVM}-vmConfig.general.tenancy`]: tenancy,
-      [`${targetVM}-vmConfig.general.hostType`]: hostType,
-      [`${targetVM}-vmConfig.general.hostMoref`]: hostMoref,
-      [`${targetVM}-vmConfig.general.affinity`]: affinity,
-      [`${targetVM}-vmConfig.general.image`]: image,
-      [`${targetVM}-vmConfig.general.license`]: license,
+      [`${targetVM}-vmConfig.general.tenancy`]: getValue(`${targetVM}-vmConfig.general.tenancy`, values) || tenancy,
+      [`${targetVM}-vmConfig.general.hostType`]: getValue(`${targetVM}-vmConfig.general.hostType`, values) || hostType,
+      [`${targetVM}-vmConfig.general.hostMoref`]: getValue(`${targetVM}-vmConfig.general.hostMoref`, values) || hostMoref,
+      [`${targetVM}-vmConfig.general.affinity`]: getValue(`${targetVM}-vmConfig.general.affinity`, values) || affinity,
+      [`${targetVM}-vmConfig.general.image`]: getValue(`${targetVM}-vmConfig.general.image`, values) || image,
+      [`${targetVM}-vmConfig.general.license`]: getValue(`${targetVM}-vmConfig.general.license`, values) || license,
     };
   }
   if (typeof tenancy !== 'undefined' && tenancy === AWS_TENANCY_TYPES.Shared) {
     generalConfig = {
       ...generalConfig,
-      [`${targetVM}-vmConfig.general.tenancy`]: tenancy,
+      [`${targetVM}-vmConfig.general.tenancy`]: getValue(`${targetVM}-vmConfig.general.tenancy`, values) || tenancy,
     };
   }
 
@@ -110,21 +110,17 @@ function setGeneralConfiguration(sourceConfig, targetVM, user, dispatch) {
   }
   generalConfig = {
     ...generalConfig,
-    [`${targetVM}-vmConfig.general.instanceType`]: instanceType || '',
-    [`${targetVM}-vmConfig.general.volumeType`]: volumeType || '',
-    [`${targetVM}-vmConfig.general.dataStoreMoref`]: { label: datastoreMoref, value: datastoreMoref },
-    [`${targetVM}-vmConfig.general.datacenterMoref`]: datacenterMoref || '',
-    [`${targetVM}-vmConfig.general.folderPath`]: folderPath || '',
-    [`${targetVM}-vmConfig.general.volumeType`]: volumeType || '',
-    [`${targetVM}-vmConfig.general.volumeIOPS`]: volumeIOPS || 0,
-    [`${targetVM}-vmConfig.general.encryptionKey`]: encryptionKey || '',
-    [`${targetVM}-vmConfig.general.tags`]: tagsData || '',
-    [`${targetVM}-vmConfig.general.availibility.zone`]: availZone || '',
-    [`${targetVM}-vmConfig.network.securityGroup`]: networkTags || '',
-    [`${targetVM}-vmConfig.network.securityGroup`]: networkTags || '',
-    [`${targetVM}-vmConfig.network.securityGroup`]: networkTags || '',
-    [`${targetVM}-vmConfig.network.securityGroup`]: networkTags || '',
-    [`${targetVM}-vmConfig.network.securityGroup`]: networkTags || '',
+    [`${targetVM}-vmConfig.general.instanceType`]: getValue(`${targetVM}-vmConfig.general.instanceType`, values) || instanceType || '',
+    [`${targetVM}-vmConfig.general.volumeType`]: getValue(`${targetVM}-vmConfig.general.volumeType`, values) || volumeType || '',
+    [`${targetVM}-vmConfig.general.dataStoreMoref`]: getValue(`${targetVM}-vmConfig.general.dataStoreMoref`, values) || { label: datastoreMoref, value: datastoreMoref },
+    [`${targetVM}-vmConfig.general.datacenterMoref`]: getValue(`${targetVM}-vmConfig.general.datacenterMoref`, values) || datacenterMoref || '',
+    [`${targetVM}-vmConfig.general.folderPath`]: getValue(`${targetVM}-vmConfig.general.folderPath`, values) || folderPath || '',
+    [`${targetVM}-vmConfig.general.volumeType`]: getValue(`${targetVM}-vmConfig.general.volumeType`, values) || volumeType || '',
+    [`${targetVM}-vmConfig.general.volumeIOPS`]: getValue(`${targetVM}-vmConfig.general.volumeIOPS`, values) || volumeIOPS || 0,
+    [`${targetVM}-vmConfig.general.encryptionKey`]: getValue(`${targetVM}-vmConfig.general.encryptionKey`, values) || encryptionKey || '',
+    [`${targetVM}-vmConfig.general.tags`]: getValue(`${targetVM}-vmConfig.general.tags`, values) || tagsData || '',
+    [`${targetVM}-vmConfig.general.availibility.zone`]: getValue(`${targetVM}-vmConfig.general.availibility.zone`, values) || availZone || '',
+    [`${targetVM}-vmConfig.network.securityGroup`]: getValue(`${targetVM}-vmConfig.network.securityGroup`, values) || networkTags || '',
 
   };
   return generalConfig;
@@ -141,7 +137,6 @@ export function resetGeneralConfig({ user, targetVM }) {
   const { values } = user;
   const flow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
   const recoveryPlatform = getValue('ui.values.recoveryPlatform', values);
-  const mem = getMemoryInfo();
   let generalConfig;
   if (flow === UI_WORKFLOW.TEST_RECOVERY) {
     switch (recoveryPlatform) {
@@ -163,7 +158,8 @@ export function resetGeneralConfig({ user, targetVM }) {
           [`${targetVM}-vmConfig.general.dataStoreMoref`]: '',
           [`${targetVM}-vmConfig.general.datacenterMoref`]: '',
           [`${targetVM}-vmConfig.general.numcpu`]: 2,
-          [`${targetVM}-vmConfig.general-memory`]: parseInt(mem[0], 10) || 2,
+          [`${targetVM}-vmConfig.general-memory`]: 0,
+          [`${targetVM}-vmConfig.general-unit`]: '',
         };
         break;
       case PLATFORM_TYPES.Azure:
@@ -186,8 +182,8 @@ export function resetGeneralConfig({ user, targetVM }) {
       [`${targetVM}-vmConfig.general.dataStoreMoref`]: '',
       [`${targetVM}-vmConfig.general.datacenterMoref`]: '',
       [`${targetVM}-vmConfig.general.numcpu`]: 2,
-      [`${targetVM}-vmConfig.general-memory`]: parseInt(mem[0], 10) || 2,
-      [`${targetVM}-vmConfig.general-unit`]: mem[1] || '',
+      [`${targetVM}-vmConfig.general-memory`]: 0,
+      [`${targetVM}-vmConfig.general-unit`]: '',
       [`${targetVM}-vmConfig.general.folderPath`]: '',
       [`${targetVM}-vmConfig.general.volumeType`]: '',
       [`${targetVM}-vmConfig.general.volumeIOPS`]: 0,
@@ -262,7 +258,7 @@ function setNetworkConfig(sourceConfig, targetVM, user, dispatch) {
               sgs = { label, value: securityGroups };
             }
           }
-          const nwCon = setNetworkConfigValues({ key, index, vpcId, subnet, availZone, isPublicIP, publicIP, network, networkTier, isFromSource, sgs, adapterType, networkMoref, dns, netmask, gateway, privateIP, macAddress });
+          const nwCon = setNetworkConfigValues({ key, index, vpcId, subnet, availZone, isPublicIP, publicIP, network, networkTier, isFromSource, sgs, adapterType, networkMoref, dns, netmask, gateway, privateIP, macAddress, values });
 
           networkConfig = { ...networkConfig, ...nwCon };
         }
@@ -281,24 +277,25 @@ function setNetworkConfig(sourceConfig, targetVM, user, dispatch) {
  * @returns object network config
  */
 
-export function setNetworkConfigValues({ key, index, vpcId, subnet, availZone, publicIP, isPublicIP, network, networkTier, isFromSource, sgs, adapterType, networkMoref, dns, netmask, gateway, privateIP, macAddress }) {
+export function setNetworkConfigValues({ values, key, index, vpcId, subnet, availZone, publicIP, isPublicIP, network, networkTier, isFromSource, sgs, adapterType, networkMoref, dns, netmask, gateway, privateIP, macAddress }) {
+  const isPublic = getValue(`${key}-eth-${index}-isPublic`, values);
   const nwCon = {
-    [`${key}-eth-${index}-vpcId`]: vpcId || '',
-    [`${key}-eth-${index}-subnet`]: subnet || '',
-    [`${key}-eth-${index}-availZone`]: availZone || '',
-    [`${key}-eth-${index}-isPublic`]: isPublicIP || '',
-    [`${key}-eth-${index}-network`]: network || '',
-    [`${key}-eth-${index}-networkTier`]: networkTier || '',
-    [`${key}-eth-${index}-isFromSource`]: isFromSource || '',
-    [`${key}-eth-${index}-securityGroups`]: sgs || '',
-    [`${key}-eth-${index}-adapterType`]: adapterType || '',
-    [`${key}-eth-${index}-networkMoref`]: networkMoref || '',
-    [`${key}-eth-${index}-publicIP`]: publicIP || '',
-    [`${key}-eth-${index}-dnsserver`]: dns || '',
-    [`${key}-eth-${index}-gateway`]: gateway || '',
-    [`${key}-eth-${index}-netmask`]: netmask || '',
-    [`${key}-eth-${index}-privateIP`]: privateIP || '',
-    [`${key}-eth-${index}-macAddress`]: macAddress || '',
+    [`${key}-eth-${index}-vpcId`]: getValue(`${key}-eth-${index}-vpcId`, values) || vpcId || '',
+    [`${key}-eth-${index}-subnet`]: getValue(`${key}-eth-${index}-subnet`, values) || subnet || '',
+    [`${key}-eth-${index}-availZone`]: getValue(`${key}-eth-${index}-availZone`, values) || availZone || '',
+    [`${key}-eth-${index}-isPublic`]: isPublic !== '' ? isPublic : isPublicIP || '',
+    [`${key}-eth-${index}-network`]: getValue(`${key}-eth-${index}-network`, values) || network || '',
+    [`${key}-eth-${index}-networkTier`]: getValue(`${key}-eth-${index}-networkTier`, values) || networkTier || '',
+    [`${key}-eth-${index}-isFromSource`]: getValue(`${key}-eth-${index}-isFromSource`, values) || isFromSource || '',
+    [`${key}-eth-${index}-securityGroups`]: getValue(`${key}-eth-${index}-securityGroups`, values) || sgs || '',
+    [`${key}-eth-${index}-adapterType`]: getValue(`${key}-eth-${index}-adapterType`, values) || adapterType || '',
+    [`${key}-eth-${index}-networkMoref`]: getValue(`${key}-eth-${index}-networkMoref`, values) || networkMoref || '',
+    [`${key}-eth-${index}-publicIP`]: getValue(`${key}-eth-${index}-publicIP`, values) || publicIP || '',
+    [`${key}-eth-${index}-dnsserver`]: getValue(`${key}-eth-${index}-dnsserver`, values) || dns || '',
+    [`${key}-eth-${index}-gateway`]: getValue(`${key}-eth-${index}-gateway`, values) || gateway || '',
+    [`${key}-eth-${index}-netmask`]: getValue(`${key}-eth-${index}-netmask`, values) || netmask || '',
+    [`${key}-eth-${index}-privateIP`]: getValue(`${key}-eth-${index}-privateIP`, values) || privateIP || '',
+    [`${key}-eth-${index}-macAddress`]: getValue(`${key}-eth-${index}-macAddress`, values) || macAddress || '',
   };
   return nwCon;
 }
@@ -326,11 +323,12 @@ function setReplicationScripts(sourceConfig, targetVM) {
  * @returns key value pairs to set values
  */
 
-function setRecoveryScripts(sourceConfig, targetVM) {
+function setRecoveryScripts(sourceConfig, targetVM, user) {
   const { preScript, postScript } = sourceConfig;
+  const { values } = user;
   const scripts = {
-    [`${targetVM}-vmConfig.scripts.preScript`]: preScript,
-    [`${targetVM}-vmConfig.scripts.postScript`]: postScript,
+    [`${targetVM}-vmConfig.scripts.preScript`]: getValue(`${targetVM}-vmConfig.scripts.preScript`, values) || preScript,
+    [`${targetVM}-vmConfig.scripts.postScript`]: getValue(`${targetVM}-vmConfig.scripts.postScript`, values) || postScript,
   };
   return scripts;
 }
@@ -443,12 +441,29 @@ export function resetInstanceConfiguration({ targetVMs, configToReset }) {
       }
     }
     dispatch(closeModal());
-    setTimeout(() => {
-      dispatch(updateValues(res));
-    }, APP_SET_TIMEOUT);
+    dispatch(updateValues(res));
   };
 }
 
+const resetNetworkConfigValues = ({ key, index }) => {
+  const nwCon = {
+    [`${key}-eth-${index}-vpcId`]: '',
+    [`${key}-eth-${index}-subnet`]: '',
+    [`${key}-eth-${index}-availZone`]: '',
+    [`${key}-eth-${index}-isPublic`]: '',
+    [`${key}-eth-${index}-network`]: '',
+    [`${key}-eth-${index}-networkTier`]: '',
+    [`${key}-eth-${index}-isFromSource`]: '',
+    [`${key}-eth-${index}-securityGroups`]: '',
+    [`${key}-eth-${index}-adapterType`]: '',
+    [`${key}-eth-${index}-networkMoref`]: '',
+    [`${key}-eth-${index}-publicIP`]: '',
+    [`${key}-eth-${index}-dnsserver`]: '',
+    [`${key}-eth-${index}-gateway`]: '',
+    [`${key}-eth-${index}-netmask`]: '',
+  };
+  return nwCon;
+};
 export function resetNetworkConfig(targetVM, values) {
   const selectedVMs = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   const vm = selectedVMs[targetVM];
@@ -458,7 +473,7 @@ export function resetNetworkConfig(targetVM, values) {
     const networkKey = `${targetVM}-vmConfig.network.net1`;
     if (typeof nics !== 'undefined' && nics.length > 0) {
       for (let i = 0; i < nics.length; i += 1) {
-        const nw = setNetworkConfigValues({ key: networkKey, index: i });
+        const nw = resetNetworkConfigValues({ key: networkKey, index: i });
         networkConfig = { ...networkConfig, ...nw };
       }
     }

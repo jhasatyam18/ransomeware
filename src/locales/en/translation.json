@@ -148,7 +148,7 @@
   "report.includeAlerts": "Alerts",
   "report.includeReplicationJobs": "Replication Jobs",
   "report.includeRecoveryJobs": "Recovery Jobs",
-  "report.pdf.title": "Datamotive Solution Report | © 2024 All Rights Reserved | Confidential | www.datamotive.io",
+  "report.pdf.title": "Datamotive Solution Report | © {{year}} All Rights Reserved | Confidential | www.datamotive.io",
   "report.includeNodes": "Nodes",
   "report.includeCheckpoints":"Point In Time Checkpoints",
   "report.export.pdf": "Exporting data to pdf.",
@@ -918,6 +918,7 @@
   "created.at": "Created At",
   "cleanup.recoveries": "Recoveries",
   "cleanup.recoveries.test.": "Cleanup Test Recoveries",
+  "select.plan":"Select Plan",
   "test.recovery.instance.warning": "An IP conflict can occur if a previous Test Recovery instance remains active. This will cause the Test Recovery operation to fail."
 
 }

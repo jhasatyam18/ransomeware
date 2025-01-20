@@ -693,7 +693,7 @@ export function getReportTypeOptions() {
 }
 
 export function getReportProtectionPlans(user) {
-  const result = [{ label: 'All', value: 0 }];
+  const result = [{ label: STATIC_KEYS.REPORT_LABEL_ALL, value: STATIC_KEYS.ALL }];
   return [...result, ...getDRPlanOptions(user)];
 }
 
@@ -1521,3 +1521,21 @@ export function hasOwnRow(key, d, primaryKey) {
   }
   return false;
 }
+
+export const showReplOption = (user) => {
+  const { values } = user;
+  const isReplJobSelected = getValue('report.protectionPlan.includeReplicationJobs', values);
+  if (isReplJobSelected) {
+    return true;
+  }
+  return false;
+};
+
+export const showRecoveryOption = (user) => {
+  const { values } = user;
+  const isReplJobSelected = getValue('report.protectionPlan.includeRecoveryJobs', values);
+  if (isReplJobSelected) {
+    return true;
+  }
+  return false;
+};

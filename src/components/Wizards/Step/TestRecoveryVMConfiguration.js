@@ -22,7 +22,7 @@ function TestRecoveryVMConfiguration(props) {
       if (isPointInTime !== CHECKPOINT_TYPE.POINT_IN_TIME) {
       // to fetch last test recovery only in case of test recovery flow
         dispatch(fetchLastTestRecovery());
-        onRecoveryConfigOptChange(option);
+        initializeRecoveryOption(option);
       }
     }
   }, []);
@@ -59,12 +59,23 @@ function TestRecoveryVMConfiguration(props) {
     renderVMConfig(selectedVMs[key], index)
   ));
 
+  function initializeRecoveryOption(value) {
+    if (value === 'current' && selectedVMs && recoveryConfigKeys.length > 0) {
+      Object.keys(selectedVMs).map((key) => {
+        if (recoveryConfig[key]) {
+          dispatch(copyInstanceConfiguration({ targetVMs: [selectedVMs[key].moref], configToCopy, sourceData: recoveryConfig[key] }));
+        }
+      });
+    }
+  }
+
   function onRecoveryConfigOptChange(value) {
     dispatch(valueChange('ui.recovery.option', value));
     if (selectedVMs) {
       if (value === 'current' && recoveryConfigKeys.length > 0) {
         Object.keys(selectedVMs).map((key) => {
           if (recoveryConfig[key]) {
+            dispatch(resetInstanceConfiguration({ targetVMs: [key], configToReset: configToCopy }));
             dispatch(copyInstanceConfiguration({ targetVMs: [selectedVMs[key].moref], configToCopy, sourceData: recoveryConfig[key] }));
           }
         });
@@ -72,6 +83,7 @@ function TestRecoveryVMConfiguration(props) {
         const selectedvmkey = Object.keys(selectedVMs);
         selectedvmkey.forEach((vmkey) => {
           if (previousRecoveryConfig[vmkey]) {
+            dispatch(resetInstanceConfiguration({ targetVMs: [vmkey], configToReset: configToCopy }));
             dispatch(copyInstanceConfiguration({ targetVMs: [previousRecoveryConfig[vmkey].sourceMoref], configToCopy, sourceData: previousRecoveryConfig[vmkey] }));
           } else {
             dispatch(resetInstanceConfiguration({ targetVMs: [vmkey], configToReset: configToCopy }));

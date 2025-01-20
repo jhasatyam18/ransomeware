@@ -62,7 +62,7 @@ class RecoveryConfig extends Component {
       const checked = this.getCheckboxValue(key);
       return (
         <Row>
-          <Label for="dm-checkbox" className="col-sm-4 col-form-Label">
+          <Label for="dm-checkbox" className="col-sm-4 col-form-Label" htmlFor={key}>
             {t(label)}
           </Label>
           <Col sm={8}>

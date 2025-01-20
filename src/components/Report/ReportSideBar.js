@@ -32,6 +32,34 @@ function ReportSideBar(props) {
     return renderFields(rFields);
   }
 
+  function renderPlanOtions() {
+    return (
+      <Row>
+        <Col sm={4}>
+          <DMField dispatch={dispatch} user={user} fieldKey="report.protectionPlan.protectionPlans" key="rpt-report.protectionPlan.protectionPlans" />
+        </Col>
+        <Col sm={4}>
+          <DMField dispatch={dispatch} user={user} fieldKey="report.protectionPlan.includeProtectedVMS" key="rpt-report.protectionPlan.includeProtectedVMS" />
+        </Col>
+        <Col sm={4}>
+          <DMField dispatch={dispatch} user={user} fieldKey="report.protectionPlan.includeCheckpoints" key="rpt-report.protectionPlan.includeCheckpoints" />
+        </Col>
+        <Col sm={4}>
+          <DMField dispatch={dispatch} user={user} fieldKey="report.protectionPlan.includeReplicationJobs" key="rpt-report.protectionPlan.includeReplicationJobs" />
+        </Col>
+        <Col sm={6}>
+          <DMField dispatch={dispatch} user={user} fieldKey="report.protectionPlan.replJobOption" key="rpt-report.protectionPlan.replJobOption" hideLabel />
+        </Col>
+        <Col sm={4}>
+          <DMField dispatch={dispatch} user={user} fieldKey="report.protectionPlan.includeRecoveryJobs" key="rpt-report.protectionPlan.includeRecoveryJobs" />
+        </Col>
+        <Col sm={6}>
+          <DMField dispatch={dispatch} user={user} fieldKey="report.protectionPlan.recoveryJobOption" key="rpt-report.protectionPlan.recoveryJobOption" hideLabel />
+        </Col>
+      </Row>
+    );
+  }
+
   return (
     <>
       <Label className="text-muted">{t('report.system')}</Label>
@@ -41,7 +69,7 @@ function ReportSideBar(props) {
       <hr />
       <Label className="text-muted">{t('protection.plans')}</Label>
       <div>
-        {renderProtectionPlanOptions('report.protectionPlan')}
+        {renderPlanOtions()}
       </div>
       <hr />
       <Label className="text-muted mt-2">{t('report.duration.heading')}</Label>
