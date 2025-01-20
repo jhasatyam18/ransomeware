@@ -913,7 +913,7 @@
   "vm.removal.confirmation":"Virtual Machine Removal Confirmation",
   "aws.dedicated.host.default":"Shared",
   "node.versions.mismatch.warning": "Data sync for workloads is paused due to version mismatch on one or more Datamotive node(s). Upgrade applicable node(s) to version ({{localNodeversion}}).",
-  "select.plan":"Select Plan",
-  "test.recovery.instance.warning": "An IP conflict can occur if a previous Test Recovery instance remains active. This will cause the Test Recovery operation to fail."
-
+  "test.recovery.instance.warning": "An IP conflict can occur if a previous Test Recovery instance remains active. This will cause the Test Recovery operation to fail.",
+  "playbook.delete.msg": "Playbook deleted successfully",
+  "select.plan":"Select Plan"
 }
