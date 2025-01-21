@@ -138,9 +138,8 @@ export function deletePlan(id, history) {
     const planID = (typeof id === 'undefined' ? ids[0] : id);
     let url = API_DELETE_DR_PLAN.replace('<id>', planID);
     // To remove associated checkpoint while removing protection plan
-    const removeAssosiatedCheckpoints = getValue('drplan.remove.checkpoint', values) || false;
     const removeEntity = getValue('drplan.remove.entity', values) || false;
-    url = `${url}?deleteRecoveryCheckpoint=${removeAssosiatedCheckpoints}&deleteRecoveryEntity=${removeEntity}`;
+    url = `${url}?deleteRecoveryCheckpoint=${removeEntity}&deleteRecoveryEntity=${removeEntity}`;
     const obj = createPayload(API_TYPES.DELETE, { });
     dispatch(showApplicationLoader(url, 'Removing protection plan...'));
     return callAPI(url, obj).then((json) => {
@@ -155,6 +154,7 @@ export function deletePlan(id, history) {
         dispatch(refreshPostActon(true));
         dispatch(setVmlevelCheckpoints([]));
         dispatch(setCheckpointCount(0));
+        dispatch(valueChange('drplan.remove.entity', false));
         if (typeof history !== 'undefined') {
           history.push(PROTECTION_PLANS_PATH);
         }
@@ -776,6 +776,7 @@ export function onEditProtectionPlan() {
         dispatch(closeWizard());
         dispatch(clearValues());
         dispatch(closeModal());
+        dispatch(valueChange('drplan.remove.entity', false));
         fetchByDelay(dispatch, refresh, 2000);
       }
       changedVMRecoveryConfigurations(payload, user, dispatch);

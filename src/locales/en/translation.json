@@ -909,7 +909,7 @@
   "per.vm.resync.disk": "Resync Disks - {{selectedDiskCount}} [{{selectedDiskSize}}]",
   "get.latest.recovery.status":"Get Latest Recovery Status",
   "plan.delete.msg":"Protection Plan deleted successfully",
-  "delete.vm.infra":"Delete recovery instance from target infrastructure. [Recovered instances will not be deleted]",
+  "delete.vm.infra":"Delete recovery instance(s) and their associated checkpoint(s) from target infrastructure. [Recovered instances will not be deleted]",
   "vm.removal.confirmation":"Virtual Machine Removal Confirmation",
   "aws.dedicated.host.default":"Shared",
   "node.versions.mismatch.warning": "Data sync for workloads is paused due to version mismatch on one or more Datamotive node(s). Upgrade applicable node(s) to version ({{localNodeversion}}).",

@@ -7,28 +7,22 @@ import { withRouter } from 'react-router-dom/cjs/react-router-dom';
 import { Col, Row } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
 import { getValue } from '../../utils/InputUtils';
-import { PLATFORM_TYPES } from '../../constants/InputConstants';
 import { valueChange } from '../../store/actions';
 import { fetchCheckpointsByPlanId } from '../../store/actions/checkpointActions';
 import { closeModal } from '../../store/actions/ModalActions';
 
 function DeletVMConfirmation(props) {
-  const { modal, t, dispatch, history, jobs, user } = props;
+  const { modal, t, dispatch, history, user } = props;
   const { values } = user;
   const { options } = modal;
-  const { checkpointCount } = jobs;
   const { message, vmName, protectionPlan } = options;
-  const { id, recoverySite } = protectionPlan;
-  const { platformDetails } = recoverySite;
-  const { platformType } = platformDetails;
-  const removeCheckpoint = getValue('drplan.remove.checkpoint', values) || false;
+  const { id } = protectionPlan;
   const removeEntity = getValue('drplan.remove.entity', values) || false;
   useEffect(() => {
     dispatch(fetchCheckpointsByPlanId(id));
   }, []);
 
   function onClose() {
-    dispatch(valueChange('drplan.remove.checkpoint', false));
     dispatch(valueChange('drplan.remove.entity', false));
     dispatch(closeModal());
   }
@@ -40,11 +34,6 @@ function DeletVMConfirmation(props) {
 
   const handleChange = (key, e) => {
     dispatch(valueChange(key, e.target.checked));
-    if (platformType === PLATFORM_TYPES.VMware) {
-      if (key === 'drplan.remove.entity') {
-        dispatch(valueChange('drplan.remove.checkpoint', e.target.checked));
-      }
-    }
   };
 
   function renderFooter() {
@@ -99,17 +88,6 @@ function DeletVMConfirmation(props) {
                 </label>
               </div>
             </div>
-            {checkpointCount > 0
-              ? (
-                <div className="">
-                  <div className="custom-control custom-checkbox ">
-                    <input type="checkbox" disabled={removeEntity && platformType === PLATFORM_TYPES.VMware} checked={removeCheckpoint} className="custom-control-input" id="drplan.remove.checkpoint" name="drplan.remove.checkpoint" onChange={(e) => handleChange('drplan.remove.checkpoint', e)} />
-                    <label className="custom-control-label" htmlFor="drplan.remove.checkpoint">
-                      <span style={{ fontSize: '12px' }}>{t('title.pplan.delete.checkpoint')}</span>
-                    </label>
-                  </div>
-                </div>
-              ) : null}
           </Col>
         </Row>
       </div>
