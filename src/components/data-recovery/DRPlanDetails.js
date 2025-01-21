@@ -8,7 +8,7 @@ import { PROTECTION_PLAN_CLEANUP_PATH, PROTECTION_PLANS_PATH } from '../../const
 import { PLAN_DETAIL_TABS } from '../../constants/UserConstant';
 import { setActiveTab } from '../../store/actions';
 import { fetchCheckpointsByPlanId, setCheckpointCount, setVmlevelCheckpoints } from '../../store/actions/checkpointActions';
-import { fetchDRPlanById, onDeleteProtectionPlanClick, onResetDiskReplicationClick, openCleanupTestRecoveryWizard, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, playbookExport, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
+import { fetchDRPlanById, onDeleteProtectionPlanClick, onResetDiskReplicationClick, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, playbookExport, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
 import { downloadRecoveryPlaybook } from '../../store/actions/DrPlaybooksActions';
 import { convertMinutesToDaysHourFormat, getRecoveryCheckpointSummary } from '../../utils/AppUtils';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
@@ -282,7 +282,7 @@ class DRPlanDetails extends Component {
         { label: 'Migrate', action: openMigrationWizard, icon: faClone, disabled: allVmRecovered || !hasRequestedPrivileges(user, ['recovery.migration']) },
         { label: 'Reverse', action: openReverseWizard, icon: faBackward, disabled: isReverseActionDisabled },
         { label: 'Test Recovery', action: openTestRecoveryWizard, icon: faCheck, disabled: allVmRecovered || !hasRequestedPrivileges(user, ['recovery.test']) },
-        { label: 'Cleanup Recoveries', action: openCleanupTestRecoveryWizard, icon: faBroom, disabled: !hasRequestedPrivileges(user, ['recovery.test']) },
+        { label: 'Cleanup Recoveries', action: 'CHANGE_ROUTE', routePath: `${cleanupPath}`, icon: faBroom, disabled: !hasRequestedPrivileges(user, ['recovery.test']) },
         { label: 'Download Credentials Playbook', action: downloadRecoveryPlaybook, id: protectionPlan.id, icon: faDownload },
       ];
     } else {

@@ -1,33 +1,116 @@
+import { addMessage } from './MessageActions';
+import { hideApplicationLoader, showApplicationLoader } from './UserActions';
+import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import * as Types from '../../constants/actionTypes';
+import { API_CLEANUP_RECOVERIES, API_CLEANUP_RECOVERIES_FETCH } from '../../constants/ApiConstants';
+import { MESSAGE_TYPES, RENDER_CLEANUP_MESSAGE } from '../../constants/MessageConstants';
+import { getValue } from '../../utils/InputUtils';
+import { getCleanupResourcesPayload } from '../../utils/PayloadUtil';
+import { closeModal } from './ModalActions';
+import { TABLE_CLEANUP_DR_COPIES } from '../../constants/TableConstants';
+import { filterNestedCleanupData } from '../../utils/AppUtils';
 
-export function handleCleanupTableSelection(data, isSelected, primaryKey) {
+// Store functions
+export function updateSelectedCleanupResources(selectedCleanupSources) {
+  return {
+    type: Types.UPDATE_SELECTED_CLEANUP_RESOURCES,
+    selectedCleanupSources,
+  };
+}
+
+export function cleanupResourcesFetched(data, fullData) {
+  return {
+    type: Types.FETCHED_CLEAN_UP_RESOURCES,
+    data,
+    fullData,
+  };
+}
+
+export function setCleanupData(data) {
+  return {
+    type: Types.SET_CLEANUP_DATA,
+    data,
+  };
+}
+
+// Action Handling function
+export function handleSelectAllCleanupResources(isSelected) {
   return (dispatch, getState) => {
     const { drPlans } = getState();
     const { cleanup } = drPlans;
-    const { selectedResources } = cleanup;
+    const { data } = cleanup;
+    const childKeyName = 'resourceID';
+    const primaryKey = 'workloadID';
+    const newResources = {};
+    if (!isSelected) {
+      dispatch(updateSelectedCleanupResources(newResources));
+      return;
+    }
+    data.forEach((w) => {
+      newResources[w[primaryKey]] = w;
+      if (w.resources && w.resources.length > 0) {
+        w.resources.forEach((child) => {
+          newResources[child[childKeyName]] = child;
+        });
+      }
+    });
+    // Update the state with the new resources
+    dispatch(updateSelectedCleanupResources(newResources));
+  };
+}
 
+export function handleCleanupTableSelection(rowData, isSelected, primaryKey) {
+  return (dispatch, getState) => {
+    const { drPlans } = getState();
+    const { cleanup } = drPlans;
+    const { selectedResources, data = [] } = cleanup;
+    const childKeyName = 'resourceID';
     const newResources = { ...selectedResources };
 
     if (isSelected) {
       // Add the selected row
-      if (!selectedResources[data[primaryKey]]) {
-        newResources[data[primaryKey]] = data;
+      if (!selectedResources[rowData[primaryKey]]) {
+        newResources[rowData[primaryKey]] = rowData;
 
         // If the row is a parent, add all its children
-        if (data.resources && data.resources.length > 0) {
-          data.resources.forEach((child) => {
-            newResources[child[primaryKey]] = child;
+        if (rowData.resources && rowData.resources.length > 0) {
+          rowData.resources.forEach((child) => {
+            newResources[child[childKeyName]] = child;
+          });
+        } else {
+          // make parent row selected if any one is selected
+          data.forEach((d) => {
+            d.resources.forEach((r) => {
+              if (newResources[r.resourceID]) {
+                newResources[d.workloadID] = d;
+              }
+            });
           });
         }
       }
     } else {
       // Remove the unselected row
-      delete newResources[data[primaryKey]];
+      delete newResources[rowData[primaryKey]];
 
       // If the row is a parent, remove all its children
-      if (data.resources && data.resources.length > 0) {
-        data.resources.forEach((child) => {
-          delete newResources[child[primaryKey]];
+      if (rowData.resources && rowData.resources.length > 0) {
+        rowData.resources.forEach((child) => {
+          // child key is resourceID
+          delete newResources[child[childKeyName]];
+        });
+      } else {
+        // unselect parent if all child's are unselected
+        data.forEach((d) => {
+          let inUse = false;
+          d.resources.forEach((r) => {
+            if (newResources[r.resourceID]) {
+              inUse = true;
+            }
+          });
+          // not in use and marked as checked
+          if (!inUse && selectedResources[d.workloadID]) {
+            delete newResources[d.workloadID];
+          }
         });
       }
     }
@@ -37,64 +120,109 @@ export function handleCleanupTableSelection(data, isSelected, primaryKey) {
   };
 }
 
-export function updateSelectedCleanupResources(selectedCleanupSources) {
-  return {
-    type: Types.UPDATE_SELECTED_CLEANUP_RESOURCES,
-    selectedCleanupSources,
-  };
-}
-
-export function cleanupResourcesFetched(data) {
-  return {
-    type: Types.FETCHED_CLEAN_UP_RESOURCES,
-    data,
-  };
-}
-
 export function cleanupToggleChildRow(rowID) {
   return (dispatch, getState) => {
     const { drPlans } = getState();
     const { cleanup } = drPlans;
-    const { data = [] } = cleanup;
+    const { data = [], fullData = [] } = cleanup;
     const updatedData = [];
     data.forEach((d) => {
       const nd = { ...d };
-      if (d && d.id && d.id === rowID) {
+      if (d && d.workloadID && d.workloadID === rowID) {
         nd.showChild = !d.showChild;
       }
       updatedData.push(nd);
     });
-    dispatch(cleanupResourcesFetched(updatedData));
+    dispatch(cleanupResourcesFetched(updatedData, fullData));
   };
 }
 
-export function setDummyData() {
+// Fetch cleanup resources
+export function fetchCleanupResources(type, id) {
   return (dispatch) => {
-    const data = [
-      {
-        id: 'row-1',
-        workloadName: 'PROD-VM-1',
-        resourcesForDeletion: 'Test Drill Instances - 4',
-        createdAt: '29/11/2024-1:51:31 pm',
-        description: 'Instances created for test recovery',
-        showChild: true,
-        resources: [
-          { id: 'instance-1', resourcesForDeletion: 'PROD-VM-1-dm-test-drill-134885', createdAt: '29/11/2024-1:51:31 pm', description: 'Instance ID - i-hjuy6756897' },
-          { id: 'instance-2', resourcesForDeletion: 'PROD-VM-1-dm-test-drill-144885', createdAt: '29/11/2024-3:51:31 pm', description: 'Instance ID - i-hjuy6787811' },
-        ],
-      },
-      {
-        id: 'row-2',
-        workloadName: 'PROD-VM-2',
-        resourcesForDeletion: 'Test Drill Instances - 3',
-        createdAt: '30/11/2024-2:21:15 pm',
-        description: 'Instances created for testing',
-        // resources: [
-        //   { id: 'instance-3', resourcesForDeletion: 'PROD-VM-2-dm-test-drill-234885', createdAt: '30/11/2024-2:51:31 pm', description: 'Instance ID - i-hjuy123456' },
-        //   { id: 'instance-4', resourcesForDeletion: 'PROD-VM-2-dm-test-drill-244885', createdAt: '30/11/2024-4:15:31 pm', description: 'Instance ID - i-hjuy654321' },
-        // ],
-      },
-    ];
-    dispatch(cleanupResourcesFetched(data));
+    // making the resources empty
+    dispatch(cleanupResourcesFetched([], []));
+    dispatch(showApplicationLoader('DR-CLEANUP-RESOURCES-FETCH', 'Loading clean-up resources...'));
+    let url = API_CLEANUP_RECOVERIES_FETCH.replace('<id>', id);
+    url = url.replace('<type>', type);
+    return callAPI(url).then((json) => {
+      dispatch(hideApplicationLoader('DR-CLEANUP-RESOURCES-FETCH'));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        // modify the object to fit the component structure
+        const data = [];
+        if (json && json.length > 0) {
+          json.forEach((o) => {
+            const { workloadName, workloadID, description } = o;
+            const resFDeletion = `Test Drill Instances - ${o.associatedResources.length}`;
+            const resources = [];
+            if (o.associatedResources && o.associatedResources.length > 0) {
+              o.associatedResources.forEach((r) => {
+                const childObj = { ...r, description: `${r.resourceType} - ${r.resourceID}`, isDisabled: false };
+                if (r.status !== '') {
+                  childObj.description = r.status;
+                  childObj.isDisabled = true;
+                }
+                resources.push(childObj);
+              });
+            }
+            const c = { workloadName, workloadID, description, resources: [...resources], showChild: false, resourceName: resFDeletion };
+            data.push(c);
+          });
+        }
+        dispatch(cleanupResourcesFetched(data, data));
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('export-excel'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+  };
+}
+
+// cleanup resources call
+export function cleanupResources(id) {
+  return (dispatch, getState) => {
+    const { drPlans, user } = getState();
+    const { values } = user;
+    const { cleanup } = drPlans;
+    const payload = getCleanupResourcesPayload(cleanup);
+    const ty = getValue('ui.cleanup.type.value', values);
+    const obj = createPayload(API_TYPES.POST, payload);
+    dispatch(showApplicationLoader('DR-CLEANUP-RESOURCES', 'Initiating cleanup on selected resources...'));
+    let url = API_CLEANUP_RECOVERIES.replace('<id>', id);
+    url = url.replace('<type>', ty);
+    return callAPI(url, obj).then((json) => {
+      dispatch(hideApplicationLoader('DR-CLEANUP-RESOURCES'));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        const d = { msg: `Cleanup has been successfully initiated for ${payload.deletedCount} resource(s). The cleanup status can be monitored in recovery jobs.`, itemRenderer: RENDER_CLEANUP_MESSAGE, planID: id };
+        dispatch(addMessage('-', MESSAGE_TYPES.INFO, false, d));
+        dispatch(closeModal());
+        dispatch(updateSelectedCleanupResources({}));
+        dispatch(fetchCleanupResources(ty, id));
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('DR-CLEANUP-RESOURCES'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      dispatch(closeModal());
+    });
+  };
+}
+
+export function onFilterTable(criteria) {
+  return (dispatch, getState) => {
+    const { drPlans } = getState();
+    const { cleanup } = drPlans;
+    const { fullData = [] } = cleanup;
+    if (criteria.trim() === '') {
+      dispatch(setCleanupData(fullData));
+    } else {
+      const newData = filterNestedCleanupData(fullData, criteria.trim(), TABLE_CLEANUP_DR_COPIES);
+      dispatch(setCleanupData(newData));
+    }
   };
 }

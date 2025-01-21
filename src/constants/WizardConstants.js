@@ -1,4 +1,4 @@
-import { cleanupTestRecoveries, onConfigureDRPlan, startMigration, startRecovery, startReversePlan, updateVMConfig } from '../store/actions/DrPlanActions';
+import { onConfigureDRPlan, startMigration, startRecovery, startReversePlan, updateVMConfig } from '../store/actions/DrPlanActions';
 import { postPlanSitesSelected } from '../store/actions/SiteActions';
 import { checkCBTStatus, noValidate, validateDRPlanProtectData, validateMigrationVMs, validateRecoveryCheckpointData, validateRecoveryVMs, validateReversePlan, validateSteps, validateVMConfiguration, validateVMSelection } from '../utils/validationUtils';
 import { UI_WORKFLOW } from './InputConstants';
@@ -117,11 +117,4 @@ export const PROTECTED_VM_RECONFIGURATION_WIZARD = {
   steps: [
     { label: 'Alerts', title: '', component: VM_ALERTS_STEP, validate: (user, dispatch) => noValidate(user, dispatch) },
     { label: 'Recovery Configuration', title: '', component: VM_CONFIGURATION_STEP, validate: (user, dispatch) => validateVMConfiguration({ user, dispatch }) }],
-};
-
-export const CLEANUP_TEST_RECOVERY_WIZARDS = {
-  options: { title: 'Cleanup Test Recovery', onFinish: cleanupTestRecoveries },
-  steps: [
-    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateDRPlanProtectData({ user, dispatch }), isAsync: true },
-    { label: 'Summary', title: '', component: TEST_RECOVERY_CLEANUP_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch) }],
 };

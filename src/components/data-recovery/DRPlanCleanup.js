@@ -11,19 +11,24 @@ import { PROTECTION_PLAN_DETAILS_PATH, PROTECTION_PLANS_PATH } from '../../const
 import { CLEANUP_DR } from '../../constants/InputConstants';
 import { getValue } from '../../utils/InputUtils';
 import { valueChange } from '../../store/actions';
-import { addMessage } from '../../store/actions/MessageActions';
-import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { TABLE_CLEANUP_DR_COPIES } from '../../constants/TableConstants';
-import { cleanupToggleChildRow, handleCleanupTableSelection, setDummyData } from '../../store/actions/cleanupActions';
+import { cleanupResources, cleanupToggleChildRow, fetchCleanupResources, handleCleanupTableSelection, handleSelectAllCleanupResources, onFilterTable, setCleanupData } from '../../store/actions/cleanupActions';
+import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
+import { getCleanupResourcesPayload } from '../../utils/PayloadUtil';
+import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
+import { openModal } from '../../store/actions/ModalActions';
+import DMTPaginator from '../Table/DMTPaginator';
+import { formatLocalString } from '../../utils/LocallUtils';
 
 function DRPlanCleanup({ drPlans, t, dispatch, user }) {
   const { values = {} } = user;
   const { protectionPlan, cleanup = {} } = drPlans;
-  const { data = [], selectedResources = {} } = cleanup;
+  const { data = [], selectedResources = {}, fullData = [] } = cleanup;
   const refresh = useSelector((state) => state.user.context.refresh);
   const [cleanupOptionType, setCleanupOptionType] = useState(CLEANUP_DR.TEST_RECOVERIES);
+  const [hasSearchFilter, setSearchFilter] = useState(false);
   const { id } = useParams();
-
+  const disableBtn = Object.keys(selectedResources).length === 0 || !hasRequestedPrivileges(user, ['recovery.test']);
   const planPath = PROTECTION_PLAN_DETAILS_PATH.replace(':id', id);
   const planName = protectionPlan ? protectionPlan.name : '';
 
@@ -33,17 +38,37 @@ function DRPlanCleanup({ drPlans, t, dispatch, user }) {
       dispatch(valueChange('ui.cleanup.type.value', CLEANUP_DR.TEST_RECOVERIES));
       setCleanupOptionType(CLEANUP_DR.TEST_RECOVERIES);
     }
-    dispatch(setDummyData());
-
+    dispatch(fetchCleanupResources(CLEANUP_DR.TEST_RECOVERIES, id));
     if (!protectionPlan) {
       dispatch(fetchDRPlanById(id));
     }
-    dispatch(addMessage('cleanup page refresh', MESSAGE_TYPES.INFO));
   }, [refresh]);
+
+  const onFilter = (c) => {
+    dispatch(onFilterTable(c));
+    if (c.trim() === '') {
+      setSearchFilter(true);
+    } else {
+      setSearchFilter(false);
+    }
+  };
+
+  const setDataForDisplay = (d) => {
+    dispatch(setCleanupData(d));
+  };
+
+  const onCleanAction = () => {
+    const payload = getCleanupResourcesPayload(cleanup);
+    const ty = cleanupOptionType === CLEANUP_DR.TEST_RECOVERIES ? t('test.recovered') : '';
+    const title = formatLocalString(t('clean.delete.warning'), payload.deletedCount, ty);
+    const options = { title: 'Alert', confirmAction: cleanupResources, message: title, id };
+    dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
+  };
 
   const handleCleanupOptionChange = (option) => {
     setCleanupOptionType(option);
     dispatch(valueChange('ui.cleanup.type.value', option));
+    dispatch(fetchCleanupResources(option, id));
   };
 
   const renderCleanupOptions = () => (
@@ -85,12 +110,25 @@ function DRPlanCleanup({ drPlans, t, dispatch, user }) {
             links={[
               { label: t('protection.plans'), link: PROTECTION_PLANS_PATH },
               { label: planName, link: planPath },
+              { label: 'Cleanup', link: '#' },
             ]}
           />
-          <Row className="margin-left-5">
+          <Row className="padding-left-20">
             <Col sm={12}>{renderCleanupOptions()}</Col>
-            <Col sm={12} className="padding-top-5">
-              <ActionButton label="Cleanup" t={t} key="cleanupBtn" />
+          </Row>
+          <Row className="pr-4 padding-left-20">
+            <Col sm={6} className="padding-top-10 padding-bottom-10">
+              <ActionButton label="Cleanup" t={t} key="cleanupBtn" isDisabled={disableBtn} onClick={onCleanAction} />
+            </Col>
+            <Col sm={6}>
+              <DMTPaginator
+                id="cleanupRecovery"
+                data={hasSearchFilter ? data : fullData}
+                setData={setDataForDisplay}
+                showFilter="true"
+                onFilter={onFilter}
+                columns={TABLE_CLEANUP_DR_COPIES}
+              />
             </Col>
             <Col sm={12} className="padding-top-5 margin-top-5">
               <DMCollapsibleTable
@@ -99,10 +137,12 @@ function DRPlanCleanup({ drPlans, t, dispatch, user }) {
                 isSelectable
                 tableID="cleanup-resources"
                 name="cleanup-resources"
-                primaryKey="id"
+                primaryKey="workloadID"
+                childPrimaryKey="resourceID"
                 onSelect={handleCleanupTableSelection}
                 selectedData={selectedResources}
                 toggleRow={cleanupToggleChildRow}
+                onSelectAll={handleSelectAllCleanupResources}
               />
             </Col>
           </Row>

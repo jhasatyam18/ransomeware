@@ -11,7 +11,7 @@ import DMCollapsibleRow from './DMCollapsibleRow';
 
 const DMCollapsibleTable = (props) => {
   const [selected, setSelected] = useState(false);
-  const { onSelectAll, dispatch, data = [], tableID, t, columns, onSelect, selectedData, primaryKey, user, toggleRow, tblName } = props;
+  const { onSelectAll, dispatch, data = [], tableID, t, columns, onSelect, selectedData, childPrimaryKey, primaryKey, user, toggleRow, tblName } = props;
 
   const onChange = (e) => {
     setSelected(e.target.checked);
@@ -84,6 +84,7 @@ const DMCollapsibleTable = (props) => {
       name={`${tblName}`}
       key={`dmtable-row-${index + 1}`}
       toggleRow={toggleRow}
+      childPrimaryKey={childPrimaryKey}
     />
   ));
 

@@ -90,6 +90,8 @@ import { DrPlanRecoveryStatusRenderer } from '../components/Table/ItemRenderers/
 import EmailSubscribedEventRenderer from '../components/Table/ItemRenderers/EmailSubscribedEventRenderer';
 import ReportAverageRPORenderer from '../components/Table/ItemRenderers/ReportAverageRPORenderer';
 import ReportDataReductionRenderer from '../components/Table/ItemRenderers/ReportDataReductionRenderer';
+import CleanupMsgRender from '../components/Messages/CleanupMsgRender';
+import { RENDER_CLEANUP_MESSAGE } from '../constants/MessageConstants';
 
 export function getStackComponent(dispatch, user, children, conf, data) {
   const field = children[conf];
@@ -283,5 +285,14 @@ export function getItemRendererComponent({ render, data, field, user, dispatch }
       return <ReportDataReductionRenderer data={data} field={field} />;
     default:
       return (<div> 404 </div>);
+  }
+}
+
+export function getMessageComponent(dispatch, data) {
+  switch (data.itemRenderer) {
+    case RENDER_CLEANUP_MESSAGE:
+      return <CleanupMsgRender dispatch={dispatch} data={data} />;
+    default:
+      return <div>404</div>;
   }
 }

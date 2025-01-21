@@ -919,6 +919,7 @@
   "cleanup.recoveries": "Recoveries",
   "cleanup.recoveries.test.": "Cleanup Test Recoveries",
   "select.plan":"Select Plan",
-  "test.recovery.instance.warning": "An IP conflict can occur if a previous Test Recovery instance remains active. This will cause the Test Recovery operation to fail."
-
+  "test.recovery.instance.warning": "An IP conflict can occur if a previous Test Recovery instance remains active. This will cause the Test Recovery operation to fail.",
+  "clean.delete.warning": "Are you sure you want to delete {1} {2}",
+  "test.recovered": "test recovered instance(s)"
 }

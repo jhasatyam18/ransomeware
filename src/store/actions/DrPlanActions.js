@@ -10,7 +10,7 @@ import { MODAL_DELETE_VM_CONFIRMATON, MODAL_RESET_DISK_REPLICATION } from '../..
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { STORE_KEYS } from '../../constants/StoreKeyConstants';
 import { APPLICATION_GETTING_STARTED_COMPLETED } from '../../constants/UserConstant';
-import { CLEANUP_TEST_RECOVERY_WIZARDS, MIGRATION_WIZARDS, PROTECTED_VM_RECONFIGURATION_WIZARD, RECOVERY_WIZARDS, REVERSE_WIZARDS, STEPS, TEST_RECOVERY_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS } from '../../constants/WizardConstants';
+import { MIGRATION_WIZARDS, PROTECTED_VM_RECONFIGURATION_WIZARD, RECOVERY_WIZARDS, REVERSE_WIZARDS, STEPS, TEST_RECOVERY_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS } from '../../constants/WizardConstants';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { getLabelWithResourceGrp, getMemoryInfo, getNetworkIDFromName, getSubnetIDFromName, isUnrecoveredVMsLengthMoreThanOne } from '../../utils/AppUtils';
 import { setCookie } from '../../utils/CookieUtils';
@@ -523,27 +523,6 @@ function removeStepsFromWizard(steps, stepName) {
   return res;
 }
 
-export function openCleanupTestRecoveryWizard() {
-  return (dispatch, getState) => {
-    const { drPlans } = getState();
-    const { protectionPlan } = drPlans;
-    const { recoverySite, id, protectedSite } = protectionPlan;
-    const { platformDetails } = recoverySite;
-    const protectedSitePlatform = protectedSite.platformDetails.platformType;
-    dispatch(clearValues());
-    dispatch(valueChange('ui.recovery.plan', protectionPlan));
-    dispatch(valueChange('ui.values.recoveryPlatform', platformDetails.platformType));
-    dispatch(valueChange('ui.values.protectionPlatform', protectedSitePlatform));
-    dispatch(valueChange('recovery.protectionplanID', id));
-    dispatch(valueChange('ui.values.recoverySiteID', recoverySite.id));
-    if (platformDetails.platformType === PLATFORM_TYPES.Azure) {
-      dispatch(fetchNetworks(recoverySite.id, undefined));
-    }
-    dispatch(onProtectionPlanChange({ value: protectionPlan.id, allowDeleted: true }));
-    dispatch(valueChange(STATIC_KEYS.UI_WORKFLOW, UI_WORKFLOW.CLEANUP_TEST_RECOVERY));
-    dispatch(openWizard(CLEANUP_TEST_RECOVERY_WIZARDS.options, CLEANUP_TEST_RECOVERY_WIZARDS.steps));
-  };
-}
 export function openTestRecoveryWizard() {
   return (dispatch, getState) => {
     const { drPlans } = getState();

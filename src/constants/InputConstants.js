@@ -368,6 +368,6 @@ export const RECOVERY_STEPS = {
 
 export const CHANGE_ROUTE = 'CHANGE_ROUTE';
 export const CLEANUP_DR = {
-  TEST_RECOVERIES: 'TEST_RECOVERIES',
-  DR_COPIES: 'DR_COPIES',
+  TEST_RECOVERIES: 'testrecovery',
+  DR_COPIES: 'recovery',
 };

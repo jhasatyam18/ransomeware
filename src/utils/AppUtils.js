@@ -527,3 +527,52 @@ export const arraysAreNotEqual = (currArray, prevArray) => {
   }
   return true;
 };
+
+export function filterNestedCleanupData(data, criteria, columns) {
+  const response = [];
+  if (!data) {
+    return response;
+  }
+  data.forEach((row) => {
+    const d = searchOnNestedColumn(row, columns, criteria);
+    if (d !== null) {
+      response.push(d);
+    }
+  });
+  return response;
+}
+
+function searchOnNestedColumn(row, columns, value) {
+  let hasMatch = false;
+  // match parent
+  for (let index = 0; index < columns.length; index += 1) {
+    const colVal = `${getValueByKey(row, columns[index].field)}`;
+    if (colVal.toLowerCase().indexOf(value.toLowerCase()) !== -1) {
+      hasMatch = true;
+      break;
+    }
+  }
+  if (hasMatch) {
+    return row;
+  }
+  hasMatch = false;
+  // check for the child rows
+  const parent = { ...row, resources: [] };
+  for (let childIndex = 0; childIndex < row.resources.length; childIndex += 1) {
+    for (let index = 0; index < columns.length; index += 1) {
+      const { childKey } = columns[index];
+      let colVal = `${getValueByKey(row.resources[childIndex], columns[index].field)}`;
+      if (childKey) {
+        colVal = `${getValueByKey(row.resources[childIndex], columns[index].childKey)}`;
+      }
+      if (colVal.toLowerCase().indexOf(value.toLowerCase()) !== -1) {
+        hasMatch = true;
+        parent.resources.push(row.resources[childIndex]);
+      }
+    }
+  }
+  if (hasMatch) {
+    return parent;
+  }
+  return null;
+}

@@ -71,7 +71,7 @@ class ConfirmationModal extends Component {
               {!component ? (
                 <>
                   <div className="col-sm-1 confirmation-icon">
-                    <i className="fas fa-exclamation-triangle" />
+                    <i className="fas fa-exclamation-triangle text-warning" />
                   </div>
                   <div className="col-sm-9 confirmation_modal_msg">
                     {message}

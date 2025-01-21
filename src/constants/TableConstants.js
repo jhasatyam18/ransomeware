@@ -499,8 +499,8 @@ export const ALERT_FILTERS = [
 ];
 
 export const TABLE_CLEANUP_DR_COPIES = [
-  { label: 'workload.name', field: 'workloadName', isParentRow: true },
-  { label: 'resources.for.deletion', field: 'resourcesForDeletion' },
-  { label: 'created.at', field: 'createdAt' },
+  { label: 'workload.name', field: 'workloadName' },
+  { label: 'resources.for.deletion', field: 'resourceName' },
+  { label: 'created.at', field: 'createdAt', itemRenderer: DATE_ITEM_RENDERER },
   { label: 'description', field: 'description' },
 ];

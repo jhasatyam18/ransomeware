@@ -1,8 +1,8 @@
 import * as Types from '../../constants/actionTypes';
 
-export function addMessage(message, msgType, isSticky = false) {
+export function addMessage(message, msgType, isSticky = false, data = null) {
   return {
-    type: Types.ADD_MESSAGE, msgType, message, isSticky,
+    type: Types.ADD_MESSAGE, msgType, message, isSticky, data,
   };
 }
 

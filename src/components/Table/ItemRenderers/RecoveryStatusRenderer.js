@@ -166,7 +166,7 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
                 {renderShowProgress()}
               </Col>
               <Col sm={3}>
-                <i title="View Recovery Configuration" className="fas fa-info-circle info__icon test_summary_icon" aria-hidden="true" onClick={onClick} style={{ height: 20, cursor: 'pointer' }} />
+                { (data.recoveryType && data.recoveryType.indexOf('cleanup') === -1) ? <i title="View Recovery Configuration" className="fas fa-info-circle info__icon test_summary_icon" aria-hidden="true" onClick={onClick} style={{ height: 20, cursor: 'pointer' }} /> : null }
               </Col>
               {((data.status === RECOVERY_STATUS.FAILED || detailedStepError) && data.guestOS === RECOVERY_GUEST_OS.WINDOWS) ? (
                 <Col sm={3} className="padding-left-5" title="Troubleshooting Steps">

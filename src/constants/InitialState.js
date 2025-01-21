@@ -30,7 +30,7 @@ const INITIAL_STATE = {
     drPlanDetailActiveTab: '1',
   },
   sites: { sites: [], selectedSites: [] },
-  drPlans: { plans: [], selectedPlans: [], recoveryPlan: {}, allVmRecovered: false, cleanup: { selectedResources: {}, data: [] } },
+  drPlans: { plans: [], selectedPlans: [], recoveryPlan: {}, allVmRecovered: false, cleanup: { selectedResources: {}, data: [], fullData: [] } },
   drPlaybooks: { templates: [], selectedPlaybook: {}, playbook: {} },
   modal: [],
   wizard: { steps: [], show: false, options: { title: '' } },

@@ -727,3 +727,25 @@ export function addDeletedVmInRecoveryEntity(payloadInstancedetails, values) {
     });
   }
 }
+
+export function getCleanupResourcesPayload(cleanup) {
+  const { data, selectedResources } = cleanup;
+  // return { data, selectedResources };
+  const payload = [];
+  let deletedCount = 0;
+  data.forEach((d) => {
+    const obj = { ...d, associatedResources: [], resources: [] };
+    // if workload is selected or its child is selected then need to add it
+    d.resources.forEach((r) => {
+      if (selectedResources[r.resourceID]) {
+        obj.associatedResources.push(r);
+        deletedCount += 1;
+      }
+    });
+    if (obj.associatedResources.length > 0) {
+      payload.push(obj);
+    }
+  });
+  payload.deletedCount = deletedCount;
+  return payload;
+}
