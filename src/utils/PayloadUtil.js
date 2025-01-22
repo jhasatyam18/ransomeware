@@ -715,13 +715,12 @@ export function addDeletedVmInRecoveryEntity(payloadInstancedetails, values) {
     const { recoveryEntities } = selectedPlan;
     const { instanceDetails } = recoveryEntities;
     const deleteEntity = getValue('drplan.remove.entity', values) || false;
-    const deleteCheckpoint = getValue('drplan.remove.checkpoint', values) || false;
     instanceDetails.forEach((ins) => {
       const { sourceMoref } = ins;
       if (Object.keys(deletedvms).indexOf(sourceMoref) !== -1) {
         const obj = JSON.parse(JSON.stringify(ins));
         obj.deleteInstance = deleteEntity;
-        obj.deleteCheckpoint = deleteCheckpoint;
+        obj.deleteCheckpoint = deleteEntity;
         payloadInstancedetails.push(obj);
       }
     });

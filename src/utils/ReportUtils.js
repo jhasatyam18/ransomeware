@@ -541,6 +541,13 @@ export function getNodePlatformType(data, user) {
   return dataToShow;
 }
 
+function getRecoveryType(value) {
+  if (!value) {
+    return '-';
+  }
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
 function convertValueAccordingToType(value, type, data = {}, user) {
   switch (type) {
     case REPORT_DURATION.SIZE:
@@ -579,6 +586,8 @@ function convertValueAccordingToType(value, type, data = {}, user) {
       return getReportVMSIteration(data, value);
     case REPORT_DURATION.REPORT_VMS_SIZE:
       return getReportVMSSizes(data, value);
+    case REPORT_DURATION.REPORT_RECOVERY_TYPE:
+      return getRecoveryType(value);
     default:
       return value;
   }

@@ -1,3 +1,4 @@
+import i18n from 'i18next';
 import * as Types from '../../constants/actionTypes';
 import { API_BULK_GENERATE, API_GET_BULK_PLANS, API_GET_CONFIG_TEMPLATE_BY_ID, API_GET_PLAN_DIFF, API_UPDATE_ISPLAYBOOK_DOWNLOAD_STATUS, API_UPLOAD_TEMPLATED, API_VALIDATE_TEMPLATE, CREATE_PLAN_FROM_PLAYBOOK } from '../../constants/ApiConstants';
 import { PLAYBOOK_IN_VALIDATED } from '../../constants/AppStatus';
@@ -11,7 +12,7 @@ import { getValue } from '../../utils/InputUtils';
 import { checkPlanConfigurationChanges, checkVmRecoveryConfigurationChanges, validateField } from '../../utils/validationUtils';
 import { addMessage } from './MessageActions';
 import { closeModal, openModal } from './ModalActions';
-import { hideApplicationLoader, refresh, showApplicationLoader, valueChange } from './UserActions';
+import { hideApplicationLoader, refresh, refreshApplication, showApplicationLoader, valueChange } from './UserActions';
 
 /**
  *
@@ -132,7 +133,9 @@ export function fetchPlaybookById(id) {
 }
 
 export function deletePlaybook(id, history) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    const { drPlaybooks } = getState();
+    const { selectedPlaybook } = drPlaybooks;
     const bulkConfigByIdURL = API_GET_CONFIG_TEMPLATE_BY_ID.replace('<id>', id);
     const obj = createPayload(API_TYPES.DELETE, {});
     dispatch(showApplicationLoader('Fetching', 'Deleting playbooks...'));
@@ -143,6 +146,12 @@ export function deletePlaybook(id, history) {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
           dispatch(closeModal());
+          if (selectedPlaybook[id]) {
+            delete selectedPlaybook[id];
+          }
+          dispatch(setSelectedPlaybook(selectedPlaybook));
+          dispatch(addMessage(i18n.t('playbook.delete.msg'), MESSAGE_TYPES.SUCCESS));
+          dispatch(refreshApplication());
           if (typeof history !== 'undefined') {
             history.push(PLAYBOOK_LIST);
           }
@@ -266,7 +275,6 @@ export function onMultiplePlaybookDelete() {
     ids.forEach((id) => {
       calls.push(dispatch(deletePlaybook(id)));
     });
-    dispatch(setSelectedPlaybook([]));
   };
 }
 
