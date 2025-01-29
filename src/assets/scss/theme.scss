@@ -761,3 +761,11 @@ span.flatpickr-weekday {
     font-size: 0.7rem;
   }
 }
+
+.text-wrapper {
+  width: 150px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  padding: 5px;
+}

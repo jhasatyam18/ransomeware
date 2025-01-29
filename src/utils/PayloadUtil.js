@@ -736,8 +736,15 @@ export function getCleanupResourcesPayload(cleanup) {
     const obj = { ...d, associatedResources: [], resources: [] };
     // if workload is selected or its child is selected then need to add it
     d.resources.forEach((r) => {
+      const resource = { ...r };
       if (selectedResources[r.resourceID]) {
-        obj.associatedResources.push(r);
+        if (r.resourceType === 'volume') {
+          const parts = r.resourceID.split('^');
+          if (parts.length >= 2) {
+            [, resource.resourceID] = parts;
+          }
+        }
+        obj.associatedResources.push(resource);
         deletedCount += 1;
       }
     });

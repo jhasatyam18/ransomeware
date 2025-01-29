@@ -74,6 +74,7 @@ export const CLEANUP_SUMMARY_ROW_RENDERER = 'CLEANUP_SUMMARY_ROW_RENDERER';
 export const REPORT_AVG_RPO_RENDERER = 'REPORT_AVG_RPO_RENDERER';
 export const REPORT_VMS_ITERATION = 'REPORT_VMS_ITERATION';
 export const REPORT_DATA_REDUCTION_RATIO = 'REPORT_DATA_REDUCTION_RATIO';
+export const WRAP_TEXT_ITEM_RENDERER = 'WRAP_TEXT_ITEM_RENDERER';
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
@@ -208,10 +209,10 @@ export const TABLE_PROTECTION_PLAN_RECOVERY = [
 // Table fields for EVENTS
 export const TABLE_EVENTS = [
   { label: 'Date', field: 'timeStamp', itemRenderer: DATE_ITEM_RENDERER, width: 2 },
-  { label: 'Topic', field: 'topic', width: 2, allowFilter: true, checked: true },
-  { label: 'Level', field: 'severity', itemRenderer: EVENT_LEVEL_ITEM_RENDERER, width: 1, allowFilter: true, checked: true },
-  { label: 'Event Type', field: 'type', width: 1, allowFilter: true, checked: true },
-  { label: 'Description', field: 'description', itemRenderer: EVENT_DESCRIPTION_RENDERER, width: 3, allowFilter: true, checked: true },
+  { label: 'Topic', field: 'topic', allowFilter: true, checked: true, width: 1 },
+  { label: 'Level', field: 'severity', itemRenderer: EVENT_LEVEL_ITEM_RENDERER, allowFilter: true, checked: true, width: 1 },
+  { label: 'Event Type', field: 'type', allowFilter: true, checked: true, width: 1, itemRenderer: WRAP_TEXT_ITEM_RENDERER },
+  { label: 'Description', field: 'description', itemRenderer: EVENT_DESCRIPTION_RENDERER, allowFilter: true, checked: true, width: 3 },
   { label: 'User', field: 'generator', allowFilter: true, checked: true, width: 1 },
 ];
 
@@ -499,8 +500,8 @@ export const ALERT_FILTERS = [
 ];
 
 export const TABLE_CLEANUP_DR_COPIES = [
-  { label: 'workload.name', field: 'workloadName' },
-  { label: 'resources.for.deletion', field: 'resourceName' },
-  { label: 'created.at', field: 'createdAt', itemRenderer: DATE_ITEM_RENDERER },
-  { label: 'description', field: 'description' },
+  { label: 'workload.name', field: 'workloadName', width: 2 },
+  { label: 'resources.for.deletion', field: 'resourceName', width: 2 },
+  { label: 'created.at', field: 'createdAt', itemRenderer: DATE_ITEM_RENDERER, width: 2 },
+  { label: 'description', field: 'description', width: 4 },
 ];

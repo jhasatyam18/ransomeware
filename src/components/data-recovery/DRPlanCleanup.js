@@ -33,15 +33,21 @@ function DRPlanCleanup({ drPlans, t, dispatch, user }) {
   const planName = protectionPlan ? protectionPlan.name : '';
 
   useEffect(() => {
-    const selectedOption = getValue('ui.cleanup.type.value', values);
+    let selectedOption = getValue('ui.cleanup.type.value', values);
     if (!selectedOption) {
       dispatch(valueChange('ui.cleanup.type.value', CLEANUP_DR.TEST_RECOVERIES));
       setCleanupOptionType(CLEANUP_DR.TEST_RECOVERIES);
+      selectedOption = CLEANUP_DR.TEST_RECOVERIES;
+    } else {
+      setCleanupOptionType(selectedOption);
     }
-    dispatch(fetchCleanupResources(CLEANUP_DR.TEST_RECOVERIES, id));
+    dispatch(fetchCleanupResources(selectedOption, id));
     if (!protectionPlan) {
       dispatch(fetchDRPlanById(id));
     }
+    return () => {
+      dispatch(valueChange('ui.cleanup.type.value', selectedOption));
+    };
   }, [refresh]);
 
   const onFilter = (c) => {
@@ -59,8 +65,7 @@ function DRPlanCleanup({ drPlans, t, dispatch, user }) {
 
   const onCleanAction = () => {
     const payload = getCleanupResourcesPayload(cleanup);
-    const ty = cleanupOptionType === CLEANUP_DR.TEST_RECOVERIES ? t('test.recovered') : '';
-    const title = formatLocalString(t('clean.delete.warning'), payload.deletedCount, ty);
+    const title = formatLocalString(t('clean.delete.warning'), payload.deletedCount);
     const options = { title: 'Alert', confirmAction: cleanupResources, message: title, id };
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   };
