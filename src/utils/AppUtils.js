@@ -567,7 +567,15 @@ function searchOnNestedColumn(row, columns, value) {
       }
       if (colVal.toLowerCase().indexOf(value.toLowerCase()) !== -1) {
         hasMatch = true;
-        parent.resources.push(row.resources[childIndex]);
+        let pushChild = true;
+        parent.resources.forEach((r) => {
+          if (row.resources[childIndex].resourceID === r.resourceID) {
+            pushChild = false;
+          }
+        });
+        if (pushChild) {
+          parent.resources.push(row.resources[childIndex]);
+        }
       }
     }
   }

@@ -73,7 +73,7 @@ class ConfirmationModal extends Component {
                   <div className="col-sm-1 confirmation-icon">
                     <i className="fas fa-exclamation-triangle text-warning" />
                   </div>
-                  <div className="col-sm-9 confirmation_modal_msg">
+                  <div className="col-sm-10 confirmation_modal_msg">
                     {message}
                     {this.modalItemRenderer()}
                   </div>

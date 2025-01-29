@@ -131,10 +131,12 @@ const DMCollapsibleRow = (props) => {
             className={`itemRendererContainer ${tableHeader.customCSS || ''}`}
           >
             <Row>
-              <Col sm={1}>
-                {columnIndex === 1 ? renderChildCheckBox(resource) : null}
-              </Col>
-              <Col sm={10}>
+              {columnIndex === 1 ? (
+                <Col sm={1}>
+                  {renderChildCheckBox(resource)}
+                </Col>
+              ) : null}
+              <Col sm={columnIndex === 1 ? 10 : 12}>
                 {renderCellContent(tableHeader, resource)}
               </Col>
             </Row>

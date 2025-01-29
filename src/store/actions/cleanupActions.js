@@ -8,7 +8,8 @@ import { getValue } from '../../utils/InputUtils';
 import { getCleanupResourcesPayload } from '../../utils/PayloadUtil';
 import { closeModal } from './ModalActions';
 import { TABLE_CLEANUP_DR_COPIES } from '../../constants/TableConstants';
-import { filterNestedCleanupData } from '../../utils/AppUtils';
+import { filterNestedCleanupData, getStorageWithUnit } from '../../utils/AppUtils';
+import { CLEANUP_DR } from '../../constants/InputConstants';
 
 // Store functions
 export function updateSelectedCleanupResources(selectedCleanupSources) {
@@ -155,13 +156,36 @@ export function fetchCleanupResources(type, id) {
         if (json && json.length > 0) {
           json.forEach((o) => {
             const { workloadName, workloadID, description } = o;
-            const resFDeletion = `Test Drill Instances - ${o.associatedResources.length}`;
+            let resFDeletion = '';
+            if (o.associatedResources && o.associatedResources.length > 0) {
+              // resource type
+              const resType = o.associatedResources[0].resourceType;
+              switch (resType) {
+                case 'volume':
+                  let size = 0;
+                  o.associatedResources.forEach((r) => {
+                    size += r.size;
+                  });
+                  resFDeletion = `Volumes - ${o.associatedResources.length} [${getStorageWithUnit(size)}]`;
+                  break;
+                case 'instance':
+                  if (type === CLEANUP_DR.TEST_RECOVERIES) {
+                    resFDeletion = `Test Drill Instances - ${o.associatedResources.length}`;
+                  } else {
+                    resFDeletion = `Instances - ${o.associatedResources.length}`;
+                  }
+                  break;
+                default:
+                  resFDeletion = `Resources - ${o.associatedResources.length}`;
+              }
+            }
             const resources = [];
             if (o.associatedResources && o.associatedResources.length > 0) {
               o.associatedResources.forEach((r) => {
                 const childObj = { ...r, description: `${r.resourceType} - ${r.resourceID}`, isDisabled: false };
-                if (r.status !== '') {
+                if (r.status !== '' || r.resourceType === 'volume') {
                   childObj.description = r.status;
+                  childObj.resourceID = `${o.workloadID}^${r.resourceID}`;
                   childObj.isDisabled = true;
                 }
                 resources.push(childObj);

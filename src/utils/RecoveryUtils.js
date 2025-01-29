@@ -244,7 +244,7 @@ function getNetworkConfig({ sourceConfig, user, workFlow }) {
   } else {
     workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
   }
-  const { networks, availZone } = sourceConfig;
+  const { networks = [], availZone } = sourceConfig;
   const netWorkKeys = [];
   networks.forEach((nw, index) => {
     const { vpcId = '', Subnet = '', isPublicIP = '', networkTier = '', privateIP, isFromSource, securityGroups, adapterType, networkMoref, macAddress = '', netmask = '', gateway = '', dns = '' } = nw;
