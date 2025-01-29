@@ -81,7 +81,7 @@ export function reportFetchPlans(id, criteria) {
       return;
     }
     const { startDate, endDate } = criteria;
-    const url = (`${API_FETCH_DR_PLANS}?protectionplanid=${id}&planstats=true&starttime=${startDate}&endtime=${endDate}`);
+    const url = (`${API_FETCH_DR_PLANS}?${id !== STATIC_KEYS.REPORT_LABEL_ALL ? `protectionplanid=${id}&` : ''}planstats=true&starttime=${startDate}&endtime=${endDate}`);
     callAPI(url)
       .then((json) => {
         if (json.hasError) {
@@ -152,7 +152,7 @@ export function reportFetchReplicationJobs(id, data = [], offset = 0, criteria =
     const { values } = user;
     const replFilterOption = getValue('report.protectionPlan.replJobOption', values);
     const { startDate, endDate } = criteria;
-    const url = (`${API_REPLICATION_VM_JOBS}?protectionplanid=${id}&limit=${limit || API_MAX_RECORD_LIMIT}&offset=${offset}&starttime=${startDate}&endtime=${endDate}${replFilterOption && replFilterOption !== 'all' ? `&searchstr=${replFilterOption}` : ''}&searchcol=syncStatus`);
+    const url = (`${API_REPLICATION_VM_JOBS}?${id !== STATIC_KEYS.REPORT_LABEL_ALL ? `protectionplanid=${id}&` : ''}limit=${limit || API_MAX_RECORD_LIMIT}&offset=${offset}&starttime=${startDate}&endtime=${endDate}${replFilterOption && replFilterOption !== 'all' ? `&searchstr=${replFilterOption}` : ''}&searchcol=syncStatus`);
     dispatch(showApplicationLoader('replication_report', 'generating replications'));
     callAPI(url)
       .then((json) => {
@@ -180,7 +180,7 @@ export function reportFetchRecoveryJobs(id, data = [], offset = 0, criteria = {}
     const { values } = user;
     const recFilterOption = getValue('report.protectionPlan.recoveryJobOption', values);
     const { startDate, endDate } = criteria;
-    const url = (`${API_RECOVERY_JOBS}?protectionplanid=${id}&limit=${API_MAX_RECORD_LIMIT}&offset=${offset}&starttime=${startDate}&endtime=${endDate}${recFilterOption && recFilterOption !== 'all' ? `&recoverytype=${recFilterOption}` : ''}`);
+    const url = (`${API_RECOVERY_JOBS}?${id !== STATIC_KEYS.REPORT_LABEL_ALL ? `protectionplanid=${id}&` : ''}limit=${API_MAX_RECORD_LIMIT}&offset=${offset}&starttime=${startDate}&endtime=${endDate}${recFilterOption && recFilterOption !== 'all' ? `&recoverytype=${recFilterOption}` : ''}`);
     callAPI(url)
       .then((json) => {
         if (json.hasNext === true) {
@@ -420,7 +420,7 @@ export function reportFetchCheckpoints(id, data = [], offset = 0, criteria = {},
   return (dispatch) => {
     const { startDate, endDate } = criteria;
     const apiQuery = `limit=${limit || API_MAX_RECORD_LIMIT}&offset=${offset}&starttime=${startDate}&endtime=${endDate}`;
-    const url = isPlanSpecificData(id) ? `${API_UPDAT_RECOVERY_CHECKPOINT_BY_ID}?planID=${id}&${apiQuery}` : `${API_UPDAT_RECOVERY_CHECKPOINT_BY_ID}?${apiQuery}`;
+    const url = isPlanSpecificData(id) ? `${API_UPDAT_RECOVERY_CHECKPOINT_BY_ID}?${id !== STATIC_KEYS.REPORT_LABEL_ALL ? `planID=${id}&` : ''}${apiQuery}` : `${API_UPDAT_RECOVERY_CHECKPOINT_BY_ID}?${apiQuery}`;
     dispatch(showApplicationLoader('report_checkpoints', 'generating checkpoints'));
     callAPI(url)
       .then((json) => {

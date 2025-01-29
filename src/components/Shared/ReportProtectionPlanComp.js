@@ -46,7 +46,12 @@ function ReportProtectionPlanComp(props) {
     }
     dispatch(valueChange(`${fieldKey}-reportfilter-selected-option`, updatedOptions));
     const isAllSelected = updatedOptions?.some((opt) => opt.value === STATIC_KEYS.ALL);
-    const dispatchValue = isAllSelected ? optionsArr.map((opt) => opt.value).filter((value) => value !== STATIC_KEYS.ALL).join(',') : updatedOptions.map((opt) => opt.value).join(',');
+    let dispatchValue;
+    if (fieldKey === STATIC_KEYS.REPORT_PROTECTION_PLAN) {
+      dispatchValue = isAllSelected ? STATIC_KEYS.REPORT_LABEL_ALL : updatedOptions.map((opt) => opt.value).join(',');
+    } else {
+      dispatchValue = isAllSelected ? optionsArr.map((opt) => opt.value).filter((value) => value !== STATIC_KEYS.ALL).join(',') : updatedOptions.map((opt) => opt.value).join(',');
+    }
     dispatch(valueChange(fieldKey, dispatchValue));
   };
 
