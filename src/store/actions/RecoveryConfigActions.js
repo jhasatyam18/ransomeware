@@ -225,8 +225,8 @@ function setNetworkConfig(sourceConfig, targetVM, user, dispatch) {
     if (nics && nics.length > 0) {
       for (let index = 0; index < networks.length; index += 1) {
         if (typeof networks[index] !== 'undefined' && networks[index]) {
-          const { vpcId = '', Subnet = '', networkTier = '', isFromSource, securityGroups, adapterType, networkMoref, networkPlatformID, macAddress } = networks[index];
-          let { subnet, network, publicIP, isPublicIP = '', dns = '', netmask = '', gateway = '', privateIP = '' } = networks[index];
+          const { vpcId = '', Subnet = '', networkTier = '', isFromSource, securityGroups, adapterType, networkMoref, networkPlatformID } = networks[index];
+          let { subnet, network, publicIP, isPublicIP = '', dns = '', netmask = '', gateway = '', privateIP = '', macAddress = '' } = networks[index];
           let sgs = (securityGroups ? securityGroups.split(',') : []);
           if (typeof subnet === 'undefined' || subnet === '' && Subnet !== '') {
             subnet = Subnet;
@@ -242,21 +242,33 @@ function setNetworkConfig(sourceConfig, targetVM, user, dispatch) {
               dns = '';
               netmask = '';
               gateway = '';
+              macAddress = '';
             }
           } else if (recoveryPlatform === PLATFORM_TYPES.Azure) {
             const { publicIp } = setPublicIPWhileEdit(isPublicIP, publicIP, networkKey, index, dispatch);
             network = getNetworkIDFromName(network, values);
             subnet = getSubnetIDFromName(subnet, values, network);
-            if (publicIp === 'true' || publicIp === 'false' || publicIP !== '') {
-              publicIP = publicIp;
-            } else {
-              publicIP = 'false';
+            if (workflow === UI_WORKFLOW.CREATE_PLAN) {
+              if (publicIp === 'true' || publicIp === 'false') {
+                publicIP = publicIp;
+              } else {
+                publicIP = '';
+              }
+            } else if (workflow !== UI_WORKFLOW.CREATE_PLAN) {
+              if (publicIp === 'true' || publicIp === 'false' || publicIP !== '') {
+                publicIP = publicIp;
+              } else {
+                publicIP = 'false';
+              }
             }
 
             if (typeof securityGroups !== 'undefined' && securityGroups !== '') {
               const label = getLabelWithResourceGrp(securityGroups);
               sgs = { label, value: securityGroups };
             }
+          } else if (recoveryPlatform === PLATFORM_TYPES.AWS && workflow === UI_WORKFLOW.CREATE_PLAN) {
+            // Made elastic IP empty in case of AWS while creating plan
+            network = '';
           }
           const nwCon = setNetworkConfigValues({ key, index, vpcId, subnet, availZone, isPublicIP, publicIP, network, networkTier, isFromSource, sgs, adapterType, networkMoref, dns, netmask, gateway, privateIP, macAddress, values });
 
@@ -461,6 +473,7 @@ const resetNetworkConfigValues = ({ key, index }) => {
     [`${key}-eth-${index}-dnsserver`]: '',
     [`${key}-eth-${index}-gateway`]: '',
     [`${key}-eth-${index}-netmask`]: '',
+    [`${key}-eth-${index}-privateIP`]: '',
   };
   return nwCon;
 };
