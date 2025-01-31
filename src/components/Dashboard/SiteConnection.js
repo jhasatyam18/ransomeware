@@ -72,7 +72,6 @@ function SiteConnection(props) {
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
             fitView
-            nodesDraggable={false}
             proOptions={proOptions}
           >
             <Controls className="react-flow__controls-custom" />
