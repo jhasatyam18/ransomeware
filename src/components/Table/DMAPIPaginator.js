@@ -7,16 +7,17 @@ import { Button, ButtonGroup, CardTitle, Col, Dropdown, DropdownItem, DropdownMe
 import { MILI_SECONDS_TIME } from '../../constants/EventConstant';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { API_LIMIT_HUNDRED } from '../../constants/UserConstant';
-import { hideApplicationLoader, showApplicationLoader } from '../../store/actions';
+import { hideApplicationLoader, showApplicationLoader, valueChange } from '../../store/actions';
 import { addMessage } from '../../store/actions/MessageActions';
 import { callAPI, removeSimilarQuery } from '../../utils/ApiUtils';
+import { getValue } from '../../utils/InputUtils';
 
 function DMAPIPaginator(props) {
   const { pageLimit = API_LIMIT_HUNDRED, fetchInInterval = undefined, subFilter = [], subFilterTitle = '' } = props;
   const emptyPageInfo = { limit: pageLimit, currentPage: 0, hasNext: false, hasPrev: false, nextOffset: 0, pageRecords: 0, totalPages: 0, totalRecords: 0 };
-  const [pageInfo, setPageInfo] = useState(emptyPageInfo);
-  const [currentP, setCurrentPage] = useState(emptyPageInfo.currentPage);
-  const { apiUrl, storeFn, dispatch, columns, t, isParameterizedUrl, name } = props;
+  const { apiUrl, storeFn, dispatch, columns, t, isParameterizedUrl, name, user } = props;
+  const { values } = user;
+  const metadata = getValue(`${name}.dmapipaginator.metadata`, values) || {};
   const [isOpenFilterCol, toggleFilterCol] = useState(false);
   const [filterColumns, setFilterColumns] = useState([]);
   const [forceUpdate, setForceUpdate] = useState(1);
@@ -25,7 +26,7 @@ function DMAPIPaginator(props) {
   const refresh = useSelector((state) => state.user.context.refresh);
   const timerRef = useRef(null);
   const searchStrRef = useRef(searchStr);
-  const pageNummRef = useRef(currentP);
+  const pageNummRef = useRef(Object.keys(metadata).length > 0 ? metadata.currentPage : 1);
 
   const getBaseURL = () => {
     if (isParameterizedUrl === 'true') {
@@ -37,9 +38,9 @@ function DMAPIPaginator(props) {
   const getUrl = (offset) => {
     let url = getBaseURL();
     if (offset === 0) {
-      url = `${url}limit=${pageInfo.limit}`;
+      url = `${url}limit=${Object.keys(metadata).length > 0 ? metadata.limit : pageLimit}`;
     } else {
-      url = `${url}offset=${offset}&limit=${pageInfo.limit}`;
+      url = `${url}offset=${offset}&limit=${Object.keys(metadata).length > 0 ? metadata.limit : pageLimit}`;
     }
     if (searchStr !== '') {
       // include encoded search value and field in the API
@@ -76,7 +77,7 @@ function DMAPIPaginator(props) {
     callAPI(url).then((json) => {
       dispatch(hideApplicationLoader(url));
       const { records, ...others } = json;
-      setPageInfo({ ...others, limit: pageLimit || API_LIMIT_HUNDRED });
+      dispatch(valueChange(`${name}.dmapipaginator.metadata`, { ...others, limit: pageLimit || API_LIMIT_HUNDRED }));
       dispatch(storeFn(records));
       return json;
     },
@@ -90,8 +91,8 @@ function DMAPIPaginator(props) {
   useEffect(() => {
     let isUnmounting = false;
     if (!isUnmounting) {
-      fetchData(0);
-      setCurrentPage(1);
+      const pagec = Object.keys(metadata).length > 0 ? metadata.currentPage : 0;
+      dispatch(valueChange(`${name}.dmapipaginator.metadata`, { ...metadata, currentPage: Object.keys(metadata).length > 0 ? metadata.currentPage : 1 }));
       const cols = Array.from(columns);
       const arr = [...cols.filter((c) => c.allowFilter), ...subFilter];
       setFilterColumns(arr);
@@ -100,6 +101,7 @@ function DMAPIPaginator(props) {
         addSubFilterQuery(f);
       },
       );
+      fetchData(pagec > 0 ? (pagec - 1) * API_LIMIT_HUNDRED : pagec * API_LIMIT_HUNDRED);
     }
     return () => {
       isUnmounting = true;
@@ -113,39 +115,53 @@ function DMAPIPaginator(props) {
 
   useEffect(() => {
     searchStrRef.current = searchStr;
-    pageNummRef.current = currentP;
-  }, [searchStr, currentP]);
+    pageNummRef.current = Object.keys(metadata).length > 0 ? metadata.currentPage : 1;
+  }, [searchStr, metadata]);
 
   const onNext = () => {
-    const { nextOffset } = pageInfo;
+    const { nextOffset = 0 } = metadata;
     fetchData(nextOffset, true);
-    setCurrentPage((currentP + 1));
+    dispatch(valueChange(`${name}.dmapipaginator.metadata`, { ...metadata, currentPage: metadata.currentPage + 1 }));
   };
 
   const onBack = () => {
-    const { currentPage, limit } = pageInfo;
+    const { currentPage = 0, limit = pageLimit } = metadata;
     fetchData((currentPage * limit) - (limit * 2), true);
-    setCurrentPage(currentP - 1);
+    dispatch(valueChange(`${name}.dmapipaginator.metadata`, { ...metadata, currentPage: metadata.currentPage - 1 }));
   };
 
   const onSearch = () => {
-    setPageInfo(emptyPageInfo);
-    if (currentP === '') {
+    dispatch(valueChange(`${name}.dmapipaginator.metadata`, emptyPageInfo));
+    if (Object.keys(metadata).length === 0) {
       fetchData(0);
-      setCurrentPage(1);
+      dispatch(valueChange(`${name}.dmapipaginator.metadata`, { ...metadata, currentPage: 1 }));
     } else {
-      fetchData((currentP - 1) * API_LIMIT_HUNDRED);
+      fetchData(0);
+    }
+  };
+
+  const onPageJump = () => {
+    if (metadata.currentPage) {
+      fetchData((metadata.currentPage - 1) * API_LIMIT_HUNDRED);
+    } else {
+      fetchData(0);
     }
   };
 
   const applyFilter = () => {
     toggleFilterCol(false);
+    dispatch(valueChange(`${name}.dmapipaginator.metadata`, { ...metadata, currentPage: 1 }));
     fetchData(0);
   };
 
   const onKeyPress = (e) => {
     if (e.key === 'Enter') {
       onSearch();
+    }
+  };
+  const onKeyPressPageJump = (e) => {
+    if (e.key === 'Enter') {
+      onPageJump();
     }
   };
 
@@ -162,17 +178,17 @@ function DMAPIPaginator(props) {
   }
 
   const setCurrentPageValue = (e) => {
-    const { totalPages } = pageInfo;
+    const { totalPages = 0 } = metadata;
     const numStr = ' 0123456789';
     const valueStr = e.target.value[e.target.value.length - 1] || '';
     const valInNum = parseInt(e.target.value, 10) || '';
     if (numStr.indexOf(valueStr) !== -1) {
       if (valInNum < 0) {
-        setCurrentPage(1);
+        dispatch(valueChange(`${name}.dmapipaginator.metadata`, { ...metadata, currentPage: 1 }));
       } else if (valInNum > totalPages) {
-        setCurrentPage(totalPages);
+        dispatch(valueChange(`${name}.dmapipaginator.metadata`, { ...metadata, currentPage: totalPages }));
       } else {
-        setCurrentPage(valInNum);
+        dispatch(valueChange(`${name}.dmapipaginator.metadata`, { ...metadata, currentPage: valInNum }));
       }
     }
   };
@@ -196,9 +212,13 @@ function DMAPIPaginator(props) {
   };
 
   function addSubFilterQuery(obj) {
-    if (obj && obj.checked) {
+    let isAvailable = false;
+    if (Object.keys(apiQuery).length !== 0 && (apiQuery[obj.query] && apiQuery[obj.query].includes(obj.value))) {
+      isAvailable = true;
+    }
+    if (obj && obj.checked && !isAvailable) {
       setApiQuery({ ...apiQuery, [obj.query]: [...(apiQuery[obj.query] || []), obj.value] });
-    } else if (apiQuery[obj.query]) {
+    } else if (!obj.checked && apiQuery[obj.query]) {
       const apiQ = apiQuery[obj.query];
       const ind = apiQ.indexOf(obj.value);
       if (ind !== -1) {
@@ -288,7 +308,7 @@ function DMAPIPaginator(props) {
 
   const renderData = () => {
     const { showFilter } = props;
-    const { hasNext, hasPrev, totalPages } = pageInfo;
+    const { hasNext = false, hasPrev = false, totalPages = 0 } = metadata;
     return (
       <Row>
         {showFilter && showFilter === 'true' ? (
@@ -302,7 +322,7 @@ function DMAPIPaginator(props) {
               <FontAwesomeIcon size="xs" icon={faChevronLeft} className="padding-4" />
             </Button>
             <div className="input-group input_div">
-              <input type="text" className="paginator_input  paginator_input_div  " id="tablecurrentpage" value={currentP} onChange={(e) => setCurrentPageValue(e)} onKeyPress={(e) => onKeyPress(e)} />
+              <input type="text" className="paginator_input  paginator_input_div  " id="tablecurrentpage" value={metadata.currentPage} onChange={(e) => setCurrentPageValue(e)} onKeyPress={(e) => onKeyPressPageJump(e)} />
               <div className="dmaipaginator_totalpage input-group ">
                 <p className="paginator_input totalpag_text ">
                   {`/ ${totalPages}`}
