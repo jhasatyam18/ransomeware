@@ -264,6 +264,7 @@ export function fetchUsers() {
           dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
         } else {
           dispatch(fetchUsersData(json));
+          dispatch(setSelectedUsers([]));
         }
       },
       (err) => {

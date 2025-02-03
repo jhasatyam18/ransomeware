@@ -497,7 +497,15 @@ export function getRecoveryStatusStep(data = {}) {
     const parsedSteps = JSON.parse(step);
     stepsText = parsedSteps.map((s) => {
       const stepName = s.name || '';
-      const stepStatus = s.status === STATIC_KEYS.COMPLETED ? STATIC_KEYS.REC_STEP_PASS : STATIC_KEYS.REC_STEP_FAIL;
+      let stepStatus = s.status === 'failed' ? STATIC_KEYS.REC_STEP_FAIL : 'Running';
+      if (s.status === STATIC_KEYS.COMPLETED) {
+        let subSteps = [];
+        if (s.data && s.data !== '') {
+          subSteps = JSON.parse(s.data); // Parse the substeps
+        }
+        const hasFailedSubstep = subSteps.some((sub) => sub.result !== STATIC_KEYS.REC_STEP_PASS);
+        stepStatus = hasFailedSubstep ? 'Partially-Completed' : STATIC_KEYS.REC_STEP_PASS;
+      }
       const stepTime = s.time * 1000;
       let time = new Date(stepTime);
       time = `${time.toLocaleTimeString()}` || '-';
