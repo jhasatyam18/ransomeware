@@ -275,8 +275,8 @@ class DRPlanDetails extends Component {
       actions.push({ label: 'Edit', action: openEditProtectionPlanWizard, id: protectionPlan, disabled: this.disableEdit(), icon: faEdit });
       actions.push({ label: 'Resync Disk Replication', action: onResetDiskReplicationClick, id: protectionPlan, disabled: isServerActionDisabled, navigate: PROTECTION_PLANS_PATH, icon: faRetweet });
       actions.push({ label: 'Download Plan Playbook', action: playbookExport, id: protectionPlan, disabled: this.disableEdit(), icon: faDownload });
-      actions.push({ label: 'Remove', action: onDeleteProtectionPlanClick, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS || !hasRequestedPrivileges(user, ['protectionplan.delete']), navigate: PROTECTION_PLANS_PATH, icon: faTrash });
       actions.push({ label: 'Cleanup Recoveries', action: 'CHANGE_ROUTE', routePath: `${cleanupPath}`, icon: faBroom, disabled: !hasRequestedPrivileges(user, ['recovery.test']) });
+      actions.push({ label: 'Remove', action: onDeleteProtectionPlanClick, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS || !hasRequestedPrivileges(user, ['protectionplan.delete']), navigate: PROTECTION_PLANS_PATH, icon: faTrash });
     } else if (localVMIP === recoverySite.node.hostname) {
       actions = [{ label: 'recover', action: openRecoveryWizard, icon: faPlus, disabled: !recovered || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED || !hasRequestedPrivileges(user, ['recovery.full']) },
         { label: 'Migrate', action: openMigrationWizard, icon: faClone, disabled: allVmRecovered || !hasRequestedPrivileges(user, ['recovery.migration']) },

@@ -39,6 +39,7 @@ function DRPlanCleanup({ drPlans, t, dispatch, user }) {
       setCleanupOptionType(CLEANUP_DR.TEST_RECOVERIES);
       selectedOption = CLEANUP_DR.TEST_RECOVERIES;
     } else {
+      dispatch(valueChange('ui.cleanup.type.value', selectedOption));
       setCleanupOptionType(selectedOption);
     }
     dispatch(fetchCleanupResources(selectedOption, id));

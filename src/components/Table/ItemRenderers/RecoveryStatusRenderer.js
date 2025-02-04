@@ -13,7 +13,7 @@ import { MODAL_SUMMARY, MODAL_TROUBLESHOOTING_WINDOW } from '../../../constants/
 import { addMessage } from '../../../store/actions/MessageActions';
 import { openModal } from '../../../store/actions/ModalActions';
 import { callAPI } from '../../../utils/ApiUtils';
-import { getRecoveryInfoForVM } from '../../../utils/RecoveryUtils';
+import { getCleanupInfoForVM, getRecoveryInfoForVM } from '../../../utils/RecoveryUtils';
 import StepStatus from '../../Common/StepStatus';
 import StatusItemRenderer from './StatusItemRenderer';
 
@@ -29,8 +29,6 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
     { value: 'copy_net_config', label: 'Network' },
     { value: 'copy_rep_script_config', label: 'Replication Scripts' },
     { value: 'copy_rec_script_config', label: 'Recovery Scripts' }];
-  const configData = getRecoveryInfoForVM({ user, configToCopy: COPY_CONFIG, recoveryConfig: parsedConfiguration, values, workFlow: UI_WORKFLOW.LAST_TEST_RECOVERY_SUMMARY });
-  const options = { title: 'Recovery Configuration', data: configData, css: 'modal-lg', showSummary: true };
   const timerId = useRef();
   const RecoveryStatus = [JOB_COMPLETION_STATUS, JOB_FAILED];
 
@@ -120,6 +118,14 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
   }
 
   const onClick = () => {
+    let options = {};
+    if (data.recoveryType.indexOf('cleanup') !== -1) {
+      const configData = getCleanupInfoForVM(data);
+      options = { title: 'Cleanup Configuration', data: configData, css: 'modal-lg', showSummary: true };
+    } else {
+      const configData = getRecoveryInfoForVM({ user, configToCopy: COPY_CONFIG, recoveryConfig: parsedConfiguration, values, workFlow: UI_WORKFLOW.LAST_TEST_RECOVERY_SUMMARY });
+      options = { title: 'Recovery Configuration', data: configData, css: 'modal-lg', showSummary: true };
+    }
     dispatch(openModal(MODAL_SUMMARY, options));
   };
 
@@ -166,7 +172,7 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
                 {renderShowProgress()}
               </Col>
               <Col sm={3}>
-                { (data.recoveryType && data.recoveryType.indexOf('cleanup') === -1) ? <i title="View Recovery Configuration" className="fas fa-info-circle info__icon test_summary_icon" aria-hidden="true" onClick={onClick} style={{ height: 20, cursor: 'pointer' }} /> : null }
+                <i title="View Configuration" className="fas fa-info-circle info__icon test_summary_icon" aria-hidden="true" onClick={onClick} style={{ height: 20, cursor: 'pointer' }} />
               </Col>
               {((data.status === RECOVERY_STATUS.FAILED || detailedStepError) && data.guestOS === RECOVERY_GUEST_OS.WINDOWS) ? (
                 <Col sm={3} className="padding-left-5" title="Troubleshooting Steps">

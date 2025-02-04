@@ -48,11 +48,17 @@ export function handleSelectAllCleanupResources(isSelected) {
       return;
     }
     data.forEach((w) => {
-      newResources[w[primaryKey]] = w;
+      let isChildAdded = false;
       if (w.resources && w.resources.length > 0) {
         w.resources.forEach((child) => {
-          newResources[child[childKeyName]] = child;
+          if (!child.isDisabled) {
+            newResources[child[childKeyName]] = child;
+            isChildAdded = true;
+          }
         });
+      }
+      if (isChildAdded) {
+        newResources[w[primaryKey]] = w;
       }
     });
     // Update the state with the new resources
@@ -76,7 +82,9 @@ export function handleCleanupTableSelection(rowData, isSelected, primaryKey) {
         // If the row is a parent, add all its children
         if (rowData.resources && rowData.resources.length > 0) {
           rowData.resources.forEach((child) => {
-            newResources[child[childKeyName]] = child;
+            if (!child.isDisabled) {
+              newResources[child[childKeyName]] = child;
+            }
           });
         } else {
           // make parent row selected if any one is selected
@@ -183,10 +191,14 @@ export function fetchCleanupResources(type, id) {
             if (o.associatedResources && o.associatedResources.length > 0) {
               o.associatedResources.forEach((r) => {
                 const childObj = { ...r, description: `${r.resourceType} - ${r.resourceID}`, isDisabled: false };
-                if (r.status !== '' || r.resourceType === 'volume') {
-                  childObj.description = r.status;
-                  childObj.resourceID = `${o.workloadID}^${r.resourceID}`;
+                if (r.status !== '') {
+                  childObj.description = `${r.status}`;
                   childObj.isDisabled = true;
+                }
+                if (r.resourceType === 'volume') {
+                  const size = getStorageWithUnit(r.size);
+                  childObj.resourceName = `${r.resourceName} [${size}]`;
+                  childObj.resourceID = `${o.workloadID}^${r.resourceID}`;
                 }
                 resources.push(childObj);
               });
@@ -209,8 +221,13 @@ export function fetchCleanupResources(type, id) {
 export function cleanupResources(id) {
   return (dispatch, getState) => {
     const { drPlans, user } = getState();
-    const { values } = user;
-    const { cleanup } = drPlans;
+    const { values, platformType, localVMIP } = user;
+    const { cleanup, protectionPlan } = drPlans;
+    //
+    const { protectedSite } = protectionPlan;
+    const protectedSitePlatform = protectedSite.platformDetails.platformType;
+    const isSourceSite = (platformType === protectedSitePlatform && localVMIP === protectedSite.node.hostname);
+    //
     const payload = getCleanupResourcesPayload(cleanup);
     const ty = getValue('ui.cleanup.type.value', values);
     const obj = createPayload(API_TYPES.POST, payload);
@@ -222,7 +239,7 @@ export function cleanupResources(id) {
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
-        const d = { msg: `Cleanup has been successfully initiated for ${payload.deletedCount} resource(s). The cleanup status can be monitored in recovery jobs.`, itemRenderer: RENDER_CLEANUP_MESSAGE, planID: id };
+        const d = { msg: `Cleanup has been successfully initiated for ${payload.deletedCount} resource(s). The cleanup status can be monitored in recovery jobs.`, itemRenderer: RENDER_CLEANUP_MESSAGE, planID: id, isSourceSite };
         dispatch(addMessage('-', MESSAGE_TYPES.INFO, false, d));
         dispatch(closeModal());
         dispatch(updateSelectedCleanupResources({}));
