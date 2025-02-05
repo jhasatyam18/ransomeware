@@ -197,6 +197,7 @@ export function fetchCleanupResources(type, id) {
                 }
                 if (r.resourceType === 'volume') {
                   const size = getStorageWithUnit(r.size);
+                  childObj.isTickOnly = true;
                   childObj.resourceName = `${r.resourceName} [${size}]`;
                   childObj.resourceID = `${o.workloadID}^${r.resourceID}`;
                 }
@@ -240,7 +241,7 @@ export function cleanupResources(id) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
         const d = { msg: `Cleanup has been successfully initiated for ${payload.deletedCount} resource(s). The cleanup status can be monitored in recovery jobs.`, itemRenderer: RENDER_CLEANUP_MESSAGE, planID: id, isSourceSite };
-        dispatch(addMessage('-', MESSAGE_TYPES.INFO, false, d));
+        dispatch(addMessage('-', MESSAGE_TYPES.SUCCESS, false, d));
         dispatch(closeModal());
         dispatch(updateSelectedCleanupResources({}));
         dispatch(fetchCleanupResources(ty, id));

@@ -8,7 +8,9 @@ import { getObjectValue, hasOwnRow } from '../../utils/InputUtils';
 
 const DMCollapsibleRow = (props) => {
   const { user, dispatch, data = [], primaryKey, childPrimaryKey, columns = [], index, isSelectable, onSelect, selectedData, toggleRow, tblName } = props;
+  const { resources = [], showChild } = data;
   let cData = null;
+  const isAllChildDisabled = resources.every((r) => r.isDisabled === true);
   const onChange = (e) => {
     dispatch(onSelect(data, e.target.checked, primaryKey));
   };
@@ -45,6 +47,9 @@ const DMCollapsibleRow = (props) => {
   };
 
   const renderCheckBox = (ind) => {
+    if (isAllChildDisabled) {
+      return (<Th> &nbsp; </Th>);
+    }
     let rKey = '';
     const keyVal = (typeof ind !== 'undefined' ? ind : getAppKey());
     if (tblName) {
@@ -99,6 +104,13 @@ const DMCollapsibleRow = (props) => {
         showSelected = true;
       }
     }
+    // show check tick only
+    if (d.isTickOnly) {
+      return (showSelected ? <i className="fa fa-check-circle text-success" /> : null);
+    }
+    if (d.isDisabled) {
+      return null;
+    }
     if (isSelectable) {
       return (
         <div className="custom-control custom-checkbox">
@@ -120,7 +132,6 @@ const DMCollapsibleRow = (props) => {
     return null;
   };
 
-  const { resources, showChild } = data;
   if (showChild) {
     cData = resources.map((resource) => (
       <Tr key={`${resource[childPrimaryKey]}`} className="child-row">

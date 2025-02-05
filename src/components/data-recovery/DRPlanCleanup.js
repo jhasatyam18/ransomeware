@@ -75,6 +75,7 @@ function DRPlanCleanup({ drPlans, t, dispatch, user }) {
     setCleanupOptionType(option);
     dispatch(valueChange('ui.cleanup.type.value', option));
     dispatch(fetchCleanupResources(option, id));
+    dispatch(handleSelectAllCleanupResources(false));
   };
 
   const renderCleanupOptions = () => (
