@@ -43,3 +43,7 @@ export function getFieldInfo({ fieldKey, user }) {
   }
   return res;
 }
+
+export function formatLocalString(t, ...vals) {
+  return t.replace(/{(\d+)}/g, (match, number) => (vals[number - 1] !== undefined ? vals[number - 1] : match));
+}

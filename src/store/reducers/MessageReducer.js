@@ -6,7 +6,7 @@ export default function messages(state = {}, action) {
       const time = Date.now();
       return {
         ...state,
-        [time]: { type: action.msgType, text: action.message, isSticky: action.isSticky },
+        [time]: { type: action.msgType, text: action.message, isSticky: action.isSticky, data: action.data },
       };
     case Types.CLEAR_ALL_MESSAGES:
       return {};

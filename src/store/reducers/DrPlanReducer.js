@@ -22,6 +22,20 @@ export default function drPlans(state = INITIAL_STATE.drPlans, action) {
       return {
         ...state, allVmRecovered: action.allVmRecovered,
       };
+    case Types.UPDATE_SELECTED_CLEANUP_RESOURCES:
+      // const { data = [] } = state.cleanup || {};
+      return {
+        ...state, cleanup: { ...state.cleanup, selectedResources: action.selectedCleanupSources },
+      };
+    case Types.FETCHED_CLEAN_UP_RESOURCES:
+      const { selectedResources = {} } = state.cleanup || {};
+      return {
+        ...state, cleanup: { data: action.data, fullData: action.fullData, selectedResources },
+      };
+    case Types.SET_CLEANUP_DATA:
+      return {
+        ...state, cleanup: { ...state.cleanup, data: action.data },
+      };
     default:
       return state;
   }

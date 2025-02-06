@@ -7,6 +7,9 @@ import { openModal } from '../../../store/actions/ModalActions';
 import { hasRequestedPrivileges } from '../../../utils/PrivilegeUtils';
 
 function DateItemRenderer({ data, field, dispatch, t, user }) {
+  if (data && typeof data[field] === 'undefined') {
+    return '';
+  }
   const fieldArray = ['currentSnapshotTime', 'lastSyncTime'];
   const time = data[field] * 1000;
   const { isPreserveCheckpoint } = data;

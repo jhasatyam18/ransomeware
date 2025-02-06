@@ -1498,6 +1498,30 @@ export function showRecipientEmailField(user) {
   return true;
 }
 
+export function getObjectValue(object, field) {
+  const parts = field.split('.');
+  switch (parts.length) {
+    case 2:
+      return object[parts[0]][parts[1]];
+    case 3:
+      return object[parts[0]][parts[1]][parts[2]];
+    case 4:
+      return object[parts[0]][parts[1]][parts[2]][parts[3]];
+    default:
+      return object[field];
+  }
+}
+
+export function hasOwnRow(key, d, primaryKey) {
+  if (primaryKey) {
+    if (d) {
+      return key === `${d[primaryKey]}`;
+    }
+    return key === `${d[primaryKey]}`;
+  }
+  return false;
+}
+
 export const showReplOption = (user) => {
   const { values } = user;
   const isReplJobSelected = getValue('report.protectionPlan.includeReplicationJobs', values);
@@ -1506,6 +1530,7 @@ export const showReplOption = (user) => {
   }
   return false;
 };
+
 export const showRecoveryOption = (user) => {
   const { values } = user;
   const isReplJobSelected = getValue('report.protectionPlan.includeRecoveryJobs', values);

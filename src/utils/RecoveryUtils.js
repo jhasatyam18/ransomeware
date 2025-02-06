@@ -3,7 +3,7 @@ import { AWS_TARGET_HOST_TYPES, AWS_TENANCY_TYPES, COPY_CONFIG, PLATFORM_TYPES, 
 import { MESSAGE_TYPES } from '../constants/MessageConstants';
 import { STACK_COMPONENT_NETWORK, STACK_COMPONENT_SECURITY_GROUP } from '../constants/StackConstants';
 import { addMessage } from '../store/actions/MessageActions';
-import { getLabelWithResourceGrp, getMemoryInfo } from './AppUtils';
+import { getLabelWithResourceGrp, getMemoryInfo, getStorageWithUnit } from './AppUtils';
 import { getAwsHostAffinityOptions, getAwsHostMorefLabel, getAwsTenancyOptionBy, getAwsTenancyOptions, showTenancyOptions } from './AwsUtils';
 import { getAzureGeneralSettings, getEncryptionKeyOptions, getInstanceTypeOptions, getNetworkOptions, getRecoveryScript, getReplicationScript, getValue, getVMwareGeneralSettings, shouldEnableAWSEncryption, getGCPNetworkValue } from './InputUtils';
 import { getSourceConfig } from './PayloadUtil';
@@ -244,7 +244,7 @@ function getNetworkConfig({ sourceConfig, user, workFlow }) {
   } else {
     workflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
   }
-  const { networks, availZone } = sourceConfig;
+  const { networks = [], availZone } = sourceConfig;
   const netWorkKeys = [];
   networks.forEach((nw, index) => {
     const { vpcId = '', Subnet = '', isPublicIP = '', networkTier = '', privateIP, isFromSource, securityGroups, adapterType, networkMoref, macAddress = '', netmask = '', gateway = '', dns = '' } = nw;
@@ -378,4 +378,42 @@ function getAzureVMTestConfig(vm, workflow) {
   }
   config.data.push(...getRecoveryScript(key));
   return config;
+}
+
+export function getCleanupInfoForVM(recoveryJob) {
+  const { config } = recoveryJob;
+  if (config === '') {
+    return [];
+  }
+  const data = [];
+  const parsedData = JSON.parse(config) || [];
+  // set data for volume cleanup
+  if (Array.isArray(parsedData)) {
+    parsedData.forEach((vol, index) => {
+      const volConfig = getCleanupVolumeInfo(vol, index);
+      data.push(volConfig);
+    });
+  } else {
+    const vmConfig = getCleanUPVMConfig(parsedData);
+    data.push(vmConfig);
+  }
+  return data;
+}
+
+function getCleanupVolumeInfo(vol, index) {
+  const keys = [
+    { title: 'Platform ID', value: vol.resourceID || '' },
+    { title: 'Size', value: getStorageWithUnit(vol.size) },
+  ];
+  const title = `Volume-${index}`;
+  return { title, values: keys };
+}
+
+function getCleanUPVMConfig(instance) {
+  const keys = [
+    { title: 'Name', value: instance.resourceName || '' },
+    { title: 'Platform ID', value: instance.resourceID || '' },
+  ];
+  const title = 'Cleanup Instance Detail';
+  return { title, values: keys };
 }

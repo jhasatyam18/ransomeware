@@ -33,3 +33,4 @@ export const API_FETCH_SITES = 'api/v1/sites';
 // History
 
 export const API_GET_HISTORY = 'api/v1/upgrade/history';
+

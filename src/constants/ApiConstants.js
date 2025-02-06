@@ -157,3 +157,6 @@ export const REFRESH_OPS = {
   poll: 'poll',
   update: 'update',
 };
+
+export const API_CLEANUP_RECOVERIES_FETCH = 'api/v1/recover/cleanup?planids=<id>&cleanuptype=<type>';
+export const API_CLEANUP_RECOVERIES = 'api/v1/recover/cleanup?planid=<id>&cleanuptype=<type>';

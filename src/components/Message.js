@@ -7,6 +7,7 @@ import {
 import { removeMessage } from '../store/actions/MessageActions';
 
 import { MESSAGE_TYPES } from '../constants/MessageConstants';
+import { getMessageComponent } from '../utils/ComponentFactory';
 
 class AppMessage extends Component {
   constructor() {
@@ -53,14 +54,15 @@ class AppMessage extends Component {
   }
 
   render() {
-    const { message } = this.props;
+    const { message, dispatch } = this.props;
+    const { data } = message;
     const messageClass = this.getClassName(message.type);
     const msg = message ? message.text : '';
     if (!message || !message.text) { return null; }
     return (
       <div className={`${messageClass} dm__message`}>
         <UncontrolledAlert color={messageClass} role="alert" toggle={this.onDismiss} style={{ maxWidth: 600 }}>
-          {msg}
+          {data && data !== null ? getMessageComponent(dispatch, data) : msg}
         </UncontrolledAlert>
       </div>
     );

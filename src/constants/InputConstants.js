@@ -366,3 +366,9 @@ export const REFRESH_RECOVERY_TYPE_FILTER = {
 export const RECOVERY_STEPS = {
   VALIDATION_INSTANCE_FOR_RECOVERY: 'Validating Instance for recovery',
 };
+
+export const CHANGE_ROUTE = 'CHANGE_ROUTE';
+export const CLEANUP_DR = {
+  TEST_RECOVERIES: 'testrecovery',
+  DR_COPIES: 'recovery',
+};

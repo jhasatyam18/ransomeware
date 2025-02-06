@@ -4,11 +4,11 @@ import React, { Component, Suspense } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardTitle, Col, Container, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
 import { PLATFORM_TYPES, PROTECTION_PLANS_STATUS, RECOVERY_STATUS, REPLICATION_STATUS } from '../../constants/InputConstants';
-import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
+import { PROTECTION_PLAN_CLEANUP_PATH, PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { PLAN_DETAIL_TABS } from '../../constants/UserConstant';
 import { setActiveTab } from '../../store/actions';
 import { fetchCheckpointsByPlanId, setCheckpointCount, setVmlevelCheckpoints } from '../../store/actions/checkpointActions';
-import { fetchDRPlanById, onDeleteProtectionPlanClick, onResetDiskReplicationClick, openCleanupTestRecoveryWizard, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, playbookExport, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
+import { fetchDRPlanById, onDeleteProtectionPlanClick, onResetDiskReplicationClick, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, playbookExport, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
 import { downloadRecoveryPlaybook } from '../../store/actions/DrPlaybooksActions';
 import { convertMinutesToDaysHourFormat, getRecoveryCheckpointSummary } from '../../utils/AppUtils';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
@@ -267,6 +267,7 @@ class DRPlanDetails extends Component {
     const isServerActionDisabled = (protectionPlan.recoveryStatus === RECOVERY_STATUS.RECOVERED || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED || !hasRequestedPrivileges(user, ['protectionplan.edit']));
     const recovered = planHaCheckpoints || !(protectionPlan.recoveryStatus === RECOVERY_STATUS.RECOVERED || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED);
     const isReverseActionDisabled = this.disableReverse(protectionPlan);
+    const cleanupPath = PROTECTION_PLAN_CLEANUP_PATH.replace(':id', protectionPlan.id);
     let actions = [];
     if (platformType === protectedSitePlatform && localVMIP !== recoverySite.node.hostname) {
       actions.push({ label: 'Start', action: startPlan, id: protectionPlan.id, disabled: this.disableStart(protectionPlan), icon: faPlay });
@@ -274,13 +275,14 @@ class DRPlanDetails extends Component {
       actions.push({ label: 'Edit', action: openEditProtectionPlanWizard, id: protectionPlan, disabled: this.disableEdit(), icon: faEdit });
       actions.push({ label: 'Resync Disk Replication', action: onResetDiskReplicationClick, id: protectionPlan, disabled: isServerActionDisabled, navigate: PROTECTION_PLANS_PATH, icon: faRetweet });
       actions.push({ label: 'Download Plan Playbook', action: playbookExport, id: protectionPlan, disabled: this.disableEdit(), icon: faDownload });
+      actions.push({ label: 'Cleanup Recoveries', action: 'CHANGE_ROUTE', routePath: `${cleanupPath}`, icon: faBroom, disabled: !hasRequestedPrivileges(user, ['recovery.test']) });
       actions.push({ label: 'Remove', action: onDeleteProtectionPlanClick, id: protectionPlan.id, disabled: protectionPlan.status.toUpperCase() === REPLICATION_STATUS || !hasRequestedPrivileges(user, ['protectionplan.delete']), navigate: PROTECTION_PLANS_PATH, icon: faTrash });
     } else if (localVMIP === recoverySite.node.hostname) {
       actions = [{ label: 'recover', action: openRecoveryWizard, icon: faPlus, disabled: !recovered || protectionPlan.recoveryStatus === RECOVERY_STATUS.MIGRATED || !hasRequestedPrivileges(user, ['recovery.full']) },
         { label: 'Migrate', action: openMigrationWizard, icon: faClone, disabled: allVmRecovered || !hasRequestedPrivileges(user, ['recovery.migration']) },
         { label: 'Reverse', action: openReverseWizard, icon: faBackward, disabled: isReverseActionDisabled },
         { label: 'Test Recovery', action: openTestRecoveryWizard, icon: faCheck, disabled: allVmRecovered || !hasRequestedPrivileges(user, ['recovery.test']) },
-        { label: 'Cleanup Test Recoveries', action: openCleanupTestRecoveryWizard, icon: faBroom, disabled: !hasRequestedPrivileges(user, ['recovery.test']) },
+        { label: 'Cleanup Recoveries', action: 'CHANGE_ROUTE', routePath: `${cleanupPath}`, icon: faBroom, disabled: !hasRequestedPrivileges(user, ['recovery.test']) },
         { label: 'Download Credentials Playbook', action: downloadRecoveryPlaybook, id: protectionPlan.id, icon: faDownload },
       ];
     } else {
