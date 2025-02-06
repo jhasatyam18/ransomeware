@@ -42,8 +42,8 @@ class DMTable extends Component {
         <Th key={`${index + 1}-${col.lable}`} width={`${col.width * 10}%`}>
           {' '}
           <Row>
-            <Col sm={9}>{t(col.label)}</Col>
-            <Col sm={1}>{typeof col.info !== 'undefined' && col.info !== null && col.info && <DMToolTip tooltip={col.info} />}</Col>
+            <Col sm={col.info ? 9 : 12} className={`${col.info ? 'pr-0' : ''}`}>{t(col.label)}</Col>
+            {typeof col.info !== 'undefined' && col.info !== null && col.info && <Col sm={1}><DMToolTip tooltip={col.info} /></Col>}
           </Row>
           {' '}
         </Th>

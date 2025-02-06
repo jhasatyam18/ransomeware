@@ -6,6 +6,7 @@
   .mini-stat-icon {
     overflow: hidden;
     position: relative;
+
     &:before,
     &:after {
       content: "";
@@ -38,12 +39,15 @@
 .resync_modal_height {
   max-height: 64vh;
   min-height: 40vh;
+
   @media (max-height: 902px) {
     max-height: 65vh;
   }
+
   @media (max-height: 775px) {
     max-height: 62vh;
   }
+
   @media (max-height: 635px) {
     max-height: 55vh;
   }
@@ -52,5 +56,11 @@
 .resync_font_size {
   @media (max-width: 1199px) {
     font-size: 10px;
+  }
+}
+
+@media (max-width: 992px) {
+  .adj_wizard_length {
+    min-width: 90%;
   }
 }

@@ -228,7 +228,7 @@ class DMWizard extends React.Component {
     const { title } = options;
     return (
       <>
-        <Modal centered size={wizardSize} isOpen={show}>
+        <Modal centered size={wizardSize} isOpen={show} className="adj_wizard_length">
           <div className="modal-header">
             <h5 className="modal-title mt-0" id="dmwizard">
               {title}

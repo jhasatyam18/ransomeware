@@ -66,7 +66,7 @@ const DropdownActions = (props) => {
           <span className="d-none d-xl-inline-block ml-2 mr-1">
             {title}
           </span>
-          <FontAwesomeIcon style={{ fontSize: '8px', padding: '1px' }} size="xs" icon={faChevronDown} onClick={toggle} />
+          <FontAwesomeIcon style={{ fontSize: '8px', padding: '1px' }} size="xs" icon={faChevronDown} onClick={() => toggle} />
         </DropdownToggle>
         {alignLeft === 0 ? renderLeft() : renderRight()}
       </Dropdown>

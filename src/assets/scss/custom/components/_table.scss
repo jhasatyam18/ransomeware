@@ -6,6 +6,18 @@
   th {
     font-weight: $font-weight-bold;
   }
+  font-size: 0.8rem;
+  @media (max-width: 1199px) {
+    font-size: 0.7rem;
+  }
+
+  @media (max-width: 992px) {
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 907px) {
+    font-size: 0.6rem;
+  }
 }
 
 //Table centered
