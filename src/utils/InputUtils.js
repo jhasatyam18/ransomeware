@@ -666,6 +666,8 @@ export function getEventOptions() {
     { label: 'Site', value: 'Site' },
     { label: 'Test Recovery', value: 'TestRecovery' },
     { label: 'Test Recovery Cleanup', value: 'TestRecoveryCleanup' },
+    { label: 'Recovery Cleanup', value: 'RecoveryCleanup' },
+    { label: 'Bandwidth Throttling', value: 'BandwidthThrottling' },
     { label: 'User', value: 'User' },
   ];
 }
