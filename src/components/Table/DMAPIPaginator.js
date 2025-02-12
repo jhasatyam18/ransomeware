@@ -77,7 +77,7 @@ function DMAPIPaginator(props) {
     callAPI(url).then((json) => {
       dispatch(hideApplicationLoader(url));
       const { records, ...others } = json;
-      dispatch(valueChange(`${name}.dmapipaginator.metadata`, { ...others, limit: pageLimit || API_LIMIT_HUNDRED }));
+      dispatch(valueChange(`${name}.dmapipaginator.metadata`, { ...others, limit: pageLimit }));
       dispatch(storeFn(records));
       return json;
     },
@@ -97,11 +97,10 @@ function DMAPIPaginator(props) {
       const arr = [...cols.filter((c) => c.allowFilter), ...subFilter];
       setFilterColumns(arr);
       setIntervalToFetch();
-      subFilter?.forEach((f) => {
+      subFilter?.filter((f) => f.checked).forEach((f) => {
         addSubFilterQuery(f);
-      },
-      );
-      fetchData(pagec > 0 ? (pagec - 1) * API_LIMIT_HUNDRED : pagec * API_LIMIT_HUNDRED);
+      });
+      fetchData(pagec > 0 ? (pagec - 1) * pageLimit : pagec * pageLimit);
     }
     return () => {
       isUnmounting = true;
@@ -110,6 +109,7 @@ function DMAPIPaginator(props) {
         clearInterval(timerRef.current);
         timerRef.current = null;
       }
+      dispatch(valueChange(`${name}.dmapipaginator.metadata`, ''));
     };
   }, [refresh]);
 
@@ -142,7 +142,7 @@ function DMAPIPaginator(props) {
 
   const onPageJump = () => {
     if (metadata.currentPage) {
-      fetchData((metadata.currentPage - 1) * API_LIMIT_HUNDRED);
+      fetchData((metadata.currentPage - 1) * pageLimit);
     } else {
       fetchData(0);
     }

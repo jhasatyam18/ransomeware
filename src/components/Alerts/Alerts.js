@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import { withTranslation } from 'react-i18next';
+import React, { useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
+import { withTranslation } from 'react-i18next';
 import { Card, CardBody, Col, Container, Row } from 'reactstrap';
 import { clearValues } from '../../store/actions';
 import DMBreadCrumb from '../Common/DMBreadCrumb';
@@ -12,79 +12,67 @@ import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { API_FETCH_ALERTS, API_MARK_READ_ALL } from '../../constants/ApiConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { ALERT_FILTERS, TABLE_ALERTS, TABLE_FILTER_TEXT } from '../../constants/TableConstants';
-/**
- * Component to render Alerts.
- */
-class Alerts extends Component {
-  constructor() {
-    super();
-    this.state = { initDone: false };
-  }
 
-  componentDidMount() {
-    const { dispatch } = this.props;
+function Alerts({ alerts, dispatch, t }) {
+  const [initDone, setInitDone] = useState(false);
+  const alertFiltersRef = useRef(ALERT_FILTERS.map((col) => ({ ...col })));
+
+  useEffect(() => {
     const payload = createPayload(API_TYPES.POST, {});
     callAPI(API_MARK_READ_ALL, payload)
       .then(() => {
-        this.setState({ initDone: true });
+        setInitDone(true);
         dispatch(unreadAlertFetched([]));
-      },
-      (err) => {
+      })
+      .catch((err) => {
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-        this.setState({ initDone: true });
+        setInitDone(true);
       });
+
+    return () => {
+      dispatch(clearValues());
+      if (alertFiltersRef.current) {
+        alertFiltersRef.current = undefined;
+      }
+    };
+  }, []);
+
+  if (!initDone) {
+    return null;
   }
 
-  componentWillUnmount() {
-    const { dispatch } = this.props;
-    dispatch(clearValues());
-  }
-
-  render() {
-    const { alerts, dispatch, t } = this.props;
-    const { data = [] } = alerts;
-    const { initDone } = this.state;
-    const subFilterCol = ALERT_FILTERS.map((col) => ({ ...col }));
-    if (initDone === false) {
-      return null;
-    }
-    return (
-      <>
-        <>
-          <Container fluid>
-            <Card>
-              <CardBody>
-                <DMBreadCrumb links={[{ label: 'alerts', link: '#' }]} />
-                <Row className="padding-left-20">
-                  <Col sm={12}>
-                    <div className="padding-right-30 padding-left-10">
-                      <DMAPIPaginator
-                        showFilter="true"
-                        columns={TABLE_ALERTS}
-                        filterHelpText={TABLE_FILTER_TEXT.TABLE_ALERTS}
-                        apiUrl={API_FETCH_ALERTS}
-                        storeFn={alertsFetched}
-                        name="alerts"
-                        subFilter={subFilterCol}
-                        subFilterTitle={t('status')}
-                      />
-                    </div>
-                  </Col>
-                </Row>
-                <DMTable
-                  dispatch={dispatch}
+  return (
+    <Container fluid>
+      <Card>
+        <CardBody>
+          <DMBreadCrumb links={[{ label: 'alerts', link: '#' }]} />
+          <Row className="padding-left-20">
+            <Col sm={12}>
+              <div className="padding-right-30 padding-left-10">
+                <DMAPIPaginator
+                  showFilter="true"
                   columns={TABLE_ALERTS}
-                  data={data}
-                  primaryKey="id"
+                  filterHelpText={TABLE_FILTER_TEXT.TABLE_ALERTS}
+                  apiUrl={API_FETCH_ALERTS}
+                  storeFn={alertsFetched}
                   name="alerts"
+                  subFilter={alertFiltersRef.current}
+                  subFilterTitle={t('status')}
                 />
-              </CardBody>
-            </Card>
-          </Container>
-        </>
-      </>
-    );
-  }
+              </div>
+            </Col>
+          </Row>
+          <DMTable
+            dispatch={dispatch}
+            columns={TABLE_ALERTS}
+            data={alerts.data || []}
+            primaryKey="id"
+            name="alerts"
+          />
+        </CardBody>
+      </Card>
+    </Container>
+  );
 }
 
 function mapStateToProps(state) {
