@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Col, Label, Popover, PopoverBody, Row } from 'reactstrap';
+import React, { useRef, useState } from 'react';
+import { Col, Popover, PopoverBody, Row } from 'reactstrap';
 import { NODE_NAME_POPOVER_FIELDS } from '../../../Constants/TableConstants';
 
 interface Node {
@@ -20,16 +20,17 @@ interface NodeNameItemRendererProps {
 
 const NodeNameItemRenderer: React.FC<NodeNameItemRendererProps> = ({ data }) => {
     const [popoverOpen, setPopoverOpen] = useState(false);
+    const targetRef = useRef(null);
     const { node } = data;
     const key = `${node.type}-${node.id}`;
 
     return (
         <>
             <div>
-                <Label id={key} key={key} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)}>
+                <label ref={targetRef} id={key} key={key} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)}>
                     {node.name}
-                </Label>
-                <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: '#222736', minWidth: '250px' }}>
+                </label>
+                <Popover placement="bottom" isOpen={popoverOpen} target={targetRef} style={{ backgroundColor: '#222736', minWidth: '250px' }}>
                     <PopoverBody>
                         {NODE_NAME_POPOVER_FIELDS.map((f) => (
                             <Row key={`row-${f.field}`}>

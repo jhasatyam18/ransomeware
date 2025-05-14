@@ -1,6 +1,6 @@
 import { faLaptop, faLayerGroup } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Popover, PopoverBody } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
@@ -9,6 +9,9 @@ import { convertMinutesToDaysHourFormat } from '../../../utils/AppUtils';
 function PlaybookConfigureRenderer({ data, t }) {
   const { protectedEntitiesCount, protectionPlansCount, planConfigurations } = data;
   const [pplan, setPplanOpen] = useState(false);
+  const planRef = useRef(null);
+  const vmRef = useRef(null);
+  const rpoRef = useRef(null);
   const [vm, setVmOpen] = useState(false);
   const [rpoOpen, setRpoOpen] = useState(false);
   const { rpo } = planConfigurations[0];
@@ -26,19 +29,19 @@ function PlaybookConfigureRenderer({ data, t }) {
     <div className="playbook_configure_div">
       <div>
         <FontAwesomeIcon size="sm" icon={faLayerGroup} title={t('protection.plan')} />
-        <span className="padding-left-3" id={`playbook-ppln-configuration-${data.id}`} onMouseEnter={() => setPplanOpen(true)} onMouseLeave={() => setPplanOpen(false)}>{protectionPlansCount}</span>
-        {renderPopOver(t('protection.plan'), `playbook-ppln-configuration-${data.id}`, pplan)}
+        <span ref={planRef} className="padding-left-3" id={`playbook-ppln-configuration-${data.id}`} onMouseEnter={() => setPplanOpen(true)} onMouseLeave={() => setPplanOpen(false)}>{protectionPlansCount}</span>
+        {renderPopOver(t('protection.plan'), planRef, pplan)}
       </div>
       <div>
         <FontAwesomeIcon size="sm" icon={faLaptop} title={t('virtual.machine')} />
-        <span className="padding-left-3" id={`playbook-vm-configuration-${data.id}`} onMouseEnter={() => setVmOpen(true)} onMouseLeave={() => setVmOpen(false)}>{protectedEntitiesCount}</span>
-        {renderPopOver(t('virtual.machine'), `playbook-vm-configuration-${data.id}`, vm)}
+        <span ref={vmRef} className="padding-left-3" id={`playbook-vm-configuration-${data.id}`} onMouseEnter={() => setVmOpen(true)} onMouseLeave={() => setVmOpen(false)}>{protectedEntitiesCount}</span>
+        {renderPopOver(t('virtual.machine'), vmRef, vm)}
       </div>
       <div className="w-50">
-        <span id={`playbook-rpo-configuration-${data.id}`} onMouseEnter={() => setRpoOpen(true)} onMouseLeave={() => setRpoOpen(false)}>
+        <span ref={rpoRef} id={`playbook-rpo-configuration-${data.id}`} onMouseEnter={() => setRpoOpen(true)} onMouseLeave={() => setRpoOpen(false)}>
           {`${formatedRPO}`}
         </span>
-        {renderPopOver(t('rpo'), `playbook-rpo-configuration-${data.id}`, rpoOpen)}
+        {renderPopOver(t('rpo'), rpoRef, rpoOpen)}
       </div>
     </div>
   );

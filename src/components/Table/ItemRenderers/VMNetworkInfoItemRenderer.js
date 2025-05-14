@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Col, Popover, PopoverBody, Row } from 'reactstrap';
@@ -6,6 +6,7 @@ import { PLATFORM_TYPES } from '../../../constants/InputConstants';
 
 function VMNetworkInfoItemRenderer(props) {
   const { t, data, drPlans } = props;
+  const targetRef = useRef(null);
   const { recoverySite } = drPlans.protectionPlan;
   const key = `netowrk-popover-key-${data.id}`;
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -76,7 +77,7 @@ function VMNetworkInfoItemRenderer(props) {
   };
 
   const renderPopOver = () => (
-    <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: 'black', width: '300px' }}>
+    <Popover placement="bottom" isOpen={popoverOpen} target={targetRef} style={{ backgroundColor: 'black', width: '300px' }}>
       <PopoverBody>
         {renderNetworkDetails()}
       </PopoverBody>
@@ -85,7 +86,7 @@ function VMNetworkInfoItemRenderer(props) {
 
   return (
     <div>
-      <a id={key} href="#" className="icon_font" onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)}>
+      <a ref={targetRef} id={key} href="#" className="icon_font" onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)}>
         {networks.length}
         {renderPopOver()}
       </a>

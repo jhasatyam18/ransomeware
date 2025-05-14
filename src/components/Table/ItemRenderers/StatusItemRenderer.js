@@ -1,6 +1,6 @@
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import SimpleBar from 'simplebar-react';
 import { Badge, Popover, PopoverBody } from 'reactstrap';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
@@ -14,6 +14,7 @@ import { STATIC_KEYS, UI_WORKFLOW } from '../../../constants/InputConstants';
 
 function StatusItemRenderer({ data, field, t, noPopOver, showDate, user }) {
   const [popoverOpen, setPopoverOpen] = useState(false);
+  const targetRef = useRef(null);
   const { values } = user;
   const successStatus = [JOB_COMPLETION_STATUS, JOB_INIT_SUCCESS, NODE_STATUS_ONLINE, JOB_RESYNC_SUCCESS, JOB_IN_SYNC, JOB_RECOVERED, JOB_MIGRATED];
   const runningStatus = [JOB_RUNNING_STATUS, JOB_IN_PROGRESS, VALIDATING];
@@ -38,12 +39,12 @@ function StatusItemRenderer({ data, field, t, noPopOver, showDate, user }) {
 
   let resp = status.charAt(0).toUpperCase() + status.slice(1);
 
-  const renderPopOver = (hoverInfo, key) => {
+  const renderPopOver = (hoverInfo) => {
     if (noPopOver || noPopOverForWorkflow.indexOf(currentWorkflow) !== -1) {
       return null;
     }
     return (
-      <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: '#fff', borderRadius: '8px', color: 'black', border: 'none', width: '280px', textAlign: hoverInfo.length <= 50 ? 'center' : 'left' }}>
+      <Popover placement="bottom" isOpen={popoverOpen} target={targetRef} style={{ backgroundColor: '#fff', borderRadius: '8px', color: 'black', border: 'none', width: '280px', textAlign: hoverInfo.length <= 50 ? 'center' : 'left' }}>
         <PopoverBody>
           <SimpleBar style={{ maxHeight: '100px', minHeight: '30px', color: 'black' }}>
             {hoverInfo}
@@ -71,7 +72,7 @@ function StatusItemRenderer({ data, field, t, noPopOver, showDate, user }) {
     }
     return (
       <>
-        <Badge id={`status-${field}-${data.name}-${data.id}`} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} className={`font-size-13 badge-soft-${colorinfo}`} color={`${colorinfo}`} pill>
+        <Badge innerRef={targetRef} id={`status-${field}-${data.name}-${data.id}`} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} className={`font-size-13 badge-soft-${colorinfo}`} color={`${colorinfo}`} pill>
           {icon ? (
             <>
               <i className="fa fa-spinner fa-spin" />
@@ -79,7 +80,7 @@ function StatusItemRenderer({ data, field, t, noPopOver, showDate, user }) {
             </>
           ) : null}
           {t(resp)}
-          {hoverInfo !== '' ? renderPopOver(hoverInfo, `status-${field}-${data.name}-${data.id}`) : null}
+          {hoverInfo !== '' ? renderPopOver(hoverInfo) : null}
           {showDate === 'true' ? <span className="font-size-11 padding-left-10">{new Date(data.lastRunTime * 1000).toLocaleString()}</span> : null}
         </Badge>
         {/* {status === PENDING_STATUS ? <span onMouseEnter={() => setPopoverOpen(false)} aria-hidden onClick={onKnowMoreClick} className="link_color d-block margin-left-5 margin-top-5" style={{ fontSize: '10px' }}>Know more...</span> : null} */}

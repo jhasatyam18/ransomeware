@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { WithTranslation, withTranslation } from 'react-i18next';
 import { Badge, Popover, PopoverBody } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
@@ -28,6 +28,7 @@ interface Props extends WithTranslation {
 
 const StatusItemRenderer: React.FC<Props> = ({ data, field, t, noPopOver, showDate }: Props) => {
     const [popoverOpen, setPopoverOpen] = useState(false);
+    const targetRef = useRef(null);
     const successStatus = [JOB_COMPLETION_STATUS];
 
     if (!data) {
@@ -46,7 +47,7 @@ const StatusItemRenderer: React.FC<Props> = ({ data, field, t, noPopOver, showDa
         resp = status.charAt(0).toUpperCase() + status.slice(1);
     }
 
-    const renderPopOver = (hoverInfo: string, key: string) => {
+    const renderPopOver = (hoverInfo: string) => {
         if (noPopOver || !hoverInfo) {
             return null;
         }
@@ -54,7 +55,7 @@ const StatusItemRenderer: React.FC<Props> = ({ data, field, t, noPopOver, showDa
             <Popover
                 placement="bottom"
                 isOpen={popoverOpen}
-                target={key}
+                target={targetRef}
                 style={{
                     backgroundColor: '#fff',
                     borderRadius: '8px',
@@ -82,7 +83,7 @@ const StatusItemRenderer: React.FC<Props> = ({ data, field, t, noPopOver, showDa
             colorinfo = 'warning';
         }
         return (
-            <Badge id={`status-${field}-${data.name}-${data.id}`} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} className={`font-size-13 badge-soft-${colorinfo}`} color={`${colorinfo}`} pill>
+            <Badge innerRef={targetRef} id={`status-${field}-${data.name}-${data.id}`} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} className={`font-size-13 badge-soft-${colorinfo}`} color={`${colorinfo}`} pill>
                 {icon ? (
                     <>
                         <i className="fa fa-spinner fa-spin" />
@@ -90,7 +91,7 @@ const StatusItemRenderer: React.FC<Props> = ({ data, field, t, noPopOver, showDa
                     </>
                 ) : null}
                 {resp}
-                {hoverInfo !== '' ? renderPopOver(hoverInfo, `status-${field}-${data.name}-${data.id}`) : null}
+                {hoverInfo !== '' ? renderPopOver(hoverInfo) : null}
                 {showDate === 'true' ? <span className="font-size-11 padding-left-10">{new Date(data.lastRunTime * 1000).toLocaleString()}</span> : null}
             </Badge>
         );

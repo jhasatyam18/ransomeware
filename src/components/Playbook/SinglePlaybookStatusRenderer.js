@@ -1,6 +1,6 @@
 import { faCheckCircle, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Popover, PopoverBody } from 'reactstrap';
 import { PLAYBOOKS_STATUS, PLAYBOOK_IN_VALIDATED, TEMPLATE_STATUS } from '../../constants/AppStatus';
@@ -13,6 +13,7 @@ import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
 function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispatch, t, user, flow }) {
   const status = playbook[field];
   const [popoverOpen, setPopoverOpen] = useState(false);
+  const targetRef = useRef(null);
   const { id, planConfigurations, playbookStatus } = playbook;
   const statusInd = TEMPLATE_STATUS.indexOf(status);
   const Uploaded = statusInd > 0 ? 'success_line' : '';
@@ -175,8 +176,8 @@ function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispat
     }
   };
 
-  const renderPopOver = (hoverInfo, key) => (
-    <Popover placement="bottom" isOpen={popoverOpen} target={key}>
+  const renderPopOver = (hoverInfo) => (
+    <Popover placement="bottom" isOpen={popoverOpen} target={targetRef}>
       <PopoverBody style={{ maxHeight: '100px', minHeight: '30px', color: '#fff', backgroundColor: 'black', textAlign: 'center' }}>
         {hoverInfo}
       </PopoverBody>
@@ -196,8 +197,8 @@ function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispat
       // for playbook listing page
       return (
         <>
-          <p onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} id={`plybook-in-validate-${playbook.id}`} className="invalidate_warn_sts margin-0 padding-left-20 text-warning">{t('title.in.validated')}</p>
-          {renderPopOver(t('playbook.invalidate.error'), `plybook-in-validate-${playbook.id}`)}
+          <p ref={targetRef} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} id={`plybook-in-validate-${playbook.id}`} className="invalidate_warn_sts margin-0 padding-left-20 text-warning">{t('title.in.validated')}</p>
+          {renderPopOver(t('playbook.invalidate.error'))}
         </>
       );
     }

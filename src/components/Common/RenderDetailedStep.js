@@ -1,6 +1,6 @@
 import { faCheckCircle, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState } from 'react';
+import React, { createRef, useRef, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Col, Popover, PopoverBody, Row } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
@@ -12,7 +12,17 @@ function RenderDetailedSteps(props) {
   const { parseData, id, t, name, css } = props;
   const [popOver, setPopOver] = useState({});
   const [showErr, setShowErr] = useState({});
+  const targetRefs = useRef({});
+
+  const getRefForKey = (key) => {
+    if (!targetRefs.current[key]) {
+      targetRefs.current[key] = createRef();
+    }
+    return targetRefs.current[key];
+  };
+
   const renderPopOver = (hoverInfo, key, isOpen) => (
+    key && (
     <Popover placement="bottom" isOpen={popOver[isOpen]} target={key} style={{ backgroundColor: 'black', color: 'white', border: 'none', width: '200px', textAlign: 'left' }}>
       <PopoverBody>
         <SimpleBar style={{ maxHeight: '100px', minHeight: '30px' }}>
@@ -20,6 +30,7 @@ function RenderDetailedSteps(props) {
         </SimpleBar>
       </PopoverBody>
     </Popover>
+    )
   );
 
   const renderIcons = (value) => (value === STATIC_KEYS.REC_STEP_PASS ? (
@@ -82,10 +93,10 @@ function RenderDetailedSteps(props) {
         const key = Object.keys(pd);
         const detailedStepStatus = pd[key[0]].result;
         return (
-          <li id={`rec-step-${id}-${key}`} onMouseEnter={() => setPopOver({ [key]: true })} onMouseLeave={() => setPopOver({ [key]: false })}>
+          <li ref={getRefForKey(key)} id={`rec-step-${id}-${key}`} onMouseEnter={() => setPopOver({ [key]: true })} onMouseLeave={() => setPopOver({ [key]: false })}>
             { `${t(key)}`}
             {renderIcons(detailedStepStatus)}
-            {renderPopOver(pd[key[0]].message, `rec-step-${id}-${key}`, key)}
+            {renderPopOver(pd[key[0]].message, getRefForKey(key).current, key)}
           </li>
         );
       })}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Card, CardBody, CardTitle, Col, Container, Popover, PopoverBody, Row } from 'reactstrap';
@@ -35,6 +35,7 @@ const UpgradePage: React.FC<Props> = (props) => {
     const { steps, currentStep } = upgrade;
     const [popoverOpen, setPopoverOpen] = useState(false);
     const [popoverOpenPrep, setPopoverOpenPrep] = useState(false);
+    const targetRef = useRef(null);
     const historyData = getValue(STATIC_KEYS.UI_SELECTED_UPGRADE_HISTORY_LIST, values);
     const showSummary = getValue('ui.revert.show.summary', values);
     const showUpgrade = getValue(STATIC_KEYS.UI_UPGRADE_PAGE, values);
@@ -88,8 +89,8 @@ const UpgradePage: React.FC<Props> = (props) => {
         }
         return (
             <Col sm={3}>
-                <FontAwesomeIcon id={key} key={key} className="text-warning" size="xl" icon={faTriangleExclamation} onMouseEnter={key === NODES_VERSION_KEYS.REPL_NODE ? () => setPopoverOpen(true) : () => setPopoverOpenPrep(true)} onMouseLeave={key === NODES_VERSION_KEYS.REPL_NODE ? () => setPopoverOpen(false) : () => setPopoverOpenPrep(false)} />
-                <Popover placement="bottom" isOpen={key === NODES_VERSION_KEYS.REPL_NODE ? popoverOpen : popoverOpenPrep} target={key} style={{ backgroundColor: '#222736', minWidth: '300px' }}>
+                <FontAwesomeIcon ref={targetRef} id={key} key={key} className="text-warning" size="xl" icon={faTriangleExclamation} onMouseEnter={key === NODES_VERSION_KEYS.REPL_NODE ? () => setPopoverOpen(true) : () => setPopoverOpenPrep(true)} onMouseLeave={key === NODES_VERSION_KEYS.REPL_NODE ? () => setPopoverOpen(false) : () => setPopoverOpenPrep(false)} />
+                <Popover placement="bottom" isOpen={key === NODES_VERSION_KEYS.REPL_NODE ? popoverOpen : popoverOpenPrep} target={targetRef} style={{ backgroundColor: '#222736', minWidth: '300px' }}>
                     <PopoverBody>
                         <table>
                             <thead>

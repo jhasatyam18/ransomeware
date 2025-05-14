@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Popover, PopoverBody } from 'reactstrap';
 import { getAppKey, getStorageWithUnit } from '../../../utils/AppUtils';
 
 function VMDisksItemRenderer(props) {
   const { data, t } = props;
+  const targetRef = useRef(null);
   const { id } = data;
   let { virtualDisks = [] } = data;
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -39,11 +40,11 @@ function VMDisksItemRenderer(props) {
   }
   return (
     <div>
-      <button type="button" id={key} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} className="btn noPadding">
+      <button ref={targetRef} type="button" id={key} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} className="btn noPadding">
         &nbsp;
         {virtualDisks.length}
       </button>
-      <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: 'black' }}>
+      <Popover placement="bottom" isOpen={popoverOpen} target={targetRef} style={{ backgroundColor: 'black' }}>
         <PopoverBody>
           <table>
             <tbody>

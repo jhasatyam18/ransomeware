@@ -23,6 +23,7 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
   const [jobdata, setjobdata] = useState(data);
   const [steps, setSteps] = useState([]);
   const [detailedStepError, setDetailedStepError] = useState(false);
+  const targetRef = useRef(null);
   const parsedConfiguration = data.config !== '' && typeof data.config !== 'undefined' ? JSON.parse(data.config) : undefined;
   const { values } = user;
   const COPY_CONFIG = [{ value: 'copy_gen_config', label: 'General' },
@@ -154,8 +155,9 @@ function RecoveryStatusRenderer({ data, field, t, dispatch, user }) {
           onMouseLeave={() => setpopOver(false)}
           id={key}
           color={toggle === true ? '#bfc8e2' : '#50a5f1'}
+          ref={targetRef}
         />
-        {renderPopOver(key)}
+        {renderPopOver(targetRef)}
       </>
     );
   };

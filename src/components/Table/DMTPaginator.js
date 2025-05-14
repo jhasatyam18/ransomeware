@@ -14,6 +14,7 @@ class DMTPaginator extends Component {
     this.onFilterBlur = this.onFilterBlur.bind(this);
     this.onFilterFocus = this.onFilterFocus.bind(this);
     this.onFilterKeyPress = this.onFilterKeyPress.bind(this);
+    this.inputRef = React.createRef();
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -105,6 +106,7 @@ class DMTPaginator extends Component {
           <input
             type="text"
             className="form-control"
+            ref={this.inputRef}
             id={id || 'datableSearch'}
             placeholder="Search"
             onFocus={this.onFilterFocus}
@@ -121,7 +123,7 @@ class DMTPaginator extends Component {
             </div>
           </span>
           {filterHelpText ? (
-            <Popover placement="bottom" isOpen={popoverOpen} target={id || 'datableSearch'} style={{ backgroundColor: '#222736' }}>
+            <Popover placement="bottom" isOpen={popoverOpen} target={this.inputRef} style={{ backgroundColor: '#222736' }}>
               <PopoverBody>
                 {this.getHelpText(filterHelpText)}
               </PopoverBody>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Col, Popover, PopoverBody, Row } from 'reactstrap';
 import { MESSAGE_TYPES } from '../../../constants/MessageConstants';
@@ -10,6 +10,7 @@ import DateItemRenderer from './DateItemRenderer';
 
 function AlertAckItemRenderer({ data, field }) {
   const dispatch = useDispatch();
+  const targetRef = useRef(null);
   const [popoverOpen, setPopoverOpen] = useState(false);
   if (!data) {
     return '-';
@@ -64,7 +65,7 @@ function AlertAckItemRenderer({ data, field }) {
       return null;
     }
     return (
-      <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: 'black' }}>
+      <Popover placement="bottom" isOpen={popoverOpen} target={targetRef} style={{ backgroundColor: 'black' }}>
         <PopoverBody>
           <Row>
             <Col sm={4}>Message</Col>
@@ -81,7 +82,7 @@ function AlertAckItemRenderer({ data, field }) {
   return (
     <div>
       <a href="#" onClick={onViewDetails} className="icon_font">
-        <i className={`${isAcknowledged ? 'fas fa-check-circle text-success' : 'fas fa-exclamation-triangle text-danger'}`} id={key} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} />
+        <i ref={targetRef} className={`${isAcknowledged ? 'fas fa-check-circle text-success' : 'fas fa-exclamation-triangle text-danger'}`} id={key} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} />
         {renderTooltip()}
       </a>
     </div>

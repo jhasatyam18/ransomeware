@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Popover, PopoverBody } from 'reactstrap';
@@ -6,6 +6,7 @@ import { PLATFORM_TYPES } from '../../../constants/InputConstants';
 
 function VMPlacementInfoItemRenderer(props) {
   const { data, drPlans, t } = props;
+  const targetRef = useRef(null);
   // only id is added so that key is unique
   const key = `netowrk-placement-info-popover-key-${data.id}`;
   const { protectionPlan } = drPlans;
@@ -87,7 +88,7 @@ function VMPlacementInfoItemRenderer(props) {
   };
 
   const renderPopOver = () => (
-    <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: 'black', width: '250px' }}>
+    <Popover placement="bottom" isOpen={popoverOpen} target={targetRef} style={{ backgroundColor: 'black', width: '250px' }}>
       <PopoverBody>
         {renderNetworkDetails()}
       </PopoverBody>
@@ -95,7 +96,7 @@ function VMPlacementInfoItemRenderer(props) {
   );
   return (
     <div>
-      <a id={key} href="#" className="protectedvm-icon" onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)}>
+      <a ref={targetRef} id={key} href="#" className="protectedvm-icon" onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)}>
         {label}
         {renderPopOver()}
       </a>

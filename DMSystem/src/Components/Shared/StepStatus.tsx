@@ -1,6 +1,6 @@
 import { faCaretDown, faCaretRight, faCheckCircle, faCircleXmark, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Popover, PopoverBody } from 'reactstrap';
@@ -37,6 +37,7 @@ const StepStatus: React.FC<Props> = (props) => {
     const [popOver, setPopOver] = useState<Record<string, boolean>>({});
     const pop: Record<string, boolean> = {};
     const [showSubStep, setShowSubStep] = useState<Record<string, boolean>>(pop || {});
+    const targetRef = useRef(null);
 
     if (!steps || steps?.length === 0) {
         return null;
@@ -68,13 +69,13 @@ const StepStatus: React.FC<Props> = (props) => {
         return null;
     };
 
-    const renderPopOver = (hoverInfo: string, key: string, isOpen: string) => {
+    const renderPopOver = (hoverInfo: string, key: string) => {
         const data = popOver[key];
         return (
             <Popover
                 placement="bottom"
                 isOpen={data}
-                target={key}
+                target={targetRef}
                 style={{
                     backgroundColor: 'black',
                     color: 'white',
@@ -105,9 +106,9 @@ const StepStatus: React.FC<Props> = (props) => {
             <div className="step_parent_div" key={i}>
                 <div className="step_icon_div">{renderIcon(st, stepStatusWarn)}</div>
                 <div className={` ${stepDivClass} ${i === steps.length - 1 ? '' : 'progress_step_border'}`}>
-                    <p className="step_msg text-muted pr-2" onMouseEnter={() => setPopOver({ [id]: true })} onMouseLeave={() => setPopOver({ [id]: false })}>
+                    <p ref={targetRef} className="step_msg text-muted pr-2" onMouseEnter={() => setPopOver({ [id]: true })} onMouseLeave={() => setPopOver({ [id]: false })}>
                         <span style={{ cursor: parseData.length > 0 || st.failureMessage ? 'pointer' : '' }} id={id} onClick={() => (parseData.length > 0 ? setShowSubStep({ ...showSubStep, [id]: !showSubStep[id] }) : null)}>{`${name}`}</span>
-                        {st.failureMessage ? renderPopOver(st.failureMessage, id, id) : null}
+                        {st.failureMessage ? renderPopOver(st.failureMessage, id) : null}
                         {parseData.length > 0 ? (
                             showSubStep[id] ? (
                                 <>

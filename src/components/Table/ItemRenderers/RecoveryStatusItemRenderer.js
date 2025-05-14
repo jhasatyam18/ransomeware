@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Badge, Popover, PopoverBody } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
 import SimpleBar from 'simplebar-react';
@@ -6,6 +6,7 @@ import { MIGRATION_INIT_FAILED, AUTO_MIGRATION_FAILED, CHECKPOINT_STATUS_AVAILAB
 
 function RecoveryStatusItemRenderer(props) {
   const [popoverOpen, setPopoverOpen] = useState(false);
+  const targetRef = useRef(null);
   const { t, data, field } = props;
   const failedStatus = [MIGRATION_INIT_FAILED, AUTO_MIGRATION_FAILED];
   if (!data) {
@@ -32,13 +33,13 @@ function RecoveryStatusItemRenderer(props) {
     }
   }
 
-  const renderPopOver = (hoverInfo, key) => {
+  const renderPopOver = (hoverInfo) => {
     const { noPopOver } = props;
     if (noPopOver) {
       return null;
     }
     return (
-      <Popover placement="bottom" isOpen={popoverOpen} target={key} style={{ backgroundColor: 'black', borderRadius: '6px', color: 'black', border: 'none', width: '250px', textAlign: hoverInfo.length <= 50 ? 'center' : 'left' }}>
+      <Popover placement="bottom" isOpen={popoverOpen} target={targetRef} style={{ backgroundColor: 'black', borderRadius: '6px', color: 'black', border: 'none', width: '250px', textAlign: hoverInfo.length <= 50 ? 'center' : 'left' }}>
         <PopoverBody>
           <SimpleBar style={{ maxHeight: '100px', minHeight: '20px', color: 'white' }}>
             { `Recovered : ${hoverInfo}`}
@@ -92,7 +93,7 @@ function RecoveryStatusItemRenderer(props) {
         <Badge className={`font-size-13 badge-soft-${color}`} id={`status-${id}`} pill onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)}>
           {data.recoveryStatus}
         </Badge>
-        {hoverInfo !== '' ? renderPopOver(hoverInfo, `status-${id}`) : null}
+        {hoverInfo !== '' ? renderPopOver(hoverInfo) : null}
       </div>
     );
   }
