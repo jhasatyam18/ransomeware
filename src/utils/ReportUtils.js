@@ -3,6 +3,7 @@ import * as FileSaver from 'file-saver';
 import i18n from 'i18next';
 import JsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { DETAILED_STEP_COMPONENTS } from '../constants/AppStatus';
 import { NUMBER, PLATFORM_TYPES, REPORT_DURATION, STATIC_KEYS, PLAYBOOK_NAMES, NODE_TYPES } from '../constants/InputConstants';
 import { ALPHABETS, BLUE, BORDER_STYLE, DARK_NAVY_BLUE, EXCEL_WORKSHEET_TABLE_HEADER_CELL, EXCEL_WORKSHEET_TITLE, LIGHT_GREY, LIGHT_NAVY_BLUE, REPORT_TYPES } from '../constants/ReportConstants';
 import { ALERTS_COLUMNS, EVENTS_COLUMNS, NODE_COLUMNS, PROTECTED_VMS_COLUMNS, PROTECTION_PLAN_COLUMNS, RECOVERY_JOB_COLUMNS, REPLICATION_JOB_COLUMNS, SITE_COLUMNS, TABLE_REPORTS_CHECKPOINTS } from '../constants/TableConstants';
@@ -503,7 +504,23 @@ export function getRecoveryStatusStep(data = {}) {
         if (s.data && s.data !== '') {
           subSteps = JSON.parse(s.data); // Parse the substeps
         }
-        const hasFailedSubstep = subSteps.some((sub) => sub.result !== STATIC_KEYS.REC_STEP_PASS);
+        let hasFailedSubstep = false;
+        if (s.name === DETAILED_STEP_COMPONENTS.PENDING_STATUS_STEPS && subSteps.length > 0) {
+          subSteps.forEach((pd) => {
+            const { result } = pd;
+            if (result === STATIC_KEYS.REC_STEP_FAIL) {
+              hasFailedSubstep = true;
+            }
+          });
+        } else if (subSteps.length > 0) {
+          subSteps.forEach((pd) => {
+            const key = Object.keys(pd);
+            const detailedStepStatus = pd[key[0]].result;
+            if (detailedStepStatus === STATIC_KEYS.REC_STEP_FAIL) {
+              hasFailedSubstep = true;
+            }
+          });
+        }
         stepStatus = hasFailedSubstep ? 'Partially-Completed' : STATIC_KEYS.REC_STEP_PASS;
       }
       const stepTime = s.time * 1000;

@@ -34,12 +34,12 @@ function RenderDetailedSteps(props) {
   );
 
   const renderIcons = (value) => (value === STATIC_KEYS.REC_STEP_PASS ? (
-    <span className="text-success margin-right-5">
+    <span className="text-success margin-right-5 margin-left-10">
       <FontAwesomeIcon size="sm" icon={faCheckCircle} />
     </span>
   ) : (
     <>
-      <span className="text-danger margin-right-5">
+      <span className="text-danger margin-right-5 margin-left-10">
         <FontAwesomeIcon size="sm" icon={faCircleXmark} />
       </span>
     </>

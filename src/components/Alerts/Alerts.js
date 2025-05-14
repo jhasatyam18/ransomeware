@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, Col, Container, Row } from 'reactstrap';
-import { clearValues } from '../../store/actions';
 import DMBreadCrumb from '../Common/DMBreadCrumb';
 import DMAPIPaginator from '../Table/DMAPIPaginator';
 import DMTable from '../Table/DMTable';
@@ -30,7 +29,6 @@ function Alerts({ alerts, dispatch, t }) {
       });
 
     return () => {
-      dispatch(clearValues());
       if (alertFiltersRef.current) {
         alertFiltersRef.current = undefined;
       }
