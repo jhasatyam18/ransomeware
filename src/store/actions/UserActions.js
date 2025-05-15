@@ -3,7 +3,7 @@ import { API_ADD_USER, API_AUTHENTICATE, API_AWS_REGIONS, API_AZURE_REGIONS, API
 import { APP_TYPE, NODE_TYPES, PLATFORM_TYPES, SAML, STATIC_KEYS, VMWARE_OBJECT } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { MODAL_USER_SCRIPT } from '../../constants/Modalconstant';
-import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODES_PATH, PLAYBOOK_LIST, PROTECTION_PLANS_PATH, ROLES_SETTINGS_PATH, SITES_PATH, THROTTLING_SETTINGS_PATH, USER_SETTINGS_PATH } from '../../constants/RouterConstants';
+import { ALERTS_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, JOBS_REPLICATION_PATH, LICENSE_SETTINGS_PATH, NODE_UPDATE_SCHEDULER, NODES_PATH, PLAYBOOK_LIST, PROTECTION_PLANS_PATH, ROLES_SETTINGS_PATH, SITES_PATH, THROTTLING_SETTINGS_PATH, USER_SETTINGS_PATH } from '../../constants/RouterConstants';
 import { STORE_KEYS } from '../../constants/StoreKeyConstants';
 import { APPLICATION_API_USER, APPLICATION_AUTHORIZATION, APPLICATION_UID } from '../../constants/UserConstant';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
@@ -22,6 +22,7 @@ import { fetchLicenses } from './LicenseActions';
 import { addMessage, clearMessages } from './MessageActions';
 import { closeModal, openModal } from './ModalActions';
 import { fetchNodes } from './NodeActions';
+import { fetchSheduledNodes } from './NodeScheduleAction';
 import { fetchRoles } from './RolesAction';
 import { fetchAvailibilityZones, fetchSites } from './SiteActions';
 import { fetchBandwidthConfig, fetchBandwidthReplNodes } from './ThrottlingAction';
@@ -388,6 +389,9 @@ export function refresh() {
         break;
       case ROLES_SETTINGS_PATH:
         dispatch(fetchRoles());
+        break;
+      case NODE_UPDATE_SCHEDULER:
+        dispatch(fetchSheduledNodes());
         break;
       default:
         dispatch(detailPathChecks(pathname));

@@ -747,6 +747,14 @@
     </nav>
   
 </li>
+
+<li class="md-nav__item">
+  <a href="#4139-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.13.9 System 
+    </span>
+  </a>
+</li>
         
           <li class="md-nav__item">
   <a href="#414-upgrade" class="md-nav__link">
@@ -1340,6 +1348,14 @@
     </nav>
   
 </li>
+
+<li class="md-nav__item">
+  <a href="#4139-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.13.9 System 
+    </span>
+  </a>
+</li>
         
           <li class="md-nav__item">
   <a href="#414-upgrade" class="md-nav__link">
@@ -1603,6 +1619,12 @@ the user interface and related options in detail.</p>
 <td>Identity Provider</td>
 <td>SAML authentication</td>
 <td><a href="#4137-identity-provider-saml-authentication">Identity Provider</a></td>
+</tr>
+<tr>
+<td></td>
+<td>System</td>
+<td>Prep Node Update Schedule</td>
+<td><a href="#4139-system">System</a></td>
 </tr>
 <tr>
 <td>Upgrade</td>
@@ -6192,10 +6214,124 @@ alt="Graphical user interface, application Description automatically generated" 
     delete icon.</p>
 </li>
 </ul>
-<p><img src="./media/image158.png" style="width:1.91643in;height:1.16652in"
+<p style="margin-left: 40%;"><img src="./media/image158.png" style="width:1.91643in;height:1.16652in, padding-left:40px"
 alt="Graphical user interface, application Description automatically generated" />
 <br/>
-<small style="font-style: italic; margin-left: 30%; text-align: center;">Figure 128: Download support bundle icon</small></p>
+</p>
+<small style="font-style: italic; margin-left: 30%; text-align: center;">Figure 128: Download support bundle icon</small>
+
+<h3 id="4139-system">4.13.9 System </h3>
+<p>
+  <span style="font-weight: bold;">Update Schedule - </span>
+  <span>The Update schedule option is used when prep nodes need to be powered on at scheduled duration and can be found under the settings -> System option.</span>
+</p>
+<p>To schedule the powering on of the prep nodes, click on New Schedule as shown below -</p>
+<p><img src="./media/image177.png" style="width:6.26806in;height:2.81901in"
+alt="Graphical user interface, text, application Description automatically generated" />
+<br />
+<img src="./media/image178.png" style="width:6.26806in;height:3.51901in"
+alt="Graphical user interface, text, application Description automatically generated" />
+<br />
+<small style="font-style: italic; margin-left: 30%;">Figure 129: Update Schedule option</small>
+<p>In the above windows, select the desired prep node for update schedule and fill in the desired details as required-</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Repeat Occurrence</td>
+      <td>
+        <p style="margin: 0px;">The days, week and month the schedule needs to be repeated.</p>
+        <p style="margin: 0px;">For:</p>
+        <p style="margin: 0px;">Day - the schedule will occur based on the inputs ex. Every 2 days if 2 is used as a desired value (Max. 30th of used as a value)</p>
+        <p style="margin: 0px;">Week - which day in the week ex. every Tuesday</p>
+        <p style="margin: 0px;">Month - which date of the month</p>
+      </td>
+    </tr>
+    <tr>
+      <td>Power On At</td>
+      <td>Time at which the prep nodes will be powered On</td>
+    </tr>
+    <tr>
+      <td>Power Off At</td>
+      <td>Time at which the prep nodes will be powered off ex. same day or after 2 days at 3 pm. (Max. 5 days )</td>
+    </tr>
+    <tr>
+      <td>Time Zone</td>
+      <td>The time zone at which the schedule will trigger</td>
+    </tr>
+  </tbody>
+</table>
+<table>
+  <thead>
+    <tr>
+      <th>  Note: Even if you schedule it for multiple nodes simultaneously, it will show Infront of those nodes only. Once the Create schedule is done the schedule is by default enable.
+      </th>
+    </tr>
+  </thead>
+<tbody>
+</tbody>
+</table>
+<p>Once the above desired values are entered, click on the Create schedule option to schedule the powering on of the prep nodes at the desired time. 
+It will be visible as below - </p>
+<img src="./media/image179.png" style="width:6.56806in;height:0.91901in"
+alt="Graphical user interface, text, application Description automatically generated" />
+<br />
+<small style="font-style: italic; margin-left: 30%;">Figure 130: Update Schedule wizard</small>
+<p>In the above figure, once the schedule created after selecting a particular schedule, user can re-configure, Remove and disable it.</p>
+<table>
+  <thead>
+  </thead>
+<tbody>
+  <tr>
+    <td>Reconfigure</td>
+    <td>This option can be used when a certain scheduler needs to be reconfigured.</td>
+  </tr>
+  <tr>
+    <td>Remove</td>
+    <td>This option is used to remove the scheduler.</td>
+  </tr>
+  <tr>
+    <td>Enable</td>
+    <td>This option is used to enable a certain scheduler that is disabled.</td>
+  </tr>
+  <tr>
+    <td>Disable</td>
+    <td>This option can be used to disable a certain scheduler that is enabled.</td>
+  </tr>
+</tbody>
+</table>
+<p>Also the above figure the titles denote the following -</p>
+<table>
+  <thead>
+  </thead>
+<tbody>
+  <tr>
+    <td>Name</td>
+    <td>Name of the prep node</td>
+  </tr>
+  <tr>
+    <td>System Upgrade Schedule</td>
+    <td>The configuration of the schedule</td>
+  </tr>
+  <tr>
+    <td>Previous Run</td>
+    <td>The last time scheduler ran</td>
+  </tr>
+  <tr>
+    <td>Next Run</td>
+    <td>The next time the scheduler will run</td>
+  </tr>
+  <tr>
+    <td>System Update status</td>
+    <td>Time when the system was updated /patched</td>
+  </tr>
+  <tr>
+    <td>Status</td>
+    <td>If the scheduler is enabled or disabled currently </td>
+  </tr>
+</tbody>
+</table>
+
 <h2 id="414-upgrade">4.14 Upgrade</h2>
 <p>The upgrade feature is used to upgrade the Datamotive services and
 features. To upgrade Datamotive solution, execute below mentioned steps
@@ -6222,13 +6358,13 @@ nodes only.</p>
 <img src="./media/129.png"
 style="width:6.47609in;height:1.60702in" />
 <br/>
-<small style="font-style: italic; margin-left: 30%;">Figure 129: Upgrade option</small>
+<small style="font-style: italic; margin-left: 30%;">Figure 131: Upgrade option</small>
 <p>When the upgrade option is being clicked it will re-direct to a new tab and have a URL – https://<IP address>:5004/upgrade.</p>
   <p>The upgrade wizard will appear as shown in Figure 130-</p>
   <img src="./media/130.png"
 style="width:6.47609in;height:1.60702in" />
 <br />
-<small style="font-style: italic; margin-left: 30%;">Figure 130: Upgrade wizard</small>
+<small style="font-style: italic; margin-left: 30%;">Figure 132: Upgrade wizard</small>
 <p>On the page the below data will be displayed</p>
 <table>
 <tbody>
@@ -6269,27 +6405,27 @@ shown as in Figure 131-<br />
 <img src="./media/image161.png"
 style="width:6.27609in;height:1.40702in" /><br />
  
-<small style="font-style: italic; margin-left: 30%;">Figure 131: Upgrade package uploaded</small>
+<small style="font-style: italic; margin-left: 30%;">Figure 133: Upgrade package uploaded</small>
 <em></em><br />
 2. Paste the URL -<br />
 Paste the URL for the packages in the box to upload the URL as shown in
 Figure 132 -<img src="./media/image162.png"
 style="width:6.26806in;height:1.21944in" /><br />
  
-<small style="font-style: italic; margin-left: 30%;">Figure 132: Upgrade package URL</small>
+<small style="font-style: italic; margin-left: 30%;">Figure 134: Upgrade package URL</small>
 <em></em><br />
 Click on upload to upload the packages in the management node –</p>
 <p><img src="./media/image163.png" style="width:6.26806in;height:2.01368in"
 alt="A screenshot of a computer Description automatically generated" /><br />
  
-<small style="font-style: italic; margin-left: 30%;">Figure 133: Upgrade package upload in progress</small>
+<small style="font-style: italic; margin-left: 30%;">Figure 135: Upgrade package upload in progress</small>
 <em></em></p>
 <p>Once the upload is completed the below wizard along with the information
 about the upgrade will be visible -<br />
 <img src="./media/image164.png"
 style="width:6.27095in;height:1.83531in" /><br />
  
-<small style="font-style: italic; margin-left: 30%;">Figure 134: Upgrade package upload complete</small>
+<small style="font-style: italic; margin-left: 30%;">Figure 136: Upgrade package upload complete</small>
 <em></em></p>
 <p>The above wizard gives information about the name of the Upgrade
 package, size of the package, a description and a short summary about
@@ -6300,7 +6436,7 @@ upgrade option will be enabled</p>
 <p><img src="./media/image165.png"
 style="width:6.2672in;height:1.60736in" /><br />
  
-<small style="font-style: italic; margin-left: 30%;">Figure 135: Upgrade confirmation on message the before upgrade</small>
+<small style="font-style: italic; margin-left: 30%;">Figure 137: Upgrade confirmation on message the before upgrade</small>
 <em></em><br />
 Click on upgrade to upgrade the nodes. The information for the nodes is
 displayed along with the progress as to which step is being performed
@@ -6308,7 +6444,7 @@ during the upgrade as shown in Figure 136-
 <img src="./media/image166.png" style="width:6.27684in;height:1.71432in"
 alt="A screenshot of a computer Description automatically generated" /><br />
  
-<small style="font-style: italic; margin-left: 30%;">Figure 136: Upgrade in progress</small>
+<small style="font-style: italic; margin-left: 30%;">Figure 138: Upgrade in progress</small>
 </p>
 <p><strong>Note – Using the above upgrade flow, replication and the prep nodes
 will also be upgraded if they are attached/added to the management nodes
@@ -6316,18 +6452,18 @@ if they are online. Offline nodes are not upgraded.</strong></p>
 <p>The nodes can also be reverted to the previous version using the below
 workflow.<br />
 An option to revert back to the previous version is available if the
-management nodes are upgraded as shown in Figure 137 –</p>
+management nodes are upgraded as shown in Figure 138 –</p>
 <p><img src="./media/image167.png" style="width:6.26661in;height:1.80368in"
 alt="A screen shot of a computer Description automatically generated" /><br />
  
-<small style="font-style: italic; margin-left: 30%;">Figure 137: revert from the Upgrade Wizard</small>
+<small style="font-style: italic; margin-left: 30%;">Figure 139: revert from the Upgrade Wizard</small>
 <br />
 To revert click on Revert, the below wizard will be visible along with
 the information –</p>
 <p><img src="./media/image168.png"
 style="width:6.26805in;height:1.42331in" /><br />
  
-<small style="font-style: italic; margin-left: 30%;">Figure 138: Revert confirmation wizard</small>
+<small style="font-style: italic; margin-left: 30%;">Figure 140: Revert confirmation wizard</small>
 </p>
 <p>As shown in the above snip, confirm the message and click on Revert to
 revert back to previous version. The revert will happen on all the nodes
@@ -6335,14 +6471,14 @@ attached to the management node.</p>
 <p><img src="./media/image169.png" style="width:6.26744in;height:1.52761in"
 alt="A screenshot of a computer Description automatically generated" /><br />
  
-<small style="font-style: italic; margin-left: 30%; margin-left: 30%;">Figure 139: Revert in progress</small>
+<small style="font-style: italic; margin-left: 30%; margin-left: 30%;">Figure 141: Revert in progress</small>
 </p>
 <p>Once the revert is completed, the below snip along with the summary is
 available -<br />
 <img src="./media/image170.png" style="width:6.26603in;height:1.78528in"
 alt="A screenshot of a computer Description automatically generated" /><br />
  
-<small style="font-style: italic; margin-left: 30%;">Figure 140: Revert successfull</small>
+<small style="font-style: italic; margin-left: 30%;">Figure 142: Revert successfull</small>
 </p>
 <p>Using the CLI (Command line interface) – The upgrade can also be done
 using the command line interface (CLI) using the below steps-<br />
@@ -6353,7 +6489,7 @@ package URL from S3 from AWS -<br />
 <img src="./media/image171.png" style="width:6.26806in;height:1.68755in"
 alt="A screenshot of a computer program Description automatically generated" /><br />
  
-<small style="font-style: italic; margin-left: 30%;">Figure 141: Upgrade using the CLI</small>
+<small style="font-style: italic; margin-left: 30%;">Figure 143: Upgrade using the CLI</small>
 </p>
 <p>Note – If there are other management nodes connected with the management
 node being upgraded have version mismatch, an option to upgrade the
@@ -6366,7 +6502,7 @@ used for upgrading the nodes -<br />
 <img src="./media/image172.png"
 style="width:6.26806in;height:0.77847in" /><br />
  
-<small style="font-style: italic; margin-left: 30%;">Figure 142: Untar the upgrade bundle</small>
+<small style="font-style: italic; margin-left: 30%;">Figure 144: Untar the upgrade bundle</small>
 <br />
 Once the packages are extracted, using the below command the upgrade can
 be done as shown in the below snip –<br />
@@ -6378,7 +6514,7 @@ Once the upgrade is completed, the below snip will be visible -<br />
 <img src="./media/image174.png" style="width:6.26806in;height:1.64243in"
 alt="A screen shot of a computer Description automatically generated" /><br />
  
-<small style="font-style: italic; margin-left: 30%;">Figure 143: upgrade successful using the CLI</small>
+<small style="font-style: italic; margin-left: 30%;">Figure 145: upgrade successful using the CLI</small>
 </p>
 <p>Revert using the CLI (Command Line interface)-<br />
 The nodes can be reverted to the previous version by using the below
@@ -6391,7 +6527,7 @@ Once the revert operation is completed it will be shown as same in the
 below snip -<br />
 <img src="./media/image175.png"
 style="width:6.26806in;height:0.86387in" /><br />
-<small style="font-style: italic; margin-left: 30%;">Figure 144: upgrade successful using the CLI</small>
+<small style="font-style: italic; margin-left: 30%;">Figure 146: upgrade successful using the CLI</small>
  
 <h1 id="5-features-unsupported-configurations">5 Features - Unsupported configurations</h1>
 <h2 id="51-point-in-time-checkpoints">5.1 Point-in-Time Checkpoints</h2>

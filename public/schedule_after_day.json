@@ -1,0 +1,8 @@
+[
+  { "label": "Same-Day", "value": "sameDay" },
+  { "label": "After 1 Day", "value": "1" },
+  { "label": "After 2 Days", "value": "2" },
+  { "label": "After 3 Days", "value": "3" },
+  { "label": "After 4 Days", "value": "4" },
+  { "label": "After 5 Days", "value": "5" }
+]

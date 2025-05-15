@@ -4,14 +4,14 @@ import { API_VALIDATE_MIGRATION, API_VALIDATE_RECOVERY, API_VALIDATE_REVERSE_PLA
 import { FIELDS } from '../constants/FieldsConstant';
 import { CHECKPOINT_TYPE, PLATFORM_TYPES, RECOVERY_STATUS, STATIC_KEYS, UI_WORKFLOW } from '../constants/InputConstants';
 import { MESSAGE_TYPES } from '../constants/MessageConstants';
-import { MODAL_REVERSE_CHANGES_WARNING } from '../constants/Modalconstant';
+import { MODAL_CONFIRMATION_WARNING, MODAL_REVERSE_CHANGES_WARNING, MODAL_SHOW_WINPREP_UPDATE_WARNING } from '../constants/Modalconstant';
 import { STORE_KEYS } from '../constants/StoreKeyConstants';
 import { GENERAL_PLATFORM_KEYS, PLAN_KEYS, REC_SCRIPTS, REP_SCRIPTS } from '../constants/UserConstant';
 import { IP_REGEX } from '../constants/ValidationConstants';
 import { addErrorMessage, hideApplicationLoader, removeErrorMessage, showApplicationLoader, valueChange } from '../store/actions';
 import { setVMGuestOSInfo } from '../store/actions/DrPlanActions';
 import { addMessage } from '../store/actions/MessageActions';
-import { openModal } from '../store/actions/ModalActions';
+import { closeModal, openModal } from '../store/actions/ModalActions';
 import { getVMwareVMSProps } from '../store/actions/UserActions';
 import { API_TYPES, callAPI, createPayload } from './ApiUtils';
 import { convertMinutesToDaysHourFormat } from './AppUtils';
@@ -545,6 +545,10 @@ export function validateAzureNetwork(user, dispatch) {
   return isClean;
 }
 
+const onUpdateWarningConfirm = () => (dispatch) => {
+  dispatch(valueChange(STATIC_KEYS.UI_DMWIZARD_MOVENEXT, true));
+  dispatch(closeModal());
+};
 export async function validateRecoveryVMs({ user, dispatch, doNotShowPopup }) {
   const { values } = user;
   const isVMSelected = validateVMSelection(user, dispatch);
@@ -560,7 +564,6 @@ export async function validateRecoveryVMs({ user, dispatch, doNotShowPopup }) {
           dispatch(showApplicationLoader('VALIDATING_RECOVERY_MACHINES', 'Validating virtual machines.'));
           const response = await callAPI(API_VALIDATE_RECOVERY, obj);
           dispatch(hideApplicationLoader('VALIDATING_RECOVERY_MACHINES'));
-
           if (response.length > 0) {
             let warningMsg = i18n.t('recovery.discard.warning.msg');
             const warningVMS = [];
@@ -1023,15 +1026,32 @@ export function isIPsPartOfCidr(cidr, ipAddr) {
 function showValidationInfo(response = [], dispatch) {
   const errors = response.filter((res) => (res && res.isWarning === false));
   const warnings = response.filter((res) => (res && res.isWarning === true));
+  let isPrepNodeWrn = false;
   if (errors.length > 0) {
     errors.forEach((e) => {
       dispatch(addMessage(`${e.vmName} - ${e.message}`, MESSAGE_TYPES.ERROR));
     });
     return false;
   }
+  const warnDataForPrep = [];
   if (warnings.length > 0) {
     warnings.forEach((w) => {
-      dispatch(addMessage(`${w.vmName} - ${w.message}`, MESSAGE_TYPES.WARNING));
+      // check if their is any warning message related to prep node to open modal
+      if (w.vmName.indexOf('Prep Node') !== -1) {
+        isPrepNodeWrn = true;
+      }
+      warnDataForPrep.push(`${w.vmName} - ${w.message}`);
+    });
+  }
+  if (isPrepNodeWrn) {
+    // if any warning with prep node found open modal for it otherwise show message banner
+    const options = { title: 'Confirmation', size: 'lg', data: warnDataForPrep, render: MODAL_SHOW_WINPREP_UPDATE_WARNING, confirmAction: onUpdateWarningConfirm, message: '', footerLabel: 'Ignore warning and continue', color: 'warning' };
+    dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
+    return false;
+  }
+  if (warnDataForPrep.length > 0) {
+    warnDataForPrep.forEach((w) => {
+      dispatch(addMessage(w, MESSAGE_TYPES.WARNING));
     });
   }
   return true;
@@ -1553,4 +1573,31 @@ export function validateCheckpointSelection(user, vms, dispatch) {
 }
 export function isDateEmpty({ value }) {
   return !value || !(value instanceof Date); // instanceof Date operator checks the value is valid date obect or not
+}
+
+export function validateConfigureShedule(user, dispatch, fieldConfigMap) {
+  const { values } = user;
+  const fields = [
+    STORE_KEYS.UI_NODE_UPDATE_SCHEDULER_POWER_OFF_DAY,
+    STORE_KEYS.UI_NODE_UPDATE_SCHEDULER_OCCURRENCE,
+    STORE_KEYS.UI_NODE_UPDATE_SCHEDULER_OCCURRENCE_OPTION,
+    STORE_KEYS.UI_SCHEDULE_TIME_ZONE,
+  ];
+
+  const occurrenceOption = getValue(STORE_KEYS.UI_NODE_UPDATE_SCHEDULER_OCCURRENCE_OPTION, values) || '';
+  if (occurrenceOption === 'month') {
+    fields.push(STORE_KEYS.UI_NODE_UPDATE_SCHEDULER_DAY_OF_MONTH);
+  }
+
+  let isClean = true;
+  fields.forEach((fieldKey) => {
+    const field = fieldConfigMap[fieldKey];
+    if (!field) return; // skip missing config
+    const value = getValue(fieldKey, values);
+    if (!validateField(field, fieldKey, value, dispatch, user)) {
+      isClean = false;
+    }
+  });
+
+  return isClean;
 }

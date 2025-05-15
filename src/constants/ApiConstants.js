@@ -70,6 +70,8 @@ export const API_AZURE_REGIONS = 'azure_regions.json';
 export const API_AWS_AVAILABILITY_ZONES = 'aws_availability_zones.json';
 export const API_GCP_AVAILABILITY_ZONES = 'gcp_zones.json';
 export const API_AZURE_AVAILIBITY_ZONES = 'azure_availibility_zones.json';
+export const API_TIME_ZONE = 'time_zone.json';
+export const API_DAYS_LATER = 'schedule_after_day.json';
 
 // events
 export const API_FETCH_EVENTS = 'api/v1/events';
@@ -160,3 +162,5 @@ export const REFRESH_OPS = {
 
 export const API_CLEANUP_RECOVERIES_FETCH = 'api/v1/recover/cleanup?planids=<id>&cleanuptype=<type>';
 export const API_CLEANUP_RECOVERIES = 'api/v1/recover/cleanup?planid=<id>&cleanuptype=<type>';
+export const API_FETCH_SCHEDULED_NODE = 'api/v1/node/systemupdate/schedule';
+export const API_SCHEDULED_NODE = 'api/v1/node/systemupdate/schedule';

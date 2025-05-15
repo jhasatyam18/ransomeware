@@ -29,6 +29,8 @@ export const PENDING_STATUS_STEP = 'Validating Instance Status from CSP';
 export const PENDING_STATUS = 'pending-csp-verification';
 export const VALIDATING = 'fetching latest status';
 export const PASS = 'Pass';
+export const ENABLED = 'enabled';
+export const DISABLED = 'disabled';
 
 export const DELETED_FROM_PLAN = 'isRemovedFromPlan';
 export const IS_DELETED = 'isDeleted';

@@ -46,7 +46,7 @@ class placeHolderNumber extends Component {
     const { field, fieldKey, dispatch, user } = this.props;
     let { min, max } = field;
     const { onChange, getMinMax } = field;
-    const targetValue = parseInt(`${e.target.value}`, 10);
+    let targetValue = parseInt(`${e.target.value}`, 10);
     if (getMinMax && typeof getMinMax === 'function') {
       const val = getMinMax(user);
       min = val.min;
@@ -54,10 +54,13 @@ class placeHolderNumber extends Component {
     }
     if (targetValue < min) {
       this.setState({ value: min });
+      targetValue = min;
     } else if (targetValue > max) {
       this.setState({ value: max });
+      targetValue = max;
     } else if (Number.isNaN(targetValue)) {
       this.setState({ value: min });
+      targetValue = min;
     } else {
       this.setState({ value: targetValue });
     }

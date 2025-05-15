@@ -1,4 +1,4 @@
-import { faCalendar, faChartColumn, faClockFour, faClone, faCloud, faDesktop, faEnvelope, faFileContract, faGear, faHeadset, faIdCard, faLayerGroup, faNetworkWired, faScroll, faSliders, faTachometerAltFast, faTasks, faUndo, faUsers, faUserShield } from '@fortawesome/free-solid-svg-icons';
+import { faCalendar, faCalendarDays, faChartColumn, faClockFour, faClone, faCloud, faComputer, faDesktop, faEnvelope, faFileContract, faGear, faHeadset, faIdCard, faLayerGroup, faNetworkWired, faScroll, faSliders, faTachometerAltFast, faTasks, faUndo, faUsers, faUserShield } from '@fortawesome/free-solid-svg-icons';
 import { t } from 'i18next';
 import { RECOVERY_STATUS } from '../constants/AppStatus';
 import { PLATFORM_TYPES, STATIC_KEYS } from '../constants/InputConstants';
@@ -252,6 +252,7 @@ export function getSideBarContents() {
         { label: 'users', to: RPATH.USER_SETTINGS_PATH, icon: faUsers, isActivePath: [RPATH.USER_SETTINGS_PATH], hasChildren: false },
         { label: 'title.identityProvider', to: RPATH.IDENTITY_PROVIDER, icon: faIdCard, isActivePath: [RPATH.IDENTITY_PROVIDER], hasChildren: false },
         { label: 'tech.support', to: RPATH.SUPPORT_BUNDLE_PATH, icon: faHeadset, isActivePath: [RPATH.SUPPORT_BUNDLE_PATH], hasChildren: false },
+        { label: 'system', to: '#', icon: faComputer, isActivePath: [RPATH.NODE_UPDATE_SCHEDULER], hasSubMenu: true, subMenu: [{ label: 'node.update.scheduler', to: RPATH.NODE_UPDATE_SCHEDULER, icon: faCalendarDays, isActivePath: [RPATH.NODE_UPDATE_SCHEDULER], hasChildren: false }] },
       ],
     },
   ];

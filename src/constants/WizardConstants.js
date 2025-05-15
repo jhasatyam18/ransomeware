@@ -60,7 +60,7 @@ export const CREATE_DR_PLAN_WIZARDS = {
 export const RECOVERY_WIZARDS = {
   options: { title: 'Recovery', onFinish: startRecovery },
   steps: [
-    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), name: STEPS.VIRTUAL_MACHINE, isAsync: true },
+    { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), name: STEPS.VIRTUAL_MACHINE, isAsync: true, onUpdate: (user, dispatch) => checkCBTStatus({ user, dispatch }) },
     { label: 'Tools and Scripts', title: '', component: RECOVERY_CONFIG, validate: (user, dispatch) => noValidate({ user, dispatch }), name: STEPS.RECOVERY_CONFIG },
     { label: 'Summary', title: '', component: RECOVERY_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch), name: STEPS.SUMMARY }],
 };
@@ -80,7 +80,7 @@ export const TEST_RECOVERY_WIZARDS = {
   steps: [
     { label: 'Virtual Machines', title: '', component: RECOVERY_PROTECT_VM_STEP, validate: (user, dispatch) => validateVMSelection(user, dispatch) },
     { label: 'Test Recovery Configuration', title: '', component: TEST_RECOVERY_CONFIG_STEP, validate: (user, dispatch) => validateVMConfiguration({ user, dispatch, doNotShowPopup: true }) },
-    { label: 'Tools and Scripts', title: '', component: TEST_RECOVERY_CONFIG_SCRIPTS, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), isAsync: true },
+    { label: 'Tools and Scripts', title: '', component: TEST_RECOVERY_CONFIG_SCRIPTS, validate: (user, dispatch) => validateRecoveryVMs({ user, dispatch }), isAsync: true, onUpdate: (user, dispatch) => checkCBTStatus({ user, dispatch }) },
     { label: 'Summary', title: '', component: RECOVERY_SUMMARY, validate: (user, dispatch) => noValidate(user, dispatch) }],
 };
 

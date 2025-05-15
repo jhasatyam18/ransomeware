@@ -23,6 +23,12 @@ export default function settings(state = INITIAL_STATE.settings, action) {
       return { ...state, idp: action.data };
     case Types.SET_SELECTED_USERS:
       return { ...state, selectedUsers: action.selectedUsers };
+    case Types.FETCH_SCHEDULED_NODES:
+      return { ...state, scheduledNodes: action.data };
+    case Types.SET_SELECTED_SCEDULED_NODES:
+      return { ...state, selectedScheduledNodes: action.selectedScheduledNodes };
+    case Types.SET_SELECTED_CREATE_SCEDULED_NODES:
+      return { ...state, selectedCreateScheduledNodes: action.selectedScheduledNodes };
     default:
       return state;
   }

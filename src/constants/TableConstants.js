@@ -75,6 +75,8 @@ export const REPORT_AVG_RPO_RENDERER = 'REPORT_AVG_RPO_RENDERER';
 export const REPORT_VMS_ITERATION = 'REPORT_VMS_ITERATION';
 export const REPORT_DATA_REDUCTION_RATIO = 'REPORT_DATA_REDUCTION_RATIO';
 export const WRAP_TEXT_ITEM_RENDERER = 'WRAP_TEXT_ITEM_RENDERER';
+export const SYSTEM_UPGRADE_SCHEDULE_ITEM_RENDERER = 'SYSTEM_UPGRADE_SCHEDULE_ITEM_RENDERER';
+export const SCHEDULE_NODE_LOCATION_ITEM_RENDERER = 'SCHEDULE_NODE_LOCATION_ITEM_RENDERER';
 
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
@@ -504,4 +506,17 @@ export const TABLE_CLEANUP_DR_COPIES = [
   { label: 'resources.for.deletion', field: 'resourceName', width: 2 },
   { label: 'created.at', field: 'createdAt', itemRenderer: DATE_ITEM_RENDERER, width: 2 },
   { label: 'description', field: 'description', width: 4 },
+];
+
+export const TABLE_NODE_UPDATE_SCHEDULER = [
+  { label: 'Name', field: 'node.name' },
+  { label: 'System Upgrade Schedule', field: 'schedule', itemRenderer: SYSTEM_UPGRADE_SCHEDULE_ITEM_RENDERER },
+  { label: 'Previous Run', field: 'lastRun', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Next Run', field: 'nextRun', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'System Update Status', field: 'systemUpdateStatus' },
+  { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
+];
+export const TABLE_NODE_SCHEDULER = [
+  { label: 'Name', field: 'name' },
+  { label: 'Hostname', field: 'hostname', itemRenderer: SCHEDULE_NODE_LOCATION_ITEM_RENDERER },
 ];

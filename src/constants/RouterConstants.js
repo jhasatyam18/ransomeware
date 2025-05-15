@@ -30,3 +30,5 @@ export const JOBS_PATH = '/jobs/*';
 export const JOBS_REPLICATION_PATH = '/jobs/replication';
 export const JOBS_RECOVERY_PATH = '/jobs/recovery';
 export const IDENTITY_PROVIDER = '/settings/identityProvider';
+export const NODE_UPDATE_SCHEDULER = '/settings/nodeUpdateScheduler';
+export const NODE_UPDATE_SCHEDULER_CREATE = '/settings/nodeUpdateScheduler/schedule';

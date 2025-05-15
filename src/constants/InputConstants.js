@@ -161,6 +161,10 @@ export const STATIC_KEYS = {
   REPORT_PROTECTION_PLAN: 'report.protectionPlan.protectionPlans',
   COMPLETED: 'completed',
   PREVIOUS: 'previous',
+  DAY: 'day',
+  WEEK: 'week',
+  MONTH: 'month',
+  EDIT: 'edit',
 };
 
 // Recovery time in minutes
