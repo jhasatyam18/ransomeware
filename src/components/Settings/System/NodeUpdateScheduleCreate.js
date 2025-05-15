@@ -95,7 +95,11 @@ function NodeUpdateScheduleCreate(props) {
         return;
       }
       const powerOnCron = convertScheduleToCron({ type, repeat, dayOfWeek, dayOfMonth, time: formatTime(powerOnTime) });
-      const { powerOffDayOfWeek, powerOffDayOfMonth, powerOffRepeat } = getPowerOffDayInterval({ type, repeat, dayOfWeek, dayOfMonth, powerOffByDay });
+      const { powerOffDayOfWeek, powerOffDayOfMonth, powerOffRepeat, errStr } = getPowerOffDayInterval({ type, repeat, dayOfWeek, dayOfMonth, powerOffByDay });
+      if (errStr !== '') {
+        dispatch(addMessage(errStr, MESSAGE_TYPES.ERROR));
+        return;
+      }
       const powerOffCron = convertScheduleToCron({ type, repeat: powerOffRepeat, dayOfWeek: powerOffDayOfWeek, dayOfMonth: powerOffDayOfMonth, time: formatTime(powerOffTime) });
       const powerOnCronSchedule = `* ${powerOnCron}`;
       const powerOffCronSchedule = `* ${powerOffCron}`;

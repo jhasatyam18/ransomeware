@@ -158,10 +158,15 @@ export function getPowerOffDayInterval({ type, repeat, dayOfWeek, dayOfMonth, po
   let powerOffDayOfWeek = dayOfWeek;
   let powerOffDayOfMonth = dayOfMonth;
   let powerOffRepeat = repeat;
+  let errStr = '';
   if (powerOffByDay && powerOffByDay !== 'sameDay') {
     const offset = parseInt(powerOffByDay, 10);
     if (type === 'Days') {
-      powerOffRepeat = repeat + offset;
+      const por = repeat + offset;
+      if (por > 30) {
+        errStr = 'Since day computation crossing month, please select a monthly schedule.';
+      }
+      powerOffRepeat = por;
     }
     if (type === 'Week') {
       const indexOfDay = Object.entries(dayNameToIndex).reduce((acc, [k, v]) => {
@@ -169,7 +174,7 @@ export function getPowerOffDayInterval({ type, repeat, dayOfWeek, dayOfMonth, po
         return acc;
       }, {});
       powerOffDayOfWeek = (Array.isArray(dayOfWeek) ? dayOfWeek : [dayOfWeek]).map((d) => {
-        const shifted = (dayNameToIndex[d] + offset + 1) % 7;
+        const shifted = (dayNameToIndex[d] + offset) % 7;
         return indexOfDay[shifted];
       });
     }
@@ -186,6 +191,7 @@ export function getPowerOffDayInterval({ type, repeat, dayOfWeek, dayOfMonth, po
     powerOffDayOfWeek,
     powerOffDayOfMonth,
     powerOffRepeat,
+    errStr,
   };
 }
 
