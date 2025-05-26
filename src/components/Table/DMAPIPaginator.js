@@ -26,6 +26,8 @@ function DMAPIPaginator(props) {
   const refresh = useSelector((state) => state.user.context.refresh);
   const timerRef = useRef(null);
   const searchStrRef = useRef(searchStr);
+  const fetchTokenRef = useRef(0);
+  const isFetchingRef = useRef(false);
   const pageNummRef = useRef(Object.keys(metadata).length > 0 ? metadata.currentPage : 1);
 
   const getBaseURL = () => {
@@ -38,9 +40,9 @@ function DMAPIPaginator(props) {
   const getUrl = (offset) => {
     let url = getBaseURL();
     if (offset === 0) {
-      url = `${url}limit=${Object.keys(metadata).length > 0 ? metadata.limit : pageLimit}`;
+      url = `${url}limit=${(Object.keys(metadata).length > 0 && metadata.limit) ? metadata.limit : pageLimit}`;
     } else {
-      url = `${url}offset=${offset}&limit=${Object.keys(metadata).length > 0 ? metadata.limit : pageLimit}`;
+      url = `${url}offset=${offset}&limit=${(Object.keys(metadata).length > 0 && metadata.limit) ? metadata.limit : pageLimit}`;
     }
     if (searchStr !== '') {
       // include encoded search value and field in the API
@@ -55,6 +57,10 @@ function DMAPIPaginator(props) {
   };
 
   const fetchData = (offset = 0, onPgaeChange) => {
+    if (isFetchingRef.current && !onPgaeChange && searchStr === '') return; // isFetchRef skip this fetch to avoid sending duplicate or unnecessary requests if previous request is in pending state.
+    isFetchingRef.current = true;
+    fetchTokenRef.current += 1; // Increase token for each fetch to show the data of the latest request.
+    const currentToken = fetchTokenRef.current;
     const url = getUrl(offset);
 
     /**
@@ -75,15 +81,21 @@ function DMAPIPaginator(props) {
       dispatch(storeFn([]));
     }
     callAPI(url).then((json) => {
-      dispatch(hideApplicationLoader(url));
-      const { records, ...others } = json;
-      dispatch(valueChange(`${name}.dmapipaginator.metadata`, { ...others, limit: pageLimit }));
-      dispatch(storeFn(records));
+      if (currentToken === fetchTokenRef.current) {
+        dispatch(hideApplicationLoader(url));
+        const { records, ...others } = json;
+        dispatch(valueChange(`${name}.dmapipaginator.metadata`, { ...others, limit: pageLimit }));
+        dispatch(storeFn(records));
+      }
+      isFetchingRef.current = false; // Release lock
       return json;
     },
     (err) => {
-      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-      dispatch(hideApplicationLoader(url));
+      if (currentToken === fetchTokenRef.current) {
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+        dispatch(hideApplicationLoader(url));
+      }
+      isFetchingRef.current = false; // Release lock on error
       return false;
     });
   };
@@ -142,9 +154,9 @@ function DMAPIPaginator(props) {
 
   const onPageJump = () => {
     if (metadata.currentPage) {
-      fetchData((metadata.currentPage - 1) * pageLimit);
+      fetchData((metadata.currentPage - 1) * pageLimit, true);
     } else {
-      fetchData(0);
+      fetchData(0, true);
     }
   };
 
