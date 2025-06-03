@@ -49,6 +49,7 @@ const DaySelector = (props) => {
         const isSelected = selected.includes(idx);
         return (
           <button
+            id={`${fieldkey}-${idx + 1}`}
             type="button"
             key={`${day}-${idx + 1}`}
             onClick={() => toggleDay(idx)}

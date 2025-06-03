@@ -114,7 +114,9 @@ const Preview: React.FC<RendererProps> = (props) => {
                             <DMCheckbox field={inputField} fieldKey="upgrade.concent" dispatch={dispatch} user={user} disabled={!(revertNodeInfo.length > 0 || nodeInfo.length > 0)} />
                         </div>
                         <div>
-                            <span className="text-warning d-block margin-top-12 mb-2">{propsData?.concent}</span>
+                            <label htmlFor="upgrade.concent" className="text-warning d-block margin-top-12 mb-2">
+                                {propsData?.concent}
+                            </label>
                             <span className="text-warning">{`Note : Do not power off or reboot any of the nodes and offline nodes will not be ${workflow === STATIC_KEYS.REVERT ? 'reverted' : 'upgraded'}`}</span>
                         </div>
                     </div>

@@ -87,6 +87,7 @@ class DMTimePicker extends Component {
           {this.renderLabel()}
           <Col sm={hideLabel ? 12 : 8}>
             <ReactDatePicker
+              id={`timepicker-${fieldKey}`}
               className="form-control form-control-sm"
               selected={this.getTimeValue()}
               onChange={(time) => this.handleChange(time)}
