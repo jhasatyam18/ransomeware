@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Card, CardBody, Col, Media, Row } from 'reactstrap';
+import { Card, CardBody, Col, Row } from 'reactstrap';
 import { API_DASHBOARD_TITLE } from '../../constants/ApiConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { PROTECTION_PLANS_PATH, SITES_PATH } from '../../constants/RouterConstants';
@@ -54,11 +54,11 @@ function DashboardTitles(props) {
     <Row>
       {reports.map((report, key) => (
         <Col md="3" key={`_col_-${key * 2 + refresh}`}>
-          <Card className="mini-stats-wid">
+          <Card className="mini-stats-wid box-shadow">
             <Link to={report.link}>
               <CardBody>
-                <Media>
-                  <Media body>
+                <div className="d-flex justify-content-between">
+                  <div>
                     <p className="text-muted font-weight-medium">
                       {report.title}
                     </p>
@@ -67,13 +67,13 @@ function DashboardTitles(props) {
                         <Spinner />
                       ) : report.description }
                     </h4>
-                  </Media>
-                  <div className="mini-stat-icon avatar-sm rounded-circle align-self-center">
-                    <span className="">
+                  </div>
+                  <div className="mini-stat-icon avatar-sm d-flex justify-content-center">
+                    <span>
                       <FontAwesomeIcon size="lg" icon={report.icon} color={report.color ? report.color : 'white'} className="pl-2 pt-1 h2" />
                     </span>
                   </div>
-                </Media>
+                </div>
               </CardBody>
             </Link>
           </Card>

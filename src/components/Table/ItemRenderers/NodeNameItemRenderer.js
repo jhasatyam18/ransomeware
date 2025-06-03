@@ -12,7 +12,7 @@ function NodeNameItemRenderer({ data }) {
       <div>
         <label ref={targetRef} id={key} key={key} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)}>{node.name}</label>
         <Popover placement="bottom" isOpen={popoverOpen} target={targetRef} style={{ backgroundColor: '#222736', minWidth: '250px' }}>
-          <PopoverBody>
+          <PopoverBody style={{ color: 'white' }}>
             {
               fields.map((f) => (
                 <Row key={`row-${f.field}`}>

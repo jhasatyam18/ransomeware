@@ -205,18 +205,12 @@ function IdentityProvider(props) {
       );
     }
     return roleMap.map((role, index) => (
-      <Row>
-        <Col sm={8}>
-          <div className="row margin-left-10 padding-bottom-10 col" key={`role-${index * 1}`}>
-            <Badge className="font-size-13 badge-soft-info" color="info" pill>
-              {role.key}
-              -
-              {role.value}
+      <Badge className="font-size-13 badge-soft-info me-1" key={`role-${index * 1}`} color="info" pill>
+        {role.key}
+        -
+        {role.value}
               &nbsp;&nbsp;
-            </Badge>
-          </div>
-        </Col>
-      </Row>
+      </Badge>
     ));
   }
 

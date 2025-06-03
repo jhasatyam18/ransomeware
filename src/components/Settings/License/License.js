@@ -2,7 +2,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import React, { useEffect } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Card, CardBody, Container, Row } from 'reactstrap';
+import { Card, CardBody, Col, Container, Row } from 'reactstrap';
 import { MODAL_INSTALL_NEW_LICENSE } from '../../../constants/Modalconstant';
 import { TABLE_LICENSES } from '../../../constants/TableConstants';
 import { fetchLicenses } from '../../../store/actions/LicenseActions';
@@ -37,8 +37,10 @@ function License(props) {
           <Card>
             <CardBody>
               <DMBreadCrumb links={[{ label: 'license', link: '#' }]} />
-              <Row className="padding-left-30">
-                <ActionButton label="New" onClick={openInstallNewModal} icon={faPlus} isDisabled={!hasRequestedPrivileges(user, ['license.create'])} t={t} key="newLicense" />
+              <Row className="padding-left-22">
+                <Col sm={2}>
+                  <ActionButton label="New" onClick={openInstallNewModal} icon={faPlus} isDisabled={!hasRequestedPrivileges(user, ['license.create'])} t={t} key="newLicense" />
+                </Col>
               </Row>
               <DMTable
                 dispatch={dispatch}

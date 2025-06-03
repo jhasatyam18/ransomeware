@@ -203,3 +203,29 @@ export interface ModalData {
     content?: React.ReactNode;
     floatModalRight?: boolean;
 }
+
+export interface UserPreferences {
+    themePreference: 'light' | 'dark'; // Add other possible values if needed
+    userType: 'System' | 'SAML'; // Expand as needed
+    username: string;
+}
+
+type Role = {
+    id: number;
+    name: string;
+    description: string;
+    isSystemDefault: boolean;
+    privileges: any; // or replace `any` with a more specific type if known
+};
+
+export type UserDtails = {
+    id: number;
+    username: string;
+    fullName: string;
+    password: string;
+    email: string;
+    description: string;
+    isSystemDefault: boolean;
+    isForcePasswordChange: boolean;
+    role: Role;
+};

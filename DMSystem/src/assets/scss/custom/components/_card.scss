@@ -1,29 +1,30 @@
-//
-// _card.scss 
-//
+// 
+// _card.scss
+// 
 
 .card {
   margin-bottom: $grid-gutter-width;
+  // box-shadow: 1px 1px 4px 0 rgba(0, 0, 0, .1);
+}
+.progress, .progress-stacked{
+  box-shadow: 1px 1px 4px 0 rgba(0, 0, 0, .1) ;
+  // border: 1px solid #f0f0f0;
 }
 
 .card-drop {
-  color: $body-color;
+  color: var(--#{$prefix}body-color);
 }
 
 .card-title {
   font-size: 15px;
-  margin: 0 0 8px 0;
+  margin: 0 0 7px 0;
   font-weight: $font-weight-semibold;
+  color:  var(--#{$prefix}body-color);
 }
 
 .card-title-desc {
-  // color: $card-title-desc;
-  color: #74788d;
-  margin-bottom: 20px;
-}
-
-.card_note-backgrd{
-  background-color: $sidebar-dark-bg;
+  color: var(--#{$prefix}secondary-color);
+  margin-bottom: 24px;
 }
 
 .card_note_info{
@@ -31,7 +32,7 @@
 }
 
 .card_note_warning{
-  color:$yellow;
+  color: var(--warning-color);
 }
 .card_note_error{
   color:$red;
@@ -48,13 +49,15 @@
   position: relative;
   top: -12px;
 }
-.card-body {
-  // Enable `flex-grow: 1` for decks and groups so that card blocks take up
-  // as much space as possible, ensuring footers are aligned to the bottom.
-  flex: 1 1 auto;
-  // Workaround for the image size bug in IE
-  // See: https://github.com/twbs/bootstrap/pull/28855
-  min-height: 1px;
-  padding: 1rem;
-  color: $card-color;
+
+.box-shadow{
+  box-shadow:  1px 1px 4px 0 rgba(0, 0, 0, .1);
+}
+
+.card-header{
+  box-shadow: var(--card-header-box-shadow);
+}
+.bg-light{
+  box-shadow: 1px 1px 4px 0 rgba(0, 0, 0, .1);
+  background-color: var(--#{$prefix}secondary-bg) !important;
 }

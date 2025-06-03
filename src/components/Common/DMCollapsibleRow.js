@@ -69,16 +69,16 @@ const DMCollapsibleRow = (props) => {
     if (isSelectable) {
       return (
         <Th>
-          <div className="custom-control custom-checkbox">
+          <div className="form-check">
             <input
               type="checkbox"
-              className="custom-control-input"
+              className="form-check-input"
               id={rKey}
               checked={showSelected}
               onChange={onChange}
               name={rKey}
             />
-            <label className="custom-control-label" htmlFor={rKey}>
+            <label className="form-check-label" htmlFor={rKey}>
               &nbsp;
             </label>
           </div>
@@ -113,17 +113,17 @@ const DMCollapsibleRow = (props) => {
     }
     if (isSelectable) {
       return (
-        <div className="custom-control custom-checkbox">
+        <div className="form-check">
           <input
             type="checkbox"
-            className="custom-control-input"
+            className="form-check-input"
             id={rKey}
             checked={showSelected}
             onChange={(e) => onChildChange(e, d)}
             name={rKey}
             disabled={d.isDisabled}
           />
-          <label className="custom-control-label" htmlFor={rKey}>
+          <label className="form-check-label" htmlFor={rKey}>
             &nbsp;
           </label>
         </div>

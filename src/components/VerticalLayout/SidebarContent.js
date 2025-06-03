@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 // i18n
 import { withTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { APPLICATION_THEME, THEME_CONSTANT } from '../../constants/UserConstant';
 import { getSideBarContents } from '../../utils/AppUtils';
 
 class SidebarContent extends Component {
@@ -31,8 +32,9 @@ class SidebarContent extends Component {
 
   isActive(path1, path2, path3) {
     const { pathname } = window.location;
+    const theme = localStorage.getItem(APPLICATION_THEME) || '';
     if (path1 === pathname || path2 === pathname || path3 === pathname) {
-      return '#FFF';
+      return THEME_CONSTANT.SIDEBAR_MENU_ACTIVE[theme];
     }
     return '';
   }

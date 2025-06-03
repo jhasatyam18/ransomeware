@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect, useSelector } from 'react-redux';
-import { Row, Col, Card, CardBody, Media } from 'reactstrap';
+import { Row, Col, Card, CardBody } from 'reactstrap';
 import { addMessage } from '../../store/actions/MessageActions';
 import { formatTime } from '../../utils/AppUtils';
 import ReplicationStat from './ReplicationStat';
@@ -49,17 +49,17 @@ function RtoRpo(props) {
 
   const renderRtoStatus = (rtoTime, css) => (
     <div>
-      <Media>
-        <Media body>
+      <div className="d-flex justify-content-between">
+        <div>
           <p className="text-muted font-weight-medium">{t('rto')}</p>
           {loading === true ? <Spinner /> : <h4 className={`mb-0 ${css}`}>{formatTime(rtoTime)}</h4>}
-        </Media>
+        </div>
         <div className="mini-stat-icon avatar-sm rounded-circle align-self-center">
           <span className="">
             <i className="fas fa-hourglass-half fa-3x" />
           </span>
         </div>
-      </Media>
+      </div>
     </div>
   );
 
@@ -105,17 +105,17 @@ function RtoRpo(props) {
       <>
         <Col className="dashboard_divider_right">
           <div>
-            <Media>
-              <Media body>
+            <div className="d-flex justify-content-between">
+              <div>
                 <p className="text-muted font-weight-medium">{t('rpo')}</p>
                 {loading === true ? <Spinner /> : <h4 className="mb-0">{formatTime(rpo)}</h4>}
-              </Media>
+              </div>
               <div className="mini-stat-icon avatar-sm rounded-circle align-self-center">
                 <span className="">
                   <i className="fas fa-history fa-3x" />
                 </span>
               </div>
-            </Media>
+            </div>
           </div>
         </Col>
         <Col>
@@ -136,7 +136,7 @@ function RtoRpo(props) {
   const { statTest } = data;
   return (
     <>
-      <Card>
+      <Card className="box-shadow">
         <CardBody>
           <Row>
             {renderData()}

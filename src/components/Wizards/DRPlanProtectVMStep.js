@@ -65,7 +65,7 @@ class DRPlanProtectVMStep extends Component {
       <Container fluid className="padding-10">
         <Label className="margin-left-20">{t('Select Virtual Machine for protection')}</Label>
         <Row>
-          <Col className="margin-left-30 padding-right-30 margin-right-10">
+          <Col className="margin-left-20 padding-right-30 margin-right-10">
             <DMTPaginator
               id="planvmstep"
               defaultLayout="true"

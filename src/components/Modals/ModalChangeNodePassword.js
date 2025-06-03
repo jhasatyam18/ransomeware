@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Card, Col, Container, Form, Row } from 'reactstrap';
+import { Col, Container, Form, Row } from 'reactstrap';
 import { validatedNewAndCnfmPass } from '../../utils/validationUtils';
 import { NOTE_TEXT } from '../../constants/DMNoteConstant';
 import { changeSystemPassword, valueChange } from '../../store/actions';
@@ -37,22 +37,20 @@ function ModalChangeNodePassword(props) {
 
   const arrayInput = [{ title: 'title.node.name', fieldKey: 'ui.node.name', field: name, disabled: true }, { title: 'title.node.new.password', fieldKey: 'user.newPassword', field: passwordField }, { title: 'title.node.cnf.password', fieldKey: 'user.confirmPassword', field: cnfPasswordField }];
   return (
-    <Container className="margin-top-15 modal_node" fluid>
-      <Card>
-        <Form>
-          { renderNote()}
-          { arrayInput.map((el) => (
-            <>
-              <Row>
-                <Col sm={4}>{t(el.title)}</Col>
-                <Col sm={8}>
-                  <DMFieldText dispatch={dispatch} fieldKey={el.fieldKey} field={el.field} user={user} hideLabel="true" disabled={el.disabled} />
-                </Col>
-              </Row>
-            </>
-          ))}
-        </Form>
-      </Card>
+    <Container className=" modal-body" fluid>
+      <Form>
+        { renderNote()}
+        { arrayInput.map((el) => (
+          <>
+            <Row>
+              <Col sm={4}>{t(el.title)}</Col>
+              <Col sm={8}>
+                <DMFieldText dispatch={dispatch} fieldKey={el.fieldKey} field={el.field} user={user} hideLabel="true" disabled={el.disabled} />
+              </Col>
+            </Row>
+          </>
+        ))}
+      </Form>
       <div className="modal-footer">
         <button type="button" className="btn btn-secondary" onClick={onCancel}>{t('title.cancel')}</button>
         <button type="button" className="btn btn-success" onClick={onSave}>{t('title.save')}</button>

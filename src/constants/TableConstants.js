@@ -439,6 +439,7 @@ export const REPLICATION_JOB_COLUMNS = [
   { header: 'Sync Status', field: 'syncStatus' },
   { header: 'Replication Duration', field: 'duration', type: REPORT_DURATION.DURATION },
   { header: 'Sync Time', field: 'currentSnapshotTime', type: REPORT_DURATION.DATE },
+  { header: 'Failure Message', field: 'failureMessage' },
 ];
 
 export const RECOVERY_JOB_COLUMNS = [

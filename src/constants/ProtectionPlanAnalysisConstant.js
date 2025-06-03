@@ -1,5 +1,8 @@
 // Dashboard background color.
-export const DASHBOARD_BACKGROUND_COLOR = '#222736';
+export const DASHBOARD_BACKGROUND_COLOR = {
+  dark: '#222736',
+  light: '#fff',
+};
 
 // Virtual Machine Protection Analysis.
 export const SUCCESS = '#34c38f';

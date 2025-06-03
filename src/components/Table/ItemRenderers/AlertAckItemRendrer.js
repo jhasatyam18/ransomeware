@@ -67,7 +67,7 @@ function AlertAckItemRenderer({ data, field }) {
     return (
       <Popover placement="bottom" isOpen={popoverOpen} target={targetRef} style={{ backgroundColor: 'black' }}>
         <PopoverBody>
-          <Row>
+          <Row style={{ color: 'white' }}>
             <Col sm={4}>Message</Col>
             <Col sm={8}>{acknowledgeMessage()}</Col>
             <Col sm={4}>User</Col>

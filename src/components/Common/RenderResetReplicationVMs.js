@@ -2,7 +2,7 @@ import { faChevronDown, faChevronRight, faHdd } from '@fortawesome/free-solid-sv
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
-import { Card, CardHeader, Col, Collapse, Row } from 'reactstrap';
+import { CardHeader, Col, Collapse, Row } from 'reactstrap';
 import { PLATFORM_TYPES } from '../../constants/InputConstants';
 import { valueChange } from '../../store/actions';
 import { getStorageWithUnit } from '../../utils/AppUtils';
@@ -65,9 +65,9 @@ function RenderResetReplicationVms(props) {
         <Col sm={7}>
           <Row>
             <Col sm={5}>
-              <div className="custom-control custom-checkbox">
-                <input type="checkbox" className={`custom-control-input ${isReplicationReset === true ? 'checkbox_disabled' : ''}`} id={`${name}-${index === 0 ? `os-disk-${index}` : `data-disk-${index}`}`} checked={value} name={key} onChange={(e) => handleChange(e, key)} disabled={isReplicationReset} />
-                <label className="custom-control-label  margin-right-8" htmlFor={`${name}-${index === 0 ? `os-disk-${index}` : `data-disk-${index}`}`}>
+              <div className="form-check">
+                <input type="checkbox" className={`form-check-input ${isReplicationReset === true ? 'checkbox_disabled' : ''}`} id={`${name}-${index === 0 ? `os-disk-${index}` : `data-disk-${index}`}`} checked={value} name={key} onChange={(e) => handleChange(e, key)} disabled={isReplicationReset} />
+                <label className="form-check-label  margin-right-8" htmlFor={`${name}-${index === 0 ? `os-disk-${index}` : `data-disk-${index}`}`}>
                   <FontAwesomeIcon size="sm" icon={faHdd} />
                 </label>
                 <span className="margin-right-20">
@@ -123,42 +123,40 @@ function RenderResetReplicationVms(props) {
 
   return (
     <div key="dm-accordion-sksk">
-      <Card className="margin-bottom-10">
-        <CardHeader style={{ backgroundColor: '#2a3042', border: '1px solid #464952' }}>
-          <Row>
-            <Col sm={12}>
-              <Row>
-                <Col sm={2}>
-                  <div className="stack_horizontally">
-                    {renderIcon()}
-                    <OsTypeItemRenderer className="link_color" data={vmData} />
+      <CardHeader className="mb-4">
+        <Row>
+          <Col sm={12}>
+            <Row>
+              <Col sm={2}>
+                <div className="stack_horizontally">
+                  {renderIcon()}
+                  <OsTypeItemRenderer className="link_color" data={vmData} />
                     &nbsp;&nbsp;
-                    <span aria-hidden className="link_color" onClick={toggle}>
-                      {name}
-                    </span>
-                  </div>
-                </Col>
-                <Col sm={3}>
-                  <span aria-hidden>
-                    {` ${t('total.disks')} -  ${calculateDisk()}`}
+                  <span aria-hidden className="link_color" onClick={toggle}>
+                    {name}
                   </span>
-                </Col>
-                <Col sm={5}>
-                  {renderRecoveryStatus()}
-                </Col>
-                <Col sm={2}>
-                  {showResync() ? <span className="text-success">{t('per.vm.resync.disk', { selectedDiskCount, selectedDiskSize })}</span> : null }
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-          <Collapse isOpen={isOpen}>
-            <Row className="padding-left-30">
-              {isVMRecoveredOrNotAvailable(vmData) ? null : renderDisks()}
+                </div>
+              </Col>
+              <Col sm={3}>
+                <span aria-hidden>
+                  {` ${t('total.disks')} -  ${calculateDisk()}`}
+                </span>
+              </Col>
+              <Col sm={5}>
+                {renderRecoveryStatus()}
+              </Col>
+              <Col sm={2}>
+                {showResync() ? <span className="text-success">{t('per.vm.resync.disk', { selectedDiskCount, selectedDiskSize })}</span> : null }
+              </Col>
             </Row>
-          </Collapse>
-        </CardHeader>
-      </Card>
+          </Col>
+        </Row>
+        <Collapse isOpen={isOpen}>
+          <Row>
+            {isVMRecoveredOrNotAvailable(vmData) ? null : renderDisks()}
+          </Row>
+        </Collapse>
+      </CardHeader>
     </div>
   );
 }

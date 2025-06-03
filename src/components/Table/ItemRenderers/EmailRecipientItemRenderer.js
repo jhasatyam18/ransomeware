@@ -28,7 +28,7 @@ function EmailRecipientItemRenderer({ data, dispatch, user }) {
   function renderDelete() {
     return (
       <a href="#" onClick={onDelete} className="text-danger" title="Remove">
-        <i className="far fa-trash-alt fa-lg" />
+        <i className="far fa-trash-alt fa-lg text-danger" />
       </a>
     );
   }
@@ -36,7 +36,7 @@ function EmailRecipientItemRenderer({ data, dispatch, user }) {
   function renderModifyRecipient() {
     return (
       <a href="#" onClick={onModify} title="Edit">
-        <i className="far fa-edit fa-lg" />
+        <i className="far fa-edit fa-lg text-info" />
       </a>
     );
   }

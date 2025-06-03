@@ -50,20 +50,20 @@ function SinglePlaybookActions({ data, dispatch, t, user }) {
 
   const renderWarningWhileEdit = () => (
     <>
-      <i className="fas fa-exclamation-triangle" />
+      <i className="fas fa-exclamation-triangle text-warning" />
             &nbsp;&nbsp;&nbsp;
-      <span>
+      <span className="text-warning">
         {t('edit.playbook.warn.msg', { name })}
       </span>
-      <p className="margin-top-5">
-        <span aria-hidden className="link_color" onClick={onExport}>[click here]</span>
+      <p className="margin-top-5 text-warning">
+        <span aria-hidden className="text-primary" onClick={onExport}>[click here]</span>
         { t('title.download.configured.excel')}
       </p>
     </>
   );
   const renderedit = () => (
     <>
-      <div className="card_note_warning margin-top-5 text-left">
+      <div style={{ textAlign: 'left' }} className="card_note_warning margin-top-5">
         {planConfigurations.length > 0 && planConfigurations[0]?.planID > 0
           ? (
             <>

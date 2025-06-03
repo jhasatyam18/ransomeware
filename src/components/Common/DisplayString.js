@@ -18,8 +18,25 @@ const DisplayString = (props) => {
     }
     return (
       <>
-        <i className="fas fa-info-circle info__icon padding-left-5" ref={localRef} />
-        <Tooltip placement="auto" isOpen={tooltipOpen} target={localRef} toggle={toggle} autohide={false} className="dmtooltip">
+        <i className="fas fa-info-circle info__icon padding-left-5 cursor-pointer" ref={localRef} />
+        <Tooltip
+          modifiers={[
+            {
+              name: 'preventOverflow',
+              options: { boundary: 'viewport' },
+            },
+            {
+              name: 'offset',
+              options: { offset: [0, 10] }, // move popover away from the trigger
+            },
+          ]}
+          placement="auto"
+          isOpen={tooltipOpen}
+          target={localRef}
+          toggle={toggle}
+          autohide={false}
+          className="dmtooltip"
+        >
           {infoText}
         </Tooltip>
       </>

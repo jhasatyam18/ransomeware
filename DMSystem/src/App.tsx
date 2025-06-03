@@ -10,6 +10,7 @@ import MessagesContainer from './container/MessagesContainer';
 import Login from './pages/Authentication/Login';
 import { addMessage } from './store/actions/MessageActions';
 import ModalContainer from './container/ModalContainer';
+import { APPLICATION_THEME, THEME_CONSTANT } from './Constants/userConstants';
 
 const VerticalLayout = React.lazy(() => import('./Components/Routes/index'));
 
@@ -36,6 +37,28 @@ class App extends Component<AppProps> {
     componentDidCatch(error: Error) {
         const { dispatch } = this.props;
         dispatch(addMessage(error.toString(), MESSAGE_TYPES.ERROR));
+    }
+    componentDidMount() {
+        this.applyTheme();
+    }
+
+    componentDidUpdate() {
+        const currentTheme = localStorage.getItem(APPLICATION_THEME);
+        const previousTheme = document.documentElement.getAttribute('data-bs-theme');
+
+        if (currentTheme && currentTheme !== previousTheme) {
+            this.applyTheme();
+        }
+    }
+
+    applyTheme() {
+        let theme = localStorage.getItem(APPLICATION_THEME) || THEME_CONSTANT.DARK;
+        if (theme === 'undefined') {
+            theme = THEME_CONSTANT.DARK;
+            localStorage.setItem(APPLICATION_THEME, theme);
+        }
+
+        document.documentElement.setAttribute('data-bs-theme', theme);
     }
 
     render() {

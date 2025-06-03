@@ -56,16 +56,16 @@ class DMTable extends Component {
     if (isSelectable && name) {
       return (
         <Th className="dm_table_th">
-          <div className="custom-control custom-checkbox" key="global-select">
+          <div className="form-check font-size-16 ">
             <input
               type="checkbox"
-              className="custom-control-input"
+              className="form-check-input"
               id={`chk-${name}`}
               checked={selected}
               onChange={this.onChange}
               name={`chk-${name}`}
             />
-            <label className="custom-control-label" htmlFor={`chk-${name}`}>
+            <label className="form-check-label" htmlFor={`chk-${name}`}>
               &nbsp;
             </label>
           </div>
@@ -127,7 +127,7 @@ class DMTable extends Component {
         <Col>
           <Card>
             <CardBody>
-              <Table className="table table-bordered" id={name}>
+              <Table className="table table-bordered table-hover" id={name}>
                 {this.renderHeaders()}
                 <Tbody id={name}>
                   {data && data.length > 0 ? this.renderRows() : this.renderNoDataToShow()}

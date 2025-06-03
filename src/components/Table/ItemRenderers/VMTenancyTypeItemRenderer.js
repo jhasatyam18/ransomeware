@@ -15,7 +15,7 @@ function VMTenancyTypeItemRenderer(props) {
 
   const renderPopOver = () => (
     <Popover placement="bottom" isOpen={popoverOpen} target={targetRef} style={{ backgroundColor: 'black', width: '300px' }}>
-      <PopoverBody>
+      <PopoverBody style={{ color: 'white' }}>
         <>
           <section>
             {`Tenancy  : ${data.tenancy}`}

@@ -180,9 +180,13 @@ function DRPlanRecoveryCheckpointConfig(props) {
             />
             {renderError(countHasError, STORE_KEYS.RECOVERY_CHECKPOINT_COUNT, 'Invalid')}
           </Col>
-          <p className="padding-top-6">
-            {t('title.checkpoint.every')}
-          </p>
+          <Col sm={1}>
+            {' '}
+            <p className="padding-top-6">
+              {t('title.checkpoint.every')}
+            </p>
+
+          </Col>
           <Col sm={2}>
             <Input
               type="number"
@@ -211,9 +215,7 @@ function DRPlanRecoveryCheckpointConfig(props) {
             </Input>
             {renderError(durationUnitHasError, STORE_KEYS.RECOVERY_CHECKPOINT_DURATION_UNIT, 'Invalid')}
           </Col>
-          <span className="padding-left-10">
-            <DMToolTip tooltip="info.checkpoint.duration" />
-          </span>
+          <Col sm={1}><DMToolTip tooltip="info.checkpoint.duration" /></Col>
         </Row>
       </>
     );
@@ -256,9 +258,9 @@ function DRPlanRecoveryCheckpointConfig(props) {
             </Input>
             {renderError(retainUnitHasError, STORE_KEYS.RECOVERY_CHECKPOINT_RETAIN_NUMEBER_UNIT, 'Invalid')}
           </Col>
-          <span className="padding-left-10">
+          <Col sm={1}>
             <DMToolTip tooltip="info.checkpoint.retention period" />
-          </span>
+          </Col>
         </Row>
       </>
     );

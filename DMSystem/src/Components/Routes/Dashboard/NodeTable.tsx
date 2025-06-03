@@ -38,7 +38,7 @@ const NodeTable: React.FC<NodeTableProps> = ({ dispatch, user, t }) => {
     }, [refresh]);
 
     return (
-        <Card>
+        <Card className="box-shadow">
             <CardBody>
                 <p className="font-weight-medium dashboard-title">{`${t('nodes')} (${nodeData.length})`}</p>
                 <Table dispatch={dispatch} columns={TABLE_NODE} data={nodeData} primaryKey="id" user={user} />

@@ -24,7 +24,7 @@ function RenderDetailedSteps(props) {
   const renderPopOver = (hoverInfo, key, isOpen) => (
     key && (
     <Popover placement="bottom" isOpen={popOver[isOpen]} target={key} style={{ backgroundColor: 'black', color: 'white', border: 'none', width: '200px', textAlign: 'left' }}>
-      <PopoverBody>
+      <PopoverBody style={{ color: 'white' }}>
         <SimpleBar style={{ maxHeight: '100px', minHeight: '30px' }}>
           {hoverInfo}
         </SimpleBar>

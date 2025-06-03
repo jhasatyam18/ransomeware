@@ -196,8 +196,8 @@ const DownloadPackages: React.FC<RendererProps & WithTranslation> = (props) => {
         msg = state === 'uploading' ? 'Uploading upgrade package' : msg;
         return (
             <Row>
-                <Col sm={12} className={`mr-4 ${state === 'uploading' || showProgress ? 'disabled' : ''}`}>
-                    <div className={`upload__icon ${state === 'uploading' ? 'text-info' : ''} d-flex justify-content-center `} onDragOver={dragOver} onDragEnter={dragEnter} onDragLeave={dragLeave} onDrop={dragDrop}>
+                <Col sm={12} className={`me-4 ${state === 'uploading' || showProgress ? 'disabled' : ''}`}>
+                    <div className={`upload__icon d-flex justify-content-center `} onDragOver={dragOver} onDragEnter={dragEnter} onDragLeave={dragLeave} onDrop={dragDrop}>
                         <label
                             htmlFor="fileUpload"
                             className={`label`}
@@ -208,11 +208,11 @@ const DownloadPackages: React.FC<RendererProps & WithTranslation> = (props) => {
                                 }, 1000)
                             }
                         >
-                            <i className="fas fa-cloud-upload-alt fa-1x mr-2" />
+                            <i className="fas fa-cloud-upload-alt fa-1x me-2" />
                             {fileUploadErro ? (
                                 <span style={{ fontSize: '0.8rem', fontWeight: '300' }} className={`text-warning mt-2 font-bold`}>{`File upload failed due to ${fileUploadErro} please upload again`}</span>
                             ) : (
-                                <span style={{ fontSize: '0.8rem', fontWeight: '300' }} className={`ml-2 mt-2 font-bold ${state === 'uploading' ? 'text-info' : ''}`}>
+                                <span style={{ fontSize: '0.8rem', fontWeight: '300' }} className={`ms-2 mt-2 font-bold `}>
                                     {name || msg}
                                 </span>
                             )}
@@ -352,7 +352,7 @@ const DownloadPackages: React.FC<RendererProps & WithTranslation> = (props) => {
                         <>
                             <Col sm={12} className="text-muted"></Col>
                             <div style={{ width: '90%', paddingLeft: '12px', paddingBottom: '12px', fontSize: '10px', fontWeight: '550' }}>
-                                <span className="padding-bottom-10 d-flex justify-content-center text-info font-bold">{name ? 'Uploading upgrade package from the system.' : 'Uploading upgrade package from the provided URL.'}</span>
+                                <span className="padding-bottom-10 d-flex justify-content-center link_color font-bold">{name ? 'Uploading upgrade package from the system.' : 'Uploading upgrade package from the provided URL.'}</span>
                                 <ProgressBar completed={progress} />
                             </div>
                         </>
@@ -361,8 +361,8 @@ const DownloadPackages: React.FC<RendererProps & WithTranslation> = (props) => {
             </Row>
             <div className="padding-10 d-flex flex-row-reverse">
                 <div>
-                    {showProgress ? null : <ActionButton cssName={`btn btn-secondary margin-right-10 btn-sm p-2 pl-3 pr-3`} label="Close" onClick={onCancelClick} />}
-                    <ActionButton cssName={`btn btn-success btn-sm p-2 pl-3 pr-3`} label="Upload" isDisabled={(name !== '' && disableUpload) || (uploadUrl !== '' && disableUpload) || (!name && !uploadUrl)} onClick={() => (name ? upgradeThroughFile() : uploadFile(undefined))} />
+                    {showProgress ? null : <ActionButton cssName={`btn btn-secondary margin-right-10 btn-sm p-2 ps-3 pe-3`} label="Close" onClick={onCancelClick} />}
+                    <ActionButton cssName={`btn btn-success btn-sm p-2 ps-3 pe-3`} label="Upload" isDisabled={(name !== '' && disableUpload) || (uploadUrl !== '' && disableUpload) || (!name && !uploadUrl)} onClick={() => (name ? upgradeThroughFile() : uploadFile(undefined))} />
                 </div>
             </div>
         </>

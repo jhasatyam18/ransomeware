@@ -21,7 +21,7 @@ function ThrottlingItemRenderer(props) {
     }
     return (
       <a href="#" onClick={onBandwidthConfig} title="Edit">
-        <i className="far fa-edit fa-lg" />
+        <i className="far fa-edit fa-lg text-primary" />
       </a>
     );
   }

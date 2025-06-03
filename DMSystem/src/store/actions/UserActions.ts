@@ -1,10 +1,11 @@
 import { Dispatch } from 'redux';
 import * as Types from '../../Constants/actionTypes';
-import { API_AUTHENTICATE, API_CHANGE_PASSWORD, API_FETCH_SITES, API_INFO, API_USERS, API_USER_PRIVILEGES } from '../../Constants/apiConstants';
+import { API_AUTHENTICATE, API_CHANGE_PASSWORD, API_FETCH_SITES, API_INFO, API_USERS, API_USER_PREFERENCE, API_USER_PRIVILEGES } from '../../Constants/apiConstants';
 import { APP_TYPE } from '../../Constants/InputConstants';
 import { MESSAGE_TYPES } from '../../Constants/MessageConstants';
 import { DASHBOARD_PATH, UPGRADE } from '../../Constants/routeConstants';
-import { APPLICATION_API_USER, APPLICATION_AUTHORIZATION, APPLICATION_UID, STATIC_KEYS } from '../../Constants/userConstants';
+import { APPLICATION_API_USER, APPLICATION_AUTHORIZATION, APPLICATION_THEME, APPLICATION_UID, STATIC_KEYS, THEME_CONSTANT } from '../../Constants/userConstants';
+import { UserDtails, UserPreferences } from '../../interfaces/interfaces';
 import { API_TYPES, callAPI, createPayload } from '../../utils/apiUtils';
 import { getCookie, removeCookie, setCookie } from '../../utils/cookieUtils';
 import { Decrypt } from '../../utils/encryptionUtils';
@@ -324,6 +325,7 @@ export function getUserInfo(nodeKey: any) {
                         setCookie(APPLICATION_UID, json[0].id);
                         dispatch(getUserPrivileges(json[0].id, nodeKey));
                         dispatch(setUserDetails(json[0]));
+                        dispatch(getUserPreference(json[0]));
                         return;
                     }
                     dispatch(setPrivileges([]));
@@ -411,5 +413,44 @@ export function setActiveTab(value: string) {
     return {
         type: Types.SET_UPGRADE_SUMMARY_ACTIVE_TAB,
         value,
+    };
+}
+
+/**
+ * Fetch the user prefences for UI eg. theme
+ *
+ * @param {UserDetails} userDetails - An object containing user data
+ * @returns
+ */
+export function getUserPreference(userDetails: UserDtails) {
+    return (dispatch: any) => {
+        dispatch(showApplicationLoader('USER_PREFERENCE', 'Loading user preferences...'));
+        const url = `${API_USER_PREFERENCE}/${userDetails.username}`;
+        return callAPI(url).then(
+            (json) => {
+                dispatch(hideApplicationLoader('USER_PREFERENCE'));
+                if (!json.hasError) {
+                    dispatch(setUserPreferences(json));
+                    localStorage.setItem(APPLICATION_THEME, json.themePreference);
+                }
+            },
+            () => {
+                dispatch(hideApplicationLoader('USER_PREFERENCE'));
+                localStorage.setItem(APPLICATION_THEME, THEME_CONSTANT.DARK);
+            },
+        );
+    };
+}
+
+/**
+ * Action for setting user preferences
+ *
+ * @param {userPreferences} Object containing user preferences data
+ * @returns
+ */
+export function setUserPreferences(userPreferences: UserPreferences) {
+    return {
+        type: Types.SET_USER_PREFERENCES,
+        userPreferences,
     };
 }

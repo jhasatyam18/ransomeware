@@ -8,12 +8,31 @@ function DMToolTip(props) {
   const [tooltipOpen, toggleToolTip] = React.useState(false);
   const toggle = () => toggleToolTip(!tooltipOpen);
   return (
-    <div className="info__container">
-      <i className="fas fa-info-circle info__icon" ref={localRef} />
-      <Tooltip placement="auto" isOpen={tooltipOpen} target={localRef} toggle={toggle} autohide={false} className="dmtooltip">
-        {t(tooltip)}
-      </Tooltip>
-    </div>
+    <>
+      <div className="info__container cursor-pointer">
+        <i className="fas fa-info-circle info__icon" ref={localRef} />
+        <Tooltip
+          modifiers={[
+            {
+              name: 'preventOverflow',
+              options: { boundary: 'viewport' },
+            },
+            {
+              name: 'offset',
+              options: { offset: [0, 10] }, // move popover away from the trigger
+            },
+          ]}
+          autohide={false}
+          placement="auto"
+          isOpen={tooltipOpen}
+          target={localRef}
+          toggle={toggle}
+          className="dmtooltip"
+        >
+          {t(tooltip)}
+        </Tooltip>
+      </div>
+    </>
   );
 }
 

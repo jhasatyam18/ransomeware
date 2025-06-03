@@ -9,6 +9,7 @@ import { DANGER, SUCCESS } from '../../constants/ProtectionPlanAnalysisConstant'
 import { addMessage } from '../../store/actions/MessageActions';
 import { callAPI } from '../../utils/ApiUtils';
 import Spinner from '../Common/Spinner';
+import { APPLICATION_THEME, THEME_CONSTANT } from '../../constants/UserConstant';
 
 function BandwidthChart(props) {
   const refresh = useSelector((state) => state.user.context.refresh);
@@ -16,6 +17,8 @@ function BandwidthChart(props) {
   const { dispatch, t } = props;
   const upLoadSpeedTitle = t('upload.speed.mbps');
   const downloadSpeedTitle = t('download.speed.mbps');
+
+  const theme = localStorage.getItem(APPLICATION_THEME) || '';
   const [state, setState] = useState({
     series: [
       {
@@ -28,7 +31,7 @@ function BandwidthChart(props) {
       },
     ],
     options: {
-      chart: { toolbar: 'false', foreColor: 'white', stacked: true },
+      chart: { toolbar: 'false', foreColor: THEME_CONSTANT.BANDWIDTH.XAXIX[theme], stacked: true },
       colors: [DANGER, SUCCESS],
       dataLabels: { enabled: !1 },
       stroke: { curve: 'smooth', width: 2 },
@@ -46,7 +49,7 @@ function BandwidthChart(props) {
           opacityTo: 0.8,
         },
       },
-      tooltip: { theme: 'dark', x: { format: 'dd MMM yyyy hh:mm' } },
+      tooltip: { theme, x: { format: 'dd MMM yyyy hh:mm' } },
       grid: {
         xaxis: {
           lines: {
@@ -85,7 +88,7 @@ function BandwidthChart(props) {
             uploadSpeed.push([item.timeStamp * 1000, item.uploadSpeed]);
             downloadSpeed.push([item.timeStamp * 1000, item.downloadSpeed]);
           });
-          setState({ ...state, series: [{ name: upLoadSpeedTitle, data: uploadSpeed }, { name: downloadSpeedTitle, data: downloadSpeed }] });
+          setState({ ...state, options: { ...state.options, chart: { ...state.options.chart, foreColor: THEME_CONSTANT.BANDWIDTH.XAXIX[theme] }, tooltip: { ...state.toolbar, theme } }, series: [{ name: upLoadSpeedTitle, data: uploadSpeed }, { name: downloadSpeedTitle, data: downloadSpeed }] });
         }
       } catch (e) {
         if (isUnmounting) return;
@@ -101,7 +104,7 @@ function BandwidthChart(props) {
     return () => {
       isUnmounting = true;
     };
-  }, [refresh]);
+  }, [refresh, theme]);
 
   if (loading === true) {
     return (
@@ -124,7 +127,7 @@ function BandwidthChart(props) {
     const { options, series } = state;
     return (
       <>
-        <Card>
+        <Card className="box-shadow">
           <CardBody>
             <p className="font-weight-medium color-white">
               {t('dashboard.bandwidth.usage.title')}

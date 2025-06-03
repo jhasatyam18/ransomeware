@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Button, Card, CardBody, Col, Container, Row } from 'reactstrap';
+import { faArrowDown, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { MILI_SECONDS_TIME } from '../../constants/EventConstant';
 import { PLATFORM_TYPES, REPORT_DURATION, STATIC_KEYS } from '../../constants/InputConstants';
 import { DATE_ITEM_RENDERER, RECOVERY_JOBS, REPLICATION_VM_JOBS, TABLE_ALERTS, TABLE_EVENTS, TABLE_HEADER_SITES, TABLE_NODES, TABLE_REPORTS_CARD_CHECKPOINT, TABLE_REPORT_PROTECTED_VMS, TABLE_REPORT_PROTECTION_PLAN } from '../../constants/TableConstants';
@@ -131,7 +133,7 @@ class Report extends Component {
         <div className="padding-top-10">
           {this.renderForm()}
         </div>
-        <Button className="btn btn-outline-success btn-sm margin-bottom-10 bg-secondary" onClick={this.generateReport} disabled={disabled}>{t('generate.report')}</Button>
+        <Button className="btn btn-sm margin-bottom-10 bg-secondary" onClick={this.generateReport} disabled={disabled}>{t('generate.report')}</Button>
       </Col>
     );
   }
@@ -170,7 +172,7 @@ class Report extends Component {
     if (resultKeys === 0) {
       return (
         <Col sm={openCollapse === true ? 8 : 12} className="margin-bottom-20 margin-top-10 container">
-          <div className="report__content ">
+          <div className="d-flex justify-content-center">
             <span className="no__data ">
               {t('no.data.to.display')}
             </span>
@@ -202,15 +204,15 @@ class Report extends Component {
                 <DMBreadCrumb links={[{ label: 'report', link: '#' }]} />
                 {hasData ? (
                   <>
-                    <Button className="btn btn-outline-dark btn-sm margin-bottom-15 margin-left-19 " onClick={this.toggleCollapse}>
-                      <i className={openCollapse === true ? 'fas fa-arrow-down icon_font' : 'fas fa-arrow-right icon_font'} title="Report Filter" />
+                    <Button className="btn btn-secondary btn-sm margin-bottom-15 margin-left-19 " onClick={this.toggleCollapse}>
+                      {openCollapse ? <FontAwesomeIcon size="sm" icon={faArrowDown} /> : <FontAwesomeIcon size="sm" icon={faArrowRight} />}
                       <span className="padding-left-5">{t('filter')}</span>
                     </Button>
-                    <Button className="btn btn-outline-dark btn-sm margin-left-10 margin-bottom-15" onClick={this.exportToPDF}>
+                    <Button className="btn btn-secondary btn-sm margin-left-10 margin-bottom-15" onClick={this.exportToPDF}>
                       <i className="far fa-file-pdf text-danger icon_font" title="Export to PDF" />
                       <span className="padding-left-5">{t('export.pdf')}</span>
                     </Button>
-                    <Button className="btn btn-outline-dark btn-sm margin-left-10 margin-bottom-15" onClick={this.exportToExcel}>
+                    <Button className="btn btn-secondary btn-sm margin-left-10 margin-bottom-15" onClick={this.exportToExcel}>
                       <i className="fa fa-solid fa-file-excel text-success icon_font" />
                       <span className="padding-left-5">{t('export.excel')}</span>
                     </Button>

@@ -20,7 +20,7 @@ const Loader: FC<LoaderProps & WithTranslation> = ({ global }) => {
     };
     if (shouldShow) {
         return (
-            <div className="ripple__container position-fixed top-50 start-50">
+            <div className="ripple__container position-fixed">
                 <div className="ripple__box">
                     <div className="spinner-chase">
                         <div className="chase-dot" key="r-1-1" />

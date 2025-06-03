@@ -4,7 +4,6 @@ import { withTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { validatedNewAndCnfmPass } from '../../utils/validationUtils';
 import logo from '../../assets/images/logo.png';
-import logoName from '../../assets/images/logo_title.png';
 import { getValue } from '../../utils/InputUtils';
 import { resetCredetials } from '../../store/actions';
 import ResetPasswordField from './ResetPasswordField';
@@ -14,7 +13,6 @@ const ResetPassword = (props) => {
   const { values } = user;
   const { allowReset } = user;
   const [resetingType, setResetingType] = useState('password');
-
   function RenderOptions() {
     return (
       <>
@@ -67,7 +65,7 @@ const ResetPassword = (props) => {
         <div id="password-parent" className="account-pages my-5 pt-sm-5">
           <Container>
             <Row className="justify-content-center">
-              <Col md={8} lg={6} xl={5}>
+              <Col sm={5} lg={5} md={4} xl={5} xxl={4}>
                 <Card className="overflow-hidden">
                   <div className="login__soft__bg">
                     <Row>
@@ -90,13 +88,10 @@ const ResetPassword = (props) => {
                               height="34"
                             />
                           </span>
-                          <span className="logo-lg">
-                            <img
-                              src={logoName}
-                              className="logo-name-size dmname"
-                              alt="DATAMOTIVE"
-                            />
-                          </span>
+                          <div className="logo-lg logo-name-size dmname dm-logo-color">
+                            <p style={{ fontSize: '28px', fontWeight: 'none' }} className="mb-0  mt-2">DATAMOTIVE</p>
+                            <small style={{ position: 'relative', fontSize: '12px', top: '-10px' }}>Eliminating Cloud Boundaries</small>
+                          </div>
                         </div>
                       </Link>
                     </div>

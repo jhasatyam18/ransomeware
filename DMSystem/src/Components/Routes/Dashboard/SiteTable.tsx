@@ -38,7 +38,7 @@ const SiteTable: React.FC<SiteTableProps> = ({ dispatch, user, t }) => {
     }, [refresh]);
 
     return (
-        <Card>
+        <Card className="box-shadow">
             <CardBody>
                 <p className="font-weight-medium">{`${t('Sites')} (${siteData.length})`}</p>
                 <Table dispatch={dispatch} columns={TABLE_SITE} data={siteData} primaryKey="id" user={user} />

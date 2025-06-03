@@ -3,9 +3,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom/cjs/react-router-dom';
 import dmlogo from '../../assets/images/dm_logo.png';
-import dmlogoname from '../../assets/images/logo_name.png';
+// import logoName from '../../assets/images/logo_title_light.png';
+// import logoNameDark from '../../assets/images/logo_title_dark.png';
 import { API_FETCH_SITES } from '../../constants/ApiConstants';
 import { PLATFORM_TYPES } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
@@ -19,8 +21,9 @@ import WarningMessage from '../Dashboard/WarningMessage';
 
 function Header(props) {
   const [vcIp, setVcIp] = useState('');
-  const { sites, user } = props;
+  const { sites, user, dispatch } = props;
   const { platformType } = user;
+
   useEffect(() => {
     if (platformType === PLATFORM_TYPES.VMware) {
       if (vcIp === '') {
@@ -51,7 +54,6 @@ function Header(props) {
   [sites.sites]);
 
   function fetchVCIp() {
-    const { dispatch } = props;
     callAPI(API_FETCH_SITES)
       .then((json) => {
         let IP = '';
@@ -69,12 +71,11 @@ function Header(props) {
   }
 
   const onRefresh = () => {
-    const { dispatch } = props;
     dispatch(refresh());
   };
 
   const toggleMenu = () => {
-    const { dispatch, layout } = props;
+    const { layout } = props;
     const { leftSideBarType } = layout;
     if (leftSideBarType === 'default') {
       dispatch(changeLeftSidebarType('condensed', false));
@@ -130,16 +131,38 @@ function Header(props) {
         <WarningMessage />
         <div className="navbar-header">
           <div className="d-flex">
-            <div className="navbar-brand-box pl-2 pr-5">
-              <Link to="/" className="logo logo-light">
-                <span className="logo-sm">
-                  <img src={dmlogo} className="logo-size" alt="DATAMOTIVE" />
+            <div className="navbar-brand-box ps-4">
+              <Link to="/" style={{ position: 'relative', top: '14px' }} className="logo d-flex align-items-center">
+                <span>
+                  <img
+                    src={dmlogo}
+                    alt="Datamotive Logo"
+                    width={37}
+                    height={37}
+                    style={{ objectFit: 'contain' }}
+                    className="logo-size"
+                  />
                 </span>
-                <span className="logo-lg">
-                  <img src={dmlogoname} className="logo-name-size" alt="DATAMOTIVE" />
-                </span>
+                <div className="logo-lg dm-logo-color">
+                  <p style={{ fontSize: '21px', fontWeight: 'none' }} className="mb-0  mt-2">DATAMOTIVE</p>
+                  <small style={{ position: 'relative', top: '-10px', fontSize: '9px' }}>Eliminating Cloud Boundaries</small>
+                </div>
               </Link>
             </div>
+            {/* <div className="navbar-brand-box d-flex align-items-center ">
+              <img
+                src={dmlogo}
+                alt="Datamotive Logo"
+                width={37}
+                height={37}
+                style={{ objectFit: 'contain' }}
+                className="logo-size"
+              />
+              <div className="logo-lg">
+                <p style={{ fontSize: '21px', fontWeight: 'none' }} className="mb-0 text-muted mt-2  ">DATAMOTIVE</p>
+                <small style={{ position: 'relative', top: '-10px', fontSize: '9px' }} className="text-muted ">Eliminating Cloud Boundaries</small>
+              </div>
+            </div> */}
             <button
               type="button"
               onClick={toggleMenu}
@@ -171,7 +194,6 @@ function Header(props) {
                 <FontAwesomeIcon size="lg" icon={faExpand} />
               </button>
             </div>
-
             <NotificationDropdown />
             <ProfileMenu {...props} />
           </div>
@@ -182,8 +204,8 @@ function Header(props) {
 }
 
 function mapStateToProps(state) {
-  const { layout, user, dispatch, sites } = state;
-  return { layout, user, dispatch, sites };
+  const { layout, user, dispatch, sites, global } = state;
+  return { layout, user, dispatch, sites, global };
 }
 export default connect(mapStateToProps)(Header);
 

@@ -23,7 +23,7 @@ function GettingStarted(props) {
       return (
         <div className="getting_started__item completed">
           <div className="step__icon">
-            <i className="fa fa-check" />
+            <i style={{ color: 'white' }} className="fa fa-check" />
           </div>
           <div className="step__name">{t(stepName)}</div>
         </div>
@@ -33,7 +33,7 @@ function GettingStarted(props) {
       <div className="getting_started__item">
         <div className={`step__icon ${isActive ? 'step__active' : 'step__disabled'}`}>
           <Link to={path} title={t(`${stepName}.tooltip`)}>
-            <i className={`${icon} text-white`} />
+            <i style={{ color: 'white' }} className={`${icon} `} />
           </Link>
         </div>
         <div className="step__name">{t(stepName)}</div>
@@ -42,7 +42,7 @@ function GettingStarted(props) {
   }
 
   return (
-    <div className="">
+    <div>
       <div className="card-body">
         <p className="font-weight-medium color-white">
           {t('getting.started')}

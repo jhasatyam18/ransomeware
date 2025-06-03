@@ -59,7 +59,7 @@ function ReverseVMStep(props) {
           <ActionButton title={t('title.apply.recommended.button')} label={t('label.apply.recommended.button')} t={t} key="applyRecommended" isDisabled={hasWarning} onClick={onRecommendedData} cssClass="apply_suggested_btn" />
         </Col>
         <Col sm={1}>
-          <a className="pl-4  ml-3 " href="/reverseGuide.html" target="_blank" rel="noopener noreferrer" title="Learn More">
+          <a className="pl-4  ml-3 link_color" href="/reverseGuide.html" target="_blank" rel="noopener noreferrer" title="Learn More">
             <FontAwesomeIcon size="lg" icon={faCircleInfo} />
           </a>
         </Col>

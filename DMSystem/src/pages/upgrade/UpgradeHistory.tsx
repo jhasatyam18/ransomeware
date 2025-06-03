@@ -117,7 +117,7 @@ const UpgradeHistory = (props: any) => {
                               }
                               return (
                                   <>
-                                      <Row style={{ fontSize: '14px' }} className="history-row shadow-lg rounded justify-content-center align-items-center" onClick={() => toggleRow(el.id)}>
+                                      <Row style={{ fontSize: '14px' }} className="history-row rounded justify-content-center align-items-center card-header" onClick={() => toggleRow(el.id)}>
                                           <Col sm={1} className="d-flex justify-content-center">
                                               {el.status !== JOB_FAILED ? <FontAwesomeIcon size="1x" icon={faCheckCircle} className={'text-success'} /> : <FontAwesomeIcon size="1x" icon={faCircleXmark} className="text-danger" />}
                                           </Col>

@@ -2,7 +2,7 @@ import { faBackward, faBroom, faCheck, faClone, faDownload, faEdit, faPlay, faPl
 import classnames from 'classnames';
 import React, { Component, Suspense } from 'react';
 import { withTranslation } from 'react-i18next';
-import { Card, CardBody, CardTitle, Col, Container, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
+import { Badge, Card, CardBody, CardTitle, Col, Container, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
 import { PLATFORM_TYPES, PROTECTION_PLANS_STATUS, RECOVERY_STATUS, REPLICATION_STATUS } from '../../constants/InputConstants';
 import { PROTECTION_PLAN_CLEANUP_PATH, PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { PLAN_DETAIL_TABS } from '../../constants/UserConstant';
@@ -216,12 +216,12 @@ class DRPlanDetails extends Component {
     const { recoveryStatus, reverseStatus } = protectionPlan;
     if (recoveryStatus) {
       return (
-        <span className="badge badge-success margin-right-5">{recoveryStatus.toUpperCase()}</span>
+        <Badge color="success" pill>{recoveryStatus.toUpperCase()}</Badge>
       );
     }
     if (reverseStatus) {
       return (
-        <span className="badge badge-info margin-right-5">{reverseStatus.toUpperCase()}</span>
+        <Badge color="info" pill className="badge badge-info margin-right-5">{reverseStatus.toUpperCase()}</Badge>
       );
     }
   }
@@ -233,26 +233,26 @@ class DRPlanDetails extends Component {
 
     if (status === PROTECTION_PLANS_STATUS.STOPPED) {
       return (
-        <span className="badge badge-danger">{t('status.stopped')}</span>
+        <Badge pill color="danger">{t('status.stopped')}</Badge>
       );
     }
     if (status === PROTECTION_PLANS_STATUS.INIT_FAILED) {
       return (
-        <span className="badge badge-danger">{t('status.init.failed')}</span>
+        <Badge pill color="danger">{t('status.init.failed')}</Badge>
       );
     }
     if (status === PROTECTION_PLANS_STATUS.INITIALIZING) {
       return (
-        <span className="badge badge-info">{t('status.initializing')}</span>
+        <Badge pill color="info">{t('status.initializing')}</Badge>
       );
     }
     if (status === PROTECTION_PLANS_STATUS.CREATED || status === PROTECTION_PLANS_STATUS.STARTED) {
       return (
-        <span className="badge badge-info">{t('status.running')}</span>
+        <Badge color="info" pill>{t('status.running')}</Badge>
       );
     }
     return (
-      <span className="badge badge-info">{t('status.running')}</span>
+      <Badge pill color="info">{t('status.running')}</Badge>
     );
   }
 
@@ -339,7 +339,7 @@ class DRPlanDetails extends Component {
     return (
       <>
         <Container fluid>
-          <Card>
+          <Card className="box-shadow">
             <CardBody>
               <DMBreadCrumb links={[{ label: 'protection.plans', link: PROTECTION_PLANS_PATH }, { label: name, link: '#' }]} />
               <Row className="margin-left-5">
@@ -358,9 +358,7 @@ class DRPlanDetails extends Component {
               <Row className="margin-left-5">
                 <Col sm={5}>
                   <CardTitle className="title-color">{t('protected.site')}</CardTitle>
-                  <Card>
-                    {this.renderSite(protectedSite)}
-                  </Card>
+                  {this.renderSite(protectedSite)}
                 </Col>
                 <Col sm={2}>
                   <div className="stack__info">
@@ -374,7 +372,7 @@ class DRPlanDetails extends Component {
               </Row>
             </CardBody>
           </Card>
-          <Card>
+          <Card className="box-shadow">
             <CardBody>
               <Nav tabs className="nav-tabs-custom nav-justified">
                 <NavItem>

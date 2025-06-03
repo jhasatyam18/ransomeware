@@ -17,7 +17,7 @@ function SshRdpRenderer({ data }) {
         </div>
         <div className="col-sm-4">
           <a download={`${data.vmName}.rdp`} href={`data:${d}`} title="Download rdp file.">
-            <i className="fa fa-download" />
+            <i className="fa fa-download text-primary" />
           </a>
         </div>
       </div>

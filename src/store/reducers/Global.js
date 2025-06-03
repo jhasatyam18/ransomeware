@@ -11,6 +11,8 @@ export default function gobal(state = INITIAL_STATE.global, action) {
       const deleteKeys = state.loaderKeys;
       delete deleteKeys[action.key];
       return { ...state, loaderKeys: deleteKeys };
+    case Types.CHANGE_THEME:
+      return { ...state, theme: action.value };
     default:
       return state;
   }

@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
+import { Col, Row } from 'reactstrap';
+import DMToolTip from '../Shared/DMToolTip';
 import { loadRecoveryLocationData } from '../../store/actions';
 import { getValue } from '../../utils/InputUtils';
 import { openModal } from '../../store/actions/ModalActions';
@@ -8,6 +10,7 @@ import { MODAL_LOCATION_CONFIG } from '../../constants/Modalconstant';
 
 function Location(props) {
   const { dispatch, field, fieldKey, user, t } = props;
+  const { fieldInfo } = field;
   const { values } = user;
   let labelValue = getValue(fieldKey, values);
   let loc = '';
@@ -31,15 +34,22 @@ function Location(props) {
 
   return (
     <>
-      <tr>
-        <td className="padding-left-20">
-          <a id={`${fieldKey}`} href="#" onClick={() => handleClick()}>
-            {t('title.select')}
-            &nbsp;&nbsp;
-          </a>
-          {loc}
-        </td>
-      </tr>
+      <Row>
+        <Col sm={11}>
+          <tr>
+            <td className="padding-left-20">
+              <a id={`${fieldKey}`} href="#" onClick={() => handleClick()}>
+                {t('title.select')}
+                &nbsp;&nbsp;
+              </a>
+              {loc}
+            </td>
+          </tr>
+        </Col>
+        <Col sm={1} className="d-flex align-items-center">
+          <DMToolTip tooltip={t(`${fieldInfo}`)} />
+        </Col>
+      </Row>
     </>
   );
 }

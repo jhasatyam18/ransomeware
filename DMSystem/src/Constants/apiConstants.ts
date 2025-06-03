@@ -34,3 +34,4 @@ export const API_FETCH_SITES = 'api/v1/sites';
 
 export const API_GET_HISTORY = 'api/v1/upgrade/history';
 
+export const API_USER_PREFERENCE = 'api/v1/users/preferences';

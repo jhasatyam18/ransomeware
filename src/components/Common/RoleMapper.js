@@ -83,15 +83,13 @@ class RoleMapper extends Component {
     const { roles } = this.state;
     const { fieldKey } = this.state;
     return roles.map((tag, index) => (
-      <div className="row margin-left-10 padding-bottom-10 col" key={`dm-tags-${fieldKey}${index * 1}`}>
-        <Badge className="font-size-13 badge-soft-info" color="info" pill onClick={() => this.removeMapping(tag)}>
-          {tag.key}
-          -
-          {tag.value}
-          &nbsp;&nbsp;
-          <i className="fa fa-minus-circle" />
-        </Badge>
-      </div>
+      <Badge className="font-size-13 badge-soft-info me-1" key={`dm-tags-${fieldKey}${index * 1}`} color="info" pill onClick={() => this.removeMapping(tag)}>
+        {tag.key}
+        -
+        {tag.value}
+        &nbsp;&nbsp;
+        <i className="fa fa-minus-circle text-info" />
+      </Badge>
     ));
   }
 
@@ -170,9 +168,9 @@ class RoleMapper extends Component {
             </FormGroup>
           </Col>
         </Row>
-        <Row className="padding-left-5">
+        <div className="mb-2">
           {this.renderMapping()}
-        </Row>
+        </div>
       </>
     );
   }

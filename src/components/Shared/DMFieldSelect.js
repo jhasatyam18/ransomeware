@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Col, FormFeedback, FormGroup, Input, Label, Row } from 'reactstrap';
+import { Col, FormGroup, Input, Label, Row } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
 import DMToolTip from './DMToolTip';
 import { getValue } from '../../utils/InputUtils';
@@ -110,7 +110,7 @@ class DMFieldSelect extends Component {
     }
     if (hasError) {
       return (
-        <FormFeedback htmlFor={fieldKey}>{errorMessage}</FormFeedback>
+        <small className="form-text app_danger" htmlFor={fieldKey}>{errorMessage}</small>
       );
     }
     return null;
@@ -163,16 +163,16 @@ class DMFieldSelect extends Component {
           <Col sm={hideLabel ? 12 : 8}>
             <Row>
               <Col sm={11}>
-                <Input type="select" id={fieldKey} onSelect={this.handleChange} className={`form-control form-control-sm custom-select ${hasWarning ? 'border border-warning' : ''}`} onChange={this.handleChange} value={value} invalid={hasErrors} disabled={shouldDisabled} onBlur={this.onBlur}>
+                <Input type="select" id={fieldKey} onSelect={this.handleChange} className={`form-select form-control-sm custom-select ${hasWarning ? 'border border-warning' : ''}`} onChange={this.handleChange} value={value} invalid={hasErrors} disabled={shouldDisabled} onBlur={this.onBlur}>
                   <option key={`${fieldKey}-default`} value="">  </option>
                   {this.renderOptions()}
                 </Input>
-                {this.renderError(hasErrors)}
               </Col>
               <Col sm={1}>
                 {this.renderTooltip()}
               </Col>
             </Row>
+            {this.renderError(hasErrors)}
           </Col>
         </FormGroup>
       </>

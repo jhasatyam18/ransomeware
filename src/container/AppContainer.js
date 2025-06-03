@@ -18,7 +18,7 @@ AppContainer.propTypes = propTypes;
 
 function mapStateToProps(state) {
   const {
-    layout, user, sites, drPlans, jobs, dashboard, drPlaybooks,
+    layout, user, sites, drPlans, jobs, dashboard, drPlaybooks, global,
   } = state;
   return {
     layout,
@@ -28,6 +28,7 @@ function mapStateToProps(state) {
     jobs,
     dashboard,
     drPlaybooks,
+    global,
   };
 }
 export default connect(mapStateToProps)(AppContainer);

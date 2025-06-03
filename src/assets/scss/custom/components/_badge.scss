@@ -1,14 +1,25 @@
-//
-// _badge.scss 
-//
+// 
+// _badge.scss
+// 
+
+
+.badge {
+  &[href] {
+    &:hover,
+    &:focus {
+      color: var(--#{$prefix}secondary-bg);
+    }
+  }
+}
 
 // Soft badge
 @mixin badge-variant-soft($bg) {
   color: $bg;
-  background-color: rgba($bg, 0.18);
+  background-color: rgba($bg, 0.18) !important;
 
   &[href] {
-    @include hover-focus {
+    &:hover,
+    &:focus {
       color: $bg;
       text-decoration: none;
       background-color: rgba($bg, 0.4);
@@ -16,22 +27,53 @@
   }
 }
 
-@each $color,
-$value in $theme-colors {
-  .badge-soft-#{$color} {
-    @include badge-variant-soft($value);
+@each $color, $value in $theme-colors {
+  .badge {
+  &.bg-#{$color} {
+    &[href] {
+      &:hover,
+      &:focus {
+        background-color: darken($value, 4%) !important;
+      }
+    }
   }
+}
+
+.badge{
+  &.bg-light{
+    color: var(--#{$prefix}body-color);
+
+    &[href] {
+      &:hover,
+      &:focus {
+        color: var(--#{$prefix}body-color);
+      }
+    }
+  }
+}
+
+.badge-soft-#{$color} {
+      @include badge-variant-soft($value);
+      color: $value !important;  
+  }
+  
+}
+
+.rounded-pill{
+   padding-right: .6em;
+    padding-left: .6em;
 }
 
 // Dark badge
 
-.badge-dark {
-  color: $light;
+.badge.bg-dark{
+  color: var(--#{$prefix}light);
 }
 
 .badge-pill {
   padding-right: 0.6em !important;
   padding-left: 0.6em !important;
+  border-radius: 9px !important;
 }
 
 .badge-pill-alert {
@@ -40,3 +82,4 @@ $value in $theme-colors {
   width: 2.4em;
   border-radius: 9px;
 }
+

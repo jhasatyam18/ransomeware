@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { withTranslation } from 'react-i18next';
-import { Card, CardBody, Container, Row } from 'reactstrap';
+import { Card, CardBody, Container } from 'reactstrap';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import DMBreadCrumb from '../../Common/DMBreadCrumb';
 import ActionButton from '../../Common/ActionButton';
@@ -54,9 +54,7 @@ function Scripts(props) {
           <Card>
             <CardBody>
               <DMBreadCrumb links={[{ label: 'scripts', link: '#' }]} />
-              <Row className="padding-left-30">
-                <ActionButton isDisabled={!hasRequestedPrivileges(user, ['script.create'])} label="New" onClick={onNewScript} icon={faPlus} t={t} key="newScript" id="newScript" />
-              </Row>
+              <ActionButton cssName="btn btn-secondary btn-sm ms-4" isDisabled={!hasRequestedPrivileges(user, ['script.create'])} label="New" onClick={onNewScript} icon={faPlus} t={t} key="newScript" id="newScript" />
               <DMTable
                 dispatch={dispatch}
                 columns={TABLE_UPLOAD_SCRIPTS}

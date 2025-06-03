@@ -93,7 +93,7 @@ function ResyncDiskDropdown(props) {
           <Col sm={4}>{t('select.workloads.for.resync')}</Col>
           <Col sm={4} className="ml-2">{t('select.disk.type')}</Col>
         </Row>
-        <Row className="pl-3">
+        <Row className="ps-3">
           <Col sm={4}>
             <Select
               inputId="resyncDisk_workloads_select"

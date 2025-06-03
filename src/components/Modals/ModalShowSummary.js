@@ -123,20 +123,20 @@ function ModalShowSummary(props) {
 
   const render = () => (
     <>
-      <div className="modal-body noPadding">
-        <SimpleBar className="max-h-400">
-          <div className="summary-container">
-            {renderNote()}
-            <Row>
-              <Col sm={12}>
-                {renderData()}
-              </Col>
-            </Row>
-          </div>
-
-        </SimpleBar>
-
-      </div>
+      <Card>
+        <div className="modal-body noPadding">
+          <SimpleBar className="max-h-400">
+            <div className="summary-container">
+              {renderNote()}
+              <Row>
+                <Col sm={12}>
+                  {renderData()}
+                </Col>
+              </Row>
+            </div>
+          </SimpleBar>
+        </div>
+      </Card>
       {renderFooter()}
     </>
   );

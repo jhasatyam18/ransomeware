@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { withRouter } from 'react-router-dom';
@@ -9,37 +9,38 @@ import SimpleBar from 'simplebar-react';
 
 // i18n
 import { withTranslation } from 'react-i18next';
+import { APPLICATION_THEME, THEME_CONSTANT } from '../../constants/UserConstant';
 import SidebarContent from './SidebarContent';
 
-class Sidebar extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
+const Sidebar = ({ type }) => {
+  const theme = localStorage.getItem(APPLICATION_THEME) || '';
 
-  componentDidMount() {
-    if (document.body) document.body.setAttribute('data-sidebar', 'dark');
-  }
+  useEffect(() => {
+    if (document.body) {
+      if (theme !== THEME_CONSTANT.LIGHT) {
+        document.body.setAttribute('data-sidebar', THEME_CONSTANT.DARK);
+      } else {
+        document.body.setAttribute('data-sidebar', theme);
+      }
+    }
+  }, [theme]);
 
-  render() {
-    const { type } = this.props;
-    return (
-      <>
-        <div className="vertical-menu">
-          <div data-simplebar className="h-100">
-            {type !== 'condensed' ? (
-              <SimpleBar className="sidebar-height">
-                <SidebarContent />
-              </SimpleBar>
-            ) : (
+  return (
+    <>
+      <div className="vertical-menu">
+        <div data-simplebar className="h-100">
+          {type !== 'condensed' ? (
+            <SimpleBar className="sidebar-height">
               <SidebarContent />
-            )}
-          </div>
+            </SimpleBar>
+          ) : (
+            <SidebarContent />
+          )}
         </div>
-      </>
-    );
-  }
-}
+      </div>
+    </>
+  );
+};
 
 Sidebar.propTypes = {
   type: PropTypes.string,

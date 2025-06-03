@@ -68,11 +68,11 @@ function ModalConfigureUser(props) {
 
   return (
     <>
-      <div className="modal-body noPadding">
-        <SimpleBar className="max-h-400">
+      <SimpleBar className="max-h-400">
+        <div className="modal-body ">
           {renderForm()}
-        </SimpleBar>
-      </div>
+        </div>
+      </SimpleBar>
       <div className="modal-footer">
         <button type="button" className="btn btn-secondary" onClick={onClose}>
           {t('close')}

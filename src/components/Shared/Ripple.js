@@ -14,8 +14,8 @@ class Ripple extends Component {
     if (shouldShow) {
       return (
 
-        <div className="ripple__container position-fixed top-50 start-50">
-          <div className="ripple__box">
+        <div className="ripple__container ">
+          <div className="ripple__box position-fixed">
             <div className="spinner-chase">
               <div className="chase-dot" key="r-1-1" />
               <div className="chase-dot" key="r-1-2" />

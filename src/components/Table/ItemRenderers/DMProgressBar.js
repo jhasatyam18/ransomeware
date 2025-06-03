@@ -9,8 +9,8 @@ const DMProgressBar = (props) => {
   const key = `transferred-rate-popover-${data.id}`;
 
   const renderPopOver = () => (
-    <Popover placement="bottom" isOpen={popoverOpen} target={targetRef} style={{ backgroundColor: 'black', width: '220px', borderRadius: '5px', textAlign: 'center' }}>
-      <PopoverBody>
+    <Popover placement="bottom" isOpen={popoverOpen} target={targetRef} style={{ backgroundColor: 'white', width: '220px', borderRadius: '5px', textAlign: 'center', color: 'white' }}>
+      <PopoverBody style={{ color: 'black' }}>
         Transferred Data
         {' '}
         {completed}
@@ -31,8 +31,10 @@ const DMProgressBar = (props) => {
           {completed}
           %
         </div>
+        {' '}
+        { renderPopOver() }
       </div>
-      { renderPopOver() }
+
     </>
   );
 };

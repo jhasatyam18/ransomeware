@@ -229,7 +229,7 @@ class DMWizard extends React.Component {
     return (
       <>
         <Modal centered size={wizardSize} isOpen={show} className="adj_wizard_length">
-          <div className="modal-header">
+          <div className="modal-header justify-content-between">
             <h5 className="modal-title mt-0" id="dmwizard">
               {title}
             </h5>
@@ -245,7 +245,7 @@ class DMWizard extends React.Component {
           <div className="modal-body noPadding">
             <Row style={{ margin: 0 }}>
 
-              <Col sm={3} style={{ backgroundColor: '#333a4a' }}>
+              <Col className="step-wizard-parent" sm={3}>
                 <DMWSteps steps={steps} currentStep={currentStep} />
               </Col>
               <Col sm={9}>

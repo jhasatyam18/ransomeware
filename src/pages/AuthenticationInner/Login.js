@@ -6,7 +6,6 @@ import { withTranslation } from 'react-i18next';
 import { Link, withRouter } from 'react-router-dom';
 import { Card, CardBody, Col, Container, Input, Row } from 'reactstrap';
 import logo from '../../assets/images/logo.png';
-import logoName from '../../assets/images/logo_title.png';
 import saml from '../../assets/images/saml.svg';
 import { API_SAML } from '../../constants/ApiConstants';
 import { FIELD_TYPE } from '../../constants/FieldsConstant';
@@ -202,7 +201,7 @@ class Login extends Component {
         <div className="account-pages my-5 pt-sm-5">
           <Container>
             <Row className="justify-content-center">
-              <Col md={8} lg={6} xl={5}>
+              <Col sm={5} lg={5} md={4} xl={5} xxl={4}>
                 <Card className="overflow-hidden">
                   <div className="login__soft__bg">
                     <Row>
@@ -226,13 +225,10 @@ class Login extends Component {
                               height="34"
                             />
                           </span>
-                          <span className="logo-lg">
-                            <img
-                              src={logoName}
-                              className="logo-name-size dmname"
-                              alt="DATAMOTIVE"
-                            />
-                          </span>
+                          <div className="logo-lg logo-name-size dmname dm-logo-color">
+                            <p style={{ fontSize: '28px', fontWeight: 'none' }} className="mb-0  mt-2">DATAMOTIVE</p>
+                            <small style={{ position: 'relative', fontSize: '12px', top: '-10px' }}>Eliminating Cloud Boundaries</small>
+                          </div>
                         </div>
                       </Link>
                     </div>
@@ -240,7 +236,7 @@ class Login extends Component {
                       {this.renderLoginInputs()}
                       <div className="mt-3">
                         <button
-                          className="btn btn-success btn-block waves-effect waves-light"
+                          className="btn btn-success btn-block waves-effect waves-light w-100"
                           type="submit"
                           id="login_submit_btn"
                           onClick={this.onSubmit}
@@ -259,7 +255,7 @@ class Login extends Component {
                       </div>
                       <div className="mt-3">
                         <button
-                          className="btn btn-secondary btn-block waves-effect waves-light"
+                          className="btn btn-secondary btn-block waves-effect waves-light w-100"
                           type="button"
                           onClick={this.onActiveDirectoryLogin}
                         >

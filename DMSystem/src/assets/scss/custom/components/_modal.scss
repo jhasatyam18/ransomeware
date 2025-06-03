@@ -1,0 +1,17 @@
+/* CSS file for sliding in animation */
+
+/* Slide in from the right */
+@keyframes slideInRight {
+  0% {
+    transform: translateX(100%); /* Start off-screen */
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0); /* End at its normal position */
+    opacity: 1;
+  }
+}
+
+.slide-in {
+  animation: slideInRight 0.5s ease-in-out; /* Apply the animation */
+}

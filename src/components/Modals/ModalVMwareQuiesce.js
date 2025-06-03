@@ -134,10 +134,8 @@ function ModalVMwareQuiesce(props) {
         onChange={handleSearchChange}
         onKeyPress={onKeyPress}
       />
-      <span className="input-group-append">
-        <div className="input-group-text bg-transparent">
-          <FontAwesomeIcon size="sm" icon={faSearch} onClick={() => onFilter(searchStr)} />
-        </div>
+      <span className="input-group-text bg-transparent">
+        <FontAwesomeIcon size="sm" icon={faSearch} onClick={() => onFilter(searchStr)} />
       </span>
     </div>
   );
@@ -145,9 +143,9 @@ function ModalVMwareQuiesce(props) {
     <>
       <Row className="margin-10">
         <Col sm={3}>
-          <div className="custom-control custom-checkbox margin-top-5">
-            <input type="checkbox" className="custom-control-input" id="quiesceAllChk" name="quiesceAllChk" checked={quiesceAll} onChange={handleQuiesceAllChange} />
-            <label className="custom-control-label" htmlFor="quiesceAllChk">All</label>
+          <div className="form-check margin-top-5">
+            <input type="checkbox" className="form-check-input" id="quiesceAllChk" name="quiesceAllChk" checked={quiesceAll} onChange={handleQuiesceAllChange} />
+            <label className="form-check-label" htmlFor="quiesceAllChk">All</label>
           </div>
         </Col>
         <Col sm={3} />

@@ -23,8 +23,8 @@ function DMNote(props) {
   const renderSubText = () => {
     if (subText) {
       return (
-        <div className="card_note_warning margin-top-5">
-          <i className="fas fa-exclamation-triangle" />
+        <div className="text-warning margin-top-5">
+          <i className="fas fa-exclamation-triangle text-warning" />
           &nbsp;&nbsp;&nbsp;
           {t(subText)}
         </div>

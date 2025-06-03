@@ -2,7 +2,7 @@ import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { Card, CardBody, Col, Container, Form, Label, Row } from 'reactstrap';
+import { Col, Container, Form, Label, Row } from 'reactstrap';
 import { API_GET_PRESERVED_CHECKPOINTS, API_RECOVERY_CHECKPOINT } from '../../constants/ApiConstants';
 import { RECOVERY_CHECKPOINT_TYPE } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
@@ -177,37 +177,34 @@ function RecoveryCheckpoints(props) {
   return (
     <>
       <Container fluid>
-        <Card>
-          <CardBody>
-            <DMBreadCrumb links={[{ label: t('point.in.time.checkpoint'), link: '#' }]} />
-            <>
-              <p className="checkpoint_summary margin-bottom-6">{checkpointConfigurationSummary}</p>
-              <div className="d-flex ">
-                {preservedCheckpointCount ? (
-                  <p className="checkpoint_summary">
-                    {`${t('checkpoint.preserve.count')}
+        <DMBreadCrumb links={[{ label: t('point.in.time.checkpoint'), link: '#' }]} />
+        <>
+          <p className="checkpoint_summary text-muted margin-bottom-6">{checkpointConfigurationSummary}</p>
+          <div className="d-flex ">
+            {preservedCheckpointCount ? (
+              <p className="checkpoint_summary text-muted">
+                {`${t('checkpoint.preserve.count')}
 ${preservedCheckpointCount}`}
-                  </p>
-                ) : null}
-                {totalCheckpointCount ? (
-                  <p className="checkpoint_summary">
-                    {`${t('checkpoint.total.count')}
+              </p>
+            ) : null}
+            {totalCheckpointCount ? (
+              <p className="checkpoint_summary text-muted">
+                {`${t('checkpoint.total.count')}
                  ${totalCheckpointCount}`}
-                  </p>
-                ) : null}
+              </p>
+            ) : null}
 
-              </div>
-            </>
-            <Row className="padding-left-20">
-              <Col sm={12}>
-                {renderOptions()}
-              </Col>
-            </Row>
-            {checkpointType === RECOVERY_CHECKPOINT_TYPE.PLAN ? renderPplanLevelCheckpoints() : null}
-            {checkpointType === RECOVERY_CHECKPOINT_TYPE.VM ? renderVMLevelCheckpoints() : null}
-            {checkpointType === RECOVERY_CHECKPOINT_TYPE.PRESERVED_CHECKPOINTS ? renderVMLevelCheckpoints(API_GET_PRESERVED_CHECKPOINTS) : null}
-          </CardBody>
-        </Card>
+          </div>
+        </>
+        <Row className="padding-left-20">
+          <Col sm={12}>
+            {renderOptions()}
+          </Col>
+        </Row>
+        {checkpointType === RECOVERY_CHECKPOINT_TYPE.PLAN ? renderPplanLevelCheckpoints() : null}
+        {checkpointType === RECOVERY_CHECKPOINT_TYPE.VM ? renderVMLevelCheckpoints() : null}
+        {checkpointType === RECOVERY_CHECKPOINT_TYPE.PRESERVED_CHECKPOINTS ? renderVMLevelCheckpoints(API_GET_PRESERVED_CHECKPOINTS) : null}
+
       </Container>
     </>
   );

@@ -82,7 +82,7 @@ function ModalTroubleShooting(props) {
               </div>
               <div className="troubleshoot_description text-muted">
                 <p>{t('title.troubleshoot.symptoms.w1')}</p>
-                <Table className="table table-bordered text-muted">
+                <Table className="table text-muted">
                   <Tbody>
                     <Tr>
                       <Th className="w-25">{t('symptoms')}</Th>
@@ -133,7 +133,7 @@ function ModalTroubleShooting(props) {
                         <span>{t('condition.to.execute.statement')}</span>
                         <p className="font-italic font-weight-bold">{t('system.status.check.excute.conditions')}</p>
                       </div>
-                      <Table className="table table-bordered text-muted">
+                      <Table className="table text-muted">
                         <Tbody>
                           <Tr>
                             <Th>{t('steps')}</Th>
@@ -185,7 +185,7 @@ function ModalTroubleShooting(props) {
                         <span>{t('condition.to.execute.statement')}</span>
                         <p className="font-italic font-weight-bold">{t('window.update.status.check.excute.conditions')}</p>
                       </div>
-                      <Table className="table table-bordered text-muted">
+                      <Table className="table text-muted">
                         <Tbody>
                           <Tr>
                             <Th>{t('steps')}</Th>
@@ -238,7 +238,7 @@ function ModalTroubleShooting(props) {
                         <span>{t('condition.to.execute.statement')}</span>
                         <p className="font-italic font-weight-bold">{t('filesystem.status.check.excute.conditions')}</p>
                       </div>
-                      <Table className="table table-bordered text-muted">
+                      <Table className="table text-muted">
                         <Tbody>
                           <Tr>
                             <Th>{t('steps')}</Th>
@@ -306,7 +306,7 @@ function ModalTroubleShooting(props) {
                 {t('title.troubleshoot.symptoms.recovery.w1')}
                 <br />
                 <br />
-                <Table className="table table-bordered text-muted">
+                <Table className="table text-muted">
                   <Tbody>
                     <Tr>
                       <Th className="w-25">{t('symptoms')}</Th>
@@ -360,7 +360,7 @@ function ModalTroubleShooting(props) {
                     </Row>
                     <Collapse isOpen={toggle}>
                       <CardBody className="padding-left-0 paddings-right-0">
-                        <Table className="table table-bordered text-muted">
+                        <Table className="table text-muted">
                           <Tbody>
                             <Tr>
                               <Th>{t('steps')}</Th>
@@ -460,7 +460,7 @@ function ModalTroubleShooting(props) {
                           <span>{t('condition.to.execute.statement')}</span>
                           <p className="font-italic font-weight-bold">{t('system.status.check.excute.conditions')}</p>
                         </div>
-                        <Table className="table table-bordered text-muted">
+                        <Table className="table text-muted">
                           <Tbody>
                             <Tr>
                               <Th>{t('steps')}</Th>
@@ -514,7 +514,7 @@ function ModalTroubleShooting(props) {
                           <span>{t('condition.to.execute.statement')}</span>
                           <p className="font-italic font-weight-bold">{t('window.update.status.check.excute.conditions')}</p>
                         </div>
-                        <Table className="table table-bordered text-muted">
+                        <Table className="table text-muted">
                           <Tbody>
                             <Tr>
                               <Th>{t('steps')}</Th>
@@ -597,7 +597,7 @@ function ModalTroubleShooting(props) {
                           <span>{t('condition.to.execute.statement')}</span>
                           <p className="font-italic font-weight-bold">{t('filesystem.status.check.excute.conditions')}</p>
                         </div>
-                        <Table className="table table-bordered text-muted">
+                        <Table className="table text-muted">
                           <Tbody>
                             <Tr>
                               <Th>{t('steps')}</Th>

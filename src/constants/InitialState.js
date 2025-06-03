@@ -1,11 +1,14 @@
 import { APP_TYPE, RECOVERY_CHECKPOINT_TYPE, RECOVERY_JOB_TYPE, REPLICATION_JOB_TYPE } from './InputConstants';
+import { THEME_CONSTANT } from './UserConstant';
 
 const INITIAL_STATE = {
   global: {
     loaderKeys: {},
+    theme: THEME_CONSTANT.DARK,
   },
   messages: {},
   user: { id: 1,
+    userDetails: {},
     context: { refresh: 0, updateID: 0 },
     passwordChangeReq: false,
     allowCancel: false,
@@ -28,6 +31,7 @@ const INITIAL_STATE = {
     users: [],
     // Added tab in redux
     drPlanDetailActiveTab: '1',
+    userPreferences: {},
   },
   sites: { sites: [], selectedSites: [] },
   drPlans: { plans: [], selectedPlans: [], recoveryPlan: {}, allVmRecovered: false, cleanup: { selectedResources: {}, data: [], fullData: [] } },

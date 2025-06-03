@@ -104,7 +104,7 @@ class DMMultiSelect extends Component {
         <Badge className="font-size-13 badge-soft-info" color="info" pill onClick={() => this.removeItem(item)}>
           {this.getLabelByID(item)}
           &nbsp;&nbsp;
-          <i className="fa fa-minus-circle" />
+          <i className="fa fa-minus-circle text-info" />
         </Badge>
       </div>
     ));

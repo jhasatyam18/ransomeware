@@ -432,7 +432,7 @@ export function postPlanSitesSelected() {
   return (dispatch, getState) => {
     const { user } = getState();
     const { values } = user;
-    const recoveryID = getValue('drplan.recoverySite', user.values);
+    const recoveryID = getValue('drplan.recoverySite', values);
     const protectionPlatform = getValue('ui.values.protectionPlatform', values);
     const recoverySite = getValue('ui.values.sites', values).filter((site) => `${site.id}` === `${recoveryID}`)[0];
     const { platformType } = { ...recoverySite.platformDetails };

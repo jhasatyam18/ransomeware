@@ -131,9 +131,9 @@ function NodeUpdateScheduleCreate(props) {
   const renderFooter = () => {
     const disable = Object.keys(selectedCreateScheduledNodes).length <= 0;
     return (
-      <Row className="m-3 mr-5">
+      <Row className="m-3 me-5">
         <Col sm={9} className="text-right">
-          <button type="button" className="btn btn-secondary mr-2" onClick={onCloseClick}>{t('Close')}</button>
+          <button type="button" className="btn btn-secondary me-2" onClick={onCloseClick}>{t('Close')}</button>
           <button type="button" className="btn btn-success" onClick={onCreate} disabled={disable}>{`${flow === STATIC_KEYS.EDIT ? t('Reconfigure Schedule') : t('Create Schedule')}`}</button>
         </Col>
       </Row>
@@ -143,7 +143,7 @@ function NodeUpdateScheduleCreate(props) {
   const renderDays = () => {
     if (occurrenceOption === STATIC_KEYS.WEEK) {
       return (
-        <Row className="ml-3 mb-3">
+        <Row className="ms-3 mb-3">
           <Col sm={3}><p>{t('day.of.week')}</p></Col>
           <Col sm={5} className="pl-4">
             <DaySelector user={user} dispatch={dispatch} options={days} fieldkey={STORE_KEYS.UI_NODE_UPDATE_SCHEDULER_DAY_OF_WEEK} />
@@ -156,7 +156,7 @@ function NodeUpdateScheduleCreate(props) {
     }
     if (occurrenceOption === STATIC_KEYS.MONTH) {
       return (
-        <Row className="ml-3 mt-1 mb-2">
+        <Row className="ms-3 mt-1 mb-2">
           <Col sm={3}><p>{t('date.of.month')}</p></Col>
           <Col sm={3}>
             <DMFieldNumber dispatch={dispatch} fieldKey={STORE_KEYS.UI_NODE_UPDATE_SCHEDULER_DAY_OF_MONTH} field={dayOfMonthText} user={user} hideLabel />
@@ -192,13 +192,13 @@ function NodeUpdateScheduleCreate(props) {
     });
 
     return (
-      <div className="ml-3">
+      <div className="ms-3">
         <p>{t('schedule.summarry')}</p>
         <ul className="text-warning mb-1">
           <li>{summary.powerOnText}</li>
           <li>{summary.powerOffText}</li>
         </ul>
-        <p className="ml-3 ">
+        <p className="ms-3 ">
           <i className="fas fa-exclamation-triangle icon__warning padding-right-7" aria-hidden="true" />
           <snap className="text-warning ">
             {t('warning.system.schedule.create')}
@@ -214,7 +214,7 @@ function NodeUpdateScheduleCreate(props) {
         <Card>
           <CardBody style={{ minHeight: '100vh' }}>
             <DMBreadCrumb links={[{ label: 'node.system.update', link: NODE_UPDATE_SCHEDULER }, { label: `${flow === 'edit' ? 'Reconfigure' : 'Create'}`, link: '#' }]} />
-            <Row className="ml-3 mb-2">
+            <Row className="ms-3 mb-2">
               <Col sm={3} className="mt-3"><p>{t('select.prepnode.schedule')}</p></Col>
               <SimpleBar style={{ maxHeight: '260px', width: '70%' }}>
                 <Col sm={8}>
@@ -230,9 +230,9 @@ function NodeUpdateScheduleCreate(props) {
                 </Col>
               </SimpleBar>
             </Row>
-            <div className="ml-4">
+            <div className="ms-4">
               <p>{t('sys.update.schedule')}</p>
-              <Row className="ml-3 mb-2">
+              <Row className="ms-3 mb-2">
                 <Col sm={3} className="mt-1"><p>{t('repeat.occurence')}</p></Col>
                 <Col sm={3}>
                   <DMFieldNumber dispatch={dispatch} fieldKey={STORE_KEYS.UI_NODE_UPDATE_SCHEDULER_OCCURRENCE} field={occurrenceText} user={user} hideLabel />
@@ -245,7 +245,7 @@ function NodeUpdateScheduleCreate(props) {
                 </Col>
               </Row>
               {renderDays()}
-              <Row className="ml-3 mt-2 mb-2">
+              <Row className="ms-3 mt-2 mb-2">
                 <Col sm={3}><p>{t('power.on.at')}</p></Col>
                 <Col sm={3} className="pr-5">
                   <DMTimePicker dispatch={dispatch} fieldKey={STORE_KEYS.UI_NODE_UPDATE_SCHEDULER_POWER_ON_TIME} field={powerOnTimeField} user={user} hideLabel />
@@ -255,7 +255,7 @@ function NodeUpdateScheduleCreate(props) {
                   <DMToolTip tooltip={t('shedule.power.on.time')} />
                 </Col>
               </Row>
-              <Row className="ml-3 mb-2">
+              <Row className="ms-3 mb-2">
                 <Col sm={3} className="mt-1"><p>{t('power.off.at')}</p></Col>
                 <Col sm={2}>
                   <DMFieldSelect dispatch={dispatch} fieldKey={STORE_KEYS.UI_NODE_UPDATE_SCHEDULER_POWER_OFF_DAY} field={powerOffAtDay} user={user} hideLabel />
@@ -268,7 +268,7 @@ function NodeUpdateScheduleCreate(props) {
                   <DMToolTip tooltip={t('shedule.power.off.time')} />
                 </Col>
               </Row>
-              <Row className="ml-3 mb-2">
+              <Row className="ms-3 mb-2">
                 <Col sm={3} className="mt-1"><p>{t('schedule.time.zone')}</p></Col>
                 <Col sm={3}>
                   <DMSearchSelect dispatch={dispatch} fieldKey={STORE_KEYS.UI_SCHEDULE_TIME_ZONE} field={timeZoneField} user={user} hideLabel />

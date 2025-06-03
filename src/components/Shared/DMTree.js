@@ -106,8 +106,8 @@ function DMTree(props) {
                 autoComplete="off"
                 ref={ref}
               />
-              <span className="input-group-append" aria-hidden onClick={() => onSearchChange(null, true)}>
-                <div className="input-group-text bg-transparent">
+              <span className="input-group-append input-group-text bg-transparent" aria-hidden onClick={() => onSearchChange(null, true)}>
+                <div>
                   <FontAwesomeIcon size="sm" className="search__icon" icon={faSearch} />
                 </div>
               </span>
@@ -150,8 +150,8 @@ function DMTree(props) {
                   {showSelectedData.map((node) => (
                     <p>
                       {node.name}
-                      <a href="#" onClick={() => removeFromSelectedList(node)} className="dm-caret ml-2">
-                        <FontAwesomeIcon size="lg" icon={faCircleXmark} />
+                      <a href="#" onClick={() => removeFromSelectedList(node)} className="dm-caret ms-2">
+                        <FontAwesomeIcon size="lg" icon={faCircleXmark} className="tree_folder_color" />
                       </a>
                     </p>
                   ))}
@@ -162,8 +162,8 @@ function DMTree(props) {
                     {showSelectedData.map((node) => (
                       <p>
                         {node.name}
-                        <a href="#" onClick={() => removeFromSelectedList(node)} className="dm-caret ml-2">
-                          <FontAwesomeIcon size="lg" icon={faCircleXmark} />
+                        <a href="#" onClick={() => removeFromSelectedList(node)} className="dm-caret ms-2">
+                          <FontAwesomeIcon size="lg" icon={faCircleXmark} className="tree_folder_color" />
                         </a>
                       </p>
                     ))}

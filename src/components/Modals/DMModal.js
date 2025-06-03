@@ -152,7 +152,7 @@ function DMModal(props) {
     <>
       {floatModalRight ? (
         <Modal isOpen className={`${css} slide-in`} style={{ margin: '0px', float: 'right', width: `${width || '30%'}`, marginTop: '3px', overflow: 'hidden', background: 'inherit' }} size={size} centered={false}>
-          <div style={{ height: '97vh', background: 'inherit', verticalAlign: 'middle' }}>
+          <div style={{ height: '97vh', background: 'inherit', verticalAlign: 'middle' }} data-simplebar>
             <div className="modal-header">
               <h4 className="modal-title mt-0" id="dmwizard">
                 {options.title}
@@ -170,8 +170,8 @@ function DMModal(props) {
         </Modal>
       ) : (
         <Modal isOpen centered className={css} size={size}>
-          <div className="modal-header">
-            <h5 className="modal-title mt-0" id="DMMODAL">
+          <div className="modal-header d-flex justify-content-between">
+            <h5 className="modal-title mt-0 " id="DMMODAL">
               {options.title}
             </h5>
             {modalActions ? (

@@ -6,10 +6,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SideBarMenuItem } from '../../interfaces/interfaces';
 import { getSideBarContents } from '../../utils/appUtils';
 import withRouter from './withRouter';
+import { APPLICATION_THEME, THEME_CONSTANT } from '../../Constants/userConstants';
 
 interface SidebarContentProps extends WithTranslation {
     type?: string;
 }
+type Theme = 'dark' | 'light';
 
 class SidebarContent extends Component<SidebarContentProps> {
     componentDidMount() {
@@ -29,8 +31,9 @@ class SidebarContent extends Component<SidebarContentProps> {
 
     isActive(path1: string, path2?: string, path3?: string): string {
         const { pathname } = window.location;
+        const theme = localStorage.getItem(APPLICATION_THEME) as Theme;
         if (path1 === pathname || path2 === pathname || path3 === pathname) {
-            return '#FFF';
+            return THEME_CONSTANT.SIDEBAR_MENU_ACTIVE[theme];
         }
         return '';
     }

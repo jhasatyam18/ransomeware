@@ -2,16 +2,15 @@ import React, { Component } from 'react';
 // Redux
 import { Link, withRouter } from 'react-router-dom';
 import { Card, CardBody, Col, Container, Label, Row } from 'reactstrap';
+import { getCookie } from '../../utils/CookieUtils';
 import { changeUserPassword } from '../../store/actions';
 // import images
 import logo from '../../assets/images/logo.png';
-import logoName from '../../assets/images/logo_title.png';
 import DMFieldText from '../../components/Shared/DMFieldText';
 import { FIELD_TYPE } from '../../constants/FieldsConstant';
 import { PASSWORD_REGEX } from '../../constants/ValidationConstants';
 import { validatePassword, isEmpty, validatedNewAndCnfmPass } from '../../utils/validationUtils';
 import { getValue } from '../../utils/InputUtils';
-import { getCookie } from '../../utils/CookieUtils';
 import { APPLICATION_API_USER } from '../../constants/UserConstant';
 
 class ChangePassword extends Component {
@@ -92,7 +91,7 @@ class ChangePassword extends Component {
         <div id="password-parent" className="account-pages my-5 pt-sm-5">
           <Container>
             <Row className="justify-content-center">
-              <Col md={8} lg={6} xl={5}>
+              <Col sm={5} lg={5} md={4} xl={5} xxl={4}>
                 <Card className="overflow-hidden">
                   <div className="login__soft__bg">
                     <Row>
@@ -103,7 +102,7 @@ class ChangePassword extends Component {
                       </Col>
                     </Row>
                   </div>
-                  <CardBody className="pt-0">
+                  <CardBody className="pt-0 ">
                     <div>
                       <Link to="/">
                         <div className="avatar-md profile-user-wid mb-4 login">
@@ -115,17 +114,14 @@ class ChangePassword extends Component {
                               height="34"
                             />
                           </span>
-                          <span className="logo-lg">
-                            <img
-                              src={logoName}
-                              className="logo-name-size dmname"
-                              alt="DATAMOTIVE"
-                            />
-                          </span>
+                          <div className="logo-lg logo-name-size dmname dm-logo-color">
+                            <p style={{ fontSize: '28px', fontWeight: 'none' }} className="mb-0  mt-2">DATAMOTIVE</p>
+                            <small style={{ position: 'relative', fontSize: '12px', top: '-10px' }}>Eliminating Cloud Boundaries</small>
+                          </div>
                         </div>
                       </Link>
                     </div>
-                    <div className="p-2">
+                    <div style={{ width: '90%', margin: 'auto' }} className="card margin-auto">
                       { allowCancel ? null
                         : (
                           <Label className="text-danger padding-left-20">
@@ -134,15 +130,18 @@ class ChangePassword extends Component {
                             &rsquo; user
                           </Label>
                         )}
-                      <DMFieldText dispatch={dispatch} fieldKey="user.oldPassword" field={oldPassword} user={user} hideLabel="true" />
-                      <DMFieldText dispatch={dispatch} fieldKey="user.newPassword" field={password} user={user} hideLabel="true" />
-                      <DMFieldText dispatch={dispatch} fieldKey="user.confirmPassword" field={cnfPassword} user={user} hideLabel="true" />
+                      <DMFieldText dispatch={dispatch} fieldKey="user.oldPassword" field={oldPassword} user={user} hideLabel />
+                      <DMFieldText dispatch={dispatch} fieldKey="user.newPassword" field={password} user={user} hideLabel />
+                      <DMFieldText dispatch={dispatch} fieldKey="user.confirmPassword" field={cnfPassword} user={user} hideLabel />
                     </div>
-                    <div className="mt-3">
-                      <button id="password-btn" className="btn btn-success btn-block waves-effect waves-light" type="submit" onClick={this.onSubmit}>
+                    <div className="p-2">
+                      <button id="password-btn" className="w-100 btn btn-success btn-block waves-effect waves-light" type="submit" onClick={this.onSubmit}>
                         Change Password
                       </button>
-                      { allowCancel ? <button className="btn btn-block waves-effect waves-light" type="submit" onClick={this.onCancel}> Cancel </button> : null }
+                    </div>
+                    <div className="d-flex justify-content-center">
+                      { allowCancel ? <button className="btn btn-secondary-outline waves-effect waves-light" type="submit" onClick={this.onCancel}> Cancel </button> : null }
+
                     </div>
                   </CardBody>
                 </Card>

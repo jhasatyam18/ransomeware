@@ -1,0 +1,26 @@
+// Custom alert-variant mixin for Bootstrap 5
+@mixin alert-variant($background, $border, $color) {
+    color: $color;
+    background-color: $background;
+  
+    .alert-link {
+      color: shade-color($color, 20%);
+    }
+    
+  }
+  
+  // Alert variants loop using Bootstrap 5's $theme-colors map
+  @each $color, $value in $theme-colors {
+    .alert-#{$color} {
+      @include alert-variant(
+        tint-color($value, 70%), // background
+        tint-color($value, 70%), // border
+        shade-color($value, 60%) // text color
+      );
+    }
+  }
+  
+  .alert-dismissible .close {
+   
+    margin: 0.9rem !important;
+  }

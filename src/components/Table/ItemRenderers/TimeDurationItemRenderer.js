@@ -5,6 +5,7 @@ import DateItemRenderer from './DateItemRenderer';
 
 function TimeDurationItemRenderer({ data }) {
   const [popoverOpen, setPopoverOpen] = useState(false);
+
   const { startTime, endTime, id } = data;
   const targetRef = useRef(null);
   if (endTime === 0) {
@@ -22,8 +23,8 @@ function TimeDurationItemRenderer({ data }) {
           { duration === '-' ? '0s' : duration }
         </button>
         { targetRef.current && (
-        <Popover placement="bottom" isOpen={popoverOpen} target={targetRef} style={{ backgroundColor: 'black' }}>
-          <PopoverBody>
+        <Popover placement="bottom" isOpen={popoverOpen} target={targetRef} style={{ backgroundColor: 'white' }}>
+          <PopoverBody style={{ color: 'black' }}>
             <table>
               <tbody>
                 <tr>

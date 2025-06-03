@@ -66,7 +66,7 @@ class ModalEmailRecipient extends Component {
   render() {
     return (
       <>
-        <div className="modal-body noPadding">
+        <div className="modal-body">
           <SimpleBar className="max-h-400">
             {this.renderForm()}
           </SimpleBar>

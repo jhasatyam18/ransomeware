@@ -2,7 +2,7 @@ import { faDatabase, faDesktop, faHdd, faSearch } from '@fortawesome/free-solid-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
-import { Col, Row } from 'reactstrap';
+import { Card, Col, Row } from 'reactstrap';
 import { connect } from 'react-redux';
 import SimpleBar from 'simplebar-react';
 import { PLATFORM_TYPES, STATIC_KEYS } from '../../constants/InputConstants';
@@ -106,26 +106,26 @@ function ResetDiskReplicationModal({ t, dispatch, options, user }) {
     return (
       <div className="padding-top-10 resync_font_size">
         <p>{t('resync.summary')}</p>
-        <Row className="mb-3 ml-2">
+        <Row className="mb-3 ms-2">
           <Col sm={3}>
             <FontAwesomeIcon size="lg" icon={faDesktop} />
-            <span className="ml-2">{t('Workloads')}</span>
+            <span className="ms-2">{t('Workloads')}</span>
           </Col>
           <Col>{resyncSelectedData.vms}</Col>
         </Row>
-        <Row className="mb-3 ml-2">
+        <Row className="mb-3 ms-2">
           <Col>
             <FontAwesomeIcon size="lg" icon={faHdd} />
-            <span className="ml-2">{t('Disks')}</span>
+            <span className="ms-2">{t('Disks')}</span>
           </Col>
           <Col>{t('total.disk', { totalDisks: resyncSelectedData.disks })}</Col>
           <Col>{t('os.disk.count', { osDisks: resyncSelectedData.osDisks })}</Col>
           <Col>{t('data.disk.count', { dataDisks: resyncSelectedData.dataDisks })}</Col>
         </Row>
-        <Row className="ml-2">
+        <Row className="ms-2">
           <Col>
             <FontAwesomeIcon size="lg" icon={faDatabase} />
-            <span className="ml-2">{t('Storage')}</span>
+            <span className="ms-2">{t('Storage')}</span>
           </Col>
           <Col>{t('total.disk.size', { totalDiskSize: resyncSelectedData.diskSize })}</Col>
           <Col>{t('os.disk.size', { osDisksSize: resyncSelectedData.osSize })}</Col>
@@ -199,8 +199,8 @@ function ResetDiskReplicationModal({ t, dispatch, options, user }) {
           onChange={onSearchChange}
           autoComplete="off"
         />
-        <span className="input-group-append">
-          <div className="input-group-text bg-transparent">
+        <span className="input-group-append input-group-text bg-transparent">
+          <div className="">
             <FontAwesomeIcon size="sm" icon={faSearch} onClick={onFilterClick} />
           </div>
         </span>
@@ -218,7 +218,7 @@ function ResetDiskReplicationModal({ t, dispatch, options, user }) {
     }
     if (isRecoveryCheckpointEnabled) {
       return (
-        <div className="text-warning mt-4 ml-4">
+        <div className="text-warning mt-4 ms-4">
           <i className="fas fa-exclamation-triangle" />
           &nbsp;&nbsp;&nbsp;
           {`${t('resynk.disk.warning.with.checkpoint')}`}
@@ -226,7 +226,7 @@ function ResetDiskReplicationModal({ t, dispatch, options, user }) {
       );
     }
     return (
-      <div className="text-warning mt-4 ml-4">
+      <div className="text-warning mt-4 ms-4">
         <i className="fas fa-exclamation-triangle" />
         &nbsp;&nbsp;&nbsp;
         {`${t('resynk.disk.warning.without.checkpoint')}`}
@@ -244,11 +244,11 @@ function ResetDiskReplicationModal({ t, dispatch, options, user }) {
         <Col sm={2}>{t('resync.summary')}</Col>
         <Col sm={2}>
           <FontAwesomeIcon size="lg" icon={faDesktop} />
-          <span className="pl-3">{totalVMs}</span>
+          <span className="ps-3">{totalVMs}</span>
         </Col>
         <Col sm={2}>
           <FontAwesomeIcon size="lg" icon={faHdd} />
-          <span className="pl-3">{`${selectedDiskCount} [${selectedDiskSize}]`}</span>
+          <span className="ps-3">{`${selectedDiskCount} [${selectedDiskSize}]`}</span>
         </Col>
         <Col sm={6}>{renderFilter()}</Col>
       </Row>
@@ -257,13 +257,15 @@ function ResetDiskReplicationModal({ t, dispatch, options, user }) {
 
   return (
     <>
-      {!showConfirmation && showWarningMsg()}
-      <SimpleBar className={`${showConfirmation ? '' : 'resync_modal_height resync_font_size'}`}>
-        {virtualMachines.length > 1 && <ResyncDiskDropdown vms={virtualMachines} dispatch={dispatch} showConfirmation={showConfirmation} user={user} />}
-        {renderResyncSummary()}
-        {showConfirmation ? renderConfirmation()
-          : vms.map((vm) => <RenderResetReplicationVMs vmData={vm} dispatch={dispatch} user={user} selectedPlan={selectedPlan} />)}
-      </SimpleBar>
+      <Card>
+        {!showConfirmation && showWarningMsg()}
+        <SimpleBar className={`${showConfirmation ? '' : 'resync_modal_height resync_font_size'}`}>
+          {virtualMachines.length > 1 && <ResyncDiskDropdown vms={virtualMachines} dispatch={dispatch} showConfirmation={showConfirmation} user={user} />}
+          {renderResyncSummary()}
+          {showConfirmation ? renderConfirmation()
+            : vms.map((vm) => <RenderResetReplicationVMs vmData={vm} dispatch={dispatch} user={user} selectedPlan={selectedPlan} />)}
+        </SimpleBar>
+      </Card>
       {renderModalFooter()}
     </>
   );

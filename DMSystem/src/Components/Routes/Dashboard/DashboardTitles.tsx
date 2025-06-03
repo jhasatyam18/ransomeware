@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { connect, useSelector } from 'react-redux';
-import { Card, CardBody, Col, Media, Row } from 'reactstrap';
+import { Card, CardBody, Col, Row } from 'reactstrap';
 import { Dispatch } from 'redux';
 import { INITIAL_STATE, TilesData } from '../../../interfaces/interfaces';
 import { GET_DASHBORAD_TITLE } from '../../../Constants/apiConstants';
@@ -62,19 +62,17 @@ const DashboardTitles: React.FC<DashboardTitlesProps> = ({ t, dispatch }) => {
         <Row>
             {infoCards.map((report, key) => (
                 <Col md="3" key={`_col_-${key * 2}`}>
-                    <Card className="mini-stats-wid">
-                        <CardBody>
-                            <Media>
-                                <Media body>
-                                    <p className="text-muted font-weight-medium">{report.title}</p>
-                                    <h4 className="mb-0">{report.description}</h4>
-                                </Media>
-                                <div className="mini-stat-icon avatar-sm rounded-circle align-self-center">
-                                    <span className="">
-                                        <FontAwesomeIcon size="lg" icon={report.icon as IconProp} color={'white'} className="pl-2 pt-1 h2" />
-                                    </span>
-                                </div>
-                            </Media>
+                    <Card className="mini-stats-wid box-shadow">
+                        <CardBody className="d-flex justify-content-between">
+                            <div>
+                                <p className="text-muted font-weight-medium">{report.title}</p>
+                                <h4 className="mb-0">{report.description}</h4>
+                            </div>
+                            <div className="mini-stat-icon avatar-sm align-self-center">
+                                <span className="">
+                                    <FontAwesomeIcon size="lg" icon={report.icon as IconProp} color={'white'} className="pl-2 pt-1 h2" />
+                                </span>
+                            </div>
                         </CardBody>
                     </Card>
                 </Col>

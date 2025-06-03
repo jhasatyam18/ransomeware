@@ -87,18 +87,16 @@ class DMTableRow extends Component {
     if (isSelectable) {
       return (
         <Th>
-          <div className="custom-control custom-checkbox">
+          <div className="form-check font-size-16">
             <input
+              className="form-check-input"
               type="checkbox"
-              className="custom-control-input"
               id={rKey}
               checked={showSelected}
               onChange={this.onChange}
               name={rKey}
             />
-            <label className="custom-control-label" htmlFor={rKey}>
-              &nbsp;
-            </label>
+            <label className="form-check-label" htmlFor={rKey} />
           </div>
         </Th>
       );

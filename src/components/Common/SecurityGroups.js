@@ -55,11 +55,11 @@ class SecurityGroups extends Component {
     const { selectedSG } = this.state;
     const { vmKey } = this.props;
     return selectedSG.map((sg, index) => (
-      <div className="row margin-left-10 padding-bottom-10 col" key={`dm-sg-${vmKey}${index * 1}`}>
+      <div className=" margin-left-10 padding-bottom-10 " key={`dm-sg-${vmKey}${index * 1}`}>
         <Badge className="font-size-13 badge-soft-info" color="info" pill onClick={() => this.removeSG(sg)}>
           {sg}
           &nbsp;&nbsp;
-          <i className="fa fa-minus-circle" />
+          <i className="fa fa-minus-circle text-info" />
         </Badge>
       </div>
     ));

@@ -66,11 +66,30 @@ export function getErrorText(err) {
   return { code: 0, message: err };
 }
 
+function getThemeFromCSSVariables() {
+  const root = getComputedStyle(document.documentElement);
+  return {
+    colors: {
+      background: root.getPropertyValue('--select-bg').trim(),
+      text: root.getPropertyValue('--select-font').trim(),
+      border: root.getPropertyValue('--select-border').trim(),
+      hover: root.getPropertyValue('--select-hover').trim(),
+      hoverColor: root.getPropertyValue('--select-hover-color').trim(),
+      primary: root.getPropertyValue('--select-primary').trim(),
+      error: root.getPropertyValue('--select-error').trim(),
+      selected: root.getPropertyValue('--select-select').trim(),
+    },
+  };
+}
+
 export function getSearchSelectStyle(hasError) {
-  const hoverColor = '#2a3042';
-  const bckClr = '#2e3548';
-  const fontClr = '#bfc8e2';
-  const borderClr = hasError ? '#f46a6a' : '#32394e';
+  const theme = getThemeFromCSSVariables();
+  const hoverColor = theme.colors.hover;
+  const bckClr = theme.colors.background;
+  const fontClr = theme.colors.text;
+  const borderClr = hasError ? theme.colors.error : theme.colors.border;
+  const hovertextColor = theme.colors.hoverColor;
+  const selectedColor = theme.colors.selected;
   return {
     control: (base, state) => ({
       ...base,
@@ -105,10 +124,10 @@ export function getSearchSelectStyle(hasError) {
     }),
     option: (base, state) => ({
       ...base,
-      backgroundColor: state.isSelected ? '#2684FF' : bckClr,
+      backgroundColor: state.isSelected ? selectedColor : bckClr,
       '&:hover': {
         backgroundColor: hoverColor,
-        color: 'white',
+        color: hovertextColor,
       },
     }),
   };

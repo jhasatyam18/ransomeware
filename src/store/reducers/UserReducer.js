@@ -107,7 +107,7 @@ export default function user(state = INITIAL_STATE.user, action) {
       };
     case Types.SET_USER_DETAILS: {
       return {
-        ...state, id: action.data.id,
+        ...state, id: action.data.id, userDetails: action.data,
       };
     }
     case Types.FETCH_USERS: {
@@ -119,6 +119,8 @@ export default function user(state = INITIAL_STATE.user, action) {
     case Types.SET_DRPLAN_DETAIL_ACTIVE_TAB: {
       return { ...state, drPlanDetailActiveTab: action.value };
     }
+    case Types.SET_USER_PREFERENCES:
+      return { ...state, userPreferences: action.userPreferences };
     default:
       return state;
   }

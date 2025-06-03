@@ -50,12 +50,12 @@ class ModalConfigureSite extends Component {
   render() {
     return (
       <>
-        <div className="modal-body noPadding">
-          <SimpleBar className="max-h-400">
+        <SimpleBar className="max-h-400">
+          <div className="modal-body max-h-400 ">
             <ConfigureSite {...this.props} />
-          </SimpleBar>
+          </div>
+        </SimpleBar>
 
-        </div>
         {this.renderFooter()}
       </>
     );

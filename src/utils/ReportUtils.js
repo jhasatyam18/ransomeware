@@ -5,7 +5,7 @@ import JsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { DETAILED_STEP_COMPONENTS } from '../constants/AppStatus';
 import { NUMBER, PLATFORM_TYPES, REPORT_DURATION, STATIC_KEYS, PLAYBOOK_NAMES, NODE_TYPES } from '../constants/InputConstants';
-import { ALPHABETS, BLUE, BORDER_STYLE, DARK_NAVY_BLUE, EXCEL_WORKSHEET_TABLE_HEADER_CELL, EXCEL_WORKSHEET_TITLE, LIGHT_GREY, LIGHT_NAVY_BLUE, REPORT_TYPES } from '../constants/ReportConstants';
+import { ALPHABETS, BLUE, BORDER_STYLE, EXCEL_WORKSHEET_TABLE_HEADER_CELL, EXCEL_WORKSHEET_TITLE, REPORT_TYPES } from '../constants/ReportConstants';
 import { ALERTS_COLUMNS, EVENTS_COLUMNS, NODE_COLUMNS, PROTECTED_VMS_COLUMNS, PROTECTION_PLAN_COLUMNS, RECOVERY_JOB_COLUMNS, REPLICATION_JOB_COLUMNS, SITE_COLUMNS, TABLE_REPORTS_CHECKPOINTS } from '../constants/TableConstants';
 import { APPLICATION_API_USER } from '../constants/UserConstant';
 import { calculateChangedData, convertMinutesToDaysHourFormat, formatTime, getAppDateFormat, getStorageWithUnit } from './AppUtils';
@@ -220,7 +220,7 @@ export async function exportTableToExcel(dashboard, data, siteDetails, user) {
   for (let a = 0; a < nameOfWorksheet.length; a += 1) {
     const worksheetName = nameOfWorksheet[a];
     if (data[worksheetName] && data[worksheetName].length > 0) {
-      const worksheet = workbook.addWorksheet(worksheetName.split('_').join(' '), { pageSetup: { paperSize: 5, orientation: 'landscape' } });
+      const worksheet = workbook.addWorksheet(i18n.t(nameOfWorksheet[a]), { pageSetup: { paperSize: 5, orientation: 'landscape' } });
       worksheet.columns = columnsMapping[worksheetName].map((col) => ({ header: col.header, key: col.field }));
       addDataToWorksheet(worksheet, columnsMapping[worksheetName], data[worksheetName], workbook, base64ImgUrl, worksheetName, user);
     }
@@ -257,26 +257,39 @@ function AdjustColumnWidth(ws) {
 
 function addingStyleToWorksheet(ws) {
   const worksheet = ws;
+  const { bodyBg, linkColor, bodyColor, cardHeaderBg } = getThemeColorForReports();
   worksheet.columns.forEach((col) => {
     // style Each column in worksheet
     const column = col;
     column.border = BORDER_STYLE;
-    column.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: DARK_NAVY_BLUE }, bgColor: { argb: DARK_NAVY_BLUE } };
-    column.font = { color: { argb: LIGHT_GREY } };
+    column.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: bodyBg }, bgColor: { argb: bodyBg } };
+    column.font = { color: { argb: bodyColor } };
     column.alignment = { wrapText: true, horizontal: 'center', vertical: 'middle' };
   });
   // apply blue font color and light blue background color in the header of the table
-  EXCEL_WORKSHEET_TABLE_HEADER_CELL.map((key) => {
-    worksheet.getCell(key).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: LIGHT_NAVY_BLUE }, bgColor: { argb: LIGHT_NAVY_BLUE } };
+  worksheet.columns.map((pl, ind) => {
+    const key = EXCEL_WORKSHEET_TABLE_HEADER_CELL[ind];
+    worksheet.getCell(key).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: bodyBg }, bgColor: { argb: bodyBg } };
     worksheet.getCell(key).font = { size: 12 };
     worksheet.getCell(key).font = { color: { argb: BLUE } };
   });
   // apply gray font color and dark blue background color to the title of the Table
-  EXCEL_WORKSHEET_TITLE.map((key) => {
+  worksheet.columns.map((pl, ind) => {
+    const key = EXCEL_WORKSHEET_TITLE[ind];
     worksheet.getCell(key).font = { size: 14 };
-    worksheet.getCell(key).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: DARK_NAVY_BLUE }, bgColor: { argb: DARK_NAVY_BLUE } };
-    worksheet.getCell(key).font = { color: { argb: LIGHT_GREY } };
+    worksheet.getCell(key).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: cardHeaderBg }, bgColor: { argb: cardHeaderBg } };
+    worksheet.getCell(key).font = { color: { argb: linkColor } };
   });
+}
+
+export function getThemeColorForReports() {
+  const root = getComputedStyle(document.documentElement);
+  return {
+    bodyBg: root.getPropertyValue('--bs-body-bg').trim().substring(1),
+    bodyColor: root.getPropertyValue('--bs-body-color').trim().substring(1) === 'fff' ? 'ffffff' : root.getPropertyValue('--bs-body-color').trim().substring(1),
+    linkColor: root.getPropertyValue('--tree-fd-color').trim().substring(1),
+    cardHeaderBg: root.getPropertyValue('--bs-card-cap-bg').trim().substring(1),
+  };
 }
 
 /**
@@ -314,13 +327,14 @@ function addingHeaderItemToWorksheet(oTable, wb, ws, base64ImgUrl, title) {
 function summaryInfo(ws, dashboard) {
   const worksheet = ws;
   const excelData = getExcelData(dashboard);
+  const { bodyBg, bodyColor } = getThemeColorForReports();
   excelData.forEach((e) => {
     mergeCells(worksheet, e);
   });
   // for setting summary page title
   ['A3'].map((key) => {
-    worksheet.getCell(key).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: LIGHT_NAVY_BLUE }, bgColor: { argb: LIGHT_NAVY_BLUE } };
-    worksheet.getCell(key).font = { color: { argb: LIGHT_GREY }, size: 12 };
+    worksheet.getCell(key).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: bodyBg }, bgColor: { argb: bodyBg } };
+    worksheet.getCell(key).font = { color: { argb: bodyColor }, size: 12 };
   });
 }
 
@@ -344,37 +358,38 @@ function getExcelData(dashboard) {
   const { sites, vms, storage, protectionPlans } = titles;
   const { running, completed, failures, changedRate, dataReduction, rpo } = replicationStats;
   const { fullRecovery, migrations, testExecutions, rto } = recoveryStats;
+  const { bodyBg, bodyColor, cardHeaderBg, linkColor } = getThemeColorForReports();
   const excel = [
-    { mergeCell: 'B6:D7', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'Sites', fontSize: 8 },
-    { mergeCell: 'B8:D9', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: sites },
-    { mergeCell: 'F6:H7', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'Protection Plans', fontSize: 8 },
-    { mergeCell: 'F8:H9', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: protectionPlans },
-    { mergeCell: 'J6:L7', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'Protected Machine', fontSize: 8 },
-    { mergeCell: 'J8:L9', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: vms },
-    { mergeCell: 'N6:P7', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'Storage', fontSize: 8 },
-    { mergeCell: 'N8:P9', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: getStorageWithUnit(storage) },
-    { mergeCell: 'B11:H12', fontColor: LIGHT_GREY, backgroundColor: DARK_NAVY_BLUE, value: 'Replication Statistics', fontSize: 10 },
-    { mergeCell: 'J11:P12', fontColor: LIGHT_GREY, backgroundColor: DARK_NAVY_BLUE, value: 'Recovery Statistics', fontSize: 10 },
-    { mergeCell: 'B13:D14', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'Completed', fontSize: 8 },
-    { mergeCell: 'B15:D15', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: completed },
-    { mergeCell: 'E13:F14', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'Running', fontSize: 8 },
-    { mergeCell: 'E15:F15', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: running },
-    { mergeCell: 'G13:H14', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'Failure', fontSize: 8 },
-    { mergeCell: 'G15:H15', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: failures },
-    { mergeCell: 'J13:L14', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'Test Recovery', fontSize: 8 },
-    { mergeCell: 'J15:L15', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: testExecutions },
-    { mergeCell: 'M13:N14', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'Recovery', fontSize: 8 },
-    { mergeCell: 'M15:N15', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: fullRecovery },
-    { mergeCell: 'O13:P14', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'Migration', fontSize: 8 },
-    { mergeCell: 'O15:P15', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: migrations },
-    { mergeCell: 'B17:D18', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'Change Rate', fontSize: 8 },
-    { mergeCell: 'B19:D19', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: calculateChangedData(changedRate) },
-    { mergeCell: 'F17:H18', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'Data Reduction', fontSize: 8 },
-    { mergeCell: 'F19:H19', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: `${parseInt(dataReduction, 10)}%` },
-    { mergeCell: 'J17:L18', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'RPO', fontSize: 8 },
-    { mergeCell: 'J19:L19', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: formatTime(rpo) },
-    { mergeCell: 'N17:P18', fontColor: BLUE, backgroundColor: LIGHT_NAVY_BLUE, value: 'RTO', fontSize: 8 },
-    { mergeCell: 'N19:P19', fontColor: LIGHT_GREY, backgroundColor: LIGHT_NAVY_BLUE, value: formatTime(rto) },
+    { mergeCell: 'B6:D7', fontColor: linkColor, backgroundColor: bodyBg, value: 'Sites', fontSize: 8 },
+    { mergeCell: 'B8:D9', fontColor: bodyColor, backgroundColor: bodyBg, value: sites },
+    { mergeCell: 'F6:H7', fontColor: linkColor, backgroundColor: bodyBg, value: 'Protection Plans', fontSize: 8 },
+    { mergeCell: 'F8:H9', fontColor: bodyColor, backgroundColor: bodyBg, value: protectionPlans },
+    { mergeCell: 'J6:L7', fontColor: linkColor, backgroundColor: bodyBg, value: 'Protected Machine', fontSize: 8 },
+    { mergeCell: 'J8:L9', fontColor: bodyColor, backgroundColor: bodyBg, value: vms },
+    { mergeCell: 'N6:P7', fontColor: linkColor, backgroundColor: bodyBg, value: 'Storage', fontSize: 8 },
+    { mergeCell: 'N8:P9', fontColor: bodyColor, backgroundColor: bodyBg, value: getStorageWithUnit(storage) },
+    { mergeCell: 'B11:H12', fontColor: bodyColor, backgroundColor: cardHeaderBg, value: 'Replication Statistics', fontSize: 10 },
+    { mergeCell: 'J11:P12', fontColor: bodyColor, backgroundColor: cardHeaderBg, value: 'Recovery Statistics', fontSize: 10 },
+    { mergeCell: 'B13:D14', fontColor: linkColor, backgroundColor: bodyBg, value: 'Completed', fontSize: 8 },
+    { mergeCell: 'B15:D15', fontColor: bodyColor, backgroundColor: bodyBg, value: completed },
+    { mergeCell: 'E13:F14', fontColor: linkColor, backgroundColor: bodyBg, value: 'Running', fontSize: 8 },
+    { mergeCell: 'E15:F15', fontColor: bodyColor, backgroundColor: bodyBg, value: running },
+    { mergeCell: 'G13:H14', fontColor: linkColor, backgroundColor: bodyBg, value: 'Failure', fontSize: 8 },
+    { mergeCell: 'G15:H15', fontColor: bodyColor, backgroundColor: bodyBg, value: failures },
+    { mergeCell: 'J13:L14', fontColor: linkColor, backgroundColor: bodyBg, value: 'Test Recovery', fontSize: 8 },
+    { mergeCell: 'J15:L15', fontColor: bodyColor, backgroundColor: bodyBg, value: testExecutions },
+    { mergeCell: 'M13:N14', fontColor: linkColor, backgroundColor: bodyBg, value: 'Recovery', fontSize: 8 },
+    { mergeCell: 'M15:N15', fontColor: bodyColor, backgroundColor: bodyBg, value: fullRecovery },
+    { mergeCell: 'O13:P14', fontColor: linkColor, backgroundColor: bodyBg, value: 'Migration', fontSize: 8 },
+    { mergeCell: 'O15:P15', fontColor: bodyColor, backgroundColor: bodyBg, value: migrations },
+    { mergeCell: 'B17:D18', fontColor: linkColor, backgroundColor: bodyBg, value: 'Change Rate', fontSize: 8 },
+    { mergeCell: 'B19:D19', fontColor: bodyColor, backgroundColor: bodyBg, value: calculateChangedData(changedRate) },
+    { mergeCell: 'F17:H18', fontColor: linkColor, backgroundColor: bodyBg, value: 'Data Reduction', fontSize: 8 },
+    { mergeCell: 'F19:H19', fontColor: bodyColor, backgroundColor: bodyBg, value: `${parseInt(dataReduction, 10)}%` },
+    { mergeCell: 'J17:L18', fontColor: linkColor, backgroundColor: bodyBg, value: 'RPO', fontSize: 8 },
+    { mergeCell: 'J19:L19', fontColor: bodyColor, backgroundColor: bodyBg, value: formatTime(rpo) },
+    { mergeCell: 'N17:P18', fontColor: linkColor, backgroundColor: bodyBg, value: 'RTO', fontSize: 8 },
+    { mergeCell: 'N19:P19', fontColor: bodyColor, backgroundColor: bodyBg, value: formatTime(rto) },
   ];
   return excel;
 }

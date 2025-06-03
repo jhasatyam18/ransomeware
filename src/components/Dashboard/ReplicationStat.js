@@ -51,7 +51,7 @@ function ReplicationStat(props) {
     const { statRep, statTasks } = data;
     return (
       <>
-        <Card>
+        <Card className="box-shadow">
           <CardBody className="min-h-188">
             <p className="font-weight-medium color-white">
               {t('replication.statistics')}

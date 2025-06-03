@@ -257,7 +257,7 @@ function DMAPIPaginator(props) {
           toggle={() => toggleFilterCol(true)}
         >
           <a href="#" onClick={() => toggleFilterCol(true)}>
-            <i className="fas fa-filter text-secondary" />
+            <i className="fas fa-filter text-muted" />
           </a>
         </DropdownToggle>
         <DropdownMenu right>
@@ -273,17 +273,17 @@ function DMAPIPaginator(props) {
                     </>
                   ) : null}
                   <DropdownItem key={`filterItem-${label}`}>
-                    <div className="custom-control custom-checkbox">
+                    <div className="form-check">
                       <input
                         type="checkbox"
-                        className="custom-control-input"
+                        className="form-check-input"
                         id={`${label}-${field}`}
                         name={`${label}-${field}`}
                         onChange={() => updateFilterColumns(col)}
                         checked={col.checked === true}
                       />
                       <label
-                        className="custom-control-label"
+                        className="form-check-label"
                         htmlFor={`${label}-${field}`}
                       >
                         {label}
@@ -307,12 +307,10 @@ function DMAPIPaginator(props) {
   const renderFilter = () => (
     <div className="input-group">
       <input type="text" className="form-control" id="datableSearch" placeholder="Search" autoComplete="off" value={searchStr} onChange={(e) => setSearchStr(e.target.value)} onKeyPress={(e) => onKeyPress(e)} />
-      <span className="input-group-append">
-        <div className="input-group-text bg-transparent">
-          <a href="#" onClick={() => onSearch()}>
-            <i className="fas fa-search text-secondary" />
-          </a>
-        </div>
+      <span className="input-group-append input-group-text bg-transparent">
+        <a href="#" onClick={() => onSearch()}>
+          <i className="fas fa-search text-muted" />
+        </a>
       </span>
       {renderColFilter()}
     </div>
@@ -324,11 +322,11 @@ function DMAPIPaginator(props) {
     return (
       <Row>
         {showFilter && showFilter === 'true' ? (
-          <Col className="padding-0 margin-0 display__flex__reverse dmapi_col ">
+          <Col className="margin-0 display__flex__reverse dmapi_col ">
             {renderFilter()}
           </Col>
         ) : null}
-        <Col className="padding-0 margin-0 display__flex__reverse padding-right-20">
+        <Col className="margin-0 display__flex__reverse padding-right-20">
           <ButtonGroup className="btn-group-sm">
             <Button disabled={!hasPrev} onClick={onBack}>
               <FontAwesomeIcon size="xs" icon={faChevronLeft} className="padding-4" />
@@ -356,7 +354,7 @@ function DMAPIPaginator(props) {
       return (renderData());
     }
     return (
-      <Row className="float-right" id={name}>
+      <Row className="float-end" id={name}>
         {renderData()}
       </Row>
     );

@@ -78,7 +78,7 @@ function VMNetworkInfoItemRenderer(props) {
 
   const renderPopOver = () => (
     <Popover placement="bottom" isOpen={popoverOpen} target={targetRef} style={{ backgroundColor: 'black', width: '300px' }}>
-      <PopoverBody>
+      <PopoverBody style={{ color: 'white' }}>
         {renderNetworkDetails()}
       </PopoverBody>
     </Popover>

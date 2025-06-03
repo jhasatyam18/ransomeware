@@ -57,8 +57,9 @@ class AppMessage extends Component {
     const { message, dispatch } = this.props;
     const { data } = message;
     const messageClass = this.getClassName(message.type);
-    const msg = message ? message.text : '';
+    let msg = message ? message.text : '';
     if (!message || !message.text) { return null; }
+    msg = message ? message?.text.replaceAll('/"/g', '') : '';
     return (
       <div className={`${messageClass} dm__message`}>
         <UncontrolledAlert color={messageClass} role="alert" toggle={this.onDismiss} style={{ maxWidth: 600 }}>

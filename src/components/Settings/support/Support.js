@@ -97,9 +97,9 @@ function Support(props) {
           <Card>
             <CardBody>
               <DMBreadCrumb links={[{ label: 'tech.support', link: '#' }]} />
-              <Row className="padding-left-30">
-                <Col sm={5}>
-                  <ActionButton label="Generate" onClick={onGenerate} icon={faPlus} isDisabled={!hasRequestedPrivileges(user, ['support.create']) || disable} t={t} key="newsupportbundle" />
+              <Row>
+                <Col sm={6}>
+                  <ActionButton cssName="btn btn-secondary btn-sm ms-4" label="Generate" onClick={onGenerate} icon={faPlus} isDisabled={!hasRequestedPrivileges(user, ['support.create']) || disable} t={t} key="newsupportbundle" />
 
                 </Col>
                 <Col sm={6}>

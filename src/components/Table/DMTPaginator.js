@@ -117,14 +117,14 @@ class DMTPaginator extends Component {
             onMouseLeave={() => this.setPopoverOpen(false)}
             autoComplete="off"
           />
-          <span className="input-group-append">
-            <div className="input-group-text bg-transparent">
+          <span className="input-group-append input-group-text  bg-transparent">
+            <div className=" bg-transparent">
               <FontAwesomeIcon size="sm" icon={faSearch} onClick={this.onFilter} />
             </div>
           </span>
           {filterHelpText ? (
             <Popover placement="bottom" isOpen={popoverOpen} target={this.inputRef} style={{ backgroundColor: '#222736' }}>
-              <PopoverBody>
+              <PopoverBody style={{ color: 'white' }}>
                 {this.getHelpText(filterHelpText)}
               </PopoverBody>
             </Popover>
@@ -142,11 +142,11 @@ class DMTPaginator extends Component {
     const cP = (index > 0 ? Math.ceil(index / maxRowPerPage) : 0);
     return (
       <Row>
-        <Col className="padding-0 margin-0 display__flex__reverse dmapi_col">
+        <Col className=" margin-0 display__flex__reverse dmapi_col">
           {this.renderFilter()}
         </Col>
-        <Col className="padding-0 margin-0 display__flex__reverse">
-          <ButtonGroup className="btn-group-sm padding-right-20">
+        <Col className=" margin-0 display__flex__reverse">
+          <ButtonGroup className="btn-group-sm ">
             <Button disabled={disablePrevious} onClick={this.onBack}>
               <FontAwesomeIcon size="xs" icon={faChevronLeft} className="padding-4 pt-2" />
             </Button>
@@ -173,7 +173,7 @@ class DMTPaginator extends Component {
       return (this.renderData());
     }
     return (
-      <Row className="float-right">
+      <Row className="float-end">
         {this.renderData()}
       </Row>
     );

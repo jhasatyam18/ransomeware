@@ -8,7 +8,7 @@ interface Props {
 }
 
 const ProgressBar: React.FC<Props> = (props: Props) => {
-    const { completed, staticBar, text, color } = props;
+    const { completed, staticBar, text } = props;
     const key = `transferred-rate-popover-${completed}`;
     const formatNumber = (number: number, decimalPlaces: number) => {
         // Check if the number has any decimal values
@@ -23,10 +23,8 @@ const ProgressBar: React.FC<Props> = (props: Props) => {
     return (
         <>
             <div className="progress dm__progress__bar" id={key}>
-                <div className={` progress-bar progress-bar${!staticBar ? '-striped progress-bar-animated' : ''}`} role="progressbar" style={{ width: `${completed}%`, backgroundColor: `${color || '#556ee6'}` }}>
-                    <span style={{ width: '85%' }} className={`d-flex justify-content-center mb-1`}>
-                        {typeof text !== 'undefined' ? text : `${formatNumber(completed, 2)}%`}
-                    </span>
+                <div className={` progress-bar progress-bar${!staticBar ? '-striped progress-bar-animated' : ''}`} role="progressbar" style={{ width: `${completed}%` }}>
+                    {typeof text !== 'undefined' ? text : `${formatNumber(completed, 2)}%`}
                 </div>
             </div>
         </>

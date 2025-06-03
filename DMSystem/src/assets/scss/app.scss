@@ -2,22 +2,41 @@
 @import "custom/fonts/fonts";
  
 //Core files
-@import "./node_modules/bootstrap/scss/functions";
-@import "./node_modules/bootstrap/scss/variables";
-@import "variables";
-@import "./node_modules/bootstrap/scss/mixins.scss";
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+// @import "variables";
+@import "./variables";
+@import "./variables-dark";
+@import "bootstrap/scss/mixins.scss";
 
 // Structure
 @import "custom/structure/topbar";
+@import "custom/structure/page-head";
+@import "custom/structure/footer";
+@import "custom/structure/right-sidebar";
 @import "custom/structure/vertical";
+@import "custom/structure/horizontal-nav";
+@import "custom/structure/layouts";
 
 // Components
 @import "custom/components/waves";
 @import "custom/components/avatar";
-@import "custom/components/forms";
+@import "custom/components/helper";
+@import "custom/components/preloader";
+@import "custom/components/form-control";
+@import "custom/components/dashboard";
+@import "custom/components/alert";
 
 // Plugins
 @import "custom/plugins/custom-scrollbar";
+@import "custom/plugins/cropperjs";
+@import "custom/plugins/parsley";
+@import "custom/plugins/switch";
+@import "custom/plugins/timepicker";
+
+// Pages
+@import "custom/pages/authentication";
+
 
 .dm-wizard {
   height:600px !important;

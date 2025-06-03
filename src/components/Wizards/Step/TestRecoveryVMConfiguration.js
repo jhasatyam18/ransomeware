@@ -101,7 +101,7 @@ function TestRecoveryVMConfiguration(props) {
         {ipWarningMessage ? (
           <>
             <p className=" text-warning rec_ip_validation_div">
-              <i className="fas fa-exclamation-triangle" />
+              <i className="text-warning fas fa-exclamation-triangle" />
           &nbsp;&nbsp;&nbsp;
               {ipWarningMessage}
             </p>
@@ -110,7 +110,7 @@ function TestRecoveryVMConfiguration(props) {
         {option === STATIC_KEYS.PREVIOUS ? (
           <>
             <p className=" text-warning rec_ip_validation_div">
-              <i className="fas fa-exclamation-triangle" />
+              <i className="text-warning fas fa-exclamation-triangle" />
           &nbsp;&nbsp;&nbsp;
               {t('test.recovery.instance.warning')}
             </p>
@@ -124,7 +124,7 @@ function TestRecoveryVMConfiguration(props) {
     if (isPointInTime !== CHECKPOINT_TYPE.POINT_IN_TIME) {
       return (
         <>
-          <div className="custom-control custom-checkbox padding-bottom-8 test_rec_config">
+          <div className="form-check padding-bottom-8 test_rec_config">
             <div>
               <input type="radio" id="cure" name="option" value="current" checked={option === 'current'} onChange={(e) => onRecoveryConfigOptChange(e.target.value)} />
               <label htmlFor="current" style={{ paddingLeft: '5px', cursor: 'pointer' }} aria-hidden="true" onClick={() => onRecoveryConfigOptChange('current')}>{t('test.recovery.recovery.configuration')}</label>

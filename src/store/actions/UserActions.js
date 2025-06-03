@@ -26,6 +26,7 @@ import { fetchSheduledNodes } from './NodeScheduleAction';
 import { fetchRoles } from './RolesAction';
 import { fetchAvailibilityZones, fetchSites } from './SiteActions';
 import { fetchBandwidthConfig, fetchBandwidthReplNodes } from './ThrottlingAction';
+import { getUserPreference } from './UserPreferenceAction';
 import { fetchSelectedVmsProperty, fetchVMwareComputeResource, fetchVMwareNetwork, getVMwareConfigDataForField, setVMwareAPIResponseData } from './VMwareActions';
 
 export function refreshApplication() {
@@ -182,6 +183,7 @@ export function showApplicationLoader(key, value) {
     type: Types.ADD_KEY_TO_APPLICATION_LOADER, key, value,
   };
 }
+
 export function hideApplicationLoader(key) {
   return {
     type: Types.REMOVE_KEY_FROM_APPLICATION_LOADER, key,
@@ -611,6 +613,7 @@ export function getUserInfo(nodeKey) {
             dispatch(getUserPrivileges(json[0].id, nodeKey));
           }
           dispatch(setUserDetails(json[0]));
+          dispatch(getUserPreference(json[0]));
           return;
         }
         dispatch(setPrivileges([]));

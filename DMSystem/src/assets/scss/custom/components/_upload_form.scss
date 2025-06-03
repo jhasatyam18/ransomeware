@@ -1,0 +1,89 @@
+
+// upload license
+.upload__form {
+    display: flex;
+    width: calc(100% - 20px);
+    min-height: 250px;
+    padding: 5px;
+    margin: 10px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    .upload__icon {
+      padding-bottom: 5px;
+      text-align: center;
+    }
+    .details {
+      padding: 20px;
+      width: 100%;
+    }
+    .label {
+      cursor: pointer;
+    }
+    .upload__success__info {
+      padding-top: 15px;
+      color: $green;
+      width: 100%;
+      text-align: center;
+    }
+  }
+  
+  .upload__init, .upload__uploading, .upload__validating  {
+    border: 1px dashed var(--#{$prefix}body-color);
+  }
+  .upload__success {    
+    border: 1px dashed $green;
+  }
+  .upload__error {
+    color: $red;
+    border: 1px dashed $red;
+  }
+  
+  .text-danger-1 {
+    color: #c0392b;
+  }
+  
+  .text-danger-2 {
+    color: #e74c3c;
+  }
+  
+  .text-warning-1 {
+    color: #f1c40f;
+  }
+  
+  .text-warning-2 {
+    color: #f39c12;
+  }
+
+  
+
+// upload license
+.upload__script__form {
+    display: flex;
+    width: calc(100% - 20px);
+    min-height: 100px;
+    padding: 5px;
+    margin: 10px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    .upload__icon {
+      padding-bottom: 5px;
+      text-align: center;
+      color: var(--#{$prefix}body-color);
+    }
+  }
+  
+  .card-summary {
+    border: 1px solid #000;
+    padding: 10px;
+    background-color: #222736;
+  }
+  .refreshModal {
+    height: 60vh;
+  }
+  
+  .refresh-modal {
+    max-width: 80%;
+    width: 80%;
+  }

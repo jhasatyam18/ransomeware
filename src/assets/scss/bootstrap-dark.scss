@@ -1,8 +1,8 @@
-//Core files 
-@import "./node_modules/bootstrap/scss/functions";
-@import "./node_modules/bootstrap/scss/variables";
-@import "variables-dark";
-@import "./node_modules/bootstrap/scss/bootstrap";
+
+@import   "bootstrap/scss/functions";
+@import   "bootstrap/scss/variables";
+@import "variables-dark";//Core files 
+@import   "bootstrap/scss/bootstrap";
 
 @import "custom/components/reboot";
 @import "custom/components/backgrounds";

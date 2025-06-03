@@ -19,13 +19,13 @@ const ProgressBar = (props) => {
   const percentage = (100 * used) / total;
   return (
     <div className="margin-top-5">
-      <div className="progress position-relative">
+      <div className="progress position-relative align-items-center">
         <span>
           {`${used} / ${total}`}
         </span>
         <div
-          className={`progress-bar ${bg}`}
-          style={{ width: `${percentage}%` }}
+          className={`progress-bar  ${bg}`}
+          style={{ width: `${percentage}%`, height: '100%' }}
           title={`${used} / ${total}`}
         />
 

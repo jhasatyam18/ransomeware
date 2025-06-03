@@ -124,6 +124,7 @@ class Layout extends Component {
               theme={leftSideBarTheme}
               type={leftSideBarType}
               isMobile={isMobile}
+              {...this.props}
             />
             <div className="main-content" style={{ width: '100%' }}>
               <div className="page-content">

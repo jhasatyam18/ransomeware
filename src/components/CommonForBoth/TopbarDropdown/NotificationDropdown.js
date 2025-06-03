@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
-import { Col, Dropdown, DropdownMenu, DropdownToggle, Row } from 'reactstrap';
+import { Badge, Col, Dropdown, DropdownMenu, DropdownToggle, Row } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
 import { ALERTS_PATH } from '../../../constants/RouterConstants';
 import { getUnreadAlerts } from '../../../store/actions/AlertActions';
@@ -46,7 +46,7 @@ class NotificationDropdown extends Component {
     const { alerts, t } = this.props;
     const { unread } = alerts;
     if (unread.length === 0) {
-      return <p className="ml-3 text-secondary">{t('no.new.notification')}</p>;
+      return <p className="ms-3 text-secondary">{t('no.new.notification')}</p>;
     }
     const notifications = (unread.length > 4 ? unread.slice(0, 4) : unread);
     return (
@@ -77,11 +77,11 @@ class NotificationDropdown extends Component {
   renderAlertCount() {
     const { alerts } = this.props;
     const { unread } = alerts;
-    if (unread && unread.length > 0) {
-      if (unread.length > 99) {
-        return <span className="badge badge-danger badge-pill-alert">99+</span>;
+    if (unread && unread.length !== 0) {
+      if (unread.length >= 99) {
+        return <Badge color="danger" pill>99+</Badge>;
       }
-      return <span className="badge badge-danger badge-pill-alert">{unread.length}</span>;
+      return <Badge color="danger" pill>{unread.length}</Badge>;
     }
     return null;
   }
@@ -103,10 +103,10 @@ class NotificationDropdown extends Component {
             id="page-header-notifications-dropdown"
           >
             <FontAwesomeIcon size="lg" icon={faBell} />
-            <span className="mr-2">{this.renderAlertCount()}</span>
+            <span className="me-3">{this.renderAlertCount()}</span>
           </DropdownToggle>
 
-          <DropdownMenu className="dropdown-menu dropdown-menu-lg p-0" right>
+          <DropdownMenu className="dropdown-menu dropdown-menu-lg p-0" end>
             <div className="p-3">
               <Row className="align-items-center">
                 <Col>

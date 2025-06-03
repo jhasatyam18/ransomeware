@@ -8,7 +8,7 @@ function DMFieldWarningLabel(props) {
   if (!showField) return null;
   const renderText = () => (
     <div className="card_note_warning margin-top-5">
-      <i className="fas fa-exclamation-triangle" />
+      <i className="fas fa-exclamation-triangle text-warning" />
               &nbsp;&nbsp;&nbsp;
       {text}
     </div>

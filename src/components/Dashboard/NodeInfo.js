@@ -77,7 +77,7 @@ function NodeInfo(props) {
     }
     return (
       <>
-        <Card>
+        <Card className="box-shadow">
           <CardBody>
             <Row>
               <Col sm={9}>

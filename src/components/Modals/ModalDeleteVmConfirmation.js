@@ -81,9 +81,9 @@ function DeletVMConfirmation(props) {
           <Col sm={1} />
           <Col sm={10} className="margin-left-25">
             <div className="pt-2 mb-1">
-              <div className="custom-control custom-checkbox ">
-                <input type="checkbox" checked={removeEntity} className="custom-control-input" id="drplan.remove.entity" name="drplan.remove.entity" onChange={(e) => handleChange('drplan.remove.entity', e)} />
-                <label className="custom-control-label" htmlFor="drplan.remove.entity">
+              <div className="form-check">
+                <input type="checkbox" checked={removeEntity} className="form-check-input" id="drplan.remove.entity" name="drplan.remove.entity" onChange={(e) => handleChange('drplan.remove.entity', e)} />
+                <label className="form-check-label" htmlFor="drplan.remove.entity">
                   <span style={{ fontSize: '12px' }}>{t('delete.vm.infra')}</span>
                 </label>
               </div>

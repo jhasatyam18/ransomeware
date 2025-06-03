@@ -1,7 +1,7 @@
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Component } from 'react';
-import { Badge, Col, FormGroup, Input, Label, Row } from 'reactstrap';
+import { Badge, Col, Input, Label, Row } from 'reactstrap';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { valueChange } from '../../store/actions';
 import { addMessage } from '../../store/actions/MessageActions';
@@ -93,13 +93,13 @@ class CloudTags extends Component {
     const { tags } = this.state;
     const { vmKey } = this.state;
     return tags.map((tag, index) => (
-      <div className="row margin-left-10 padding-bottom-10 col" key={`dm-tags-${vmKey}${index * 1}`}>
+      <div className="margin-left-10 padding-bottom-2" key={`dm-tags-${vmKey}${index * 1}`}>
         <Badge className="font-size-13 badge-soft-info" color="info" pill onClick={() => this.removeTag(tag)}>
           {tag.key}
           -
           {tag.value}
           &nbsp;&nbsp;
-          <i className="fa fa-minus-circle" />
+          <i className="fa fa-minus-circle text-info" />
         </Badge>
       </div>
     ));
@@ -117,9 +117,9 @@ class CloudTags extends Component {
           <Label>Copy Source System Tags</Label>
         </Col>
         <Col sm={6}>
-          <div className="custom-control custom-checkbox">
-            <input key={`${vmKey}-cpyTag`} type="checkbox" className="custom-control-input" id={`${vmKey}-tags-copy`} name={`${vmKey}-tags-copy`} checked={chkCopyTgs} onChange={this.copyTags} />
-            <label className="custom-control-label" htmlFor={`${vmKey}-tags-copy`} />
+          <div className="form-check">
+            <input key={`${vmKey}-cpyTag`} type="checkbox" className="form-check-input" id={`${vmKey}-tags-copy`} name={`${vmKey}-tags-copy`} checked={chkCopyTgs} onChange={this.copyTags} />
+            <label className="form-check-label" htmlFor={`${vmKey}-tags-copy`} />
           </div>
         </Col>
       </Row>
@@ -133,58 +133,38 @@ class CloudTags extends Component {
     return (
       <>
         {this.renderCopyTags()}
-        <Row className="padding-left-10">
+        <Row className="padding-left-10 padding-right-10">
           <Col sm={5}>
-            <FormGroup className="row mb-4 form-group">
-              <Col sm={12}>
-                <Input
-                  type="text"
-                  className="form-control form-control-sm"
-                  id="tagKey"
-                  value={tagKey}
-                  onChange={this.handleChange}
-                  placeholder="Key"
-                  autoComplete="off"
-                />
-              </Col>
-            </FormGroup>
+            <Input
+              type="text"
+              className="form-control form-control-sm"
+              id="tagKey"
+              value={tagKey}
+              onChange={this.handleChange}
+              placeholder="Key"
+              autoComplete="off"
+            />
           </Col>
           <Col sm={5}>
-            <FormGroup className="row mb-4 form-group">
-              <Col sm={12}>
-                <Input
-                  type="text"
-                  className="form-control form-control-sm"
-                  id="tagValue"
-                  value={tagValue}
-                  onChange={this.handleChange}
-                  placeholder="Value"
-                  autoComplete="off"
-                  onKeyPress={this.addTagsOnKeyPress}
-                />
-              </Col>
-            </FormGroup>
+            <Input
+              type="text"
+              className="form-control form-control-sm"
+              id="tagValue"
+              value={tagValue}
+              onChange={this.handleChange}
+              placeholder="Value"
+              autoComplete="off"
+              onKeyPress={this.addTagsOnKeyPress}
+            />
           </Col>
-          <Col sm={1}>
-            <FormGroup className="row mb-4 form-group">
-              <Col sm={12}>
-                <div className="wizard-header-options">
-                  <div className="wizard-header-div">
-                    <FontAwesomeIcon size="lg" icon={faCirclePlus} className="pt-1" onClick={this.addTags} />
-                  </div>
-                </div>
-              </Col>
-            </FormGroup>
+          <Col sm={1} className="d-flex align-items-center">
+            <FontAwesomeIcon size="lg" icon={faCirclePlus} className="pt-1" onClick={this.addTags} />
           </Col>
-          <Col sm={1}>
-            <FormGroup className="row mb-4 form-group">
-              <Col sm={12}>
-                <DMToolTip tooltip={fieldInfo} />
-              </Col>
-            </FormGroup>
+          <Col sm={1} className="d-flex align-items-center">
+            <DMToolTip tooltip={fieldInfo} />
           </Col>
         </Row>
-        <Row className="padding-left-5">
+        <Row className="padding-left-2 mt-2">
           {this.renderTags()}
         </Row>
       </>

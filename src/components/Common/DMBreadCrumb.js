@@ -7,7 +7,7 @@ function DMBreadCrumb(props) {
   function renderList() {
     const items = links.map((item, index) => (
       <li className="breadcrumb-item" key={`breadcrumb-${item.link}-${index + 1}`}>
-        <Link to={item.link} className="text-secondary">
+        <Link to={item.link} className="text-muted">
           {t(`${item.label}`)}
         </Link>
       </li>

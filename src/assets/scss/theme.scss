@@ -1,10 +1,15 @@
 @import "./icons.scss";
 @import "./tool-tip.scss";
-@import "./bootstrap-dark.scss";
-@import "./app-dark.scss";
+// @import "./bootstrap-dark.scss";
+// @import "./app-dark.scss";
 @import "react-datepicker/dist/react-datepicker.css";
-// @import "./bootstrap.scss";
-// @import "./app.scss";
+
+@import "./bootstrap.scss";
+@import "./app.scss";
+// @import "./bootstrap-dark.scss";
+// @import "./app-dark.scss";
+// @import "./variables";
+@import "./root";
 
 #sidebar-menu {
   ul {
@@ -25,7 +30,7 @@
   float: right;
 }
 .rdw-editor-main {
-  border: 1px solid $gray-300;
+  border: 1px solid var(--#{$prefix}gray-300);
   height: 239px;
 }
 .dz-message {
@@ -185,7 +190,7 @@ span.flatpickr-weekday {
 }
 .ripple__box {
   padding: 10px;
-  background-color:#222736;
+  background-color:var(--#{$prefix}body-bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -193,40 +198,16 @@ span.flatpickr-weekday {
 }
 
 .login__soft__bg {
-  background-color: #222736;
+  background-color: var(--#{$prefix}body-bg);
 }
 
-.step-wizard {
-  padding-top: 5px;
-  padding-bottom: 10px;
-  font-weight: 200;
-  color: white;
-  font-size: 14px;
-}
 
-.step-ul {
-  padding-top: 15px;
-  padding-left: 0px;
-  padding-right: 0px;
-}
-
-.step-active {
-  background-color: #2b5480;
-}
-
-.wizard-header-options {
-  display: flex;
-  flex-direction: row;
-  .wizard-header-div {
-    padding-right: 10px;
-  }
-}
 
 .table tbody th {
   font-weight: 400;
 }
 
-.table tbody tr:hover {background-color:#545a6d;}
+// .table tbody tr:hover {background-color:var(--#{$prefix}body-bg)}
 
 .stack__info {
   display: flex;
@@ -246,7 +227,7 @@ span.flatpickr-weekday {
   .line {
     height: 200px;
     margin-left: 50%;
-    border: 1px solid #222736;
+    border: 1px solid var(--#{$prefix}body-bg);
   }
 }
 
@@ -272,7 +253,6 @@ span.flatpickr-weekday {
 }
 
 .title-color {
-  color: #FFF;
   font-weight: 400;
 }
 
@@ -316,7 +296,7 @@ span.flatpickr-weekday {
 
   .dmname{
       margin-left: 80px;
-      margin-top: -90px;  
+      margin-top: -75px;  
   }
 }
 
@@ -362,7 +342,7 @@ span.flatpickr-weekday {
 }
 
 .logo-size{
-  width: 30px;
+  width: 40px;
 }
 
 .loginshowpass{
@@ -372,12 +352,13 @@ span.flatpickr-weekday {
 }
 
 .field-icon{
-  position: absolute;
-  bottom: 5px;
-  right: 20px;
+  position: relative;
+  float: right;
+  top: -25px;
+  right: 10px;
+  height: 0;
 }
 
-// applicable for textfields, when focused.
 .field-icon-focused{
   position: absolute;
   bottom: 25px;
@@ -385,7 +366,7 @@ span.flatpickr-weekday {
 }
 
 .login-icon{
-  position: absolute;
+  position: relative;
   bottom: 218px;
   right: 44px;
 }
@@ -420,18 +401,13 @@ span.flatpickr-weekday {
 .rpt__system__overview {
   width: 100%;
   text-align: center;
-  margin: 10px;
-  border: 1px solid #222736;
-  padding: 10px;
+  display: flex;
+  justify-content: space-between;
   .title__cards {
-    padding-top: 10px;
     text-align: left;
-    padding-left: 25px;
   }
   .title__values {
     text-align: left;
-    padding-left: 25px;
-    padding-top: 20px;
   }
 }
 
@@ -446,18 +422,14 @@ span.flatpickr-weekday {
   }
 }
 
-.disabled {
-  color: gray;
-  pointer-events: none;
-}
+
 
 .progress span {
   position:absolute;
   width:100%;
   text-align:center;
   z-index:2;
-  color:white;
-  margin-top: 5px;
+  margin-top: 2px;
 }
 
 .itemRendererContainer {
@@ -469,6 +441,8 @@ span.flatpickr-weekday {
   position: relative;
   min-height: 15px;
   height: 100%;
+  width: 2px;
+  margin: auto;
   .info__icon {
     position: absolute;
     top: 50%;
@@ -478,11 +452,11 @@ span.flatpickr-weekday {
 }
 
 .icon__warning {
-  color: $warning;
+   color:var(--warning-color) !important;
 }
 
 .cbt_icon__warning {
-  color: $warning;
+   color:var(--warning-color) !important;
   font-size: 10px;
 }
 
@@ -491,14 +465,14 @@ span.flatpickr-weekday {
 }
 
 .selected_role {
-  background-color: #545a6d;
+  background-color: var(--#{$prefix}table-hover-bg) !important;
 }
 
 .dropdown__col__filter {
   max-height: 37px;
-  border-top: 1px solid $gray-300;
-  border-right: 1px solid $gray-300;
-  border-bottom: 1px solid $gray-300;
+  border-top: 1px solid $input-border-color !important;
+  border-right: 1px solid $input-border-color !important;
+  border-bottom: 1px solid $input-border-color !important;
 }
 
 .summary-container {
@@ -508,12 +482,11 @@ span.flatpickr-weekday {
 
 
 .summary__view {
-  border: 1px solid #2a3042;
   margin: 0px;
   transition:visibility 1s linear,opacity 0.3s linear;
   .key {
-    background-color: #2a3042;
-    border-bottom: 1px solid $gray-400 !important;
+    background-color: var(--bs-wizard-stack-key-bg);
+    border-bottom: 1px solid var(--bs-stack-row-border) !important;
     padding-left: 10px;
     padding-top: 10px;
   }
@@ -521,15 +494,15 @@ span.flatpickr-weekday {
     padding-left: 40px;
   }
   .value {
-    background-color: #32394e;
-    border-bottom: 1px solid $gray-400 !important;
+    background-color: var(--bs-wizard-stack-value-bg);
+    border-bottom: 1px solid var(--bs-stack-row-border) !important;
     padding-top: 10px;
     padding-left: 15px;
   }
 }
 
 .summary_card {
-  background-color: #32394e !important;
+  background-color: var(--#{$prefix}tertiary-bg) !important;
   padding: 1px;
   margin: 5px;
 }
@@ -717,9 +690,8 @@ span.flatpickr-weekday {
 }
 .rec_ip_validation_div{
   position: relative;
-  top: -20px;
   left: 19px;
-  margin-bottom: 0px;
+  margin-bottom: 10px;
 }
 
 
@@ -769,3 +741,191 @@ span.flatpickr-weekday {
   white-space: normal;
   padding: 5px;
 }
+
+// button bar
+.button__bar__border_right {
+  border-right: solid 1px;
+}
+
+.stack__view {
+  border: 1px solid var(--#{$prefix}stack-row-border);
+  margin: 0px;
+  transition:visibility 1s linear,opacity 0.3s linear;
+  .key {
+    background-color: var(--#{$prefix}wizard-stack-key-bg);
+    padding-left: 10px;
+    padding-top: 10px;
+  }
+  .child {
+    padding-left: 40px;
+  }
+  .value {
+    background-color: var(--#{$prefix}wizard-stack-value-bg);
+    padding-top: 10px;
+    padding-left: 15px;
+  }
+}
+
+.app_info{
+  color:$info;
+}
+
+.app_success{
+  color: $success;
+}
+
+.app_warning{
+  color: $warning;
+}
+
+.app_danger{
+  color: $danger;
+}
+
+.app_primary{
+  color: $primary !important;
+}
+
+.app_secondary{
+  color:var(--#{$prefix}gray-800);
+}
+
+// upload license
+.upload__form {
+  display: flex;
+  width: calc(100% - 20px);
+  min-height: 250px;
+  padding: 5px;
+  margin: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  .upload__icon {
+    padding-bottom: 5px;
+    text-align: center;
+  }
+  .details {
+    padding: 20px;
+    width: 100%;
+  }
+  .label {
+    cursor: pointer;
+  }
+  .upload__success__info {
+    padding-top: 15px;
+    color: $green;
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.upload__init, .upload__uploading, .upload__validating  {
+  border: 1px dashed var(--#{$prefix}body-color);
+}
+.upload__success {    
+  border: 1px dashed $green;
+}
+.upload__error {
+  color: $red;
+  border: 1px dashed $red;
+}
+
+.text-danger-1 {
+  color: #c0392b;
+}
+
+.text-danger-2 {
+  color: #e74c3c;
+}
+
+.text-warning-1 {
+  color: #f1c40f;
+}
+
+.text-warning-2 {
+  color: #f39c12;
+}
+
+.text-white {
+ color: var(--#{$prefix}body-color) !important;
+}
+
+// upload license
+.upload__script__form {
+  display: flex;
+  width: calc(100% - 20px);
+  min-height: 100px;
+  padding: 5px;
+  margin: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  .upload__icon {
+    padding-bottom: 5px;
+    text-align: center;
+    color: var(--#{$prefix}body-color);
+  }
+}
+
+.card-summary {
+  border: 1px solid #000;
+  padding: 10px;
+  background-color: #222736;
+}
+.refreshModal {
+  height: 60vh;
+}
+
+.refresh-modal {
+  max-width: 80%;
+  width: 80%;
+}
+
+.fw-bold{
+  font-weight: bold;
+}
+.unclickable {
+  pointer-events: none;
+  opacity: 0.8;
+}
+// Custom alert-variant mixin for Bootstrap 5
+@mixin alert-variant($background, $border, $color) {
+  color: $color;
+  background-color: $background;
+
+  .alert-link {
+    color: shade-color($color, 20%);
+  }
+  
+}
+
+// Alert variants loop using Bootstrap 5's $theme-colors map
+@each $color, $value in $theme-colors {
+  .alert-#{$color} {
+    @include alert-variant(
+      tint-color($value, 70%), // background
+      tint-color($value, 70%), // border
+      shade-color($value, 60%) // text color
+    );
+  }
+}
+
+.alert-dismissible .close {
+  padding: 0.3575rem .25rem !important;
+  margin: 0.9rem !important;
+}
+.fa-spin{
+  color:inherit
+}
+[data-layout-mode=dark] .form-select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ced4da' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+}
+
+// [data-bs-theme=dark] .card {
+//   --bs-card-bg: #2a3042;
+// }
+
+[data-bs-theme=dark] .btn-close-white {
+  filter: invert(1) grayscale(100%) brightness(0);
+}
+

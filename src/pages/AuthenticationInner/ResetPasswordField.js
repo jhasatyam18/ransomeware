@@ -1,6 +1,5 @@
 import React from 'react';
 import { withTranslation } from 'react-i18next';
-import { Col, Row } from 'reactstrap';
 import { FIELD_TYPE } from '../../constants/FieldsConstant';
 import { isEmpty, validatePassword } from '../../utils/validationUtils';
 import { PASSWORD_REGEX } from '../../constants/ValidationConstants';
@@ -21,9 +20,7 @@ const ResetPasswordField = (props) => {
       return null;
     }
     return (
-      <Col sm={12}>
-        <DMFieldText dispatch={dispatch} fieldKey="user.ssh_key" field={sshKey} user={user} hideLabel="true" />
-      </Col>
+      <DMFieldText dispatch={dispatch} fieldKey="user.ssh_key" field={sshKey} user={user} hideLabel="true" />
     );
   }
 
@@ -32,33 +29,19 @@ const ResetPasswordField = (props) => {
       return null;
     }
     return (
-      <Col sm={12}>
-        <DMFieldText dispatch={dispatch} fieldKey="user.systemPassword" field={systemPassword} user={user} hideLabel="true" />
-      </Col>
+      <DMFieldText dispatch={dispatch} fieldKey="user.systemPassword" field={systemPassword} user={user} hideLabel="true" />
     );
   }
 
   return (
-    <div>
-      <Row>
-        <Col sm={12}><DMFieldText dispatch={dispatch} fieldKey="user.username" field={username} user={user} hideLabel="true" /></Col>
-      </Row>
-      <Row>
-        <Col sm={12}><DMFieldText dispatch={dispatch} fieldKey="user.systemUsername" field={systemUsername} user={user} hideLabel="true" /></Col>
-      </Row>
-      <Row>
-        <Col sm={12} className="mb-2 ml-2">{RenderOptions()}</Col>
-      </Row>
-      <Row>
-        {renderSSHKey()}
-        {renderPassword()}
-      </Row>
-      <Row>
-        <Col sm={12}><DMFieldText dispatch={dispatch} fieldKey="user.newPassword" field={password} user={user} hideLabel="true" /></Col>
-      </Row>
-      <Row>
-        <Col sm={12}><DMFieldText dispatch={dispatch} fieldKey="user.confirmPassword" field={cnfPassword} user={user} hideLabel="true" /></Col>
-      </Row>
+    <div style={{ margin: '0px 15px' }}>
+      <DMFieldText dispatch={dispatch} fieldKey="user.username" field={username} user={user} hideLabel="true" />
+      <DMFieldText dispatch={dispatch} fieldKey="user.systemUsername" field={systemUsername} user={user} hideLabel="true" />
+      {RenderOptions()}
+      {renderSSHKey()}
+      {renderPassword()}
+      <DMFieldText dispatch={dispatch} fieldKey="user.newPassword" field={password} user={user} hideLabel="true" />
+      <DMFieldText dispatch={dispatch} fieldKey="user.confirmPassword" field={cnfPassword} user={user} hideLabel="true" />
     </div>
   );
 };

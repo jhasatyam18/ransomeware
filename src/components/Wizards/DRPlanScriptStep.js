@@ -6,7 +6,6 @@ import { FIELDS, FIELD_TYPE } from '../../constants/FieldsConstant';
 import DMFieldText from '../Shared/DMFieldText';
 import DMFieldSelect from '../Shared/DMFieldSelect';
 import DMFieldNumber from '../Shared/DMFieldNumber';
-import DMToolTip from '../Shared/DMToolTip';
 import { STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { getValue } from '../../utils/InputUtils';
 
@@ -21,12 +20,6 @@ function DRPlanScriptStep(props) {
       <Label for="horizontal-firstname-Input" className="col-sm-4 col-form-Label">
         {t(label)}
       </Label>
-    );
-  }
-
-  function renderTooltip(fieldInfo) {
-    return (
-      <DMToolTip tooltip={fieldInfo} />
     );
   }
 
@@ -97,18 +90,18 @@ function DRPlanScriptStep(props) {
           <Row>
             <Col sm={6}>
               <Row>
-                <Col sm={11}>
+                <Col sm={12}>
                   {renderFields('drplan.preScript')}
                 </Col>
-                {renderTooltip('info.protectionplan.preScript')}
+                {/* {renderTooltip('info.protectionplan.preScript')} */}
               </Row>
             </Col>
             <Col sm={6}>
               <Row>
-                <Col sm={11}>
+                <Col sm={12}>
                   {renderFields('drplan.preInputs')}
                 </Col>
-                {renderTooltip('info.protectionplan.scriptInput')}
+                {/* {renderTooltip('info.protectionplan.scriptInput')} */}
               </Row>
             </Col>
           </Row>
@@ -122,18 +115,16 @@ function DRPlanScriptStep(props) {
           <Row>
             <Col sm={6} className="padding-top-10">
               <Row>
-                <Col sm={11}>
+                <Col sm={12}>
                   {renderFields('drplan.postScript')}
                 </Col>
-                {renderTooltip('info.protectionplan.postScript')}
               </Row>
             </Col>
             <Col sm={6} className="padding-top-10">
               <Row>
-                <Col sm={11}>
+                <Col sm={12}>
                   {renderFields('drplan.postInputs')}
                 </Col>
-                {renderTooltip('info.protectionplan.scriptInput')}
               </Row>
             </Col>
           </Row>

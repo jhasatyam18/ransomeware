@@ -44,21 +44,15 @@ function StatusItemRenderer({ data, field, t, noPopOver, showDate, user }) {
       return null;
     }
     return (
-      <Popover placement="bottom" isOpen={popoverOpen} target={targetRef} style={{ backgroundColor: '#fff', borderRadius: '8px', color: 'black', border: 'none', width: '280px', textAlign: hoverInfo.length <= 50 ? 'center' : 'left' }}>
-        <PopoverBody>
-          <SimpleBar style={{ maxHeight: '100px', minHeight: '30px', color: 'black' }}>
+      <Popover placement="bottom" isOpen={popoverOpen} target={targetRef} style={{ backgroundColor: 'black', color: 'black', border: 'none', width: '280px', textAlign: hoverInfo.length <= 50 ? 'center' : 'left' }}>
+        <PopoverBody style={{ color: 'white' }}>
+          <SimpleBar style={{ maxHeight: '100px', minHeight: '30px', color: 'white' }}>
             {hoverInfo}
           </SimpleBar>
         </PopoverBody>
       </Popover>
     );
   };
-
-  // const onKnowMoreClick = () => {
-  //   const textObject = { reasonTitle: t('pending.reason'), reasonDescription: t('pending.reason.description'), resolutionStepTitle: t('pending.resolution.step.title'), resolutionSteps: [t('pending.resolution.step.1'), t('pending.resolution.step.2'), t('pending.resolution.step.3'), t('pending.resolution.step.4')], impactDescription: t('impact.description') };
-  //   const options = { title: 'Pending Platform Checks', floatModalRight: true, modal: INFORMATION_MODAL, textObject };
-  //   dispatch(openModal(INFORMATION_MODAL, options));
-  // };
 
   function statusRenderer({ name, icon }) {
     const { failureMessage, errorMessage } = data;
@@ -72,7 +66,7 @@ function StatusItemRenderer({ data, field, t, noPopOver, showDate, user }) {
     }
     return (
       <>
-        <Badge innerRef={targetRef} id={`status-${field}-${data.name}-${data.id}`} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} className={`font-size-13 badge-soft-${colorinfo}`} color={`${colorinfo}`} pill>
+        <Badge innerRef={targetRef} id={`status-${field}-${data.name}-${data.id}`} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} className={`me-1 font-size-13 badge-soft-${colorinfo}`} color={`${colorinfo}`} pill>
           {icon ? (
             <>
               <i className="fa fa-spinner fa-spin" />

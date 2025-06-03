@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Dispatch } from 'redux';
 import dmlogo from '../../assets/images/dm_logo.png';
-import dmlogoname from '../../assets/images/logo_name.png';
 import { INITIAL_STATE, SiteInterface, UserInterface } from '../../interfaces/interfaces';
 import { SITE_API } from '../../Constants/apiConstants';
 import { PLATFORM_TYPES } from '../../Constants/InputConstants';
@@ -138,13 +137,16 @@ const Header: React.FC<HeaderProps> = ({ user, dispatch, layout }) => {
                 <div className="navbar-header">
                     <div className="d-flex">
                         <div className="navbar-brand-box  pl-2 pr-5">
-                            <Link to="/" className="logo logo-light">
-                                <span className="logo-sm ml-2">
-                                    <img src={dmlogo} className="logo-size" alt="DATAMOTIVE" />
+                            <Link to="/" className="logo logo-light d-flex">
+                                <span style={{ position: 'relative', top: '14px' }}>
+                                    <img src={dmlogo} alt="Datamotive Logo" width={37} height={37} style={{ objectFit: 'contain' }} className="logo-size" />
                                 </span>
-                                <span className="logo-lg">
-                                    <img src={dmlogoname} className="logo-name-size" alt="DATAMOTIVE" />
-                                </span>
+                                <div className="logo-lg dm-logo-color">
+                                    <p style={{ fontSize: '21px', fontWeight: 'none' }} className="mb-0  mt-2">
+                                        DATAMOTIVE
+                                    </p>
+                                    <small style={{ position: 'relative', top: '-10px', fontSize: '9px' }}>Eliminating Cloud Boundaries</small>
+                                </div>
                             </Link>
                         </div>
                         <button type="button" onClick={toggleMenu} className="btn btn-sm px-3 font-size-16 header-item waves-effect" id="vertical-menu-btn">

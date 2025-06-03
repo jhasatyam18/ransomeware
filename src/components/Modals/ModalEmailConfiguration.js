@@ -100,11 +100,11 @@ class ModalEmailConfiguration extends Component {
   render() {
     return (
       <>
-        <div className="modal-body noPadding">
-          <SimpleBar className="max-h-400">
+        <SimpleBar className="max-h-400">
+          <div className="modal-body ">
             {this.renderForm()}
-          </SimpleBar>
-        </div>
+          </div>
+        </SimpleBar>
         {this.renderFooter()}
       </>
     );

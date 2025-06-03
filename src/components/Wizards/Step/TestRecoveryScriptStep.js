@@ -39,9 +39,9 @@ function TestRecoveryScriptStep(props) {
         <Col sm={8}>
           <Row>
             <Col sm={1}>
-              <div className="custom-control custom-checkbox">
-                <input type="checkbox" className="custom-control-input" id={key} name={key} checked={checked} onChange={(e) => handleChange(e, key)} />
-                <label className="custom-control-label" htmlFor={key} />
+              <div className="form-check font-size-16">
+                <input type="checkbox" className="form-check-input" id={key} name={key} checked={checked} onChange={(e) => handleChange(e, key)} />
+                <label className="form-check-label" htmlFor={key} />
               </div>
             </Col>
             <Col sm={2}>
@@ -61,11 +61,11 @@ function TestRecoveryScriptStep(props) {
           {recoveryPlatform === PLATFORM_TYPES.VMware ? (
             <>
               <p className="mb-0 text-warning margin-top-10">
-                <i className="fas fa-xs mb-10 mt-0 fa-exclamation-triangle padding-right-6" />
+                <i className="fas fa-xs text-warning mb-10 mt-0 fa-exclamation-triangle padding-right-6" />
                 {t('recover.cloud.agent.ip.warning')}
               </p>
               <p className="mb-0 text-warning">
-                <i className="fas fa-xs mb-10 fa-exclamation-triangle padding-right-6" />
+                <i className="fas fa-xs text-warning mb-10 fa-exclamation-triangle padding-right-6" />
                 {t('recover.cloud.agent.warning')}
               </p>
             </>
@@ -73,7 +73,7 @@ function TestRecoveryScriptStep(props) {
           <DMField dispatch={dispatch} user={user} fieldKey="recovery.installCloudPkg" />
           {recoveryPlatform !== PLATFORM_TYPES.VMware ? (
             <p className="mb-0 text-warning">
-              <i className="fas fa-xs mb-10 fa-exclamation-triangle padding-right-6" />
+              <i className="fas fa-xs mb-10 text-warning fa-exclamation-triangle padding-right-6" />
               {t('recover.common.installation.warning')}
             </p>
           ) : null}

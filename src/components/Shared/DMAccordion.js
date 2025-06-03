@@ -109,7 +109,7 @@ class DMAccordion extends Component {
           <CardHeader>
             <Row>
               <Col sm={6}>
-                <a id={`dm-accordion-${sourceID}`} href="#" onClick={this.toggle}>
+                <a className="link_color" id={`dm-accordion-${sourceID}`} href="#" onClick={this.toggle}>
                   {title}
                 </a>
               </Col>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, CardBody } from 'reactstrap';
+import { Form } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
@@ -69,24 +69,22 @@ class ModalConfigureNode extends Component {
       renderFields.push((<DMField dispatch={dispatch} user={user} fieldKey={field} key={`node-${field}`} disabled={shouldDisable} />));
     });
     return (
-      <CardBody className="modal-card-body">
-        <Form>
-          {
+      <Form>
+        {
             renderFields
           }
-        </Form>
-      </CardBody>
+      </Form>
     );
   }
 
   render() {
     return (
       <>
-        <div className="modal-body noPadding">
-          <SimpleBar className="max-h-400">
+        <SimpleBar className="max-h-400">
+          <div className="modal-body ">
             {this.renderForm()}
-          </SimpleBar>
-        </div>
+          </div>
+        </SimpleBar>
         {this.renderFooter()}
       </>
     );

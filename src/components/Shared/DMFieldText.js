@@ -80,7 +80,7 @@ class DMFieldText extends Component {
     const icon = (state.type === FIELD_TYPE.PASSWORD ? faEyeSlash : faEye);
     const focused = state.isFocused;
     return (
-      <span className={(focused && field.description) ? 'field-icon' : 'field-icon'}>
+      <span className={(focused && field.description) ? 'field-icon-focused' : 'field-icon'}>
         <FontAwesomeIcon size="sm" icon={icon} onClick={this.typeToggle} />
       </span>
     );
@@ -176,8 +176,8 @@ class DMFieldText extends Component {
                     disabled={disabled}
                     onKeyPress={this.handleKeyPress}
                   />
-                  {this.showPasswordToggle()}
                 </div>
+                {this.showPasswordToggle()}
               </Col>
               <Col sm={1}>
                 {this.renderTooltip()}

@@ -45,7 +45,7 @@ function VMDisksItemRenderer(props) {
         {virtualDisks.length}
       </button>
       <Popover placement="bottom" isOpen={popoverOpen} target={targetRef} style={{ backgroundColor: 'black' }}>
-        <PopoverBody>
+        <PopoverBody style={{ color: 'white' }}>
           <table>
             <tbody>
               {

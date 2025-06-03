@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { CardBody, Form } from 'reactstrap';
+import { Form } from 'reactstrap';
 import DMField from '../Shared/DMField';
 
 class WizardStep extends Component {
@@ -10,13 +10,11 @@ class WizardStep extends Component {
     }
     return (
       <>
-        <CardBody className="modal-card-body">
-          <Form>
-            {
+        <Form className="p-4">
+          {
               fields.map((field) => (<DMField key={`${field}-DMField-key`} dispatch={dispatch} user={user} fieldKey={field} />))
             }
-          </Form>
-        </CardBody>
+        </Form>
       </>
     );
   }

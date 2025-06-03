@@ -20,7 +20,7 @@ function SupportBundleActionsRenderer({ data, dispatch, user }) {
     }
     return (
       <a href={downloadUrl}>
-        <i className="fas fa-download fa-lg" />
+        <i className="fas fa-download text-info fa-lg" />
       </a>
     );
   }
@@ -32,8 +32,8 @@ function SupportBundleActionsRenderer({ data, dispatch, user }) {
     }
 
     return (
-      <a href="#" onClick={onDelete} className={`text-danger ${disabled ? 'disabled' : ''}`} title="Remove">
-        <i className="far fa-trash-alt fa-lg" />
+      <a href="#" onClick={onDelete} className={`${disabled ? 'disabled' : ''}`} title="Remove">
+        <i className="far fa-trash-alt fa-lg text-danger " />
       </a>
     );
   }

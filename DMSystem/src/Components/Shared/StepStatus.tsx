@@ -85,7 +85,7 @@ const StepStatus: React.FC<Props> = (props) => {
                     borderRadius: '3px',
                 }}
             >
-                <PopoverBody>{hoverInfo}</PopoverBody>
+                <PopoverBody style={{ color: 'white' }}>{hoverInfo}</PopoverBody>
             </Popover>
         );
     };

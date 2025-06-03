@@ -50,9 +50,9 @@ function Roles(props) {
     <Table className="table table-bordered">
       <Tbody>
         {roles.map((role) => (
-          <tr key={`role-${role.id}`} className={activeRoleID === role.id ? 'selected_role' : ''}>
-            <td>
-              <a href="#" onClick={() => setSelectedRoleData(role.id)}>
+          <tr key={`role-${role.id}`} className="cursor-pointer" onClick={() => setSelectedRoleData(role.id)}>
+            <td className={activeRoleID === role.id ? 'selected_role' : ''}>
+              <a href="#">
                 {role.name}
               </a>
             </td>

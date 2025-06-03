@@ -23,16 +23,16 @@ const DMCollapsibleTable = (props) => {
     if (isSelectable && name && onSelectAll) {
       return (
         <Th className="dm_table_th">
-          <div className="custom-control custom-checkbox" key="global-select">
+          <div className="form-check" key="global-select">
             <input
               type="checkbox"
-              className="custom-control-input"
+              className="form-check-input"
               id={`chk-${name}`}
               checked={selected}
               onChange={onChange}
               name={`chk-${name}`}
             />
-            <label className="custom-control-label" htmlFor={`chk-${name}`}>
+            <label className="form-check-label" htmlFor={`chk-${name}`}>
               &nbsp;
             </label>
           </div>

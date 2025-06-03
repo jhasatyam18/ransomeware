@@ -152,7 +152,7 @@ function ModalScripts(props) {
       <FormGroup>
         <Row>
           <Col sm={4}>
-            <Label className="padding-right-20">Script Type</Label>
+            <Label>Script Type</Label>
           </Col>
           <Col sm={8}>
             <div className="form-check-inline">

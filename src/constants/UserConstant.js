@@ -1,6 +1,7 @@
 export const APPLICATION_API_USER = 'APPLICATION_API_USER';
 export const APPLICATION_UID = 'APPLICATION_UID';
 export const APPLICATION_AUTHORIZATION = 'Authorization';
+export const APPLICATION_THEME = 'APPLICATION_THEME';
 // export const APPLICATION_API_USER_ID = 'APPLICATION_API_USER_ID';
 export const APPLICATION_GETTING_STARTED_COMPLETED = 'APPLICATION_GETTING_STARTED_COMPLETED';
 export const API_MAX_RECORD_LIMIT = 2000;
@@ -73,4 +74,19 @@ export const KEY_CONSTANTS = {
   CHECKPOINT_EXPIRY_TIME: 'expirationTime',
   CHECKPOINT_RECOVERY_POINT_TIME: 'recoveryPointTime',
   CHECKPOINT_DELETED_FROM_PLATFORM: 'Deleted from Platform',
+};
+
+export const THEME_CONSTANT = {
+  LIGHT: 'light',
+  DARK: 'dark',
+  SIDEBAR_MENU_ACTIVE: {
+    dark: '#fff',
+    light: '#000', // ',
+  },
+  BANDWIDTH: {
+    XAXIX: {
+      dark: 'white',
+      light: 'black',
+    },
+  },
 };

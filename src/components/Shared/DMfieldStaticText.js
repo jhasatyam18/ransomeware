@@ -19,7 +19,7 @@ function DMFieldStaticText(props) {
     if (text) {
       return (
         <p className={`${css} ${className || ''}`}>
-          <i className={`${icon}`} />
+          <i className={`${icon} ${css}`} />
             &nbsp;&nbsp;
           {text}
         </p>

@@ -125,6 +125,7 @@ export const API_ADD_USER = 'api/v1/users';
 export const API_ROLES = 'api/v1/roles';
 export const API_USER_PRIVILEGES = 'api/v1/users/<id>/privileges';
 export const API_USER_RESET = 'api/v1/users/<id>/reset';
+export const API_USER_PREFERENCE = 'api/v1/users/preferences';
 
 // scripts
 export const API_USER_SCRIPT = 'api/v1/script';

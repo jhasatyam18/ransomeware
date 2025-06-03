@@ -18,8 +18,8 @@ h2,
 h3,
 h4,
 h5,
-h6 {
-  color: $gray-700;
+h6,i {
+  color: var(--#{$prefix}icon-color) ;
 }
 
 a {
@@ -43,73 +43,6 @@ label {
   text-align: right;
 }
 
-.tree-parent{
-  background-color:#2e3548;
-}
-
-.tree{
-    margin-bottom:2px;
-    background-color:#2e3548;
-    border-radius: 15px;
-}
-
-.treestart li{
-  list-style-type:none;
-  margin-bottom:10px;
-  background-color:#2e3548;
-}
-
-.tree li {
-  list-style-type:none;
-  margin:0;
-  padding:5px 0 0px;
-  position:relative;
-  left: -25px;
-}
-
-.tree_node_p{
-  font-size: 14px;
-  font-weight: 100;
-  width: 400px;
-}
-
-.treeDiv{
-  display: flex;
-  min-width: 300px;
-}
-
-.selectedvm-div{
-  padding:18px 10px;
-  text-align: left;
-  background-color:#2e3548;
-  border-radius: 5px;
- width: 100%; 
-}
-
-.selectedvm-div p{
-  list-style-type:none;
-  text-decoration: none;
-  font-size: 12px;
-  text-align: left;
-  justify-content: center;
-  margin:0px 0px 2px 15px;
-padding: 0px 3px 3px 10px;
-  
-}
-
-.selectedvm-div>p{
-  font-size: 13px;
-padding-left:10px;
-  text-align: left;
-  margin: 0px;
-}
-
-.selectedvm-row{
-  width: 790px;
-  min-height: 290px;
-   background-color: #2e3548;
-    margin: 10px 0px;
-}
 
 .max-w-170 {
   max-width: 170px;
@@ -164,7 +97,7 @@ padding-left:10px;
 }
 
 .color-white {
-  color: $white;
+  color: var(--#{$prefix}body-color);
 }
 
 .cursor-pointer {
@@ -173,11 +106,6 @@ padding-left:10px;
 
 .h-20{
   height: 20px;
-}
-.hr{
-  box-sizing: none; // 1
-  height: 0; // 1
-  overflow: none; // 2
 }
 
 .max-h-350{
@@ -204,7 +132,7 @@ padding-left:10px;
   width: 100%;
 }
 
-.modal-file-upload{
+.modal-lic-upload{
   visibility: hidden;
    display: none;
 }
@@ -223,20 +151,7 @@ padding-left:10px;
   max-width: 350px;
 }
 
-.vmware-search-box{
-  min-width: 200px;
-}
 
-.dmtree_scrollbar{
-  max-height: 47vh;
-  min-height: 47vh;
-  background: #2e3548;
-}
-
-.dmtree-selectedvm-scrollbar{
-  max-height:38vh;
-  min-height:38vh
-}
 
 .icon_font{
   font-size: 16px
@@ -261,7 +176,7 @@ padding-left:10px;
 }
 
 .sidebar-height{
-  max-height: 100%;
+  max-height: 80%;
 }
 
 .instance_memory_p{
@@ -311,9 +226,9 @@ max-height: 55vh;
     font-size: 0.8125rem;
     font-weight: 400;
     line-height: 1.5;
-    color: $gray-300;
+    color: $black;
     border: none ;
-    background-color: $gray-500;
+    background-color: var(--#{$prefix}gray-500);
     outline: none;
     text-align: right;
 }
@@ -326,12 +241,6 @@ max-height: 55vh;
 .totalpag_text{
   position: relative;
   top:8px;
-}
-.modal_node{
-  width: 510px;
-}
-.nic_modal_Width{
-  width: 490px;
 }
 
 .remove_checkbox{
@@ -350,7 +259,7 @@ max-height: 55vh;
   margin-right: 4px;
 }
 .input_div{
-  background-color: $gray-500;
+  background-color: var(--#{$prefix}gray-500);
   max-width: 100px !important;
 }
 
@@ -360,10 +269,6 @@ max-height: 55vh;
   border-radius: 3px;
 }
 
-.link_color{
-  color: $blue;
-  cursor: pointer;
-}
 
 .rec_job_parent{
   min-width: 240px;
@@ -372,4 +277,8 @@ max-height: 55vh;
 
 .rev_diff_warning{
   width: 800px;
+}
+
+.text-warning{
+  color:var(--warning-color) !important;
 }

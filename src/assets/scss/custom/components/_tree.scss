@@ -1,0 +1,85 @@
+.tree-parent{
+    background-color: var(--tree-bg-color);
+  }
+  
+  .tree{
+      margin-bottom:2px;
+      background-color: var(--tree-bg-color);
+      border-radius: 15px;
+  }
+  
+  .treestart li{
+    list-style-type:none;
+    margin-bottom:10px;
+    background-color: var(--tree-bg-color);
+  }
+  
+  .tree li {
+    list-style-type:none;
+    margin:0;
+    padding:5px 0 0px;
+    position:relative;
+    left: -25px;
+  }
+  
+  .tree_node_p{
+    font-size: 14px;
+    font-weight: 100;
+    width: 400px;
+  }
+  
+  .treeDiv{
+    display: flex;
+    min-width: 300px;
+  }
+  
+  .selectedvm-div{
+    padding:18px 10px;
+    text-align: left;
+    background-color: var(--tree-bg-color);
+    border-radius: 5px;
+   width: 100%; 
+  }
+  
+  .selectedvm-div p{
+    list-style-type:none;
+    text-decoration: none;
+    font-size: 12px;
+    text-align: left;
+    justify-content: center;
+    margin:0px 0px 2px 15px;
+  padding: 0px 3px 3px 10px;
+    
+  }
+  
+  .selectedvm-div>p{
+    font-size: 13px;
+  padding-left:10px;
+    text-align: left;
+    margin: 0px;
+  }
+  
+  .selectedvm-row{
+    width: 790px;
+    min-height: 290px;
+     background-color:  var(--tree-bg-color);
+      margin: 10px 0px;
+  }
+  .vmware-search-box{
+  min-width: 200px;
+}
+
+.dmtree_scrollbar{
+  max-height: 47vh;
+  min-height: 47vh;
+  background:  var(--tree-bg-color);
+}
+
+.dmtree-selectedvm-scrollbar{
+  max-height:38vh;
+  min-height:38vh
+}
+
+.tree_folder_color {
+  color: var(--tree-fd-color);
+}

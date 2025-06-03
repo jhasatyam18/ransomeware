@@ -29,8 +29,9 @@
 }
 
 .link_color{
-    color: $sidebar-menu-item-active-color;
-}
+    color: var(--tree-fd-color);
+    cursor: pointer;
+  }
 
 .upgrade_concent_div{
     position: relative;

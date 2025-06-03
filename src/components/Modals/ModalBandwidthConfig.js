@@ -151,7 +151,7 @@ class ModalBandwidthConfig extends Component {
   render() {
     return (
       <>
-        <div className="modal-body noPadding">
+        <div className="modal-body ">
           {this.renderForm()}
         </div>
         {this.renderFooter()}

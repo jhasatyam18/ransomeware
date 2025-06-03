@@ -1,4 +1,4 @@
-import { faChevronDown, faCircleArrowUp } from '@fortawesome/free-solid-svg-icons';
+import { faBook, faChevronDown, faCircleArrowUp, faCircleInfo, faKey, faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
 // users
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'prop-types';
@@ -9,12 +9,13 @@ import { Link } from 'react-router-dom';
 import {
   Dropdown, DropdownItem, DropdownMenu, DropdownToggle,
 } from 'reactstrap';
+import { AddUserThemePreference, setUserPreferences } from '../../../store/actions/UserPreferenceAction';
 import { API_LOGOUT, API_SAML_LOGOUT } from '../../../constants/ApiConstants';
 import { MESSAGE_TYPES } from '../../../constants/MessageConstants';
 import { MODAL_ABOUT } from '../../../constants/Modalconstant';
-import { APPLICATION_API_USER } from '../../../constants/UserConstant';
+import { APPLICATION_API_USER, APPLICATION_THEME } from '../../../constants/UserConstant';
 // users
-import { initChangePassword, logOutUser, removeCookies } from '../../../store/actions';
+import { initChangePassword, logOutUser, removeCookies, setUserDetails } from '../../../store/actions';
 import { addMessage } from '../../../store/actions/MessageActions';
 import { openModal } from '../../../store/actions/ModalActions';
 import { API_TYPES, callAPI, createPayload } from '../../../utils/ApiUtils';
@@ -31,6 +32,7 @@ class ProfileMenu extends Component {
     this.logout = this.logout.bind(this);
     this.aboutModal = this.aboutModal.bind(this);
     this.changePassword = this.changePassword.bind(this);
+    this.toggleTheme = this.toggleTheme.bind(this);
   }
 
   logout() {
@@ -46,6 +48,8 @@ class ProfileMenu extends Component {
     callAPI(API_LOGOUT, obj).then(() => {
       dispatch(removeCookies());
       fetchByDelay(dispatch, logOutUser, 100);
+      dispatch(setUserPreferences({}));
+      dispatch(setUserDetails({}));
     },
     (err) => {
       dispatch(logOutUser());
@@ -69,12 +73,17 @@ class ProfileMenu extends Component {
     }));
   }
 
+  toggleTheme() {
+    const { dispatch } = this.props;
+    dispatch(AddUserThemePreference());
+  }
+
   renderChangePassword() {
     const { t } = this.props;
     return (
       <>
         <DropdownItem onClick={this.changePassword}>
-          <i className="fas fa-key font-size-16 align-middle mr-1" />
+          <FontAwesomeIcon size="lg" icon={faKey} />
           &nbsp;&nbsp;
           {t('change.password')}
         </DropdownItem>
@@ -88,6 +97,8 @@ class ProfileMenu extends Component {
     const { t, user } = this.props;
     const { id, localVMIP } = user;
     const name = getCookie(APPLICATION_API_USER) || '';
+    const theme = localStorage.getItem(APPLICATION_THEME) || '';
+
     return (
       <>
         <Dropdown
@@ -105,22 +116,22 @@ class ProfileMenu extends Component {
             </span>
             <FontAwesomeIcon style={{ fontSize: '8px', padding: '1px' }} size="xs" icon={faChevronDown} />
           </DropdownToggle>
-          <DropdownMenu right>
+          <DropdownMenu end>
             <DropdownItem onClick={this.aboutModal}>
-              <i className="fa fa-info font-size-16 align-middle mr-1" />
+              <FontAwesomeIcon size="lg" icon={faCircleInfo} />
               &nbsp;&nbsp;
               {t('About')}
             </DropdownItem>
             <div className="dropdown-divider" />
             <a href={`${window.location.origin}/docs/index.html`} rel="noreferrer" target="_blank" className="drop-down-menu-color">
               <DropdownItem>
-                <i className="fa fa-book font-size-16 align-middle mr-1" />
+                <FontAwesomeIcon size="lg" icon={faBook} />
                 &nbsp;&nbsp;
                 {t('Documentation')}
               </DropdownItem>
             </a>
             <div className="dropdown-divider" />
-            { id === 0 ? null : this.renderChangePassword()}
+            {id === 0 ? null : this.renderChangePassword()}
             <a href={`https://${localVMIP}:${5004}/upgrade`} rel="noreferrer" target="_blank" className="drop-down-menu-color">
               <DropdownItem>
                 <FontAwesomeIcon size="lg" icon={faCircleArrowUp} />
@@ -128,6 +139,15 @@ class ProfileMenu extends Component {
                 {t('Upgrade')}
               </DropdownItem>
             </a>
+            {' '}
+            <div className="dropdown-divider" />
+            <Link onClick={this.toggleTheme} className="drop-down-menu-color">
+              <DropdownItem>
+                <FontAwesomeIcon size="lg" icon={theme === 'dark' ? faSun : faMoon} />
+                &nbsp;&nbsp;
+                {t('Switch Theme')}
+              </DropdownItem>
+            </Link>
             <div className="dropdown-divider" />
             <Link to="/logout" className="dropdown-item" onClick={this.logout}>
               <i className="fas fa-power-off font-size-16 align-middle mr-1 text-danger" />

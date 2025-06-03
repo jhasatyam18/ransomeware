@@ -942,5 +942,9 @@
   "day.of.week": "Day Of Week",
   "select.day.of.week": "Select day of week",
   "select.date.of.month": "Select any date of the month",
-  "winprep.update.warning":"A system update schedule is currently running on prep node {{name}}. The recovery operation might fail if a system reboot occurs during the upgrade. Please wait for the system update to complete."
+  "winprep.update.warning":"A system update schedule is currently running on prep node {{name}}. The recovery operation might fail if a system reboot occurs during the upgrade. Please wait for the system update to complete.",
+  "plans":"Protection Plans",
+  "protectedVMS":"Protected Machine",
+  "point_in_time_checkpoints":"Point In Time Checkpoints"
+
 }

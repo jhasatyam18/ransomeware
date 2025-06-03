@@ -114,8 +114,8 @@ function TreeNode(props) {
       return (
         <>
           <FontAwesomeIcon id={`${node.key}-${node.title}`} size="sm" icon={faChevronRight} onClick={handleCaretChenge} className="padding-4" />
-          <a href="#" onClick={() => handleCaretChenge()} className="mr-2 ">
-            <FontAwesomeIcon size="lg" icon={faFolder} />
+          <a href="#" onClick={() => handleCaretChenge()} className="me-2 ">
+            <FontAwesomeIcon size="lg" className="tree_folder_color" icon={faFolder} />
           </a>
         </>
       );
@@ -123,8 +123,8 @@ function TreeNode(props) {
     return (
       <>
         <FontAwesomeIcon id={`${node.key}-${node.title}`} size="sm" icon={faChevronDown} onClick={handleCaretChenge} className="padding-4" />
-        <a href="#" onClick={() => handleCaretChenge()} className="mr-2 ">
-          <FontAwesomeIcon size="lg" icon={faFolderOpen} />
+        <a href="#" onClick={() => handleCaretChenge()} className="me-2 ">
+          <FontAwesomeIcon size="lg" className="tree_folder_color" icon={faFolderOpen} />
         </a>
       </>
     );
@@ -136,9 +136,19 @@ function TreeNode(props) {
       if (showInput) {
         const v = getFieldValue();
         return (
-          <div className="custom-control ml-2 custom-checkbox">
-            <input type="checkbox" className="custom-control-input" disabled={disabled} id={`${fieldKey}-${node.value}`} name={`${fieldKey}-${node.value}`} checked={v} onChange={(e) => handleChange(e)} />
-            <label className="custom-control-label" htmlFor={`${fieldKey}-${node.value}`} />
+          <div className="form-check font-size-16 ms-3">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id={`${fieldKey}-${node.value}`}
+              checked={v}
+              onChange={(e) => handleChange(e)}
+              name={`${fieldKey}-${node.value}`}
+              disabled={disabled}
+            />
+            <label className="form-check-label" htmlFor={`${fieldKey}-${node.value}`}>
+              &nbsp;
+            </label>
           </div>
         );
       }

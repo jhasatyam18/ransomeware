@@ -14,6 +14,7 @@ export const UPGRADE_INSTALLATION_STEP = 'UPGRADE_INSTALLATION_STEP';
 export const UPGRADE_SUMMARY_STEP = 'UPGRADE_SUMMARY_STEP';
 export const SERVICE_UP_TIME_RENDERE = 'SERVICE_UPTIME_RENDERE';
 
+export const APPLICATION_THEME = 'APPLICATION_THEME';
 export const STATIC_KEYS = {
     UI_PREVIEW_NODE_VERSION_INFO: 'ui.upgrade.preview.node.info',
     UI_NODE_UPGRADE_INSTALLATION_STATUS: 'ui.node.installation.status',
@@ -55,3 +56,18 @@ export const PORTS = {
 };
 
 export const COMPONENT_TYPES = ['DM-APPLICATION-UPGRADE'];
+
+export const THEME_CONSTANT = {
+    LIGHT: 'light',
+    DARK: 'dark',
+    SIDEBAR_MENU_ACTIVE: {
+        dark: '#fff',
+        light: '#000', // ',
+    },
+    BANDWIDTH: {
+        XAXIX: {
+            dark: 'white',
+            light: 'black',
+        },
+    },
+};

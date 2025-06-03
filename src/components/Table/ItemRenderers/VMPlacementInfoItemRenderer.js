@@ -89,7 +89,7 @@ function VMPlacementInfoItemRenderer(props) {
 
   const renderPopOver = () => (
     <Popover placement="bottom" isOpen={popoverOpen} target={targetRef} style={{ backgroundColor: 'black', width: '250px' }}>
-      <PopoverBody>
+      <PopoverBody style={{ color: 'white' }}>
         {renderNetworkDetails()}
       </PopoverBody>
     </Popover>

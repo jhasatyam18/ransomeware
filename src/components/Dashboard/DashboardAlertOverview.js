@@ -40,7 +40,7 @@ function DashboardAlertOverview(props) {
 
   return (
     <Card>
-      <CardBody className="max-h-250">
+      <CardBody className="max-h-250 box-shadow">
         <Link to={ALERTS_PATH} className="font-weight-medium text-white">
           <p className="font-weight-medium text-muted">
             {t('Alerts')}

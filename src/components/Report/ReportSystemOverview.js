@@ -48,22 +48,26 @@ class ReportSystemOverview extends Component {
       { title: 'Storage', icon: faHdd, description: getStorageWithUnit(storage) },
     ];
     return (
-      <div key="rpt-system-overview" id="rpt-system-overview">
+      <div key="rpt-system-overview" id="rpt-system-overview " className="box-shadow">
         <Row>
           {data.map((report, key) => (
             <Col md="3" key={`_col_-${key * 2}`}>
-              <Media className="rpt__system__overview">
-                <Media body>
-                  <p className="text-muted font-weight-medium title__cards">
-                    {report.title}
-                  </p>
-                  <h4 className="mb-0 title__values">{report.description}</h4>
+              <Card className="p-4">
+                {' '}
+                <Media className="rpt__system__overview">
+                  <Media body>
+                    <p className="text-muted font-weight-medium title__cards">
+                      {report.title}
+                    </p>
+                    <h4 className="mb-0 title__values">{report.description}</h4>
+                  </Media>
+
+                  <span className="align-self-center">
+                    <FontAwesomeIcon size="lg" icon={report.icon} color={report.color ? report.color : 'white'} className="h2" />
+                  </span>
                 </Media>
 
-                <span className="align-self-center">
-                  <FontAwesomeIcon size="lg" icon={report.icon} color={report.color ? report.color : 'white'} className="h2" />
-                </span>
-              </Media>
+              </Card>
             </Col>
           ))}
         </Row>

@@ -78,8 +78,8 @@ function DashBoardJob(props) {
   const renderData = (data, css, icon) => {
     const message = (data.recoveryType ? `Recovery for ${data.vmName} is ${data.status}.` : `Replication for ${data.vmName} is ${data.status}.`);
     return (
-      <Media className="padding-10">
-        <div className="mr-4">
+      <Media className="d-flex  padding-10">
+        <div className="me-2">
           <h5 className="font-size-16">
             <FontAwesomeIcon size="sm" icon={icon} className={css} />
           </h5>
@@ -118,7 +118,7 @@ function DashBoardJob(props) {
 
   return (
     <>
-      <Card>
+      <Card className="box-shadow">
         <CardBody className="min-h-190">
           <p className="font-weight-medium color-white">
             {t('jobs')}

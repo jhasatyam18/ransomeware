@@ -2,7 +2,7 @@ import { faCircleCheck, faCircleXmark, faTriangleExclamation } from '@fortawesom
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Card, CardBody, Col, Media, Row } from 'reactstrap';
 import { API_FETCH_EVENTS } from '../../constants/ApiConstants';
@@ -58,8 +58,8 @@ function DashBoardEvents(props) {
   const renderData = (obj, css, icon) => {
     const { description } = obj;
     return (
-      <Media className="padding-10">
-        <div className="mr-4">
+      <Media className="padding-10 d-flex">
+        <div className="me-2">
           <h5 className="font-size-16">
             <FontAwesomeIcon size="sm" icon={icon} className={css} />
           </h5>
@@ -97,8 +97,8 @@ function DashBoardEvents(props) {
 
   return (
     <>
-      <Card>
-        <CardBody className="min-h-365">
+      <Card className="box-shadow">
+        <CardBody className="min-h-365 ">
           <p className="font-weight-medium color-white">
             {t('events')}
           </p>
@@ -115,4 +115,13 @@ function DashBoardEvents(props) {
   );
 }
 
-export default (withTranslation()(DashBoardEvents));
+// Map state to props
+const mapStateToProps = (state) => {
+  const { modal, user, dispatch } = state;
+  return { modal, user, dispatch };
+};
+
+// Connect the component
+const connector = connect(mapStateToProps);
+
+export default connector(withTranslation()(DashBoardEvents));

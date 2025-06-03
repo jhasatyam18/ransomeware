@@ -44,9 +44,9 @@ function Alerts({ alerts, dispatch, t }) {
       <Card>
         <CardBody>
           <DMBreadCrumb links={[{ label: 'alerts', link: '#' }]} />
-          <Row className="padding-left-20">
+          <Row>
             <Col sm={12}>
-              <div className="padding-right-30 padding-left-10">
+              <div>
                 <DMAPIPaginator
                   showFilter="true"
                   columns={TABLE_ALERTS}

@@ -88,7 +88,7 @@ const SystemInfo: React.FC<SystemInfoProps> = ({ t, dispatch }) => {
 
         return (
             <Col sm={5}>
-                <Card>
+                <Card className=" box-shadow">
                     <CardBody className="text-right">
                         <p className="font-weight-medium text-left margin-bottom-0">{t('system.information')}</p>
                         <hr />
@@ -128,7 +128,7 @@ const SystemInfo: React.FC<SystemInfoProps> = ({ t, dispatch }) => {
     const renderServiceInfo = () => {
         return (
             <Col sm={7}>
-                <Card className="padding-bottom-4">
+                <Card className="padding-bottom-4 box-shadow">
                     <CardBody>
                         <span className="font-weight-medium  font-weight-bold">{t('service.information')}</span>
                         <hr></hr>

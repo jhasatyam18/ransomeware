@@ -73,13 +73,23 @@ function ReportProtectionPlanComp(props) {
       const displayText = allSelectedLabels.length > 15 ? `${allSelectedLabels.slice(0, 15)}...` : allSelectedLabels;
       return (
         <div>
-          <span id={`${key}-tooltip`}>{displayText}</span>
+          <span id={`${key}-tooltip`} className="cursor-pointer">{displayText}</span>
           { allSelectedLabels.length > 15 && (
           <Tooltip
             placement="top"
             isOpen={tooltipOpen}
             target={`${key}-tooltip`}
             toggle={toggleTooltip}
+            modifiers={[
+              {
+                name: 'preventOverflow',
+                options: { boundary: 'viewport' },
+              },
+              {
+                name: 'offset',
+                options: { offset: [0, 10] }, // move popover away from the trigger
+              },
+            ]}
           >
             {selectedOptionExceptAll.map((opt) => (
               <span key={`${key}`}>
@@ -154,16 +164,16 @@ function ReportProtectionPlanComp(props) {
                   <DropdownItem
                     key={`${fieldKey}`}
                   >
-                    <div className="custom-control custom-checkbox">
+                    <div className="form-check ">
                       <input
                         type="checkbox"
-                        className="custom-control-input"
+                        className="form-check-input"
                         id={`${fieldKey}-${option.label}`}
                         name={`${fieldKey}-${option.label}`}
                         checked={selectedOpt.some((opt) => opt.value === option.value)}
                         onChange={(e) => handleOptionChange(option, e)}
                       />
-                      <label className="custom-control-label" htmlFor={`${fieldKey}-${option.label}`}>
+                      <label className="form-check-label" htmlFor={`${fieldKey}-${option.label}`}>
                         {option.label}
                       </label>
                     </div>

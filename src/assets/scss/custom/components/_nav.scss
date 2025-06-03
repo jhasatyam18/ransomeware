@@ -6,7 +6,7 @@
 .nav-pills {
   > li {
     > a {
-      color: $gray-700;
+      color: var(--#{$prefix}body-color);
       font-weight: $font-weight-medium;
     }
   }
@@ -14,20 +14,22 @@
 
 .nav-pills {
   > a {
-    color: $gray-700;
+    color: var(--#{$prefix}body-color);
     font-weight: $font-weight-medium;
   }
 }
 
 .nav-tabs-custom {
-  border-bottom: 2px solid $gray-300;
+ 
 
   .nav-item {
     position: relative;
     color: $dark;
     .nav-link {
       border: none;
-
+      &:hover{
+        color: var(--#{$prefix}body-color);
+      }
       &::after {
         content: "";
         background: $primary;

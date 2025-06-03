@@ -75,9 +75,9 @@ class DMFieldCheckbox extends Component {
           <Col sm={hideLabel ? 12 : 8}>
             <Row>
               <Col sm={1}>
-                <div className="custom-control custom-checkbox">
-                  <input type="checkbox" className="custom-control-input" id={fieldKey} name={fieldKey} checked={value} onChange={this.handleChange} disabled={disabled} />
-                  <label className="custom-control-label" htmlFor={fieldKey} />
+                <div className="form-check font-size-16">
+                  <input className="form-check-input" type="checkbox" id={fieldKey} name={fieldKey} checked={value} onChange={this.handleChange} disabled={disabled} />
+                  <label className="form-check-label" htmlFor={fieldKey} />
                 </div>
               </Col>
               <Col sm={2}>
