@@ -902,9 +902,8 @@ export function changeSystemPassword(nodeID, selectedAlerts) {
     const { values } = user;
     const password = getValue('user.newPassword', values) || '';
     dispatch(showApplicationLoader('CHANGE_PASSWORD', 'Changing password...'));
-    const obj = createPayload(API_TYPES.PUT, { newPassword: password });
-    const uName = getCookie(APPLICATION_API_USER);
-    const URL = API_CHANGE_NODE_PASSWORD.replace('<name>', uName).replace('<nodeid>', nodeID);
+    const obj = createPayload(API_TYPES.POST, { newPassword: password });
+    const URL = API_CHANGE_NODE_PASSWORD.replace('<nodeid>', nodeID);
     return callAPI(URL, obj).then((json) => {
       dispatch(hideApplicationLoader('CHANGE_PASSWORD'));
       if (json.hasError) {
@@ -912,6 +911,7 @@ export function changeSystemPassword(nodeID, selectedAlerts) {
       }
       dispatch(acknowledgeNodeAlert(selectedAlerts));
       dispatch(closeModal());
+      dispatch(refresh());
     },
     (err) => {
       dispatch(hideApplicationLoader('CHANGE_PASSWORD'));
