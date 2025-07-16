@@ -5,7 +5,7 @@ import { withTranslation } from 'react-i18next';
 import SimpleBar from 'simplebar-react';
 import { useHistory } from 'react-router-dom';
 import DMFieldNumber from '../../Shared/DMFieldNumber';
-import { convertScheduleToCron, defaultTimeZone, formatTime, getMinMaxForSchedulerOccurence, getPowerOffDayInterval, getScheduleSummary, occuranceDisabled, onOccurenceOptionChange, showDayOfMonthField } from '../../../utils/SystemUpdateScheduleUtils';
+import { convertScheduleToCron, defaultTimeZone, formatTime, getMinMaxForSchedulerOccurence, getPowerOffDayInterval, getScheduleSummary, onOccurenceOptionChange, showDayOfMonthField, toOrdinal } from '../../../utils/SystemUpdateScheduleUtils';
 import { clearValues, valueChange } from '../../../store/actions';
 import { getValue } from '../../../utils/InputUtils';
 import DaySelector from '../../Common/DaySelector';
@@ -35,7 +35,7 @@ function NodeUpdateScheduleCreate(props) {
   const selectedKey = Object.keys(selectedScheduledNodes)[0]; // since only 1 is allowed
   const powerOffDayOptions = getValue(STORE_KEYS.UI_SCHEDULE_DAYS_LATER_OPTION, user.values) || [];
   const reconfigureData = selectedKey ? [selectedScheduledNodes[selectedKey].node] : [];
-  const occurrenceText = { label: '', placeHolderText: '', type: FIELD_TYPE.NUMBER, validate: (value) => isEmpty(value, user), errorMessage: 'Enter Occurrence.', shouldShow: true, disabled: (fieldKey) => occuranceDisabled(user, fieldKey), min: 1, getMinMax: () => getMinMaxForSchedulerOccurence(user) };
+  const occurrenceText = { label: '', placeHolderText: '', type: FIELD_TYPE.NUMBER, validate: (value) => isEmpty(value, user), errorMessage: 'Enter Occurrence.', shouldShow: true, min: 1, getMinMax: () => getMinMaxForSchedulerOccurence(user) };
   const dayOfMonthText = { label: '', placeHolderText: '', type: FIELD_TYPE.NUMBER, validate: (value) => isEmpty(value, user), errorMessage: 'Enter day of month.', shouldShow: (fieldkey) => showDayOfMonthField(fieldkey, user), defaultValue: 1, min: 1, max: 30 };
   const occurrenceSelect = { label: '', onChange: onOccurenceOptionChange, errorMessage: 'Select Occurrence', options: [{ label: 'Day', value: 'day' }, { label: 'Week', value: 'week' }, { label: 'Month', value: 'month' }], shouldShow: true, validate: (value) => isEmpty(value, user), defaultValue: 'day' };
   const powerOffAtDay = { label: '', errorMessage: '', options: powerOffDayOptions, shouldShow: true, validate: (value) => isEmpty(value, user) };
@@ -115,6 +115,8 @@ function NodeUpdateScheduleCreate(props) {
         powerOffCronSchedule,
         timeZone,
         powerOffDays,
+        cronType: occurrenceOptions,
+        occurrence: repeat,
       };
       if (flow === STATIC_KEYS.EDIT) {
         const selectedScheduleKey = Object.keys(selectedScheduledNodes);
@@ -171,6 +173,36 @@ function NodeUpdateScheduleCreate(props) {
     return null;
   };
 
+  const renderAlternateWeeklySummary = ({ repeat, dayOfWeek, powerOn, powerOff }) => {
+    const powerOffByDay = getValue(STORE_KEYS.UI_NODE_UPDATE_SCHEDULER_POWER_OFF_DAY, user.values);
+    const day = Array.isArray(dayOfWeek) ? dayOfWeek[0] : dayOfWeek;
+    const dayText = `every ${toOrdinal(repeat)} week on ${day}`;
+    const powerOnText = `Power on ${dayText} at ${formatTime(powerOn)}`;
+    const offTimeStr = formatTime(powerOff);
+    const offset = parseInt(powerOffByDay, 10);
+    let powerOffText = '';
+    if (powerOffByDay === 'sameDay' || Number.isNaN(offset)) {
+      powerOffText = `Power off at ${offTimeStr} on the same day`;
+    } else {
+      powerOffText = `Power off on ${offset} day${offset > 1 ? 's' : ''} later at ${offTimeStr}`;
+    }
+    return (
+      <div className="ml-3">
+        <p>{t('schedule.summarry')}</p>
+        <ul className="text-warning mb-1">
+          <li>{powerOnText}</li>
+          <li>{powerOffText}</li>
+        </ul>
+        <p className="ml-3 ">
+          <i className="fas fa-exclamation-triangle icon__warning padding-right-7" aria-hidden="true" />
+          <span className="text-warning ">
+            {t('warning.system.schedule.create')}
+          </span>
+        </p>
+      </div>
+    );
+  };
+
   const renderSummary = () => {
     const repeat = parseInt(getValue(STORE_KEYS.UI_NODE_UPDATE_SCHEDULER_OCCURRENCE, user.values) || 1, 10);
     const occurrenceOptions = getValue(STORE_KEYS.UI_NODE_UPDATE_SCHEDULER_OCCURRENCE_OPTION, user.values);
@@ -179,6 +211,10 @@ function NodeUpdateScheduleCreate(props) {
     const powerOn = new Date(getValue(STORE_KEYS.UI_NODE_UPDATE_SCHEDULER_POWER_ON_TIME, user.values));
     const powerOff = new Date(getValue(STORE_KEYS.UI_NODE_UPDATE_SCHEDULER_POWER_OFF_TIME, user.values));
     const powerOffByDay = getValue(STORE_KEYS.UI_NODE_UPDATE_SCHEDULER_POWER_OFF_DAY, user.values);
+
+    if (occurrenceOptions === STATIC_KEYS.WEEK && repeat > 1) {
+      return renderAlternateWeeklySummary({ repeat, dayOfWeek, powerOn, powerOff, t });
+    }
 
     const summary = getScheduleSummary({
       occurrenceOptions,

@@ -376,3 +376,5 @@ export const CLEANUP_DR = {
   TEST_RECOVERIES: 'testrecovery',
   DR_COPIES: 'recovery',
 };
+
+export const DAYS_CONSTANT = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];

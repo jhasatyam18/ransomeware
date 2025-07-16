@@ -149,11 +149,6 @@ export function parseCronToScheduleFields(cron) {
   };
 }
 
-export const occuranceDisabled = (user) => {
-  const disable = getValue(STORE_KEYS.UI_NODE_UPDATE_SCHEDULER_OCCURRENCE_OPTION, user.values) === 'week';
-  return disable;
-};
-
 export function getPowerOffDayInterval({ type, repeat, dayOfWeek, dayOfMonth, powerOffByDay }) {
   let powerOffDayOfWeek = dayOfWeek;
   let powerOffDayOfMonth = dayOfMonth;
@@ -219,7 +214,7 @@ export const getMinMaxForSchedulerOccurence = (user) => {
   const occurenceOptionValue = getValue(STORE_KEYS.UI_NODE_UPDATE_SCHEDULER_OCCURRENCE_OPTION, values);
   switch (occurenceOptionValue) {
     case STATIC_KEYS.WEEK:
-      return { min: 1, max: 1 };
+      return { min: 1, max: 4 };
     case STATIC_KEYS.MONTH:
       return { min: 1, max: 12 };
     case STATIC_KEYS.DAY:
@@ -227,4 +222,30 @@ export const getMinMaxForSchedulerOccurence = (user) => {
     default:
       break;
   }
+};
+
+export const toOrdinal = (n) => {
+  const suffixes = ['st', 'nd', 'rd'];
+  const v = n % 100;
+  if (v >= 11 && v <= 13) return `${n}th`;
+  return `${n}${suffixes[(v - 1) % 10] || 'th'}`;
+};
+
+export const formatTimeFromCron = (cron) => {
+  const parts = cron.trim().split(' ');
+  const minuteStr = parts[1];
+  const hourStr = parts[2];
+
+  const minute = parseInt(minuteStr, 10);
+  const hour = parseInt(hourStr, 10);
+
+  // If hour or minute is invalid (e.g., '*'), return 'Invalid time'
+  if (Number.isNaN(hour) || Number.isNaN(minute)) return 'Invalid time';
+
+  const date = new Date();
+  date.setHours(hour);
+  date.setMinutes(minute);
+  date.setSeconds(0);
+
+  return formatTime(date);
 };

@@ -50,7 +50,7 @@ const NodeSchedulerActionButton = (props) => {
       .find((node) => node.id === +selectedKey);
     dispatch(handleCreateNodeScheduleSelection(selectedSchedule, true, 'id'));
     if (!data) return;
-    const { powerOnCronSchedule, powerOffCronSchedule } = data;
+    const { powerOnCronSchedule, powerOffCronSchedule, occurrence } = data;
     const powerOnTime = parseCronToTime(powerOnCronSchedule);
     const powerOffTime = parseCronToTime(powerOffCronSchedule);
     const parsed = parseCronToScheduleFields(powerOnCronSchedule);
@@ -64,6 +64,7 @@ const NodeSchedulerActionButton = (props) => {
     dispatch(valueChange(STORE_KEYS.UI_SCHEDULE_TIME_ZONE, { label: data.timeZone, value: data.timeZone }));
     if (parsed.type === STATIC_KEYS.WEEK) {
       dispatch(valueChange(STORE_KEYS.UI_NODE_UPDATE_SCHEDULER_DAY_OF_WEEK, parsed.dayOfWeek));
+      dispatch(valueChange(STORE_KEYS.UI_NODE_UPDATE_SCHEDULER_OCCURRENCE, occurrence));
     } else if (parsed.type === STATIC_KEYS.MONTH) {
       dispatch(valueChange(STORE_KEYS.UI_NODE_UPDATE_SCHEDULER_DAY_OF_MONTH, +parsed.dayOfMonth));
     }

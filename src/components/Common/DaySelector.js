@@ -1,34 +1,45 @@
 import React, { useEffect, useState } from 'react';
 import { valueChange } from '../../store/actions';
 import { getValue } from '../../utils/InputUtils';
+import { STORE_KEYS } from '../../constants/StoreKeyConstants';
+import { DAYS_CONSTANT } from '../../constants/InputConstants';
 
 const DaySelector = (props) => {
   const { user, options, defaultSelected = null, dispatch, fieldkey } = props;
-  const [selected, setSelected] = useState(['Sunday']);
-  const dayMap = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const [selected, setSelected] = useState([0]);
+  const occurrence = getValue(STORE_KEYS.UI_NODE_UPDATE_SCHEDULER_OCCURRENCE, user.values) || 1;
 
   useEffect(() => {
     const fieldValue = getValue(fieldkey, user.values) || '';
     if (Array.isArray(fieldValue) && fieldValue.length > 0) {
-      const indexes = fieldValue.map((day) => dayMap.indexOf(day)).filter((i) => i !== -1);
-      setSelected(indexes);
+      const indexes = fieldValue.map((day) => DAYS_CONSTANT.indexOf(day)).filter((i) => i !== -1);
+      if (occurrence > 1 && indexes.length > 1) {
+        // Only one day allowed for occurrence > 1
+        setSelected([0]);
+        dispatch(valueChange(fieldkey, [DAYS_CONSTANT[0]]));
+      } else {
+        setSelected(indexes);
+      }
     } else if (Array.isArray(defaultSelected)) {
       const initialSelected = defaultSelected
         .map((day) => options.indexOf(day))
         .filter((i) => i !== -1);
-      setSelected(initialSelected);
-      const selectedDays = initialSelected.map((i) => dayMap[i]);
+      const validIndexes = occurrence > 1 ? [0] : initialSelected;
+      setSelected(validIndexes);
+      const selectedDays = validIndexes.map((i) => DAYS_CONSTANT[i]);
       dispatch(valueChange(fieldkey, selectedDays));
     } else {
       const sundayIndex = 0;
       setSelected([sundayIndex]);
-      dispatch(valueChange(fieldkey, [dayMap[sundayIndex]]));
+      dispatch(valueChange(fieldkey, [DAYS_CONSTANT[sundayIndex]]));
     }
-  }, []);
+  }, [occurrence]);
 
   const toggleDay = (index) => {
     let updated;
-    if (selected.includes(index)) {
+    if (occurrence > 1) {
+      updated = [index]; // Only allow one selected day
+    } else if (selected.includes(index)) {
       // Deselect
       updated = selected.filter((i) => i !== index);
       if (updated.length === 0) {
@@ -39,7 +50,7 @@ const DaySelector = (props) => {
       updated = [...selected, index];
     }
     setSelected(updated);
-    const selectedDays = updated.map((i) => dayMap[i]);
+    const selectedDays = updated.map((i) => DAYS_CONSTANT[i]);
     dispatch(valueChange(fieldkey, selectedDays));
   };
 
