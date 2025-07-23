@@ -37,7 +37,7 @@ function NodeUpdateScheduleCreate(props) {
   const reconfigureData = selectedKey ? [selectedScheduledNodes[selectedKey].node] : [];
   const occurrenceText = { label: '', placeHolderText: '', type: FIELD_TYPE.NUMBER, validate: (value) => isEmpty(value, user), errorMessage: 'Enter Occurrence.', shouldShow: true, min: 1, getMinMax: () => getMinMaxForSchedulerOccurence(user) };
   const dayOfMonthText = { label: '', placeHolderText: '', type: FIELD_TYPE.NUMBER, validate: (value) => isEmpty(value, user), errorMessage: 'Enter day of month.', shouldShow: (fieldkey) => showDayOfMonthField(fieldkey, user), defaultValue: 1, min: 1, max: 30 };
-  const occurrenceSelect = { label: '', onChange: onOccurenceOptionChange, errorMessage: 'Select Occurrence', options: [{ label: 'Day', value: 'day' }, { label: 'Week', value: 'week' }, { label: 'Month', value: 'month' }], shouldShow: true, validate: (value) => isEmpty(value, user), defaultValue: 'day' };
+  const occurrenceSelect = { label: '', onChange: onOccurenceOptionChange, errorMessage: 'Select Occurrence', options: [{ label: 'Week', value: 'week' }, { label: 'Month', value: 'month' }], shouldShow: true, validate: (value) => isEmpty(value, user), defaultValue: 'week' };
   const powerOffAtDay = { label: '', errorMessage: '', options: powerOffDayOptions, shouldShow: true, validate: (value) => isEmpty(value, user) };
   const powerOnTimeField = { label: '', COMPONENT: TIME_PICKER_COMP, type: FIELD_TYPE.CUSTOM, shouldShow: true, validate: (value) => isEmpty(value, user) };
   const powerOffTimeField = { label: '', COMPONENT: TIME_PICKER_COMP, type: FIELD_TYPE.CUSTOM, shouldShow: true, validate: (value) => isEmpty(value, user) };
