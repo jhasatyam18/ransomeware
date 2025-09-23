@@ -93,6 +93,7 @@ const UpgradeSummary: React.FC<Props> = ({ dispatch, user, upgrade, t }) => {
                                 </Col>
                             </Row>
                         ) : null}
+                        <p className="text-warning ms-2">{propsData?.note}</p>
                     </CardBody>
                 </Card>
             </Container>

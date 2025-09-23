@@ -22,7 +22,7 @@ export const UPGRADE_STEP: UpgradeStepsInterface[] = [
         nextLabel: 'Upgrade',
         isAsync: true,
         postAction: () => UpgradeNode(undefined),
-        propsData: { concent: STATIC_KEYS.UI_UPGRADE_CONCENT_TEXT, showSummary: true },
+        propsData: { concent: STATIC_KEYS.UI_UPGRADE_CONCENT_TEXT, showSummary: true, note: 'After a successful upgrade, Datamotive services will restart automatically after 10 minutes.' },
     },
     {
         label: 'Install',
@@ -38,7 +38,7 @@ export const UPGRADE_STEP: UpgradeStepsInterface[] = [
         state: '',
         stepIsDisabled: true,
         doNotShoNextLabel: true,
-        propsData: { successText: 'Upgrade completed successfully on the following nodes' },
+        propsData: { successText: 'Upgrade completed successfully on the following nodes', note: 'Note : Datamotive services will restart automatically after 10 minutes.' },
     },
 ];
 
@@ -54,7 +54,7 @@ export const UPGRADE_REVERT: UpgradeStepsInterface[] = [
         url: API_GET_NODE_INSTALLATION_STATUS_REVERT,
         isAsync: true,
         postAction: () => UpgradeNode('init-revert'),
-        propsData: { concent: STATIC_KEYS.UI_REVERT_CONCENT_TEXT, showSummary: false },
+        propsData: { concent: STATIC_KEYS.UI_REVERT_CONCENT_TEXT, showSummary: false, note: '  After a successful revert, Datamotive services will restart automatically after 10 minutes.' },
     },
     {
         label: 'Install',
@@ -70,6 +70,6 @@ export const UPGRADE_REVERT: UpgradeStepsInterface[] = [
         component: UPGRADE_SUMMARY_STEP,
         state: '',
         stepIsDisabled: true,
-        propsData: { successText: 'Revert completed successfully on the following nodes' },
+        propsData: { successText: 'Revert completed successfully on the following nodes', note: 'Note : Datamotive services will restart automatically after 10 minutes.' },
     },
 ];

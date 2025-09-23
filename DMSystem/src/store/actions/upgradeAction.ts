@@ -84,9 +84,9 @@ export function UpgradeNode(action: string | undefined) {
         if (upgradeInstallationStatus?.status !== 'completed') {
             const { user } = getState();
             const { values } = user;
-            const nodeInfo = getValue(STATIC_KEYS.UI_PREVIEW_NODE_VERSION_INFO, values);
+            const nodeInfo = action === 'init-revert' ? getValue(STATIC_KEYS.UPGRADE_HISTORY_PREVIEW_NODE_INFO, values) : getValue(STATIC_KEYS.UI_PREVIEW_NODE_VERSION_INFO, values);
             const obj = createPayload(API_TYPES.POST, {
-                upgradeBundleName: nodeInfo.name,
+                upgradeBundleName: action === 'init-revert' ? nodeInfo.packageName : nodeInfo.name,
                 action: action || 'init-upgrade',
             });
             dispatch(showApplicationLoader('UPGRADING', `${action ? 'Reverting' : 'Upgrading'}`));

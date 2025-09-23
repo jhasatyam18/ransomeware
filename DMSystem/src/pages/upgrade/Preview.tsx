@@ -50,18 +50,16 @@ const Preview: React.FC<RendererProps> = (props) => {
     const concent = getValue(STATIC_KEYS.UI_UPGRADE_CONCENT, values);
 
     useEffect(() => {
-        dispatch(getNodeVersionInfo());
+        if (workflow !== STATIC_KEYS.REVERT) {
+            dispatch(getNodeVersionInfo());
+        }
         dispatch(fetchNodes(STATIC_KEYS.UI_FTECH_NODE_INFO));
         return () => {
             dispatch(valueChange(STATIC_KEYS.UI_UPGRADE_CONCENT, false));
         };
     }, []);
 
-    const nodeUpgradeVersion: NodeUpgradeVersionInterface = getValue(STATIC_KEYS.UI_PREVIEW_NODE_VERSION_INFO, values) || '';
-
-    if (Object.keys(nodeUpgradeVersion).length === 0) {
-        return null;
-    }
+    const nodeUpgradeVersion: NodeUpgradeVersionInterface = getValue(STATIC_KEYS.UI_PREVIEW_NODE_VERSION_INFO, values) || {};
     const upgradeNodeInfo: any = [];
     if (workflow === STATIC_KEYS.UPGRADE && Object.keys(nodeUpgradeVersion).length > 0) {
         const availablePackages = nodeUpgradeVersion.packages.map((pkg) => pkg.package);
@@ -91,10 +89,10 @@ const Preview: React.FC<RendererProps> = (props) => {
 
     const renderNodeTableHeader = () => {
         return (
-            <p className=" title-color mb-2 font-weight-bold">
+            <h5>
                 {t('applicable.node')}
                 &nbsp;&nbsp;
-            </p>
+            </h5>
         );
     };
 
@@ -109,17 +107,29 @@ const Preview: React.FC<RendererProps> = (props) => {
         return (
             <>
                 {upgradeNodeInfo.length !== 0 || revertNodeInfo.length !== 0 ? (
-                    <div className="upgrade_concent_div" style={{ fontSize: '13px' }}>
-                        <div className="padding-top-12">
-                            <DMCheckbox field={inputField} fieldKey="upgrade.concent" dispatch={dispatch} user={user} disabled={!(revertNodeInfo.length > 0 || nodeInfo.length > 0)} />
+                    <>
+                        <div className="upgrade_concent_div" style={{ fontSize: '13px' }}>
+                            <div className="padding-top-12">
+                                <DMCheckbox field={inputField} fieldKey="upgrade.concent" dispatch={dispatch} user={user} disabled={!(revertNodeInfo.length > 0 || nodeInfo.length > 0)} />
+                            </div>
+                            <div>
+                                <label htmlFor="upgrade.concent" className="d-block margin-top-15">
+                                    {propsData?.concent}
+                                </label>
+                            </div>
                         </div>
                         <div>
-                            <label htmlFor="upgrade.concent" className="text-warning d-block margin-top-12 mb-2">
-                                {propsData?.concent}
-                            </label>
-                            <span className="text-warning">{`Note : Do not power off or reboot any of the nodes and offline nodes will not be ${workflow === STATIC_KEYS.REVERT ? 'reverted' : 'upgraded'}`}</span>
+                            <h5 className="text-warning">{t('note:')}</h5>
+                            <ul className="text-warning">
+                                <li className="ms-2">
+                                    <span>{`Do not power off or reboot any of the nodes and offline nodes will not be ${workflow === STATIC_KEYS.REVERT ? 'reverted' : 'upgraded'}`}</span>
+                                </li>
+                                <li className="ms-2">
+                                    <span className=" display-block ">{propsData?.note}</span>
+                                </li>
+                            </ul>
                         </div>
-                    </div>
+                    </>
                 ) : null}
                 {upgradeNodeInfo.length === 0 && revertNodeInfo.length === 0 ? (
                     <div style={{ fontSize: '13px', paddingTop: '12px' }}>
