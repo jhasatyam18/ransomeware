@@ -71,6 +71,7 @@ const StepStatus: React.FC<Props> = (props) => {
 
     const renderPopOver = (hoverInfo: string, key: string) => {
         const data = popOver[key];
+        const mesgArray = hoverInfo.split('||');
         return (
             <Popover
                 placement="bottom"
@@ -81,11 +82,20 @@ const StepStatus: React.FC<Props> = (props) => {
                     color: 'white',
                     border: 'none',
                     minWidth: '400px',
-                    textAlign: 'center',
                     borderRadius: '3px',
                 }}
             >
-                <PopoverBody style={{ color: 'white' }}>{hoverInfo}</PopoverBody>
+                <SimpleBar style={{ minHeight: '10vh', maxHeight: '30vh' }}>
+                    <PopoverBody style={{ color: 'white' }}>
+                        {mesgArray.map((el, ind) => {
+                            return (
+                                <p style={{ fontSize: '11px', marginBottom: '2px' }} key={`${el}-${ind}`}>
+                                    {el}
+                                </p>
+                            );
+                        })}
+                    </PopoverBody>
+                </SimpleBar>
             </Popover>
         );
     };
