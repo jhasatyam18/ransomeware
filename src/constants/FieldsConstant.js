@@ -192,7 +192,7 @@ export const FIELDS = {
   'emailConfiguration.emailAddress': {
     label: 'emailConfiguration.emailAddress', placeHolderText: 'Email address', type: FIELD_TYPE.TEXT, errorMessage: 'Enter valid email address', shouldShow: true, patterns: [EMAIL_REGEX], fieldInfo: 'info.email.address' },
   'emailConfiguration.password': {
-    label: 'emailConfiguration.password', placeHolderText: 'Email password', type: FIELD_TYPE.PASSWORD, errorMessage: 'Enter email password', shouldShow: true, validate: (value, user) => isEmpty(value, user), fieldInfo: 'info.email.password' },
+    label: 'emailConfiguration.password', placeHolderText: 'Email password', type: FIELD_TYPE.PASSWORD, errorMessage: 'Enter email password', shouldShow: true, fieldInfo: 'info.email.password' },
   'emailConfiguration.smtpHost': {
     label: 'emailConfiguration.smtpHost', placeHolderText: 'SMTP host name', type: FIELD_TYPE.TEXT, errorMessage: 'Enter valid smtp host or ip address', shouldShow: true, validate: (value, user) => isEmpty(value, user), fieldInfo: 'info.email.smtp.host' },
   'emailConfiguration.smtpPort': {
