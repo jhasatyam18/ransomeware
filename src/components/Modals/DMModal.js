@@ -40,6 +40,8 @@ import PlaybookUploadModal from './PlaybookUploadModal';
 import ModalRefreshRecovery from './ModalRefreshRecovery';
 import InformationModal from './ModalInformation';
 import ModalDeleteVmConfirmation from './ModalDeleteVmConfirmation';
+import ModalShowScheduledReports from './ModalShowScheduledReports';
+import ModalScheduleStatusChange from './ModalScheduleStatusChange';
 
 function DMModal(props) {
   const { modal, dispatch, user } = props;
@@ -137,6 +139,10 @@ function DMModal(props) {
           return <InformationModal {...props} />;
         case MODALS.MODAL_DELETE_VM_CONFIRMATON:
           return <ModalDeleteVmConfirmation dispatch={dispatch} {...props} />;
+        case MODALS.MODAL_GENERATE_REPORT_SCHEDULE:
+          return <ModalShowScheduledReports dispatch={dispatch} {...props} />;
+        case MODALS.MODAL_CHANGE_SCHEDULE_STATUS:
+          return <ModalScheduleStatusChange dispatch={dispatch} {...props} />;
         default:
           return (<div>404</div>);
       }

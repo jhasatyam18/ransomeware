@@ -38,6 +38,8 @@ export function convertScheduleToCron(schedule) {
       return `${minute} ${hour24} */${schedule.repeat} * *`;
     case 'Month':
       return `${minute} ${hour24} ${schedule.dayOfMonth} */${schedule.repeat} *`;
+    case 'Hourly':
+      return schedule.repeat === 1 ? '0 * * * *' : `0 */${schedule.repeat} * * *`;
     default:
       throw new Error('Unsupported schedule type');
   }
@@ -86,11 +88,13 @@ export function parseCronToTime(cron) {
   const parts = cron.trim().split(' ');
   if (parts.length < 6) throw new Error('Invalid cron format');
   const [rawSeconds, minutes, hours] = parts;
-  const seconds = rawSeconds === '*' ? '0' : rawSeconds;
+  const seconds = rawSeconds === '*' ? 0 : parseInt(rawSeconds, 10);
+  const mins = minutes === '*' ? 0 : parseInt(minutes, 10);
+  const hrs = hours === '*' ? 0 : parseInt(hours, 10);
   const date = new Date();
-  date.setHours(parseInt(hours, 10));
-  date.setMinutes(parseInt(minutes, 10));
-  date.setSeconds(parseInt(seconds, 10));
+  date.setHours(hrs);
+  date.setMinutes(mins);
+  date.setSeconds(seconds);
   date.setMilliseconds(0);
 
   return date;

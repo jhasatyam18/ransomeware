@@ -946,6 +946,15 @@
   "plans":"Protection Plans",
   "protectedVMS":"Protected Machine",
   "point_in_time_checkpoints":"Point In Time Checkpoints",
+  "report.format": "Report Format",
+  "shedule.report.occurence.info": "Defines the interval at which the schedule runs, based on the selected unit (hourly, daily, weekly, or monthly",
+  "shedule.report.time.info": "Time at which schedule should trigger",
+  "shedule.report.maintain.copy.info": "Maximum number of report you want to save at a time",
+  "schedule.report.email.info": "Specify the email address(es) to receive this report.",
+  "schedule.report.format.info": "Select your preferred report format. You can download reports as PDF or Excel files",
+  "shedule.report.summary.conf": "Generate Reports For Following Configuration",
+  "email.recipient": "Email Recipient",
+  "shedule.report.name.info": "Name for your schedule",
   "stop.replication.select.workload.title": "Select workload to stop replication.",
   "start.replication.select.workload.title": "Select workload to start replication.",
   "plan.status.partially.running":"Partially-Running",
@@ -973,6 +982,5 @@
   "suggetion":"Suggestion : ",
   "test.data.count":"Test recovered virtual machine count of last one month",
   "DM_ERR_INTERNAL_SERVER":"Internal server error"
-  
 
 }

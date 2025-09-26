@@ -32,6 +32,10 @@ class DMFieldText extends Component {
   handleKeyPress = (e) => {
     if (e.target.charCode === 13 || e.charCode === 13) {
       e.preventDefault();
+      const { onEnter } = this.props;
+      if (onEnter) {
+        onEnter(); // Call parent handler if provided
+      }
     }
   };
 

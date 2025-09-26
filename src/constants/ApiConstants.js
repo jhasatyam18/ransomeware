@@ -165,3 +165,5 @@ export const API_CLEANUP_RECOVERIES_FETCH = 'api/v1/recover/cleanup?planids=<id>
 export const API_CLEANUP_RECOVERIES = 'api/v1/recover/cleanup?planid=<id>&cleanuptype=<type>';
 export const API_FETCH_SCHEDULED_NODE = 'api/v1/node/systemupdate/schedule';
 export const API_SCHEDULED_NODE = 'api/v1/node/systemupdate/schedule';
+export const API_SCHEDULE = 'api/v1/reports/schedules';
+export const API_SCHEDULED_JOBS = 'api/v1/reports/jobs';

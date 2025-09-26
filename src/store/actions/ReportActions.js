@@ -1,22 +1,25 @@
 import * as Types from '../../constants/actionTypes';
-import { API_FETCH_ALERTS, API_FETCH_DR_PLANS, API_FETCH_EVENTS, API_FETCH_SITES, API_NODES, API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS, API_RECOVERY_JOBS, API_REPLICATION_VM_JOBS, API_UPDAT_RECOVERY_CHECKPOINT_BY_ID } from '../../constants/ApiConstants';
+import { API_FETCH_ALERTS, API_FETCH_DR_PLANS, API_FETCH_EVENTS, API_FETCH_SITES, API_NODES, API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS, API_RECOVERY_JOBS, API_REPLICATION_VM_JOBS, API_SCHEDULE, API_SCHEDULED_JOBS, API_UPDAT_RECOVERY_CHECKPOINT_BY_ID } from '../../constants/ApiConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { callAPI } from '../../utils/ApiUtils';
+import { REPORTS_PATH } from '../../constants/RouterConstants';
+import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
 import { getAppDateFormat } from '../../utils/AppUtils';
 import { getValue } from '../../utils/InputUtils';
-import { addFooters, addHeaderPage, exportDoc, createPDFDoc, systemOverview, addTableFromData, getStartDate, showSiteDetails } from '../../utils/ReportUtils';
+import { addFooters, addHeaderPage, exportDoc, createPDFDoc, systemOverview, addTableFromData, getStartDate, showSiteDetails, cancelCreateSchedule } from '../../utils/ReportUtils';
 import { fetchDashboardTitles, fetchRecoveryStats, fetchReplicationStats } from './DashboardActions';
 import { addMessage } from './MessageActions';
-import { hideApplicationLoader, showApplicationLoader } from './UserActions';
+import { hideApplicationLoader, setActiveTabReport, showApplicationLoader } from './UserActions';
 import { API_MAX_RECORD_LIMIT } from '../../constants/UserConstant';
 import { ALERTS_COLUMNS, EVENTS_COLUMNS, NODE_COLUMNS, PROTECTED_VMS_COLUMNS, PROTECTION_PLAN_COLUMNS, RECOVERY_JOB_COLUMNS, REPLICATION_JOB_COLUMNS, SITE_COLUMNS, TABLE_REPORTS_CHECKPOINTS } from '../../constants/TableConstants';
 import { PLATFORM_TYPES, REPORT_DURATION, STATIC_KEYS } from '../../constants/InputConstants';
+import { closeModal } from './ModalActions';
 
 export function generateAuditReport() {
   return (dispatch, getState) => {
     const { user } = getState();
     const criteria = getCriteria(user);
-    dispatch(resetReport());
+    dispatch(setReportObject({}));
+    dispatch(setReportCriteria({}));
     const apis = getRequiredReportObjects(criteria, dispatch);
     dispatch(showApplicationLoader('AUDIT_REPORT', 'Generating audit report...'));
     return Promise.all(apis)
@@ -434,6 +437,129 @@ export function reportFetchCheckpoints(id, data = [], offset = 0, criteria = {},
       },
       (err) => {
         dispatch(hideApplicationLoader('report_checkpoints', 'Generating audit report...'));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  };
+}
+
+export function fetchSchedule() {
+  return (dispatch) => {
+    dispatch(showApplicationLoader('FETCHING_SCHEDULE', 'Loading schedule...'));
+    return callAPI(API_SCHEDULE)
+      .then((json = []) => {
+        dispatch(hideApplicationLoader('FETCHING_SCHEDULE'));
+        if (json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          dispatch({
+            type: Types.FETCH_SCHEDULED_REPORTS,
+            scheduledReports: json,
+          });
+        }
+      },
+      (err) => {
+        dispatch(hideApplicationLoader('FETCHING_SCHEDULE'));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  };
+}
+
+export function setReportScheduleJob(scheduledReportsJobs) {
+  return {
+    type: Types.FETCH_SCHEDULED_REPORTS_JOBS,
+    scheduledReportsJobs,
+  };
+}
+
+export function fetchScheduledJobs() {
+  return (dispatch) => {
+    dispatch(showApplicationLoader('FETCHING_SCHEDULED_JOBS', 'Loading scheduled jobs...'));
+    return callAPI(API_SCHEDULED_JOBS)
+      .then((json = []) => {
+        dispatch(hideApplicationLoader('FETCHING_SCHEDULED_JOBS'));
+        if (json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          dispatch(setReportScheduleJob(json));
+        }
+      },
+      (err) => {
+        dispatch(hideApplicationLoader('FETCHING_SCHEDULED_JOBS'));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  };
+}
+
+export function configureReportSchedule(payload, isUpdate = false, history, uuid = null) {
+  return (dispatch) => {
+    let url = API_SCHEDULE;
+    if (isUpdate) {
+      url = `${url}/${uuid}`;
+    }
+    const obj = createPayload(isUpdate ? API_TYPES.PUT : API_TYPES.POST, payload);
+    dispatch(showApplicationLoader('configure-schedule', 'Creating Schedule...'));
+    return callAPI(url, obj).then((json) => {
+      dispatch(hideApplicationLoader('configure-schedule'));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        dispatch(addMessage(`${uuid ? 'Schedule reconfigured successfully' : 'Schedule configured successfully'}`, MESSAGE_TYPES.SUCCESS));
+        dispatch(fetchSchedule());
+        dispatch(setSelectedSchedule([]));
+        history.push(REPORTS_PATH);
+        dispatch(setActiveTabReport('2'));
+        dispatch(cancelCreateSchedule());
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('configure-schedule'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+  };
+}
+
+export function setSelectedSchedule(selectedSchedule) {
+  return {
+    type: Types.SET_SELECTED_SCHEDULE,
+    selectedSchedule,
+  };
+}
+
+export function handleReportScheduleTableSelection(data, isSelected, primaryKey) {
+  return (dispatch, getState) => {
+    const { reports } = getState();
+    const { selectedSchedule } = reports;
+    if (isSelected) {
+      if (!selectedSchedule || selectedSchedule.length === 0 || !selectedSchedule[data[primaryKey]]) {
+        const newSchedules = { ...selectedSchedule, [data[primaryKey]]: data };
+        dispatch(setSelectedSchedule(newSchedules));
+      }
+    } else if (selectedSchedule[data[primaryKey]]) {
+      const newSchedules = selectedSchedule;
+      delete newSchedules[data[primaryKey]];
+      dispatch(setSelectedSchedule(newSchedules));
+    }
+  };
+}
+
+export function removeReportSchedule(id) {
+  return (dispatch) => {
+    dispatch(showApplicationLoader(`${API_SCHEDULE}-${id}`, 'Removing Schedule'));
+    const obj = createPayload(API_TYPES.DELETE, {});
+    return callAPI(`${API_SCHEDULE}/${id}`, obj)
+      .then((json) => {
+        dispatch(hideApplicationLoader(`${API_SCHEDULE}-${id}`));
+        if (json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          dispatch(addMessage('Schedule removed successfully', MESSAGE_TYPES.INFO));
+          dispatch(fetchSchedule());
+          dispatch(setSelectedSchedule([]));
+          dispatch(closeModal());
+        }
+      },
+      (err) => {
+        dispatch(hideApplicationLoader(`${API_SCHEDULE}-${id}`));
         dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
       });
   };

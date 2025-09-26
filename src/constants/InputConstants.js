@@ -164,6 +164,7 @@ export const STATIC_KEYS = {
   DAY: 'day',
   WEEK: 'week',
   MONTH: 'month',
+  HOURLY: 'hour',
   EDIT: 'edit',
 };
 

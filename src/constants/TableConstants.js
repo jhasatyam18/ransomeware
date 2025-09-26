@@ -78,6 +78,13 @@ export const REPORT_DATA_REDUCTION_RATIO = 'REPORT_DATA_REDUCTION_RATIO';
 export const WRAP_TEXT_ITEM_RENDERER = 'WRAP_TEXT_ITEM_RENDERER';
 export const SYSTEM_UPGRADE_SCHEDULE_ITEM_RENDERER = 'SYSTEM_UPGRADE_SCHEDULE_ITEM_RENDERER';
 export const SCHEDULE_NODE_LOCATION_ITEM_RENDERER = 'SCHEDULE_NODE_LOCATION_ITEM_RENDERER';
+export const REPORT_SCHEDULE_ITEM_RENDERER = 'REPORT_SCHEDULE_ITEM_RENDERER';
+export const GENERATED_REPORTS_ITEM_RENDERER = 'GENERATED_REPORTS_ITEM_RENDERER';
+export const REPORT_JOB_NAME_ITEM_RENDERER = 'REPORT_JOB_NAME_ITEM_RENDERER';
+export const END_TIME_REPORT_SHEDULE_JOB = 'END_TIME_REPORT_SHEDULE_JOB';
+export const REPORT_SCHEDULE_EMAIL_ITEM_RENDERER = 'REPORT_SCHEDULE_EMAIL_ITEM_RENDERER';
+export const SCHEDULE_STATUS_RENDERER = 'SCHEDULE_STATUS_RENDERER';
+
 export const PLAN_LIST_WORKLOAD = 'PLAN_LIST_WORKLOAD';
 export const VM_REPL_STATUS = 'VM_REPL_STATUS';
 // show time taken by any job
@@ -527,6 +534,27 @@ export const TABLE_NODE_UPDATE_SCHEDULER = [
 export const TABLE_NODE_SCHEDULER = [
   { label: 'Name', field: 'name' },
   { label: 'Hostname', field: 'hostname', itemRenderer: SCHEDULE_NODE_LOCATION_ITEM_RENDERER },
+];
+export const TABLE_SCHEDULE = [
+  { label: 'Name', field: 'name' },
+  { label: 'Schedule', field: 'cron_string', width: 3, itemRenderer: REPORT_SCHEDULE_ITEM_RENDERER },
+  { label: 'Email Recipients', field: 'emailIDs', width: 3, itemRenderer: REPORT_SCHEDULE_EMAIL_ITEM_RENDERER },
+  { label: 'Generated Reports', field: 'savedReports', itemRenderer: GENERATED_REPORTS_ITEM_RENDERER, width: 1.5 },
+  { label: 'Status', field: 'disabled', itemRenderer: SCHEDULE_STATUS_RENDERER, width: 1 },
+];
+export const TABLE_SCHEDULE_JOB = [
+  { label: 'Schedule', field: 'scheduleName', allowFilter: true, checked: true },
+  { label: 'Start Time', field: 'createdAt', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'End Time', field: 'updatedAt', itemRenderer: END_TIME_REPORT_SHEDULE_JOB },
+  { label: 'Size', field: 'fileSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
+  { label: 'File Name', field: 'name', itemRenderer: REPORT_JOB_NAME_ITEM_RENDERER },
+  { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER, allowFilter: true, checked: true },
+];
+export const TABLE_SCHEDULE_GENERATE = [
+  { label: 'Name', field: 'filePath', itemRenderer: REPORT_JOB_NAME_ITEM_RENDERER },
+  { label: 'Size', field: 'fileSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
+  { label: 'Time', field: 'createdAt', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
 ];
 
 export const SELECTIVE_REPLICATION_VM_LIST = [

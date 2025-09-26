@@ -929,3 +929,65 @@ span.flatpickr-weekday {
   filter: invert(1) grayscale(100%) brightness(0);
 }
 
+.upgrade_status_line {
+    position: relative;
+    top:9px;
+    width: 200px;
+    margin: 0 3px;
+    border-top: 1px solid $gray-500;
+}
+
+.upgrade_step-label{
+    width: 88%;
+    text-align: center;
+}
+
+.link-item{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: inherit;
+}
+
+.upgrade_end_step{
+    position: relative;
+    left: -22px;
+}
+
+.disabled_hr {
+    color: #7682a7;
+    border-top: 1px solid #7682a7;
+}
+
+.link_color{
+    color: var(--tree-fd-color);
+    cursor: pointer;
+  }
+
+.upgrade_concent_div{
+    position: relative;
+    left: -20px;
+    display: flex;
+    margin-top: 17px;
+}
+
+.upgrade_steps_success{
+  border-top: 1px solid $green;
+}
+
+.nav-resp-width {
+  width: 25%;
+
+  @media (max-width: 1569px) {
+    width: 30%;
+  }
+  @media (max-width: 1361px) {
+    width: 33%;
+  }
+  @media (max-width: 1266px) {
+    width: 37%;
+  }
+  @media (max-width: 1164px) {
+    width: 40%;
+  }
+}

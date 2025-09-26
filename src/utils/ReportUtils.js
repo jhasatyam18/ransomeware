@@ -12,6 +12,17 @@ import { APPLICATION_API_USER } from '../constants/UserConstant';
 import { calculateChangedData, convertMinutesToDaysHourFormat, formatTime, getAppDateFormat, getStorageWithUnit } from './AppUtils';
 import { getCookie } from './CookieUtils';
 import { getValue } from './InputUtils';
+import { STORE_KEYS } from '../constants/StoreKeyConstants';
+import { clearValues, setActiveTabReport, valueChange } from '../store/actions';
+import { validateField } from './validationUtils';
+import { addMessage } from '../store/actions/MessageActions';
+import { MESSAGE_TYPES } from '../constants/MessageConstants';
+import { FIELDS } from '../constants/FieldsConstant';
+import { getCriteria, setSelectedSchedule } from '../store/actions/ReportActions';
+import { convertScheduleToCron, parseCronToScheduleFields, parseCronToTime, formatTime as schedularFormatTime } from './SystemUpdateScheduleUtils';
+import { fetchDrPlans } from '../store/actions/DrPlanActions';
+import { REPORTS_PATH } from '../constants/RouterConstants';
+import { closeModal } from '../store/actions/ModalActions';
 
 /**
  * Create empty pdf document object
@@ -838,4 +849,287 @@ export function getDurationOfReport(date) {
   const ampm = d.getHours() >= 12 ? 'PM' : 'AM';
 
   return `${day}-${month}-${year} ${hours}:${minutes} ${ampm}`;
+}
+
+export const onReportOccurrenceChange = () => (dispatch) => {
+  dispatch(valueChange(STORE_KEYS.UI_REPORT_SCHEDULER_OCCURRENCE, 1));
+};
+
+export const showReportDayOfMonthField = (user) => {
+  const occurrenceOption = getValue(STORE_KEYS.UI_REPORT_SCHEDULER_OCCURRENCE_OPTION, user.values) || '';
+  if (occurrenceOption === 'week' || occurrenceOption === 'day') {
+    return false;
+  }
+  return true;
+};
+
+const FREQUENCY_MAP = {
+  hour: 'hourly',
+  day: 'daily',
+  week: 'weekly',
+  month: 'monthly',
+};
+
+export const getReportSchedulePayload = (user) => {
+  const { values } = user;
+  const criteria = getCriteria(user) || {};
+  const plans = getValue(STATIC_KEYS.UI_PROTECTION_PLANS, values) || [];
+  let type;
+  const occurrenceOption = getValue(STORE_KEYS.UI_REPORT_SCHEDULER_OCCURRENCE_OPTION, values) || '';
+  if (occurrenceOption === STATIC_KEYS.DAY) type = 'Days';
+  else if (occurrenceOption === STATIC_KEYS.WEEK) type = 'Week';
+  else if (occurrenceOption === STATIC_KEYS.MONTH) type = 'Month';
+  else type = 'Hourly';
+  const name = getValue(STORE_KEYS.UI_REPORT_SCHEDULER_NAME, values) || '';
+  const timeZone = getValue(STORE_KEYS.UI_REPORT_SCHEDULE_TIME_ZONE, values) || '';
+  const occurrence = getValue(STORE_KEYS.UI_REPORT_SCHEDULER_OCCURRENCE, values) || 1;
+  const dayOfWeek = getValue(STORE_KEYS.UI_REPORT_SCHEDULER_DAY_OF_WEEK, values) || [];
+  const dayOfMonth = getValue(STORE_KEYS.UI_REPORT_SCHEDULER_DAY_OF_MONTH, values) || [];
+  const time = getValue(STORE_KEYS.UI_REPORT_SCHEDULER_GENERATE_ON_TIME, values) || '';
+  const emailIDs = getValue('schedule.report.email', values) || '';
+  const maintain = getValue(STORE_KEYS.UI_REPORT_SCHEDULER_MAINTAIN, values) || '';
+  const fileType = getValue(STORE_KEYS.UI_REPORT_SCHEDULER_FORMAT_TYPE, values) || '';
+  let protectionPlan = getValue(STATIC_KEYS.REPORT_PROTECTION_PLAN, values) || '';
+  if (protectionPlan === 'All') {
+    protectionPlan = plans?.map((p) => p.id).join(',');
+  }
+  const replicationJobFilters = getValue('report.protectionPlan.replJobOption', values) || '';
+  const recoveryJobFilters = getValue('report.protectionPlan.recoveryJobOption', values) || '';
+  let cronString = convertScheduleToCron({ type, repeat: occurrence, dayOfWeek, dayOfMonth, time: schedularFormatTime(time) });
+  cronString = `0 ${cronString}`;
+
+  const payload = {
+    config: {
+      alerts: !!criteria.includeAlerts,
+      events: !!criteria.includeEvents,
+      nodes: !!criteria.includeNodes,
+      protectionPlanConfig: {
+        pointInTimeCheckpoints: !!criteria.includeCheckpoints,
+        protectedMachines: !!criteria.includeProtectedVMS,
+        protectionPlans: protectionPlan,
+        recoveryJobFilters,
+        recoveryJobs: !!criteria.includeRecoveryJobs,
+        replicationJobFilters,
+        replicationJobs: !!criteria.includeReplicationJobs,
+      },
+    },
+    cronString,
+    disabled: false,
+    emailIDs,
+    fileType,
+    frequency: FREQUENCY_MAP[occurrenceOption],
+    name,
+    reportsToRetain: maintain,
+    timezone: timeZone?.value,
+  };
+  return payload;
+};
+
+export const getMinMaxForReportSchedulerOccurence = (user) => {
+  const { values } = user;
+  const occurenceOptionValue = getValue(STORE_KEYS.UI_REPORT_SCHEDULER_OCCURRENCE_OPTION, values);
+  switch (occurenceOptionValue) {
+    case STATIC_KEYS.WEEK:
+      return { min: 1, max: 4 };
+    case STATIC_KEYS.MONTH:
+      return { min: 1, max: 12 };
+    case STATIC_KEYS.DAY:
+      return { min: 1, max: 30 };
+    case STATIC_KEYS.HOURLY:
+      return { min: 1, max: 24 };
+    default:
+      break;
+  }
+};
+
+export const getMinMaxForReportSchedulerMaintanance = () => ({ min: 1, max: 10 });
+
+const showTime = (timeStr) => {
+  if (!timeStr) return '';
+  const date = new Date(timeStr);
+  return date.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  });
+};
+
+export const getReportScheduleText = (user) => {
+  const { values } = user;
+  const occurrenceOptionValue = getValue(STORE_KEYS.UI_REPORT_SCHEDULER_OCCURRENCE_OPTION, values);
+  const time = getValue(STORE_KEYS.UI_REPORT_SCHEDULER_GENERATE_ON_TIME, values);
+  const occurrence = getValue(STORE_KEYS.UI_REPORT_SCHEDULER_OCCURRENCE, values) || 1;
+  const days = getValue(STORE_KEYS.UI_REPORT_SCHEDULER_DAY_OF_WEEK, values) || [];
+  const monthDay = getValue(STORE_KEYS.UI_REPORT_SCHEDULER_DAY_OF_MONTH, values) || [];
+  switch (occurrenceOptionValue) {
+    case STATIC_KEYS.WEEK: {
+      const readableTime = showTime(time);
+      const readableDays = days.length > 0 ? days.join(' and ') : '';
+      return `Generate report at ${readableTime} on every ${readableDays}`;
+    }
+    case STATIC_KEYS.DAY: {
+      const readableTime = showTime(time);
+      if (occurrence === 1) {
+        return `Generate report every day at ${readableTime}`;
+      }
+      return `Generate report on every ${occurrence} days at ${readableTime}`;
+    }
+    case STATIC_KEYS.HOURLY: {
+      if (occurrence === 1) {
+        return 'Generate report every hour';
+      }
+      return `Generate report after every ${occurrence} hours`;
+    }
+    case STATIC_KEYS.MONTH: {
+      const readableTime = showTime(time);
+      if (occurrence === 1) {
+        return `Generate report at ${readableTime} on day ${monthDay} of every month`;
+      }
+      return `Generate report at ${readableTime} on day ${monthDay} of every ${occurrence} months`;
+    }
+    default:
+      return '-';
+  }
+};
+
+export const getReportFieldConfig = () => {
+  const fieldConfig = {
+    [STORE_KEYS.UI_REPORT_SCHEDULER_NAME]: FIELDS['ui.report.schedule.name'],
+    [STORE_KEYS.UI_REPORT_SCHEDULER_OCCURRENCE_OPTION]: FIELDS['ui.report.schedule.day'],
+    [STORE_KEYS.UI_REPORT_SCHEDULE_TIME_ZONE]: FIELDS['ui.report.schedule.time.zone'],
+    [STORE_KEYS.UI_REPORT_SCHEDULER_EMAIL]: FIELDS['schedule.report.email'],
+    [STORE_KEYS.UI_REPORT_SCHEDULER_FORMAT_TYPE]: FIELDS['report.format.type'],
+  };
+  return fieldConfig;
+};
+
+export function validateCreateScheduleStep(user, dispatch, stepIndex) {
+  const { values } = user;
+  const fieldConfigMap = getReportFieldConfig(user);
+  let fields = [];
+  switch (stepIndex) {
+    case 0: // Schedule
+      fields = [
+        STORE_KEYS.UI_REPORT_SCHEDULER_NAME,
+        STORE_KEYS.UI_REPORT_SCHEDULER_OCCURRENCE_OPTION,
+        STORE_KEYS.UI_REPORT_SCHEDULE_TIME_ZONE,
+      ];
+      break;
+    case 1: // Configure
+      if (showSelectPlanError(user)) {
+        dispatch(addMessage('Please select protection plan', MESSAGE_TYPES.ERROR));
+        return false;
+      }
+      fields = [STORE_KEYS.UI_REPORT_SCHEDULER_FORMAT_TYPE];
+      break;
+    case 2: // Email
+      fields = [
+        STORE_KEYS.UI_REPORT_SCHEDULER_EMAIL,
+      ];
+      break;
+    default:
+      return true;
+  }
+  let isValid = true;
+  fields.forEach((fieldKey) => {
+    const field = fieldConfigMap[fieldKey];
+    if (!field) return;
+    const value = getValue(fieldKey, values);
+    if (!validateField(field, fieldKey, value, dispatch, user)) {
+      isValid = false;
+    }
+  });
+  return isValid;
+}
+
+export const getTimeZoneOptions = (user) => {
+  const timeZoneOptions = getValue(STORE_KEYS.UI_SCHEDULE_TIME_ZONE_OPTIONS, user.values) || [];
+  return timeZoneOptions;
+};
+
+export const defaultReportScheduleTimeZone = ({ dispatch }) => {
+  const { timeZone } = Intl.DateTimeFormat().resolvedOptions();
+  const defaultZone = { label: timeZone, value: timeZone };
+  dispatch(valueChange(STORE_KEYS.UI_REPORT_SCHEDULE_TIME_ZONE, defaultZone));
+  return defaultZone;
+};
+
+export function setReconfigureReportScheduleData(data = []) {
+  return (dispatch, getState) => {
+    const { drPlans } = getState();
+    const { plans = [] } = drPlans;
+    const { config = {} } = data;
+    const { protectionPlanConfig = {} } = config;
+    const cronString = data.cronString || '';
+    const parsed = parseCronToScheduleFields(cronString);
+    if (parsed.type === STATIC_KEYS.WEEK) {
+      dispatch(valueChange(STORE_KEYS.UI_REPORT_SCHEDULER_DAY_OF_WEEK, parsed.dayOfWeek));
+    } else if (parsed.type === STATIC_KEYS.MONTH) {
+      dispatch(valueChange(STORE_KEYS.UI_REPORT_SCHEDULER_DAY_OF_MONTH, +parsed.dayOfMonth));
+    }
+    const generateTime = parseCronToTime(cronString);
+    const occurrenceKey = Object.keys(FREQUENCY_MAP).find((key) => FREQUENCY_MAP[key] === data.frequency);
+    dispatch(valueChange(STORE_KEYS.UI_REPORT_SCHEDULE_WORKFLOW, STATIC_KEYS.EDIT));
+    dispatch(valueChange(STORE_KEYS.UI_REPORT_SCHEDULER_NAME, data.name));
+    dispatch(valueChange(STORE_KEYS.UI_REPORT_SCHEDULER_GENERATE_ON_TIME, generateTime));
+    dispatch(valueChange(STORE_KEYS.UI_REPORT_SCHEDULER_OCCURRENCE, 1));
+    dispatch(valueChange(STORE_KEYS.UI_REPORT_SCHEDULER_OCCURRENCE_OPTION, occurrenceKey));
+    dispatch(valueChange(STORE_KEYS.UI_REPORT_SCHEDULER_FORMAT_TYPE, data.fileType));
+    dispatch(valueChange(STORE_KEYS.UI_REPORT_SCHEDULE_TIME_ZONE, { label: data.timezone, value: data.timezone }));
+    dispatch(valueChange(STORE_KEYS.UI_REPORT_SCHEDULER_EMAIL, data.emailIDs));
+    dispatch(valueChange(STORE_KEYS.UI_REPORT_SCHEDULER_MAINTAIN, data.reportsToRetain));
+    dispatch(valueChange('report.system.includeSystemOverView', true));
+    dispatch(valueChange('report.system.includeNodes', !!config.nodes));
+    dispatch(valueChange('report.system.includeEvents', !!config.events));
+    dispatch(valueChange('report.system.includeAlerts', !!config.alerts));
+    dispatch(valueChange('report.protectionPlan.includeReplicationJobs', !!protectionPlanConfig.replicationJobs));
+    dispatch(valueChange('report.protectionPlan.includeRecoveryJobs', !!protectionPlanConfig.recoveryJobs));
+    dispatch(valueChange('report.protectionPlan.includeCheckpoints', !!protectionPlanConfig.pointInTimeCheckpoints));
+    dispatch(valueChange('report.protectionPlan.includeProtectedVMS', !!protectionPlanConfig.protectedMachines));
+    if (data.config?.protectionPlanConfig?.recoveryJobFilters) {
+      dispatch(valueChange('report.protectionPlan.recoveryJobOption', protectionPlanConfig.recoveryJobFilters));
+      const recFilters = data.config.protectionPlanConfig.recoveryJobFilters.split(',').map((f) => f.trim()).filter(Boolean)
+        .map((f) => ({
+          value: f,
+          label: f.replace(/\b\w/g, (c) => c.toUpperCase()), // capitalize each word
+        }));
+      dispatch(valueChange('report.protectionPlan.recoveryJobOption-reportfilter-selected-option', recFilters));
+    }
+    if (data.config?.protectionPlanConfig?.replicationJobFilters) {
+      dispatch(valueChange('report.protectionPlan.replJobOption', protectionPlanConfig.replicationJobFilters));
+      const replFilters = data.config.protectionPlanConfig.replicationJobFilters.split(',').map((f) => f.trim()).filter(Boolean)
+        .map((f) => ({
+          value: f,
+          label: f.replace(/\b\w/g, (c) => c.toUpperCase()),
+        }));
+      dispatch(valueChange('report.protectionPlan.replJobOption-reportfilter-selected-option', replFilters));
+    }
+    if (protectionPlanConfig.protectionPlans) {
+      if (protectionPlanConfig?.protectionPlans?.split(',').length === plans.length) {
+        dispatch(valueChange(STATIC_KEYS.REPORT_PROTECTION_PLAN, 'All'));
+      } else {
+        dispatch(valueChange(STATIC_KEYS.REPORT_PROTECTION_PLAN, protectionPlanConfig.protectionPlans));
+      }
+      const selectedIds = protectionPlanConfig.protectionPlans.split(',').map((id) => Number(id.trim())).filter((id) => !Number.isNaN(id));
+      const selectedPlans = plans
+        .filter((plan) => selectedIds.includes(Number(plan.id)))
+        .map((plan) => ({ value: Number(plan.id), label: plan.name }));
+      dispatch(valueChange('report.protectionPlan.protectionPlans-reportfilter-selected-option', selectedPlans));
+    }
+  };
+}
+
+export function cancelCreateSchedule(id, history) {
+  return (dispatch) => {
+    if (history) {
+      history.push(REPORTS_PATH);
+    }
+    dispatch(closeModal());
+    dispatch(setSelectedSchedule([]));
+    dispatch(setActiveTabReport('2'));
+    dispatch(clearValues());
+    dispatch(valueChange('report.system.includeSystemOverView', true));
+    dispatch(fetchDrPlans(STATIC_KEYS.UI_PROTECTION_PLANS));
+    dispatch(valueChange(STATIC_KEYS.REPORT_DURATION_TYPE, 'month'));
+  };
 }

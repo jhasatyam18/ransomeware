@@ -119,6 +119,9 @@ export default function user(state = INITIAL_STATE.user, action) {
     case Types.SET_DRPLAN_DETAIL_ACTIVE_TAB: {
       return { ...state, drPlanDetailActiveTab: action.value };
     }
+    case Types.SET_DRPLAN_DETAIL_ACTIVE_TAB_REPORT: {
+      return { ...state, reportActiveTab: action.value };
+    }
     case Types.SET_USER_PREFERENCES:
       return { ...state, userPreferences: action.userPreferences };
     default:

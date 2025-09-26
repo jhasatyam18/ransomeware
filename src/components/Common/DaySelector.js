@@ -5,9 +5,9 @@ import { STORE_KEYS } from '../../constants/StoreKeyConstants';
 import { DAYS_CONSTANT } from '../../constants/InputConstants';
 
 const DaySelector = (props) => {
-  const { user, options, defaultSelected = null, dispatch, fieldkey } = props;
+  const { user, options, defaultSelected = null, dispatch, fieldkey, occurenceKey = STORE_KEYS.UI_NODE_UPDATE_SCHEDULER_OCCURRENCE } = props;
   const [selected, setSelected] = useState([0]);
-  const occurrence = getValue(STORE_KEYS.UI_NODE_UPDATE_SCHEDULER_OCCURRENCE, user.values) || 1;
+  const occurrence = getValue(occurenceKey, user.values) || 1;
 
   useEffect(() => {
     const fieldValue = getValue(fieldkey, user.values) || '';

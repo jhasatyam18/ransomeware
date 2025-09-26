@@ -16,7 +16,7 @@ const Index = React.lazy(() => import('../DRPlans/Index'));
 const Jobs = React.lazy(() => import('../Jobs/Jobs'));
 const Events = React.lazy(() => import('../Events/Events'));
 const Alerts = React.lazy(() => import('../Alerts/Alerts'));
-const Report = React.lazy(() => import('../Report/Report'));
+const ReportIndex = React.lazy(() => import('../Report/index'));
 const Settings = React.lazy(() => import('../Settings/Settings'));
 class Layout extends Component {
   constructor(props) {
@@ -79,7 +79,7 @@ class Layout extends Component {
           <Route path={JOBS_PATH} render={() => <Jobs protectionplanID={0} {...this.props} />} />
           <Route path={EVENTS_PATH} render={() => <Events />} />
           <Route path={ALERTS_PATH} render={() => <Alerts />} />
-          <Route path={REPORTS_PATH} render={() => <Report />} />
+          <Route path={REPORTS_PATH} render={() => <ReportIndex />} />
           <Route path={SETTINGS_PATH} render={() => <Settings />} />
           <Route render={() => <Dashboard {...this.props} />} />
         </Switch>

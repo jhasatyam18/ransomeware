@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Button, Card, CardBody, Col, Container, Row } from 'reactstrap';
+import classnames from 'classnames';
+import { Button, Card, CardBody, Col, Container, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
 import { faArrowDown, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { MILI_SECONDS_TIME } from '../../constants/EventConstant';
@@ -9,8 +10,8 @@ import { PLATFORM_TYPES, REPORT_DURATION, STATIC_KEYS } from '../../constants/In
 import { DATE_ITEM_RENDERER, RECOVERY_JOBS, REPLICATION_VM_JOBS, TABLE_ALERTS, TABLE_EVENTS, TABLE_HEADER_SITES, TABLE_NODES, TABLE_REPORTS_CARD_CHECKPOINT, TABLE_REPORT_PROTECTED_VMS, TABLE_REPORT_PROTECTION_PLAN } from '../../constants/TableConstants';
 import { valueChange } from '../../store/actions';
 import { fetchDrPlans } from '../../store/actions/DrPlanActions';
-import { exportReportToPDF, generateAuditReport, getCriteria, resetReport } from '../../store/actions/ReportActions';
-import { clearValues, hideApplicationLoader, showApplicationLoader } from '../../store/actions/UserActions';
+import { exportReportToPDF, fetchSchedule, generateAuditReport, getCriteria, setReportCriteria, setReportObject } from '../../store/actions/ReportActions';
+import { clearValues, hideApplicationLoader, setActiveTabReport, showApplicationLoader } from '../../store/actions/UserActions';
 import { getValue } from '../../utils/InputUtils';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
 import { exportTableToExcel, showSelectPlanError, showSiteDetails } from '../../utils/ReportUtils';
@@ -21,6 +22,8 @@ import ReportSystemOverview from './ReportSystemOverview';
 import ReportTables from './ReportTables';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
 import { addMessage } from '../../store/actions/MessageActions';
+import { PLAN_DETAIL_TABS } from '../../constants/UserConstant';
+import ScheduledReport from './ScheduledReport';
 
 class Report extends Component {
   constructor() {
@@ -35,12 +38,15 @@ class Report extends Component {
     const { dispatch } = this.props;
     dispatch(fetchDrPlans(STATIC_KEYS.UI_PROTECTION_PLANS));
     dispatch(valueChange('report.system.includeSystemOverView', true));
+    dispatch(fetchSchedule());
   }
 
   componentWillUnmount() {
     const { dispatch } = this.props;
-    dispatch(resetReport());
+    dispatch(setReportObject({}));
+    dispatch(setReportCriteria({}));
     dispatch(clearValues());
+    dispatch(setActiveTabReport('1'));
   }
 
   toggleCollapse = () => {
@@ -113,9 +119,38 @@ class Report extends Component {
     }, MILI_SECONDS_TIME.TEN_THOUSAND);
   };
 
+  toggleTab(tab) {
+    const { dispatch, user } = this.props;
+    const { reportActiveTab } = user;
+    const activeTab = reportActiveTab;
+    if (activeTab !== tab) {
+      dispatch(setActiveTabReport(tab));
+    }
+  }
+
   renderForm() {
     return (
       <ReportSideBar />
+    );
+  }
+
+  renderNavLink() {
+    const { t, user } = this.props;
+    const { reportActiveTab } = user;
+    const activeTab = reportActiveTab;
+    return (
+      <Nav tabs className="nav-tabs-custom nav-justified nav-resp-width">
+        <NavItem>
+          <NavLink className={`${classnames({ active: activeTab === PLAN_DETAIL_TABS.ONE })} cursor-pointer`} onClick={() => { this.toggleTab(PLAN_DETAIL_TABS.ONE); }}>
+            <span className="d-none d-sm-block">{t('Reports')}</span>
+          </NavLink>
+        </NavItem>
+        <NavItem>
+          <NavLink className={`${classnames({ active: activeTab === PLAN_DETAIL_TABS.TWO })} cursor-pointer`} onClick={() => { this.toggleTab(PLAN_DETAIL_TABS.TWO); }}>
+            <span className="d-none d-sm-block">{t('Scheduled Reports')}</span>
+          </NavLink>
+        </NavItem>
+      </Nav>
     );
   }
 
@@ -190,7 +225,8 @@ class Report extends Component {
   }
 
   render() {
-    const { reports, t } = this.props;
+    const { reports, t, user } = this.props;
+    const { reportActiveTab } = user;
     const { openCollapse } = this.state;
     const { result = {} } = reports;
     const keys = Object.keys(result).length;
@@ -202,28 +238,38 @@ class Report extends Component {
             <Card>
               <CardBody>
                 <DMBreadCrumb links={[{ label: 'report', link: '#' }]} />
-                {hasData ? (
-                  <>
-                    <Button className="btn btn-secondary btn-sm margin-bottom-15 margin-left-19 " onClick={this.toggleCollapse}>
-                      {openCollapse ? <FontAwesomeIcon size="sm" icon={faArrowDown} /> : <FontAwesomeIcon size="sm" icon={faArrowRight} />}
-                      <span className="padding-left-5">{t('filter')}</span>
-                    </Button>
-                    <Button className="btn btn-secondary btn-sm margin-left-10 margin-bottom-15" onClick={this.exportToPDF}>
-                      <i className="far fa-file-pdf text-danger icon_font" title="Export to PDF" />
-                      <span className="padding-left-5">{t('export.pdf')}</span>
-                    </Button>
-                    <Button className="btn btn-secondary btn-sm margin-left-10 margin-bottom-15" onClick={this.exportToExcel}>
-                      <i className="fa fa-solid fa-file-excel text-success icon_font" />
-                      <span className="padding-left-5">{t('export.excel')}</span>
-                    </Button>
-                  </>
-                ) : null}
-                <Row className="margin-left-8">
-                  {this.renderReportFilter()}
-                </Row>
-                <Row className="margin-left-5">
-                  {this.renderReportContents()}
-                </Row>
+                {this.renderNavLink()}
+                <TabContent activeTab={reportActiveTab}>
+                  <TabPane tabId={PLAN_DETAIL_TABS.TWO} className="p-3">
+                    <ScheduledReport />
+                  </TabPane>
+                </TabContent>
+                <TabContent activeTab={reportActiveTab}>
+                  <TabPane tabId={PLAN_DETAIL_TABS.ONE} className="p-3">
+                    {hasData ? (
+                      <>
+                        <Button className="btn btn-secondary btn-sm margin-bottom-15 margin-left-19 " onClick={this.toggleCollapse}>
+                          {openCollapse ? <FontAwesomeIcon size="sm" icon={faArrowDown} /> : <FontAwesomeIcon size="sm" icon={faArrowRight} />}
+                          <span className="padding-left-5">{t('filter')}</span>
+                        </Button>
+                        <Button className="btn btn-secondary btn-sm margin-left-10 margin-bottom-15" onClick={this.exportToPDF}>
+                          <i className="far fa-file-pdf text-danger icon_font" title="Export to PDF" />
+                          <span className="padding-left-5">{t('export.pdf')}</span>
+                        </Button>
+                        <Button className="btn btn-secondary btn-sm margin-left-10 margin-bottom-15" onClick={this.exportToExcel}>
+                          <i className="fa fa-solid fa-file-excel text-success icon_font" />
+                          <span className="padding-left-5">{t('export.excel')}</span>
+                        </Button>
+                      </>
+                    ) : null}
+                    <Row className="margin-left-8">
+                      {this.renderReportFilter()}
+                    </Row>
+                    <Row className="margin-left-5">
+                      {this.renderReportContents()}
+                    </Row>
+                  </TabPane>
+                </TabContent>
               </CardBody>
             </Card>
           </Container>

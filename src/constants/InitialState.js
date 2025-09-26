@@ -32,6 +32,7 @@ const INITIAL_STATE = {
     users: [],
     // Added tab in redux
     drPlanDetailActiveTab: '1',
+    reportActiveTab: '1',
     userPreferences: {},
   },
   sites: { sites: [], selectedSites: [] },
@@ -50,7 +51,7 @@ const INITIAL_STATE = {
   events: { data: [], selected: {}, filteredData: [] },
   alerts: { data: [], selected: {}, associatedEvent: {}, unread: [], filteredData: [] },
   settings: { bundles: [], nodes: [], selectedNodes: [], emailConfig: null, emailRecipients: [], licenses: [], replNodes: [], selectedUsers: [], idp: {}, scheduledNodes: [], selectedScheduledNodes: [], selectedCreateScheduledNodes: [] },
-  reports: { criteria: {}, result: {} },
+  reports: { criteria: {}, result: {}, scheduledReports: [], scheduledReportsJobs: [], selectedSchedule: [] },
 };
 
 export default INITIAL_STATE;

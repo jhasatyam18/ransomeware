@@ -6,7 +6,7 @@ import DMField from '../Shared/DMField';
 import { FIELDS } from '../../constants/FieldsConstant';
 
 function ReportSideBar(props) {
-  const { user, dispatch, t } = props;
+  const { user, dispatch, t, showFormat } = props;
   function renderFields(fields) {
     return (
       <Row>
@@ -72,9 +72,9 @@ function ReportSideBar(props) {
         {renderPlanOtions()}
       </div>
       <hr />
-      <Label className="text-muted mt-2">{t('report.duration.heading')}</Label>
+      {!showFormat && <Label className="text-muted mt-2">{t('report.duration.heading')}</Label>}
       <div>
-        {renderProtectionPlanOptions('report.duration')}
+        {renderProtectionPlanOptions(`${showFormat ? 'report.format' : 'report.duration'}`)}
       </div>
     </>
   );
