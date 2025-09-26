@@ -1,3 +1,4 @@
+import { drPlanStatus } from '../store/actions/DrPlanActions';
 import VMInstanceItemRenderer from '../components/Table/ItemRenderers/VMInstanceItemRenderer';
 import { getRecoveryVMName } from '../utils/TableUtils';
 import { REPORT_DURATION, STATIC_KEYS } from './InputConstants';
@@ -77,10 +78,13 @@ export const REPORT_DATA_REDUCTION_RATIO = 'REPORT_DATA_REDUCTION_RATIO';
 export const WRAP_TEXT_ITEM_RENDERER = 'WRAP_TEXT_ITEM_RENDERER';
 export const SYSTEM_UPGRADE_SCHEDULE_ITEM_RENDERER = 'SYSTEM_UPGRADE_SCHEDULE_ITEM_RENDERER';
 export const SCHEDULE_NODE_LOCATION_ITEM_RENDERER = 'SCHEDULE_NODE_LOCATION_ITEM_RENDERER';
-
+export const PLAN_LIST_WORKLOAD = 'PLAN_LIST_WORKLOAD';
+export const VM_REPL_STATUS = 'VM_REPL_STATUS';
 // show time taken by any job
 export const TIME_DURATION_RENDERER = 'TIME_RENDERER';
 export const VM_TENANCY_ITEM_RENDERER = 'VM_TENANCY_ITEM_RENDERER';
+
+export const REVERSE_SHOW_DISABLED_VM_REPL_WARNING = 'REVERSE_SHOW_DISABLED_VM_REPL_WARNING';
 
 export const TABLE_HEADER_SITES = [
   { label: 'site.name', field: 'name', itemRenderer: SITE_NAME_LINK_RENDERER },
@@ -96,7 +100,8 @@ export const TABLE_HEADER_DR_PLANS = [
   { label: 'protected.name', field: 'protectedSite.name', itemRenderer: PROTECTION_SITE_LINK_ITEM_RENDERER },
   { label: 'recovery.site', field: 'recoverySite.name', itemRenderer: RECOVERY_SITE_LINK_ITEM_RENDERER },
   { label: 'replication.interval', field: 'replicationInterval', itemRenderer: REPLICATION_INTERVAL_ITEM_RENDERER },
-  { label: 'status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
+  { label: 'Workload', itemRenderer: PLAN_LIST_WORKLOAD, field: 'status' },
+  { label: 'status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER, options: { getValueFromFunc: drPlanStatus } },
   { label: 'Recovery Status', field: 'recoveryStatus', itemRenderer: DR_PLAN_RECOVERY_STATUS_RENDERER },
   { label: 'Playbook', field: '', itemRenderer: PLAYBOOK_ITEM_RENDERER },
 ];
@@ -113,6 +118,7 @@ export const TABLE_BOOT_VM_VMWARE = [
 
 export const TABLE_PROTECTION_PLAN_VMS = [
   { label: 'name', field: 'name' },
+  { label: 'Replication Enabled', field: 'name', itemRenderer: VM_REPL_STATUS },
   { label: 'size', field: 'virtualDisks', itemRenderer: VM_SIZE_ITEM_RENDERER },
   { label: 'disks', field: 'virtualDisks', itemRenderer: VM_DISK_ITEM_RENDERER },
   { label: 'os', field: 'guestOS', itemRenderer: OS_TYPE_ITEM_RENDERER },
@@ -314,6 +320,7 @@ export const TABLE_FILTER_TEXT = {
   TABLE_HEADER_DR_PLANS: 'Data can be filtered on following fields :- Name, Status, Recovery Status, Protection Site, Recovery Site',
   TABLE_PROTECTION_PLAN_VMS: 'Data can be filtered on following fields :- Name, OS, Disk, Status',
   TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG: 'Data can be filtered on following fields :- Name, Instance Type',
+  TABLE_SELECTIVE_VM_REPLICATION: 'Data can be filtered on following fields :- Name, Sync Status and Replication Status',
 };
 
 export const PLAYBOOKS = [
@@ -378,7 +385,7 @@ export const PROTECTION_PLAN_COLUMNS = [
   { header: 'Protection Site', field: 'protectedSite.name' },
   { header: 'Recovery Site', field: 'recoverySite.name' },
   { header: 'Replication Interval', field: 'replicationInterval', type: REPORT_DURATION.TIME },
-  { header: 'Status', field: 'replStatus', type: REPORT_DURATION.REPLICATION_STATUS },
+  { header: 'Status', field: 'replStatus', type: REPORT_DURATION.REPLICATION_STATUS, options: { getValueFromFunc: drPlanStatus } },
   { header: 'Recovery Status', field: 'rStatus', type: STATIC_KEYS.RECOVER_STATUS },
   { header: 'Average RPO', field: 'achievedAvgRPO', type: 'rpo-renderer' },
   { header: 'Average RTO', field: 'achievedAvgRTO', type: 'rpo-renderer' },
@@ -491,7 +498,7 @@ export const TABLE_REPORT_PROTECTION_PLAN = [
   { label: 'protected.name', field: 'protectedSite.name', itemRenderer: PROTECTION_SITE_LINK_ITEM_RENDERER },
   { label: 'recovery.site', field: 'recoverySite.name', itemRenderer: RECOVERY_SITE_LINK_ITEM_RENDERER },
   { label: 'replication.interval', field: 'replicationInterval', itemRenderer: REPLICATION_INTERVAL_ITEM_RENDERER },
-  { label: 'status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
+  { label: 'status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER, options: { getValueFromFunc: drPlanStatus } },
   { label: 'Recovery Status', field: 'recoveryStatus', itemRenderer: DR_PLAN_RECOVERY_STATUS_RENDERER },
   { label: 'Average RPO', field: 'achievedAvgRPO', itemRenderer: REPORT_AVG_RPO_RENDERER },
   { label: 'Average RTO', field: 'achievedAvgRTO', itemRenderer: REPORT_AVG_RPO_RENDERER },
@@ -520,4 +527,11 @@ export const TABLE_NODE_UPDATE_SCHEDULER = [
 export const TABLE_NODE_SCHEDULER = [
   { label: 'Name', field: 'name' },
   { label: 'Hostname', field: 'hostname', itemRenderer: SCHEDULE_NODE_LOCATION_ITEM_RENDERER },
+];
+
+export const SELECTIVE_REPLICATION_VM_LIST = [
+  { label: 'Name', field: 'name', allowFilter: true, checked: true },
+  { label: 'Replication Enabled', field: 'replicationStatus', itemRenderer: VM_REPL_STATUS, allowFilter: true, checked: true },
+  { label: 'Sync Status', field: 'syncStatus', itemRenderer: STATUS_ITEM_RENDERER, allowFilter: true, checked: true, options: { ItemRenderer: DATE_ITEM_RENDERER, field: 'currentSnapshotTime' } },
+  { label: 'Replication Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER, allowFilter: true, checked: true, options: { ItemRenderer: TRANSFER_SIZE_ITEM_RENDERER, field: 'changedSize' } },
 ];

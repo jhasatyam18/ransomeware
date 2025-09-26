@@ -11,7 +11,7 @@ import Pages404 from '../../pages/Page-404';
 import { clearValues, valueChange } from '../../store/actions';
 import { addMessage } from '../../store/actions/MessageActions';
 import { closeWizard } from '../../store/actions/WizardActions';
-import DRPlanRecoveryCheckpointConfig from '../data-recovery/DRPlanRecoveryCheckpointConfig';
+import DRPlanRecoveryCheckpointConfig from '../DRPlans/DRPlanRecoveryCheckpointConfig';
 import DMWSteps from './DNWizardSteps';
 import DRPlanBootOrderStep from './DRPlanBootOrderStep';
 import DRPlanProtectVMStep from './DRPlanProtectVMStep';

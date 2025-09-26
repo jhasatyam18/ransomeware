@@ -1,7 +1,7 @@
 import React from 'react';
 import { withTranslation } from 'react-i18next';
 import { PLAYBOOKS_STATUS } from '../../constants/AppStatus';
-import FixPlaybookErrors from '../Playbook/FixPlaybookErrors';
+import FixPlaybookErrors from '../DRPlans/Playbook/FixPlaybookErrors';
 import { validatePlaybook } from '../../store/actions/DrPlaybooksActions';
 import { closeModal } from '../../store/actions/ModalActions';
 

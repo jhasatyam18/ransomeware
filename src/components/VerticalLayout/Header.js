@@ -17,7 +17,7 @@ import { addMessage } from '../../store/actions/MessageActions';
 import { callAPI } from '../../utils/ApiUtils';
 import NotificationDropdown from '../CommonForBoth/TopbarDropdown/NotificationDropdown';
 import ProfileMenu from '../CommonForBoth/TopbarDropdown/ProfileMenu';
-import WarningMessage from '../Dashboard/WarningMessage';
+import WarningMessage from '../Dashboard/WarningBanner';
 
 function Header(props) {
   const [vcIp, setVcIp] = useState('');
@@ -149,20 +149,6 @@ function Header(props) {
                 </div>
               </Link>
             </div>
-            {/* <div className="navbar-brand-box d-flex align-items-center ">
-              <img
-                src={dmlogo}
-                alt="Datamotive Logo"
-                width={37}
-                height={37}
-                style={{ objectFit: 'contain' }}
-                className="logo-size"
-              />
-              <div className="logo-lg">
-                <p style={{ fontSize: '21px', fontWeight: 'none' }} className="mb-0 text-muted mt-2  ">DATAMOTIVE</p>
-                <small style={{ position: 'relative', top: '-10px', fontSize: '9px' }} className="text-muted ">Eliminating Cloud Boundaries</small>
-              </div>
-            </div> */}
             <button
               type="button"
               onClick={toggleMenu}

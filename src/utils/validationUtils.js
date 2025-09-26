@@ -6,7 +6,7 @@ import { CHECKPOINT_TYPE, PLATFORM_TYPES, RECOVERY_STATUS, STATIC_KEYS, UI_WORKF
 import { MESSAGE_TYPES } from '../constants/MessageConstants';
 import { MODAL_CONFIRMATION_WARNING, MODAL_REVERSE_CHANGES_WARNING, MODAL_SHOW_WINPREP_UPDATE_WARNING } from '../constants/Modalconstant';
 import { STORE_KEYS } from '../constants/StoreKeyConstants';
-import { GENERAL_PLATFORM_KEYS, PLAN_KEYS, REC_SCRIPTS, REP_SCRIPTS } from '../constants/UserConstant';
+import { GENERAL_PLATFORM_KEYS, KEY_CONSTANTS, PLAN_KEYS, REC_SCRIPTS, REP_SCRIPTS } from '../constants/UserConstant';
 import { IP_REGEX } from '../constants/ValidationConstants';
 import { addErrorMessage, hideApplicationLoader, removeErrorMessage, showApplicationLoader, valueChange } from '../store/actions';
 import { setVMGuestOSInfo } from '../store/actions/DrPlanActions';
@@ -239,7 +239,7 @@ export async function validateMigrationVMs({ user, dispatch }) {
           const response = await callAPI(API_VALIDATE_MIGRATION, obj);
           dispatch(hideApplicationLoader('VALIDATING_MIGRATION_MACHINBES'));
           if (response.length > 0) {
-            return showValidationInfo(response, dispatch);
+            return showValidationInfo(response, dispatch, vms);
           }
           return true;
         }
@@ -576,9 +576,8 @@ export async function validateRecoveryVMs({ user, dispatch, doNotShowPopup }) {
             });
             dispatch(valueChange('recovery.discard.warning.vms', warningVMS));
             dispatch(valueChange('recovery.discardPartialChanges', true));
-            return showValidationInfo(response, dispatch);
           }
-          return true;
+          return showValidationInfo(response, dispatch, vms);
         }
       } catch (err) {
         dispatch(hideApplicationLoader('VALIDATING_RECOVERY_MACHINES'));
@@ -1023,7 +1022,7 @@ export function isIPsPartOfCidr(cidr, ipAddr) {
   return true;
 }
 
-function showValidationInfo(response = [], dispatch) {
+function showValidationInfo(response = [], dispatch, selectedVms) {
   const errors = response.filter((res) => (res && res.isWarning === false));
   const warnings = response.filter((res) => (res && res.isWarning === true));
   let isPrepNodeWrn = false;
@@ -1043,9 +1042,20 @@ function showValidationInfo(response = [], dispatch) {
       warnDataForPrep.push(`${w.vmName} - ${w.message}`);
     });
   }
-  if (isPrepNodeWrn) {
+
+  const replDisabledWrn = [];
+  Object.keys(selectedVms).forEach((el) => {
+    if (selectedVms[el].replicationStatus === KEY_CONSTANTS.DISABLED || selectedVms[el].replicationStatus === KEY_CONSTANTS.DISABLING) {
+      replDisabledWrn.push(selectedVms[el]);
+    }
+  });
+
+  if (isPrepNodeWrn || replDisabledWrn.length > 0) {
+    if (replDisabledWrn.length > 0) {
+      warnDataForPrep.push(KEY_CONSTANTS.REPL_DISABLED_RECOVERY_WARNING_MODAL_TEXT);
+    }
     // if any warning with prep node found open modal for it otherwise show message banner
-    const options = { title: 'Confirmation', size: 'lg', data: warnDataForPrep, render: MODAL_SHOW_WINPREP_UPDATE_WARNING, confirmAction: onUpdateWarningConfirm, message: '', footerLabel: 'Ignore warning and continue', color: 'warning' };
+    const options = { title: 'Confirmation', size: 'lg', selectedVms: replDisabledWrn, data: warnDataForPrep, render: MODAL_SHOW_WINPREP_UPDATE_WARNING, confirmAction: onUpdateWarningConfirm, message: '', footerLabel: 'Ignore warning and continue', color: 'warning' };
     dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
     return false;
   }

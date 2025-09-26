@@ -1,14 +1,18 @@
-import { faBackward, faBroom, faCheck, faClone, faDownload, faEdit, faPlay, faPlus, faRetweet, faStop, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faBackward, faBroom, faCheck, faCheckDouble, faClone, faDesktop, faDownload, faEdit, faPlay, faPlus, faRetweet, faStop, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 import React, { Component, Suspense } from 'react';
 import { withTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import SimpleBar from 'simplebar-react';
 import { Badge, Card, CardBody, CardTitle, Col, Container, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
 import { PLATFORM_TYPES, PROTECTION_PLANS_STATUS, RECOVERY_STATUS, REPLICATION_STATUS } from '../../constants/InputConstants';
-import { PROTECTION_PLAN_CLEANUP_PATH, PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
+import { PROTECTION_PLAN_CLEANUP_PATH, PROTECTION_PLANS_PATH, PROTECTION_PLAN_FLOW } from '../../constants/RouterConstants';
+import DMToolTip from '../Shared/DMToolTip';
 import { PLAN_DETAIL_TABS } from '../../constants/UserConstant';
 import { setActiveTab } from '../../store/actions';
 import { fetchCheckpointsByPlanId, setCheckpointCount, setVmlevelCheckpoints } from '../../store/actions/checkpointActions';
-import { fetchDRPlanById, onDeleteProtectionPlanClick, onResetDiskReplicationClick, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, playbookExport, startPlan, stopPlan } from '../../store/actions/DrPlanActions';
+import { drPlanStatus, fetchDRPlanById, onDeleteProtectionPlanClick, onResetDiskReplicationClick, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, planDetailSummaryData, playbookExport } from '../../store/actions/DrPlanActions';
 import { downloadRecoveryPlaybook } from '../../store/actions/DrPlaybooksActions';
 import { convertMinutesToDaysHourFormat, getRecoveryCheckpointSummary } from '../../utils/AppUtils';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
@@ -19,6 +23,9 @@ import DMBreadCrumb from '../Common/DMBreadCrumb';
 import DropdownActions from '../Common/DropdownActions';
 import Loader from '../Shared/Loader';
 import ProtectionPlanVMConfig from './ProtectionPlanVMConfig';
+import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
+import { closeModal, openModal } from '../../store/actions/ModalActions';
+import Spinner from '../Common/Spinner';
 
 const Replication = React.lazy(() => import('../Jobs/Replication'));
 const Recovery = React.lazy(() => import('../Jobs/Recovery'));
@@ -29,6 +36,9 @@ class DRPlanDetails extends Component {
   constructor() {
     super();
     this.disableEdit = this.disableEdit.bind(this);
+    this.showTestRecoveredVmModal = this.showTestRecoveredVmModal.bind(this);
+    this.showTestRecoveredVm = this.showTestRecoveredVm.bind(this);
+    this.footer = this.footer.bind(this);
   }
 
   componentDidMount() {
@@ -36,9 +46,7 @@ class DRPlanDetails extends Component {
     const { pathname } = location;
     const parts = pathname.split('/');
     this.toggleTab = this.toggleTab.bind(this);
-    const urlParams = new URLSearchParams(window.location.search);
-    const params = Object.fromEntries(urlParams.entries());
-    dispatch(fetchDRPlanById(parts[parts.length - 1], params));
+    dispatch(fetchDRPlanById(parts[parts.length - 1]));
     dispatch(fetchCheckpointsByPlanId(parts[parts.length - 1]));
     dispatch(setActiveTab('1'));
   }
@@ -48,6 +56,18 @@ class DRPlanDetails extends Component {
     dispatch(setVmlevelCheckpoints([]));
     dispatch(setCheckpointCount(0));
   }
+
+  stopPlanClick = () => () => {
+    const { drPlans, history } = this.props;
+    const { protectionPlan } = drPlans;
+    history.push(`${PROTECTION_PLAN_FLOW.replace(':id', protectionPlan.id).replace(':flow', 'stop')}`);
+  };
+
+  startPlanCLick = () => () => {
+    const { drPlans, history } = this.props;
+    const { protectionPlan } = drPlans;
+    history.push(`${PROTECTION_PLAN_FLOW.replace(':id', protectionPlan.id).replace(':flow', 'start')}`);
+  };
 
   disableEdit() {
     const { drPlans, user } = this.props;
@@ -69,12 +89,13 @@ class DRPlanDetails extends Component {
 
   disableStart(protectionPlan) {
     const { user } = this.props;
-    return (isPlanRecovered(protectionPlan) || protectionPlan.status === REPLICATION_STATUS.INIT_FAILED || protectionPlan.status === REPLICATION_STATUS.INITIALIZING || protectionPlan.status.toUpperCase() === REPLICATION_STATUS.STARTED || !hasRequestedPrivileges(user, ['protectionplan.status']));
+    const newStatus = drPlanStatus(protectionPlan);
+    return (isPlanRecovered(protectionPlan) || newStatus === REPLICATION_STATUS.INIT_FAILED || newStatus === REPLICATION_STATUS.INITIALIZING || !hasRequestedPrivileges(user, ['protectionplan.status']));
   }
 
   disableStop(protectionPlan) {
     const { user } = this.props;
-    return (isPlanRecovered(protectionPlan) || protectionPlan.status === REPLICATION_STATUS.INIT_FAILED || protectionPlan.status === REPLICATION_STATUS.INITIALIZING || protectionPlan.status === REPLICATION_STATUS.STOPPED || !hasRequestedPrivileges(user, ['protectionplan.status']));
+    return (isPlanRecovered(protectionPlan) || protectionPlan.status === REPLICATION_STATUS.INIT_FAILED || protectionPlan.status === REPLICATION_STATUS.INITIALIZING || !hasRequestedPrivileges(user, ['protectionplan.status']));
   }
 
   toggleTab(tab) {
@@ -97,6 +118,51 @@ class DRPlanDetails extends Component {
       return true;
     }
     return !hasRequestedPrivileges(user, ['recovery.reverse']);
+  }
+
+  showTestRecoveredVm() {
+    const { drPlans } = this.props;
+    const { testRecoveryInMonth } = drPlans;
+    const { tested, notTested } = testRecoveryInMonth;
+    return (
+      <>
+        <SimpleBar style={{ maxHeight: '40vh', minHeight: '10vh', color: 'white', textAlign: 'center' }}>
+          <Row>
+            <Col sm={1} />
+            <Col sm={5} style={{ borderRight: '1px solid #32394e' }}>
+              <p style={{ fontWeight: 'bold', marginBottom: '2px' }}>Test Recovered</p>
+              <hr style={{ margin: '4px' }} />
+              {tested?.map((el) => <p key={`${el}-tested`} style={{ marginBottom: '2px' }}>{el}</p>)}
+            </Col>
+            <Col sm={1} />
+            <Col sm={5}>
+              <p style={{ fontWeight: 'bold', marginBottom: '2px' }}>Not Tested</p>
+              <hr style={{ margin: '4px' }} />
+              {notTested?.map((el) => <p key={`${el}-tested`} style={{ marginBottom: '2px' }}>{el}</p>)}
+            </Col>
+          </Row>
+        </SimpleBar>
+      </>
+    );
+  }
+
+  footer() {
+    const { t, dispatch } = this.props;
+    return (
+      <>
+        <div className="modal-footer">
+          <button type="button" className="btn btn-secondary" onClick={() => dispatch(closeModal())}>
+            {t('close')}
+          </button>
+        </div>
+      </>
+    );
+  }
+
+  showTestRecoveredVmModal() {
+    const { dispatch } = this.props;
+    const options = { title: 'Test Recovered Virtual Machines', footerComponent: this.footer, node: null, isUpdate: false, component: this.showTestRecoveredVm, size: 'lg' };
+    dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
   }
 
   renderSite(site) {
@@ -229,28 +295,33 @@ class DRPlanDetails extends Component {
   renderStatus() {
     const { drPlans, t } = this.props;
     const { protectionPlan } = drPlans;
-    const { status } = protectionPlan;
-
-    if (status === PROTECTION_PLANS_STATUS.STOPPED) {
+    const newStatus = drPlanStatus(protectionPlan);
+    if (newStatus === PROTECTION_PLANS_STATUS.STOPPED) {
       return (
         <Badge pill color="danger">{t('status.stopped')}</Badge>
       );
     }
-    if (status === PROTECTION_PLANS_STATUS.INIT_FAILED) {
+    if (newStatus === PROTECTION_PLANS_STATUS.INIT_FAILED) {
       return (
         <Badge pill color="danger">{t('status.init.failed')}</Badge>
       );
     }
-    if (status === PROTECTION_PLANS_STATUS.INITIALIZING) {
+    if (newStatus === PROTECTION_PLANS_STATUS.INITIALIZING) {
       return (
         <Badge pill color="info">{t('status.initializing')}</Badge>
       );
     }
-    if (status === PROTECTION_PLANS_STATUS.CREATED || status === PROTECTION_PLANS_STATUS.STARTED) {
+    if (newStatus === PROTECTION_PLANS_STATUS.CREATED || newStatus === PROTECTION_PLANS_STATUS.STARTED) {
       return (
         <Badge color="info" pill>{t('status.running')}</Badge>
       );
     }
+    if (newStatus === PROTECTION_PLANS_STATUS.PARTIALLY_RUNNING) {
+      return (
+        <Badge color="warning" pill>{t('plan.status.partially.running')}</Badge>
+      );
+    }
+
     return (
       <Badge pill color="info">{t('status.running')}</Badge>
     );
@@ -270,8 +341,8 @@ class DRPlanDetails extends Component {
     const cleanupPath = PROTECTION_PLAN_CLEANUP_PATH.replace(':id', protectionPlan.id);
     let actions = [];
     if (platformType === protectedSitePlatform && localVMIP !== recoverySite.node.hostname) {
-      actions.push({ label: 'Start', action: startPlan, id: protectionPlan.id, disabled: this.disableStart(protectionPlan), icon: faPlay });
-      actions.push({ label: 'Stop', action: stopPlan, id: protectionPlan.id, disabled: this.disableStop(protectionPlan), icon: faStop });
+      actions.push({ label: 'Start', action: this.startPlanCLick, id: protectionPlan.id, disabled: this.disableStart(protectionPlan), icon: faPlay });
+      actions.push({ label: 'Stop', action: this.stopPlanClick, id: protectionPlan.id, disabled: this.disableStop(protectionPlan), icon: faStop });
       actions.push({ label: 'Edit', action: openEditProtectionPlanWizard, id: protectionPlan, disabled: this.disableEdit(), icon: faEdit });
       actions.push({ label: 'Resync Disk Replication', action: onResetDiskReplicationClick, id: protectionPlan, disabled: isServerActionDisabled, navigate: PROTECTION_PLANS_PATH, icon: faRetweet });
       actions.push({ label: 'Download Plan Playbook', action: playbookExport, id: protectionPlan, disabled: this.disableEdit(), icon: faDownload });
@@ -327,6 +398,78 @@ class DRPlanDetails extends Component {
     );
   }
 
+  renderSummaryRow(plan) {
+    const { t, drPlans } = this.props;
+    const { testRecoveryInMonth, protectionPlan } = drPlans;
+    const { protectedSite } = protectionPlan;
+    const { node } = protectedSite;
+    const { isLocalNode } = node;
+    const { replEnableTotalNumVms, recoveryTotalNumVms, numOfWorkload } = planDetailSummaryData(plan);
+    return (
+      <>
+        <Row>
+          <Col sm={isLocalNode ? 4 : 2}>
+            <div className="d-flex justify-content-between">
+              <div>
+                <FontAwesomeIcon className="me-2" icon={faDesktop} />
+                {t('workloads')}
+              </div>
+              <div>{numOfWorkload}</div>
+            </div>
+          </Col>
+          {isLocalNode ? <Col sm={2} /> : null}
+          <Col sm={isLocalNode ? 4 : 3} className="ms-3">
+            <div className="d-flex justify-content-between">
+              <div>
+                <FontAwesomeIcon className="me-2" icon={faClone} />
+                {t('repl.enabled')}
+              </div>
+              <div>{`${replEnableTotalNumVms.length} / ${numOfWorkload}`}</div>
+            </div>
+          </Col>
+          {!isLocalNode ? (
+            <>
+              <Col sm={1} />
+              <Col sm={3}>
+                <div className="d-flex justify-content-between">
+                  <div>
+                    <FontAwesomeIcon icon={faCheck} />
+                    {t('test.recovered.title')}
+                  </div>
+                  {testRecoveryInMonth && Object.keys(testRecoveryInMonth).length > 0 ? (
+                    <div
+                      className="d-flex"
+                    >
+                      <a
+                        href="#"
+                        className="me-3 cursor-pointer"
+                        id="test-recovered-vm"
+                        onClick={this.showTestRecoveredVmModal}
+                      >
+                        {`${testRecoveryInMonth?.tested?.length || 0} / ${numOfWorkload}`}
+                      </a>
+                      <DMToolTip tooltip="test.data.count" />
+                    </div>
+                  ) : <Spinner /> }
+
+                </div>
+              </Col>
+              <Col sm={2} className="ms-4">
+                <div className="d-flex justify-content-between">
+                  <div>
+                    <FontAwesomeIcon className="me-2" icon={faCheckDouble} />
+                    {t('recovered')}
+                  </div>
+                  <div>{`${recoveryTotalNumVms.length} / ${numOfWorkload}`}</div>
+                </div>
+              </Col>
+            </>
+          ) : null}
+        </Row>
+      </>
+    );
+  }
+
   render() {
     const { drPlans, dispatch, t, user } = this.props;
     const { drPlanDetailActiveTab } = user;
@@ -370,6 +513,8 @@ class DRPlanDetails extends Component {
                   {this.renderSite(recoverySite, true)}
                 </Col>
               </Row>
+              <hr />
+              {this.renderSummaryRow(protectionPlan)}
             </CardBody>
           </Card>
           <Card className="box-shadow">
@@ -453,4 +598,9 @@ class DRPlanDetails extends Component {
     );
   }
 }
-export default (withTranslation()(DRPlanDetails));
+
+function mapStateToProps(state) {
+  const { drPlans } = state;
+  return { drPlans };
+}
+export default connect(mapStateToProps)(withTranslation()(DRPlanDetails));

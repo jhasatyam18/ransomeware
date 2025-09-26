@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Badge, Card, CardHeader, Col, Collapse, Row } from 'reactstrap';
-import { isEmpty, isEmptyNum } from '../../utils/validationUtils';
+import { isEmpty, isEmptyNum } from '../../../utils/validationUtils';
 
 function ShowPlaybookVmChanges(props) {
   const { t, data, type, add, deletedData } = props;

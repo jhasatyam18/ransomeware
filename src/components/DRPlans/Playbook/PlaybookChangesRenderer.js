@@ -1,7 +1,7 @@
 import React from 'react';
 import { withTranslation } from 'react-i18next';
-import { clearValues } from '../../store/actions';
-import { playbookFetchPlanDiff } from '../../store/actions/DrPlaybooksActions';
+import { clearValues } from '../../../store/actions';
+import { playbookFetchPlanDiff } from '../../../store/actions/DrPlaybooksActions';
 
 function PlaybookChangesRenderer({ dispatch, data, field, t }) {
   const planId = data[field];

@@ -39,5 +39,6 @@
     "revert.summary.version.mismatch.warning": "Data sync for workloads will remain paused until the following node(s) are reverted to version ({{localNodeVersion}}).",
     "applicable.node":"Applicable Nodes",
     "logout": "Logout ",
-    "note:":"Note:"
+  "DM_ERR_INTERNAL_SERVER":"Internal server error",
+    "note":"Note : "
 }

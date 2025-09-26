@@ -1,8 +1,8 @@
 import React from 'react';
 import { withTranslation } from 'react-i18next';
 import { Col, Row } from 'reactstrap';
-import { MODAL_TEMPLATE_ERROR } from '../../constants/Modalconstant';
-import { openModal } from '../../store/actions/ModalActions';
+import { MODAL_TEMPLATE_ERROR } from '../../../constants/Modalconstant';
+import { openModal } from '../../../store/actions/ModalActions';
 
 function FixPlaybookErrors({ dispatch, playbook, t }) {
   const onErrorClick = () => {

@@ -2,17 +2,17 @@ import React, { useEffect, useRef } from 'react';
 import { withTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Card, CardBody, Col, Container, Row } from 'reactstrap';
-import { API_GET_BULK_PLANS } from '../../constants/ApiConstants';
-import { MILI_SECONDS_TIME } from '../../constants/EventConstant';
-import { STATIC_KEYS } from '../../constants/InputConstants';
-import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
-import { PLAYBOOKS } from '../../constants/TableConstants';
-import { handlePlaybooksSelect, setAllPlaybooks, setPlaybookData } from '../../store/actions/DrPlaybooksActions';
-import { addMessage } from '../../store/actions/MessageActions';
-import { callAPI } from '../../utils/ApiUtils';
-import DMBreadCrumb from '../Common/DMBreadCrumb';
-import DMTable from '../Table/DMTable';
+import { API_GET_BULK_PLANS } from '../../../constants/ApiConstants';
+import { MILI_SECONDS_TIME } from '../../../constants/EventConstant';
+import { STATIC_KEYS } from '../../../constants/InputConstants';
+import { MESSAGE_TYPES } from '../../../constants/MessageConstants';
+import { PROTECTION_PLANS_PATH } from '../../../constants/RouterConstants';
+import { PLAYBOOKS } from '../../../constants/TableConstants';
+import { handlePlaybooksSelect, setAllPlaybooks, setPlaybookData } from '../../../store/actions/DrPlaybooksActions';
+import { addMessage } from '../../../store/actions/MessageActions';
+import { callAPI } from '../../../utils/ApiUtils';
+import DMBreadCrumb from '../../Common/DMBreadCrumb';
+import DMTable from '../../Table/DMTable';
 import CommonPlaybookActions from './CommonPlaybookActions';
 
 function Playbooks(props) {

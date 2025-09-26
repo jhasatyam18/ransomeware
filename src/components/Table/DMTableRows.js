@@ -15,9 +15,9 @@ class DMTableRow extends Component {
     dispatch(onSelect(data, e.target.checked, primaryKey));
   }
 
-  getItemRenderer(render, data, field) {
+  getItemRenderer(render, data, field, options) {
     const { user, dispatch } = this.props;
-    return getItemRendererComponent({ render, data, field, user, dispatch });
+    return getItemRendererComponent({ render, data, field, user, dispatch, options });
   }
 
   getObjectValue(object, field) {
@@ -43,9 +43,9 @@ class DMTableRow extends Component {
   }
 
   renderCellContent(tableHeader, data) {
-    const { field, itemRenderer, filterText } = tableHeader;
+    const { field, itemRenderer, filterText, options } = tableHeader;
     if (itemRenderer) {
-      return this.getItemRenderer(itemRenderer, data, field);
+      return this.getItemRenderer(itemRenderer, data, field, options);
     }
     const value = this.getObjectValue(data, field);
     if (typeof filterText !== 'undefined') {

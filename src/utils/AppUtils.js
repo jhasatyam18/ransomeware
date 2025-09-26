@@ -1,7 +1,11 @@
 import { faCalendar, faCalendarDays, faChartColumn, faClockFour, faClone, faCloud, faComputer, faDesktop, faEnvelope, faFileContract, faGear, faHeadset, faIdCard, faLayerGroup, faNetworkWired, faScroll, faSliders, faTachometerAltFast, faTasks, faUndo, faUsers, faUserShield } from '@fortawesome/free-solid-svg-icons';
 import { t } from 'i18next';
+import { addMessage } from '../store/actions/MessageActions';
+import { MESSAGE_TYPES } from '../constants/MessageConstants';
+import { KEY_CONSTANTS } from '../constants/UserConstant';
+import { addWarningBannerMsg } from '../store/actions';
 import { RECOVERY_STATUS } from '../constants/AppStatus';
-import { PLATFORM_TYPES, STATIC_KEYS } from '../constants/InputConstants';
+import { PLATFORM_TYPES, PROTECTION_PLANS_STATUS, STATIC_KEYS } from '../constants/InputConstants';
 import * as RPATH from '../constants/RouterConstants';
 import { getCheckpointTimeFromMinute } from '../store/actions/checkpointActions';
 import { getAzureNetworkOptions, getValue } from './InputUtils';
@@ -584,4 +588,52 @@ function searchOnNestedColumn(row, columns, value) {
     return parent;
   }
   return null;
+}
+
+export function renderPlanErrorInWarnMsg(plans) {
+  return (dispatch) => {
+    const obj = { replDisabledVmCount: 0, replDisabledPlanCount: 0 };
+    if (!plans || plans.length === 0) return obj;
+    plans.map((el) => {
+      const plan = el;
+      const { protectedEntities, status } = plan;
+      const { virtualMachines } = protectedEntities;
+      let planReplDisabled = false;
+      if (status === PROTECTION_PLANS_STATUS.STARTED || status === PROTECTION_PLANS_STATUS.PARTIALLY_RUNNING) {
+        virtualMachines.map((vm) => {
+          if (vm.replicationStatus === KEY_CONSTANTS.DISABLED) {
+            obj.replDisabledVmCount += 1;
+            planReplDisabled = true;
+          }
+        });
+        if (planReplDisabled) {
+          obj.replDisabledPlanCount += 1;
+        }
+      }
+    });
+
+    dispatch(addWarningBannerMsg('repl.disable.msg', obj));
+  };
+}
+
+export function renderErrors(errors) {
+  return (dispatch) => {
+    errors.map((err) => {
+      dispatch(addMessage(err.errorMessage, MESSAGE_TYPES.ERROR));
+    });
+  };
+}
+
+export function errorMessageForReasonInReplOp({ fieldKey, user }) {
+  const path = window.location.pathname.split('/');
+  const workflow = path[path.length - 1];
+  const { values } = user;
+  const val = getValue(fieldKey, values) || '';
+  if (!val) {
+    if (workflow === KEY_CONSTANTS.STOP) {
+      return 'Please provide a reason to stop replication';
+    } if (workflow === KEY_CONSTANTS.START) {
+      return 'Please provide a reason to start replication';
+    }
+  }
 }

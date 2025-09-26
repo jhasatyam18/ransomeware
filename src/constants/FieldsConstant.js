@@ -1,4 +1,5 @@
 import i18n from 'i18next';
+import { errorMessageForReasonInReplOp } from '../utils/AppUtils';
 import { onNodeTypeChange, onPlatformTypeChange } from '../store/actions';
 import { onProtectionPlanChange } from '../store/actions/DrPlanActions';
 import { onProtectSiteChange, updateAvailabilityZones } from '../store/actions/SiteActions';
@@ -285,4 +286,7 @@ export const FIELDS = {
   'ui.common.checkpoint': { shouldShow: true, type: FIELD_TYPE.SELECT_SEARCH, options: (user) => commonCheckpointOptions(user), validate: true, errorMessage: '', onChange: ({ value, fieldKey, dispatch }) => onCommonCheckpointChange({ value, dispatch, fieldKey }), fieldInfo: 'common.checkpoint.info' },
   'ui.vm.replication.type': { label: '', shouldShow: true, type: FIELD_TYPE.SELECT, options: (user, fieldKey, dispatch) => getVmReplicationTypeOptions(user, fieldKey, dispatch), validate: ({ value }) => isEmpty({ value }), errorMessage: 'Please select replication type', defaultValue: (user, fieldKey, dispatch) => defaultReplicationTypeForVm({ user, fieldKey, dispatch }), hasWarningFunc: (user, fieldKey, fieldName) => hasWarning(user, fieldKey, fieldName) },
   'ui.vm.entity.type': { label: '', shouldShow: true, type: FIELD_TYPE.SELECT, options: (user, fieldKey, dispatch) => getVmEntityTypeOptions(user, fieldKey, dispatch), validate: ({ value }) => isEmpty({ value }), errorMessage: 'Please select entity type', defaultValue: (user, fieldKey, dispatch) => defaultEntityTypeForVm({ user, fieldKey, dispatch }), hasWarningFunc: (user, fieldKey, fieldName) => hasWarning(user, fieldKey, fieldName) },
+  'stop.repl.reason': {
+    label: 'Reason', placeHolderText: 'Reason', type: FIELD_TYPE.TEXT, maxLength: 128, shouldShow: true, fieldInfo: 'Please provide reason', validate: (value, user) => isEmpty(value, user), errorMessage: 'pleas', errorFunction: errorMessageForReasonInReplOp,
+  },
 };

@@ -74,6 +74,14 @@ export const KEY_CONSTANTS = {
   CHECKPOINT_EXPIRY_TIME: 'expirationTime',
   CHECKPOINT_RECOVERY_POINT_TIME: 'recoveryPointTime',
   CHECKPOINT_DELETED_FROM_PLATFORM: 'Deleted from Platform',
+  START: 'start',
+  STOP: 'stop',
+  DISABLED: 'disabled',
+  ENABLED: 'enabled',
+  DISABLING: 'disabling',
+  REPL_DISABLED_RECOVERY_WARNING_MODAL_TEXT: 'REPL_DISABLED_RECOVERY_WARNING_MODAL_TEXT',
+  INCREASE: 'increase',
+  DESCREASE: 'decrease',
 };
 
 export const THEME_CONSTANT = {

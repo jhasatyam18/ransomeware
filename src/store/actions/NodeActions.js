@@ -1,4 +1,3 @@
-// actions
 import * as Types from '../../constants/actionTypes';
 // constants
 import { API_NODES } from '../../constants/ApiConstants';

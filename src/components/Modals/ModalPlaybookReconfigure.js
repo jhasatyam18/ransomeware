@@ -10,7 +10,7 @@ import { refresh } from '../../store/actions';
 import { getValue } from '../../utils/InputUtils';
 import { closeModal, openModal } from '../../store/actions/ModalActions';
 import { STATIC_KEYS } from '../../constants/InputConstants';
-import ShowPlaybookVmChanges from '../Playbook/ShowPlaybookVmChanges';
+import ShowPlaybookVmChanges from '../DRPlans/Playbook/ShowPlaybookVmChanges';
 import { MODAL_CBT_CONFIRMATION } from '../../constants/Modalconstant';
 
 function ModalPlaybookReconfigure({ dispatch, user, options, t }) {

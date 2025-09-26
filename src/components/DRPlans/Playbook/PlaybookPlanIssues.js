@@ -3,9 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardHeader, Col, Collapse, Row } from 'reactstrap';
-import { PLAYBOOK_ISSUES } from '../../constants/TableConstants';
-import { KEY_CONSTANTS } from '../../constants/UserConstant';
-import DMTable from '../Table/DMTable';
+import { PLAYBOOK_ISSUES } from '../../../constants/TableConstants';
+import { KEY_CONSTANTS } from '../../../constants/UserConstant';
+import DMTable from '../../Table/DMTable';
 
 function PlaybookPlanIssues({ data, t }) {
   const { planValidationResponse, name } = data;

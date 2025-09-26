@@ -3,12 +3,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useRef, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Popover, PopoverBody } from 'reactstrap';
-import { PLAYBOOKS_STATUS, PLAYBOOK_IN_VALIDATED, TEMPLATE_STATUS } from '../../constants/AppStatus';
-import { MODAL_CBT_CONFIRMATION, MODAL_CONFIRMATION_WARNING, MODAL_TEMPLATE_ERROR } from '../../constants/Modalconstant';
-import { KEY_CONSTANTS } from '../../constants/UserConstant';
-import { onCreatePlanFromPlaybook, playbookFetchPlanDiff, validatePlaybook } from '../../store/actions/DrPlaybooksActions';
-import { closeModal, openModal } from '../../store/actions/ModalActions';
-import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
+import { PLAYBOOKS_STATUS, PLAYBOOK_IN_VALIDATED, TEMPLATE_STATUS } from '../../../constants/AppStatus';
+import { MODAL_CBT_CONFIRMATION, MODAL_CONFIRMATION_WARNING, MODAL_TEMPLATE_ERROR } from '../../../constants/Modalconstant';
+import { KEY_CONSTANTS } from '../../../constants/UserConstant';
+import { onCreatePlanFromPlaybook, playbookFetchPlanDiff, validatePlaybook } from '../../../store/actions/DrPlaybooksActions';
+import { closeModal, openModal } from '../../../store/actions/ModalActions';
+import { hasRequestedPrivileges } from '../../../utils/PrivilegeUtils';
 
 function SinglePlaybookStatusRenderer({ playbook, field, showStatusLabel, dispatch, t, user, flow }) {
   const status = playbook[field];

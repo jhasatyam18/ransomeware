@@ -2,13 +2,9 @@ import PropTypes from 'prop-types';
 import React, { Component, Suspense } from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
 import { withTranslation } from 'react-i18next';
-import Playbooks from '../Playbook/Playbooks';
-import SinglePlaybookDetailsPage from '../Playbook/SinglePlaybookDetailsPage';
 import { changePageTitle } from '../../utils/AppUtils';
-import { ALERTS_PATH, DASHBOARD_PATH, EVENTS_PATH, JOBS_PATH, LOGIN_PATH, NODES_PATH, PLAYBOOK_DETAILS_PAGE, PLAYBOOK_LIST, PROTECTION_PLANS_PATH, PROTECTION_PLAN_CLEANUP_PATH, PROTECTION_PLAN_DETAILS_PATH, REPORTS_PATH, SETTINGS_PATH, SITES_PATH } from '../../constants/RouterConstants';
+import { ALERTS_PATH, DASHBOARD_PATH, EVENTS_PATH, JOBS_PATH, LOGIN_PATH, NODES_PATH, PROTECTION_PLANS, REPORTS_PATH, SETTINGS_PATH, SITES_PATH } from '../../constants/RouterConstants';
 import Login from '../../pages/AuthenticationInner/Login';
-// import Pages404 from '../../pages/Page-404';
-import DRPlans from '../data-recovery/DRPlans';
 import Node from '../Settings/node/Node';
 import Loader from '../Shared/Loader';
 import Header from './Header';
@@ -16,8 +12,7 @@ import Sidebar from './Sidebar';
 // lazy load components
 const Dashboard = React.lazy(() => import('../Dashboard/Dashboard'));
 const Sites = React.lazy(() => import('../Configure/Sites/Sites'));
-const DRPlanDetails = React.lazy(() => import('../data-recovery/DRPlanDetails'));
-const DRPlanCleanup = React.lazy(() => import('../data-recovery/DRPlanCleanup'));
+const Index = React.lazy(() => import('../DRPlans/Index'));
 const Jobs = React.lazy(() => import('../Jobs/Jobs'));
 const Events = React.lazy(() => import('../Events/Events'));
 const Alerts = React.lazy(() => import('../Alerts/Alerts'));
@@ -64,7 +59,7 @@ class Layout extends Component {
   }
 
   renderRoutes() {
-    const { sites, dispatch, user, drPlans, drPlaybooks } = this.props;
+    const { sites, dispatch, user } = this.props;
     const { privileges = [] } = user;
     changePageTitle(user);
     if (privileges.length === 0) {
@@ -80,16 +75,12 @@ class Layout extends Component {
           <Route path={NODES_PATH} render={() => <Node />} />
           <Route path={DASHBOARD_PATH} render={() => <Dashboard {...this.props} />} />
           <Route path={SITES_PATH} render={() => <Sites user={user} sites={sites} dispatch={dispatch} />} />
-          <Route path={PROTECTION_PLANS_PATH} render={() => <DRPlans user={user} sites={sites} dispatch={dispatch} drPlans={drPlans} />} />
-          <Route path={PROTECTION_PLAN_DETAILS_PATH} render={() => <DRPlanDetails {...this.props} />} />
-          <Route path={PROTECTION_PLAN_CLEANUP_PATH} render={() => <DRPlanCleanup {...this.props} />} />
+          <Route path={PROTECTION_PLANS} render={() => <Index {...this.props} />} />
           <Route path={JOBS_PATH} render={() => <Jobs protectionplanID={0} {...this.props} />} />
           <Route path={EVENTS_PATH} render={() => <Events />} />
           <Route path={ALERTS_PATH} render={() => <Alerts />} />
           <Route path={REPORTS_PATH} render={() => <Report />} />
           <Route path={SETTINGS_PATH} render={() => <Settings />} />
-          <Route path={PLAYBOOK_DETAILS_PAGE} render={() => <SinglePlaybookDetailsPage drPlaybooks={drPlaybooks} dispatch={dispatch} user={user} />} />
-          <Route path={PLAYBOOK_LIST} render={() => <Playbooks drPlaybooks={drPlaybooks} dispatch={dispatch} user={user} />} />
           <Route render={() => <Dashboard {...this.props} />} />
         </Switch>
       </Suspense>

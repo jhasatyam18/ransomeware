@@ -22,7 +22,7 @@ export const REPLICATION_STATUS = {
 };
 
 export const PROTECTION_PLANS_STATUS = {
-  CREATED: 'Created', STOPPED: 'Stopped', STARTED: 'Started', INIT_FAILED: 'Init-Failed', INITIALIZING: 'Initializing',
+  CREATED: 'Created', STOPPED: 'Stopped', STARTED: 'Started', INIT_FAILED: 'Init-Failed', INITIALIZING: 'Initializing', PARTIALLY_RUNNING: 'Partially-Running',
 };
 
 export const RECOVERY_STATUS = {
@@ -221,6 +221,7 @@ export const NODE_TYPES = {
   Replication: 'Replication',
   PrepNode: 'PrepNode',
   DedupeServer: 'DedupeServer',
+  MANAGEMENT: 'Management',
 };
 
 export const SUPPORTED_GUEST_OS = {
@@ -275,6 +276,11 @@ export const EMAIL = {
 export const CHECKPOINT_TYPE = {
   LATEST: 'latest',
   POINT_IN_TIME: 'pointInTime',
+};
+
+export const STOP_REPLICATION_TYPE = {
+  IMMEDIATE: 'stop-immediately',
+  COMPLETE_REPLICATION: 'allow-running',
 };
 export const RECOVERY_TYPE = {
   TEST_RECOVERY: 'test recovery',

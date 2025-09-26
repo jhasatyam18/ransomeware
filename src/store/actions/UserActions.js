@@ -405,14 +405,14 @@ export function detailPathChecks(pathname) {
   return (dispatch, getState) => {
     const { user } = getState();
     const { values } = user;
-    if (pathname.indexOf('protection/plan/details') !== -1) {
+    if (/^\/?protection\/plan\/details\/[0-9]+$/.test(pathname)) {
       const pathArray = pathname.split('/');
       dispatch(fetchDRPlanById(pathArray[pathArray.length - 1]));
       dispatch(fetchCheckpointsByPlanId(pathArray[pathArray.length - 1]));
       if (getValue(STORE_KEYS.RECOVERY_CHECKPOINT_JOB_LINK_INSTANCE, values)) {
         dispatch(valueChange(STORE_KEYS.RECOVERY_CHECKPOINT_JOB_LINK_INSTANCE, undefined));
       }
-    } else if (pathname.indexOf('protection/plan/playbook/') !== -1) {
+    } else if (/^\/?protection\/plan\/playbook\/[0-9]+$/.test(pathname)) {
       const parts = pathname.split('/');
       dispatch(fetchPlaybookById(parts[parts.length - 1]));
     }
@@ -1153,4 +1153,12 @@ export async function decryptAndSetPrivileges(data, nodeKey, dispatch) {
     dispatch(addMessage('Failed to fetch user privileges', MESSAGE_TYPES.ERROR));
   }
   dispatch(setPrivileges(privileges));
+}
+
+export function addWarningBannerMsg(key, value) {
+  return {
+    type: Types.ADD_WARNING_BANNER_MSG,
+    key,
+    value,
+  };
 }

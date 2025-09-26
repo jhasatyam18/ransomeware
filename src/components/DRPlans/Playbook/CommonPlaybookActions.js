@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload, faTrash, faUpload } from '@fortawesome/free-solid-svg-icons';
-import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
-import { API_UPLOAD_TEMPLATED } from '../../constants/ApiConstants';
-import { clearValues } from '../../store/actions';
-import { openModal } from '../../store/actions/ModalActions';
-import { MODAL_PLAYBOOK_DOWNLOAD, MODAL_CONFIRMATION_WARNING, MODAL_PLAYBOOK_UPLOAD } from '../../constants/Modalconstant';
-import { onMultiplePlaybookDelete, uploadFiles } from '../../store/actions/DrPlaybooksActions';
+import { hasRequestedPrivileges } from '../../../utils/PrivilegeUtils';
+import { API_UPLOAD_TEMPLATED } from '../../../constants/ApiConstants';
+import { clearValues } from '../../../store/actions';
+import { openModal } from '../../../store/actions/ModalActions';
+import { MODAL_PLAYBOOK_DOWNLOAD, MODAL_CONFIRMATION_WARNING, MODAL_PLAYBOOK_UPLOAD } from '../../../constants/Modalconstant';
+import { onMultiplePlaybookDelete, uploadFiles } from '../../../store/actions/DrPlaybooksActions';
 
 function CommonPlaybookActions(props) {
   const onGenerate = () => {

@@ -9,7 +9,7 @@ import { refresh } from '../../store/actions';
 import { getValue } from '../../utils/InputUtils';
 import { closeModal } from '../../store/actions/ModalActions';
 import { STATIC_KEYS } from '../../constants/InputConstants';
-import ShowPlaybookVmChanges from '../Playbook/ShowPlaybookVmChanges';
+import ShowPlaybookVmChanges from '../DRPlans/Playbook/ShowPlaybookVmChanges';
 
 function ModalTemplateShowPplanChanges({ dispatch, user, options, t }) {
   const { values } = user;

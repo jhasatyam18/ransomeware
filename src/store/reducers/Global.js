@@ -13,6 +13,8 @@ export default function gobal(state = INITIAL_STATE.global, action) {
       return { ...state, loaderKeys: deleteKeys };
     case Types.CHANGE_THEME:
       return { ...state, theme: action.value };
+    case Types.ADD_WARNING_BANNER_MSG:
+      return { ...state, warningBannerMessages: { ...state.warningBannerMessages, [action.key]: action.value } };
     default:
       return state;
   }

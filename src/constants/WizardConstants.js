@@ -1,4 +1,4 @@
-import { onConfigureDRPlan, startMigration, startRecovery, startReversePlan, updateVMConfig } from '../store/actions/DrPlanActions';
+import { onConfigureDRPlan, reverseValidateDisabledVmRepl, startMigration, startRecovery, updateVMConfig } from '../store/actions/DrPlanActions';
 import { postPlanSitesSelected } from '../store/actions/SiteActions';
 import { checkCBTStatus, noValidate, validateDRPlanProtectData, validateMigrationVMs, validateRecoveryCheckpointData, validateRecoveryVMs, validateReversePlan, validateSteps, validateVMConfiguration, validateVMSelection } from '../utils/validationUtils';
 import { UI_WORKFLOW } from './InputConstants';
@@ -86,7 +86,7 @@ export const TEST_RECOVERY_WIZARDS = {
 
 // Reverse Wizard
 export const REVERSE_WIZARDS = {
-  options: { title: 'Reverse Protection Plan', onFinish: startReversePlan },
+  options: { title: 'Reverse Protection Plan', onFinish: reverseValidateDisabledVmRepl },
   steps: [
     { label: 'Reverse Plan', title: '', component: REVERSE_CONFIG_STEP, validate: (user, dispatch, fields) => validateSteps(user, dispatch, fields), fields: REVERSE_RECOVERY_CONFIGURATION_STEP },
     { label: 'Virtual Machines', title: '', component: REVERSE_VM_STEP, validate: (user, dispatch) => validateDRPlanProtectData({ user, dispatch }), isAsync: true, onUpdate: (user, dispatch) => checkCBTStatus({ user, dispatch }) },

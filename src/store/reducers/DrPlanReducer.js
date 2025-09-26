@@ -36,6 +36,8 @@ export default function drPlans(state = INITIAL_STATE.drPlans, action) {
       return {
         ...state, cleanup: { ...state.cleanup, data: action.data },
       };
+    case Types.TEST_RECOVERED_IN_MONTH:
+      return { ...state, testRecoveryInMonth: action.data };
     default:
       return state;
   }

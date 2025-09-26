@@ -410,7 +410,9 @@ export async function fetchVmCheckpoint(planId, moref, offset = 0, dispatch) {
 export async function fetchVMsLatestReplicaionJob(moref, dispatch, criteria) {
   try {
     const url = `${API_REPLICATION_VM_JOBS}?${criteria}&vmMorefs=${moref}`;
+    dispatch(showApplicationLoader('job_data', 'Loading replication jobs'));
     const res = await callAPI(url);
+    dispatch(hideApplicationLoader('job_data'));
     dispatch(valueChange(STATIC_KEYS.VM_LATEST_REPLICATION_JOBS, res));
     return res;
   } catch (err) {
@@ -471,7 +473,9 @@ export function takeActionOnCheckpoint(alert, id) {
 export function fetchCheckpointsByPlanId(planId, key) {
   return (dispatch) => {
     const url = API_RECOVERY_CHECKPOINT.replace('<id>', planId);
+    dispatch(showApplicationLoader('FETCHING_PROTECTION_PLAN_CHECKPOINTS', 'Loading checkpoint'));
     return callAPI(url).then((res) => {
+      dispatch(hideApplicationLoader('FETCHING_PROTECTION_PLAN_CHECKPOINTS'));
       if (res.records.length > 0) {
         if (typeof key !== 'undefined') {
           dispatch(valueChange(key, true));
@@ -482,6 +486,10 @@ export function fetchCheckpointsByPlanId(planId, key) {
         dispatch(setVmlevelCheckpoints([]));
         dispatch(setCheckpointCount(0));
       }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('FETCHING_PROTECTION_PLAN_CHECKPOINTS'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
   };
 }

@@ -7,7 +7,7 @@ import { hideApplicationLoader, showApplicationLoader } from '../../store/action
 import { uploadFiles } from '../../store/actions/DrPlaybooksActions';
 import { closeModal } from '../../store/actions/ModalActions';
 import { exportIssues } from '../../utils/ReportUtils';
-import PlaybookPlanIssues from '../Playbook/PlaybookPlanIssues';
+import PlaybookPlanIssues from '../DRPlans/Playbook/PlaybookPlanIssues';
 
 function ModalPlaybookError({ dispatch, options, t }) {
   const { playbook } = options;

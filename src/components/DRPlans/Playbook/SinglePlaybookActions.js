@@ -3,14 +3,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { withTranslation } from 'react-i18next';
 import { Input } from 'reactstrap';
-import { API_GET_CONFIG_TEMPLATE_BY_ID } from '../../constants/ApiConstants';
-import { NOTE_TEXT } from '../../constants/DMNoteConstant';
-import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
-import { playbookExport } from '../../store/actions/DrPlanActions';
-import { deletePlaybook, downloadPlaybooks, uploadFiles } from '../../store/actions/DrPlaybooksActions';
-import { closeModal, openModal } from '../../store/actions/ModalActions';
-import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
-import DMNote from '../Common/DMNote';
+import { API_GET_CONFIG_TEMPLATE_BY_ID } from '../../../constants/ApiConstants';
+import { NOTE_TEXT } from '../../../constants/DMNoteConstant';
+import { MODAL_CONFIRMATION_WARNING } from '../../../constants/Modalconstant';
+import { playbookExport } from '../../../store/actions/DrPlanActions';
+import { deletePlaybook, downloadPlaybooks, uploadFiles } from '../../../store/actions/DrPlaybooksActions';
+import { closeModal, openModal } from '../../../store/actions/ModalActions';
+import { hasRequestedPrivileges } from '../../../utils/PrivilegeUtils';
+import DMNote from '../../Common/DMNote';
 
 function SinglePlaybookActions({ data, dispatch, t, user }) {
   const { id, name, planConfigurations } = data;

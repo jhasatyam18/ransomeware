@@ -145,7 +145,7 @@ class DMFieldText extends Component {
 
   render() {
     const { field, fieldKey, user, hideLabel, disabled } = this.props;
-    const { shouldShow, placeHolderText } = field;
+    const { shouldShow, placeHolderText, maxLength } = field;
     const { errors } = user;
     const { type } = this.state;
     const value = this.getFieldValue();
@@ -175,6 +175,7 @@ class DMFieldText extends Component {
                     onFocus={() => this.handleFocus(true)}
                     disabled={disabled}
                     onKeyPress={this.handleKeyPress}
+                    maxLength={maxLength}
                   />
                 </div>
                 {this.showPasswordToggle()}

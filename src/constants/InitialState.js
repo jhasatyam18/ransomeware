@@ -5,6 +5,7 @@ const INITIAL_STATE = {
   global: {
     loaderKeys: {},
     theme: THEME_CONSTANT.DARK,
+    warningBannerMessages: {},
   },
   messages: {},
   user: { id: 1,
@@ -34,7 +35,7 @@ const INITIAL_STATE = {
     userPreferences: {},
   },
   sites: { sites: [], selectedSites: [] },
-  drPlans: { plans: [], selectedPlans: [], recoveryPlan: {}, allVmRecovered: false, cleanup: { selectedResources: {}, data: [], fullData: [] } },
+  drPlans: { plans: [], selectedPlans: [], recoveryPlan: {}, allVmRecovered: false, cleanup: { selectedResources: {}, data: [], fullData: [] }, testRecoveryInMonth: { tested: [], notTested: [] } },
   drPlaybooks: { templates: [], selectedPlaybook: {}, playbook: {} },
   modal: [],
   wizard: { steps: [], show: false, options: { title: '' } },

@@ -119,7 +119,7 @@ const Preview: React.FC<RendererProps> = (props) => {
                             </div>
                         </div>
                         <div>
-                            <h5 className="text-warning">{t('note:')}</h5>
+                            <h6 className="text-warning">{t('note')}</h6>
                             <ul className="text-warning">
                                 <li className="ms-2">
                                     <span>{`Do not power off or reboot any of the nodes and offline nodes will not be ${workflow === STATIC_KEYS.REVERT ? 'reverted' : 'upgraded'}`}</span>

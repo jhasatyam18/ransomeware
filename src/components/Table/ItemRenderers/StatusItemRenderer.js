@@ -5,14 +5,13 @@ import SimpleBar from 'simplebar-react';
 import { Badge, Popover, PopoverBody } from 'reactstrap';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { NODE_STATUS_ONLINE, NODE_STATUS_OFFLINE, JOB_RECOVERED, JOB_COMPLETION_STATUS, JOB_RUNNING_STATUS, JOB_IN_PROGRESS, JOB_FAILED, JOB_INIT_FAILED, JOB_IN_SYNC, JOB_COMPLETED_WITH_ERRORS, JOB_EXCEEDED_INTERVAL, JOB_STOPPED, JOB_INIT_SUCCESS, JOB_INIT_PROGRESS, JOB_SYNC_FAILED, JOB_INIT_SYNC_PROGRESS, JOB_RESYNC_FAILED, JOB_RESYNC_IN_PROGRESS, JOB_RESYNC_SUCCESS, JOB_SYNC_IN_PROGRESS, JOB_INIT_SYNC_FAILED, JOB_MIGRATED, MIGRATION_INIT_FAILED, PARTIALLY_COMPLETED, JOB_QUEUED, PENDING_STATUS, VALIDATING, AUTO_MIGRATION_FAILED, ENABLED, DISABLED } from '../../../constants/AppStatus';
+import { NODE_STATUS_ONLINE, NODE_STATUS_OFFLINE, JOB_RECOVERED, JOB_COMPLETION_STATUS, JOB_RUNNING_STATUS, JOB_IN_PROGRESS, JOB_FAILED, JOB_INIT_FAILED, JOB_IN_SYNC, JOB_COMPLETED_WITH_ERRORS, JOB_EXCEEDED_INTERVAL, JOB_STOPPED, JOB_INIT_SUCCESS, JOB_INIT_PROGRESS, JOB_SYNC_FAILED, JOB_INIT_SYNC_PROGRESS, JOB_RESYNC_FAILED, JOB_RESYNC_IN_PROGRESS, JOB_RESYNC_SUCCESS, JOB_SYNC_IN_PROGRESS, JOB_INIT_SYNC_FAILED, JOB_MIGRATED, MIGRATION_INIT_FAILED, PARTIALLY_COMPLETED, JOB_QUEUED, PENDING_STATUS, VALIDATING, AUTO_MIGRATION_FAILED, ENABLED, DISABLED, PARTIALLY_RUNNING } from '../../../constants/AppStatus';
 import 'boxicons';
 import { getValue } from '../../../utils/InputUtils';
 import { STATIC_KEYS, UI_WORKFLOW } from '../../../constants/InputConstants';
-// import { openModal } from '../../../store/actions/ModalActions';
-// import { INFORMATION_MODAL } from '../../../constants/Modalconstant';
+import { getItemRendererComponent } from '../../../utils/ComponentFactory';
 
-function StatusItemRenderer({ data, field, t, noPopOver, showDate, user }) {
+function StatusItemRenderer({ data, field, t, noPopOver, showDate, user, dispatch, options }) {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const targetRef = useRef(null);
   const { values } = user;
@@ -20,16 +19,21 @@ function StatusItemRenderer({ data, field, t, noPopOver, showDate, user }) {
   const runningStatus = [JOB_RUNNING_STATUS, JOB_IN_PROGRESS, VALIDATING];
   const errorStatus = [JOB_FAILED, JOB_STOPPED, JOB_INIT_FAILED, JOB_SYNC_FAILED, NODE_STATUS_OFFLINE, JOB_RESYNC_FAILED, JOB_INIT_SYNC_FAILED, MIGRATION_INIT_FAILED, AUTO_MIGRATION_FAILED, DISABLED];
   const progressStatus = [JOB_INIT_PROGRESS, JOB_INIT_SYNC_PROGRESS, JOB_RESYNC_IN_PROGRESS, JOB_SYNC_IN_PROGRESS];
-  const warningStatus = [PARTIALLY_COMPLETED, JOB_EXCEEDED_INTERVAL, JOB_QUEUED, PENDING_STATUS];
+  const warningStatus = [PARTIALLY_COMPLETED, JOB_EXCEEDED_INTERVAL, JOB_QUEUED, PENDING_STATUS, PARTIALLY_RUNNING];
   const noPopOverForWorkflow = [UI_WORKFLOW.REFRESH_RECOVERY];
   const currentWorkflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
+  // option field to retrieve data value from a function
+  const { getValueFromFunc } = options || {};
   useEffect(() => {
   }, [data[field]]);
   if (!data) {
     return '-';
   }
-
   let status = data[field];
+  if (getValueFromFunc && typeof getValueFromFunc === 'function') {
+    status = getValueFromFunc(data);
+  }
+
   if (!status) {
     return '-';
   }
@@ -65,20 +69,20 @@ function StatusItemRenderer({ data, field, t, noPopOver, showDate, user }) {
       colorinfo = 'warning';
     }
     return (
-      <>
+      <div className="d-flex">
         <Badge innerRef={targetRef} id={`status-${field}-${data.name}-${data.id}`} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} className={`me-1 font-size-13 badge-soft-${colorinfo}`} color={`${colorinfo}`} pill>
           {icon ? (
             <>
               <i className="fa fa-spinner fa-spin" />
-            &nbsp;&nbsp;
+              &nbsp;&nbsp;
             </>
           ) : null}
           {t(resp)}
           {hoverInfo !== '' ? renderPopOver(hoverInfo) : null}
           {showDate === 'true' ? <span className="font-size-11 padding-left-10">{new Date(data.lastRunTime * 1000).toLocaleString()}</span> : null}
         </Badge>
-        {/* {status === PENDING_STATUS ? <span onMouseEnter={() => setPopoverOpen(false)} aria-hidden onClick={onKnowMoreClick} className="link_color d-block margin-left-5 margin-top-5" style={{ fontSize: '10px' }}>Know more...</span> : null} */}
-      </>
+        {options?.ItemRenderer ? getItemRendererComponent({ render: options?.ItemRenderer, data, field: options?.field, user, dispatch, options }) : null}
+      </div>
     );
   }
 

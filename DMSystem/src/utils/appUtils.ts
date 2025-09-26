@@ -195,3 +195,12 @@ export function hasRequestedPrivileges(user: UserInterface, reqPrivileges: strin
     const { privileges = [] } = user;
     return reqPrivileges.every((privilege) => privileges.includes(privilege));
 }
+
+export function mapErrorMessage(message: string) {
+    if (message.includes(`"errorCode":"DM_ERR_INTERNAL_SERVER"`)) {
+        return ['Internal server error'];
+    }
+
+    const errArray = message.split('||');
+    return errArray;
+}

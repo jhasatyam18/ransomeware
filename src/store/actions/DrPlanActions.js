@@ -1,18 +1,19 @@
 import i18n from 'i18next';
+import { REVERSE_SHOW_DISABLED_VM_REPL_WARNING } from '../../constants/TableConstants';
 import * as Types from '../../constants/actionTypes';
-import { API_AUTO_MIGRATE_WORKFLOW, API_BULK_GENERATE, API_DELETE_DR_PLAN, API_EDIT_PROTECTED_VM, API_FETCH_DR_PLANS, API_FETCH_DR_PLAN_BY_ID, API_FETCH_REVERSE_DR_PLAN_BY_ID, API_FETCH_VMWARE_INVENTORY, API_MIGRATE, API_PROTECTION_PLAN_PROTECTED_VMS, API_PROTECTION_PLAN_UPDATE, API_PROTECTION_PLAN_VMS, API_RECOVER, API_REVERSE, API_START_DR_PLAN, API_STOP_DR_PLAN, API_TEST_RECOVERY_CLEANUP, API_VM_ALERTS } from '../../constants/ApiConstants';
+import { API_AUTO_MIGRATE_WORKFLOW, API_BULK_GENERATE, API_DELETE_DR_PLAN, API_EDIT_PROTECTED_VM, API_FETCH_DR_PLANS, API_FETCH_DR_PLAN_BY_ID, API_FETCH_REVERSE_DR_PLAN_BY_ID, API_FETCH_VMWARE_INVENTORY, API_MIGRATE, API_PROTECTION_PLAN_PROTECTED_VMS, API_PROTECTION_PLAN_UPDATE, API_PROTECTION_PLAN_VMS, API_RECOVER, API_RECOVERY_JOBS, API_REVERSE, API_START_DR_PLAN, API_STOP_DR_PLAN, API_TEST_RECOVERY_CLEANUP, API_VM_ALERTS } from '../../constants/ApiConstants';
 import { RECOVERY_STATUS } from '../../constants/AppStatus';
 import { DRPLAN_CONFIG_STEP } from '../../constants/DrplanConstants';
 import { MILI_SECONDS_TIME, MONITORING_DISK_CHANGES } from '../../constants/EventConstant';
-import { CHECKPOINT_TYPE, PLATFORM_TYPES, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
+import { CHECKPOINT_TYPE, PLATFORM_TYPES, PROTECTION_PLANS_STATUS, STATIC_KEYS, UI_WORKFLOW } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
-import { MODAL_DELETE_VM_CONFIRMATON, MODAL_RESET_DISK_REPLICATION } from '../../constants/Modalconstant';
+import { MODAL_CONFIRMATION_WARNING, MODAL_DELETE_VM_CONFIRMATON, MODAL_RESET_DISK_REPLICATION } from '../../constants/Modalconstant';
 import { PROTECTION_PLANS_PATH } from '../../constants/RouterConstants';
 import { STORE_KEYS } from '../../constants/StoreKeyConstants';
-import { APPLICATION_GETTING_STARTED_COMPLETED } from '../../constants/UserConstant';
+import { API_MAX_RECORD_LIMIT, APPLICATION_GETTING_STARTED_COMPLETED, KEY_CONSTANTS } from '../../constants/UserConstant';
 import { MIGRATION_WIZARDS, PROTECTED_VM_RECONFIGURATION_WIZARD, RECOVERY_WIZARDS, REVERSE_WIZARDS, STEPS, TEST_RECOVERY_WIZARDS, UPDATE_PROTECTION_PLAN_WIZARDS } from '../../constants/WizardConstants';
 import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
-import { getLabelWithResourceGrp, getMemoryInfo, getNetworkIDFromName, getSubnetIDFromName, isUnrecoveredVMsLengthMoreThanOne } from '../../utils/AppUtils';
+import { getLabelWithResourceGrp, getMemoryInfo, getNetworkIDFromName, getSubnetIDFromName, isUnrecoveredVMsLengthMoreThanOne, renderPlanErrorInWarnMsg } from '../../utils/AppUtils';
 import { setCookie } from '../../utils/CookieUtils';
 import { getMatchingFirmwareType, getMatchingInsType, getMatchingOSType, getValue, getVMInstanceFromEvent, getVMMorefFromEvent, isSamePlatformPlan } from '../../utils/InputUtils';
 import { getCreateDRPlanPayload, getEditProtectionPlanPayload, getRecoveryPayload, getResetDiskReplicationPayload, getReversePlanPayload, getVMConfigPayload } from '../../utils/PayloadUtil';
@@ -25,7 +26,7 @@ import { fetchReplicationJobsByPplanId } from './JobActions';
 import { addMessage } from './MessageActions';
 import { closeModal, openModal } from './ModalActions';
 import { fetchNetworks, fetchSites, onRecoverSiteChange } from './SiteActions';
-import { clearValues, fetchScript, hideApplicationLoader, loadRecoveryLocationData, onDiffReverseChanges, refresh, setActiveTab, setInstanceDetails, setProtectionPlanScript, setTags, showApplicationLoader, valueChange } from './UserActions';
+import { addWarningBannerMsg, clearValues, fetchScript, hideApplicationLoader, loadRecoveryLocationData, onDiffReverseChanges, refresh, setActiveTab, setInstanceDetails, setProtectionPlanScript, setTags, showApplicationLoader, valueChange } from './UserActions';
 import { setVmwareInitialData, setVMwareTargetData } from './VMwareActions';
 import { closeWizard, openWizard } from './WizardActions';
 
@@ -42,6 +43,7 @@ export function fetchDrPlans(key) {
           if (key) {
             dispatch(valueChange(key, json));
           }
+          dispatch(renderPlanErrorInWarnMsg(json));
         }
       },
       (err) => {
@@ -93,38 +95,70 @@ export function drPlanStopStart(action) {
   };
 }
 
-export function startPlan(id) {
-  return (dispatch) => {
+export function startPlan(id, history) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const selectedVm = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
+    const payload = {
+      workloadIds: Object.keys(selectedVm),
+      operationType: getValue('ui.stop.repl.type', values),
+      reason: getValue('stop.repl.reason', values),
+    };
     const url = API_START_DR_PLAN.replace('<id>', id);
-    const obj = createPayload(API_TYPES.POST, {});
+    const obj = createPayload(API_TYPES.POST, payload);
+    dispatch(showApplicationLoader('start.repl', 'Loading ...'));
     return callAPI(url, obj).then((json) => {
+      dispatch(hideApplicationLoader('start.repl'));
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
+        dispatch(closeModal());
         dispatch(addMessage(json.message, MESSAGE_TYPES.SUCCESS));
         fetchByDelay(dispatch, refreshPostActon, 100);
+        history.goBack();
       }
     },
     (err) => {
-      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      const error = JSON.parse(err.message);
+      error.errors.map((er) => {
+        dispatch(addMessage(er.errorMessage, MESSAGE_TYPES.ERROR));
+      });
+      dispatch(hideApplicationLoader('start.repl'));
     });
   };
 }
 
-export function stopPlan(id) {
-  return (dispatch) => {
+export function stopPlan(id, history) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const selectedVm = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
+    const payload = {
+      workloadIds: Object.keys(selectedVm),
+      operationType: getValue('ui.stop.repl.type', values),
+      reason: getValue('stop.repl.reason', values),
+    };
     const url = API_STOP_DR_PLAN.replace('<id>', id);
-    const obj = createPayload(API_TYPES.POST, {});
+    const obj = createPayload(API_TYPES.POST, payload);
+    dispatch(showApplicationLoader('stop.repl', 'Loading...'));
     return callAPI(url, obj).then((json) => {
+      dispatch(hideApplicationLoader('stop.repl'));
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
         dispatch(addMessage(json.message, MESSAGE_TYPES.SUCCESS));
+        dispatch(closeModal());
         fetchByDelay(dispatch, refreshPostActon, 100);
+        history.goBack();
       }
     },
     (err) => {
-      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      const error = JSON.parse(err.message);
+      error.errors.map((er) => {
+        dispatch(addMessage(er.errorMessage, MESSAGE_TYPES.ERROR));
+      });
+      dispatch(hideApplicationLoader('stop.repl'));
     });
   };
 }
@@ -199,7 +233,7 @@ export function onConfigureDRPlan() {
   };
 }
 
-export function fetchDRPlanById(id, params) {
+export function fetchDRPlanById(id, workflow) {
   return (dispatch) => {
     const url = API_FETCH_DR_PLAN_BY_ID.replace('<id>', id);
     const obj = createPayload();
@@ -209,23 +243,89 @@ export function fetchDRPlanById(id, params) {
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
-        dispatch(drPlanDetailsFetched(json));
-        // if plan details is rendered thorugh reset url then open reset disk replication modal
-        if (typeof params !== 'undefined' && Object.keys(params).length > 0 && params.reset) {
-          dispatch(onResetDiskReplicationClick());
-        }
-
         const allRecoveryInstanceMoref = [];
         json.recoveryEntities.instanceDetails.forEach((el) => allRecoveryInstanceMoref.push(el.sourceMoref));
         const latestReplication = await fetchVMsLatestReplicaionJob(allRecoveryInstanceMoref.join(','), dispatch, STATIC_KEYS.LATEST_REPLICATION_JOBS) || [];
-        const allVMsRecovered = latestReplication.length > 0 ? latestReplication.every((repl) => repl.resetIteration === true) : false;
-        dispatch(setAllVmRecovered(allVMsRecovered));
+        dispatch(updateVmDataWithLatestJob(json, workflow, latestReplication));
+        if (workflow !== KEY_CONSTANTS.STOP && workflow !== KEY_CONSTANTS.START) {
+          const allVMsRecovered = latestReplication.length > 0 ? latestReplication.every((repl) => repl.resetIteration === true) : false;
+          dispatch(setAllVmRecovered(allVMsRecovered));
+        }
+        const today = new Date();
+        // Start = today
+        const endDate = today.getTime();
+        // End = one month before today
+        const oneMonthAgo = new Date(today);
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+        const startDate = oneMonthAgo.getTime();
+        dispatch(fetchTestRecoveredVmInMonth(id, [], 0, { startDate: Math.floor(startDate / 1000), endDate: Math.floor(endDate / 1000) }, json));
       }
     },
     (err) => {
       dispatch(hideApplicationLoader('FETCHING_PROTECTION_PLAN_DETAILS'));
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
+  };
+}
+
+/**
+ *sets the plan virtual machine data with latest replication job
+ we are doing this to show latest replication data in start or stop flow vm selection table
+ * @param {*} jsonPlanData latest plan data
+ * @param {*} workflow
+ * @param {*} latestReplication latest repl data
+ * @returns
+ */
+
+function updateVmDataWithLatestJob(jsonPlanData, workflow, latestReplication) {
+  return (dispatch, getState) => {
+    const updatedVmDataWithLatestJob = [];
+    let planHasReplDisabled = false;
+    const plan = jsonPlanData;
+    const { global } = getState();
+    const { warningBannerMessages } = global;
+    const replErrormsg = { replDisabledVmCount: 0, replDisabledPlanCount: plan.name };
+    plan.protectedEntities.virtualMachines.forEach((vm) => {
+      const newVmObj = vm;
+      // if workflow is start or stop then only add the latest replication data into the vm object
+      // we are adding latest repl data into vm object for it to show on vm selection table
+      if (workflow === KEY_CONSTANTS.STOP || workflow === KEY_CONSTANTS.START) {
+        for (let i = 0; i < latestReplication.length; i += 1) {
+          if (latestReplication[i].vmMoref === vm.moref) {
+            if (vm.recoveryStatus === RECOVERY_STATUS.RECOVERED || vm.recoveryStatus === RECOVERY_STATUS.MIGRATED) {
+              newVmObj.isDisabled = true;
+            }
+            // below are the field we are adding in plan vm data from latest replication job's data
+            newVmObj.syncStatus = latestReplication[i].syncStatus;
+            newVmObj.status = latestReplication[i].status;
+            newVmObj.currentSnapshotTime = latestReplication[i].currentSnapshotTime;
+            newVmObj.changedSize = latestReplication[i].changedSize;
+            break;
+          }
+        }
+        updatedVmDataWithLatestJob.push(newVmObj);
+        plan.protectedEntities.virtualMachines = updatedVmDataWithLatestJob;
+      }
+      // we are calculating disabled vm count for it to show on top banner
+      if (vm.replicationStatus === KEY_CONSTANTS.DISABLED && plan.status === PROTECTION_PLANS_STATUS.STARTED) {
+        replErrormsg.replDisabledVmCount += 1;
+        planHasReplDisabled = true;
+      }
+    });
+    // adding disabled data count into redux
+    if (planHasReplDisabled) {
+      dispatch(addWarningBannerMsg('repl.disable.msg', replErrormsg));
+    } else {
+      // if the current plan is in warning banner then remove it
+      const replDisabledErr = getValue('repl.disable.msg', warningBannerMessages);
+      if (replDisabledErr && replDisabledErr.replDisabledPlanCount === plan.name) {
+        dispatch(addWarningBannerMsg('repl.disable.msg', replErrormsg));
+        // after removing current plan from warning banner fetch plans to check any plan's partially running status
+        // show it in the warning banner
+        dispatch(fetchDrPlans());
+      }
+    }
+    dispatch(drPlanDetailsFetched(plan));
   };
 }
 
@@ -391,6 +491,26 @@ export function startMigration() {
       dispatch(hideApplicationLoader('RECOVERY-API-EXECUTION'));
       dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
     });
+  };
+}
+
+export function reverseValidateDisabledVmRepl() {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const vms = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
+    const disabledVmRepl = [];
+    Object.keys(vms).forEach((key) => {
+      if (vms[key].replicationStatus === KEY_CONSTANTS.DISABLED) {
+        disabledVmRepl.push(vms[key]);
+      }
+    });
+    if (disabledVmRepl.length > 0) {
+      const options = { title: 'Confirmation', confirmAction: startReversePlan, render: REVERSE_SHOW_DISABLED_VM_REPL_WARNING, vms: disabledVmRepl };
+      dispatch(openModal(MODAL_CONFIRMATION_WARNING, options));
+    } else {
+      dispatch(startReversePlan());
+    }
   };
 }
 
@@ -1912,5 +2032,109 @@ export function onDeleteProtectionPlanClick() {
     const { protectionPlan } = drPlans;
     const options = { title: i18n.t('confirmation'), confirmAction: deletePlan, message: `Are you sure you want to delete protection plan ${protectionPlan.name} ?`, id: protectionPlan.id, css: 'confirmation', protectionPlan };
     dispatch(openModal(MODAL_DELETE_VM_CONFIRMATON, options));
+  };
+}
+
+export function handleSelectiveVmSelection(data, isSelected, primaryKey) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    let selectedVMs = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
+    if (!selectedVMs) {
+      selectedVMs = {};
+    }
+    if (isSelected) {
+      if (!selectedVMs || selectedVMs.length === 0 || !selectedVMs[data[primaryKey]]) {
+        const newVMs = { ...selectedVMs, [data[primaryKey]]: data };
+        dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, newVMs));
+      }
+    } else if (selectedVMs[data[primaryKey]]) {
+      const newVMs = selectedVMs;
+      delete newVMs[data[primaryKey]];
+      dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, newVMs));
+    }
+  };
+}
+
+export const allSelectiveVmReplication = (value, data) => (dispatch) => {
+  if (value) {
+    let newSites = {};
+    data.forEach((key) => {
+      if (!key.isDisabled) {
+        newSites = { ...newSites, [key.moref]: key };
+      }
+    });
+    dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, newSites));
+  } else {
+    dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, {}));
+  }
+};
+
+export const planDetailSummaryData = (plan) => {
+  const { protectedEntities } = plan;
+  const { virtualMachines } = protectedEntities;
+  const replEnableTotalNumVms = virtualMachines.filter((el) => el.replicationStatus === KEY_CONSTANTS.ENABLED);
+  const recoveryTotalNumVms = virtualMachines.filter((el) => el.recoveryStatus === RECOVERY_STATUS.RECOVERED);
+  return { replEnableTotalNumVms, recoveryTotalNumVms, numOfWorkload: virtualMachines.length };
+};
+
+export function drPlanStatus(plan) {
+  if (!plan) return;
+  const { status, protectedEntities } = plan;
+  let newStatus = status;
+  if (status === PROTECTION_PLANS_STATUS.STARTED) {
+    const { virtualMachines } = protectedEntities;
+    for (let i = 0; i < virtualMachines.length; i += 1) {
+      const vm = virtualMachines[i];
+      if (vm.replicationStatus === KEY_CONSTANTS.DISABLED) {
+        newStatus = PROTECTION_PLANS_STATUS.PARTIALLY_RUNNING;
+        break;
+      }
+    }
+  }
+  return newStatus;
+}
+
+export function fetchTestRecoveredVmInMonth(id, data = [], offset = 0, criteria = {}, drPlan) {
+  return (dispatch) => {
+    const { startDate, endDate } = criteria;
+    const url = (`${API_RECOVERY_JOBS}?${id !== STATIC_KEYS.REPORT_LABEL_ALL ? `protectionplanid=${id}&` : ''}limit=${API_MAX_RECORD_LIMIT}&offset=${offset}&starttime=${startDate}&endtime=${endDate}&recoverytype=test recovery`);
+    callAPI(url)
+      .then((json) => {
+        if (json.hasNext === true) {
+          dispatch(fetchTestRecoveredVmInMonth(id, [...data, ...json.records], json.nextOffset, criteria, drPlan));
+        } else {
+          const { protectedEntities } = drPlan;
+          const { virtualMachines } = protectedEntities;
+          const testRecoveredData = [...data, ...json.records];
+          const recoveryInfo = { notTested: [], tested: [] };
+          virtualMachines.forEach((vm) => {
+            let tested = false;
+            for (let i = 0; i < testRecoveredData.length; i += 1) {
+              const el = testRecoveredData[i];
+              if (vm.moref === el.vmMoref && el.recoveryType === 'test recovery' && el.status === 'completed') {
+                tested = true;
+                break;
+              }
+            }
+            if (tested) {
+              recoveryInfo.tested.push(vm.name);
+            } else {
+              recoveryInfo.notTested.push(vm.name);
+            }
+          });
+          dispatch(setTestRecoveredInMonthCount(recoveryInfo));
+        }
+      },
+      (err) => {
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  };
+}
+
+export function setTestRecoveredInMonthCount(data) {
+  return {
+    type: Types.TEST_RECOVERED_IN_MONTH,
+    data,
   };
 }

@@ -1,13 +1,14 @@
 import { faCaretDown, faCaretRight, faCheckCircle, faCircleXmark, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useRef, useState } from 'react';
-import { withTranslation } from 'react-i18next';
+import { WithTranslation, withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Popover, PopoverBody } from 'reactstrap';
 import { Dispatch } from 'redux';
 import SimpleBar from 'simplebar-react';
 import { INITIAL_STATE } from '../../interfaces/interfaces';
 import { JOB_COMPLETION_STATUS, JOB_FAILED, JOB_IN_PROGRESS } from '../../Constants/statusConstant';
+import { mapErrorMessage } from '../../utils/appUtils';
 
 interface Step {
     status: string;
@@ -24,7 +25,7 @@ interface Data {
     failureMessage?: string;
 }
 
-interface Props {
+interface Props extends WithTranslation {
     steps: Step[];
     data?: Data;
     noCard?: boolean;
@@ -33,7 +34,7 @@ interface Props {
 }
 
 const StepStatus: React.FC<Props> = (props) => {
-    const { steps, noCard, dispatch, maxHeight } = props;
+    const { steps, noCard, dispatch, maxHeight, t } = props;
     const [popOver, setPopOver] = useState<Record<string, boolean>>({});
     const pop: Record<string, boolean> = {};
     const [showSubStep, setShowSubStep] = useState<Record<string, boolean>>(pop || {});
@@ -71,7 +72,7 @@ const StepStatus: React.FC<Props> = (props) => {
 
     const renderPopOver = (hoverInfo: string, key: string) => {
         const data = popOver[key];
-        const mesgArray = hoverInfo.split('||');
+        const errorMsg: string[] = mapErrorMessage(hoverInfo);
         return (
             <Popover
                 placement="bottom"
@@ -87,7 +88,7 @@ const StepStatus: React.FC<Props> = (props) => {
             >
                 <SimpleBar style={{ minHeight: '10vh', maxHeight: '30vh' }}>
                     <PopoverBody style={{ color: 'white' }}>
-                        {mesgArray.map((el, ind) => {
+                        {errorMsg.map((el: string, ind: number) => {
                             return (
                                 <p style={{ fontSize: '11px', marginBottom: '2px' }} key={`${el}-${ind}`}>
                                     {el}
@@ -155,7 +156,7 @@ const StepStatus: React.FC<Props> = (props) => {
                     {showSubStep[id] ? (
                         <>
                             <div style={{ position: 'relative', top: '-12px', left: '13px' }}>
-                                <StepStatus steps={JSON.parse(st.SubSteps)} noCard={true} dispatch={dispatch} />
+                                <StepStatus t={t} i18n={props.i18n} tReady={props.tReady} steps={JSON.parse(st.SubSteps)} noCard={true} dispatch={dispatch} />
                             </div>
                         </>
                     ) : null}

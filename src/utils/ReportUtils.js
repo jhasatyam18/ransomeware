@@ -3,6 +3,7 @@ import * as FileSaver from 'file-saver';
 import i18n from 'i18next';
 import JsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { drPlanStatus } from '../store/actions/DrPlanActions';
 import { DETAILED_STEP_COMPONENTS } from '../constants/AppStatus';
 import { NUMBER, PLATFORM_TYPES, REPORT_DURATION, STATIC_KEYS, PLAYBOOK_NAMES, NODE_TYPES } from '../constants/InputConstants';
 import { ALPHABETS, BLUE, BORDER_STYLE, EXCEL_WORKSHEET_TABLE_HEADER_CELL, EXCEL_WORKSHEET_TITLE, REPORT_TYPES } from '../constants/ReportConstants';
@@ -498,10 +499,11 @@ export function getRecoveryTimingAndDuration(data) {
 }
 
 export function getReplicationStatus(data) {
-  if (data.status === STATIC_KEYS.STARTED) {
+  const newStatus = drPlanStatus(data);
+  if (newStatus === STATIC_KEYS.STARTED) {
     return STATIC_KEYS.RUNNING;
   }
-  return data.status;
+  return newStatus;
 }
 export function getRecoveryStatusStep(data = {}) {
   if (!data || typeof data !== 'object') {
