@@ -870,7 +870,7 @@ const FREQUENCY_MAP = {
   month: 'monthly',
 };
 
-export const getReportSchedulePayload = (user) => {
+export const getReportSchedulePayload = (user, data = {}) => {
   const { values } = user;
   const criteria = getCriteria(user) || {};
   const plans = getValue(STATIC_KEYS.UI_PROTECTION_PLANS, values) || [];
@@ -914,7 +914,7 @@ export const getReportSchedulePayload = (user) => {
       },
     },
     cronString,
-    disabled: false,
+    disabled: Object.keys(data).length > 0 ? data.disabled : false,
     emailIDs,
     fileType,
     frequency: FREQUENCY_MAP[occurrenceOption],
@@ -1072,7 +1072,8 @@ export function setReconfigureReportScheduleData(data = []) {
     dispatch(valueChange(STORE_KEYS.UI_REPORT_SCHEDULE_WORKFLOW, STATIC_KEYS.EDIT));
     dispatch(valueChange(STORE_KEYS.UI_REPORT_SCHEDULER_NAME, data.name));
     dispatch(valueChange(STORE_KEYS.UI_REPORT_SCHEDULER_GENERATE_ON_TIME, generateTime));
-    dispatch(valueChange(STORE_KEYS.UI_REPORT_SCHEDULER_OCCURRENCE, 1));
+    const occurrenceValue = occurrenceKey === STATIC_KEYS.HOURLY ? getHourlyStepFromCron(cronString) : 1;
+    dispatch(valueChange(STORE_KEYS.UI_REPORT_SCHEDULER_OCCURRENCE, occurrenceValue));
     dispatch(valueChange(STORE_KEYS.UI_REPORT_SCHEDULER_OCCURRENCE_OPTION, occurrenceKey));
     dispatch(valueChange(STORE_KEYS.UI_REPORT_SCHEDULER_FORMAT_TYPE, data.fileType));
     dispatch(valueChange(STORE_KEYS.UI_REPORT_SCHEDULE_TIME_ZONE, { label: data.timezone, value: data.timezone }));
@@ -1132,4 +1133,17 @@ export function cancelCreateSchedule(id, history) {
     dispatch(fetchDrPlans(STATIC_KEYS.UI_PROTECTION_PLANS));
     dispatch(valueChange(STATIC_KEYS.REPORT_DURATION_TYPE, 'month'));
   };
+}
+
+export function getHourlyStepFromCron(cronString) {
+  if (!cronString) return 1;
+  const parts = cronString.trim().split(' ');
+  if (parts.length < 3) return 1;
+  const hourField = parts[2]; // hour field (index 2)
+  // Check for */N format
+  if (hourField.startsWith('*/')) {
+    const step = parseInt(hourField.replace('*/', ''), 10);
+    return Number.isNaN(step) ? 1 : step;
+  }
+  return 1;
 }

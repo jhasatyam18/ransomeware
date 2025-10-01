@@ -50,10 +50,6 @@ const ReportScheduleCreate = (props) => {
       if (!data || Object.keys(data).length === 0) {
         const path = REPORT_SCHEDULE_CREATE.replace('*', 'create');
         history.push(path);
-        dispatch(valueChange(STORE_KEYS.UI_REPORT_SCHEDULER_GENERATE_ON_TIME, defaultTime));
-        dispatch(valueChange(STORE_KEYS.UI_REPORT_SCHEDULER_OCCURRENCE, 1));
-        dispatch(valueChange(STORE_KEYS.UI_REPORT_SCHEDULER_OCCURRENCE_OPTION, STATIC_KEYS.WEEK));
-        dispatch(valueChange(STORE_KEYS.UI_REPORT_SCHEDULER_MAINTAIN, 1));
       } else {
         dispatch(setReconfigureReportScheduleData(data));
       }
@@ -68,6 +64,12 @@ const ReportScheduleCreate = (props) => {
       dispatch(clearValues());
     });
   }, [id]);
+
+  useEffect(() => {
+    dispatch(clearValues());
+    dispatch(valueChange('report.system.includeSystemOverView', true));
+    dispatch(valueChange(STATIC_KEYS.REPORT_DURATION_TYPE, STATIC_KEYS.MONTH));
+  }, []);
 
   const handleStepClick = (index) => {
     if (steps[index].state === 'done' && !steps[index].isDisabled) {
@@ -116,7 +118,7 @@ const ReportScheduleCreate = (props) => {
       if (isLastStep) {
         const selectedKey = Object.keys(selectedSchedule)[0];
         const data = selectedSchedule[selectedKey];
-        const payload = getReportSchedulePayload(user);
+        const payload = getReportSchedulePayload(user, data);
         if (flow !== STATIC_KEYS.EDIT) {
           dispatch(configureReportSchedule(payload, false, history));
         } else {

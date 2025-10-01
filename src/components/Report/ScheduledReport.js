@@ -207,8 +207,8 @@ const ScheduledReport = (props) => {
             <Col sm={5} className="mt-4">
               {!viewJobs ? (
                 <div className="btn-group padding-left-20" role="group" aria-label="First group">
-                  <ActionButton label="New" icon={faPlus} onClick={handleNewSchedule} isDisabled={!hasRequestedPrivileges(user, ['scheduledreport.create'])} t={t} key="reportScheduleConfiguration" />
-                  <ActionButton label="Edit" icon={faEdit} onClick={onReconfigure} isDisabled={disableAction || !hasRequestedPrivileges(user, ['scheduledreport.edit'])} t={t} key="reportScheduleEdit" />
+                  <ActionButton label="New Schedule" icon={faPlus} onClick={handleNewSchedule} isDisabled={!hasRequestedPrivileges(user, ['scheduledreport.create'])} t={t} key="reportScheduleConfiguration" />
+                  <ActionButton label="Reconfigure" icon={faEdit} onClick={onReconfigure} isDisabled={disableAction || !hasRequestedPrivileges(user, ['scheduledreport.edit'])} t={t} key="reportScheduleEdit" />
                   <ActionButton label="Delete" icon={faTrash} onClick={onRemove} isDisabled={disableAction || !hasRequestedPrivileges(user, ['scheduledreport.delete'])} t={t} key="reportScheduleDelete" />
                   <ActionButton label="Enable" onClick={() => onEnableSchedule(false)} icon={faCircleCheck} t={t} key="resetUserPassword" isDisabled={disableEnable || !hasRequestedPrivileges(user, ['scheduledreport.edit'])} />
                   <ActionButton label="Disable" onClick={() => onEnableSchedule(true)} icon={faCircleMinus} t={t} key="resetUserPassword" isDisabled={disableDisableBtn || !hasRequestedPrivileges(user, ['scheduledreport.edit'])} />
