@@ -946,6 +946,8 @@
   "plans":"Protection Plans",
   "protectedVMS":"Protected Machine",
   "point_in_time_checkpoints":"Point In Time Checkpoints",
+  "target.storage.title":"Target Storage",
+  "target.storage.info":"AWS Target has different storage types for replication. Replicated data will be stored on these target storage types. ",
   "report.format": "Report Format",
   "shedule.report.occurence.info": "Defines the interval at which the schedule runs, based on the selected unit (hourly, daily, weekly, or monthly",
   "shedule.report.time.info": "Time at which schedule should trigger",

@@ -120,6 +120,7 @@ export const STATIC_KEYS = {
   REC_STEP_PASS: 'Pass',
   REC_STEP_FAIL: 'Fail',
   VMWARE_QUIESCE_KEY: '-vmConfig.general.IsVMwareQuiescing',
+  AWS_TARGET_STORAGE_KEY: '-vmConfig.general.targetStorageType',
   DMTREE_SEARCH_FOLDER_KEY: 'DMTREE_SEARCH_FOLDER_KER',
   PLAYBOOK_CONFIG_VALIDATING: 'configValidating',
   REPORT_DURATION_START_DATE: 'report.duration.startDate',

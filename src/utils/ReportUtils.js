@@ -3,7 +3,6 @@ import * as FileSaver from 'file-saver';
 import i18n from 'i18next';
 import JsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { drPlanStatus } from '../store/actions/DrPlanActions';
 import { DETAILED_STEP_COMPONENTS } from '../constants/AppStatus';
 import { NUMBER, PLATFORM_TYPES, REPORT_DURATION, STATIC_KEYS, PLAYBOOK_NAMES, NODE_TYPES } from '../constants/InputConstants';
 import { ALPHABETS, BLUE, BORDER_STYLE, EXCEL_WORKSHEET_TABLE_HEADER_CELL, EXCEL_WORKSHEET_TITLE, REPORT_TYPES } from '../constants/ReportConstants';
@@ -20,7 +19,7 @@ import { MESSAGE_TYPES } from '../constants/MessageConstants';
 import { FIELDS } from '../constants/FieldsConstant';
 import { getCriteria, setSelectedSchedule } from '../store/actions/ReportActions';
 import { convertScheduleToCron, parseCronToScheduleFields, parseCronToTime, formatTime as schedularFormatTime } from './SystemUpdateScheduleUtils';
-import { fetchDrPlans } from '../store/actions/DrPlanActions';
+import { fetchDrPlans, drPlanStatus } from '../store/actions/DrPlanActions';
 import { REPORTS_PATH } from '../constants/RouterConstants';
 import { closeModal } from '../store/actions/ModalActions';
 

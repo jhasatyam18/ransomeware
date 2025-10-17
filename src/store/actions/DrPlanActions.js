@@ -1576,6 +1576,7 @@ export function setAWSVMRecoveryData(vmMoref, protectectionPlan) {
         dispatch(valueChange(`${key}-vmConfig.general.affinity`, ins.affinity));
         dispatch(valueChange(`${key}-vmConfig.general.image`, ins.image));
         dispatch(valueChange(`${key}-vmConfig.general.license`, ins.license));
+        dispatch(valueChange(`${key}-vmConfig.general.targetStorageType`, ins.targetStorageType));
         if (ins.tags && ins.tags.length > 0) {
           const tagsData = [];
           ins.tags.forEach((tag) => {

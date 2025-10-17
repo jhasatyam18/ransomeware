@@ -209,12 +209,12 @@ export function getVMConfigPayload(user) {
     const affinity = getValue(`${key}-vmConfig.general.affinity`, values) || '';
     const image = getValue(`${key}-vmConfig.general.image`, values) || '';
     const license = getValue(`${key}-vmConfig.general.license`, values) || '';
-
+    const targetStorageType = getValue(`${key}-vmConfig.general.targetStorageType`, values) || 'Snapshot';
     // const hostMoref = getValue(`${key}-vmConfig.general.hostMoref`, values) || ''
     if (typeof id !== 'undefined' && id !== '') {
-      instanceDetails.push({ sourceMoref, id, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, encryptionKey, recoveryEntityType, tenancy, hostType, affinity, image, license });
+      instanceDetails.push({ sourceMoref, id, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, encryptionKey, recoveryEntityType, tenancy, hostType, affinity, image, license, targetStorageType });
     } else {
-      instanceDetails.push({ sourceMoref, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, encryptionKey, recoveryEntityType, tenancy, hostType, affinity, image, license });
+      instanceDetails.push({ sourceMoref, instanceID, instanceName, instanceType, volumeType, volumeIOPS, tags, bootPriority, networks, securityGroups, preScript, postScript, availZone, folderPath, memoryMB, hostMoref, datastoreMoref, numCPU, datacenterMoref, encryptionKey, recoveryEntityType, tenancy, hostType, affinity, image, license, targetStorageType });
     }
   });
   return instanceDetails;

@@ -1094,6 +1094,7 @@ export function setInstanceDetails(key, ins) {
     dispatch(valueChange(`${key}-vmConfig.general.affinity`, ins.affinity));
     dispatch(valueChange(`${key}-vmConfig.general.image`, ins.image));
     dispatch(valueChange(`${key}-vmConfig.general.license`, ins.license));
+    dispatch(valueChange(`${key}-vmConfig.general.targetStorageType`, ins.targetStorageType));
   };
 }
 

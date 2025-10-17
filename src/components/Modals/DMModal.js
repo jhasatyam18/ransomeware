@@ -40,6 +40,7 @@ import PlaybookUploadModal from './PlaybookUploadModal';
 import ModalRefreshRecovery from './ModalRefreshRecovery';
 import InformationModal from './ModalInformation';
 import ModalDeleteVmConfirmation from './ModalDeleteVmConfirmation';
+import ModalSetTargetStoraage from './ModalSetTargetStoraage';
 import ModalShowScheduledReports from './ModalShowScheduledReports';
 import ModalScheduleStatusChange from './ModalScheduleStatusChange';
 
@@ -139,6 +140,8 @@ function DMModal(props) {
           return <InformationModal {...props} />;
         case MODALS.MODAL_DELETE_VM_CONFIRMATON:
           return <ModalDeleteVmConfirmation dispatch={dispatch} {...props} />;
+        case MODALS.MODAL_SET_TAGER_STORAGE:
+          return <ModalSetTargetStoraage dispatch={dispatch} {...props} />;
         case MODALS.MODAL_GENERATE_REPORT_SCHEDULE:
           return <ModalShowScheduledReports dispatch={dispatch} {...props} />;
         case MODALS.MODAL_CHANGE_SCHEDULE_STATUS:

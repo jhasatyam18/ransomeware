@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { Tbody, Th, Tr } from 'react-super-responsive-table';
 import { Card, CardHeader, Col, Collapse, Row, Table } from 'reactstrap';
 import { PLATFORM_TYPES } from '../../constants/InputConstants';
-import { MODAL_REPLICATION_PRIORITY, MODAL_VMWARE_QUIESCE } from '../../constants/Modalconstant';
+import { MODAL_REPLICATION_PRIORITY, MODAL_SET_TAGER_STORAGE, MODAL_VMWARE_QUIESCE } from '../../constants/Modalconstant';
 import { openModal } from '../../store/actions/ModalActions';
 import { getValue } from '../../utils/InputUtils';
 import { getFilteredObject, getKeyStruct } from '../../utils/PayloadUtil';
@@ -39,6 +39,11 @@ function ReplicationAdvancedConfig(props) {
   const onVMwareQuiesce = () => {
     const options = { title: t('title.vmware.quiesce'), size: 'lg' };
     dispatch(openModal(MODAL_VMWARE_QUIESCE, options));
+  };
+
+  const onTargetStorageClick = () => {
+    const options = { title: t('target.storage.title'), size: 'lg' };
+    dispatch(openModal(MODAL_SET_TAGER_STORAGE, options));
   };
 
   const renderIcon = () => (
@@ -84,7 +89,7 @@ function ReplicationAdvancedConfig(props) {
                     </Th>
                     <Th>
                       <div className="display__flex__row">
-                        <a href="#" onClick={onVMwareQuiesce}>
+                        <a href="#" id="configur-vmware-quiesce" onClick={onVMwareQuiesce}>
                           {t('Configure')}
                         </a>
                       </div>
@@ -92,28 +97,52 @@ function ReplicationAdvancedConfig(props) {
                   </Tr>
                 ) : null}
                 {recoveryPlatform === PLATFORM_TYPES.AWS ? (
-                  <Tr>
-                    <Th>
-                      {`${rSite.name} (Target)`}
-                    </Th>
-                    <Th>
-                      <Row>
-                        <Col sm={8}>
-                          {t('replication.priority')}
-                        </Col>
-                        <Col sm={1}>
-                          <DMToolTip tooltip={t('replication.priority.info')} />
-                        </Col>
-                      </Row>
-                    </Th>
-                    <Th>
-                      <div className="display__flex__row">
-                        <a href="#" onClick={onAWSReplPriority}>
-                          {t('Configure')}
-                        </a>
-                      </div>
-                    </Th>
-                  </Tr>
+                  <>
+                    <Tr>
+                      <Th>
+                        {`${rSite.name} (Target)`}
+                      </Th>
+                      <Th>
+                        <Row>
+                          <Col sm={8}>
+                            {t('replication.priority')}
+                          </Col>
+                          <Col sm={1}>
+                            <DMToolTip tooltip={t('replication.priority.info')} />
+                          </Col>
+                        </Row>
+                      </Th>
+                      <Th>
+                        <div className="display__flex__row">
+                          <a href="#" id="configur-aws-replication-priority" onClick={onAWSReplPriority}>
+                            {t('Configure')}
+                          </a>
+                        </div>
+                      </Th>
+                    </Tr>
+                    <Tr>
+                      <Th>
+                        {`${rSite.name} (Target)`}
+                      </Th>
+                      <Th>
+                        <Row>
+                          <Col sm={8}>
+                            {t('target.storage.title')}
+                          </Col>
+                          <Col sm={1}>
+                            <DMToolTip tooltip={t('target.storage.info')} />
+                          </Col>
+                        </Row>
+                      </Th>
+                      <Th>
+                        <div className="display__flex__row">
+                          <a href="#" id="configur-aws-target-storage" onClick={onTargetStorageClick}>
+                            {t('Configure')}
+                          </a>
+                        </div>
+                      </Th>
+                    </Tr>
+                  </>
                 ) : null}
               </Tbody>
             </Table>
