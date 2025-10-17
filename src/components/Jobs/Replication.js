@@ -1,6 +1,10 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
-import { Card, CardBody, Col, Container, Form, Label, Row } from 'reactstrap';
+import { connect, useSelector } from 'react-redux';
+import { Card, CardBody, Col, Form, Label, Row } from 'reactstrap';
+import { getValue } from '../../utils/InputUtils';
+import { KEY_CONSTANTS } from '../../constants/UserConstant';
+import { hideApplicationLoader, showApplicationLoader, valueChange } from '../../store/actions';
 import { API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS, API_PROTECTOIN_PLAN_REPLICATION_JOBS, API_PROTECTTION_PLAN_REPLICATION_VM_JOBS, API_REPLICATION_JOBS, API_REPLICATION_VM_JOBS } from '../../constants/ApiConstants';
 import { REPLICATION_JOB_TYPE } from '../../constants/InputConstants';
 import { MESSAGE_TYPES } from '../../constants/MessageConstants';
@@ -8,44 +12,31 @@ import { REPLICATION_JOBS, REPLICATION_VM_JOBS, TABLE_FILTER_TEXT } from '../../
 import { changeReplicationJobType, setDiskReplicationJobs, setReplicationJobs } from '../../store/actions/JobActions';
 import { addMessage } from '../../store/actions/MessageActions';
 import { callAPI } from '../../utils/ApiUtils';
-import DMBreadCrumb from '../Common/DMBreadCrumb';
 import DMAPIPaginator from '../Table/DMAPIPaginator';
 import DMTable from '../Table/DMTable';
 import ProtectionPlanReplications from './ProtectionPlanReplications';
 
-class Replication extends Component {
-  constructor() {
-    super();
-    this.state = { plansData: [] };
-    this.changeJobType = this.changeJobType.bind(this);
-  }
+function Replication(props) {
+  const [plansData, setPlanData] = useState([]);
+  const refresh = useSelector((state) => state.user.context.refresh);
+  const { protectionplanID, dispatch, jobs, t } = props;
 
-  componentDidMount() {
-    this.fetchReplicationJobs();
-  }
+  useEffect(() => {
+    fetchReplicationJobs();
+    return () => {
+      dispatch(valueChange(KEY_CONSTANTS.UI_REPL_VM_NAME, ''));
+    };
+  }, [refresh, protectionplanID]);
 
-  componentDidUpdate(prevProps) {
-    const { user, jobs } = this.props;
-    const { refresh } = user.context;
-    const prevRefresh = prevProps.user.context.refresh;
-    const { replicationType } = jobs;
-    if (refresh !== prevRefresh && replicationType === REPLICATION_JOB_TYPE.PLAN) {
-      this.fetchReplicationJobs();
-    }
-  }
-
-  componentWillUnmount() {
-    this.state = null;
-  }
-
-  fetchReplicationJobs() {
-    const { protectionplanID, dispatch } = this.props;
+  function fetchReplicationJobs() {
     const url = (protectionplanID === 0 ? API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS : `${API_PROTECTION_PLAN_REPLICATION_JOBS_STATUS}?protectionplanid=${protectionplanID}`);
+    dispatch(showApplicationLoader('REPL_PROTECTION_PLAN', 'Loading protection plans...'));
     callAPI(url).then((json) => {
+      dispatch(hideApplicationLoader('REPL_PROTECTION_PLAN', 'Loading protection plans...'));
       if (json.hasError) {
         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
       } else {
-        this.setState({ plansData: json });
+        setPlanData(json);
       }
     },
     (err) => {
@@ -53,32 +44,30 @@ class Replication extends Component {
     });
   }
 
-  changeJobType(type) {
-    const { dispatch } = this.props;
+  function changeJobType(type) {
     dispatch(changeReplicationJobType(type));
   }
 
-  renderOptions() {
-    const { jobs, t } = this.props;
+  function renderOptions() {
     const { replicationType } = jobs;
     return (
       <>
         <Form>
           <div className="form-check-inline">
             <Label className="form-check-label" for="plan-options">
-              <input type="radio" className="form-check-input" id="plan-options" name="jobsType" value={replicationType === REPLICATION_JOB_TYPE.PLAN} checked={replicationType === REPLICATION_JOB_TYPE.PLAN} onChange={() => { this.changeJobType(REPLICATION_JOB_TYPE.PLAN); }} />
+              <input type="radio" className="form-check-input" id="plan-options" name="jobsType" value={replicationType === REPLICATION_JOB_TYPE.PLAN} checked={replicationType === REPLICATION_JOB_TYPE.PLAN} onChange={() => { changeJobType(REPLICATION_JOB_TYPE.PLAN); }} />
               {t('protection.plan')}
             </Label>
           </div>
           <div className="form-check-inline">
             <Label className="form-check-label" for="vms-options">
-              <input type="radio" className="form-check-input" id="vms-options" name="jobsType" value={replicationType === REPLICATION_JOB_TYPE.VM} checked={replicationType === REPLICATION_JOB_TYPE.VM} onChange={() => { this.changeJobType(REPLICATION_JOB_TYPE.VM); }} />
+              <input type="radio" className="form-check-input" id="vms-options" name="jobsType" value={replicationType === REPLICATION_JOB_TYPE.VM} checked={replicationType === REPLICATION_JOB_TYPE.VM} onChange={() => { changeJobType(REPLICATION_JOB_TYPE.VM); }} />
               {t('virtual.machines')}
             </Label>
           </div>
           <div className="form-check-inline">
             <Label className="form-check-label" for="disks-options">
-              <input type="radio" className="form-check-input" id="disks-options" name="jobsType" value={replicationType === REPLICATION_JOB_TYPE.DISK} checked={replicationType === REPLICATION_JOB_TYPE.DISK} onChange={() => { this.changeJobType(REPLICATION_JOB_TYPE.DISK); }} />
+              <input type="radio" className="form-check-input" id="disks-options" name="jobsType" value={replicationType === REPLICATION_JOB_TYPE.DISK} checked={replicationType === REPLICATION_JOB_TYPE.DISK} onChange={() => { changeJobType(REPLICATION_JOB_TYPE.DISK); }} />
               {t('disks')}
             </Label>
           </div>
@@ -87,16 +76,13 @@ class Replication extends Component {
     );
   }
 
-  renderDiskJobs() {
-    const { jobs, protectionplanID, dispatch } = this.props;
+  function renderDiskJobs() {
     const { diskReplication } = jobs;
     const url = (protectionplanID === 0 ? API_REPLICATION_JOBS : API_PROTECTOIN_PLAN_REPLICATION_JOBS.replace('<id>', protectionplanID));
     return (
       <>
         <Row className="padding-left-20">
-          <Col sm={5}>
-            {this.renderOptions()}
-          </Col>
+          <Col sm={5} />
           <Col sm={7}>
             <div className="padding-right-30 padding-left-10">
               <DMAPIPaginator
@@ -122,16 +108,16 @@ class Replication extends Component {
     );
   }
 
-  renderVMJobs() {
-    const { jobs, protectionplanID, dispatch } = this.props;
+  function renderVMJobs() {
     const { replication } = jobs;
+    const { user } = props;
+    const { values } = user;
+    const selectedVmName = getValue(KEY_CONSTANTS.UI_REPL_VM_NAME, values);
     const url = (protectionplanID === 0 ? API_REPLICATION_VM_JOBS : API_PROTECTTION_PLAN_REPLICATION_VM_JOBS.replace('<id>', protectionplanID));
     return (
       <>
         <Row className="padding-left-20">
-          <Col sm={5}>
-            {this.renderOptions()}
-          </Col>
+          <Col sm={5} />
           <Col sm={7}>
             <div className="padding-right-30 padding-left-10">
               <DMAPIPaginator
@@ -143,6 +129,8 @@ class Replication extends Component {
                 storeFn={setReplicationJobs}
                 name="replicationVMs"
                 fetchInInterval
+                dispatch={dispatch}
+                searchString={selectedVmName}
               />
             </div>
           </Col>
@@ -157,10 +145,8 @@ class Replication extends Component {
     );
   }
 
-  renderDrReplications() {
-    const { jobs, protectionplanID } = this.props;
+  function renderDrReplications() {
     const { replicationType } = jobs;
-    const { plansData } = this.state;
     if (replicationType !== REPLICATION_JOB_TYPE.PLAN || plansData.length <= 0) {
       return null;
     }
@@ -169,58 +155,47 @@ class Replication extends Component {
     if (typeof name === 'undefined') {
       return null;
     }
-    return (
-      <Row className="padding-top-20">
-        <Col sm={12}>
-          {plansData.map((plan) => {
-            if (protectionplanID === null || protectionplanID === 0) {
-              return <ProtectionPlanReplications title={plan.name} vms={plan.vms} />;
-            }
-            if (protectionplanID !== 0 && protectionplanID === plan.id) {
-              return <ProtectionPlanReplications title={plan.name} vms={plan.vms} />;
-            }
-            return null;
-          })}
-        </Col>
-      </Row>
-    );
+    return plansData.map((plan) => {
+      if (protectionplanID === null || protectionplanID === 0) {
+        return <ProtectionPlanReplications dispatch={dispatch} plan={plan} t={t} />;
+      }
+      if (protectionplanID !== 0 && protectionplanID === plan.id) {
+        return <ProtectionPlanReplications dispatch={dispatch} plan={plan} t={t} />;
+      }
+      return null;
+    });
   }
 
-  renderProtectionPlanJobs() {
-    return (
+  function renderProtectionPlanJobs() {
+    return renderDrReplications();
+  }
+
+  const { replicationType } = jobs;
+  return (
+    <>
       <>
-
-        <Row className="padding-left-20">
-          <Col sm={12}>
-            {this.renderOptions()}
-          </Col>
-        </Row>
-        {this.renderDrReplications()}
-
+        <Card>
+          <CardBody>
+            <span className="text-muted pt-2">
+              Replication
+            </span>
+            <Row className="mt-3 p-2">
+              <Col className="mb-2" sm={5}>
+                {renderOptions()}
+              </Col>
+              {replicationType === REPLICATION_JOB_TYPE.VM ? renderVMJobs() : null}
+              {replicationType === REPLICATION_JOB_TYPE.DISK ? renderDiskJobs() : null}
+              {replicationType === REPLICATION_JOB_TYPE.PLAN ? renderProtectionPlanJobs() : null}
+            </Row>
+          </CardBody>
+        </Card>
       </>
-    );
-  }
-
-  render() {
-    const { jobs } = this.props;
-    const { replicationType } = jobs;
-    return (
-      <>
-        <>
-          <Container fluid>
-            <Card>
-              <CardBody>
-                <DMBreadCrumb links={[{ label: 'replication', link: '#' }]} />
-                {replicationType === REPLICATION_JOB_TYPE.VM ? this.renderVMJobs() : null}
-                {replicationType === REPLICATION_JOB_TYPE.DISK ? this.renderDiskJobs() : null}
-                {replicationType === REPLICATION_JOB_TYPE.PLAN ? this.renderProtectionPlanJobs() : null}
-              </CardBody>
-            </Card>
-          </Container>
-        </>
-      </>
-    );
-  }
+    </>
+  );
 }
 
-export default (withTranslation()(Replication));
+function mapStateToProps(state) {
+  const { jobs, user } = state;
+  return { jobs, user };
+}
+export default connect(mapStateToProps)(withTranslation()(Replication));

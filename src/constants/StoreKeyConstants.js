@@ -39,4 +39,5 @@ export const STORE_KEYS = {
   UI_REPORT_SCHEDULE_TIME_ZONE: 'ui.report.schedule.time.zone',
   UI_SCHEDULE_TIME_ZONE_OPTIONS: 'ui.schedule.time.zone.options',
   UI_SCHEDULE_DAYS_LATER_OPTION: 'ui.schedule.days.later.options',
+  UI_REPL_VM_NAME: 'ui.repl.vm.name',
 };

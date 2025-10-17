@@ -23,13 +23,17 @@ function StatusItemRenderer({ data, field, t, noPopOver, showDate, user, dispatc
   const noPopOverForWorkflow = [UI_WORKFLOW.REFRESH_RECOVERY];
   const currentWorkflow = getValue(STATIC_KEYS.UI_WORKFLOW, values);
   // option field to retrieve data value from a function
-  const { getValueFromFunc } = options || {};
+  const { getValueFromFunc, shouldShowFnc } = options || {};
   useEffect(() => {
   }, [data[field]]);
   if (!data) {
     return '-';
   }
   let status = data[field];
+  if (typeof shouldShowFnc === 'function') {
+    const show = shouldShowFnc(data);
+    if (!show) return '-';
+  }
   if (getValueFromFunc && typeof getValueFromFunc === 'function') {
     status = getValueFromFunc(data);
   }

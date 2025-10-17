@@ -1,3 +1,4 @@
+import { hideStatusForReplPlan } from '../utils/AppUtils';
 import { drPlanStatus } from '../store/actions/DrPlanActions';
 import VMInstanceItemRenderer from '../components/Table/ItemRenderers/VMInstanceItemRenderer';
 import { getRecoveryVMName } from '../utils/TableUtils';
@@ -84,7 +85,8 @@ export const REPORT_JOB_NAME_ITEM_RENDERER = 'REPORT_JOB_NAME_ITEM_RENDERER';
 export const END_TIME_REPORT_SHEDULE_JOB = 'END_TIME_REPORT_SHEDULE_JOB';
 export const REPORT_SCHEDULE_EMAIL_ITEM_RENDERER = 'REPORT_SCHEDULE_EMAIL_ITEM_RENDERER';
 export const SCHEDULE_STATUS_RENDERER = 'SCHEDULE_STATUS_RENDERER';
-
+export const VM_REPL_STATUS_ICON = 'VM_REPL_STATUS_ICON';
+export const VM_NAME_LINK = 'VM_NAME_LINK';
 export const PLAN_LIST_WORKLOAD = 'PLAN_LIST_WORKLOAD';
 export const VM_REPL_STATUS = 'VM_REPL_STATUS';
 // show time taken by any job
@@ -203,14 +205,14 @@ export const TABLE_RECOVERY_VMS = [
 
 // Table fields for protection plan vise replication
 export const TABLE_PROTECTION_PLAN_REPLICATIONS = [
-  { label: 'name', field: 'name' },
-  { label: 'Iteration', field: 'totalIteration' },
+  { label: 'name', field: 'name', itemRenderer: VM_NAME_LINK, width: '2' },
+  { label: 'Replication Enabled', field: 'name', itemRenderer: VM_REPL_STATUS, width: '1' },
   { label: 'Total Changed', field: 'totalChangedSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
   { label: 'Total Transferred', field: 'totalTransferredSize', itemRenderer: TRANSFER_SIZE_ITEM_RENDERER },
-  { label: 'Data Reduction (%)', field: 'dataReductionRatio' },
-  { label: 'Job Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
-  { label: 'Sync Status', field: 'syncStatus', itemRenderer: STATUS_ITEM_RENDERER },
-  { label: 'Sync Time', field: 'lastSyncTime', itemRenderer: DATE_ITEM_RENDERER },
+  { label: 'Data Reduction (%)', field: 'dataReductionRatio', width: '1' },
+  { label: 'Latest Job Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER, options: { shouldShowFnc: (data) => hideStatusForReplPlan(data) } },
+  { label: 'Latest Sync Status', field: 'syncStatus', itemRenderer: STATUS_ITEM_RENDERER, options: { shouldShowFnc: (data) => hideStatusForReplPlan(data) } },
+  { label: 'Last Sync Time', field: 'lastSyncTime', itemRenderer: DATE_ITEM_RENDERER, options: { ItemRenderer: VM_REPL_STATUS_ICON } },
 ];
 
 // Table fields for protection plan

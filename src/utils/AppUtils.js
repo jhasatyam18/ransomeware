@@ -637,3 +637,11 @@ export function errorMessageForReasonInReplOp({ fieldKey, user }) {
     }
   }
 }
+
+export const hideStatusForReplPlan = (data) => {
+  const { recoveryStatus } = data;
+  if (recoveryStatus === RECOVERY_STATUS.RECOVERED || recoveryStatus === RECOVERY_STATUS.MIGRATED) {
+    return false;
+  }
+  return true;
+};

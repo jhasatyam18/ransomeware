@@ -981,6 +981,9 @@
   "allow-running":"Allow Running Replication To Complete",
   "suggetion":"Suggestion : ",
   "test.data.count":"Test recovered virtual machine count of last one month",
-  "DM_ERR_INTERNAL_SERVER":"Internal server error"
+  "DM_ERR_INTERNAL_SERVER":"Internal server error",
+  "meets":"Meets",
+  "partial":"Partial",
+  "breached":"Does Not Meet"
 
 }

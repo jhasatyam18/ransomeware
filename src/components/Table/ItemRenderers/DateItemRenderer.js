@@ -1,12 +1,13 @@
 import React from 'react';
 import { withTranslation } from 'react-i18next';
+import { getItemRendererComponent } from '../../../utils/ComponentFactory';
 import { JOB_COMPLETION_STATUS } from '../../../constants/AppStatus';
 import { MODAL_PRESERVE_CHECKPOINT } from '../../../constants/Modalconstant';
 import { KEY_CONSTANTS } from '../../../constants/UserConstant';
 import { openModal } from '../../../store/actions/ModalActions';
 import { hasRequestedPrivileges } from '../../../utils/PrivilegeUtils';
 
-function DateItemRenderer({ data, field, dispatch, t, user }) {
+function DateItemRenderer({ data, field, dispatch, t, user, options }) {
   if (data && typeof data[field] === 'undefined') {
     return '';
   }
@@ -22,8 +23,8 @@ function DateItemRenderer({ data, field, dispatch, t, user }) {
     checkpoint.id = checkpoint.recoveryCheckpointID;
     checkpoint.creationTime = checkpoint.recoveryPointTime;
     checkpoint.workloadName = checkpoint.vmName;
-    const options = { title: t('checkpoint.preserve.title'), selectedCheckpoints: { [checkpoint.id]: checkpoint }, size: 'lg' };
-    dispatch(openModal(MODAL_PRESERVE_CHECKPOINT, options));
+    const checkpointOptions = { title: t('checkpoint.preserve.title'), selectedCheckpoints: { [checkpoint.id]: checkpoint }, size: 'lg' };
+    dispatch(openModal(MODAL_PRESERVE_CHECKPOINT, checkpointOptions));
   };
 
   if (fieldArray.includes(field)) {
@@ -68,6 +69,7 @@ function DateItemRenderer({ data, field, dispatch, t, user }) {
   return (
     <>
       {resp}
+      {resp !== '-' && options && Object.keys(options).length > 0 && options?.ItemRenderer ? getItemRendererComponent({ render: options?.ItemRenderer, data, field: options?.field, user, dispatch, options }) : null}
     </>
   );
 }

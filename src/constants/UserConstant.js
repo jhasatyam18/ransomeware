@@ -98,3 +98,9 @@ export const THEME_CONSTANT = {
     },
   },
 };
+
+export const PLAN_REPL_RPO = {
+  meets: 'success',
+  breached: 'danger',
+  partial: 'warning',
+};

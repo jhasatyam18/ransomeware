@@ -42,7 +42,8 @@ export const CHECKPOINT_STATUS_DELETED_FROM_INFRA = 'Deleted from Platform';
 export const PARTIALLY_RUNNING = 'partially-running';
 
 export const PLAYBOOK_IN_VALIDATED = 'Not-in-sync';
-
+export const REPLSTATUS_MEETS = 'meets';
+export const REPLSTATUS_BREACHED = 'breached';
 export const RECOVERY_STATUS = {
   MIGRATED: 'Migrated',
   RECOVERED: 'Recovered',

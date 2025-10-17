@@ -34,6 +34,7 @@ function SelectiveReplicationVm(props) {
   const selectedVMs = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
   const path = window.location.pathname.split('/');
   const workflow = path[path.length - 1];
+  const notRecoveredVm = virtualMachines.filter((el) => el.recoveryStatus !== RECOVERY_STATUS.RECOVERED);
   const setDataForDisplay = (data) => {
     setConfigDataToDisplay(data);
   };
@@ -127,7 +128,7 @@ function SelectiveReplicationVm(props) {
       <button type="button" className="btn btn-secondary" onClick={onClose}>
         {t('close')}
       </button>
-      { virtualMachines.length === Object.keys(selectedVMs).length || !enablePPlanLevelScheduling ? (
+      { !enablePPlanLevelScheduling || (notRecoveredVm.length === Object.keys(selectedVMs).length && enablePPlanLevelScheduling) ? (
         <button type="button" className="btn btn-danger" onClick={onConfirm}>
           {t('confirm')}
         </button>
@@ -135,83 +136,80 @@ function SelectiveReplicationVm(props) {
     </div>
   );
 
-  const confirmationModalComponent = () => {
-    const notRecoveredVm = virtualMachines.filter((el) => el.recoveryStatus !== RECOVERY_STATUS.RECOVERED);
-    return (
-      <>
-        {enablePPlanLevelScheduling && notRecoveredVm.length !== Object.keys(selectedVMs).length ? (
-          <>
-            <Row className="ps-4">
-              <Col className="d-flex align-items-center" sm={2}>
-                <i style={{ fontSize: '100px' }} className="fas fa-exclamation-triangle text-warning" />
-              </Col>
-              <Col sm={10}>
-                <p style={{ textAlign: 'left', marginBottom: '0px' }}>
-                  {t('title.synchronize.vm.disabled')}
-                </p>
-                <p style={{ textAlign: 'left' }}>
-                  {t('title.two.synchronize.vm.disabled', { workflow: workflow === KEY_CONSTANTS.START ? 'Starting' : 'Stopping' })}
-                </p>
-                <p style={{ textAlign: 'left', marginBottom: '0px' }}>{`To ${workflow === KEY_CONSTANTS.STOP ? 'stop' : 'start'} replication, you have two options:`}</p>
-                <ul style={{ textAlign: 'left' }}>
-                  <li>
-                    Edit the protection plan and disable the
-                    {' '}
-                    <small style={{ fontWeight: 'bold', fontSize: '12px' }}>Synchronize All VMs Replication</small>
-                    {' '}
-                    option in the replication configuration.
-                  </li>
-                  <li>
-                    If you choose to keep
-                    {' '}
-                    <small style={{ fontWeight: 'bold', fontSize: '12px' }}>Synchronize All VMs Replication</small>
-                    {' '}
-                    {` enabled, you must select all workloads in the plan to ${workflow === KEY_CONSTANTS.STOP ? 'stop' : 'start'} replication.`}
-                  </li>
-                </ul>
-              </Col>
-            </Row>
-          </>
-        ) : (
+  const confirmationModalComponent = () => (
+    <>
+      {enablePPlanLevelScheduling && notRecoveredVm.length !== Object.keys(selectedVMs).length ? (
+        <>
           <Row className="ps-4">
             <Col className="d-flex align-items-center" sm={2}>
               <i style={{ fontSize: '100px' }} className="fas fa-exclamation-triangle text-warning" />
             </Col>
             <Col sm={10}>
-              <p style={{ textAlign: 'left' }} className="text-warning">
-                Are you sure want to
-                {' '}
-                {workflow === KEY_CONSTANTS.STOP ? 'stop' : 'start'}
-                {' '}
-                replication for following workloads.
+              <p style={{ textAlign: 'left', marginBottom: '0px' }}>
+                {t('title.synchronize.vm.disabled')}
               </p>
-              <ul>
-                {workflow === KEY_CONSTANTS.STOP ? (
-                  <li style={{ textAlign: 'left' }}>
-                    {t('stop.repl.type')}
-                    {t(`${getValue('ui.stop.repl.type', values)}`)}
-                  </li>
-                ) : null}
-                <li style={{ textAlign: 'left' }}>
-                  {t('workloads')}
-                  <SimpleBar style={{ maxHeight: '40vh', minHeight: '4vh' }}>
-                    <ul>
-                      {Object.values(selectedVMs).map((el) => <li style={{ textAlign: 'left' }} key={el.id}>{el.name}</li>)}
-                    </ul>
-                  </SimpleBar>
+              <p style={{ textAlign: 'left' }}>
+                {t('title.two.synchronize.vm.disabled', { workflow: workflow === KEY_CONSTANTS.START ? 'Starting' : 'Stopping' })}
+              </p>
+              <p style={{ textAlign: 'left', marginBottom: '0px' }}>{`To ${workflow === KEY_CONSTANTS.STOP ? 'stop' : 'start'} replication, you have two options:`}</p>
+              <ul style={{ textAlign: 'left' }}>
+                <li>
+                  Edit the protection plan and disable the
+                  {' '}
+                  <small style={{ fontWeight: 'bold', fontSize: '12px' }}>Synchronize All VMs Replication</small>
+                  {' '}
+                  option in the replication configuration.
                 </li>
-                <li style={{ textAlign: 'left' }}>
-                  {t('user.provide.reason')}
-                  {getValue('stop.repl.reason', values)}
+                <li>
+                  If you choose to keep
+                  {' '}
+                  <small style={{ fontWeight: 'bold', fontSize: '12px' }}>Synchronize All VMs Replication</small>
+                  {' '}
+                  {` enabled, you must select all workloads in the plan to ${workflow === KEY_CONSTANTS.STOP ? 'stop' : 'start'} replication.`}
                 </li>
               </ul>
             </Col>
           </Row>
-        )}
+        </>
+      ) : (
+        <Row className="ps-4">
+          <Col className="d-flex align-items-center" sm={2}>
+            <i style={{ fontSize: '100px' }} className="fas fa-exclamation-triangle text-warning" />
+          </Col>
+          <Col sm={10}>
+            <p style={{ textAlign: 'left' }} className="text-warning">
+              Are you sure want to
+              {' '}
+              {workflow === KEY_CONSTANTS.STOP ? 'stop' : 'start'}
+              {' '}
+              replication for following workloads.
+            </p>
+            <ul>
+              {workflow === KEY_CONSTANTS.STOP ? (
+                <li style={{ textAlign: 'left' }}>
+                  {t('stop.repl.type')}
+                  {t(`${getValue('ui.stop.repl.type', values)}`)}
+                </li>
+              ) : null}
+              <li style={{ textAlign: 'left' }}>
+                {t('workloads')}
+                <SimpleBar style={{ maxHeight: '40vh', minHeight: '4vh' }}>
+                  <ul>
+                    {Object.values(selectedVMs).map((el) => <li style={{ textAlign: 'left' }} key={el.id}>{el.name}</li>)}
+                  </ul>
+                </SimpleBar>
+              </li>
+              <li style={{ textAlign: 'left' }}>
+                {t('user.provide.reason')}
+                {getValue('stop.repl.reason', values)}
+              </li>
+            </ul>
+          </Col>
+        </Row>
+      )}
 
-      </>
-    );
-  };
+    </>
+  );
 
   const openStopConfirmationModal = () => {
     const title = enablePPlanLevelScheduling ? `Warning ${workflow === KEY_CONSTANTS.STOP ? 'Stop' : 'Start'} Replication : ${name}` : `Confirmation ${workflow === KEY_CONSTANTS.STOP ? 'Stop' : 'Start'} Replication : ${name}`;

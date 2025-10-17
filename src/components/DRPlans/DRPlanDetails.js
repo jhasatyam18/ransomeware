@@ -6,13 +6,13 @@ import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import SimpleBar from 'simplebar-react';
 import { Badge, Card, CardBody, CardTitle, Col, Container, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
-import { PLATFORM_TYPES, PROTECTION_PLANS_STATUS, RECOVERY_STATUS, REPLICATION_STATUS } from '../../constants/InputConstants';
+import { PLATFORM_TYPES, PROTECTION_PLANS_STATUS, RECOVERY_STATUS, REPLICATION_JOB_TYPE, REPLICATION_STATUS } from '../../constants/InputConstants';
 import { PROTECTION_PLAN_CLEANUP_PATH, PROTECTION_PLANS_PATH, PROTECTION_PLAN_FLOW } from '../../constants/RouterConstants';
 import DMToolTip from '../Shared/DMToolTip';
 import { PLAN_DETAIL_TABS } from '../../constants/UserConstant';
 import { setActiveTab } from '../../store/actions';
 import { fetchCheckpointsByPlanId, setCheckpointCount, setVmlevelCheckpoints } from '../../store/actions/checkpointActions';
-import { drPlanStatus, fetchDRPlanById, onDeleteProtectionPlanClick, onResetDiskReplicationClick, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, planDetailSummaryData, playbookExport } from '../../store/actions/DrPlanActions';
+import { drPlanDetailsFetched, drPlanStatus, fetchDRPlanById, onDeleteProtectionPlanClick, onResetDiskReplicationClick, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, planDetailSummaryData, playbookExport } from '../../store/actions/DrPlanActions';
 import { downloadRecoveryPlaybook } from '../../store/actions/DrPlaybooksActions';
 import { convertMinutesToDaysHourFormat, getRecoveryCheckpointSummary } from '../../utils/AppUtils';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
@@ -26,6 +26,7 @@ import ProtectionPlanVMConfig from './ProtectionPlanVMConfig';
 import { MODAL_CONFIRMATION_WARNING } from '../../constants/Modalconstant';
 import { closeModal, openModal } from '../../store/actions/ModalActions';
 import Spinner from '../Common/Spinner';
+import { changeReplicationJobType } from '../../store/actions/JobActions';
 
 const Replication = React.lazy(() => import('../Jobs/Replication'));
 const Recovery = React.lazy(() => import('../Jobs/Recovery'));
@@ -42,19 +43,23 @@ class DRPlanDetails extends Component {
   }
 
   componentDidMount() {
-    const { dispatch, location } = this.props;
+    const { dispatch, location, user } = this.props;
     const { pathname } = location;
     const parts = pathname.split('/');
+    const { drPlanDetailActiveTab } = user;
     this.toggleTab = this.toggleTab.bind(this);
     dispatch(fetchDRPlanById(parts[parts.length - 1]));
     dispatch(fetchCheckpointsByPlanId(parts[parts.length - 1]));
-    dispatch(setActiveTab('1'));
+    dispatch(setActiveTab(drPlanDetailActiveTab || '1'));
   }
 
   componentWillUnmount() {
     const { dispatch } = this.props;
     dispatch(setVmlevelCheckpoints([]));
     dispatch(setCheckpointCount(0));
+    dispatch(setActiveTab('1'));
+    dispatch(changeReplicationJobType(REPLICATION_JOB_TYPE.PLAN));
+    dispatch(drPlanDetailsFetched({}));
   }
 
   stopPlanClick = () => () => {
@@ -554,41 +559,25 @@ class DRPlanDetails extends Component {
                     </Col>
                   </Row>
                 </TabPane>
-                <TabPane tabId={PLAN_DETAIL_TABS.THREE} className="p-3">
-                  <Row>
-                    <Col sm="12">
-                      <Suspense fallback={<Loader />}>
-                        {activeTab === PLAN_DETAIL_TABS.THREE ? <Replication protectionplanID={id} {...this.props} /> : null}
-                      </Suspense>
-                    </Col>
-                  </Row>
+                <TabPane tabId={PLAN_DETAIL_TABS.THREE}>
+                  <Suspense fallback={<Loader />}>
+                    {activeTab === PLAN_DETAIL_TABS.THREE ? <Replication protectionplanID={id} {...this.props} /> : null}
+                  </Suspense>
                 </TabPane>
-                <TabPane tabId={PLAN_DETAIL_TABS.SIX} className="p-3">
-                  <Row>
-                    <Col sm="12">
-                      <Suspense fallback={<Loader />}>
-                        {activeTab === PLAN_DETAIL_TABS.SIX ? <Recovery protectionplanID={id} {...this.props} /> : null}
-                      </Suspense>
-                    </Col>
-                  </Row>
+                <TabPane tabId={PLAN_DETAIL_TABS.SIX}>
+                  <Suspense fallback={<Loader />}>
+                    {activeTab === PLAN_DETAIL_TABS.SIX ? <Recovery protectionplanID={id} {...this.props} /> : null}
+                  </Suspense>
                 </TabPane>
-                <TabPane tabId={PLAN_DETAIL_TABS.FOUR} className="p-3">
-                  <Row>
-                    <Col sm="12">
-                      <Suspense fallback={<Loader />}>
-                        {activeTab === PLAN_DETAIL_TABS.FOUR ? <RecoveryCheckPointsJobs user={user} protectionplanID={id} {...this.props} /> : null}
-                      </Suspense>
-                    </Col>
-                  </Row>
+                <TabPane tabId={PLAN_DETAIL_TABS.FOUR}>
+                  <Suspense fallback={<Loader />}>
+                    {activeTab === PLAN_DETAIL_TABS.FOUR ? <RecoveryCheckPointsJobs user={user} protectionplanID={id} {...this.props} /> : null}
+                  </Suspense>
                 </TabPane>
-                <TabPane tabId={PLAN_DETAIL_TABS.FIVE} className="p-3">
-                  <Row>
-                    <Col sm="12">
-                      <Suspense fallback={<Loader />}>
-                        {activeTab === PLAN_DETAIL_TABS.FIVE ? <RecoveryCheckpoints user={user} protectionplanID={id} {...this.props} /> : null}
-                      </Suspense>
-                    </Col>
-                  </Row>
+                <TabPane tabId={PLAN_DETAIL_TABS.FIVE}>
+                  <Suspense fallback={<Loader />}>
+                    {activeTab === PLAN_DETAIL_TABS.FIVE ? <RecoveryCheckpoints user={user} protectionplanID={id} {...this.props} /> : null}
+                  </Suspense>
                 </TabPane>
               </TabContent>
             </CardBody>

@@ -13,7 +13,7 @@ import { callAPI, removeSimilarQuery } from '../../utils/ApiUtils';
 import { getValue } from '../../utils/InputUtils';
 
 function DMAPIPaginator(props) {
-  const { pageLimit = API_LIMIT_HUNDRED, fetchInInterval = undefined, subFilter = [], subFilterTitle = '' } = props;
+  const { pageLimit = API_LIMIT_HUNDRED, fetchInInterval = undefined, subFilter = [], subFilterTitle = '', searchString } = props;
   const emptyPageInfo = { limit: pageLimit, currentPage: 0, hasNext: false, hasPrev: false, nextOffset: 0, pageRecords: 0, totalPages: 0, totalRecords: 0 };
   const { apiUrl, storeFn, dispatch, columns, t, isParameterizedUrl, name, user } = props;
   const { values } = user;
@@ -21,7 +21,7 @@ function DMAPIPaginator(props) {
   const [isOpenFilterCol, toggleFilterCol] = useState(false);
   const [filterColumns, setFilterColumns] = useState([]);
   const [forceUpdate, setForceUpdate] = useState(1);
-  const [searchStr, setSearchStr] = useState('');
+  const [searchStr, setSearchStr] = useState(searchString || '');
   const [apiQuery, setApiQuery] = useState({});
   const refresh = useSelector((state) => state.user.context.refresh);
   const timerRef = useRef(null);
@@ -37,17 +37,17 @@ function DMAPIPaginator(props) {
     return `${apiUrl}?`;
   };
 
-  const getUrl = (offset) => {
+  const getUrl = (offset, filterCol) => {
     let url = getBaseURL();
     if (offset === 0) {
       url = `${url}limit=${(Object.keys(metadata).length > 0 && metadata.limit) ? metadata.limit : pageLimit}`;
     } else {
       url = `${url}offset=${offset}&limit=${(Object.keys(metadata).length > 0 && metadata.limit) ? metadata.limit : pageLimit}`;
     }
-    if (searchStr !== '') {
+    if (searchStr !== '' && typeof searchStr !== 'undefined') {
       // include encoded search value and field in the API
       const encodedSearchStr = encodeURIComponent(searchStr.trim());
-      const applicableCols = filterColumns.filter((f) => f.checked === true);
+      const applicableCols = typeof filterCol !== 'undefined' && filterCol?.length > 0 ? filterCol.filter((f) => f.checked === true) : filterColumns?.filter((f) => f.checked === true);
       if (applicableCols.length > 0) {
         const searchFields = applicableCols.map((m) => m.field).join(',');
         url = `${url}&searchstr=${encodedSearchStr}&searchcol=${searchFields}`;
@@ -56,12 +56,12 @@ function DMAPIPaginator(props) {
     return removeSimilarQuery(url, apiQuery);
   };
 
-  const fetchData = (offset = 0, onPgaeChange) => {
+  const fetchData = (offset = 0, onPgaeChange, filterCol) => {
     if (isFetchingRef.current && !onPgaeChange && searchStr === '') return; // isFetchRef skip this fetch to avoid sending duplicate or unnecessary requests if previous request is in pending state.
     isFetchingRef.current = true;
     fetchTokenRef.current += 1; // Increase token for each fetch to show the data of the latest request.
     const currentToken = fetchTokenRef.current;
-    const url = getUrl(offset);
+    const url = getUrl(offset, filterCol);
 
     /**
     * if there is a continuous fetching of data in an interval then loader comes and it's gets annoying for user to see it continuous
@@ -112,7 +112,7 @@ function DMAPIPaginator(props) {
       subFilter?.filter((f) => f.checked).forEach((f) => {
         addSubFilterQuery(f);
       });
-      fetchData(pagec > 0 ? (pagec - 1) * pageLimit : pagec * pageLimit);
+      fetchData(pagec > 0 ? (pagec - 1) * pageLimit : pagec * pageLimit, false, arr);
     }
     return () => {
       isUnmounting = true;
