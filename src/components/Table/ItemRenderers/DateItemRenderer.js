@@ -11,7 +11,7 @@ function DateItemRenderer({ data, field, dispatch, t, user, options }) {
   if (data && typeof data[field] === 'undefined') {
     return '';
   }
-  const fieldArray = ['currentSnapshotTime', 'lastSyncTime'];
+  const fieldArray = ['currentSnapshotTime'];
   const time = data[field] * 1000;
   const { isPreserveCheckpoint } = data;
   const d = new Date(time);

@@ -98,7 +98,7 @@ function ProtectionPlanReplications(props) {
               {enablePPlanLevelScheduling ? (
                 <>
                   <FontAwesomeIcon icon={faCheckCircle} size="xs" className="text-success mt-1 ms-1" />
-                  <span className="ms-2" style={{ fontSize: '10px' }}>
+                  <span className="ms-2" style={{ fontSize: '12px' }}>
                     Synchronize All VM Replications
                   </span>
                 </>
