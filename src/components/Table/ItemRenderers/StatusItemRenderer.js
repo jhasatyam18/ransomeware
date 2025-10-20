@@ -85,7 +85,7 @@ function StatusItemRenderer({ data, field, t, noPopOver, showDate, user, dispatc
           {hoverInfo !== '' ? renderPopOver(hoverInfo) : null}
           {showDate === 'true' ? <span className="font-size-11 padding-left-10">{new Date(data.lastRunTime * 1000).toLocaleString()}</span> : null}
         </Badge>
-        {options?.ItemRenderer ? getItemRendererComponent({ render: options?.ItemRenderer, data, field: options?.field, user, dispatch, options }) : null}
+        {options?.ItemRenderer ? getItemRendererComponent({ render: options?.ItemRenderer, data, field: options?.field, user, dispatch }) : null}
       </div>
     );
   }

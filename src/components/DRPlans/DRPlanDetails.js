@@ -12,7 +12,7 @@ import DMToolTip from '../Shared/DMToolTip';
 import { PLAN_DETAIL_TABS } from '../../constants/UserConstant';
 import { setActiveTab } from '../../store/actions';
 import { fetchCheckpointsByPlanId, setCheckpointCount, setVmlevelCheckpoints } from '../../store/actions/checkpointActions';
-import { drPlanDetailsFetched, drPlanStatus, fetchDRPlanById, onDeleteProtectionPlanClick, onResetDiskReplicationClick, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, planDetailSummaryData, playbookExport } from '../../store/actions/DrPlanActions';
+import { drPlanStatus, fetchDRPlanById, onDeleteProtectionPlanClick, onResetDiskReplicationClick, openEditProtectionPlanWizard, openMigrationWizard, openRecoveryWizard, openReverseWizard, openTestRecoveryWizard, planDetailSummaryData, playbookExport } from '../../store/actions/DrPlanActions';
 import { downloadRecoveryPlaybook } from '../../store/actions/DrPlaybooksActions';
 import { convertMinutesToDaysHourFormat, getRecoveryCheckpointSummary } from '../../utils/AppUtils';
 import { hasRequestedPrivileges } from '../../utils/PrivilegeUtils';
@@ -59,7 +59,6 @@ class DRPlanDetails extends Component {
     dispatch(setCheckpointCount(0));
     dispatch(setActiveTab('1'));
     dispatch(changeReplicationJobType(REPLICATION_JOB_TYPE.PLAN));
-    dispatch(drPlanDetailsFetched({}));
   }
 
   stopPlanClick = () => () => {
