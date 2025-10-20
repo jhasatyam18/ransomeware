@@ -12,3 +12,6 @@ export const USERNAME_REGEX = /^[a-zA-Z0-9\-_]{5,20}$/;
 // Then again same character set [0-9A-F] that is repeated 2 times ex : 00:50:56:09:f2:36
 export const MAC_ADDRESS = /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/;
 export const POSITIVE_NUMBERS_REGEX = '^[0-9]+$';
+// This regular expression finds any character in a string that is not a letter, number, hyphen, or underscore, and replaces it.
+// Matches one or more consecutive invalid characters as a single match.
+export const INVALID_ID_CHARS = /[^a-zA-Z0-9-_]+/g;

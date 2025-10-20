@@ -7,7 +7,7 @@ import { MESSAGE_TYPES } from '../constants/MessageConstants';
 import { MODAL_CONFIRMATION_WARNING, MODAL_REVERSE_CHANGES_WARNING, MODAL_SHOW_WINPREP_UPDATE_WARNING } from '../constants/Modalconstant';
 import { STORE_KEYS } from '../constants/StoreKeyConstants';
 import { GENERAL_PLATFORM_KEYS, KEY_CONSTANTS, PLAN_KEYS, REC_SCRIPTS, REP_SCRIPTS } from '../constants/UserConstant';
-import { IP_REGEX } from '../constants/ValidationConstants';
+import { INVALID_ID_CHARS, IP_REGEX } from '../constants/ValidationConstants';
 import { addErrorMessage, hideApplicationLoader, removeErrorMessage, showApplicationLoader, valueChange } from '../store/actions';
 import { setVMGuestOSInfo } from '../store/actions/DrPlanActions';
 import { addMessage } from '../store/actions/MessageActions';
@@ -1611,3 +1611,8 @@ export function validateConfigureShedule(user, dispatch, fieldConfigMap) {
 
   return isClean;
 }
+
+export const makeSafeId = (value) => {
+  if (!value) return '';
+  return value.replace(INVALID_ID_CHARS, '');
+};

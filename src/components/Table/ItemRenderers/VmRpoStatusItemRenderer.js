@@ -4,13 +4,15 @@ import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Popover, PopoverBody } from 'reactstrap';
 import SimpleBar from 'simplebar-react';
+import { makeSafeId } from '../../../utils/validationUtils';
 import { REPLSTATUS_BREACHED, REPLSTATUS_MEETS } from '../../../constants/AppStatus';
 
 const VmRpoStatusItemRenderer = ({ data, t }) => {
-  const { rpoStatus } = data;
+  const { rpoStatus = '', name = '' } = data;
   const [popoverOpen, setPopoverOpen] = useState(false);
+  const id = makeSafeId(`status-${rpoStatus}-${name}`);
   const renderPopOver = () => (
-    <Popover placement="bottom" isOpen={popoverOpen} target={`status-${rpoStatus}-${data.name}-${data.id}`} style={{ backgroundColor: 'black', color: 'black', border: 'none', width: rpoStatus.length > 5 ? '200px' : '100px', textAlign: 'center' }}>
+    <Popover placement="bottom" isOpen={popoverOpen} target={id} style={{ backgroundColor: 'black', color: 'black', border: 'none', width: rpoStatus.length > 5 ? '200px' : '100px', textAlign: 'center' }}>
       <PopoverBody style={{ color: 'white' }}>
         <SimpleBar style={{ color: 'white' }}>
           <span>{`RPO ${t(rpoStatus)}`}</span>
@@ -21,7 +23,7 @@ const VmRpoStatusItemRenderer = ({ data, t }) => {
   if (rpoStatus === REPLSTATUS_MEETS) {
     return (
       <>
-        <FontAwesomeIcon id={`status-${rpoStatus}-${data.name}-${data.id}`} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} className="text-success mt-1 ms-1" icon={faCheckCircle} />
+        <FontAwesomeIcon id={id} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} className="text-success mt-1 ms-1" icon={faCheckCircle} />
         {renderPopOver()}
       </>
     );
@@ -30,7 +32,7 @@ const VmRpoStatusItemRenderer = ({ data, t }) => {
     return (
 
       <>
-        <FontAwesomeIcon id={`status-${rpoStatus}-${data.name}-${data.id}`} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} icon={faExclamationTriangle} className="text-warning mt-1 ms-1" />
+        <FontAwesomeIcon id={id} onMouseEnter={() => setPopoverOpen(true)} onMouseLeave={() => setPopoverOpen(false)} icon={faExclamationTriangle} className="text-warning mt-1 ms-1" />
         {renderPopOver()}
       </>
     );
