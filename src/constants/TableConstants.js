@@ -63,6 +63,7 @@ export const QUIESCE_SOURCE_SNAPSHOT_RENDERER = 'QUIESCE_SOURCE_SNAPSHOT_RENDERE
 export const QUIESCE_VMNAME_RENDERER = 'QUIESCE_VMNAME_RENDERER';
 export const DISK_REPLICATION_TYPE_ITEM_RENDERER = 'DISK_REPLICATION_TYPE_ITEM_RENDERER';
 export const PLATFORM_TYPE_ITEM_RENDERER = 'PREP_NODE_ITEM_RENDERER';
+export const NODE_HOSTNAME_ITEM_RENDERER = 'NODE_HOSTNAME_ITEM_RENDERER';
 export const EVENT_DESCRIPTION_RENDERER = 'EVENT_DESCRIPTION_RENDERER';
 export const JOBS_VM_NAME_RENDERER = 'JOBS_VM_NAME_RENDERER';
 export const NODE_STATUS_RENDERER = 'NODE_STATUS_RENDERER';
@@ -246,7 +247,7 @@ export const TABLE_ALERTS = [
 // Table fields for nodes
 export const TABLE_NODES = [
   { label: 'Name', field: 'name' },
-  { label: 'Hostname', field: 'hostname' },
+  { label: 'Hostname', field: 'hostname', itemRenderer: NODE_HOSTNAME_ITEM_RENDERER },
   { label: 'Type', field: 'nodeType' },
   { label: 'Platform Type ', field: 'platformType', itemRenderer: PLATFORM_TYPE_ITEM_RENDERER },
   { label: 'Version', field: 'version', ifEmptyShow: '-' },

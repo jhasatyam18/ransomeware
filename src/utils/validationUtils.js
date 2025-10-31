@@ -1616,3 +1616,21 @@ export const makeSafeId = (value) => {
   if (!value) return '';
   return value.replace(INVALID_ID_CHARS, '');
 };
+export function isGatewayValid({ value, user }) {
+  const { values } = user;
+  const isBehindGateway = getValue('node.isBehindGateway', values);
+  const ipRegex = new RegExp(IP_REGEX);
+  const fqdnRegex = new RegExp(FQDN_REGEX);
+
+  // When Behind Gateway is enabled value must be valid IP or FQDN
+  if (isBehindGateway) {
+    if (!value || value.trim() === '') {
+      return true; // Error: empty when required
+    }
+    const entries = value.split(',').map((v) => v.trim());
+    return entries.some((v) => !ipRegex.test(v) && !fqdnRegex.test(v)); // true = error
+  }
+
+  // When Behind Gateway is disabled value must be empty
+  return value && value.trim() !== '';
+}

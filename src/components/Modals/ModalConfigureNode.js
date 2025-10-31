@@ -57,7 +57,7 @@ class ModalConfigureNode extends Component {
     fields.forEach((field) => {
       let shouldDisable = false;
       if (typeof isUpdate !== 'undefined') {
-        const allowedFields = ['username', 'password', 'hostname'];
+        const allowedFields = ['username', 'password', 'hostname', 'isBehindGateway', 'gatewayIP'];
         const ports = ['replicationDataPort', 'replicationCtrlPort', 'managementPort', 'name'];
         const fName = field.split('.')[1];
         const isLocalNode = values['node.isLocalNode'];

@@ -1541,3 +1541,12 @@ export const showRecoveryOption = (user) => {
   }
   return false;
 };
+
+export function shouldShowNodeGatewayIP(user) {
+  const { values } = user;
+  const isBehindGateway = getValue('node.isBehindGateway', values);
+  if (isBehindGateway) {
+    return true;
+  }
+  return false;
+}

@@ -411,6 +411,9 @@ export function getNodePayload(user) {
     node.node.replicationCtrlPort = 0;
     node.node.replicationDataPort = 0;
   }
+  if (node.node.isBehindGateway === false) {
+    node.node.gatewayIP = '';
+  }
   return node;
 }
 

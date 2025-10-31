@@ -5,11 +5,11 @@ import { onProtectionPlanChange } from '../store/actions/DrPlanActions';
 import { onProtectSiteChange, updateAvailabilityZones } from '../store/actions/SiteActions';
 import { onLimitChange, onTimeLimitChange } from '../store/actions/ThrottlingAction';
 import { loadTreeChildData, onDiffReverseChanges, onScriptChange } from '../store/actions/UserActions';
-import { commonCheckpointOptions, defaultRecoveryCheckpointForVm, disableSiteSelection, enableNodeTypeVM, getAvailibilityZoneOptions, getCheckpointDurationOption, getCheckRentaintionOption, getDefaultRecoverySite, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getReportProtectionPlans, getSiteNodeOptions, getSitesOptions, getSubnetOptions, getVmCheckpointOptions, getVMwareVMSelectionData, isPlatformTypeAWS, isPlatformTypeAzure, isPlatformTypeGCP, isPlatformTypeVMware, onCommonCheckpointChange, onVmRecoveryCheckpointOptionChange, revShowRemoveCheckpointOption, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort, showDifferentialReverseCheckbox, showInstallCloudPackageOption, showRecipientEmailField, showRecoveryOption, showReplOption, showRevPrefix, userRoleOptions } from '../utils/InputUtils';
+import { commonCheckpointOptions, defaultRecoveryCheckpointForVm, disableSiteSelection, enableNodeTypeVM, getAvailibilityZoneOptions, getCheckpointDurationOption, getCheckRentaintionOption, getDefaultRecoverySite, getDRPlanOptions, getEventOptions, getNodeTypeOptions, getPlatformTypeOptions, getPostScriptsOptions, getPreScriptsOptions, getRegionOptions, getReplicationUnitDays, getReplicationUnitHours, getReplicationUnitMins, getReportProtectionPlans, getSiteNodeOptions, getSitesOptions, getSubnetOptions, getVmCheckpointOptions, getVMwareVMSelectionData, isPlatformTypeAWS, isPlatformTypeAzure, isPlatformTypeGCP, isPlatformTypeVMware, onCommonCheckpointChange, onVmRecoveryCheckpointOptionChange, revShowRemoveCheckpointOption, shouldShowNodeGatewayIP, shouldShowNodeManagementPort, shouldShowNodePlatformType, shouldShowNodeReplicationPort, showDifferentialReverseCheckbox, showInstallCloudPackageOption, showRecipientEmailField, showRecoveryOption, showReplOption, showRevPrefix, userRoleOptions } from '../utils/InputUtils';
 import { getErrorMessage, getFieldInfo, getLabel } from '../utils/LocallUtils';
 import { defaultReportScheduleTimeZone, getMinMaxForReportSchedulerMaintanance, getMinMaxForReportSchedulerOccurence, getReportDurationOptions, getTimeZoneOptions, onReportOccurrenceChange, setMinDateForReport, showReportDayOfMonthField, showReportDurationDate } from '../utils/ReportUtils';
 import { defaultEntityTypeForVm, defaultReplicationTypeForVm, getVmEntityTypeOptions, getVmReplicationTypeOptions, hasWarning } from '../utils/ReverseReplicationUtils';
-import { disableRecoveryCheckpointField, isEmpty, showReverseWarningText, validateCheckpointFields, validateDrSiteSelection, validatePassword, validatePlanSiteSelection, validateReplicationInterval, validateReplicationValue } from '../utils/validationUtils';
+import { disableRecoveryCheckpointField, isEmpty, isGatewayValid, showReverseWarningText, validateCheckpointFields, validateDrSiteSelection, validatePassword, validatePlanSiteSelection, validateReplicationInterval, validateReplicationValue } from '../utils/validationUtils';
 import { CONSTANT_NUMBERS, STATIC_KEYS } from './InputConstants';
 import { EMAIL_REGEX, FQDN_REGEX, HOSTNAME_FQDN_REGEX, HOSTNAME_IP_REGEX, IP_REGEX, PASSWORD_REGEX, USERNAME_REGEX } from './ValidationConstants';
 
@@ -186,6 +186,12 @@ export const FIELDS = {
   },
   'node.replicationCtrlPort': {
     label: 'node.replicationCtrlPort', defaultValue: 5003, min: 1, max: 65536, type: FIELD_TYPE.NUMBER, errorMessage: 'Port value required', shouldShow: (user) => shouldShowNodeReplicationPort(user), fieldInfo: 'info.node.replicationCtrlPort',
+  },
+  'node.isBehindGateway': {
+    label: 'node.isBehindGateway', defaultValue: false, type: FIELD_TYPE.CHECKBOX, shouldShow: true, fieldInfo: 'info.node.isBehindGateway',
+  },
+  'node.gatewayIP': {
+    label: 'node.gatewayIP', defaultValue: '', type: FIELD_TYPE.TEXT, shouldShow: (user) => shouldShowNodeGatewayIP(user), fieldInfo: 'info.node.gatewayIP', validate: (value, user) => isGatewayValid(value, user), errorMessage: 'Provide gateway/DNAT hostname/ip address',
   },
   'node.encryptionKey': {
     label: 'node.encryptionKey', placeHolderText: 'encryption key', type: FIELD_TYPE.TEXT, errorMessage: 'Enter encryption key for the node', shouldShow: false, fieldInfo: 'info.node.encryption.key' },
