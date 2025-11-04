@@ -10,7 +10,7 @@ const ActionButton = (props) => {
   }
   return (
     <button type="button" className={`${btnCss}`} onClick={onClick} disabled={isDisabled} id={id || `actionButton-${labelID}`}>
-      <FontAwesomeIcon size="sm" icon={icon} />
+      {icon ? <FontAwesomeIcon size="sm" icon={icon} /> : null}
       &nbsp;&nbsp;
       {t(`${label}`)}
     </button>

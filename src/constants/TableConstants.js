@@ -332,6 +332,7 @@ export const TABLE_FILTER_TEXT = {
   TABLE_PROTECTION_PLAN_VMS: 'Data can be filtered on following fields :- Name, OS, Disk, Status',
   TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG: 'Data can be filtered on following fields :- Name, Instance Type',
   TABLE_SELECTIVE_VM_REPLICATION: 'Data can be filtered on following fields :- Name, Sync Status and Replication Status',
+  TABLE_SCHEDULED_REPORTS_LIST: 'Data can be filtered on following fields :- Name, Email Recipients and Generated Reports',
 };
 
 export const PLAYBOOKS = [

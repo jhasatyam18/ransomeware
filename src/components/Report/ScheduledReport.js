@@ -198,7 +198,6 @@ const ScheduledReport = (props) => {
   const renderScheduledReport = () => {
     if (email && Object.keys(email).length > 0) {
       const url = API_SCHEDULED_JOBS;
-      const vmData = (hasFilterString ? searchData : scheduledReportsJobs) || [];
       const vmConfigData = (configHasFilterString ? configSearchData : scheduledReports) || [];
       return (
         <div>
@@ -232,13 +231,13 @@ const ScheduledReport = (props) => {
             {!viewJobs && (
             <Col sm={7} className="mt-3">
               <DMTPaginator
-                id={viewJobs ? 'scheduledjobs' : 'scheduledreport'}
-                data={viewJobs ? vmData : vmConfigData}
+                id="scheduledreport"
+                data={vmConfigData}
                 setData={setDataForDisplay}
                 showFilter="true"
                 onFilter={onFilter}
-                columns={viewJobs ? TABLE_SCHEDULE_JOB : TABLE_SCHEDULE}
-                filterHelpText={viewJobs ? TABLE_FILTER_TEXT.TABLE_PROTECTION_PLAN_VMS : TABLE_FILTER_TEXT.TABLE_PROTECTION_PLAN_VMS_RECOVERY_CONFIG}
+                columns={TABLE_SCHEDULE}
+                filterHelpText={TABLE_FILTER_TEXT.TABLE_SCHEDULED_REPORTS_LIST}
               />
             </Col>
             )}
