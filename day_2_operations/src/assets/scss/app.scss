@@ -1,0 +1,55 @@
+//Fonts
+@import "custom/fonts/fonts";
+ 
+//Core files
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+// @import "variables";
+@import "./variables";
+@import "./variables-dark";
+@import "bootstrap/scss/mixins.scss";
+
+// Structure
+@import "custom/structure/topbar";
+@import "custom/structure/page-head";
+@import "custom/structure/footer";
+@import "custom/structure/right-sidebar";
+@import "custom/structure/vertical";
+@import "custom/structure/horizontal-nav";
+@import "custom/structure/layouts";
+
+// Components
+@import "custom/components/waves";
+@import "custom/components/avatar";
+@import "custom/components/helper";
+@import "custom/components/preloader";
+@import "custom/components/form-control";
+@import "custom/components/widgets";
+@import "custom/components/dashboard";
+@import "custom/components/gettingStarted";
+@import "custom/components/troubleshoot";
+@import "custom/components/wizard";
+@import "custom/components/utilities";
+@import "custom/components/tree";
+@import "custom/components/alert";
+
+// Plugins
+@import "custom/plugins/custom-scrollbar";
+@import "custom/plugins/cropperjs";
+@import "custom/plugins/parsley";
+@import "custom/plugins/switch";
+@import "custom/plugins/timepicker";
+
+// Pages
+@import "custom/pages/authentication";
+
+// Pages
+@import "custom/pages/authentication";
+@import 'custom/pages/jobs';
+
+@import "custom/pages/idp";
+
+
+.dm-wizard {
+  height:600px !important;
+}

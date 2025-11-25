@@ -1,0 +1,1172 @@
+import * as Types from '../../constants/actionTypes';
+import { API_ADD_USER, API_AUTHENTICATE, API_AWS_REGIONS, API_AZURE_REGIONS, API_CHANGE_NODE_PASSWORD, API_CHANGE_PASSWORD, API_GCP_REGIONS, API_INFO, API_SCRIPTS, API_USERS, API_USER_PRIVILEGES, API_USER_SCRIPT, routeStart } from '../../constants/ApiConstants';
+import { APP_TYPE, NODE_TYPES, PLATFORM_TYPES, SAML, STATIC_KEYS, VMWARE_OBJECT } from '../../constants/InputConstants';
+import { MESSAGE_TYPES } from '../../constants/MessageConstants';
+import { MODAL_USER_SCRIPT } from '../../constants/Modalconstant';
+import { ALERTS_PATH, DASHBOARD_PATH, EMAIL_SETTINGS_PATH, EVENTS_PATH, JOBS_RECOVERY_PATH, LICENSE_SETTINGS_PATH, NODE_UPDATE_SCHEDULER, NODES_PATH, PLAYBOOK_LIST, PROTECTION_PLANS_PATH, REPORTS_PATH, ROLES_SETTINGS_PATH, SITES_PATH, THROTTLING_SETTINGS_PATH, USER_SETTINGS_PATH } from '../../constants/RouterConstants';
+import { STORE_KEYS } from '../../constants/StoreKeyConstants';
+import { APPLICATION_API_USER, APPLICATION_AUTHORIZATION, APPLICATION_UID } from '../../constants/UserConstant';
+import { API_TYPES, callAPI, createPayload } from '../../utils/ApiUtils';
+import { getCookie, removeCookie, setCookie } from '../../utils/CookieUtils';
+import { Decrypt } from '../../utils/EncryptionUtil';
+import { getMatchingInsType, getValue, getVMwareLocationPath, isAWSCopyNic, isPlanWithSamePlatform } from '../../utils/InputUtils';
+import { fetchByDelay } from '../../utils/SlowFetch';
+import { acknowledgeNodeAlert, getUnreadAlerts } from './AlertActions';
+import { fetchCheckpointsByPlanId } from './checkpointActions';
+import { drPlansFetched, fetchDRPlanById, fetchDrPlans, setVMGuestOSInfo } from './DrPlanActions';
+import { fetchPlaybookById, fetchPlaybooks } from './DrPlaybooksActions';
+import { fetchEmailConfig, fetchEmailRecipients } from './EmailActions';
+import { fetchRecoveryJobs } from './JobActions';
+import { fetchLicenses } from './LicenseActions';
+import { addMessage, clearMessages } from './MessageActions';
+import { closeModal, openModal } from './ModalActions';
+import { fetchNodes } from './NodeActions';
+import { fetchSheduledNodes } from './NodeScheduleAction';
+import { fetchSchedule } from './ReportActions';
+import { fetchRoles } from './RolesAction';
+import { fetchAvailibilityZones, fetchSites } from './SiteActions';
+import { fetchBandwidthConfig, fetchBandwidthReplNodes } from './ThrottlingAction';
+import { getUserPreference } from './UserPreferenceAction';
+import { fetchSelectedVmsProperty, fetchVMwareComputeResource, fetchVMwareNetwork, getVMwareConfigDataForField, setVMwareAPIResponseData } from './VMwareActions';
+
+export function refreshApplication() {
+  return {
+    type: Types.APP_REFRESH,
+  };
+}
+
+export function login({ username, password, history }) {
+  return (dispatch) => {
+    dispatch(loginRequest());
+    // dispatch(clearMessages());
+    const obj = createPayload(API_TYPES.POST, { username, password });
+    return callAPI(API_AUTHENTICATE, obj).then((json) => {
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        // check password change is required
+        if (json.status && json.status === 403) {
+          setSessionInfo(username);
+          dispatch(initChangePassword(true, false));
+          return;
+        }
+        if (window.location.pathname.indexOf('mgmt') === -1 || window.location.pathname.endsWith('/mgmt/') || window.location.pathname.indexOf('mgmt/login') !== -1) {
+          history(DASHBOARD_PATH);
+        }
+        setSessionInfo(username);
+        dispatch(getUserInfo());
+        dispatch(loginSuccess('', username));
+        dispatch(getInfo());
+      }
+    },
+    (err) => {
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+  };
+}
+export function loginRequest() {
+  return {
+    type: Types.AUTHENTICATE_USER_REQUEST,
+  };
+}
+
+export function loginSuccess(token, username) {
+  return {
+    type: Types.AUTHENTICATE_USER_SUCCESS,
+    token,
+    username,
+  };
+}
+
+export function loginFailed() {
+  return {
+    type: Types.AUTHENTICATE_USER_FAILED,
+  };
+}
+
+export function logOutUser() {
+  return {
+    type: Types.AUTHENTICATE_USER_FAILED,
+  };
+}
+
+export function removeCookies() {
+  return () => {
+    setCookie(APPLICATION_API_USER, '');
+    setCookie(APPLICATION_UID, '');
+    setCookie(APPLICATION_AUTHORIZATION, '');
+    removeCookie(APPLICATION_API_USER);
+    removeCookie(APPLICATION_UID);
+    removeCookie(APPLICATION_AUTHORIZATION);
+  };
+}
+
+export function valueChange(key, value) {
+  return {
+    type: Types.VALUE_CHANGE,
+    key,
+    value,
+  };
+}
+
+export function valueChanges(values) {
+  return {
+    type: Types.VALUE_CHANGES,
+    values,
+  };
+}
+
+export function treeDataChange(key, value) {
+  return {
+    type: Types.TREE_DATA,
+    key,
+    value,
+  };
+}
+
+export function addErrorMessage(key, message) {
+  return {
+    type: Types.ADD_ERROR_MESSAGE,
+    key,
+    message,
+  };
+}
+
+export function removeErrorMessage(key) {
+  return {
+    type: Types.DELETE_ERROR_MESSAGE,
+    key,
+  };
+}
+export function changeAppType(appType, platformType = '', localVMIP = '', zone = '') {
+  return {
+    type: Types.APP_TYPE,
+    appType,
+    platformType,
+    localVMIP,
+    zone,
+  };
+}
+export function getInfo(history) {
+  return (dispatch) => {
+    dispatch(clearMessages());
+    return callAPI(API_INFO).then((json) => {
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        dispatch(loginSuccess(json.token, getCookie(APPLICATION_API_USER)));
+        const appType = json.serviceType === 'Client' ? APP_TYPE.CLIENT : APP_TYPE.SERVER;
+        const { version, serviceType, nodeKey, licenses } = json;
+        dispatch(changeAppType(appType, json.platformType, json.localVMIP, json.zone));
+        fetchByDelay(dispatch, updateLicenseInfo, 2000, { nodeKey, version, serviceType, activeLicenses: licenses });
+        // dispatch(validateLicense(licenseExpiredTime));
+        dispatch(getUnreadAlerts());
+        dispatch(getUserInfo(nodeKey, history));
+      }
+    },
+    (err) => {
+      if (err.message !== 'Unauthorized: session expired') {
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      }
+    });
+  };
+}
+export function clearValues() {
+  return {
+    type: Types.CLEAR_VALUES,
+  };
+}
+
+export function showApplicationLoader(key, value) {
+  return {
+    type: Types.ADD_KEY_TO_APPLICATION_LOADER, key, value,
+  };
+}
+
+export function hideApplicationLoader(key) {
+  return {
+    type: Types.REMOVE_KEY_FROM_APPLICATION_LOADER, key,
+  };
+}
+
+export function onPlatformTypeChange({ value }) {
+  return (dispatch) => {
+    dispatch(valueChange('configureSite.node', ''));
+    if (value === '') return;
+    if (value === PLATFORM_TYPES.AWS) {
+      dispatch(fetchRegions(PLATFORM_TYPES.AWS));
+      dispatch(fetchAvailibilityZones(PLATFORM_TYPES.AWS));
+    } else if (value === PLATFORM_TYPES.GCP) {
+      dispatch(fetchRegions(PLATFORM_TYPES.GCP));
+      dispatch(fetchAvailibilityZones(PLATFORM_TYPES.GCP));
+    } else {
+      dispatch(fetchRegions(PLATFORM_TYPES.Azure));
+    }
+  };
+}
+
+export function fetchRegions(TYPE) {
+  return (dispatch) => {
+    let url = '';
+    switch (TYPE) {
+      case PLATFORM_TYPES.AWS:
+        url = API_AWS_REGIONS;
+        break;
+      case PLATFORM_TYPES.GCP:
+        url = API_GCP_REGIONS;
+        break;
+      case PLATFORM_TYPES.Azure:
+        url = API_AZURE_REGIONS;
+        break;
+      default:
+        url = '';
+        break;
+    }
+    if (url !== '') {
+      return callAPI(url)
+        .then((json) => {
+          if (json && json.hasError) {
+            dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+          } else {
+            let data = json;
+            if (data === null) {
+              data = [];
+            }
+            dispatch(valueChange('ui.values.regions', data));
+          }
+        },
+        (err) => {
+          dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+        });
+    }
+  };
+}
+
+export function fetchUsersData(data) {
+  return {
+    type: Types.FETCH_USERS,
+    data,
+  };
+}
+
+export function setSelectedUsers(selectedUsers) {
+  return {
+    type: Types.SET_SELECTED_USERS,
+    selectedUsers,
+  };
+}
+
+export function fetchUsers() {
+  return (dispatch) => {
+    dispatch(showApplicationLoader(API_USERS, 'loading users'));
+    return callAPI(API_USERS)
+      .then((json) => {
+        dispatch(hideApplicationLoader(API_USERS));
+        if (json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          dispatch(fetchUsersData(json));
+          dispatch(setSelectedUsers([]));
+        }
+      },
+      (err) => {
+        dispatch(hideApplicationLoader(API_USERS));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  };
+}
+
+export function removeUser(id) {
+  return (dispatch) => {
+    dispatch(showApplicationLoader(`${API_USERS}-${id}`, 'Removing User'));
+    const obj = createPayload(API_TYPES.DELETE, {});
+    return callAPI(`${API_USERS}/${id}`, obj)
+      .then((json) => {
+        dispatch(hideApplicationLoader(`${API_USERS}-${id}`));
+        if (json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          dispatch(addMessage('User deleted successfully', MESSAGE_TYPES.INFO));
+          dispatch(fetchUsers());
+          dispatch(setSelectedUsers([]));
+          dispatch(closeModal());
+        }
+      },
+      (err) => {
+        dispatch(hideApplicationLoader(`${API_USERS}-${id}`));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  };
+}
+
+export function configureUser(payload, isUpdate = false) {
+  return (dispatch) => {
+    let url = API_ADD_USER;
+    if (isUpdate) {
+      url = `${url}/${payload.id}`;
+    }
+    const obj = createPayload(isUpdate ? API_TYPES.PUT : API_TYPES.POST, { ...payload.configureUser });
+    dispatch(showApplicationLoader('configuring-user', 'Configuring User...'));
+    return callAPI(url, obj).then((json) => {
+      dispatch(hideApplicationLoader('configuring-user'));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        dispatch(addMessage('User configuration successful', MESSAGE_TYPES.SUCCESS));
+        dispatch(fetchUsers());
+        dispatch(closeModal(true));
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('configuring-user'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+  };
+}
+
+export function handleUserTableSelection(data, isSelected, primaryKey) {
+  return (dispatch, getState) => {
+    const { settings } = getState();
+    const { selectedUsers } = settings;
+    if (isSelected) {
+      if (!selectedUsers || selectedUsers.length === 0 || !selectedUsers[data[primaryKey]]) {
+        const newUsers = { ...selectedUsers, [data[primaryKey]]: data };
+        dispatch(setSelectedUsers(newUsers));
+      }
+    } else if (selectedUsers[data[primaryKey]]) {
+      const newUsers = selectedUsers;
+      delete newUsers[data[primaryKey]];
+      dispatch(setSelectedUsers(newUsers));
+    }
+  };
+}
+
+export function refresh(history) {
+  return (dispatch) => {
+    const { location } = window;
+    const { pathname } = location;
+    // dispatch refreshAction to notify selector component
+    dispatch(refreshApplication());
+    switch (pathname) {
+      case PROTECTION_PLANS_PATH:
+        dispatch(drPlansFetched([]));
+        dispatch(fetchDrPlans());
+        dispatch(fetchPlaybooks());
+        break;
+      case SITES_PATH:
+        dispatch(fetchSites());
+        break;
+      case JOBS_RECOVERY_PATH:
+        dispatch(fetchRecoveryJobs(0));
+        break;
+      case ALERTS_PATH:
+        // dispatch(fetchAlerts());
+        break;
+      case EVENTS_PATH:
+        // dispatch(fetchEvents());
+        break;
+      case LICENSE_SETTINGS_PATH:
+        dispatch(fetchLicenses());
+        break;
+      case NODES_PATH:
+        dispatch(fetchNodes());
+        break;
+      case EMAIL_SETTINGS_PATH:
+        dispatch(fetchEmailConfig());
+        dispatch(fetchEmailRecipients());
+        break;
+      case THROTTLING_SETTINGS_PATH:
+        dispatch(fetchBandwidthConfig());
+        dispatch(fetchBandwidthReplNodes());
+        break;
+      case PLAYBOOK_LIST:
+        dispatch(fetchPlaybooks());
+        break;
+      case USER_SETTINGS_PATH:
+        dispatch(fetchUsers());
+        break;
+      case ROLES_SETTINGS_PATH:
+        dispatch(fetchRoles());
+        break;
+      case NODE_UPDATE_SCHEDULER:
+        dispatch(fetchSheduledNodes());
+        break;
+      case REPORTS_PATH:
+        dispatch(fetchSchedule());
+        break;
+      default:
+        dispatch(detailPathChecks(pathname, history));
+    }
+  };
+}
+
+export function detailPathChecks(pathname, history) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    if (/\/?protection\/plan\/details\/[0-9]+$/.test(pathname)) {
+      const pathArray = pathname.split('/');
+      dispatch(fetchDRPlanById(pathArray[pathArray.length - 1]));
+      dispatch(fetchCheckpointsByPlanId(pathArray[pathArray.length - 1]));
+      if (getValue(STORE_KEYS.RECOVERY_CHECKPOINT_JOB_LINK_INSTANCE, values)) {
+        dispatch(valueChange(STORE_KEYS.RECOVERY_CHECKPOINT_JOB_LINK_INSTANCE, undefined));
+      }
+    } else if (/\/?protection\/plan\/playbook\/[0-9]+$/.test(pathname)) {
+      const parts = pathname.split('/');
+      dispatch(fetchPlaybookById(parts[parts.length - 1]));
+    } else if (history && pathname.indexOf(ALERTS_PATH) !== -1) {
+      history(ALERTS_PATH);
+    }
+    return null;
+  };
+}
+
+export function fetchScript(fieldKey, name) {
+  return (dispatch) => {
+    const url = API_SCRIPTS;
+    return callAPI(url)
+      .then((json) => {
+        if (json && json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          const data = json;
+          dispatch(valueChange(STATIC_KEYS.UI_SCRIPT_PRE, data.preScripts));
+          dispatch(valueChange(STATIC_KEYS.UI_SCRIPT_POST, data.postScripts));
+          if (fieldKey && name) {
+            dispatch(valueChange(fieldKey, name));
+          }
+        }
+      },
+      (err) => {
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  };
+}
+
+export function updateLicenseInfo(license) {
+  return {
+    type: Types.APP_LICENSE_INFO,
+    license,
+  };
+}
+
+export function validateLicense(licenseExpiredTime) {
+  return (dispatch) => {
+    const today = new Date();
+    const eDate = new Date(licenseExpiredTime * 1000);
+    const diff = Math.ceil(eDate - today);
+    const difference = 691100000;
+    if (difference > diff) {
+      dispatch(addMessage('There is expired or expiring license. Please check about info for more details.', MESSAGE_TYPES.WARNING, true));
+    }
+  };
+}
+
+export function initChangePassword(passwordChangeReq, allowCancel) {
+  return {
+    type: Types.APP_USER_CHANGE_PASSWORD,
+    passwordChangeReq,
+    allowCancel,
+  };
+}
+export function initResetPassword(passwordResetReq, allowReset) {
+  return {
+    type: Types.APP_USER_RESET_PASSWORD,
+    passwordResetReq,
+    allowReset,
+  };
+}
+
+export function saveApplicationToken(token) {
+  return {
+    type: Types.AUTHENTICATE_USER_SUCCESS_PARTIAL,
+    token,
+  };
+}
+
+/**
+ * updateValues : use to update batch object values in store
+ * Use this when a object can be form and need to append in the user -> values
+ * For single value change use valueChange
+ * @param {*} object
+ * @returns
+ */
+export function updateValues(valueObject) {
+  return {
+    type: Types.UPDATE_VALUES,
+    valueObject,
+  };
+}
+
+/**
+ * forceComponentUpdate : use for HOC to trigger required action
+ */
+export function forceComponentUpdate() {
+  return {
+    type: Types.DM_FORCE_UPDATE,
+  };
+}
+
+export function setSessionInfo(username) {
+  setCookie(APPLICATION_API_USER, username);
+}
+
+export function changeUserPassword(oldPass, newPass) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { token } = user;
+    dispatch(showApplicationLoader('CHANGE_PASSWORD', 'Changing password...'));
+    // const name = getCookie(APPLICATION_API_USER) || '';
+    const obj = createPayload(API_TYPES.POST, { username: getCookie(APPLICATION_API_USER), oldPassword: oldPass, newPassword: newPass });
+    return callAPI(API_CHANGE_PASSWORD, obj, token).then((json) => {
+      dispatch(hideApplicationLoader('CHANGE_PASSWORD'));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        dispatch(removeCookies());
+        dispatch(logOutUser());
+        window.location.reload();
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('CHANGE_PASSWORD'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+  };
+}
+
+export function removeNicConfig(networkKey, index) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const nicCards = getValue(networkKey, values);
+    if (nicCards && nicCards.length >= 2) {
+      const newNicCards = [];
+      nicCards.forEach((nic, i) => {
+        if (i !== index) {
+          newNicCards.push(nic);
+        }
+      });
+      dispatch(valueChange(networkKey, newNicCards));
+    }
+  };
+}
+
+export function resetCredetials(payload) {
+  return (dispatch) => {
+    dispatch(showApplicationLoader('CHANGE_PASSWORD', 'Changing password...'));
+    const obj = createPayload(API_TYPES.POST, { ...payload });
+    return callAPI(API_CHANGE_PASSWORD, obj).then((json) => {
+      dispatch(hideApplicationLoader('CHANGE_PASSWORD'));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        window.location.reload();
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('CHANGE_PASSWORD'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+  };
+}
+
+export function setPrivileges(privileges) {
+  return {
+    type: Types.APP_USER_PRIVILEGES,
+    privileges,
+  };
+}
+
+export function setUserDetails(data) {
+  return {
+    type: Types.SET_USER_DETAILS,
+    data,
+  };
+}
+
+export function getUserInfo(nodeKey) {
+  return (dispatch) => {
+    let username = getCookie(APPLICATION_API_USER);
+    const uid = getCookie(APPLICATION_UID);
+    /**
+     * condition to check user name is for the saml on it's first renderes i.e after login as username is not get set, after getting the json data below we set saml username and id on the browser
+       condition to check id is on refresh for saml user i.e if the user is logged in through saml and does refresh then it's username and id is already set on the browser
+       in that case if the id is 0 then also fetch saml user
+    */
+
+    if ((username === '' || typeof username === 'undefined') || (typeof uid !== 'undefined' && uid === '0')) {
+      username = SAML.DEFAULT_USERNAME;
+    }
+    const url = `${API_USERS}?username=${username}`;
+    dispatch(showApplicationLoader(url, 'Loading...'));
+    return callAPI(url).then((json) => {
+      dispatch(hideApplicationLoader(url));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        if (json && json.length >= 1) {
+          setCookie(APPLICATION_API_USER, json[0].username);
+          setCookie(APPLICATION_UID, json[0].id);
+          if (json[0].id === '' || typeof json[0].id === 'undefined' || json[0].id === 0) {
+            dispatch(getUserPrivileges(SAML.DEFAULT_USER_ID, nodeKey));
+          } else {
+            dispatch(getUserPrivileges(json[0].id, nodeKey));
+          }
+          dispatch(setUserDetails(json[0]));
+          dispatch(getUserPreference(json[0]));
+          return;
+        }
+        dispatch(setPrivileges([]));
+        dispatch(addMessage('Failed to fetch user details', MESSAGE_TYPES.ERROR));
+        dispatch(removeCookies());
+        dispatch(logOutUser());
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader(url));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+  };
+}
+
+export function getUserPrivileges(id, nodeKey) {
+  return (dispatch) => {
+    if (nodeKey === '' || typeof nodeKey === 'undefined') {
+      return;
+    }
+    const url = API_USER_PRIVILEGES.replace('<id>', id);
+    dispatch(showApplicationLoader(API_USER_PRIVILEGES, 'Loading...'));
+    return callAPI(url).then((json) => {
+      dispatch(hideApplicationLoader(API_USER_PRIVILEGES));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        dispatch(setPrivileges(json));
+        if (json && json.length >= 1) {
+          decryptAndSetPrivileges(json, nodeKey, dispatch);
+          return;
+        }
+        dispatch(addMessage('Failed to fetch user privileges', MESSAGE_TYPES.ERROR));
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader(API_USER_PRIVILEGES));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+  };
+}
+
+export function deleteScript(id) {
+  return (dispatch) => {
+    dispatch(showApplicationLoader(API_USER_SCRIPT, 'Removing script...'));
+    const obj = createPayload(API_TYPES.DELETE, {});
+    return callAPI(`${API_USER_SCRIPT}/${id}`, obj)
+      .then((json) => {
+        dispatch(hideApplicationLoader(API_USER_SCRIPT));
+        if (json.hasError) {
+          dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+        } else {
+          dispatch(addMessage('Script deleted successfully', MESSAGE_TYPES.INFO));
+          dispatch(refreshApplication());
+          dispatch(closeModal());
+        }
+      },
+      (err) => {
+        dispatch(hideApplicationLoader(API_USER_SCRIPT));
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  };
+}
+
+export function onScriptChange({ value, fieldKey }) {
+  return (dispatch) => {
+    if (value === '+NEW_SCRIPT') {
+      dispatch(valueChange(fieldKey, ''));
+      dispatch(openModal(MODAL_USER_SCRIPT, { title: 'Script', data: { fieldKey } }));
+    }
+  };
+}
+
+export function onAwsCopyNetConfigChange({ value, fieldKey }) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    if (!fieldKey) {
+      return;
+    }
+    const networkKey = fieldKey.replace('-isFromSource', '');
+    if (!value) {
+      // reset all the values
+      dispatch(valueChange(`${networkKey}-subnet`, ''));
+      dispatch(valueChange(`${networkKey}-availZone`, ''));
+      dispatch(valueChange(`${networkKey}-isPublic`, false));
+      dispatch(valueChange(`${networkKey}-securityGroups`, ''));
+      dispatch(valueChange(`${networkKey}-network`, ''));
+      dispatch(valueChange(`${networkKey}-privateIP`, ''));
+    } else {
+      // set the source VM values
+      const keys = fieldKey.split('-');
+      if (keys.length > 3) {
+        // nic index
+        const index = keys[keys.length - 2];
+        const vmKey = `${keys[0]}-${keys[1]}`;
+        const selectedVMS = getValue(STATIC_KEYS.UI_SITE_SELECTED_VMS, values);
+        Object.keys(selectedVMS).forEach((key) => {
+          if (vmKey === key) {
+            const nics = selectedVMS[key].virtualNics;
+            if (nics && nics.length >= index) {
+              const nic = nics[index];
+              dispatch(valueChange(`${networkKey}-subnet`, nic.Subnet));
+              dispatch(valueChange(`${networkKey}-isPublic`, nic.isPublicIP));
+              dispatch(valueChange(`${networkKey}-privateIP`, nic.privateIP));
+              if (nic.securityGroups) {
+                const sgp = nic.securityGroups.split(',');
+                dispatch(valueChange(`${networkKey}-securityGroups`, sgp));
+              }
+            }
+          }
+        });
+      }
+    }
+  };
+}
+
+/**
+ * AWS Network subnet change
+ * Set the subnet zone value
+ * @param value value of the subnet
+ * @param fieldKey field key for which value is changed
+ */
+export function onAwsSubnetChange({ value, fieldKey }) {
+  return (dispatch, getState) => {
+    if (value) {
+      const { user } = getState();
+      const { values } = user;
+      let isCopyConfiguration = false;
+      if (fieldKey && isPlanWithSamePlatform(user)) {
+        isCopyConfiguration = isAWSCopyNic(fieldKey, '-subnet', user);
+      }
+      const dataSourceKey = (isCopyConfiguration === true ? STATIC_KEYS.UI_SUBNETS__SOURCE : STATIC_KEYS.UI_SUBNETS);
+      const subnets = getValue(dataSourceKey, values) || [];
+      for (let s = 0; s < subnets.length; s += 1) {
+        if (subnets[s].id === value) {
+          const availZoneKey = fieldKey.replace('-subnet', '-availZone');
+          dispatch(valueChange(availZoneKey, subnets[s].zone));
+        }
+      }
+    }
+  };
+}
+
+/**
+ * AWS Network VPC change
+ * Set the subnet zone and sg value
+ * @param value value of the subnet
+ * @param fieldKey field key for which value is changed
+ */
+export function onAwsVPCChange({ value, fieldKey }) {
+  return (dispatch) => {
+    if (value) {
+      const key = fieldKey.split('-');
+      const networkKey = key.slice(0, key.length - 1).join('-');
+      dispatch(valueChange(`${networkKey}-isFromSource`, false));
+      dispatch(valueChange(`${networkKey}-subnet`, ''));
+      dispatch(valueChange(`${networkKey}-availZone`, ''));
+      dispatch(valueChange(`${networkKey}-isPublic`, false));
+      dispatch(valueChange(`${networkKey}-privateIP`, ''));
+      dispatch(valueChange(`${networkKey}-securityGroups`, ''));
+      dispatch(valueChange(`${networkKey}-network`, ''));
+    }
+  };
+}
+
+const iterate = (array, k, v) => {
+  const d = array;
+  const kerArray = Object.keys(d);
+  for (let i = 0; i < kerArray.length; i += 1) {
+    const a = kerArray[i];
+    if (d[a] === k) {
+      d.children = v;
+      d.doneChildrenLoading = true;
+      d.children = v;
+      break;
+    }
+
+    if (typeof d[a] === 'object' && d[a] !== null) {
+      const c = pushChildInObj(d[a], k, v);
+      d[a] = c;
+    }
+  }
+
+  return d;
+};
+
+export function pushChildInObj(array, k, v) {
+  const res = array;
+  for (let i = 0; i < array.length; i += 1) {
+    const keys = iterate(array[i], k, v);
+    if (keys.length > 0) {
+      res[i] = keys;
+      break;
+    }
+  }
+  return res;
+}
+
+export function loadTreeChildData(fieldKey, node, field) {
+  const { baseURL, urlParms, urlParmKey, baseURLIDReplace, dataKey } = field;
+
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const pplan = getValue('ui.selected.protection.planID', values);
+    dispatch(showApplicationLoader('TEST_KEY', 'loading tree data'));
+    let apiURL = baseURL;
+    let paramURL = '';
+    for (let i = 0; i < urlParms.length; i += 1) {
+      const parameKeyType = urlParmKey[i].split(':');
+      const paramKeyValue = parameKeyType[0] === 'static' ? parameKeyType[1] : node[parameKeyType[1]];
+      if (i === 0) {
+        paramURL = `?${urlParms[i]}=${paramKeyValue}`;
+      } else {
+        paramURL = `${paramURL}&${urlParms[i]}=${paramKeyValue}`;
+      }
+    }
+    if (typeof pplan !== 'undefined' && pplan !== '') {
+      paramURL += `&protectionplan=${pplan}`;
+    }
+    if (baseURLIDReplace) {
+      const parts = baseURLIDReplace.split(':');
+      const val = getValue(parts[1], values);
+      apiURL = apiURL.replace(parts[0], val);
+    }
+    const url = `${apiURL}${paramURL}`;
+    return callAPI(url).then((json) => {
+      dispatch(hideApplicationLoader('TEST_KEY'));
+      const childResp = [];
+      if (json !== null) {
+        json.forEach((d) => {
+          const nodes = {};
+          nodes.type = d.type;
+          nodes.doneChildrenLoading = false;
+          nodes.key = d.id;
+          nodes.value = d.id;
+          nodes.children = [];
+          nodes.title = d.name;
+          childResp.push(nodes);
+        });
+      }
+      const treeData = getValue(dataKey, values);
+      const res = pushChildInObj(treeData, node.key, childResp);
+      dispatch(treeDataChange(dataKey, res));
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('TEST_KEY'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+  };
+}
+
+export function loadRecoveryLocationData(site) {
+  return (dispatch) => {
+    dispatch(showApplicationLoader('ui.vmware.recovery.locations', 'loading tree data'));
+    return callAPI(`${routeStart}api/v1/sites/${site}/resources?type=Datacenter`).then((json) => {
+      dispatch(hideApplicationLoader('ui.vmware.recovery.locations'));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        const data = [];
+        json.forEach((d) => {
+          const node = {};
+          node.doneChildrenLoading = false;
+          node.key = d.id;
+          node.type = d.type;
+          node.value = d.id;
+          node.children = [];
+          node.title = d.name;
+          data.push(node);
+        });
+        dispatch(treeDataChange('ui.drplan.vms.location', data));
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('ui.vmware.recovery.locations'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+  };
+}
+
+export function changeSystemPassword(nodeID, selectedAlerts) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const password = getValue('user.newPassword', values) || '';
+    dispatch(showApplicationLoader('CHANGE_PASSWORD', 'Changing password...'));
+    const obj = createPayload(API_TYPES.POST, { newPassword: password });
+    const URL = API_CHANGE_NODE_PASSWORD.replace('<nodeid>', nodeID);
+    return callAPI(URL, obj).then((json) => {
+      dispatch(hideApplicationLoader('CHANGE_PASSWORD'));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      }
+      dispatch(acknowledgeNodeAlert(selectedAlerts));
+      dispatch(closeModal());
+      dispatch(refresh());
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('CHANGE_PASSWORD'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+  };
+}
+
+export function getVMwareVMSProps(vms, dispatch, user) {
+  const { values } = user;
+  const siteId = getValue('ui.values.protectionSiteID', values);
+  let vmString = [];
+  const selectedVMS = {};
+  const platform = getValue('ui.values.protectionPlatform', values);
+  if (platform === PLATFORM_TYPES.VMware) {
+    const plan = getValue('ui.selected.protection.plan', values);
+    // if vm is already in the pretection plan then don't fetch it from the backend
+    if (plan !== '') {
+      vms.forEach((moreF) => {
+        let found = false;
+        plan.protectedEntities.virtualMachines.forEach((vm) => {
+          if (moreF === vm.moref) {
+            selectedVMS[vm.moref] = vm;
+            found = true;
+          }
+        });
+        if (!found) {
+          vmString.push(moreF);
+        }
+      });
+    } else {
+      vmString = vms;
+    }
+    dispatch(valueChange(STATIC_KEYS.UI_SITE_SELECTED_VMS, selectedVMS));
+    dispatch(setVMGuestOSInfo(selectedVMS));
+    if (vmString && vmString.length > 0) {
+      vmString = vmString.join(',');
+      return fetchSelectedVmsProperty(siteId, vmString, selectedVMS, dispatch);
+    }
+  } else {
+    vmString = vms.toString();
+    return fetchSelectedVmsProperty(siteId, vmString, selectedVMS, dispatch);
+  }
+  return true;
+}
+
+export function getComputeResources(fieldKey, dataCenterKey) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const recoverySite = getValue('ui.values.recoverySiteID', values);
+    const locationData = getValue('ui.drplan.vms.location', values);
+    const fieldVal = getValue(fieldKey, values);
+    const key = getVMwareLocationPath(locationData, fieldVal[0]);
+    const computeKey = fieldKey.replace('folderPath', 'COMPUTERESOURCEDATA');
+    if (typeof key !== 'undefined') {
+      dispatch(valueChange('ui.site.vmware.datacenterMoref', key.value));
+    }
+    if (typeof fieldVal === 'undefined' || fieldVal.length === 0) {
+      dispatch(addMessage('Please select Datacenter', MESSAGE_TYPES.ERROR));
+      return;
+    }
+    let url = '';
+    let entityKey = '';
+    if (dataCenterKey) {
+      dispatch(valueChange('ui.site.vmware.datacenterMoref', dataCenterKey));
+      url = `${routeStart}api/v1/sites/${recoverySite}/resources?type=ClusterComputeResource,${VMWARE_OBJECT.ComputeResource}&entity=${dataCenterKey}`;
+      entityKey = dataCenterKey;
+    } else {
+      url = `${routeStart}api/v1/sites/${recoverySite}/resources?type=ClusterComputeResource,${VMWARE_OBJECT.ComputeResource}&entity=${key.key}`;
+      entityKey = key.key;
+    }
+
+    const responseData = getVMwareConfigDataForField(`ClusterComputeResource,${VMWARE_OBJECT.ComputeResource}`, entityKey, values);
+    if (responseData !== null) {
+      dispatch(valueChange(computeKey, responseData));
+      return;
+    }
+
+    dispatch(showApplicationLoader('vmware_compute', 'Loading vmware computeResource'));
+    return callAPI(url).then((json) => {
+      dispatch(hideApplicationLoader('vmware_compute'));
+      if (json.hasError) {
+        dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+      } else {
+        const res = [];
+        json.forEach((d) => {
+          const val = {};
+          val.label = d.name;
+          val.value = d.id;
+          res.push(val);
+        });
+        // set data
+        dispatch(setVMwareAPIResponseData(`ClusterComputeResource,${VMWARE_OBJECT.ComputeResource}`, entityKey, res));
+        dispatch(valueChange(computeKey, res));
+      }
+    },
+    (err) => {
+      dispatch(hideApplicationLoader('vmware_compute'));
+      dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+    });
+  };
+}
+
+export function getStorageForVMware({ fieldKey, hostMoref, isNotChange }) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const recoverySite = getValue('ui.values.recoverySiteID', values);
+    const fieldVal = getValue(fieldKey, values);
+    let storageURL = '';
+    let networkURL = '';
+    let entityKey = '';
+    if (hostMoref) {
+      networkURL = `${routeStart}api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Network},${VMWARE_OBJECT.DistributedVirtualPortgroup}&entity=${hostMoref}`;
+      storageURL = `${routeStart}api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Datastore}&entity=${hostMoref}`;
+      entityKey = `${hostMoref}`;
+    } else if (fieldVal !== '' && fieldVal.value !== '') {
+      networkURL = `${routeStart}api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Network},${VMWARE_OBJECT.DistributedVirtualPortgroup}&entity=${fieldVal.value}`;
+      storageURL = `${routeStart}api/v1/sites/${recoverySite}/resources?type=${VMWARE_OBJECT.Datastore}&entity=${fieldVal.value}`;
+      entityKey = `${fieldVal.value}`;
+    } else {
+      return;
+    }
+    if (!isNotChange) {
+      const key = fieldKey.split('.general.hostMoref');
+      const networkKey = `${key[0]}.network.net1`;
+      const eths = getValue(networkKey, values) || [];
+      for (let index = 0; index < eths.length; index += 1) {
+        dispatch(valueChange(`${networkKey}-eth-${index}-network`, ''));
+      }
+    }
+    const apis = [dispatch(fetchVMwareComputeResource(storageURL, fieldKey, VMWARE_OBJECT.Network, entityKey)), dispatch(fetchVMwareNetwork(networkURL, fieldKey, VMWARE_OBJECT.Datastore, entityKey))];
+    return Promise.all(apis).then(
+      () => new Promise((resolve) => resolve()),
+      (err) => {
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+        return new Promise((resolve) => resolve());
+      },
+    );
+  };
+}
+
+/**
+ * set the script for pplan
+ *
+ * @param {key,obj} options
+ */
+export function setProtectionPlanScript(key, obj) {
+  return (dispatch) => {
+    dispatch(valueChange(`${key}-protection.scripts.preScript`, obj.preScript));
+    dispatch(valueChange(`${key}-protection.scripts.postScript`, obj.postScript));
+  };
+}
+
+export function setInstanceDetails(key, ins) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    dispatch(valueChange(`${key}-vmConfig.general.id`, ins.id));
+    dispatch(valueChange(`${key}-vmConfig.general.sourceMoref`, ins.sourceMoref));
+    const insType = getMatchingInsType(values, ins);
+    if (insType.value) {
+      dispatch(valueChange(`${key}-vmConfig.general.instanceType`, insType));
+    }
+    dispatch(valueChange(`${key}-vmConfig.general.volumeType`, ins.volumeType));
+    dispatch(valueChange(`${key}-vmConfig.general.volumeIOPS`, ins.volumeIOPS));
+    dispatch(valueChange(`${key}-vmConfig.general.encryptionKey`, ins.encryptionKey));
+    dispatch(valueChange(`${key}-vmConfig.general.bootOrder`, ins.bootPriority));
+    dispatch(valueChange(`${key}-vmConfig.scripts.preScript`, ins.preScript));
+    dispatch(valueChange(`${key}-vmConfig.scripts.postScript`, ins.postScript));
+    // for aws
+    dispatch(valueChange(`${key}-vmConfig.general.tenancy`, ins.tenancy));
+    dispatch(valueChange(`${key}-vmConfig.general.hostType`, ins.hostType));
+    dispatch(valueChange(`${key}-vmConfig.general.hostMoref`, ins.hostMoref));
+    dispatch(valueChange(`${key}-vmConfig.general.affinity`, ins.affinity));
+    dispatch(valueChange(`${key}-vmConfig.general.image`, ins.image));
+    dispatch(valueChange(`${key}-vmConfig.general.license`, ins.license));
+    dispatch(valueChange(`${key}-vmConfig.general.targetStorageType`, ins.targetStorageType));
+  };
+}
+
+export function setTags(key, obj) {
+  return (dispatch) => {
+    if (obj.tags && obj.tags.length > 0) {
+      const tagsData = [];
+      obj.tags.forEach((tag) => {
+        tagsData.push({ id: tag.id, key: tag.key, value: tag.value });
+      });
+      dispatch(valueChange(`${key}-vmConfig.general.tags`, tagsData));
+    }
+  };
+}
+
+export function onNodeTypeChange({ value, fieldKey }) {
+  return (dispatch) => {
+    const fKey = fieldKey.replace('nodeType', 'managementPort');
+    if (value === NODE_TYPES.DEDUPE_SERVER) {
+      dispatch(valueChange(fKey, 5005));
+    } else {
+      dispatch(valueChange(fKey, 5000));
+    }
+  };
+}
+
+export function onDiffReverseChanges({ value }) {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    const { values } = user;
+    const recoveryPlatform = getValue('ui.values.recoveryPlatform', values) || '';
+    if (value) {
+      if (recoveryPlatform !== '' && recoveryPlatform === PLATFORM_TYPES.VMware) {
+        // if target is vmware disable differential with checkpoint
+        dispatch(valueChange('recoveryPointConfiguration.isRecoveryCheckpointEnabled', false));
+        dispatch(valueChange(STORE_KEYS.UI_DISABLE_RECOVERY_CHECKPOINT, true));
+      }
+    } else {
+      dispatch(valueChange(STORE_KEYS.UI_DISABLE_RECOVERY_CHECKPOINT, false));
+    }
+  };
+}
+
+export function setActiveTab(value) {
+  return {
+    type: Types.SET_DRPLAN_DETAIL_ACTIVE_TAB,
+    value,
+  };
+}
+export function setActiveTabReport(value) {
+  return {
+    type: Types.SET_DRPLAN_DETAIL_ACTIVE_TAB_REPORT,
+    value,
+  };
+}
+
+export async function decryptAndSetPrivileges(data, nodeKey, dispatch) {
+  if (typeof data === 'undefined' || data.length === 0) {
+    return;
+  }
+  let privileges = [];
+  // decrypt the privileges using node key
+  try {
+    const d = await Decrypt(data, `${nodeKey}${nodeKey}`);
+    privileges = d.split(',') || [];
+  } catch (error) {
+    dispatch(addMessage('Failed to fetch user privileges', MESSAGE_TYPES.ERROR));
+  }
+  dispatch(setPrivileges(privileges));
+}
+
+export function addWarningBannerMsg(key, value) {
+  return {
+    type: Types.ADD_WARNING_BANNER_MSG,
+    key,
+    value,
+  };
+}

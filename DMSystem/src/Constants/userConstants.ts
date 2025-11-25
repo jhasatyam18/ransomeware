@@ -49,10 +49,13 @@ export const UPGRADE_SUMMARY_TAB = {
 
 export const TIMER = {
     FIFTEEN_GUNDRED: 1500,
+    TEN_SECONDS: 10000,
+    FIVE_SECONDS: 5000,
 };
 
 export const PORTS = {
     FIVE_THOUSAND_FOUR: 5004,
+    FIVE_THOUSAND: 5000,
 };
 
 export const COMPONENT_TYPES = ['DM-APPLICATION-UPGRADE'];

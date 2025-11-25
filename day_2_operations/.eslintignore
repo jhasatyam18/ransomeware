@@ -1,0 +1,12 @@
+node_modules/
+build/
+config/
+scripts/
+# src/assets/*
+# src\logo.svg
+# src/app.css
+# src/index.css
+export default defineConfig({
+    ignores: ['node_modules/*', 'dist/*'],
+    // other configuration settings
+});

@@ -1,11 +1,18 @@
 import React from 'react';
 import { Container } from 'reactstrap';
+import { NODE_TYPE } from '../../Constants/InputConstants';
+import { UserInterface } from '../../interfaces/interfaces';
 import DashboardTitles from './Dashboard/DashboardTitles';
 import NodeTable from './Dashboard/NodeTable';
 import SiteTable from './Dashboard/SiteTable';
 import SystemInfo from './Dashboard/SystemInfo';
 
-const Dashboard: React.FC = () => {
+type Props = {
+    user: UserInterface;
+};
+
+const Dashboard: React.FC<Props> = ({ user }) => {
+    const { nodeType } = user;
     return (
         <div>
             <Container fluid>
@@ -14,12 +21,18 @@ const Dashboard: React.FC = () => {
             <Container fluid>
                 <SystemInfo />
             </Container>
-            <Container fluid>
-                <NodeTable />
-            </Container>
-            <Container fluid>
-                <SiteTable />
-            </Container>
+            {nodeType && nodeType === NODE_TYPE.DOP ? (
+                ''
+            ) : (
+                <>
+                    <Container fluid>
+                        <NodeTable />
+                    </Container>
+                    <Container fluid>
+                        <SiteTable />
+                    </Container>
+                </>
+            )}
         </div>
     );
 };

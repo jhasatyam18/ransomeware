@@ -8,16 +8,20 @@ import { UpgradeStepsInterface } from '../../interfaces/upgradeInterfaces';
 import { NODE_TYPES, NODES_VERSION_KEYS } from '../../Constants/InputConstants';
 import { UPGRADE_STEP } from '../../Constants/upgradeConstant';
 import { STATIC_KEYS } from '../../Constants/userConstants';
-import { areAllNodeVersionsSame, deepCopy, hasRequestedPrivileges } from '../../utils/appUtils';
+import { areAllNodeVersionsSame, deepCopy } from '../../utils/appUtils';
 import { getValue } from '../../utils/inputUtils';
-import { addUpgradeStep, fetchNodes, getDownloadUpgradeProgress } from '../../store/actions/upgradeAction';
+import { addUpgradeStep, fetchNodes, getDownloadUpgradeProgress, setCurrentUpgradeStep } from '../../store/actions/upgradeAction';
 import ActionButton from '../../Components/Shared/ActionButton';
 import { valueChange } from '../../store/actions';
 import ComponentRenderer from '../ComponentRenderer';
 import UpgradeSteps from '../upgrade/UpgradeSteps';
 import UpgradeHistory from './UpgradeHistory';
-import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
+import { faSpinner, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { callAPI, hasPriviledges } from '../../utils/apiUtils';
+import { API_GET_UPGRADE_DOWNLOAD } from '../../Constants/apiConstants';
+import { MESSAGE_TYPES } from '../../Constants/MessageConstants';
+import { addMessage } from '../../store/actions/MessageActions';
 
 interface Props extends WithTranslation {
     dispatch: Dispatch<any>;
@@ -31,7 +35,7 @@ interface Props extends WithTranslation {
 
 const UpgradePage: React.FC<Props> = (props) => {
     const { dispatch, t, upgrade, user } = props;
-    const { values } = user;
+    const { values, nodeType = '', version = '' } = user;
     const { steps, currentStep } = upgrade;
     const [popoverOpen, setPopoverOpen] = useState(false);
     const [popoverOpenPrep, setPopoverOpenPrep] = useState(false);
@@ -45,31 +49,55 @@ const UpgradePage: React.FC<Props> = (props) => {
     let mgmtNodeVersion = '';
     let replNodes: NodeVersionData[] = [];
     let prepNodes: NodeVersionData[] = [];
-
+    const [loading, setLoading] = useState<boolean>(false);
+    const workflow = getValue(STATIC_KEYS.UI_CURRENT_FLOW, values);
     useEffect(() => {
         dispatch(fetchNodes(STATIC_KEYS.UI_FTECH_NODE_INFO));
-        dispatch(getDownloadUpgradeProgress());
+        getUpgradeStatusJobId();
     }, []);
-
+    function getUpgradeStatusJobId() {
+        setLoading(true);
+        return callAPI(API_GET_UPGRADE_DOWNLOAD).then(
+            (json) => {
+                if (json.hasError) {
+                    setLoading(false);
+                    dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+                } else {
+                    if (json.status === 'in-progress') {
+                        const arr = deepCopy(UPGRADE_STEP);
+                        dispatch(addUpgradeStep(arr));
+                        dispatch(setCurrentUpgradeStep(0));
+                        dispatch(valueChange(STATIC_KEYS.UI_UPGRADE_PAGE, STATIC_KEYS.UI_UPGRADE));
+                        dispatch(valueChange(STATIC_KEYS.UI_CURRENT_FLOW, workflow || 'upgrade'));
+                    }
+                    dispatch(getDownloadUpgradeProgress());
+                    setLoading(false);
+                }
+            },
+            (err) => {
+                setLoading(false);
+                dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+            },
+        );
+    }
     const node: NodeInterface[] = getValue(STATIC_KEYS.UI_FTECH_NODE_INFO, values) || [];
 
-    if (node.length === 0) {
-        return null;
+    if (node.length > 0) {
+        node?.forEach((element: NodeInterface) => {
+            if (element.nodeType === NODE_TYPES.MANAGEMENT && element.isLocalNode) {
+                mgmtCount += 1;
+                mgmtNodeVersion = `${element.version}`;
+            }
+            if (element.nodeType === NODE_TYPES.Replication) {
+                replCount += 1;
+                replNodes.push({ name: element.name, version: element.version, status: element.status });
+            }
+            if (element.nodeType === NODE_TYPES.PrepNode) {
+                prepCount += 1;
+                prepNodes.push({ name: element.name, version: element.version, status: element.status });
+            }
+        });
     }
-    node.forEach((element: NodeInterface) => {
-        if (element.nodeType === NODE_TYPES.MANAGEMENT && element.isLocalNode) {
-            mgmtCount += 1;
-            mgmtNodeVersion = `${element.version}`;
-        }
-        if (element.nodeType === NODE_TYPES.Replication) {
-            replCount += 1;
-            replNodes.push({ name: element.name, version: element.version, status: element.status });
-        }
-        if (element.nodeType === NODE_TYPES.PrepNode) {
-            prepCount += 1;
-            prepNodes.push({ name: element.name, version: element.version, status: element.status });
-        }
-    });
     const onUpgradeClick = () => {
         dispatch(valueChange(STATIC_KEYS.UI_CURRENT_FLOW, 'upgrade'));
         dispatch(addUpgradeStep(deepCopy(UPGRADE_STEP)));
@@ -119,33 +147,45 @@ const UpgradePage: React.FC<Props> = (props) => {
     const renderNodeInfo = () => {
         return (
             <Row className="margin-left-5">
-                <Col sm={5}>
-                    <Row className="mb-3">
-                        <Col sm={7}>{t('mgmtnode')}</Col>
-                        <Col sm={2}>{mgmtCount}</Col>
-                        <Col sm={3}>{mgmtNodeVersion}</Col>
-                    </Row>
-                    <Row className="mb-3">
-                        <Col sm={7}>{t('replNode')}</Col>
-                        <Col sm={2}>{replCount}</Col>
-                        {renderNodeVersion(replNodes, NODES_VERSION_KEYS.REPL_NODE)}
-                    </Row>
-                    <Row className="mb-3">
-                        <Col sm={7}>{t('prepnode')}</Col>
-                        <Col sm={2}>{prepCount}</Col>
-                        {renderNodeVersion(prepNodes, NODES_VERSION_KEYS.PREP_NODE)}
-                    </Row>
-                </Col>
-                <Col sm={3} className="mr-5">
-                    <div className="stack__info">
-                        <div className="line" />
-                    </div>
-                </Col>
-                <Col sm={3} className="d-flex flex-row-reverse mt-3">
-                    <div>
-                        <ActionButton isDisabled={!hasRequestedPrivileges(user, ['upgrade.start']) || steps.length !== 0} onClick={onUpgradeClick} cssName={`btn btn-xl btn-success ml-5`} label="Upgrade" />
-                    </div>
-                </Col>
+                {node.length > 0 ? (
+                    <>
+                        <Col sm={5}>
+                            <Row className="mb-3">
+                                <Col sm={7}>{t('mgmtnode')}</Col>
+                                <Col sm={2}>{mgmtCount}</Col>
+                                <Col sm={3}>{mgmtNodeVersion}</Col>
+                            </Row>
+                            <Row className="mb-3">
+                                <Col sm={7}>{t('replNode')}</Col>
+                                <Col sm={2}>{replCount}</Col>
+                                {renderNodeVersion(replNodes, NODES_VERSION_KEYS.REPL_NODE)}
+                            </Row>
+                            <Row className="mb-3">
+                                <Col sm={7}>{t('prepnode')}</Col>
+                                <Col sm={2}>{prepCount}</Col>
+                                {renderNodeVersion(prepNodes, NODES_VERSION_KEYS.PREP_NODE)}
+                            </Row>
+                        </Col>
+                        <Col sm={3} className="mr-5">
+                            <div className="stack__info">
+                                <div className="line" />
+                            </div>
+                        </Col>
+                        <Col sm={3} className="d-flex flex-row-reverse mt-3">
+                            <div>
+                                <ActionButton isDisabled={!hasPriviledges() || steps.length !== 0} onClick={onUpgradeClick} cssName={`btn btn-xl btn-success ml-5`} label="Upgrade" />
+                            </div>
+                        </Col>
+                    </>
+                ) : (
+                    <>
+                        <Col sm={2}>{nodeType}</Col>
+                        <Col sm={2}>{version}</Col>
+                        <Col sm={8} className="d-flex flex-row-reverse">
+                            <ActionButton isDisabled={!hasPriviledges() || steps.length !== 0} onClick={onUpgradeClick} cssName={`btn btn-xl btn-success ml-5`} label="Upgrade" />
+                        </Col>
+                    </>
+                )}
             </Row>
         );
     };
@@ -194,7 +234,17 @@ const UpgradePage: React.FC<Props> = (props) => {
                         </CardBody>
                     </Card>
                 ) : null}
-                {flowRenderer()}
+                {loading ? (
+                    <>
+                        <Card>
+                            <CardBody>
+                                <FontAwesomeIcon icon={faSpinner} className="me-2" /> Loading...
+                            </CardBody>
+                        </Card>
+                    </>
+                ) : (
+                    flowRenderer()
+                )}
             </Container>
         </>
     );

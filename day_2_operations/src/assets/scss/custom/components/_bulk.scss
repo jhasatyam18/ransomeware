@@ -1,0 +1,159 @@
+.bulk_status_text_parent{
+  width: 95%;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  top:-15px;
+  margin: auto;
+}
+
+.bulk_status_parent{
+  width: 85%;
+  padding-left: 22px;
+  margin: auto;
+}
+.bulk_sts_horizntal_line{
+    border-top:1px solid #aeaeae;
+    height: 1px;
+    width: 100%;
+    position: relative;
+    top: -9px;
+  }
+
+.success{
+  color: #34c38f ;
+}
+.error{
+  color: #f46a6a ;
+}
+
+
+.flex-item{
+  flex-basis: 100%;
+}
+
+.bulk_status_icon{
+  z-index: -1;
+  margin-left: 4px;
+  margin-right: 4px;
+  font-size: 1em;
+  &:hover{
+    color: rgb(162, 206, 206);
+    cursor:pointer;
+  }
+}
+
+.template_status_text{
+  font-size: 0.7rem;
+}
+.success_line{
+  border-top:1px solid #34c38f;
+}
+
+.template_select_folder{
+  min-height: 30vh;
+  max-height: 30vh;
+}
+
+.template_serach_vm{
+  max-height: 19vh;
+  min-height: 19vh;
+}
+
+.bulk_summary__view {
+  margin: 0px;
+  transition:visibility 1s linear,opacity 0.3s linear;
+  .key {
+    background-color: #2a3042;
+    padding-left: 10px;
+    padding-top: 10px;
+  }
+  .child {
+    padding-left: 40px;
+  }
+  .value {
+    background-color: #32394e;
+    padding-top: 10px;
+    padding-left: 15px;
+  }
+}
+
+.bulk_diff_border{
+  border: 1px solid rgb(70, 73, 82)
+}
+
+.bulk_dmtree_vm_div{
+  min-height: 45vh;
+  max-height: 45vh; 
+  background: var(--tree-bg-color);
+}
+
+.bulk_dmtree_selected_vm_div{
+  min-height: 36vh;
+  max-height: 36vh;
+}
+
+.single_playbook_download{
+  color: #34c38f;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.single_playbook_delete{
+  color: #f46a6a;
+}
+
+.progress_text {
+  font-weight: 540; 
+  font-size: 1.1em;
+  width: 100%;
+  margin: auto;
+  padding-left: 15px;
+  text-align: center;
+}
+
+.how_to_fix_container {
+  display: flex;
+  flex-direction: row;
+  .stepName {
+    padding-right: 10px;
+    color: $success;
+  }
+}
+
+.invalidate_warn_sts{
+  font-size: 10px;
+  text-align: center;
+}
+
+.playbook_configure_div{
+  display: flex;
+  justify-content: space-between;
+}
+
+.checkpoint_preserved_text{
+  font-size: 9px;
+  color:$green;
+  display: block;
+  padding-left: 2px;
+  padding-top: 2px;
+}
+
+.checkpoint_summary{
+  padding-left: 15px;
+  margin-top: 0px;
+  font-weight: 100;
+}
+
+.checkpoint_preserve_text{
+  font-size: 9px;
+  color:#50a5f1;
+  display: block;
+  padding-left: 2px;
+  padding-top: 2px;  
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.singlee_playbook_icon{
+  font-size: 15px;
+}

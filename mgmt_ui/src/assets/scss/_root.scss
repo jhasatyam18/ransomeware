@@ -1,0 +1,165 @@
+// 
+// root.scss
+//
+
+//theme-light
+:root {
+    
+    
+    --#{$prefix}dm-logo-color: #{$body-secondary-color};
+    // Topbar - Default Light
+    --#{$prefix}header-bg:                              #{$header-bg}; 
+    --#{$prefix}header-item-color:                      #{$header-item-color}; 
+
+    // Topbar - Dark
+    --#{$prefix}header-dark-bg:                         #{$header-dark-bg}; 
+    --#{$prefix}header-dark-item-color:                 #{$header-dark-item-color}; 
+    
+    --#{$prefix}topbar-search-bg:                       #{$topbar-search-bg}; 
+
+    // Footer
+    --#{$prefix}footer-bg:                              #{$footer-bg}; 
+    --#{$prefix}footer-color:                           #{$footer-color}; 
+
+    // Horizontal nav
+    --#{$prefix}topnav-bg:                              #{$topnav-bg}; 
+    --#{$prefix}menu-item-color:                        #{$menu-item-color}; 
+    --#{$prefix}menu-item-active-color:                 #{$menu-item-active-color}; 
+
+    // Boxed layout width
+    --#{$prefix}boxed-body-bg:                          #{$boxed-body-bg}; 
+
+    --#{$prefix}display-none:                           #{$display-none};
+    --#{$prefix}display-block:                          #{$display-block};
+    --#{$prefix}body-bg:                                #{$body-bg}; 
+    --#{$prefix}body-color:                             #{$body-color}; 
+
+    // inputs
+     
+    --#{$prefix}input-bg-color:                            #{$body-secondary-bg};
+    
+    --#{$prefix}input-bg-color-disabled:                             #{$body-bg};
+    --tree-bg-color:                            #{$tree-bg-color};
+    --input-box-shadow:                            #{$tree-bg-color};
+
+    //wizard
+    
+    --#{$prefix}wizard-steps-bg:                             #{$wizard-steps-bg}; 
+    --#{$prefix}stack-row-border:                            #{$stack-row-border-light};
+    --#{$prefix}wizard-stack-key-bg:                             #{$wizard-stack-key-bg}; 
+    --#{$prefix}wizard-stack-value-bg:                             #{$wizard-stack-value-bg}; 
+    --#{$prefix}wizard-steps-active-bg:                             #{$grey}; 
+    
+    --#{$prefix}secondary-bg-rgb: #{to-rgb($body-secondary-bg)};
+    --#{$prefix}icon-color: #{$grey};
+
+    
+     --select-bg: #{$body-secondary-bg};
+     --select-font: #{$body-color};
+     --select-hover: #{$table-hover-bg};
+     --select-hover-color: #{$grey};
+     --select-primary: #{$search-select-primary};
+     --select-error: #{$red-dark};
+     --select-border: #{$border-color-translucent};
+     --select-select: #{$grey};
+     --tree-fd-color:#{$grey};
+     --loader-dot-color: #{$grey};
+     --select-diabled-bg: #{$body-bg};
+     --link-color:var(--#{$prefix}body-color);
+     // card
+     --bs-form-select-bg-icon:'';
+     
+     --warning-color: #{$yellow};
+     --card-header-box-shadow: 1px 1px 4px 0 rgba(0, 0, 0, .1)
+    }
+
+//theme dark
+@if $enable-dark-mode {
+    
+    @include color-mode(dark, true) { 
+        --#{$prefix}dm-logo-color: #{$white};
+        // Topbar - Default Light   
+        --#{$prefix}header-bg:                              #{$header-bg-dark}; 
+        --#{$prefix}header-item-color:                      #{$header-item-color-dark}; 
+        --#{$prefix}body-bg:                                #{$body-bg-dark}; 
+        --#{$prefix}body-color:                             #{$body-color-dark}; 
+       
+
+        --bs-form-select-bg-icon:'';
+        // Topbar - Dark
+        --#{$prefix}header-dark-bg:                         #{$header-dark-bg}; 
+        --#{$prefix}header-dark-item-color:                 #{$header-dark-item-color-dark}; 
+        --#{$prefix}topbar-search-bg:                       #{$topbar-search-bg}; 
+        
+     --#{$prefix}icon-color: #{$body-color-dark};
+        --#{$prefix}icon-color: #{$header-dark-item-color};
+        // Footer
+        --#{$prefix}footer-bg:                              #{$footer-bg}; 
+        --#{$prefix}footer-color:                           #{$footer-color}; 
+
+        // Horizontal nav
+        --#{$prefix}topnav-bg:                              #{$topnav-bg}; 
+        --#{$prefix}menu-item-color:                        #{$menu-item-color}; 
+        --#{$prefix}menu-item-active-color:                 #{$menu-item-active-color}; 
+
+        // Boxed layout width
+        --#{$prefix}boxed-body-bg:                          #{$boxed-body-bg};
+
+        // component variable
+        --#{$prefix}light:                                      #{$body-tertiary-bg};
+        --#{$prefix}light-rgb:                                  #{to-rgb($body-tertiary-bg-dark)};
+        --#{$prefix}dark:                                       #{$body-tertiary-color};
+        --#{$prefix}dark-rgb:                                   #{to-rgb($body-tertiary-color-dark)};
+
+        //theme
+        
+        --#{$prefix}primary-color:                          #{$primary-dark};
+        --#{$prefix}secondary-color :                         #{$secondary-dark};
+        --#{$prefix}tertiary-bg :                         #{$body-tertiary-bg-dark};
+
+
+        --#{$prefix}display-none:                           #{$display-none};
+        --#{$prefix}display-block:                          #{$display-block};
+        --#{$prefix}table-hover-bg:                          #{$table-hover-bg-dark};
+
+        // wizard
+        
+    --#{$prefix}wizard-steps-bg:                             #{$wizard-steps-bg-dark}; 
+    --#{$prefix}stack-row-border:                             #{$sidebar-dark-menu-item-color}; 
+    --#{$prefix}wizard-stack-key-bg:                             #{$wizard-stack-key-bg-dark}; 
+    --#{$prefix}wizard-stack-value-bg:                             #{$wizard-stack-value-bg-dark}; 
+    --#{$prefix}wizard-steps-active-bg:                             #{$wizard-steps-active-bg}; 
+
+
+        // inputs 
+        
+        --#{$prefix}input-bg-color:                             #{$input-bg-color-dark};
+        --#{$prefix}input-bg-color-disabled:                             #{$disabled-color-dark};
+        --#{$prefix}tertiary-bg-rgb:                            #{to-rgb($table-hover-bg-dark)}; 
+        --#{$prefix}btn-close-filter:                            none; 
+
+        // tree component
+        --tree-bg-color:                            #{$tree-bg-color-dark};
+
+
+        --select-bg: #{$search-select-bg-dark};
+        --select-font: #{$search-select-font-dark};
+        --select-hover: #{$search-select-hover-dark};
+        --select-primary: #{$search-select-primary-dark};
+        --select-error: #{$search-select-error-dark};
+        --select-border: #{$border-color-translucent-dark};
+        --select-hover-color: #{$search-select-hover-color-dark};
+        --select-select:#{$search-select-select-dark};
+        --link-color: #{$blue}
+        
+     --select-diabled-bg: #{$disabled-color-dark};
+
+     --loader-dot-color: #{$primary};
+        
+     --tree-fd-color:#{$primary};
+     // card
+     --card-header-box-shadow: none;
+     --warning-color: #{$warning};
+
+    }
+}

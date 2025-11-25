@@ -1,6 +1,6 @@
 import { Dispatch } from 'redux';
 import * as Types from '../../Constants/actionTypes';
-import { API_AUTHENTICATE, API_CHANGE_PASSWORD, API_FETCH_SITES, API_INFO, API_USERS, API_USER_PREFERENCE, API_USER_PRIVILEGES } from '../../Constants/apiConstants';
+import { API_AUTHENTICATE, API_CHANGE_PASSWORD, API_FETCH_SITES, API_INFO, API_USERS, API_USER_PREFERENCE } from '../../Constants/apiConstants';
 import { APP_TYPE } from '../../Constants/InputConstants';
 import { MESSAGE_TYPES } from '../../Constants/MessageConstants';
 import { DASHBOARD_PATH, UPGRADE } from '../../Constants/routeConstants';
@@ -8,7 +8,6 @@ import { APPLICATION_API_USER, APPLICATION_AUTHORIZATION, APPLICATION_THEME, APP
 import { UserDtails, UserPreferences } from '../../interfaces/interfaces';
 import { API_TYPES, callAPI, createPayload } from '../../utils/apiUtils';
 import { getCookie, removeCookie, setCookie } from '../../utils/cookieUtils';
-import { Decrypt } from '../../utils/encryptionUtils';
 import { onInit } from '../../utils/historyUtils';
 import { addMessage } from './MessageActions';
 import { fetchNodes, getDownloadUpgradeProgress, getUpgradeHistory } from './upgradeAction';
@@ -121,13 +120,15 @@ export function removeErrorMessage(key: string) {
         key,
     };
 }
-export function changeAppType(appType: string, platformType = '', localVMIP = '', zone = '') {
+export function changeAppType(appType: string, platformType = '', localVMIP = '', zone = '', nodeType = '', version = '') {
     return {
         type: Types.APP_TYPE,
         appType,
         platformType,
         localVMIP,
         zone,
+        nodeType,
+        version,
     };
 }
 export function getInfo(history: any) {
@@ -140,8 +141,8 @@ export function getInfo(history: any) {
                 } else {
                     dispatch(loginSuccess(json.token, getCookie(APPLICATION_API_USER)));
                     const appType = json.serviceType === 'Client' ? APP_TYPE.CLIENT : APP_TYPE.SERVER;
-                    const { nodeKey } = json;
-                    dispatch(changeAppType(appType, json.platformType, json.localVMIP, json.zone));
+                    const { nodeKey, nodeType, version } = json;
+                    dispatch(changeAppType(appType, json.platformType, json.localVMIP, json.zone, nodeType, version));
                     // fetchByDelay(dispatch, updateLicenseInfo, 2000, { nodeKey, version, serviceType, activeLicenses: licenses });
                     // dispatch(validateLicense(licenseExpiredTime));
 
@@ -152,7 +153,9 @@ export function getInfo(history: any) {
                 }
             },
             (err) => {
-                dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+                if (err.message !== 'Unauthorized: session expired') {
+                    dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+                }
             },
         );
     };
@@ -323,7 +326,6 @@ export function getUserInfo(nodeKey: any) {
                     if (json && json.length >= 1) {
                         setCookie(APPLICATION_API_USER, json[0].username);
                         setCookie(APPLICATION_UID, json[0].id);
-                        dispatch(getUserPrivileges(json[0].id, nodeKey));
                         dispatch(setUserDetails(json[0]));
                         dispatch(getUserPreference(json[0]));
                         return;
@@ -340,51 +342,6 @@ export function getUserInfo(nodeKey: any) {
             },
         );
     };
-}
-
-export function getUserPrivileges(id: any, nodeKey: any) {
-    return (dispatch: any) => {
-        if (nodeKey === '' || typeof nodeKey === 'undefined') {
-            return;
-        }
-        const url = API_USER_PRIVILEGES.replace('<id>', id);
-        dispatch(showApplicationLoader(API_USER_PRIVILEGES, 'Loading...'));
-        return callAPI(url).then(
-            (json) => {
-                dispatch(hideApplicationLoader(API_USER_PRIVILEGES));
-                if (json.hasError) {
-                    dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
-                } else {
-                    dispatch(setPrivileges(json));
-                    if (json && json.length >= 1) {
-                        // dispatch(setPrivileges(json));
-                        decryptAndSetPrivileges(json, nodeKey, dispatch);
-                        return;
-                    }
-                    dispatch(addMessage('Failed to fetch user privileges', MESSAGE_TYPES.ERROR));
-                }
-            },
-            (err) => {
-                dispatch(hideApplicationLoader(API_USER_PRIVILEGES));
-                dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
-            },
-        );
-    };
-}
-
-export async function decryptAndSetPrivileges(data: any, nodeKey: any, dispatch: any) {
-    if (typeof data === 'undefined' || data.length === 0) {
-        return;
-    }
-    let privileges: any = [];
-    // decrypt the privileges using node key
-    try {
-        const d = await Decrypt(data, `${nodeKey}${nodeKey}`);
-        privileges = d.split(',') || [];
-    } catch (error) {
-        // dispatch(addMessage('Failed to fetch user privileges', MESSAGE_TYPES.ERROR));
-    }
-    dispatch(setPrivileges(privileges));
 }
 
 export function fetchSites(key: string) {
@@ -424,18 +381,15 @@ export function setActiveTab(value: string) {
  */
 export function getUserPreference(userDetails: UserDtails) {
     return (dispatch: any) => {
-        dispatch(showApplicationLoader('USER_PREFERENCE', 'Loading user preferences...'));
         const url = `${API_USER_PREFERENCE}/${userDetails.username}`;
         return callAPI(url).then(
             (json) => {
-                dispatch(hideApplicationLoader('USER_PREFERENCE'));
                 if (!json.hasError) {
                     dispatch(setUserPreferences(json));
                     localStorage.setItem(APPLICATION_THEME, json.themePreference);
                 }
             },
             () => {
-                dispatch(hideApplicationLoader('USER_PREFERENCE'));
                 localStorage.setItem(APPLICATION_THEME, THEME_CONSTANT.DARK);
             },
         );

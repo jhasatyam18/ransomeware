@@ -1,0 +1,5 @@
+mock-server/*.js 
+scripts/*.js
+config/*.*
+end_of_line = CRLF
+setupProxy.js

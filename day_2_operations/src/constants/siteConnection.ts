@@ -1,0 +1,12 @@
+export const NODE_POSITIONS = [
+    { x: 10, y: 10 },
+    { x: 400, y: 10 },
+    { x: 200, y: 70 },
+    { x: 600, y: 70 },
+    { x: 10, y: 140 },
+    { x: 400, y: 140 },
+    { x: 200, y: 210 },
+    { x: 600, y: 210 },
+];
+
+export const MODAL_REGISTER_SITE = 'MODAL_REGISTER_SITE';

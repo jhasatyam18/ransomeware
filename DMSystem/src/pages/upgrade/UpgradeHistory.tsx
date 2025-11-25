@@ -4,37 +4,40 @@ import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Card, CardBody, CardTitle, Col, Row } from 'reactstrap';
 import { UpgradeNodeInterface } from '../../interfaces/HistoryInterface';
-import { NodeInterface } from '../../interfaces/interfaces';
+import { INITIAL_STATE, NodeInterface } from '../../interfaces/interfaces';
 import { UpgradeHistoryInterface } from '../../interfaces/upgradeInterfaces';
-import { deepCopy, hasRequestedPrivileges } from '../../utils/appUtils';
+import { deepCopy } from '../../utils/appUtils';
 import { getValue } from '../../utils/inputUtils';
-import { INIT_REVERT, INIT_UPGRADE, JOB_COMPLETION_STATUS, JOB_FAILED, OFFLINE } from '../../Constants/statusConstant';
+import { INIT_REVERT, INIT_UPGRADE, JOB_COMPLETION_STATUS, JOB_FAILED } from '../../Constants/statusConstant';
 import { UPGRADE_REVERT } from '../../Constants/upgradeConstant';
 import { STATIC_KEYS } from '../../Constants/userConstants';
 import { valueChange } from '../../store/actions';
 import { addUpgradeStep, getUpgradeHistory } from '../../store/actions/upgradeAction';
 import UpgradeDetails from './UpgradeDetails';
+import { hasPriviledges } from '../../utils/apiUtils';
+import { useSelector } from 'react-redux';
 
 const UpgradeHistory = (props: any) => {
     const { t, showSummary, user, dispatch } = props;
     const { values } = user;
     const [openRows, setOpenRows] = useState<Record<string, boolean>>({});
     const historyData = getValue(STATIC_KEYS.UI_SELECTED_UPGRADE_HISTORY_LIST, values) || [];
-    const nodeInfo = getValue(STATIC_KEYS.UI_FTECH_NODE_INFO, values);
+    const nodeInfo = getValue(STATIC_KEYS.UI_FTECH_NODE_INFO, values) || [];
     let upgradeSuccessfull = false;
-
+    const refresh = useSelector((state: INITIAL_STATE) => state.user.context.refresh);
     useEffect(() => {
         dispatch(getUpgradeHistory());
-    }, []);
+    }, [refresh]);
 
-    nodeInfo.forEach((nodeIn: NodeInterface) => {
-        historyData.forEach((histNode: UpgradeNodeInterface) => {
-            if (nodeIn.name === histNode.nodeName) {
-                historyData.status = nodeIn.status;
-            }
+    if (nodeInfo.length > 0) {
+        nodeInfo.forEach((nodeIn: NodeInterface) => {
+            historyData.forEach((histNode: UpgradeNodeInterface) => {
+                if (nodeIn.name === histNode.nodeName) {
+                    historyData.status = nodeIn.status;
+                }
+            });
         });
-    });
-
+    }
     const onRevertClick = (e: React.MouseEvent, el: UpgradeHistoryInterface) => {
         e.preventDefault();
         e.stopPropagation();
@@ -97,21 +100,12 @@ const UpgradeHistory = (props: any) => {
                               const dateWithTime = `${date.toLocaleDateString()}-${date.toLocaleTimeString()}`;
                               const isRowOpen = openRows[el.id];
                               if (!upgradeSuccessfull && el.action === INIT_REVERT && el.status === JOB_COMPLETION_STATUS) {
-                                  // calculate revert node count until success full upgrade job does not comes.
+                                  //   calculate revert node count until success full upgrade job does not comes.
                                   revertNodeCount += applicableNodes.length;
                               }
                               if (el.action === INIT_UPGRADE && el.status === JOB_COMPLETION_STATUS && !upgradeSuccessfull) {
-                                  // if the upgrade job is successfull and if it's the firsth job then add revert option
-                                  let offLineNodeCount = 0;
-                                  nodeInfo.forEach((nodeInf: NodeInterface) => {
-                                      applicableNodes.forEach((element: UpgradeNodeInterface) => {
-                                          if (nodeInf.name === element.nodeName && nodeInf.status === OFFLINE) {
-                                              offLineNodeCount += 1;
-                                          }
-                                      });
-                                  });
                                   upgradeSuccessfull = true;
-                                  if (applicableNodes.length - revertNodeCount > offLineNodeCount) {
+                                  if (applicableNodes.length - revertNodeCount > 0) {
                                       el.showRevertBtn = true;
                                   }
                               }
@@ -131,7 +125,7 @@ const UpgradeHistory = (props: any) => {
                                           </Col>
 
                                           <Col sm={1}>
-                                              {hasRequestedPrivileges(user, ['upgrade.start']) && el.showRevertBtn ? (
+                                              {hasPriviledges() && el.showRevertBtn ? (
                                                   <a href="#" onClick={(e) => onRevertClick(e, el)}>
                                                       {t('Revert')}
                                                   </a>

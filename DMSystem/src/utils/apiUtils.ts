@@ -1,8 +1,10 @@
 import Cookies from 'js-cookie';
+import { APPLICATION_API_USER } from '../Constants/userConstants';
 import store from '../store';
 import { clearValues, logOutUser, removeCookies } from '../store/actions';
 import { clearMessages } from '../store/actions/MessageActions';
 import { addUpgradeStep, setCurrentUpgradeStep } from '../store/actions/upgradeAction';
+import { getCookie } from './cookieUtils';
 
 export const API_TYPES = { POST: 'POST', PUT: 'PUT', DELETE: 'DELETE', PATCH: 'PATCH' };
 
@@ -39,6 +41,11 @@ export function callAPI(URL: string, obj = {}) {
             store.dispatch(addUpgradeStep([]));
             store.dispatch(setCurrentUpgradeStep(0));
         }
+        if (response.status === 504) {
+            const err = getErrorText(response.statusText);
+            err.hasError = true;
+            return err;
+        }
         if (response.status === 403) {
             const data: any = {};
             data.hasError = false;
@@ -61,5 +68,9 @@ export function callAPI(URL: string, obj = {}) {
 }
 
 export function getErrorText(err: string) {
-    return { code: 0, message: err };
+    return { code: 0, message: err, hasError: false };
+}
+
+export function hasPriviledges() {
+    return getCookie(APPLICATION_API_USER) === 'Administrator';
 }

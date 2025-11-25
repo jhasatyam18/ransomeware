@@ -1,0 +1,1 @@
+export const ACTIVITIES_MODAL = 'ACTIVITIES_MODAL';

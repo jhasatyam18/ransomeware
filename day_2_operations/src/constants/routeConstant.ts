@@ -1,0 +1,46 @@
+export const DASHBOARD_PATH = '/dop/dashboard';
+export const LOGIN_PATH = '/dop/login';
+export const Sites = '/dop/sites';
+export const Nodes = '/dop/nodes';
+export const PROTECTION_PLANS = '/dop/plans';
+export const REPLICATION_JOBS = '/dop/replication';
+export const RECOVERY_JOBS = '/dop/recovery';
+export const MONITOR_EVENTS = '/dop/events';
+export const MONITOR_ALERTS = '/dop/alerts';
+export const MONITOR_REPORTS = '/dop/reports';
+export const INSTANCES = '/dop/instances';
+export const LICENSE = '/dop/license';
+export const REPORTS = '/dop/reports';
+export const SITE_PRIORITY = '/dop/settings/dashboard';
+export const TECH_SUPPORT = '/dop/settings/support';
+/**
+ * Router constant for application
+ */
+export const SITES_PATH = '/dop/sites';
+export const PROTECTION_PLANS_PATH = '/dop/protection/plans';
+export const PLAYBOOK_LIST = '/dop/protection/plan';
+export const DOP = '/dop/dop';
+export const PLAYBOOK_DETAILS_PAGE = '/dop/protection/plan/playbook/:name';
+export const PROTECTION_PLAN_DETAILS_PATH = '/dop/protection/plan/details/:id';
+export const LOGOUT_PATH = '/dop/logout';
+export const NODES_PATH = '/dop/nodes';
+export const ACTIVITY_PATH = '/dop/Activity';
+export const LOGS_PAT = '/dop/Logs';
+export const REPORTS_PATH = '/dop/Reports';
+export const ANALYTICS_PATH = '/dop/Analytics';
+export const MONITOR_PATH = '/dop/monitor/*';
+export const EVENTS_PATH = '/dop/monitor/events';
+export const ALERTS_PATH = '/dop/monitor/alerts';
+export const SETTINGS_PATH = '/dop/settings/*';
+export const CONFIGURE = '/dop/configure/*';
+export const LICENSE_SETTINGS_PATH = '/dop/settings/license';
+export const EMAIL_SETTINGS_PATH = '/dop/settings/email';
+export const THROTTLING_SETTINGS_PATH = '/dop/settings/throttling';
+export const USER_SETTINGS_PATH = '/dop/settings/users';
+export const ROLES_SETTINGS_PATH = '/dop/settings/roles';
+export const SUPPORT_BUNDLE_PATH = '/dop/settings/support';
+export const SCRIPTS_PATH = '/dop/settings/scripts';
+export const JOBS_PATH = '/dop/jobs/*';
+export const JOBS_REPLICATION_PATH = '/dop/replication';
+export const JOBS_RECOVERY_PATH = '/dop/recovery';
+export const IDENTITY_PROVIDER = '/dop/settings/identityProvider';

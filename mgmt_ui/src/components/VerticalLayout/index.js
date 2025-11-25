@@ -1,0 +1,150 @@
+import PropTypes from 'prop-types';
+import React, { Component, Suspense } from 'react';
+import { Route, Navigate, Routes } from 'react-router-dom';
+import { withTranslation } from 'react-i18next';
+import { changePageTitle } from '../../utils/AppUtils';
+import { ALERTS_PATH, DASHBOARD_PATH, EVENTS_PATH, JOBS_PATH, LOGIN_PATH, NODES_PATH, PROTECTION_PLANS, REPORTS_PATH, SETTINGS_PATH, SITES_PATH } from '../../constants/RouterConstants';
+import Login from '../../pages/AuthenticationInner/Login';
+import Node from '../Settings/node/Node';
+import Loader from '../Shared/Loader';
+import Header from './Header';
+import Sidebar from './Sidebar';
+// lazy load components
+const Dashboard = React.lazy(() => import('../Dashboard/Dashboard'));
+const Sites = React.lazy(() => import('../Configure/Sites/Sites'));
+const Index = React.lazy(() => import('../DRPlans/Index'));
+const Jobs = React.lazy(() => import('../Jobs/Jobs'));
+const Events = React.lazy(() => import('../Events/Events'));
+const Alerts = React.lazy(() => import('../Alerts/Alerts'));
+const ReportIndex = React.lazy(() => import('../Report/index'));
+const Settings = React.lazy(() => import('../Settings/Settings'));
+class Layout extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isMobile: /iPhone|iPad|iPod|Android/i.test(navigator.userAgent),
+    };
+    this.toggleMenuCallback = this.toggleMenuCallback.bind(this);
+  }
+
+  componentDidMount() {
+    const { isPreloader } = this.props;
+    const { pathname } = window.location;
+    if (isPreloader === true) {
+      document.getElementById('preloader').style.display = 'block';
+      document.getElementById('status').style.display = 'block';
+
+      setTimeout(() => {
+        document.getElementById('preloader').style.display = 'none';
+        document.getElementById('status').style.display = 'none';
+      }, 2500);
+    } else {
+      document.getElementById('preloader').style.display = 'none';
+      document.getElementById('status').style.display = 'none';
+    }
+
+    // Scroll Top to 0
+    window.scrollTo(0, 0);
+    const currentage = this.capitalizeFirstLetter(pathname);
+
+    document.title = `${currentage} | Datamotive`;
+  }
+
+  toggleMenuCallback = () => {
+
+  };
+
+  capitalizeFirstLetter(string) {
+    return string.charAt(1).toUpperCase() + string.slice(2);
+  }
+
+  renderRoutes() {
+    const { sites, dispatch, user } = this.props;
+    const { privileges = [] } = user;
+    changePageTitle(user);
+    if (privileges.length === 0) {
+      return null;
+    }
+    return (
+      <Suspense fallback={(
+        <Loader />
+      )}
+      >
+        <Routes>
+          <Route path={LOGIN_PATH} element={<Login {...this.props} />} />
+          <Route path={NODES_PATH} element={<Node />} />
+          <Route path={DASHBOARD_PATH} element={<Dashboard {...this.props} />} />
+          <Route path={SITES_PATH} element={<Sites user={user} sites={sites} dispatch={dispatch} />} />
+          <Route path={PROTECTION_PLANS} element={<Index {...this.props} />} />
+          <Route path={JOBS_PATH} element={<Jobs protectionplanID={0} {...this.props} />} />
+          <Route path={EVENTS_PATH} element={<Events />} />
+          <Route path={ALERTS_PATH} element={<Alerts />} />
+          <Route path={`${ALERTS_PATH}/:urnID/:searchStr`} element={<Alerts />} />
+          <Route path={`${ALERTS_PATH}/:id`} element={<Alerts />} />
+          <Route path={`${REPORTS_PATH}/*`} element={<ReportIndex />} />
+          <Route path={SETTINGS_PATH} element={<Settings />} />
+          <Route path="*" element={<Navigate to={DASHBOARD_PATH} />} />
+        </Routes>
+      </Suspense>
+    );
+  }
+
+  render() {
+    const { layout } = this.props;
+    const { isMobile } = this.state;
+    const { leftSideBarTheme, leftSideBarType } = layout;
+    return (
+      <>
+        <div id="preloader">
+          <div id="status">
+            <div className="spinner-chase">
+              <div className="chase-dot" />
+              <div className="chase-dot" />
+              <div className="chase-dot" />
+              <div className="chase-dot" />
+              <div className="chase-dot" />
+              <div className="chase-dot" />
+            </div>
+          </div>
+        </div>
+
+        <div id="layout-wrapper">
+          <Header
+            toggleMenuCallback={this.toggleMenuCallback}
+          />
+          <div className="d-flex">
+            <Sidebar
+              theme={leftSideBarTheme}
+              type={leftSideBarType}
+              isMobile={isMobile}
+              {...this.props}
+            />
+            <div className="main-content" style={{ width: '100%' }}>
+              <div className="page-content">
+                {this.renderRoutes()}
+              </div>
+            </div>
+          </div>
+          {/* <Footer /> */}
+        </div>
+      </>
+    );
+  }
+}
+
+Layout.propTypes = {
+  children: PropTypes.any,
+  isPreloader: PropTypes.bool,
+  layoutWidth: PropTypes.any,
+  leftSideBarTheme: PropTypes.any,
+  leftSideBarType: PropTypes.any,
+  location: PropTypes.object,
+  showRightSidebar: PropTypes.any,
+  topbarTheme: PropTypes.any,
+  dispatch: PropTypes.func.isRequired,
+  sites: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
+  drPlaybooks: PropTypes.object.isRequired,
+};
+
+export default (withTranslation()(Layout));

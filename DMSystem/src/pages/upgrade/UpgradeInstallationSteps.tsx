@@ -7,15 +7,16 @@ import { INITIAL_STATE, UserInterface } from '../../interfaces/interfaces';
 import { UpgradeStepsInterface } from '../../interfaces/upgradeInterfaces';
 import { MESSAGE_TYPES } from '../../Constants/MessageConstants';
 import { UPGRADE_NODE_STATUS_TABLE } from '../../Constants/TableConstants';
-import { STATIC_KEYS } from '../../Constants/userConstants';
+import { STATIC_KEYS, TIMER } from '../../Constants/userConstants';
 import { callAPI } from '../../utils/apiUtils';
 import { getValue } from '../../utils/inputUtils';
-import { hideApplicationLoader, valueChange } from '../../store/actions';
+import { hideApplicationLoader, showApplicationLoader, valueChange } from '../../store/actions';
 import { addMessage } from '../../store/actions/MessageActions';
 import { addUpgradeStep, fetchNodes, setCurrentUpgradeStep } from '../../store/actions/upgradeAction';
 import ActionButton from '../../Components/Shared/ActionButton';
 import StepStatus from '../../Components/Shared/StepStatus';
 import Table from '../../Components/Table/Table';
+import { API_GET_NODE_INSTALLATION_STATUS } from '../../Constants/apiConstants';
 
 interface Props {
     noCard?: boolean;
@@ -35,17 +36,7 @@ const UpgradeInstallationStep: React.FC<Props> = (props) => {
     const installationStepFailed = getValue(STATIC_KEYS.UPGRADE_INSTALLATION_STEP_FAILED, values);
 
     useEffect(() => {
-        getUpgradeInstallationStep();
-        timerId.current = window.setInterval(() => {
-            try {
-                getUpgradeInstallationStep();
-            } catch (e: any) {
-                dispatch(addMessage(e, MESSAGE_TYPES.ERROR));
-                if (timerId.current !== null) {
-                    clearInterval(timerId.current);
-                }
-            }
-        }, 5000);
+        getUpgradeStatusJobId();
 
         return () => {
             if (timerId.current !== null) {
@@ -55,12 +46,40 @@ const UpgradeInstallationStep: React.FC<Props> = (props) => {
             dispatch(valueChange(STATIC_KEYS.UPGRADE_INSTALLATION_STEP_FAILED, false));
         };
     }, []);
-
-    function getUpgradeInstallationStep() {
+    function getUpgradeStatusJobId() {
+        dispatch(showApplicationLoader(API_GET_NODE_INSTALLATION_STATUS, 'Loading...'));
+        return callAPI(API_GET_NODE_INSTALLATION_STATUS).then(
+            (json) => {
+                if (json.hasError) {
+                    dispatch(hideApplicationLoader(API_GET_NODE_INSTALLATION_STATUS));
+                    dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+                } else {
+                    dispatch(hideApplicationLoader(API_GET_NODE_INSTALLATION_STATUS));
+                    if (json.jobId !== '') {
+                        getUpgradeInstallationStep(json.jobID, true);
+                        timerId.current = window.setInterval(() => {
+                            getUpgradeInstallationStep(json.jobID);
+                        }, TIMER.TEN_SECONDS);
+                    }
+                }
+            },
+            (err) => {
+                if (timerId.current) {
+                    clearInterval(timerId.current);
+                }
+                dispatch(hideApplicationLoader(API_GET_NODE_INSTALLATION_STATUS));
+                dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+            },
+        );
+    }
+    function getUpgradeInstallationStep(id: string, showLoader?: boolean) {
         const { url } = steps[currentStep];
         if (typeof url !== 'undefined' && url !== '') {
-            return callAPI(url).then(
+            const urlWithId = url.replace('<id>', id);
+            if (showLoader) dispatch(showApplicationLoader(url, 'Loading...'));
+            return callAPI(urlWithId).then(
                 (json) => {
+                    dispatch(hideApplicationLoader(url));
                     if (json.hasError) {
                         dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
                     } else {
@@ -95,6 +114,7 @@ const UpgradeInstallationStep: React.FC<Props> = (props) => {
                     if (timerId.current) {
                         clearInterval(timerId.current);
                     }
+                    dispatch(hideApplicationLoader(url));
                     dispatch(hideApplicationLoader('node_version'));
                     dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
                 },

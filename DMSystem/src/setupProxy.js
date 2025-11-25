@@ -2,9 +2,9 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 module.exports = function (app) {
     app.use(
-        '/api/v1/*',
+        ['/api/v1/*', '/system/api/v1/*', '/auth/api/v1/*'],
         createProxyMiddleware({
-            target: 'https://65.0.135.102:5004/', // https://18.221.189.216/ 3.218.156.149// https://34.71.172.8/ // 51.68.208.96
+            target: 'https://51.89.240.68:5000/', // https://18.221.189.216/ 3.218.156.149// https://34.71.172.8/ // 51.68.208.96
             changeOrigin: true,
             secure: false,
             /** Below code is not used for debuging purposes 

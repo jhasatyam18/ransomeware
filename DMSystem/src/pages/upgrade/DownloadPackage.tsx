@@ -6,7 +6,7 @@ import { API_GET_UPGRADE_DOWNLOAD, API_UPGRADE_UPLOAD } from '../../Constants/ap
 import { FIELD_TYPE } from '../../Constants/FielsConstants';
 import { MESSAGE_TYPES } from '../../Constants/MessageConstants';
 import { IN_PROGRESS } from '../../Constants/statusConstant';
-import { STATIC_KEYS } from '../../Constants/userConstants';
+import { STATIC_KEYS, TIMER } from '../../Constants/userConstants';
 import { callAPI, getUrlPath } from '../../utils/apiUtils';
 import { getValue } from '../../utils/inputUtils';
 import { addErrorMessage, hideApplicationLoader, showApplicationLoader, valueChange } from '../../store/actions';
@@ -148,7 +148,7 @@ const DownloadPackages: React.FC<RendererProps & WithTranslation> = (props) => {
                         }
                     }
                     dispatch(hideApplicationLoader('upload'));
-                }, 1000);
+                }, 2000);
             } else if (xhr.status === 400 || xhr.status !== 200) {
                 dispatch(hideApplicationLoader('upload'));
                 setProgress(0);
@@ -269,7 +269,7 @@ const DownloadPackages: React.FC<RendererProps & WithTranslation> = (props) => {
                     if (json.downloadUrl) {
                         dispatch(valueChange(STATIC_KEYS.UI_UPGRADE_PAGE, STATIC_KEYS.UI_UPGRADE));
                         setProgress(json.uploadProgress);
-                        if (json.uploadProgress === 100) {
+                        if (json.uploadProgress === 100 && json.status === 'completed') {
                             dispatch(goToNextStep());
                         }
                         dispatch(valueChange('UI.UPGRADE', json.downloadUrl));
@@ -281,7 +281,7 @@ const DownloadPackages: React.FC<RendererProps & WithTranslation> = (props) => {
                         setState('success');
                         setShowProgress(true);
                         uploadUrl = '';
-                        if (json.uploadProgress === 100) {
+                        if (json.uploadProgress === 100 && json.status === 'completed') {
                             dispatch(goToNextStep());
                         }
                     } else {
@@ -301,11 +301,11 @@ const DownloadPackages: React.FC<RendererProps & WithTranslation> = (props) => {
                                     clearInterval(timerId.current);
                                 }
                             }
-                        }, 5000);
+                        }, TIMER.FIVE_SECONDS);
                     }
                 }
 
-                if (json.uploadProgress === 100) {
+                if (json.uploadProgress === 100 && json.status === 'completed') {
                     if (timerId.current !== null) {
                         clearInterval(timerId.current);
                     }

@@ -11,7 +11,6 @@ import { GET_DASHBORAD_TITLE } from '../../../Constants/apiConstants';
 import { MESSAGE_TYPES } from '../../../Constants/MessageConstants';
 import { callAPI } from '../../../utils/apiUtils';
 import { getStorageWithUnit } from '../../../utils/appUtils';
-import { hideApplicationLoader, showApplicationLoader } from '../../../store/actions';
 import { addMessage } from '../../../store/actions/MessageActions';
 
 interface DashboardTitlesProps extends WithTranslation {
@@ -36,16 +35,13 @@ const DashboardTitles: React.FC<DashboardTitlesProps> = ({ t, dispatch }) => {
 
     useEffect(() => {
         setTitles({ siteCount: 0, protectionPlans: 0, protectedVMs: 0, protectedStorage: 0 });
-        dispatch(showApplicationLoader(t('titles.data'), t('feching.titles')));
         callAPI(GET_DASHBORAD_TITLE).then(
             (json: TilesData) => {
-                dispatch(hideApplicationLoader(t('titles.data')));
                 const { siteCount, protectionPlans, protectedVMs, protectedStorage } = json;
                 const info = { siteCount, protectionPlans, protectedVMs, protectedStorage };
                 setTitles(info);
             },
             (err) => {
-                dispatch(hideApplicationLoader(t('titles.data')));
                 dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
             },
         );

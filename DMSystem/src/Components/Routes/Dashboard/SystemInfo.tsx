@@ -3,6 +3,7 @@ import { withTranslation, WithTranslation } from 'react-i18next';
 import { connect, useSelector } from 'react-redux';
 import { Card, CardBody, Col, Row } from 'reactstrap';
 import { Dispatch } from 'redux';
+import SimpleBar from 'simplebar-react';
 import { GET_SERVICE_INFO, GET_SYSTEM_INFO } from '../../../Constants/apiConstants';
 import { RUNNING, SYSTEM_INFO } from '../../../Constants/InputConstants';
 import { MESSAGE_TYPES } from '../../../Constants/MessageConstants';
@@ -79,7 +80,13 @@ const SystemInfo: React.FC<SystemInfoProps> = ({ t, dispatch }) => {
 
     const renderSystemInfo = () => {
         if (!systemData) {
-            return <Col sm={5}>{t('no.data.show')}</Col>;
+            return (
+                <Col sm={5}>
+                    <Card>
+                        <CardBody>{t('no.data.show')}</CardBody>
+                    </Card>
+                </Col>
+            );
         }
 
         const cpuUsage: number = (systemData.utilizedCpuFrequency / systemData.totalCpuFrequency) * 100;
@@ -143,18 +150,20 @@ const SystemInfo: React.FC<SystemInfoProps> = ({ t, dispatch }) => {
                                 Status
                             </Col>
                         </Row>
-                        {serviceData.length > 0 &&
-                            serviceData.map((el, i) => (
-                                <Row key={i} className="margin-top-7">
-                                    <Col sm={5}>{el.serviceName}</Col>
-                                    <Col sm={3} className="d-flex justify-content-center">
-                                        {findDifferenceInTimeFromNow(el.serviceStartTime)}
-                                    </Col>
-                                    <Col sm={4} className="d-flex justify-content-center h-25">
-                                        <StatusItemRenderer data={el} field={'serviceStatus'} />
-                                    </Col>
-                                </Row>
-                            ))}
+                        <SimpleBar style={{ minHeight: '105px', maxHeight: '105px' }}>
+                            {serviceData.length > 0 &&
+                                serviceData.map((el, i) => (
+                                    <Row key={i} className="margin-top-7">
+                                        <Col sm={5}>{el.serviceName}</Col>
+                                        <Col sm={3} className="d-flex justify-content-center">
+                                            {findDifferenceInTimeFromNow(el.serviceStartTime)}
+                                        </Col>
+                                        <Col sm={4} className="d-flex justify-content-center h-25">
+                                            <StatusItemRenderer data={el} field={'serviceStatus'} />
+                                        </Col>
+                                    </Row>
+                                ))}
+                        </SimpleBar>
                     </CardBody>
                 </Card>
             </Col>

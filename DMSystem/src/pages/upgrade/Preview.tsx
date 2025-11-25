@@ -1,43 +1,29 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Col, Row } from 'reactstrap';
-import { UpgradeNodeInterface } from '../../interfaces/HistoryInterface';
-import { INITIAL_STATE, NodeInterface, NodeUpgradeVersionInterface } from '../../interfaces/interfaces';
+import { INITIAL_STATE, NodeUpgradeVersionInterface } from '../../interfaces/interfaces';
 import { RendererProps } from '../../interfaces/upgradeInterfaces';
 import { FIELD_TYPE } from '../../Constants/FielsConstants';
 import { UPGRADE_NODE_VERSION_INFO_TABLE, UPGRADE_REVERT_TABLE } from '../../Constants/TableConstants';
 import { STATIC_KEYS } from '../../Constants/userConstants';
 import { getValue } from '../../utils/inputUtils';
-import { fetchNodes, getNodeVersionInfo, moveToPreviousStep, onActionClick } from '../../store/actions/upgradeAction';
+import { getNodeVersionInfo, moveToPreviousStep, onActionClick } from '../../store/actions/upgradeAction';
 import ActionButton from '../../Components/Shared/ActionButton';
 import DMCheckbox from '../../Components/Shared/DMCheckbox';
 import Table from '../../Components/Table/Table';
 import PackageInfoCards from './PackageInfoCards';
-import { valueChange } from '../../store/actions';
-import { APP_CONSTANT } from '../../Constants/InputConstants';
+import { hideApplicationLoader, showApplicationLoader, valueChange } from '../../store/actions';
+import { callAPI } from '../../utils/apiUtils';
+import { API_NODE_UPGRADE_INFO } from '../../Constants/apiConstants';
+import { MESSAGE_TYPES } from '../../Constants/MessageConstants';
+import { addMessage } from '../../store/actions/MessageActions';
+import { NODE_TYPE } from '../../Constants/InputConstants';
 
 const Preview: React.FC<RendererProps> = (props) => {
     const { user, dispatch, propsData, nextLabel, t } = props;
-    const { values } = user;
+    const { values, nodeType } = user;
     const workflow = getValue(STATIC_KEYS.UI_CURRENT_FLOW, values);
-    let nodeInfo = getValue(STATIC_KEYS.UI_FTECH_NODE_INFO, values);
-    const upgradeHistoryNodeInfo = getValue(STATIC_KEYS.UPGRADE_HISTORY_PREVIEW_NODE_INFO, values) || '';
-    const revertNodeInfo: UpgradeNodeInterface[] = [];
-    let applicableNodes = [];
-    if (upgradeHistoryNodeInfo && workflow === STATIC_KEYS.REVERT) {
-        applicableNodes = JSON.parse(upgradeHistoryNodeInfo?.applicableNodes);
-        applicableNodes.forEach((applNode: UpgradeNodeInterface) => {
-            nodeInfo.forEach((node: NodeInterface) => {
-                if (applNode.nodeName === node.name && applNode.currentVersion < node.version) {
-                    const el = applNode;
-                    el.revertVersion = applNode.currentVersion;
-                    el.currentVersion = applNode.appliedVersion;
-                    revertNodeInfo.push(el);
-                }
-            });
-        });
-    }
 
     const inputField = {
         label: '',
@@ -48,44 +34,38 @@ const Preview: React.FC<RendererProps> = (props) => {
         hideLabel: true,
     };
     const concent = getValue(STATIC_KEYS.UI_UPGRADE_CONCENT, values);
-
+    let [upgradeNodeInfo, setupgradeNodeInfo] = useState<any[]>([]);
+    let [loader, setloader] = useState<boolean>(false);
     useEffect(() => {
         if (workflow !== STATIC_KEYS.REVERT) {
             dispatch(getNodeVersionInfo());
         }
-        dispatch(fetchNodes(STATIC_KEYS.UI_FTECH_NODE_INFO));
+        const url = API_NODE_UPGRADE_INFO.replace('<type>', workflow === STATIC_KEYS.UPGRADE ? 'init-upgrade' : 'init-revert');
+        dispatch(showApplicationLoader(url, 'Loading nodes ...'));
+        setloader(true);
+        callAPI(url).then(
+            (json) => {
+                dispatch(hideApplicationLoader(url));
+                if (json?.hasError) {
+                    setloader(false);
+                    dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+                } else {
+                    setloader(false);
+                    setupgradeNodeInfo(json || []);
+                }
+            },
+            (err) => {
+                setloader(false);
+                dispatch(hideApplicationLoader(url));
+                dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+            },
+        );
         return () => {
             dispatch(valueChange(STATIC_KEYS.UI_UPGRADE_CONCENT, false));
         };
     }, []);
 
     const nodeUpgradeVersion: NodeUpgradeVersionInterface = getValue(STATIC_KEYS.UI_PREVIEW_NODE_VERSION_INFO, values) || {};
-    const upgradeNodeInfo: any = [];
-    if (workflow === STATIC_KEYS.UPGRADE && Object.keys(nodeUpgradeVersion).length > 0) {
-        const availablePackages = nodeUpgradeVersion.packages.map((pkg) => pkg.package);
-        nodeInfo.map((nodeinf: NodeInterface) => {
-            if ((nodeinf.nodeType === APP_CONSTANT.MANAGEMENT && nodeinf.isLocalNode && availablePackages.includes(APP_CONSTANT.MANAGEMENT)) || (nodeinf.nodeType !== APP_CONSTANT.MANAGEMENT && availablePackages.includes(nodeinf.nodeType))) {
-                const packageObj = nodeUpgradeVersion.packages[availablePackages.indexOf(nodeinf.nodeType)];
-                const { component } = packageObj;
-                for (let i = 0; i < component?.length; i++) {
-                    let cmp = component[i];
-                    if ((cmp.componentType === APP_CONSTANT.DM_APPLICATION_UPGRADE && cmp.version > nodeinf.version) || cmp.componentType == APP_CONSTANT.SYSTEM_PACKAGES_UPGRADE) {
-                        upgradeNodeInfo.push(nodeinf);
-                        break;
-                    }
-                }
-            }
-        });
-    }
-
-    const showNodeVersionInfo = () => {
-        return (
-            <>
-                {renderNodeTableHeader()}
-                <Table dispatch={dispatch} primaryKey="preview" user={user} data={upgradeNodeInfo} columns={UPGRADE_NODE_VERSION_INFO_TABLE} isSelectable={false} />
-            </>
-        );
-    };
 
     const renderNodeTableHeader = () => {
         return (
@@ -106,39 +86,47 @@ const Preview: React.FC<RendererProps> = (props) => {
     const renderFooter = () => {
         return (
             <>
-                {upgradeNodeInfo.length !== 0 || revertNodeInfo.length !== 0 ? (
+                {upgradeNodeInfo.length !== 0 ? (
                     <>
                         <div className="upgrade_concent_div" style={{ fontSize: '13px' }}>
-                            <div className="padding-top-12">
-                                <DMCheckbox field={inputField} fieldKey="upgrade.concent" dispatch={dispatch} user={user} disabled={!(revertNodeInfo.length > 0 || nodeInfo.length > 0)} />
-                            </div>
-                            <div>
-                                <label htmlFor="upgrade.concent" className="d-block margin-top-15">
-                                    {propsData?.concent}
-                                </label>
-                            </div>
+                            {nodeType === NODE_TYPE.DOP ? null : (
+                                <>
+                                    <div className="padding-top-12">
+                                        <DMCheckbox field={inputField} fieldKey="upgrade.concent" dispatch={dispatch} user={user} disabled={!(upgradeNodeInfo.length > 0)} />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="upgrade.concent" className="d-block margin-top-15">
+                                            {propsData?.concent}
+                                        </label>
+                                    </div>
+                                </>
+                            )}
                         </div>
                         <div>
                             <h6 className="text-warning">{t('note')}</h6>
                             <ul className="text-warning">
-                                <li className="ms-2">
-                                    <span>{`Do not power off or reboot any of the nodes and offline nodes will not be ${workflow === STATIC_KEYS.REVERT ? 'reverted' : 'upgraded'}`}</span>
-                                </li>
-                                <li className="ms-2">
-                                    <span className=" display-block ">{propsData?.note}</span>
-                                </li>
+                                {nodeType === NODE_TYPE.DOP ? null : (
+                                    <li className="ms-2">
+                                        <span>{`Do not power off or reboot any of the nodes and offline nodes will not be ${workflow === STATIC_KEYS.REVERT ? 'reverted' : 'upgraded'}`}</span>
+                                    </li>
+                                )}
+                                {propsData?.note ? (
+                                    <li className="ms-2">
+                                        <span className=" display-block ">{propsData?.note}</span>
+                                    </li>
+                                ) : null}
                             </ul>
                         </div>
                     </>
                 ) : null}
-                {upgradeNodeInfo.length === 0 && revertNodeInfo.length === 0 ? (
+                {upgradeNodeInfo.length === 0 && workflow === STATIC_KEYS.UPGRADE ? (
                     <div style={{ fontSize: '13px', paddingTop: '12px' }}>
                         <span className="text-warning ">{t('preview.verify.node.version')}</span>
                     </div>
                 ) : null}
                 <div className="padding-10 d-flex flex-row-reverse">
                     <div>
-                        {upgradeNodeInfo.length !== 0 || revertNodeInfo.length !== 0 ? <ActionButton cssName={`btn btn-success btn-sm margin-right-10 p-2 pl-3 pr-3`} isDisabled={!concent} label={`${nextLabel}`} onClick={onNextClick} /> : null}
+                        {upgradeNodeInfo.length !== 0 ? <ActionButton cssName={`btn btn-success btn-sm margin-right-10 p-2 pl-3 pr-3`} isDisabled={!concent && nodeType !== NODE_TYPE.DOP} label={`${nextLabel}`} onClick={onNextClick} /> : null}
                         <ActionButton cssName="btn btn-secondary btn-sm p-2 pl-3 pr-3" label={`Cancel`} onClick={onCancelClick} />
                     </div>
                 </div>
@@ -148,24 +136,22 @@ const Preview: React.FC<RendererProps> = (props) => {
 
     return (
         <>
-            {workflow === STATIC_KEYS.UPGRADE ? (
+            {loader ? null : (
                 <>
                     <Row className="d-flex justify-content-center" style={{ fontSize: '0.8rem' }}>
-                        <Col sm={5}>
-                            <PackageInfoCards nodeUpgradeVersion={nodeUpgradeVersion} />
+                        {workflow === STATIC_KEYS.UPGRADE ? (
+                            <Col sm={5}>
+                                <PackageInfoCards nodeUpgradeVersion={nodeUpgradeVersion} />
+                            </Col>
+                        ) : null}
+                        <Col sm={workflow === STATIC_KEYS.UPGRADE ? 7 : 7}>
+                            {renderNodeTableHeader()}
+                            <Table dispatch={dispatch} primaryKey="id" user={user} data={upgradeNodeInfo} columns={workflow === STATIC_KEYS.UPGRADE ? UPGRADE_NODE_VERSION_INFO_TABLE : UPGRADE_REVERT_TABLE} isSelectable={false} />
+                            {workflow === STATIC_KEYS.REVERT ? renderFooter() : null}
                         </Col>
-                        <Col sm={7}>{showNodeVersionInfo()}</Col>
                     </Row>
-                    {renderFooter()}
+                    {workflow === STATIC_KEYS.UPGRADE ? renderFooter() : null}
                 </>
-            ) : (
-                <Row className="d-flex justify-content-center" style={{ fontSize: '0.8rem' }}>
-                    <Col sm={10}>
-                        {renderNodeTableHeader()}
-                        <Table dispatch={dispatch} columns={UPGRADE_REVERT_TABLE} data={revertNodeInfo} primaryKey="id" user={user} />
-                        {renderFooter()}
-                    </Col>
-                </Row>
             )}
         </>
     );

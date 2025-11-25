@@ -28,17 +28,16 @@ export const TABLE_NODE = [
 export const TABLE_SITE = [
     { label: 'Name', field: 'name' },
     { label: 'Site Type', field: 'siteType' },
-    { label: 'Description', field: 'description' },
-    { label: 'Platform', field: 'platformDetails.platformType' },
+    { label: 'Platform', field: 'node.platformType' },
     { label: 'Location', itemRenderer: SITE_LOCATION_ITEM_RENDERER },
     { label: 'Node', field: 'node.name', itemRenderer: NODE_NAME_ITEM_RENDERER },
 ];
 
 export const UPGRADE_NODE_VERSION_INFO_TABLE = [
-    { label: 'Node', field: 'name' },
+    { label: 'Node', field: 'nodeName' },
     { label: 'Type', field: 'nodeType' },
-    { label: 'Current Version', field: 'version' },
-    { label: 'Status', field: 'status', itemRenderer: STATUS_ITEM_RENDERER },
+    { label: 'Current Version', field: 'currentVersion' },
+    { label: 'Status', field: 'nodeActiveStatus', itemRenderer: STATUS_ITEM_RENDERER },
 ];
 
 export const UPGRADE_NODE_STATUS_TABLE = [
@@ -73,7 +72,7 @@ export const UPGRADE_REVERT_TABLE = [
     { label: 'Node', field: 'nodeName' },
     { label: 'Type', field: 'nodeType' },
     { label: 'Current Version', field: 'currentVersion' },
-    { label: 'Revert Version', field: 'revertVersion' },
+    { label: 'Revert Version', field: 'appliedVersion' },
 ];
 
 export const UPGRADE_REVERT_NODES_TABLE = [

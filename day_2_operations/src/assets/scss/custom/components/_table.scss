@@ -1,0 +1,53 @@
+//
+// _table.scss 
+//
+
+.table {
+  th {
+    font-weight: $font-weight-bold;
+  }
+  font-size: 0.8rem;
+  @media (max-width: 1199px) {
+    font-size: 0.7rem;
+  }
+
+  @media (max-width: 992px) {
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 907px) {
+    font-size: 0.6rem;
+  }
+}
+
+//Table centered
+.table-centered {
+  td,
+  th {
+    vertical-align: middle !important;
+  }
+}
+
+.table-nowrap {
+  th,
+  td {
+    white-space: nowrap;
+  }
+}
+
+
+.table > :not(caption) > * > * {
+  padding: 0.5rem 0.5rem !important;
+}
+
+
+.table > * {
+  width: 90%;
+}
+
+@media (min-width: 576px) {
+  .col-sm-11 {
+      flex: 0 0 auto;
+      width: 89.666667%;
+  }
+}

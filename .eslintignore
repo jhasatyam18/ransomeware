@@ -1,5 +1,8 @@
-mock-server/*.js 
-scripts/*.js
-config/*.*
-end_of_line = CRLF
-setupProxy.js
+node_modules/
+build/
+config/
+scripts/
+# src/assets/*
+# src\logo.svg
+# src/app.css
+# src/index.css

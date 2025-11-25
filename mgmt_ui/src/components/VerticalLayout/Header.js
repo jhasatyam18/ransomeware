@@ -1,0 +1,198 @@
+import { faExpand, faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+// import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { addMessage } from '../../store/actions/MessageActions';
+import { callAPI } from '../../utils/ApiUtils';
+import dmlogo from '../../assets/images/dm_logo.png';
+import { API_FETCH_SITES } from '../../constants/ApiConstants';
+import { PLATFORM_TYPES } from '../../constants/InputConstants';
+import { MESSAGE_TYPES } from '../../constants/MessageConstants';
+// Redux Store
+import { changeLeftSidebarType, refresh } from '../../store/actions';
+import NotificationDropdown from '../CommonForBoth/TopbarDropdown/NotificationDropdown';
+import ProfileMenu from '../CommonForBoth/TopbarDropdown/ProfileMenu';
+import WarningMessage from '../Dashboard/WarningBanner';
+
+function Header(props) {
+  const { user, dispatch, sites } = props;
+  const { platformType } = user;
+  const history = useNavigate();
+  const [vcIp, setVcIp] = useState('');
+
+  useEffect(() => {
+    if (platformType === PLATFORM_TYPES.VMware) {
+      if (vcIp === '') {
+        if (!sites.sites || sites.sites.length === 0) {
+          fetchVCIp();
+        } else {
+          sites.sites.forEach((s) => {
+            if (s.node.isLocalNode) {
+              setVcIp(s.platformDetails.hostname);
+            }
+          });
+        }
+      } else {
+        let index;
+        if (sites) {
+          sites.sites.forEach((s, i) => {
+            if (s.node.hostname === user.localVMIP) {
+              index = i;
+            }
+          });
+          if (typeof sites.sites[index] === 'undefined') {
+            setVcIp('');
+          }
+        }
+      }
+    }
+  },
+  [sites.sites]);
+
+  function fetchVCIp() {
+    callAPI(API_FETCH_SITES)
+      .then((json) => {
+        let IP = '';
+        json.map((site) => {
+          if (site.node.isLocalNode) {
+            const vcIP = site.platformDetails.hostname;
+            IP = vcIP;
+          }
+        });
+        setVcIp(IP);
+      },
+      (err) => {
+        dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+      });
+  }
+
+  const onRefresh = () => {
+    dispatch(refresh(history));
+  };
+
+  const toggleMenu = () => {
+    const { layout } = props;
+    const { leftSideBarType } = layout;
+    if (leftSideBarType === 'default') {
+      dispatch(changeLeftSidebarType('condensed', false));
+    } else if (leftSideBarType === 'condensed') {
+      dispatch(changeLeftSidebarType('default', false));
+    }
+  };
+
+  const toggleFullscreen = () => {
+    if (
+      !document.fullscreenElement
+      /* alternative standard method */ && !document.mozFullScreenElement
+      && !document.webkitFullscreenElement
+    ) {
+      // current working methods
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+      } else if (document.documentElement.mozRequestFullScreen) {
+        document.documentElement.mozRequestFullScreen();
+      } else if (document.documentElement.webkitRequestFullscreen) {
+        document.documentElement.webkitRequestFullscreen(
+          Element.ALLOW_KEYBOARD_INPUT,
+        );
+      }
+    } else if (document.cancelFullScreen) {
+      document.cancelFullScreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if (document.webkitCancelFullScreen) {
+      document.webkitCancelFullScreen();
+    }
+  };
+
+  const renderAppType = () => {
+    const { zone } = user;
+    const type = `${platformType}`;
+    const appZone = (typeof zone !== 'undefined' ? `${zone}` : '');
+    return (
+      <div className="dropdown d-none d-lg-inline-block ml-1">
+        <button type="button" className="btn platform-header noti-icon waves-effect">
+          {` ${type} ${appZone}`}
+        </button>
+      </div>
+    );
+  };
+
+  return (
+    <>
+      <header id="page-topbar">
+        <WarningMessage />
+        <div className="navbar-header">
+          <div className="d-flex">
+            <div className="navbar-brand-box ps-4">
+              <Link to="/" style={{ position: 'relative', top: '14px' }} className="logo d-flex align-items-center">
+                <span>
+                  <img
+                    src={dmlogo}
+                    alt="Datamotive Logo"
+                    width={37}
+                    height={37}
+                    style={{ objectFit: 'contain' }}
+                    className="logo-size"
+                  />
+                </span>
+                <div className="logo-lg dm-logo-color">
+                  <p style={{ fontSize: '21px', fontWeight: 'none' }} className="mb-0  mt-2">DATAMOTIVE</p>
+                  <small style={{ position: 'relative', top: '-10px', fontSize: '9px' }}>Eliminating Cloud Boundaries</small>
+                </div>
+              </Link>
+            </div>
+            <button
+              type="button"
+              onClick={toggleMenu}
+              className="btn btn-sm px-3 font-size-16 header-item waves-effect"
+              id="vertical-menu-btn"
+            >
+              <i className="fa fa-bars" />
+            </button>
+            {renderAppType()}
+          </div>
+          <div className="d-flex">
+            <div className="dropdown d-lg-inline-block ml-1">
+              <button
+                type="button"
+                onClick={onRefresh}
+                className="btn header-item noti-icon waves-effect"
+                data-toggle="refresh"
+              >
+                <FontAwesomeIcon size="lg" icon={faRefresh} className="fa-spin-hover" />
+              </button>
+            </div>
+            <div className="dropdown d-lg-inline-block ml-1">
+              <button
+                type="button"
+                onClick={toggleFullscreen}
+                className="btn header-item noti-icon waves-effect"
+                data-toggle="fullscreen"
+              >
+                <FontAwesomeIcon size="lg" icon={faExpand} />
+              </button>
+            </div>
+            <NotificationDropdown />
+            <ProfileMenu {...props} />
+          </div>
+        </div>
+      </header>
+    </>
+  );
+}
+
+function mapStateToProps(state) {
+  const { layout, user, dispatch, sites, global } = state;
+  return { layout, user, dispatch, sites, global };
+}
+export default connect(mapStateToProps)(Header);
+
+Header.propTypes = {
+  t: PropTypes.any,
+  toggleMenuCallback: PropTypes.any,
+  toggleRightSidebar: PropTypes.func,
+};

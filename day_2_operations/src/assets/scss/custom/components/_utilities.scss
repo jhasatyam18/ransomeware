@@ -1,0 +1,38 @@
+// _custom.scss (load before bootstrap.scss)
+
+// 1. Merge back ml/mr if you haven’t already
+$utilities: map-merge(
+  $utilities,
+  (
+    "mr": (
+      property: margin-right,
+      class: mr,
+      values: $spacers
+    ),
+    "ml": (
+      property: margin-left,
+      class: ml,
+      values: $spacers
+    )
+  )
+);
+
+// 2. Merge in the old padding-left/right
+$utilities: map-merge(
+  $utilities,
+  (
+    "pr": (
+      property: padding-right,
+      class: pr,
+      values: $spacers
+    ),
+    "pl": (
+      property: padding-left,
+      class: pl,
+      values: $spacers
+    )
+  )
+);
+
+// 3. Now import Bootstrap
+// @import "bootstrap/scss/bootstrap";

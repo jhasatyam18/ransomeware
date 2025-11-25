@@ -1,6 +1,6 @@
 import { Dispatch } from 'redux';
 import * as Types from '../../Constants/actionTypes';
-import { API_CLEAR_UPGRADE, API_GET_HISTORY, API_GET_NODE_VERSION_INFO, API_GET_UPGRADE_DOWNLOAD, API_NODES, API_UPGRADE } from '../../Constants/apiConstants';
+import { API_CLEAR_UPGRADE, API_GET_HISTORY, API_GET_NODE_VERSION_INFO, API_GET_UPGRADE_PROCESS, API_NODES, API_UPGRADE, API_UPGRADE_NODE_INFO } from '../../Constants/apiConstants';
 import { MESSAGE_TYPES } from '../../Constants/MessageConstants';
 import { UPGRADE_REVERT, UPGRADE_STEP } from '../../Constants/upgradeConstant';
 import { STATIC_KEYS } from '../../Constants/userConstants';
@@ -75,6 +75,27 @@ export function fetchNodes(key: string) {
         );
     };
 }
+export function fetchUpgradeNodeInfo(key: string) {
+    return (dispatch: Dispatch<any>) => {
+        dispatch(showApplicationLoader(API_UPGRADE_NODE_INFO, 'Loading nodes ...'));
+        return callAPI(API_UPGRADE_NODE_INFO).then(
+            (json) => {
+                dispatch(hideApplicationLoader(API_UPGRADE_NODE_INFO));
+                if (json.hasError) {
+                    dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
+                } else {
+                    if (key) {
+                        dispatch(valueChange(key, json));
+                    }
+                }
+            },
+            (err) => {
+                dispatch(hideApplicationLoader(API_UPGRADE_NODE_INFO));
+                dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
+            },
+        );
+    };
+}
 
 export function UpgradeNode(action: string | undefined) {
     return (dispatch: Dispatch<any>, getState: () => INITIAL_STATE) => {
@@ -123,16 +144,12 @@ export function goToNextStep() {
 export function moveToPreviousStep(filename: string) {
     return (dispatch: Dispatch<any>, getState: () => INITIAL_STATE) => {
         const { upgrade } = getState();
-        const { steps, currentStep } = upgrade;
+        const { currentStep } = upgrade;
         if (currentStep - 1 < 0) {
             dispatch(setCurrentUpgradeStep(0));
             dispatch(addUpgradeStep([]));
             dispatch(valueChange(STATIC_KEYS.UI_UPGRADE_PAGE, ''));
         } else {
-            const upgArr = [...steps];
-            upgArr[currentStep - 1].state = '';
-            dispatch(setCurrentUpgradeStep(currentStep - 1));
-            dispatch(addUpgradeStep(upgArr));
             dispatch(clearUpgrade(filename));
         }
     };
@@ -179,14 +196,12 @@ export function getUpgradeHistory() {
 
 export function getDownloadUpgradeProgress() {
     return (dispatch: Dispatch<any>) => {
-        dispatch(showApplicationLoader('fetch_download_package_Data', 'Loading upgrade progress'));
-        return callAPI(API_GET_UPGRADE_DOWNLOAD).then(
+        return callAPI(API_GET_UPGRADE_PROCESS).then(
             (json) => {
-                dispatch(hideApplicationLoader('fetch_download_package_Data'));
                 if (json.hasError) {
                     dispatch(addMessage(json.message, MESSAGE_TYPES.ERROR));
                 } else {
-                    if (json.jobType === 'init-upgrade') {
+                    if (json.action === 'init-upgrade') {
                         if (json.jobStatus === 'running') {
                             const arr = deepCopy(UPGRADE_STEP);
                             arr[0].state = 'done';
@@ -195,7 +210,7 @@ export function getDownloadUpgradeProgress() {
                             dispatch(setCurrentUpgradeStep(2));
                             dispatch(valueChange(STATIC_KEYS.UI_UPGRADE_PAGE, STATIC_KEYS.UI_UPGRADE));
                         }
-                    } else if (json.jobType === 'init-revert' && json.jobStatus === 'running') {
+                    } else if (json.action === 'init-revert' && json.jobStatus === 'running') {
                         dispatch(valueChange(STATIC_KEYS.UI_UPGRADE_PAGE, STATIC_KEYS.UI_UPGRADE));
                         const arr = deepCopy(UPGRADE_REVERT);
                         arr[0].state = 'done';
@@ -206,7 +221,6 @@ export function getDownloadUpgradeProgress() {
                 }
             },
             (err: any) => {
-                dispatch(hideApplicationLoader('fetch_download_package_Data'));
                 dispatch(addMessage(err.message, MESSAGE_TYPES.ERROR));
             },
         );
@@ -242,9 +256,9 @@ export function onActionClick() {
     };
 }
 
-export function clearUpgrade(name: string) {
+export function clearUpgrade(name: string, updateStep?: boolean) {
     return (dispatch: Dispatch<any>) => {
-        dispatch(showApplicationLoader('fetch_download_package_Data', ''));
+        dispatch(showApplicationLoader('fetch_download_package_Data', 'Clearing data...'));
         const url = API_CLEAR_UPGRADE.replace('filename', name);
         const obj = createPayload(API_TYPES.DELETE, {});
         return callAPI(url, obj).then(

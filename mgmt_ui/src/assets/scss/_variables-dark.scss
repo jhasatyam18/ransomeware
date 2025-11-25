@@ -1,0 +1,212 @@
+
+$white-dark: #fff;
+$gray-100-dark: #212529;
+$gray-200-dark: #2a3042;
+$gray-300-dark: #32394e;
+$gray-400-dark: #a6b0cf;
+$gray-500-dark: #bfc8e2;
+$gray-600-dark: #c3cbe4;
+$gray-700-dark: #f6f6f6;
+$gray-800-dark: #eff2f7;
+$gray-900-dark: #f8f9fa;
+$black-dark: #000;
+
+$grays: ();
+// stylelint-disable-next-line scss/dollar-variable-default
+$grays: map-merge(
+  (
+    "100": $gray-100-dark,
+    "200": $gray-200-dark,
+    "300": $gray-300-dark,
+    "400": $gray-400-dark,
+    "500": $gray-500-dark,
+    "600": $gray-600-dark,
+    "700": $gray-700-dark,
+    "800": $gray-800-dark,
+    "900": $gray-900-dark,
+  ),
+  $grays
+);
+
+$blue-dark: #556ee6;
+$indigo-dark: #564ab1;
+$purple-dark: #6f42c1;
+$pink-dark: #e83e8c;
+$red-dark: #f46a6a;
+$orange-dark: #f1734f;
+$yellow-dark: #f1b44c;
+$green-dark: #34c38f;
+$teal-dark: #050505;
+$cyan-dark: #50a5f1;
+
+$colors: ();
+// stylelint-disable-next-line scss/dollar-variable-default
+$colors: map-merge(
+  (
+    "blue": $blue-dark,
+    "indigo": $indigo-dark,
+    "purple": $purple-dark,
+    "pink": $pink-dark,
+    "red": $red-dark,
+    "orange": $orange-dark,
+    "yellow": $yellow-dark,
+    "green": $green-dark,
+    "teal": $teal-dark,
+    "cyan": $cyan-dark,
+    "white": $white-dark,
+    "gray": $gray-600-dark,
+    "gray-dark": $gray-800-dark,
+  ),
+  $colors
+);
+
+$primary-dark: $blue-dark;
+$secondary-dark: $gray-600-dark;
+$success-dark: $green-dark;
+$info-dark: $cyan-dark;
+$warning-dark: $yellow-dark;
+$danger-dark: $red-dark;
+$light-dark: $gray-300-dark;
+$dark-dark: $gray-800-dark;
+
+$theme-colors: ();
+// stylelint-disable-next-line scss/dollar-variable-default
+$theme-colors: map-merge(
+  (
+    "primary": $primary-dark,
+    "secondary": $secondary-dark,
+    "success": $success-dark,
+    "info": $info-dark,
+    "warning": $warning-dark,
+    "danger": $danger-dark,
+    "pink": $pink-dark,
+    "light": $light-dark,
+    "dark": $dark-dark,
+  ),
+  $theme-colors
+);
+$primary-text-emphasis-dark:        tint-color($primary-dark, 40%);
+$secondary-text-emphasis-dark:      tint-color($secondary-dark, 40%);
+$success-text-emphasis-dark:        tint-color($success-dark, 40%);
+$info-text-emphasis-dark:           tint-color($info-dark, 40%);
+$warning-text-emphasis-dark:        tint-color($warning-dark, 40%);
+$danger-text-emphasis-dark:         tint-color($danger-dark, 40%);
+$light-text-emphasis-dark:          $gray-100-dark;
+$dark-text-emphasis-dark:           $gray-300-dark;
+// scss-docs-end theme-text-dark-variables
+
+// scss-docs-start theme-bg-subtle-dark-variables
+$primary-bg-subtle-dark:            rgba($primary-dark, 0.25);
+$secondary-bg-subtle-dark:          rgba($secondary-dark, 0.25);
+$success-bg-subtle-dark:            rgba($success-dark, 0.25);
+$info-bg-subtle-dark:               rgba($info-dark, 0.25);
+$warning-bg-subtle-dark:            rgba($warning-dark, 0.25);
+$danger-bg-subtle-dark:             rgba($danger-dark, 0.25);
+// $light-bg-subtle-dark:              $gray-800-dark;
+$dark-bg-subtle-dark:               rgba($dark-dark, 0.25);
+// scss-docs-end theme-bg-subtle-dark-variables
+
+// scss-docs-start theme-border-subtle-dark-variables
+$primary-border-subtle-dark:        shade-color($primary-dark, 40%);
+$secondary-border-subtle-dark:      shade-color($secondary-dark, 40%);
+$success-border-subtle-dark:        shade-color($success-dark, 40%);
+$info-border-subtle-dark:           shade-color($info-dark, 40%);
+$warning-border-subtle-dark:        shade-color($warning-dark, 40%);
+$danger-border-subtle-dark:         shade-color($danger-dark, 40%);
+$light-border-subtle-dark:          $gray-700-dark;
+$dark-border-subtle-dark:           $gray-800-dark;
+// scss-docs-end theme-border-subtle-dark-variables
+
+$body-color-dark:                   #ffffff;
+$body-bg-dark:                      #222736;
+$body-secondary-color-dark:         #74788d;
+$body-secondary-bg-dark:           #2a3042;
+$body-tertiary-color-dark:          #adb5bd; //#f6f6f6;
+$body-tertiary-bg-dark:             #32394e;
+$body-emphasis-color-dark:          #bfc8e2;
+$border-color-dark:                 #32394e;
+$border-color-translucent-dark:     #353d55;
+$headings-color-dark:               #f6f6f6;
+$link-color-dark:                   $primary-dark;
+$link-hover-color-dark:             shift-color($link-color-dark, -$link-shade-percentage);
+$code-color-dark:                   $code-color;
+
+
+$button-secondary-bg-dark: #c3cbe4;
+$button-secondary-color-dark: $body-color-dark;
+//
+// Forms
+//
+
+$form-select-indicator-color-dark:  $body-color-dark;
+$form-select-indicator-dark:        url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='#{$form-select-indicator-color-dark}' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/></svg>");
+
+$form-switch-color-dark:            rgba($white, .25);
+$form-switch-bg-image-dark:         url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{$form-switch-color-dark}'/></svg>");
+
+// scss-docs-start form-validation-colors-dark
+$form-valid-color-dark:             $green-300;
+$form-valid-border-color-dark:      $green-300;
+$form-invalid-color-dark:           $red-300;
+$form-invalid-border-color-dark:    $red-300;
+// scss-docs-end form-validation-colors-dark
+
+
+// wizard 
+$wizard-steps-bg-dark: #333a4a;
+$wizard-stack-key-bg-dark: #2a3042;
+$wizard-stack-value-bg-dark: #32394e;
+//#f6f6f6
+
+//
+// Accordion
+//
+
+$accordion-icon-color-dark:         $primary-text-emphasis-dark;
+$accordion-icon-active-color-dark:  $primary-text-emphasis-dark;
+
+$accordion-button-icon-dark:         url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#{$accordion-icon-color-dark}'><path fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/></svg>");
+$accordion-button-active-icon-dark:  url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#{$accordion-icon-active-color-dark}'><path fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/></svg>");
+// scss-docs-end sass-dark-mode-vars
+
+/* =============================Custom Variables========================== */
+
+$header-bg-dark:                        #262b3c;
+$header-item-color-dark:                #a6b0cf;
+
+//topbra dark
+$header-dark-bg-dark:                   $primary-dark;
+$header-dark-item-color-dark:           $gray-200-dark;
+$topbar-search-bg-dark:                 #2e3548;
+
+// Footer
+$footer-bg-dark:                        #262b3c;
+$footer-color-dark:                     #a6b0cf;
+
+// Horizontal nav
+$topnav-bg-dark:                        #282e3f;
+$menu-item-color-dark:                  #a6b0cf;
+$menu-item-active-color-dark:           #556ee6;
+
+$boxed-body-bg-dark:                    #32394f;
+
+$tree-bg-color-dark:  #2e3548;
+// Display
+$display-none-dark:                                        block;
+$display-block-dark:                                       none;
+$table-hover-bg-dark: #545a6d;
+$search-select-bg-dark: #2e3548;
+$search-select-font-dark: #bfc8e2;
+$search-select-hover-dark: #2a3042;
+$search-select-primary-dark: #2684FF;
+$search-select-error-dark: #f46a6a;
+$search-select-border-dark: #{$border-color-translucent-dark};
+$search-select-hover-color-dark: #fff;
+$search-select-select-dark:#2684FF;
+$search-select-link-color-dark: #{$blue};
+$select-diabled-bg-dark: #2a3042;
+
+$grey: grey;
+$stack-row-border-light:#e4e6ed;
+$disabled-color-dark:#2a3042;
+$input-bg-color-dark:#2e3548;

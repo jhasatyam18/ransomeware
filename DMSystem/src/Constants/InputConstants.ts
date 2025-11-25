@@ -40,3 +40,8 @@ export const APP_CONSTANT = {
     DM_APPLICATION_UPGRADE: 'DM-APPLICATION-UPGRADE',
     SYSTEM_PACKAGES_UPGRADE: 'SYSTEM-PACKAGES-UPGRADE',
 };
+
+export const NODE_TYPE = {
+    DOP: 'Day2Operation',
+    MGMT: 'Management',
+};

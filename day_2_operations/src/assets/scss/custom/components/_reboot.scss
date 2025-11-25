@@ -1,0 +1,338 @@
+/* =============
+   General 
+============= */
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,i {
+  color: var(--#{$prefix}icon-color) ;
+}
+
+hr{
+  margin: 0.7rem 0rem;
+}
+a {
+  text-decoration: none !important;
+}
+
+label {
+  font-weight: 500;
+}
+
+// blockquote
+
+.blockquote {
+  padding: 10px 20px;
+  border-left: 4px solid $gray-300;
+}
+
+.blockquote-reverse {
+  border-left: 0;
+  border-right: 4px solid $gray-300;
+  text-align: right;
+}
+
+
+.max-w-170 {
+  max-width: 170px;
+}
+
+.render-ipfield-table {
+  text-align: center;
+ vertical-align: middle;
+}
+
+@mixin min-Height($val) {
+    min-height: $val;
+}
+
+@mixin max-Height($val) {
+  max-height: $val;
+}
+
+.min-h-100 {
+ @include min-Height(100px);
+}
+
+.max-h-230 {
+ @include max-Height(230px);
+}
+
+.max-h-250 {
+  @include max-Height(250px);
+}
+
+.min-h-365 {
+  @include min-Height(365px);
+}
+
+.min-h-190 {
+  @include min-Height(190px);
+}
+
+.min-h-188 {
+  @include min-Height(188px);
+}
+
+.text-transformation-C {
+  text-transform: capital;
+}
+
+.drop-down-menu-color {
+  color: $gray-500;
+  &:hover {
+    color: $gray-600;
+  }
+}
+
+.color-white {
+  color: var(--#{$prefix}body-color);
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.h-20{
+  height: 20px;
+}
+
+.max-h-350{
+  max-height: 350px;
+}
+
+.max-h-400{
+  max-height: 400px;
+}
+
+.max-h-600{
+  max-height: 600px;
+}
+
+.max-h-500{
+  max-height: 500px;
+}
+
+.max-h-530{
+  max-height: 530px;
+}
+
+.width-100{
+  width: 100%;
+}
+
+.modal-lic-upload{
+  visibility: hidden;
+   display: none;
+}
+
+.show-password{
+  height: 16;
+   width: 16
+}
+
+.stackview-icon{
+  height: 20px;
+}
+
+.dmtooltip{
+  min-width: 200px;
+  max-width: 350px;
+}
+
+
+
+.icon_font{
+  font-size: 16px
+}
+
+.protectedvm-icon{
+  font-size: 14px;
+}
+
+.vmware_placement_info{
+  text-decoration: underline;
+   display: flex
+}
+
+.vmware_placement_info_p{
+  font-size: 12px;
+  margin-right: 10px
+}
+
+.dmapi_col{
+  min-width: 200px;
+}
+
+.sidebar-height{
+  max-height: 80%;
+}
+
+.instance_memory_p{
+  min-width: 5px;
+   padding-top: 7px
+}
+
+.confirmation_modal_msg{
+  margin: auto;
+  padding-left: 25px;
+}
+
+.modal_location_simplebar{
+max-height: 600px;  
+}
+
+.modal_nic_simplbar{
+  max-height: 400px;
+}
+
+.roles_simplebar{
+min-height: 55vh;
+max-height: 55vh;
+}
+
+.dm_table_th{
+  width: 10px;
+}
+
+.vmnetwork_info{
+  text-decoration: underline;
+}
+
+.form_w{
+  width: 100%;
+}
+
+.paginator_input_div{
+  width: 50%;
+  border-color: $gray-600;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.paginator_input{
+  display: flex;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: $black;
+    border: none ;
+    background-color: var(--#{$prefix}gray-500);
+    outline: none;
+    text-align: right;
+}
+
+.dmaipaginator_totalpage{
+  width: 50%;
+  border-color: $gray-600;
+}
+
+.totalpag_text{
+  position: relative;
+  top:8px;
+}
+
+.remove_checkbox{
+  display: inline-block;
+}
+
+.remove_text{
+  color: #f1b44c;
+}
+
+.remove-sign_icon{
+  position: relative;
+  top: -4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-right: 4px;
+}
+.input_div{
+  background-color: var(--#{$prefix}gray-500);
+  max-width: 100px !important;
+}
+
+
+.folderSelection{
+  background-color: $card-bg;
+  border-radius: 3px;
+}
+
+.link_color{
+  color: var(--tree-fd-color);
+  cursor: pointer;
+}
+
+.rec_job_parent{
+  min-width: 240px;
+
+}
+
+.rev_diff_warning{
+  width: 800px;
+}
+
+.text-warning{
+  color:var(--warning-color) !important;
+}
+
+// .popover {
+//   max-width: none !important;
+//   width: auto !important;
+//   white-space: normal !important;
+// }
+.dr-summary-container {
+  border-radius: 6px;
+  width: fit-content;
+  max-width: 800px;
+}
+
+.dr-summary-container h4 {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.dr-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.dr-summary-table th,
+.dr-summary-table td {
+  // border: 1px solid var(--bs-border-color);
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.dr-summary-table th {
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .dr-summary-table {
+    font-size: 10px;
+  }
+}
+
+.global-dropdown {
+  border-color: var(--bs-body-color) !important;
+  color: var(--bs-body-color) !important;
+  font-weight: bold;
+}

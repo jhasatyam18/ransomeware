@@ -44,6 +44,8 @@ export default function user(state = INITIAL_STATE.user, action: UserInterface) 
                 platformType: action.platformType,
                 localVMIP: action.localVMIP,
                 zone: action.zone,
+                nodeType: action.nodeType,
+                version: action.version,
             };
         case Types.APP_USER_CHANGE_PASSWORD:
             return {

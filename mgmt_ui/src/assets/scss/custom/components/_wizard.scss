@@ -1,0 +1,32 @@
+.step-wizard {
+    padding-top: 5px;
+    padding-bottom: 10px;
+    font-size: 14px;
+  }
+  
+  .step-ul {
+    padding-top: 15px;
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+  
+  .step-active {
+    background-color: var(--#{$prefix}wizard-steps-active-bg);
+    color: $wizard-steps-active-color;
+  }
+  
+  .wizard-header-options {
+    display: flex;
+    flex-direction: row;
+    .wizard-header-div {
+      padding-right: 10px;
+    }
+  }
+
+  .step-wizard-parent {
+    
+    background-color: var(--#{$prefix}wizard-steps-bg);
+  }
+  .modal-footer>* {
+    margin: .25rem;
+}

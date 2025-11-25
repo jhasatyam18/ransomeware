@@ -10,6 +10,7 @@ import Loader from '../Shared/Loader';
 import Header from './Header';
 import Sidebar from './SideBar';
 import withRouter from './withRouter';
+import { Navigate } from 'react-router-dom';
 
 interface LayoutProps {
     isPreloader: boolean;
@@ -66,15 +67,16 @@ class Layout extends Component<LayoutProps> {
 
     renderRoutes = () => {
         const { user } = this.props;
+        const { isAuthenticated } = user;
         changePageTitle(user);
 
         return (
             <Suspense fallback={<Loader />}>
                 <Routes>
-                    <Route path={LOGIN_PATH} element={<Login {...this.props} />} />
-                    <Route path={DASHBOARD_PATH} element={<Dashboard />} />
+                    <Route path={LOGIN_PATH} element={isAuthenticated ? <Navigate to={DASHBOARD_PATH} /> : <Login {...this.props} />} />
+                    <Route path={DASHBOARD_PATH} element={<Dashboard {...this.props} />} />
                     <Route path={UPGRADE} element={<UpgradePage {...this.props} />} />
-                    <Route path="*" element={<Dashboard />} />
+                    <Route path="*" element={<Dashboard {...this.props} />} />
                 </Routes>
             </Suspense>
         );
